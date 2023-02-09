@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.SysTreeMapper">
+
+    <resultMap type="OgPerson" id="OgPersonResult">
+        <result property="pId" column="pId"/>
+        <result property="pName" column="PNAME"/>
+    </resultMap>
+
+
+    <resultMap type="SysFolder" id="FolderResult">
+        <result property="id_" column="id_"/>
+        <result property="name_" column="name_"/>
+        <result property="path_" column="path_"/>
+        <result property="parent_" column="parent_"/>
+        <result property="description_" column="description_"/>
+        <result property="create_user_" column="create_user_"/>
+        <result property="create_time_" column="create_time_"/>
+        <result property="modify_user_" column="modify_user_"/>
+        <result property="modify_time_" column="modify_time_"/>
+        <result property="update_time_" column="update_time_"/>
+        <result property="leaf_" column="leaf_"/>
+    </resultMap>
+
+    <sql id="selectFolderVo">
+		select  id_,name_,path_,parent_,description_,create_user_,create_time_,modify_user_,modify_time_,update_time_,leaf_
+          from REG_FOLDER_INDEX o
+	</sql>
+
+    <select id="selectFolderList" parameterType="SysFolder" resultMap="FolderResult">
+        <include refid="selectFolderVo"/>
+        where 1=1
+        <if test="parent_ != null and parent_ != ''">
+            AND o.parent_ = #{parent_}
+        </if>
+        <if test="name_ != null and name_ != ''">
+            AND o.name_ like '%${name_}%'
+        </if>
+        <if test="id_!=null and id_!=''">
+            AND o.id_ = #{id_}
+        </if>
+        order by o.id_
+    </select>
+
+    <select id="selectTreeById" parameterType="String" resultMap="FolderResult">
+        <include refid="selectFolderVo"/>
+        where id_ = #{id_}
+    </select>
+
+    <insert id="insertTree" parameterType="SysFolder" useGeneratedKeys="false" keyProperty="id_">
+        insert into REG_FOLDER_INDEX(
+        id_,
+        create_user_,
+        <if test="parent_ != null and parent_ != ''">parent_,</if>
+        <if test="path_ != null and path_ != ''">path_,</if>
+        <if test="description_ != null and description_ != ''">description_,</if>
+        <if test="name_ != null and name_ != ''">name_</if>
+        )values(
+        #{id_},#{create_user_},
+        <if test="parent_ != null and parent_ != ''">#{parent_},</if>
+        <if test="path_ != null and path_ != ''">#{path_},</if>
+        <if test="description_ != null and description_ != ''">#{description_},</if>
+        <if test="name_ != null and name_ != ''">#{name_}</if>
+        )
+    </insert>
+
+    <update id="updateTree" parameterType="SysFolder">
+        update REG_FOLDER_INDEX
+        <set>
+            <if test="name_ != null and name_ != ''">name_ = #{name_},</if>
+            <if test="description_ != null and description_ != ''">description_ = #{description_}</if>
+        </set>
+         where id_ = #{id_}
+    </update>
+
+    <delete id="deleteTree" parameterType="String">
+        delete from REG_FOLDER_INDEX where id_ = #{id_}
+    </delete>
+
+    <select id="selectSelfTreeById" parameterType="SysFolder" resultType="int">
+        select count(1) from REG_FOLDER_INDEX a  where a.id_ = #{id_}  and a.create_user_=#{create_user_}
+    </select>
+
+    <select id="selectTreeLeafById" parameterType="String"  resultType="int">
+        select count(1) from REG_FOLDER_INDEX  where parent_ = #{id_}
+    </select>
+    <select id="selectParentName" parameterType="String" resultType="String">
+        select name_ from REG_FOLDER_INDEX  where id_ = #{par}
+    </select>
+</mapper>

@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('协同处理调度请求单')" />
+    <th:block th:include="include :: select2-css" />
+    <th:block th:include="include :: summernote-css" />
+
+</head>
+<body class="white-bg">
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+    <form class="form-horizontal m" id="form-fmdd-edit" th:object="${fmdd}" >
+        <input th:type="hidden" th:field="*{fmddId}"/>
+        <input name="createorgId" type="hidden" id="treeId" th:field="*{createorgId}"/>
+
+        <div class="panel panel-default">
+            <div class="panel-heading" style="background-color: #3c8dbc" data-toggle="collapse" data-target="#demo">
+
+                <h4 class="panel-title" >
+                    事件属性
+                </h4>
+            </div>
+            <div id="demo" class="in">
+
+                <div class="row form-group">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label ">单号：</label>
+                            <div class="col-sm-8">
+                                <input class="form-control" type="text" name="faultNo" id="faultNo"  th:field="*{faultNo}"  disabled>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label ">创建机构：</label>
+                            <div class="col-sm-8">
+                                <input class="form-control" type="text" name="createorgId" onclick="selectDeptTree()"  id="treeName" th:field="*{orgName}" disabled>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row form-group">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label ">创建人：</label>
+                            <div class="col-sm-8">
+                                <input name="createName" id="createName" class="form-control" type="text" readonly="readonly"
+                                       th:field="*{createName}" required>
+                                <input name="createId" id="createId" class="form-control" type="hidden" readonly="readonly"
+                                       th:field="*{createId}" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label ">创建时间：</label>
+                            <div class="col-sm-8">
+                                <input id="createTime" name="createTime" class="form-control" type="text" placeholder="yyyy-MM-dd HH:mm:ss" th:value="*{createTime}" disabled>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row form-group">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label ">计划操作时间：</label>
+                            <div class="col-sm-8">
+                                <input id="planTime" name="planTime" class="form-control" type="text" placeholder="yyyy-MM-dd HH:mm:ss" th:value="*{planTime}" disabled>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label ">调度类型：</label>
+                            <div class="col-sm-8">
+                                <select th:name="faultType" class="form-control m-b" th:with="type=${@dict.getParaType('fm_dd')}" disabled>
+                                    <option value=""></option>
+                                    <option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}" th:field="*{faultType}"></option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row form-group">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label ">联系人：</label>
+                            <div class="col-sm-8">
+                                <input class="form-control"  type="text" name="faultContactName" id="faultContactName" th:field="*{faultContactName}"  disabled>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label ">联系人手机：</label>
+                            <div class="col-sm-8">
+                                <input class="form-control" type="text" name="telPhone" id="telPhone" th:field="*{telPhone}" disabled>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row form-group">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label ">其他联系方式：</label>
+                            <div class="col-sm-8">
+                                <input class="form-control"  type="text" name="otherContact" id="otherContact" th:field="*{otherContact}"  disabled>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label ">审核人：</label>
+                            <div class="col-sm-8">
+                                <input class="form-control" type="text" name="checkerId" id="checkerId" th:value="${pname}"  disabled>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+        <div class="panel panel-default">
+            <div class="panel-heading" style="background-color: #3c8dbc" data-toggle="collapse" data-target="#demo2">
+
+                <h4 class="panel-title" >
+                    事件信息
+                </h4>
+            </div>
+            <div id="demo2" class="in">
+
+                <div class="panel-body">
+                    <div class="row form-group">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label " style="width:11%">主题：</label>
+                                <div class="col-sm-8" style="width:89%">
+                                    <input class="form-control" type="text" name="faultTitle" id="faultTitle" th:field="*{faultTitle}"  disabled>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label " style="width:11%">内容：</label>
+                                <div class="col-sm-10" style="width:89%">
+                                    <input id="faultContent" name="faultContent" type="hidden" th:field="*{faultContent}" disabled >
+                                    <div class="summernote" id="summernote"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="panel panel-default">
+            <div class="panel-heading" style="background-color: #3c8dbc" data-toggle="collapse" data-target="#demo3">
+                <h4 class="panel-title" >
+                    协同处理
+                </h4>
+            </div>
+
+            <div id="demo3" class="in">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label is-required" style="width:11%">处理描述:</label>
+                            <div class="col-sm-10" style="width:89%">
+                                <textarea rows="10" cols="20" id="feedAuthorText" name="params[comment]" class="form-control"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="tabs-container">
+                    <ul class="nav nav-tabs">
+                        <li class="active"><a data-toggle="tab" href="#tab-1" aria-expanded="true">流程记录</a>
+                        </li>
+                        <li class=""><a data-toggle="tab" href="#tab-2" aria-expanded="true"> 附件</a>
+                        </li>
+                    </ul>
+                    <div class="tab-content">
+                        <div id="tab-1" class="tab-pane active">
+                            <div class="panel-body">
+                                <div class="col-sm-12 select-table table-striped">
+                                    <table id="history-table"></table>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="tab-2" class="tab-pane">
+                            <div class="panel-body">
+                                <div class="btn-group-sm" id="toolbar1" role="group">
+                                    <a class="btn btn-success" type="button" onclick="upload()">
+                                        <i class="fa fa-upload"></i> 添加附件
+                                    </a>
+                                    <a class="btn btn-primary multiple disabled" onclick="downloadFile()">
+                                        <i class="fa fa-download"></i> 下载附件
+                                    </a>
+                                    <a class="btn btn-danger multiple disabled" onclick="remove()">
+                                        <i class="fa fa-trash"></i> 删除附件
+                                    </a>
+                                </div>
+                                <div class="col-sm-12 select-table table-striped">
+                                    <table id="file-table"></table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </form>
+</div>
+
+<div class="row">
+    <div class="col-sm-offset-5 col-sm-10">
+        <button type="button" class="btn btn-sm btn-primary" onclick="synergy()"><i class="fa fa-hand-o-right"></i>协同处理</button>&nbsp;
+        <button type="button" class="btn btn-sm btn-primary" onclick="pass('1')"><i class="fa fa-check"></i>通 过</button>&nbsp;
+        <button type="button" class="btn btn-sm btn-danger" onclick="closeItem()"><i class="fa fa-window-close"></i>关 闭 </button>
+    </div>
+</div>
+<script th:src="@{/js/activiti.js}"></script>
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: summernote-js" />
+<th:block th:include="include :: select2-js" />
+<th:block th:include="include :: datetimepicker-js" />
+<script type="text/javascript">
+
+
+    var prefix = ctx + "dispatch/feedback";
+
+    var prefix_attachment = ctx + "pub/attachment";
+
+
+    $(function() {
+        puFolwHistory($("#fmddId").val());
+
+
+            var optionsfj = {
+                url: prefix_attachment + "/list",
+                id:'file-table',
+                createUrl: prefix_attachment + "/add",
+                updateUrl: prefix_attachment + "/edit/{id}",
+                removeUrl: prefix_attachment + "/remove",
+                detailUrl: prefix_attachment + "/edit/{id}",
+                sortName: "fileTime",
+                sortOrder: "desc",
+                toolbar:"toolbar1",
+                singleSelect: true,
+                clickToSelect: true,
+                queryParams:queryParams,
+                modalName: "附件列表",
+                columns: [{
+                    checkbox: true
+                },
+                    {
+                        field : 'atId',
+                        title : '附件ID',
+                        visible : false
+                    },
+                    {
+                        field : 'person.pId',
+                        title : '上传人员Id',
+                        visible: false
+                    },
+                    {
+                        field : 'fileName',
+                        title : '文件名称'
+                    },
+                    {
+                        field : 'person.pName',
+                        title : '上传人'
+                    },
+                    {
+                        field : 'size',
+                        title : '文件大小'
+                    },
+                    {
+                        field : 'memo',
+                        title : '文件描述'
+                    },
+                    {
+                        field : 'fileTime',
+                        title : '上传时间'
+                    }]
+            };
+            $.table.init(optionsfj);
+        });
+
+    function queryParams(params) {
+        var search = $.table.queryParams(params);
+        search.ownerId = $("#fmddId").val() == '' ? 'version_public_add_no_owner_id' : $("#fmddId").val();
+        return search;
+    }
+
+    // 附件上传页面
+    function upload() {
+        var url = ctx + "/pub/attachment/upload/" + $("#fmddId").val();
+        $.modal.open("调度单附件上传", url);
+    }
+
+    window.onunload = function (e) {
+        var src = ctx + "dispatch/feedback";
+        var tab = window.top.$("iframe[src='" + src + "']");
+        eg:tab.contents().find("#FmDdSearch").click();
+    }
+
+    // 附件下载
+    function downloadFile() {
+        var rows = $.table.selectFirstColumns();
+        var atId = rows[0];
+        var ownerId = $("#fmddId").val();
+        var url = ctx + "pub/attachment/download/"+ownerId+"/"+atId;
+        window.location.href = url;
+    }
+
+
+    /* 用户管理-新增-选择部门树 */
+    function selectDeptTree() {
+        var treeId = $("#treeId").val();
+        var deptId = $.common.isEmpty(treeId) ? "310100001" : $("#treeId").val();
+        var url = ctx + "system/dept/selectDeptTree/" + deptId;
+        var options = {
+            title: '选择部门',
+            width: "380",
+            url: url,
+            callBack: doSubmit
+        };
+        $.modal.openOptions(options);
+    }
+
+    function doSubmit(index, layero){
+        var tree = layero.find("iframe")[0].contentWindow.$._tree;
+
+        if(jQuery.isEmptyObject(tree)) {
+            layer.close(index);
+        }else{
+            var selectNode = tree.getSelectedNodes();
+            if(selectNode.length!=0){
+                $("#treeId").val(selectNode[0].id);
+                $("#treeName").val(selectNode[0].name);
+            }
+        }
+        layer.close(index);
+    }
+
+
+
+    $("input[name='createTime']").datetimepicker({
+        autoclose: true,
+        format: "yyyy-mm-dd hh:ii:ss"
+    });
+
+    $("input[name='planTime']").datetimepicker({
+        autoclose: true,
+        format: "yyyy-mm-dd hh:ii:ss"
+    });
+
+
+    $(function () {
+        $('.summernote').summernote({
+            placeholder: '请输入调度事件内容',
+            height : 192,
+            lang : 'zh-CN',
+            followingToolbar: false,
+            callbacks: {
+                onImageUpload: function (files) {
+                    sendFile(files[0], this);
+                }
+            },
+            focus:true
+        });
+        var content = $("#faultContent").val();
+        $('#summernote').summernote('code', content);
+        $('.summernote').summernote('disable');
+
+    });
+
+
+
+    /*通过*/
+    function pass(flag) {
+        if ($.validate.form()) {
+            //判断处理说明是否填写
+            var feedAuthorText = $('#feedAuthorText').val();
+            var trim_feedAuthorText = feedAuthorText.trim();
+            if(trim_feedAuthorText == '') {
+                $.modal.alertError('请输入处理意见!');
+                return
+            }
+            var result = '',
+                strlen = $('#feedAuthorText').val().length, // 字符串长度
+                chrlen = $('#feedAuthorText').val().replace(/[^\x00-\xff]/g, '**').length // 字节长度
+            if (chrlen <= 256) {
+                var data = $("#form-fmdd-edit").serializeArray();
+                data.feedAuthorText =trim_feedAuthorText;
+                data.push({"name": "passFlag", "value": flag});
+                $.operate.saveTab(prefix + "/feedPass", data);
+                return true
+            }else {
+                return $.modal.alertError('【处理意见】最大长度不能超过256')
+            }
+
+
+
+
+        }
+    }
+    // 协同处理(可以多选)
+    function synergy() {
+        $.modal.open("协同处理", prefix + "/synergy/"+$("#fmddId").val());
+    }
+
+
+    function remove() {
+        var row = $('#file-table').bootstrapTable('getSelections')[0]
+        //获取当前登陆人员的id
+        $.get(prefix+'/selectOgUserByUserId',function (result) {
+            if(result.data.pId==row.person.pId){
+                $.operate.removeAll();
+            }else{
+                $.modal.alertError('不能删除非本人上传附件!');
+            }
+        });
+    }
+
+
+
+
+
+
+</script>
+</body>
+</html>

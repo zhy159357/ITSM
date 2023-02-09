@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:include="include :: header('')"/>
+    <th:block th:include="include :: datetimepicker-css" />
+</head>
+<body class="white-bg">
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+    <form class="form-horizontal m" id="form-dept-add">
+		<div class="form-group">
+		<label class="col-sm-3 control-label ">日志日期</label>
+		<div class="col-sm-8">
+			<div class="input-group date">
+				<input name="opertime" type="text" class="form-control" id="datetimepicker-demo-2" readonly style="background-color: #ffffff">
+				<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+			</div>
+		</div>
+		</div>
+		<div class="form-group">
+		<label class="col-sm-3 control-label">日志类别</label>
+		<div class="col-sm-8">
+		 <select id="fileName" name="fileName" class="form-control" th:with="type=${@pubParaValue.selectPubParaValueByParaName('pub_logType')}">
+	                <option th:each="paraValue : ${type}" th:text="${paraValue.valueDetail}" th:value="${paraValue.value}"></option>
+	         </select>
+		</div>
+		</div>
+		<div class="form-group">
+		<label class="col-sm-3 control-label">行数</label>
+		<div class="col-sm-8">
+			<input type="text" class="form-control"  name="lines" id="lines"/>
+		</div>
+		</div>
+    </form>
+</div>
+<div class="row">
+	<div class="col-sm-offset-5 col-sm-10">
+		<button type="button" class="btn btn-sm btn-primary" onclick="downloadFile()"><i class="fa fa-check"></i>下 載</button>&nbsp;
+		<button type="button" class="btn btn-sm btn-danger" onclick="clean()"><i class="fa fa-reply-all"></i>清 空 </button>
+		<button type="button" class="btn btn-sm btn-danger" onclick="closeItem()"><i class="fa fa-reply-all"></i>关 闭 </button>
+	</div>
+</div>
+<th:block th:include="include :: footer"/>
+<th:block th:include="include :: datetimepicker-js" />
+<script type="text/javascript">
+    var prefix = ctx + "system/dept";
+    function doSubmit(index, layero) {
+        var body = layer.getChildFrame('body', index);
+        $("#treeId").val(body.find('#treeId').val());
+        $("#treeName").val(body.find('#treeName').val());
+        layer.close(index);
+    }
+	var prefixDownLoad = ctx + "monitor/operlog";
+	  function clean() {
+		  $("#fileName").val('');
+		  $("#datetimepicker-demo-2").val('');
+		  $("#lines").val('');
+	  }
+	  function downloadFile() {
+		    var downloadUrl= $("#fileName").val();
+		    var datetimepicker= $("#datetimepicker-demo-2").val();
+		    var lines= $("#lines").val();
+	        var userAgent = navigator.userAgent;
+	        var firefox=userAgent.indexOf("Firefox") > -1;
+	        var itime = 0;
+	        var xhr = new XMLHttpRequest();
+	        var url = prefixDownLoad+"/downloadInfo?d="+datetimepicker+"&filen="+downloadUrl+"&lines="+lines;
+	        xhr.open('get', url, true);
+	        xhr.responseType = "blob";
+	        xhr.onload = function() {
+	            if (this.status === 200) {
+	                var blob = this.response;
+	                var reader = new FileReader;
+	                reader.readAsDataURL(blob);
+	                reader.onload = function(e) {
+	                    var headerName = xhr.getResponseHeader("Content-disposition");
+	                    var fileName="";
+	                    if(firefox){
+	                        fileName = decodeURI(headerName).substring(20);
+	                    }else {
+	                        fileName = decodeURI(decodeURI(headerName)).substring(20);
+	                    }
+	                    var a = document.createElement("a");
+	                    var t = new Blob([blob], {type : "application/csv"});
+	                    a.download = fileName;
+	                    a.href =URL.createObjectURL(t);
+	                    $("body").append(a);
+	                    a.click();
+	                }
+	            }
+	        }
+	        xhr.send();
+	    }
+	  
+	   $(function() {
+		   $("#datetimepicker-demo-2").datetimepicker({
+			   format: "yyyy-mm-dd",
+			   minView: "month",
+			   autoclose: true
+		   });
+	   })
+</script>
+</body>
+</html>

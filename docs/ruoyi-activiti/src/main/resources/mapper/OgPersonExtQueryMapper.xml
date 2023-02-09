@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.activiti.mapper.OgPersonExtQueryMapper">
+    
+    <resultMap type="TelSupportPeropleExtension" id="OgPersonExtQueryResult">
+        <result property="id"    column="id"    />
+        <result property="orgid"    column="orgid"    />
+        <result property="name"    column="name"    />
+        <result property="extension"    column="extension"    />
+        <result property="sysid"    column="sysid"    />
+        <result property="sysname"    column="sysname"    />
+        <result property="createPerson"    column="create_person"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updatePerson"    column="update_person"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="caption"    column="caption"    />
+        <result property="orgname"    column="orgname"    />
+    </resultMap>
+
+    <sql id="selectOgPersonExtQueryVo">
+        select
+            t.id,
+            t.orgid,
+            t.name,
+            t.extension,
+            t.sysname,
+            t.create_person,
+            t.create_time,
+            t.update_person,
+            t.update_time,
+            t.sysid,
+            s.caption,
+            o.orgname
+        from tel_support_people_extension t
+        LEFT JOIN OG_SYS s ON t.sysname = s.sysid
+        LEFT JOIN og_org o ON t.orgid = o.orgid
+        LEFT JOIN og_person p ON t.create_person = s.pid
+        LEFT JOIN og_person p ON t.update_person = s.pid
+    </sql>
+
+    <select id="selectOgPersonExtQueryList" parameterType="TelSupportPeropleExtension" resultMap="OgPersonExtQueryResult">
+        <include refid="selectOgPersonExtQueryVo"/>
+        <where>  
+            <if test="orgid != null  and orgid != ''"> and t.orgid = #{orgid}</if>
+            <if test="sysname != null  and sysname != ''"> and t.sysname like concat(concat('%', #{sysname}), '%')</if>
+            <if test="caption != null  and caption != ''"> and t.caption like concat(concat('%', #{caption}), '%')</if>
+            <if test="orgname != null  and orgname != ''"> and o.orgname like concat(concat('%', #{orgname}), '%')</if>
+            <if test="name != null  and name != ''"> and t.name like concat(concat('%', #{name}), '%')</if>
+            <if test="extension != null  and extension != ''"> and t.extension like concat(concat('%', #{extension}), '%')</if>
+        </where>
+    </select>
+    
+    <select id="selectOgPersonExtQueryById" parameterType="String" resultMap="OgPersonExtQueryResult">
+        <include refid="selectOgPersonExtQueryVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertOgPersonExtQuery" parameterType="TelSupportPeropleExtension">
+        insert into tel_support_people_extension
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null  and id != ''">id,</if>
+            <if test="orgid != null and orgid != '' ">orgid,</if>
+            <if test="sysid != null and sysid != '' ">sysid,</if>
+            <if test="name != null  and name != ''">name,</if>
+            <if test="extension != null  and extension != ''">extension,</if>
+            <if test="sysname != null  and sysname != ''">sysname,</if>
+            <if test="createPerson != null  and createPerson != ''">create_person,</if>
+            <if test="createTime != null  and createTime != ''">create_time,</if>
+            <if test="updatePerson != null  and updatePerson != ''">update_person,</if>
+            <if test="updateTime != null  and updateTime != ''">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null  and id != ''">#{id},</if>
+            <if test="orgid != null and orgid != '' ">#{orgid},</if>
+            <if test="sysid != null and sysid != '' ">#{sysid},</if>
+            <if test="name != null  and name != ''">#{name},</if>
+            <if test="extension != null  and extension != ''">#{extension},</if>
+            <if test="sysname != null  and sysname != ''">#{sysname},</if>
+            <if test="createPerson != null  and createPerson != ''">#{createPerson},</if>
+            <if test="createTime != null  and createTime != ''">#{createTime},</if>
+            <if test="updatePerson != null  and updatePerson != ''">#{updatePerson},</if>
+            <if test="updateTime != null  and updateTime != ''">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateOgPersonExtQuery" parameterType="TelSupportPeropleExtension">
+        update tel_support_people_extension
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="orgid != null  and orgid != ''">orgid = #{orgid},</if>
+            <if test="sysid != null  and sysid != ''">sysid = #{sysid},</if>
+            <if test="name != null  and name != ''">name = #{name},</if>
+            <if test="extension != null  and extension != ''">extension = #{extension},</if>
+            <if test="sysname != null  and sysname != ''">sysname = #{sysname},</if>
+            <if test="createPerson != null  and createPerson != ''">create_person = #{createPerson},</if>
+            <if test="createTime != null  and createTime != ''">create_time = #{createTime},</if>
+            <if test="updatePerson != null  and updatePerson != ''">update_person = #{updatePerson},</if>
+            <if test="updateTime != null  and updateTime != ''">update_time = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteOgPersonExtQueryById" parameterType="String">
+        delete from tel_support_people_extension where id = #{id}
+    </delete>
+
+    <delete id="deleteOgPersonExtQueryByIds" parameterType="String">
+        delete from tel_support_people_extension where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('查询数据变更单')" />
+    <th:block th:include="include :: datetimepicker-css" />
+    <th:block th:include="include :: select2-css" />
+    <style>
+        .select-list li p, .select-list li label:not(.radio-box) {
+            float: left;
+            width: 100px;
+            margin: 5px 0px 0px 0px;
+            text-align: right;
+        }
+    </style>
+</head>
+<body class="gray-bg">
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-12 search-collapse">
+            <form id="sjbg-query-form">
+                <div class="select-list">
+                    <ul>
+                        <li>
+                            <label>变更单单号： </label><input type="text" name="changeCode"/>
+                        </li>
+                        <li>
+                            <label>事件单单号： </label><input type="text" name="fmNo"/>
+                        </li>
+                        <li>
+                            <label>状态： </label>
+                            <!--<select id="currentState" name="currentState" class="form-control"
+                                    th:with="type=${@pubParaValue.selectPubParaValueByParaName('cmsj_status')}">
+                                <option value=""></option>
+                                <option th:each="paraValue : ${type}" th:text="${paraValue.valueDetail}"
+                                        th:value="${paraValue.value}"></option>
+                            </select>-->
+                            <select id="changeSingleStatus" name="changeSingleStatus" class="form-control noselect2 selectpicker"
+                                    multiple data-actions-box="true" data-width="200px" data-live-search="true"
+                                    data-none-selected-text="请选择状态"
+                                    th:with="type=${@pubParaValue.selectPubParaValueByParaName('cmsj_status')}">
+                                <option th:each="paraValue : ${type}" th:text="${paraValue.valueDetail}"
+                                        th:value="${paraValue.value}"></option>
+                            </select>
+                        </li>
+                        <li>
+                            <label>数据变更类型： </label>
+                            <select name="changeCategoryId" class="form-control" th:with="type=${@dict.getParaType('cm_CateGory')}">
+                                <option value=""></option>
+                                <option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+                            </select>
+                        </li>
+                        <li>
+                            <label>变更创建人： </label><input type="text" name="changeApplicantName"/>
+                        </li>
+                        <li>
+                            <label>审核人： </label><input type="text" name="checkManagerName"  />
+                        </li>
+                        <li>
+                            <label>实施人： </label><input type="text" name="implementorName"/>
+                        </li>
+                        <li>
+                            <label>审核处长： </label><input type="text" name="chiefyManagerName" />
+                        </li>
+                        <li>
+                            <label>关闭人： </label><input type="text" name="closeName" />
+                        </li>
+                        <li>
+                            <label>所属应用系统： </label><input type="text" name="sysName" />
+                        </li>
+                        <li>
+                            <label>业务部门： </label><input type="text" name="checkOrgName" />
+                        </li>
+                        <li>
+                            <label>所属工作组： </label><input type="text" name="groupName"/>
+                        </li>
+                        <li>
+                            <label>变更原因： </label>
+                            <select name="changeReason" class="form-control" th:with="type=${@dict.getParaType('SJChangReason')}">
+                                <option value=""></option>
+                                <option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+                            </select>
+                        </li>
+                        <li>
+                            <label>变更省份： </label><input type="text" name="changeOrgtypeName"/>
+                        </li>
+                        <li>
+                            <label>变更条数： </label><input type="text" maxlength="6" placeholder="请输入正整数" id="startChangeNum" name="startChangeNum" />
+                        </li>
+                        <li>
+                            <label>至： </label><input type="text" maxlength="6" placeholder="请输入正整数" id="endChangeNum" name="endChangeNum"/>
+                        </li>
+                        <li>
+                            <label>创建日期： </label><input type="text" name="startCreateTime" id="startCreateTime" class="glyphicon glyphicon-calendar" readonly style="background-color: #ffffff"/>
+                        </li>
+                        <li>
+                            <label>至： </label><input type="text" name="endCreateTime" id="endCreateTime" class="glyphicon glyphicon-calendar" readonly style="background-color: #ffffff"/>
+                        </li>
+                        <li>
+                            <label>关闭日期： </label>
+                            <input type="text" name="startcloseTime" id="startcloseTime"  readonly style="background-color: #ffffff"/>
+                        </li>
+                        <li>
+                            <label>至： </label>
+                            <input type="text" name="endcloseTime" id="endcloseTime"  readonly style="background-color: #ffffff"/>
+                        </li>
+                        <li>
+                            <label>授权审批说明： </label>
+                            <input type="text" name="sqsPsm" id="sqsPsm" />
+                        </li>
+                        <li>
+                            <label>使用安全堡垒： </label>
+                            <select name="ifAQBL" class="form-control" th:with="type=${@dict.getParaType('is_tools')}">
+                                <option value=""></option>
+                                <option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+                            </select>
+                        </li>
+                        <li>
+                            <label>是否使用工具： </label>
+                            <select name="isTools" class="form-control" th:with="type=${@dict.getParaType('is_tools')}">
+                                <option value=""></option>
+                                <option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+                            </select>
+                        </li>
+                        <li>
+                            <a class="btn btn-primary btn-rounded btn-sm" id="ss" onclick="Sjbgsearch()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                            <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.resetAll('sjbg-query-form')"><i class="fa fa-repeat"></i>&nbsp;重置</a>
+                        </li>
+                    </ul>
+                </div>
+            </form>
+        </div>
+
+        <div class="btn-group-sm" id="toolbar" role="group">
+            <a class="btn btn-info " onclick="SwDetails()" id="SwDetails">
+                <i class="fa fa-search"></i> 查看详情
+            </a>
+            <a class="btn btn-info" onclick="showProcessImg()" id="showProcessImg">
+                <i class="fa fa-search"></i>查看流程
+            </a>
+            <!--导出所有｜当前页按钮组合-->
+            <div class="btn-group">
+                <button data-toggle="dropdown" class="btn btn-primary btn-sm dropdown-toggle"> <i class="fa fa-cloud-upload"></i> 导出<span
+                        class="caret"></span>
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a onclick="$.table.exportExcel()">导出所有</a>
+                    </li>
+                    <li><a onclick="$.table.exportExcelCurrentPage()">导出当前页</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="col-sm-12 select-table table-striped table-responsive">
+            <table id="bootstrap-table"></table>
+        </div>
+    </div>
+</div>
+
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: datetimepicker-js" />
+<th:block th:include="include :: select2-js" />
+<th:block th:include="include :: bootstrap-select-js"/>
+<th:block th:include="include :: bootstrap-select-css"/>
+<script th:inline="javascript">
+
+    var data = [[${@pubParaValue.selectPubParaValueByParaName('is_tools')}]];
+    var issuefxId = [[${issuefxId}]];
+     var cmNo=[[${cmNo}]];
+    $(function() {
+        $("#startCreateTime").datetimepicker({
+            format: "yyyy-mm-dd",
+            minView: "month",
+            autoclose: true
+
+        });
+
+        $("#endCreateTime").datetimepicker({
+            format: "yyyy-mm-dd",
+            minView: "month",
+            autoclose: true
+        });
+
+        $("#startcloseTime").datetimepicker({
+            format: "yyyy-mm-dd",
+            minView: "month",
+            autoclose: true
+
+        });
+
+        $("#endcloseTime").datetimepicker({
+            format: "yyyy-mm-dd",
+            minView: "month",
+            autoclose: true
+        });
+
+
+
+
+
+    })
+    var prefix = ctx + "bg/sjbg";
+
+
+    $(function() {
+        document.onkeydown = function(e){
+            var ev = document.all ? window.event : e;
+            if(ev.keyCode==13) {
+                $('#ss').trigger('click');
+                return false;
+            } //搜索逻辑
+        }
+        var options = {
+            url: prefix + "/listTwo",
+            createUrl: prefix + "/add",
+            updateUrl: prefix + "/edit/{id}",
+            removeUrl: prefix + "/remove",
+            exportUrl: prefix + "/queryExport",
+            modalName: "我的数据变更单",
+            sortName: "creatTime",
+            sortOrder: "desc",
+            clickToSelect: true,
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'changeSingleId',
+                    title: '数据变更单Id',
+                    visible:false
+                },
+                {
+                    field: 'changeCode',
+                    title: '单号',
+                    formatter: function(value, row, index) {
+                        return $.table.tooltip(value);
+                    },
+                    cellStyle: function cellStyle(value, row, index, field) {
+                        return { classes: 'text-nowrap'};
+                    }
+                },
+                {
+                    field: 'fmNo',
+                    title: '事件单号',
+                    formatter: function(value, row, index) {
+                        return $.table.tooltip(value);
+                    },
+                    cellStyle: function cellStyle(value, row, index, field) {
+                        return { classes: 'text-nowrap'};
+                    }
+                },
+                {
+                    field: 'fmTitle',
+                    title: '标题',
+                    formatter: function(value, row, index) {
+                        return $.table.tooltip(value);
+                    },
+                    cellStyle: function cellStyle(value, row, index, field) {
+                        return { classes: 'text-nowrap'};
+                    }
+                },
+                {
+                    field: 'changeApplicantName',
+                    title: '创建人',
+                    formatter: function(value, row, index) {
+                        return $.table.tooltip(value);
+                    },
+                    cellStyle: function cellStyle(value, row, index, field) {
+                        return { classes: 'text-nowrap'};
+                    }
+                },
+                {
+                    field: 'checkManagerName',
+                    title: '审核人',
+                    formatter: function(value, row, index) {
+                        return $.table.tooltip(value);
+                    },
+                    cellStyle: function cellStyle(value, row, index, field) {
+                        return { classes: 'text-nowrap'};
+                    }
+                },
+                {
+                    field: 'checkOrgName',
+                    title: '业务部门',
+                    formatter: function(value, row, index) {
+                        return $.table.tooltip(value);
+                    },
+                    cellStyle: function cellStyle(value, row, index, field) {
+                        return { classes: 'text-nowrap'};
+                    }
+                },
+                {
+                    field: 'implementorName',
+                    title: '实施人',
+                    formatter: function(value, row, index) {
+                        return $.table.tooltip(value);
+                    },
+                    cellStyle: function cellStyle(value, row, index, field) {
+                        return { classes: 'text-nowrap'};
+                    }
+                },
+                {
+                    field: 'chiefyManagerName',
+                    title: '审核处长',
+                    formatter: function(value, row, index) {
+                        return $.table.tooltip(value);
+                    },
+                    cellStyle: function cellStyle(value, row, index, field) {
+                        return { classes: 'text-nowrap'};
+                    }
+                },
+                {
+                    field: 'closeName',
+                    title: '关闭人',
+                    formatter: function(value, row, index) {
+                        return $.table.tooltip(value);
+                    },
+                    cellStyle: function cellStyle(value, row, index, field) {
+                        return { classes: 'text-nowrap'};
+                    }
+                },
+                {
+                    field: 'createTimeText',
+                    title: '申请时间',
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                        return $.table.tooltip(value);
+                    },
+                    cellStyle: function cellStyle(value, row, index, field) {
+                        return { classes: 'text-nowrap'};
+                    }
+                },
+                {
+                    field: 'changeCategoryName',
+                    title: '数据变更类别',
+                    formatter: function(value, row, index) {
+                        return $.table.tooltip(value);
+                    },
+                    cellStyle: function cellStyle(value, row, index, field) {
+                        return { classes: 'text-nowrap'};
+                    }
+                },
+                {
+                    field: 'sysName',
+                    title: '所属应用系统',
+                    formatter: function(value, row, index) {
+                        return $.table.tooltip(value);
+                    },
+                    cellStyle: function cellStyle(value, row, index, field) {
+                        return { classes: 'text-nowrap'};
+                    }
+                },
+                {
+                    field: 'groupName',
+                    title: '所属工作组',
+                    formatter: function(value, row, index) {
+                        return $.table.tooltip(value);
+                    },
+                    cellStyle: function cellStyle(value, row, index, field) {
+                        return { classes: 'text-nowrap'};
+                    }
+                },
+                {
+                    field: 'isTools',
+                    title: '是否使用工具',
+                    formatter: function(value, row, index) {
+                        return selectDictLabel(data, value);
+                    },
+                    cellStyle: function cellStyle(value, row, index, field) {
+                        return { classes: 'text-nowrap'};
+                    }
+                },
+                {
+                    field: 'changeSingleStatusName',
+                    title: '状态',
+                    formatter: function(value, row, index) {
+                        return $.table.tooltip(value);
+                    },
+                    cellStyle: function cellStyle(value, row, index, field) {
+                        return { classes: 'text-nowrap'};
+                    }
+                },
+                {
+                    field: 'closeTime',
+                    title: '关闭时间',
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                        return $.table.tooltip(value);
+                    },
+                    formatter: function (value, row, index) {
+                        var startTime = '';
+                        if(value!='' && value !=null){
+                            var pattern = /(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/;
+                            startTime = value.replace(pattern, '$1-$2-$3 $4:$5:$6');
+                        }
+                        return startTime;
+                    },
+                    cellStyle: function cellStyle(value, row, index, field) {
+                        return { classes: 'text-nowrap'};
+                    }
+                }]
+        };
+        $.table.init(options);
+    });
+
+
+
+    /**
+     * 数据变更单查看详情
+     * @constructor
+     */
+    function SwDetails() {
+        //获取当前选中数据的ID
+        //获取选中的row的Id
+        var row = $("#bootstrap-table").bootstrapTable('getSelections')[0];
+        $.modal.open("查看" + table.options.modalName, prefix+"/details/"+row.changeSingleId);
+    }
+
+    /**
+     * 查看流程
+     */
+    function showProcessImg() {
+        var row = $("#bootstrap-table").bootstrapTable('getSelections')[0];
+        var url = ctx+'process/processImg/' + row.changeSingleId;
+        $.modal.open("查看流程图", url, null, null, null, true);
+    }
+
+    // 删除数据变更单
+    function remove() {
+        var rows = $("#bootstrap-table").bootstrapTable('getSelections');
+        if (rows.length == 0) {
+            $.modal.alertWarning("请至少选择一条记录");
+            return;
+        }
+        var id = rows[0].changeSingleId;
+
+        $.modal.confirm("确认要删除" + id + "吗?", function() {
+            var url =prefix+"/updateById";
+            var data = { "id": id };
+            $.operate.submit(url, "post", "json", data);
+        });
+
+
+    }
+
+    //数据变更单为手工创建的修改区分
+    function editTab(id) {
+        var url;
+        var row = $("#bootstrap-table").bootstrapTable('getSelections')[0];
+        if(row.changeSingleStatus == '01'){
+            url = prefix + "/edit/"+row.changeSingleId;
+            $.modal.openTab("修改" + table.options.modalName, url);
+        }else{
+            //退回待修改的编辑
+            url = prefix + "/returnedEdit/"+row.changeSingleId;
+            $.modal.openTab("修改" + table.options.modalName, url);
+        }
+
+    }
+
+    function Sjbgsearch() {
+        var startChangeNum = $('#startChangeNum').val();
+        var endChangeNum = $('#endChangeNum').val();
+
+        if(startChangeNum !=null && startChangeNum != "" ){
+            if (!(/(^[1-9]\d*$)/.test(startChangeNum))) {
+                $.modal.alertError("【变更条数】必须为正整数")
+                return
+            }
+        }
+        if(endChangeNum !=null && endChangeNum !=""){
+            if (!(/(^[1-9]\d*$)/.test(endChangeNum))) {
+                $.modal.alertError("【变更条数】必须为正整数")
+                return
+            }
+        }
+
+        $.table.search();
+
+    }
+
+    function selectDictLabel(datas, value) {
+        var actions = [];
+        $.each(datas, function(index, dict) {
+            if (dict.value == ('' + value)) {
+                var listClass = $.common.equals("default", dict.listClass) || $.common.isEmpty(dict.listClass) ? "" : "badge badge-" + dict.listClass;
+                actions.push($.common.sprintf("<span class='%s'>%s</span>", listClass, dict.valueDetail));
+                return false;
+            }
+        });
+        return actions.join('');
+    }
+
+    function submitHandler() {
+        if("0"==issuefxId){
+             var sysNameRows = $.table.selectColumns('changeCode');
+                  var fuNo=parent.$("#fuNo").val();
+                  if("无"==fuNo){
+                     parent.$("#fuNo").val(sysNameRows.join());
+                  }else{
+                       parent.$("#fuNo").val(fuNo+','+sysNameRows.join());
+                  }
+                  $.modal.close();
+        }
+        // 选中数据
+        var arrays = $("#bootstrap-table").bootstrapTable('getSelections');
+        if(arrays.length>0){
+             for(var i=0;i<arrays.length;i++){
+               var data={"obj1Id":arrays[i].changeSingleId,"obj2Id":issuefxId,"type":"16"};
+               arrays[i]=data;
+            }
+             $.operate.saveModal(ctx+"system/relation/addAll",{"data":JSON.stringify(arrays)},refreshTable);
+         }
+        if(!$.common.isEmpty(cmNo)){
+            var data=new Array();
+            data.push({name:'obj1Id',value:cmNo });
+            data.push({name:'obj2Id',value:issuefxId});
+            data.push({name:'type',value:'16'});
+            $.operate.save(ctx+"system/relation/add",data);
+        }
+    }
+    function refreshTable(){
+        parent.$.table.refresh("cm-table");
+        $.modal.close();
+    }
+
+</script>
+</body>
+</html>

@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('任务详情')" />
+    <th:block th:include="include :: summernote-css" />
+    <th:block th:include="include :: datetimepicker-css" />
+
+</head>
+<body>
+<div class="main-content">
+    <form class="form-horizontal" id="form-lxbg-add" th:object="${smBizTaskinfo}">
+        <input id="taskFormId" name="taskFormId" type="hidden" th:value="*{taskFormId}"/>
+        <input th:type="hidden" id="schedulingId" th:field="*{smBizScheduling.schedulingId}"/>
+        <input th:type="hidden" id="schedulingNo" th:field="*{smBizScheduling.schedulingNo}"/>
+        <input type="hidden" name="PerformDeptId" th:value="${orgName}">
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-heading" style="background-color: #3c8dbc" data-toggle="collapse" data-target="#collapse1">
+
+                    <h4 class="panel-title" >
+                        任务基本信息
+                    </h4>
+                </div>
+                <div id="collapse1" class="panel-collapse in">
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label">任务编号：</label>
+                                    <div class="col-sm-8">
+                                        <input name="taskFromNo" class="form-control" type="text"  th:field="*{taskFromNo}" id="taskFromNo" disabled>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label">任务状态：</label>
+                                    <div class="col-sm-8">
+                                        <select th:name="taskFormStatus" class="form-control" th:with="type=${@dict.getParaType('zd_task_status')}" disabled>
+                                            <option value=""></option>
+                                            <option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}" th:field="*{taskFormStatus}"  ></option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label  text-right">生成时间：</label>
+                                    <div class="col-sm-8">
+                                        <div class="input-group date">
+                                            <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                            <input name="generateTime" class="form-control calcTotalSecondInput"  type="text" disabled th:value="*{generateTime}">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label  text-right">计划发布时间：</label>
+                                    <div class="col-sm-8">
+                                        <div class="input-group date">
+                                            <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                            <input name="performDate" class="form-control calcTotalSecondInput"  type="text" disabled th:value="*{performDate}">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading" style="background-color: #3c8dbc" data-toggle="collapse" data-target="#collapse3">
+
+                    <h4 class="panel-title" >
+                        任务处理信息
+                    </h4>
+                </div>
+                <div id="collapse3" class="panel-collapse in">
+
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label" style="width:12.5%">处理机构：</label>
+                                    <div class="col-sm-8" style="width:83.5%">
+                                        <input class="form-control" type="text"  id="PerformDeptId" th:value="${orgName}"   readonly>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label class="col-sm-3 control-label" style="width:12.5%">审核人：</label>
+                                        <div class="col-sm-8" style="width:83.5%">
+                                            <input class="form-control" type="text" name="checkPersonName" id="checkPersonName"   th:field="*{smBizScheduling.checkPersonName}" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label" style="width:12.5%">处理人：</label>
+                                    <div class="col-sm-8" style="width:83.5%">
+                                        <input class="form-control" type="text"     th:value="${pName}" readonly>
+                                        <input type="hidden" name="performUserId" id="pName"   th:value="${Pid}" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label  text-right">处理开始时间：</label>
+                                    <div class="col-sm-8">
+                                        <div class="input-group date">
+                                            <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                            <input name="workBeginTime" class="form-control calcTotalSecondInput"  type="text" disabled th:value="*{workBeginTime}">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label  text-right">处理结束时间：</label>
+                                    <div class="col-sm-8">
+                                        <div class="input-group date">
+                                            <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                            <input name="workEndTime" class="form-control calcTotalSecondInput"  type="text" disabled th:value="*{workEndTime}">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label" style="width:13.5%">处理描述：</label>
+                                <div class="col-sm-8"  style="width:81%">
+                                    <textarea rows="10" cols="20" id="excuteDescription" th:field="*{excuteDescription}" class="form-control" disabled></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label" style="width:13.5%">执行工作组：</label>
+                                <div class="col-sm-8" style="width:81%">
+                                    <input class="form-control" type="text" name="performGroupId" id="performGroupId"   th:field="*{grpname}" readonly>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label" style="width:13.5%">执行机构名称：</label>
+                                <div class="col-sm-8" style="width:81%">
+                                    <input class="form-control" type="text" name="performDeptId" id="performDeptId2"   th:field="*{ogoname}" readonly>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+
+                </div>
+
+            </div>
+        </div>
+    </form>
+
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="tabs-container">
+                <ul class="nav nav-tabs">
+                    <li class="active"><a data-toggle="tab" href="#tab-1" aria-expanded="true"> 附件上传</a>
+                    </li>
+                </ul>
+                <div class="tab-content">
+                    <div id="tab-1" class="tab-pane active">
+                        <div class="panel-body">
+                            <div class="btn-group-sm" id="toolbar1" role="group">
+                                <a class="btn btn-primary multiple disabled" onclick="downloadFile()">
+                                    <i class="fa fa-edit"></i> 下载附件
+                                </a>
+                            </div>
+                            <div class="col-sm-12 select-table table-striped">
+                                <table id="file-table"></table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: summernote-js" />
+<th:block th:include="include :: datetimepicker-js" />
+
+<script type="text/javascript">
+    var prefix_attachment = ctx + "pub/attachment";
+
+
+    $(function() {
+        var optionsfj = {
+            url: prefix_attachment + "/list",
+            id:'file-table',
+            createUrl: prefix_attachment + "/add",
+            updateUrl: prefix_attachment + "/edit/{id}",
+            removeUrl: prefix_attachment + "/remove",
+            detailUrl: prefix_attachment + "/edit/{id}",
+            sortName: "fileTime",
+            sortOrder: "desc",
+            singleSelect: true,
+            clickToSelect: true,
+            toolbar:"toolbar1",
+            queryParams:queryParams,
+            modalName: "附件列表",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field : 'atId',
+                    title : '附件ID',
+                    visible : false
+                },
+                {
+                    field : 'person.pId',
+                    title : '上传人员Id',
+                    visible: false
+                },
+                {
+                    field : 'fileName',
+                    title : '文件名称'
+                },
+                {
+                    field : 'person.pName',
+                    title : '上传人'
+                },
+                {
+                    field : 'size',
+                    title : '文件大小'
+                },
+                {
+                    field : 'memo',
+                    title : '文件描述'
+                },
+                {
+                    field : 'fileTime',
+                    title : '上传时间'
+                }]
+        };
+        $.table.init(optionsfj);
+    });
+
+
+    function queryParams(params) {
+        var search = $.table.queryParams(params);
+        search.ownerId =  $("#taskFormId").val();
+        return search;
+    }
+
+    // 附件上传页面
+    function upload() {
+        var url = ctx + "/pub/attachment/upload/" + $("#taskFormId").val();
+        $.modal.open("例行变更计划附件上传", url);
+    }
+
+    // 附件下载
+    function downloadFile() {
+        var rows = $.table.selectFirstColumns();
+        var atId = rows[0];
+        var ownerId = $("#taskFormId").val();
+        var url = ctx + "pub/attachment/download/"+ownerId+"/"+atId;
+        window.location.href = url;
+    }
+
+
+    $(function () {
+        $('.summernote').summernote({
+            placeholder: '',
+            height : 192,
+            lang : 'zh-CN',
+            followingToolbar: false,
+            callbacks: {
+                onImageUpload: function (files) {
+                    sendFile(files[0], this);
+                }
+            },
+            focus:true
+        });
+        var content = $("#schedulingDescription").val();
+        $('#summernote').summernote('code', content);
+
+    });
+
+    $("#form-lxbg-add").validate({
+        focusCleanup: true
+    });
+
+
+
+    $("input[name='createTime']").datetimepicker({
+        autoclose: true,
+        startDate: new Date()
+    });
+
+    $("input[name='publishTime']").datetimepicker({
+        autoclose: true,
+        startDate: new Date()
+    });
+
+</script>
+</body>
+</html>

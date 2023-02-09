@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:include="include :: header('查看疑难事件列表')"/>
+</head>
+<body class="gray-bg">
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-12 search-collapse">
+            <form id="formId">
+                <div class="select-list">
+                    <ul>
+                        <li>
+                            <p>运维单号：</p>
+                            <input type="text" name="params[fmNo]" id="fmNo"/>
+                        </li>
+                        <li>
+                            <p>疑难单号：</p>
+                            <input type="text" name="no"/>
+                        </li>
+                        <li>
+                            <p>部门：</p>
+                            <input type="hidden" name="dept" id="dept"/>
+                            <input type="text" name="deptName" id="deptName" onclick="selectcheckOrg()"/>
+                        </li>
+                        <li>
+                            <p>所属系统：</p>
+                            <input id="sysId" name="sysId" type="hidden" class="form-control"/>
+                            <input id="applicationName" name="applicationName" type="text" class="form-control"
+                                   onclick="selectOgSysListByCondition()"/>
+                        </li>
+                        <li>
+                            <p>工作组：</p>
+                            <select id="groupId" name="groupId" class="form-control">
+                                <option th:each="OgGroup : ${groupList}" th:text="${OgGroup.grpName}"
+                                        th:value="${OgGroup.groupId}"></option>
+                            </select>
+                        </li>
+                        <li>
+                            <p>处理人：</p>
+                            <input type="text" name="dealId"/>
+                        </li>
+                        <li class="select-time">
+                            <p>创建时间：</p>
+                            <input type="text" class="time-input" id="startCreatTime" placeholder="开始时间"
+                                   name="params[startCreatTime]" readonly/>
+                            <span>-</span>
+                            <input type="text" class="time-input" id="endCreatTime" placeholder="结束时间"
+                                   name="params[endCreatTime]" readonly/>
+                        </li>
+                        <li class="select-time">
+                            <p>处理时间：</p>
+                            <input type="text" class="time-input" id="startDealTime" name="params[startDealTime]"
+                                   placeholder="开始时间" readonly/>
+                            <span>-</span>
+                            <input type="text" class="time-input" id="endDealTime" name="params[endDealTime]"
+                                   placeholder="结束时间" readonly/>
+                        </li>
+                        <li>
+                            <p>处理描述：</p>
+                            <input type="text" name="dealDesc"/>
+                        </li>
+                        <li>
+                            <p>状态：</p>
+                            <select id="status" name="status" class="form-control"
+                                    th:with="type=${@pubParaValue.selectPubParaValueByParaName('ynsj_status')}">
+                                <option value=""></option>
+                                <option th:each="PubParaValue : ${type}" th:text="${PubParaValue.valueDetail}"
+                                        th:value="${PubParaValue.value}"></option>
+                            </select>
+                        </li>
+                        <li>
+                            <p>来源：</p>
+                            <select id="source" name="source" class="form-control"
+                                    th:with="type=${@pubParaValue.selectPubParaValueByParaName('ynsj_source')}">
+                                <option value=""></option>
+                                <option th:each="PubParaValue : ${type}" th:text="${PubParaValue.valueDetail}"
+                                        th:value="${PubParaValue.value}"></option>
+                            </select>
+                        </li>
+                        <li>
+                            <a class="btn btn-primary btn-rounded btn-sm" id="searchBut" onclick="$.table.search()"><i
+                                    class="fa fa-search"></i>&nbsp;搜索</a>
+                            <a class="btn btn-warning btn-rounded btn-sm" onclick="reset()"><i
+                                    class="fa fa-refresh"></i>&nbsp;重置</a>
+                        </li>
+                    </ul>
+                </div>
+            </form>
+        </div>
+
+        <div class="btn-group-sm" id="toolbar" role="group">
+            <a class="btn btn-primary single disabled" onclick="detail()">
+                <i class="fa fa-search"></i>查看详情
+            </a>
+            <div class="btn-group">
+                <button data-toggle="dropdown" class="btn btn-warning btn-sm dropdown-toggle">导出<span
+                        class="caret"></span>
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a onclick="$.table.exportExcel()">导出所有</a>
+                    </li>
+                    <li><a onclick="$.table.exportExcelCurrentPage()">导出当前页</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="col-sm-12 select-table table-striped">
+            <table id="bootstrap-table"></table>
+        </div>
+    </div>
+</div>
+<th:block th:include="include :: footer"/>
+<script th:inline="javascript">
+    var prefix = ctx + "system/events";
+    var prefix_fmbiz = ctx + "fmbiz";
+    var sourceV = [[${@pubParaValue.selectPubParaValueByParaName('ynsj_source')}]];
+    var statusV = [[${@pubParaValue.selectPubParaValueByParaName('ynsj_status')}]];
+    $(function () {
+        // 回车键搜索
+        document.onkeydown = function (e) {
+            var ev = document.all ? window.event : e;
+            if (ev.keyCode == 13) {
+                $('#searchBut').trigger('click');
+                return false;
+            }
+        };
+        var options = {
+            url: prefix + "/list",
+            exportUrl: prefix + "/export",
+            singleSelect: true,
+            clickToSelect: true,
+            modalName: "【查询疑难事件】",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'id',
+                    visible: false
+                },
+                {
+                    field: 'no',
+                    title: '疑难单号'
+                },
+                {
+                    field: 'fmBiz.faultNo',
+                    title: '关联运维单号'
+                },
+                {
+                    field: 'deptName',
+                    title: '部门'
+                },
+                {
+                    field: 'sysName',
+                    title: '所属系统'
+                },
+                {
+                    field: 'groupName',
+                    title: '所属工作组'
+                },
+                {
+                    field: 'dealName',
+                    title: '处理人'
+                },
+                {
+                    field: 'createrTime',
+                    title: '创建时间',
+                    formatter: function (value, row, index) {
+                        var startTime = '';
+                        if (value != '' && value != null) {
+                            var pattern = /(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/;
+                            startTime = value.replace(pattern, '$1-$2-$3 $4:$5:$6');
+                        }
+                        return startTime;
+                    }
+                },
+                {
+                    field: 'dealTime',
+                    title: '处理时间',
+                    formatter: function (value, row, index) {
+                        var startTime = '';
+                        if (value != '' && value != null) {
+                            var pattern = /(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/;
+                            startTime = value.replace(pattern, '$1-$2-$3 $4:$5:$6');
+                        }
+                        return startTime;
+                    }
+                },
+                {
+                    field: 'status',
+                    title: '状态',
+                    formatter: function (value, row, index) {
+                        return $.table.selectPubParaValueData(statusV, value);
+                    }
+                },
+                {
+                    field: 'source',
+                    title: '来源',
+                    formatter: function (value, row, index) {
+                        return $.table.selectPubParaValueData(sourceV, value);
+                    }
+                }]
+        };
+        $.table.init(options);
+    });
+
+    // 回显数据字典
+    function selectPubParaValueData(datas, value) {
+        var actions = [];
+        $.each(datas, function (index, pubParaValue) {
+            if (pubParaValue.value == ('' + value)) {
+                actions.push($.common.sprintf("<span class='%s'>%s</span>", "", pubParaValue.valueDetail));
+                return false;
+            }
+        });
+        return actions.join('');
+    }
+
+    // 选择应用系统（只能单选）
+    function selectOgSysListByCondition() {
+        $.modal.open("选择应用系统", prefix + "/sysGrouplist");
+    }
+
+    //根据系统查询工作组
+    function getGroupList(sysid) {
+        $.ajax({
+            cache: true,
+            type: "POST",
+            url: prefix_fmbiz + "/selectOgGroupBySys",
+            data: {
+                "sysid": sysid
+            },
+            async: false,
+            error: function (request) {
+                $.modal.alertError("系统错误");
+            },
+            success: function (data) {
+                var options = "<option value='" + "" + "'>" + "" + "</option> \n";
+                $("#groupId").html("");
+                for (var ak = 0; ak < data.rows.length; ak++) {
+                    options += "<option value='" + data.rows[ak].groupId + "'>" + data.rows[ak].grpName + "</option> \n";
+                }
+                $("#groupId").append(options);
+            }
+        });
+    }
+
+    //** 重置 */
+    function reset() {
+        $("#groupId").html("");
+        $.form.resetAll('formId');
+    }
+
+    function detail() {
+        var id = $.table.selectFirstColumns();
+        var url = prefix + "/detail/" + id;
+        $.modal.openTab("疑难事件详情", url);
+    }
+
+    /* 选择变更机构树 */
+    function selectcheckOrg() {
+        var orgId = $("#orgId").val();
+        var deptId = $.common.isEmpty(orgId) ? "310100001" : $("#orgId").val();
+        var url = ctx + "system/dept/selectDeptTree/" + deptId;
+        var options = {
+            title: '选择部门',
+            width: "380",
+            url: url,
+            callBack: doSubmit
+        };
+        $.modal.openOptions(options);
+    }
+
+    function doSubmit(index, layero) {
+        var tree = layero.find("iframe")[0].contentWindow.$._tree;
+        var body = layer.getChildFrame('body', index);
+        $("#dept").val(body.find('#treeId').val());
+        $("#deptName").val(body.find('#treeName').val());
+        layer.close(index);
+    }
+</script>
+</body>
+</html>

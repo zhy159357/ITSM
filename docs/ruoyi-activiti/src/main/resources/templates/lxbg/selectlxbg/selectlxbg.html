@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('查询例行变更作业')" />
+    <th:block th:include="include :: datetimepicker-css" />
+    <th:block th:include="include :: select2-css"/>
+</head>
+<body class="gray-bg">
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-12 search-collapse">
+            <form id="post-form">
+                <input type="hidden" id="deptId" name="orgId">
+                <div class="row">
+                    <div class="select-list">
+                        <ul>
+                            <li>
+                                <p>任务编号：</p>
+                                <input type="text" name="taskFromNo"/>
+                            </li>
+
+                            <li>
+                                <p>计划单标题：</p>
+                                <input type="text" name="smBizScheduling.schedulingName"/>
+                            </li>
+
+                            <li>
+                                <p>计划发布时间：</p>
+                                <input type="text" name="publishTime" id="publishTime" readonly/>
+                            </li>
+
+                            <li >
+                                <p>至：</p>
+                                <input type="text" name="endPublishTime" id="endPublishTime" readonly />
+                            </li>
+                            <li>
+                                <p>填报人：</p>
+                                <input type="text" name="performUserName" id="performUserName"/>
+                            </li>
+
+                            <li>
+                                <p>任务填报时间：</p>
+                                <input type="text" name="workBeginTime" id="workBeginTime" readonly/>
+                            </li>
+
+                            <li >
+                                <p>至：</p>
+                                <input type="text" name="endworkBeginTime" id="endworkBeginTime" readonly/>
+                            </li>
+                            <li>
+                                <a class="btn btn-primary btn-rounded btn-sm" id="lxbgSearch" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-repeat"></i>&nbsp;重置</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+
+                <div class="row">
+                    <div class="select-list">
+                        <ul>
+
+                        </ul>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div class="btn-group-sm" id="toolbar" role="group">
+            <a class="btn btn-info single disabled" onclick="$.operate.detail()">
+                <i class="fa fa-search"></i> 查看详情
+            </a>
+            <!--导出所有｜当前页按钮组合-->
+            <div class="btn-group">
+                <button data-toggle="dropdown" class="btn btn-primary btn-sm dropdown-toggle"> <i class="fa fa-cloud-upload"></i>导出<span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a onclick="$.table.exportExcel()">导出所有</a>
+                    </li>
+                    <li><a onclick="$.table.exportExcelCurrentPage()">导出当前页</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="col-sm-12 select-table table-striped">
+            <table id="bootstrap-table" style="table-layout:fixed;"></table>
+        </div>
+    </div>
+
+</div>
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: datetimepicker-js" />
+<th:block th:include="include :: select2-js"/>
+<script th:inline="javascript">
+
+    var datas = [[${@dict.getParaType('zd_task_status')}]];
+
+
+    var prefix = ctx + "lxbg/selectlxbg";
+
+    $(function() {
+        // 回车搜索
+        document.onkeydown = function(e){
+            var ev = document.all ? window.event : e;
+            if(ev.keyCode==13) {
+                $('#lxbgSearch').trigger('click');
+                return false;
+            }
+        };
+
+        var options = {
+            url: prefix + "/list",
+            createUrl: prefix + "/add",
+            detailUrl: prefix + "/detail/{id}",
+            updateUrl: prefix + "/edit/{id}",
+            removeUrl: prefix + "/remove",
+            exportUrl: prefix + "/export",
+            exportUrl: prefix + "/export",
+            singleSelect:true,
+            clickToSelect: true,
+            modalName: "查询例行变更作业",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'taskFormId',
+                    title: '任务id',
+                    width: 300,
+                    visible: false
+                },
+                {
+                    field: 'taskFromNo',
+                    width: 150,
+                    title: '任务编号'
+                },
+                {
+                    field: 'schedulingName',
+                    width: 250,
+                    title: '计划单标题',
+                    formatter:function (value,row,index) {
+                        return $.table.tooltip(value)
+                    }
+                },
+                {
+                    field: 'publishTime',
+                    width: 250,
+                    title: '任务发布时间',
+                    align: 'center',
+                    formatter: function (value, row, index) {
+                        var startTime = '';
+                        if(value!='' && value !=null){
+                            var pattern = /(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/;
+                            startTime = value.replace(pattern, '$1-$2-$3 $4:$5:$6');
+                        }
+                        return startTime;
+                    }
+                },
+                {
+                    field: 'grpname',
+                    width: 150,
+                    title: '执行工作组'
+                },
+                {
+                    field: 'ogoname',
+                    width: 150,
+                    title: '执行机构'
+                },
+                {
+                    field: 'smBizScheduling.createName',
+                    width: 150,
+                    title: '创建人'
+                },
+                {
+                    field: 'excuteDescription',
+                    width: 250,
+                    title: '处理描述',
+                    formatter:function (value,row,index) {
+                        return $.table.tooltip(value)
+                    }
+                },
+                {
+                    field: 'performUserName',
+                    width: 150,
+                    title: '填报人'
+                },
+                {
+                    field: 'workBeginTime',
+                    width: 250,
+                    title: '填报时间',
+                    formatter: function (value, row, index) {
+                        var startTime = '';
+                        if(value!='' && value !=null){
+                            var pattern = /(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/;
+                            startTime = value.replace(pattern, '$1-$2-$3 $4:$5:$6');
+                        }
+                        return startTime;
+                    }
+                },
+                {
+                    field: 'taskFormStatus',
+                    width: 100,
+                    title: '任务状态',
+                    formatter: function(value, row, index) {
+                        return selectDictLabel(datas, value);
+                    }
+                }
+            ]
+        };
+        $.table.init(options);
+    });
+
+    function selectDictLabel(datas, value) {
+        var actions = [];
+        $.each(datas, function(index, dict) {
+            if (dict.value == ('' + value)) {
+                var listClass = $.common.equals("default", dict.listClass) || $.common.isEmpty(dict.listClass) ? "" : "badge badge-" + dict.listClass;
+                actions.push($.common.sprintf("<span class='%s'>%s</span>", listClass, dict.valueDetail));
+                return false;
+            }
+        });
+        return actions.join('');
+    }
+
+    $("#workBeginTime").datetimepicker({
+        format: "yyyy-mm-dd",
+        minView: "month",
+        autoclose: true
+    });
+
+    $("#endworkBeginTime").datetimepicker({
+        format: "yyyy-mm-dd",
+        minView: "month",
+        autoclose: true
+    });
+
+    $("#publishTime").datetimepicker({
+        format: "yyyy-mm-dd",
+        minView: "month",
+        autoclose: true
+    });
+
+    $("#endPublishTime").datetimepicker({
+        format: "yyyy-mm-dd",
+        minView: "month",
+        autoclose: true
+    });
+
+
+</script>
+</body>
+</html>

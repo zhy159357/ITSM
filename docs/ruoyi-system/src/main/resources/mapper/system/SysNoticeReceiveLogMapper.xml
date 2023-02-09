@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.SysNoticeReceiveLogMapper">
+
+    <resultMap type="SysNoticeReceiveLog" id="SysNoticeReceiveLogResult">
+        <result property="amActlogId"       column="am_actlog_id"       />
+        <result property="amReceiveId"    column="am_receive_id"    />
+        <result property="performerId"     column="performer_id"     />
+        <result property="editTime"  column="update_time"  />
+        <result property="description"         column="description"          />
+        <result property="currentState"         column="current_state"          />
+        <result property="pName"         column="PNAME"          />
+        <result property="orgName"         column="ORG_NAME"          />
+        <result property="groupName"         column="GROUP_NAME"          />
+        <result property="phone"         column="PHONE"          />
+    </resultMap>
+
+    <sql id="selectNoticeReceiveLogVo">
+        SELECT
+        T.AM_ACTLOG_ID AS AM_ACTLOG_ID,
+        T.AM_RECEIVE_ID AS AM_RECEIVE_ID,
+        T.PERFORMER_ID AS PERFORMER_ID,
+        T.UPDATE_TIME AS UPDATE_TIME,
+        T.DESCRIPTION AS DESCRIPTION,
+        T.CURRENT_STATE AS CURRENT_STATE
+        FROM
+        AM_PRO_ACTLOG T
+    </sql>
+
+    <select id="selectNoticeReceiveLogById" parameterType="String" resultMap="SysNoticeReceiveLogResult">
+        <include refid="selectNoticeReceiveLogVo"/>
+        and am_actlog_id = #{amActlogId}
+    </select>
+
+    <select id="selectNoticeReceiveLogList" parameterType="SysNoticeReceiveLog" resultMap="SysNoticeReceiveLogResult">
+        <include refid="selectNoticeReceiveLogVo"/>
+        WHERE 1 = 1
+        <if test="amReceiveId != null and amReceiveId != ''">
+            AND T.AM_RECEIVE_ID = #{amReceiveId}
+        </if>
+        <if test="performerId != null and performerId != ''">
+            AND T.PERFORMER_ID = #{performerId}
+        </if>
+    </select>
+
+    <select id="receiveLogList" parameterType="SysNoticeReceiveLog" resultMap="SysNoticeReceiveLogResult">
+        SELECT
+        T.AM_ACTLOG_ID AS AM_ACTLOG_ID,
+        T.AM_RECEIVE_ID AS AM_RECEIVE_ID,
+        T.PERFORMER_ID AS PERFORMER_ID,
+        T.UPDATE_TIME AS UPDATE_TIME,
+        T.DESCRIPTION AS DESCRIPTION,
+        T.CURRENT_STATE AS CURRENT_STATE,
+        O.ORGNAME AS ORG_NAME,
+        G.GRPNAME AS GROUP_NAME,
+        P.PNAME AS PNAME,
+        P.MOBIL_PHONE AS PHONE
+        FROM
+        AM_PRO_ACTLOG T
+        LEFT JOIN AM_BIZ_RECEIVE R ON T.AM_RECEIVE_ID = R.AM_RECEIVE_ID
+        LEFT JOIN OG_ORG O ON R.RECEIVE_DEPT = O.ORGID
+        LEFT JOIN OG_GROUP  G on R.RECEIVE_GROUP = G.GROUPID
+        LEFT JOIN OG_PERSON P ON T.PERFORMER_ID = P.PID
+        WHERE 1 = 1
+        <if test="amReceiveId != null and amReceiveId != ''">
+            AND T.AM_RECEIVE_ID = #{amReceiveId}
+        </if>
+        <if test="pName != null and pName != ''">
+            AND P.PNAME LIKE concat(concat('%',#{pName}),'%')
+        </if>
+        <if test="currentState != null and currentState != ''">
+            AND T.CURRENT_STATE = #{currentState}
+        </if>
+        <if test="params.beginTime != null and params.beginTime != ''"><!-- 开始时间检索 -->
+            AND T.UPDATE_TIME &gt;= #{params.beginTime}
+        </if>
+        <if test="params.endTime != null and params.endTime != ''"><!-- 时间检索 -->
+            AND T.UPDATE_TIME &lt;= #{params.endTime}
+        </if>
+        ORDER BY T.UPDATE_TIME DESC
+    </select>
+
+    <insert id="insertNoticeReceiveLog" parameterType="SysNoticeReceiveLog">
+        insert into am_pro_actlog (
+        am_actlog_id,
+        <if test="amReceiveId != null and amReceiveId != '' ">am_receive_id, </if>
+        <if test="performerId != null and performerId != '' ">performer_id, </if>
+        <if test="editTime != null and editTime != '' ">update_time, </if>
+        <if test="description != null and description != '' ">description, </if>
+        <if test="currentState != null and currentState != '' ">current_state </if>
+        )values(
+        #{amActlogId},
+        <if test="amReceiveId != null and amReceiveId != '' ">#{amReceiveId}, </if>
+        <if test="performerId != null and performerId != '' ">#{performerId}, </if>
+        <if test="editTime != null and editTime != '' ">#{editTime}, </if>
+        <if test="description != null and description != '' ">#{description}, </if>
+        <if test="currentState != null and currentState != '' ">#{currentState} </if>
+        )
+    </insert>
+
+
+</mapper>

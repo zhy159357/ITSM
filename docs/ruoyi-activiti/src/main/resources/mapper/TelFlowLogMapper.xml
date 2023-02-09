@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.activiti.mapper.TelFlowLogMapper">
+    
+    <resultMap type="TelFlowLog" id="TelFlowLogResult">
+        <result property="logId"    column="log_id"    />
+        <result property="telId"    column="tel_id"    />
+        <result property="operationName"    column="operation_name"    />
+        <result property="creatTime"    column="create_time"    />
+        <result property="operator"    column="operator"    />
+        <result property="operatorTel"    column="operator_tel"    />
+        <result property="state"    column="state"    />
+        <result property="serialNum"    column="serial_num"    />
+    </resultMap>
+
+    <sql id="selectTelFlowLogVo">
+        select log_id, tel_id, operation_name, create_time, operator, operator_tel, state, serial_num from tel_flow_log
+    </sql>
+
+    <select id="selectTelFlowLogList" parameterType="TelFlowLog" resultMap="TelFlowLogResult">
+        <include refid="selectTelFlowLogVo"/>
+        <where>  
+            <if test="logId != null  and logId != ''"> and log_id = #{logId}</if>
+            <if test="telId != null  and telId != ''"> and tel_id = #{telId}</if>
+            <if test="operationName != null  and operationName != ''"> and operation_name like concat(concat('%', #{operationName}), '%')</if>
+            <if test="operator != null  and operator != ''"> and operator = #{operator}</if>
+            <if test="operatorTel != null  and operatorTel != ''"> and operator_tel = #{operatorTel}</if>
+            <if test="state != null  and state != ''"> and state = #{state}</if>
+            <if test="serialNum != null  and serialNum != ''"> and serial_num = #{serialNum}</if>
+        </where>
+    </select>
+    
+    <select id="selectTelFlowLogById" parameterType="String" resultMap="TelFlowLogResult">
+        <include refid="selectTelFlowLogVo"/>
+        where log_id = #{logId}
+    </select>
+        
+    <insert id="insertTelFlowLog" parameterType="TelFlowLog">
+        insert into tel_flow_log
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="logId != null  and logId != ''">log_id,</if>
+            <if test="telId != null  and telId != ''">tel_id,</if>
+            <if test="operationName != null  and operationName != ''">operation_name,</if>
+            <if test="creatTime != null  and creatTime != ''">create_time,</if>
+            <if test="operator != null  and operator != ''">operator,</if>
+            <if test="operatorTel != null  and operatorTel != ''">operator_tel,</if>
+            <if test="state != null  and state != ''">state,</if>
+            <if test="serialNum != null  and serialNum != ''">serial_num,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="logId != null  and logId != ''">#{logId},</if>
+            <if test="telId != null  and telId != ''">#{telId},</if>
+            <if test="operationName != null  and operationName != ''">#{operationName},</if>
+            <if test="creatTime != null  and creatTime != ''">#{creatTime},</if>
+            <if test="operator != null  and operator != ''">#{operator},</if>
+            <if test="operatorTel != null  and operatorTel != ''">#{operatorTel},</if>
+            <if test="state != null  and state != ''">#{state},</if>
+            <if test="serialNum != null  and serialNum != ''">#{serialNum},</if>
+         </trim>
+    </insert>
+
+    <update id="updateTelFlowLog" parameterType="TelFlowLog">
+        update tel_flow_log
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="telId != null  and telId != ''">tel_id = #{telId},</if>
+            <if test="operationName != null  and operationName != ''">operation_name = #{operationName},</if>
+            <if test="creatTime != null  and creatTime != ''">create_time = #{creatTime},</if>
+            <if test="operator != null  and operator != ''">operator = #{operator},</if>
+            <if test="operatorTel != null  and operatorTel != ''">operator_tel = #{operatorTel},</if>
+            <if test="state != null  and state != ''">state = #{state},</if>
+            <if test="serialNum != null  and serialNum != ''">serial_num = #{serialNum},</if>
+        </trim>
+        where log_id = #{logId}
+    </update>
+
+    <delete id="deleteTelFlowLogById" parameterType="String">
+        delete from tel_flow_log where log_id = #{logId}
+    </delete>
+
+    <delete id="deleteTelFlowLogByIds" parameterType="String">
+        delete from tel_flow_log where log_id in 
+        <foreach item="logId" collection="array" open="(" separator="," close=")">
+            #{logId}
+        </foreach>
+    </delete>
+    
+</mapper>

@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('例行变更进展情况')" />
+    <th:block th:include="include :: layout-latest-css" />
+    <th:block th:include="include :: select2-css"/>
+    <th:block th:include="include :: ztree-css" />
+    <th:block th:include="include :: datetimepicker-css" />
+    <style>
+        .table-striped{
+            min-height: 20%;
+        }
+    </style>
+</head>
+<body class="gray-bg">
+<input name="treeId" type="hidden" id="treeId" value="" >
+
+<div class="ui-layout-west">
+
+    <div class="box box-main">
+        <div class="box-header">
+            <div class="box-tools ">
+
+            </div>
+            <div class="box-title">
+                <i class="fa icon-grid"></i> 作业计划目录
+            </div>
+
+            <div class="ui-layout-content">
+                <div id="tree" class="ztree"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="ui-layout-center ">
+    <div class="container-div">
+        <div class="row">
+            <div class="btn-group-sm" id="toolbara" role="group">
+
+                <a class="btn btn-primary single disabled" onclick="$.operate.detail()">
+                    <i class="fa fa-detail"></i> 查看详情
+                </a>
+                <!--导出所有｜当前页按钮组合-->
+                <div class="btn-group">
+                    <button data-toggle="dropdown" class="btn btn-primary btn-sm dropdown-toggle"> <i class="fa fa-cloud-upload"></i>导出<span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a onclick="$.table.exportExcel()">导出所有</a>
+                        </li>
+                        <li><a onclick="$.table.exportExcelCurrentPage()">导出当前页</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <form id="data-form2">
+                <input type="hidden" id="folderId" name="folder" value="">
+            </form>
+            <div class="col-sm-6 select-table table-striped">
+                <table id="bootstrap-table" style="table-layout:fixed;"></table>
+            </div>
+
+
+            <div class="col-sm-12 search-collapse">
+                <form id="data-form">
+                    <input type="hidden" id="paramsschedulingId" name="params[schedulingId]" value="">
+                    <div class="row">
+                        <div class="select-list">
+                            <ul>
+                                <li>
+                                    <p>实施结果：</p>
+                                    <select name="performResult"  th:with="type=${@dict.getParaType('implement_status')}">
+                                        <option value=""></option>
+                                        <option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+                                    </select>
+                                </li>
+
+                                <li >
+                                    <p>执行机构：</p>
+                                    <input  style="width:150px" type="text" name="ogoname"/>
+                                </li>
+
+                                <li>
+                                    <p>任务编号：</p>
+                                    <input style="width:150px"  type="text" name="taskFromNo"/>
+                                </li>
+
+                                <li>
+                                    <p>任务状态：</p>
+                                    <select name="taskFormStatus"  th:with="type=${@dict.getParaType('zd_task_status_serarch')}">
+                                        <option value=""></option>
+                                        <option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}" th:selected="selected" ></option>
+                                    </select>
+                                </li>
+
+                                <li>
+                                    <p>填报时间：</p>
+                                    <input style="width:150px" type="text" name="writeTimeStart" id="writeTimeStart" readonly/>
+                                </li>
+
+                                <li>
+                                    <p>至：</p>
+                                    <input  style="width:150px" type="text" name="writeTimeEnd" id="writeTimeEnd" readonly/>
+                                </li>
+
+                                <li>
+                                    <p>是否有人填报：</p>
+                                    <select name="isWrite"  th:with="type=${@dict.getParaType('isWrite')}">
+                                        <option value=""></option>
+                                        <option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+                                    </select>
+                                </li>
+                                <li>
+                                    <a class="btn btn-primary btn-rounded btn-sm" id="lxbgSearch" onclick="$.table.search('data-form','bootstrap-table-id')"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                    <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset('data-form','bootstrap-table-id')"><i class="fa fa-repeat"></i>&nbsp;重置</a>
+                                </li>
+
+                            </ul>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div class="btn-group-sm" id="toolbara2" role="group">
+                <a class="btn btn-primary single disabled" onclick="$.operate.detail()">
+                    <i class="fa fa-detail"></i> 详情
+                </a>
+                <!--导出所有｜当前页按钮组合-->
+                <div class="btn-group">
+                    <button data-toggle="dropdown" class="btn btn-primary btn-sm dropdown-toggle"> <i class="fa fa-cloud-upload"></i>导出<span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a onclick="$.table.exportExcel('data-form')">导出所有</a>
+                        </li>
+                        <li><a onclick="$.table.exportExcelCurrentPage('data-form')">导出当前页</a>
+                        </li>
+                    </ul>
+                </div>
+                <a class="btn btn-primary single disabled" onclick="downloadFile2()">
+                    <i class="fa fa-download"></i> 打包下载
+                </a>
+            </div>
+            <div class="col-sm-6 select-table table-striped" style="min-height: calc(100vh - 40%);">
+                <table id="bootstrap-table-id" style="table-layout:fixed;"></table>
+            </div>
+
+            <div class="row">
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: layout-latest-js" />
+<th:block th:include="include :: select2-js"/>
+<th:block th:include="include :: ztree-js" />
+<th:block th:include="include :: datetimepicker-js" />
+<script th:inline="javascript">
+
+    var datas = [[${@dict.getParaType('zd_plan_status')}]];
+
+    var datass = [[${@dict.getParaType('zd_task_status')}]];
+
+    var datasss = [[${@dict.getParaType('implement_status')}]];
+
+    var selecttreeId="-1";
+
+    var scheduling_prefix = ctx + "lxbg/addlxbg";
+    var evolve_prefix = ctx + "lxbg/evolvelxbg";
+    var evo_prefix = ctx + "lxbg/evolvelxbg";
+
+    // 左侧树
+    $(function() {
+        // 回车搜索
+        document.onkeydown = function(e){
+            var ev = document.all ? window.event : e;
+            if(ev.keyCode==13) {
+                $('#lxbgSearch').trigger('click');
+                return false;
+            }
+        };
+
+        var panehHidden = false;
+        if ($(this).width() < 800) {
+            panehHidden = true;
+        }
+        $('body').layout({ initClosed: panehHidden, west__size: 185 });
+        // 回到顶部绑定
+        if ($.fn.toTop !== undefined) {
+            var opt = {
+                win:$('.ui-layout-center'),
+                doc:$('.ui-layout-center')
+            };
+            $('#scroll-up').toTop(opt);
+        }
+        queryDeptTree();
+        querylxbgList();
+        querylxbgList2();
+
+    });
+
+    //options表格按钮跳转
+    function querylxbgList() {
+        var selectId = selecttreeId;
+        var options = {
+            url: evolve_prefix + "/list",
+            toolbar: "toolbara",
+            updateUrl: scheduling_prefix + "/edit/{id}",
+            detailUrl: evolve_prefix + "/detail/{id}",
+            removeUrl: scheduling_prefix + "/remove",
+            exportUrl: evolve_prefix + "/jhexport",
+            importUrl: scheduling_prefix + "/importData",
+            pagination:true,
+            clickToSelect: true,
+            pageSize:5,
+            singleSelect:true,
+            queryParams:queryParams,
+            onClickRow: function (row) {
+                $("#paramsschedulingId").val(row.schedulingId);
+                $.table.search('data-form','bootstrap-table-id')
+            },
+            modalName: "计划",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'schedulingId',
+                    title: '计划单id',
+                    width: 300,
+                    visible: false
+                },
+                {
+                    field: 'schedulingNo',
+                    width: 250,
+                    title: '计划单编号'
+                },
+                {
+                    field: 'schedulingName',
+                    width: 250,
+                    title: '计划单标题',
+                    formatter:function (value,row,index) {
+                        return $.table.tooltip(value)
+                    }
+                },
+                {
+                    field: 'effectiveTime',
+                    width: 250,
+                    title: '发布时间',
+                    formatter: function (value, row, index) {
+                        var startTime = '';
+                        if(value!='' && value !=null){
+                            var pattern = /(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/;
+                            startTime = value.replace(pattern, '$1-$2-$3 $4:$5:$6');
+                        }
+                        return startTime;
+                    }
+                },
+                {
+                    field: 'process',
+                    width: 100,
+                    title: '完成进度'
+                },
+                {
+                    field: 'planStatus',
+                    width: 100,
+                    title: '计划状态',
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                        return selectDictLabel(datas, value);
+                    }
+                },
+                {
+                    field: 'createName',
+                    width: 150,
+                    title: '创建人'
+                },
+
+                {
+                    field: 'checkPersonName',
+                    width: 150,
+                    title: '审核人'
+                },
+
+                {
+                    field: 'createTime',
+                    width: 200,
+                    title: '创建时间',
+                    align: 'center',
+                    formatter: function (value, row, index) {
+                        var startTime = '';
+                        if(value!=''){
+                            var pattern = /(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/;
+                            startTime = value.replace(pattern, '$1-$2-$3 $4:$5:$6');
+                        }
+                        return startTime;
+                    }
+                }]
+
+        };
+        $.table.init(options);
+    }
+
+    function querylxbgList2() {
+        var options = {
+            url: evolve_prefix + "/evolist",
+            queryParams:queryParams2,
+            toolbar: "toolbara2",
+            id: "bootstrap-table-id",
+            exportUrl: evolve_prefix + "/export",
+            detailUrl: evo_prefix + "/evodetail/{id}",
+            pagination:true,
+            clickToSelect: true,
+            pageSize:5,
+            singleSelect:true,
+            modalName: "任务",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'taskFormId',
+                    title: '任务id',
+                    width: 300,
+                    visible: false
+                },
+                {
+                    field: 'taskFromNo',
+                    width: 150,
+                    title: '任务编号'
+                },
+                {
+                    field: 'ogoname',
+                    width: 250,
+                    title: '执行机构'
+                },
+                {
+                    field: 'grpname',
+                    width: 250,
+                    title: '执行工作组'
+                },
+                {
+                    field: 'relateChange',
+                    width: 150,
+                    title: '变更单单号'
+                },
+                {
+                    field: 'excuteDescription',
+                    width: 200,
+                    title: '处理描述',
+                    formatter:function (value,row,index) {
+                        return $.table.tooltip(value)
+                    }
+                },
+                {
+                    field: 'performResult',
+                    width: 150,
+                    title: '实施结果',
+                    formatter: function(value, row, index) {
+                        return selectDictLabel(datasss, value);
+                    }
+                },
+                {
+                    field: 'expectStartTime',
+                    width: 250,
+                    title: '变更计划时间',
+                    formatter: function (value, row, index) {
+                        var startTime = '';
+                        if(value!='' && value !=null){
+                            var pattern = /(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/;
+                            startTime = value.replace(pattern, '$1-$2-$3 $4:$5:$6');
+                        }
+                        return startTime;
+                    }
+                },
+                {
+                    field: 'practicleEnd',
+                    width: 250,
+                    title: '变更实施时间',
+                    formatter: function (value, row, index) {
+                        var startTime = '';
+                        if(value!='' && value !=null){
+                            var pattern = /(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/;
+                            startTime = value.replace(pattern, '$1-$2-$3 $4:$5:$6');
+                        }
+                        return startTime;
+                    }
+                },
+                {
+                    field: 'implementorName',
+                    width: 150,
+                    title: '实施人'
+                },
+                {
+                    field: 'performUserName',
+                    width: 150,
+                    title: '填报人'
+                },
+                {
+                    field: 'workEndTime',
+                    width: 250,
+                    title: '填报时间',
+                    formatter: function (value, row, index) {
+                        var startTime = '';
+                        if(value!='' && value !=null){
+                            var pattern = /(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/;
+                            startTime = value.replace(pattern, '$1-$2-$3 $4:$5:$6');
+                        }
+                        return startTime;
+                    }
+                },
+
+                {
+                    field: 'taskFormStatus',
+                    width: 150,
+                    title: '任务状态',
+                    formatter: function(value, row, index) {
+                        return selectDictLabel(datass, value);
+                    }
+                }]
+
+        };
+        $.table.init(options);
+    }
+
+    function queryParams(params) {
+        var search = $.table.queryParams(params);
+        return search;
+    }
+    function queryParams2(params) {
+        params.taskId= $("#paramsschedulingId").val();
+        var search = $.table.queryParams(params);
+        return search;
+    }
+
+    //点击左侧树
+    function queryDeptTree()
+    {
+        var url = ctx + "lxbg/folder/treeData";
+        var options = {
+            url: url,
+            expandLevel:tree,
+            onClick : zOnClick
+        };
+        $.tree.init(options);
+
+        function zOnClick(event, treeId, treeNode) {
+            $("#folderId").val(treeNode.id);
+            $.table.search("data-form2","bootstrap-table");
+            //刷新任务页面
+            //清空paramsschedulingId
+            $("#paramsschedulingId").val('');
+            $.table.search("data-form","bootstrap-table-id");
+        }
+    }
+
+    $('#btnRefresh').click(function() {
+        queryDeptTree();
+    });
+
+    function selectDictLabel(datas, value) {
+        var actions = [];
+        $.each(datas, function(index, dict) {
+            if (dict.value == ('' + value)) {
+                var listClass = $.common.equals("default", dict.listClass) || $.common.isEmpty(dict.listClass) ? "" : "badge badge-" + dict.listClass;
+                actions.push($.common.sprintf("<span class='%s'>%s</span>", listClass, dict.valueDetail));
+                return false;
+            }
+        });
+        return actions.join('');
+    }
+
+
+    $("#writeTimeStart").datetimepicker({
+        autoclose: true,
+        format: "yyyy-mm-dd hh:ii:ss",
+        minView:0,
+        minuteStep:1,
+        Date:new Date()
+    });
+
+    $("#writeTimeEnd").datetimepicker({
+        autoclose: true,
+        format: "yyyy-mm-dd hh:ii:ss",
+        minView:0,
+        minuteStep:1,
+        Date:new Date()
+    });
+
+    // 任务下载
+    function downloadFile2() {
+
+        var taskFormId = $.table.selectFirstColumns();
+        $.ajax({
+            url: ctx +"pub/attachment/listAll",
+            data:{"ownerId":taskFormId[0]},
+            async: false,
+            dataType: "json",
+            type: "POST",
+            success: function (data) {
+                if(data==null||data.length<1){
+                    return $.modal.alertError('该任务没有附件可以下载!')
+                }else {
+                    $.each(data, function(i) {
+                        var url = ctx + "pub/attachment/download/"+taskFormId+"/"+ data[i].atId;
+                        downfile("tsm",url);
+
+                    });
+                }
+            }
+        });
+    }
+
+    function downfile(btn,hurl) {
+
+        var itime = 0;
+        $(btn).attr("disabled", "disabled");
+        $(btn).html(`正在下载<i style="color:blueviolet;">${itime}</i>`);
+        var xhr = new XMLHttpRequest();
+        xhr.open('get', hurl, true);
+        xhr.responseType = "blob";
+        xhr.onload = function() {
+            if (this.status === 200) {
+                var blob = this.response;
+                var reader = new FileReader;
+                reader.readAsDataURL(blob);
+                reader.onload = function(e) {
+                    var headerName = xhr.getResponseHeader("Content-disposition");
+                    var fileName = decodeURIComponent(headerName).substring(20);
+                    var a = document.createElement("a");
+                    a.download = fileName;
+                    a.href = e.target.result;
+                    $("body").append(a);
+                    a.click();
+                    $(a).remove();
+                    clearTimeout(downloadTimer);
+                    $(btn).html("导出Execl");
+                    $(btn).removeAttr("disabled");
+                }
+            }
+        }
+        xhr.send();
+        var downloadTimer = setInterval(() => {
+            $(btn).children("i").text(++itime);
+        }, 1000);
+    }
+
+
+
+
+</script>
+</body>
+</html>

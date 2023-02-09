@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:include="include :: header('新增3环境单')"/>
+    <th:block th:include="include :: ztree-css"/>
+    <th:block th:include="include :: footer"/>
+    <th:block th:include="include :: ztree-js"/>
+    <th:block th:include="include :: select2-css"/>
+    <th:block th:include="include :: select2-js"/>
+    <th:block th:include="include :: jquery-cxselect-js"/>
+    <th:block th:include="include :: bootstrap-fileinput-js"/>
+    <th:block th:include="include :: datetimepicker-js"/>
+    <th:block th:include="include :: datetimepicker-css"/>
+    <th:block th:include="include :: bootstrap-select-js"/>
+    <th:block th:include="include :: bootstrap-select-css"/>
+    <th:block th:include="include :: jasny-bootstrap-css"/>
+    <th:block th:include="include :: jasny-bootstrap-js"/>
+</head>
+<body class="gray-bg">
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+    <form class="form-horizontal m" id="form-issue-add1">
+        <h5 style="color:#f01008;" align="center">根据【节点类型】选择所需表单信息（应用服务器、数据库）</h5>
+        <h4 class="form-header h4">创建类型</h4>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">节点类型：</label>
+                    <div class="col-sm-8">
+                        <select id="classify" name="classify" class="form-control"
+                                th:with="classify=${@pubParaValue.selectPubParaValueByParaName('TINYWEB_CLASSIFY')}"
+                                onchange="changeType(this.value)" required>
+                            <option th:each="paraValue : ${classify}" th:text="${paraValue.valueDetail}"
+                                    th:value="${paraValue.value}"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-6" id="type">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">数据库类型：</label>
+                    <div class="col-sm-8">
+                        <select id="dbType" name="dbType" class="form-control"
+                                th:with="dbType=${@pubParaValue.selectPubParaValueByParaName('TINYWEB_DB_TYPE')}"
+                                onchange="changeTypeDb(this.value)"
+                                required>
+                            <option th:each="paraValue : ${dbType}" th:text="${paraValue.valueDetail}"
+                                    th:value="${paraValue.value}"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </form>
+
+    <form class="form-horizontal m" id="form-issue-add2">
+        <input id="nodeType" name="nodeType" type="hidden" th:value="${nodeType}"/>
+        <input id="workOrderId" name="workOrderId" type="hidden" th:value="${orderId}"/>
+        <input id="id" name="id" type="hidden" th:value="${id}"/>
+        <h4 class="form-header h4">基本信息</h4>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">主机名：</label>
+                    <div class="col-sm-8">
+                        <input class="form-control" type="text" name="hostName" id="hostName"
+                               maxlength="25" th:value="${hostName}" required/>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">设备类型：</label>
+                    <div class="col-sm-8">
+                        <select id="equipmentType" name="equipmentType" class="form-control"
+                                th:with="classify=${@pubParaValue.selectPubParaValueByParaName('TINYWEB_EQU_TYPE')}"
+                                required>
+                            <option th:each="paraValue : ${classify}" th:text="${paraValue.valueDetail}"
+                                    th:value="${paraValue.value}"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">申请内存大小：</label>
+                    <div class="col-sm-8">
+                        <!--                        <input class="form-control" type="text" name="productionMemory" id="productionMemory"-->
+                        <!--                               th:value="${nodeById.productionMemory}" required>-->
+                        <select id="productionMemory" name="productionMemory" class="form-control"
+                                th:with="issueFenleis=${@pubParaValue.selectPubParaValueByParaName('memory')}"
+                                onchange="getFmKindOneList()" required>
+                            <option th:text="${productionMemory}"></option>
+                            <option th:each="itype : ${issueFenleis}" th:text="${itype.valueDetail}"
+                                    th:value="${itype.value}" th:selected="${itype.value==issueFenlei}"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">申请cpu大小：</label>
+                    <div class="col-sm-8">
+                        <select id="applyCpu" name="applyCpu" class="form-control"
+                                th:with="issueFenleis=${@pubParaValue.selectPubParaValueByParaName('cpu')}"
+                                onchange="getFmKindOneList()" required>
+                            <option th:text="${applyCpu}"></option>
+                            <option th:each="itype : ${issueFenleis}" th:text="${itype.valueDetail}"
+                                    th:value="${itype.value}" th:selected="${itype.value==issueFenlei}"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <!--            <div class="col-sm-6">-->
+            <!--                <div class="form-group">-->
+            <!--                    <label class="col-sm-4 control-label is-required">操作系统：</label>-->
+            <!--                    <div class="col-sm-8">-->
+            <!--                        <select id="applyMemory" name="applyMemory" class="form-control"-->
+            <!--                                th:with="classify=${@pubParaValue.selectPubParaValueByParaName('TINYWEB_OPERATE_TYPE')}" onchange="changeType(this.value)">-->
+            <!--                            <option th:each="paraValue : ${classify}" th:text="${paraValue.valueDetail}"-->
+            <!--                                    th:value="${paraValue.value}"></option>-->
+            <!--                        </select>-->
+            <!--                    </div>-->
+            <!--                </div>-->
+            <!--            </div>-->
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label ">特殊软件需求：</label>
+                    <div class="col-sm-8">
+                        <input name="specialApp" id="specialApp" class="form-control" type="text" maxlength="60"
+                               th:value="${specialApp}">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group" th:id="db">
+                    <label class="col-sm-4 control-label ">数据库客户端：</label>
+                    <div class="col-sm-8">
+                        <input name="dbEdition" id="dbEdition" class="form-control" type="text" maxlength="60"
+                        >
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">台数：</label>
+                    <div class="col-sm-8">
+                        <input name="number" id="number" class="form-control" type="text" maxlength="60" required>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+    <form class="form-horizontal m" id="form-issue-add5">
+        <h4 class="form-header h4" id="db5">基本信息</h4>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">操作系统：</label>
+                    <div class="col-sm-8">
+                        <select id="applyMemory" name="applyMemory" class="form-control"
+                                th:with="classify=${@pubParaValue.selectPubParaValueByParaName('TINYWEB_OPERATE_TYPE')}">
+                            <option th:each="paraValue : ${classify}" th:text="${paraValue.valueDetail}"
+                                    th:value="${paraValue.value}"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">数据库客户端：</label>
+                    <div class="col-sm-8">
+                        <input name="dbVersion" id="dbVersion" class="form-control" type="text"
+                               maxlength="60">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <form class="form-horizontal m" id="form-issue-addUser">
+        <h4 class="form-header h4">用户信息</h4>
+        <div class="row">
+            <div class="container-div">
+                <div class="btn-group-sm" id="toolbar1" role="group">
+                    <a class="btn btn-success" onclick="insertAccount()">
+                        <i class="fa fa-plus"></i> 新增
+                    </a>
+                    <a class="btn btn-primary single disabled" onclick="editAccount()">
+                        <i class="fa fa-edit"></i> 修改
+                    </a>
+                    <a class="btn btn-danger single disabled" onclick="removeAll()">
+                        <i class="fa fa-trash"></i> 删除
+                    </a>
+                </div>
+
+                <div class="col-sm-12 select-table table-striped">
+                    <table id="bootstrap-table1"></table>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <form class="form-horizontal m" id="form-issue-addDb">
+        <h4 class="form-header h4" id="h4">数据库信息</h4>
+        <div class="row">
+            <div class="container-div">
+                <div class="btn-group-sm" id="toolbar2" role="group">
+                    <a class="btn btn-success" onclick="selectAllPost()">
+                        <i class="fa fa-plus"></i> 新增数据库相关信息
+                    </a>
+                    <a class="btn btn-danger multiple disabled" onclick="removePost()">
+                        <i class="fa fa-trash"></i> 删除数据库相关信息
+                    </a>
+                </div>
+
+                <div class="col-sm-12 select-table table-striped">
+                    <table id="bootstrap-table2"></table>
+                </div>
+            </div>
+        </div>
+    </form>
+
+
+    <form class="form-horizontal m" id="form-issue-addDbOracle">
+        <h4 class="form-header h4" id="h5">数据库信息</h4>
+        <div class="row">
+            <div class="container-div">
+                <div class="btn-group-sm" id="toolbar3" role="group">
+                    <a class="btn btn-success" onclick="selectAllPost()">
+                        <i class="fa fa-plus"></i> 新增数据库相关信息
+                    </a>
+                    <a class="btn btn-danger multiple disabled" onclick="removePost()">
+                        <i class="fa fa-trash"></i> 删除数据库相关信息
+                    </a>
+                </div>
+
+                <div class="col-sm-12 select-table table-striped">
+                    <table id="bootstrap-table3"></table>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <div>
+        <div class="row">
+            <div class="col-sm-offset-5 col-sm-10">
+                <button type="button" class="btn btn-sm btn-primary" onclick="submitHandler()"><i
+                        class="fa fa-check"></i>保存
+                </button>&nbsp;
+                <button type="button" class="btn btn-sm btn-danger" onclick="closeItem()"><i
+                        class="fa fa-window-close"></i>关 闭
+                </button>
+            </div>
+        </div>
+    </div>
+    <th:block th:include="include :: footer"/>
+    <th:block th:include="include :: select2-js"/>
+    <script th:src="@{/js/activiti.js}"></script>
+    <script th:src="@{/js/issue.js}"></script>
+    <script th:inline="javascript">
+        var prefix = ctx + "twWorkNode";
+        var user_prefix = ctx + "twWorkNode";
+        //node id
+        var id = '0';
+        //order id  单号id
+        var orderId = [[${nodeId}]];
+        var nodeId = [[${orderId}]];
+        var nodeType = [[${nodeType}]];
+        //属于新增还是修改
+        var type = [[${type}]];
+        var post_prefix = ctx + "twUserDb";
+        var formtype = '0';
+        $("#testForm").validate({
+            rules: {
+                testInput: {
+                    required: true
+                },
+            },
+            focusCleanup: true
+        });
+        $(function () {
+            var value = $("#classify").val();
+            style(value);
+            OneTwo();
+        })
+
+        function changeType(value) {
+            style(value);
+        }
+
+        function changeTypeDb(value) {
+            //orderId
+            $.ajax({
+                cache: true,
+                type: 'GET',
+                url: post_prefix + "/deleteDb/" + orderId,
+                async: false,
+                success: function (data) {
+                    if (value == '1') {
+                        document.getElementById("form-issue-addDb").style.display = "";
+                        document.getElementById("form-issue-addDbOracle").style.display = "none";
+                        mySqlList();
+                    } else {
+                        document.getElementById("form-issue-addDb").style.display = "none";
+                        document.getElementById("form-issue-addDbOracle").style.display = "";
+                        oracleList();
+                    }
+                }
+            });
+            console.log("-------------------------------数据库类型")
+        }
+
+        function style(value) {
+            if (value == "1") {
+                document.getElementById("form-issue-addDb").style.display = "none";
+                document.getElementById("form-issue-addDbOracle").style.display = "none";
+                document.getElementById("form-issue-addUser").style.display = "";
+                document.getElementById("form-issue-add5").style.display = "none";
+                document.getElementById("form-issue-add2").style.display = "";
+                document.getElementById("type").style.display = "none";
+            } else if (value == "2") {
+                document.getElementById("form-issue-addDb").style.display = "";
+                document.getElementById("form-issue-addUser").style.display = "none";
+                document.getElementById("form-issue-add5").style.display = "";
+                document.getElementById("form-issue-add2").style.display = "none";
+                document.getElementById("type").style.display = "";
+                mySqlList();
+            } else if (value == "3") {
+                document.getElementById("form-issue-addDb").style.display = "none";
+                document.getElementById("h4").style.display = "none";
+                document.getElementById("centre").style.display = "none";
+            }
+        }
+
+        function OneTwo() {
+
+            formtype = '2';
+            //回车搜索
+            document.onkeydown = function (e) {
+                var ev = document.all ? window.event : e;
+                if (ev.keyCode == 13) {
+                    if (formtype == '1') {
+                        $('#post-search').trigger('click');
+                    }
+                    if (formtype == '2') {
+                        $('#ss').trigger('click');
+                    }
+                    return false;
+                } //搜索逻辑
+            }
+            var options = {
+                url: post_prefix + "/getUserUserByWorkNodeId/" + orderId,
+                createUrl: user_prefix + "/add",
+                updateUrl: user_prefix + "/edit/{id}",
+                removeUrl: post_prefix + "/delete",
+                modalName: "账号",
+                id: 'bootstrap-table1',
+                toolbar: 'toolbar1',
+                singleSelect: true,
+                clickToSelect: true,
+                columns: [{
+                    checkbox: true
+                },
+                    {
+                        field: 'id',
+                        title: '主键id',
+                        visible: false
+                    },
+                    {
+                        field: 'username',
+                        title: '用户名'
+                    },
+                    {
+                        field: 'primaryGroup',
+                        title: '主组'
+                    }
+                    ,
+                    {
+                        field: 'secondaryGroup',
+                        title: '副组'
+                    }
+                    ,
+                    {
+                        field: 'mountDirectory',
+                        title: '挂载目录'
+                    }
+                    ,
+                    {
+                        field: 'spaceSize',
+                        title: '空间大小'
+                    }
+                    ,
+                    {
+                        field: 'shell',
+                        title: 'shell脚本'
+                    }
+                ]
+            };
+            $.table.init(options);
+        }
+
+        function mySqlList() {
+            var classify = $("#classify").val();
+            var dbType = $("#dbType").val();
+            console.log("数据库类型=====" + dbType);
+            formtype = '2';
+            var options1 = {
+                /*查询出当前账号分配的岗位信息*/
+                url: post_prefix + "/getUserSqlDbByWorkNodeId/" + orderId + "/" + classify + "/" + $("#dbType").val(),
+                createUrl: post_prefix + "/add",
+                id: 'bootstrap-table2',
+                toolbar: 'toolbar2',
+                //queryParams: queryParams,
+                modalName: "岗位",
+                singleSelect: true,
+                clickToSelect: true,
+                columns: [{
+                    checkbox: true
+                },
+                    {
+                        field: 'id',
+                        title: '主键id',
+                        visible: false
+                    },
+                    {
+                        field: 'onlyKey',
+                        title: '唯一识别号',
+                        visible: false
+                    },
+                    {
+                        field: 'dbName',
+                        title: '数据库名称'
+
+                    },
+                    {
+                        field: 'characterSet',
+                        title: '字符集'
+
+                    },
+                    {
+                        field: 'tableSpaceSize',
+                        title: '大小'
+
+                    }
+                ]
+            };
+            console.log("列表结尾-----------------")
+            $.table.init(options1);
+        }
+
+        function oracleList() {
+            var classify = $("#classify").val();
+            var dbType = $("#dbType").val();
+            console.log("数据库类型=====" + dbType);
+            formtype = '2';
+            var options1 = {
+                /*查询出当前账号分配的岗位信息*/
+                url: post_prefix + "/getUserSqlDbByWorkNodeId/" + orderId + "/" + classify + "/" + $("#dbType").val(),
+                createUrl: post_prefix + "/add",
+                id: 'bootstrap-table3',
+                toolbar: 'toolbar3',
+                //queryParams: queryParams,
+                modalName: "岗位",
+                singleSelect: true,
+                clickToSelect: true,
+                columns: [{
+                    checkbox: true
+                },
+                    {
+                        field: 'id',
+                        title: '主键id',
+                        visible: false
+                    },
+                    {
+                        field: 'onlyKey',
+                        title: '唯一识别号',
+                        visible: false
+                    },
+                    {
+                        field: 'spaceName',
+                        title: '实例名称'
+
+                    },
+                    {
+                        field: 'characterSet',
+                        title: '字符集'
+
+                    }
+                    ,
+                    {
+                        field: 'dBName',
+                        title: '数据库名称'
+
+                    }
+                    ,
+                    {
+                        field: 'spaceSize',
+                        title: '表空间'
+
+                    }
+                ]
+            };
+            $.table.init(options1);
+        }
+
+
+        function submitHandler() {
+            // if (!$.validate.form()) {
+            //     $.modal.alertWarning("参数填写不全，请继续填写");
+            //     return;
+            // }
+            var classify = $("#classify").val();
+            var nodeType = $("#nodeType").val(classify);
+            var id = $("#id").val(orderId);
+            if (classify === '1') {
+                var hostName = $("#hostName").val();
+                var equipmentType = $("#equipmentType").val();
+                var productionMemory = $("#productionMemory").val();
+                var applyCpu = $("#applyCpu").val();
+                var number = $("#number").val();
+                if (hostName == "" || equipmentType == "" || productionMemory == "" || applyCpu == "" || number == "") {
+                    $.modal.alertWarning("参数填写不全，请继续填写");
+                    return;
+                }
+            } else {
+                var centreEdition = $("#centreEdition").val();
+                var applyMemory = $("#applyMemory").val();
+                if (centreEdition == "" || applyMemory == "") {
+                    $.modal.alertWarning("参数填写不全，请继续填写");
+                    return;
+                }
+            }
+            var data = $("#form-issue-add2").serializeArray();
+            data.push("classify", classify);
+            // $.operate.saveTab(user_prefix + "/addOrUpdateSever", data, function () {
+            //     //刷新父tab
+            //     hbkrefresh();
+            //     // 关闭当前tab
+            //     $.modal.closeTab();
+            // });
+            $.operate.saveTab(user_prefix + "/addOrUpdateSever", data);
+            parent.location.reload();
+        }
+        //** 关闭选项卡 */
+        function closeItem() {
+            var index = parent.layer.getFrameIndex(window.name);
+            parent.layer.close(index);//关闭当前页
+        }
+        // 刷新本页面
+        function hbkrefresh() {
+            var target = $('.RuoYi_iframe[data-panel=\'/twWorkOrder/myCreate\']', parent.document);
+            var url = target.attr('src');
+            console.log("url=" + url);
+            target.attr('src', url).ready();
+        }
+
+
+        //加载一级分类
+        function getFmKindOneList() {
+            var issueFenlei = $("#issueFenlei").val();
+            var parentId = 'WTD0001';
+            if ('6' == issueFenlei || '3' == issueFenlei) {
+                $("#fenLeiOne").show();
+                $("#fenLeiTwo").show();
+                if ('6' == issueFenlei) {
+                    $("#tardingNameDiv").show();
+                    parentId = 'WTD0002';
+                } else {
+                    $("#tardingNameDiv").hide();
+                    $("#tardingName").val('');
+                }
+                $.ajax({
+                    cache: true,
+                    type: "POST",
+                    url: prefix + "/selectFmKindBySysidForWTD",
+                    data: {
+                        "category": "1",
+                        "parentId": parentId
+                    },
+                    async: false,
+                    success: function (data) {
+                        var options = "<option value=''>请选择</option>";
+                        $("#oneType").html("");
+                        for (var ak = 0; ak < data.rows.length; ak++) {
+                            options += "<option value='" + data.rows[ak].id + "'>" + data.rows[ak].name + "</option> \n";
+                        }
+                        $("#oneType").append(options);
+                    }
+                });
+                $("#twoType").html("");
+                $("#twoType").append("<option value=''>请选择</option>");
+                $("#threeType").html("");
+                $("#threeType").append("<option value=''>请选择</option>");
+            } else {
+                $("#fenLeiOne").hide();
+                $("#fenLeiTwo").hide();
+                $("#oneType").html("");
+                $("#twoType").html("");
+                $("#threeType").html("");
+                $("#tardingName").val('');
+            }
+        }
+
+        function queryParams(params) {
+            var search = $.table.queryParams(params);
+            search.id = orderId;
+            return search;
+        }
+
+        var iframeIndex = ''
+
+        function insertAccount() {
+            var type = $("#classify").val();
+            var url = user_prefix + "/add/" + orderId + "/" + type;
+            $.modal.openAddUser('新增用户', url);
+        }
+
+        function editAccount() {
+            var row = $("#bootstrap-table1").bootstrapTable('getSelections')[0];
+            var url = user_prefix + "/update/" + row.id;
+            $.modal.openEditUser('修改账号信息', url)
+
+        }
+
+
+        function callback(id, pName) {
+            $('#layui-layer-iframe' + iframeIndex).contents().find('#pId').val(id);
+            $('#layui-layer-iframe' + iframeIndex).contents().find('#pName').val(pName);
+        }
+
+        function userSearch(userFormId, postFormId) {
+            //清空userId
+            $('#id').val('');
+            $.table.search(userFormId, 'bootstrap-table1');
+            $.table.search(postFormId, 'bootstrap-table2');
+        }
+
+        function userReset(userFormId, postFormId) {
+            //清空userId
+            $('#id').val('');
+            $.form.resetAll(userFormId, 'bootstrap-table1')
+            $.table.search(postFormId, 'bootstrap-table2');
+        }
+
+        function selectAllPost() {
+            var type = $("#classify").val();
+            var dbType = $("#dbType").val();
+            if (dbType == '2' && type == '2') {
+                var url = user_prefix + "/addOracleDb/" + orderId + "/" + type + "/" + dbType;
+            } else {
+                var url = user_prefix + "/addDb/" + orderId + "/" + type + "/" + dbType;
+            }
+            $.modal.openAddUser('新增', url);
+        }
+
+
+        function removeAll() {
+            table.set();
+            var rows = $.common.isEmpty(table.options.uniqueId) ? $.table.selectFirstColumns() : $.table.selectColumns(table.options.uniqueId);
+            if (rows.length == 0) {
+                $.modal.alertWarning("请至少选择一条记录");
+                return;
+            }
+            $.modal.confirm("确认要删除选中的" + rows.length + "条数据吗?", function () {
+                //这里
+                var data = "";
+                var row = $("#bootstrap-table1").bootstrapTable('getSelections')[0];
+                console.log(row.onlyKey)
+                console.log(row)
+                var url = post_prefix + "/delete/" + row.id;
+                $.post(url, data, function (result) {
+                    if (result.code == 0) {
+                        $.modal.msgSuccess('删除成功')
+                        console.log("删除成功")
+                        //进行数据刷新
+                        // $('').trigger('click')
+                        $.table.search('form-post', ' ')
+
+                    } else {
+                        $.modal.msgError('删除失败')
+
+                    }
+                });
+            });
+        }
+
+
+        function removePost() {
+            table.set();
+            var rows = $.common.isEmpty(table.options.uniqueId) ? $.table.selectFirstColumns() : $.table.selectColumns(table.options.uniqueId);
+            if (rows.length == 0) {
+                $.modal.alertWarning("请至少选择一条记录");
+                return;
+            }
+            $.modal.confirm("确认要删除选中的" + rows.length + "条数据吗?", function () {
+                //这里
+                var data = "";
+                var row = $("#bootstrap-table2").bootstrapTable('getSelections')[0];
+                console.log(row.onlyKey)
+                console.log(row)
+                var url = post_prefix + "/deleteUserDbDetail/" + row.id + "/" + row.onlyKey;
+                $.post(url, data, function (result) {
+                    if (result.code == 0) {
+                        $.modal.msgSuccess('删除成功')
+                        console.log("删除成功")
+                        //进行数据刷新
+                        // $('').trigger('click')
+                        $.table.search('form-post', 'bootstrap-table2')
+
+                    } else {
+                        $.modal.msgError('删除失败')
+
+                    }
+                });
+            });
+        }
+
+
+    </script>
+</div>
+</body>
+</html>

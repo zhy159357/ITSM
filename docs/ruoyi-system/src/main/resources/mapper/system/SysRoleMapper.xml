@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.SysRoleMapper">
+
+	<resultMap type="OgRole" id="OgRoleResult">
+		<id     property="rid"       column="rid"        />
+		<result property="rName"     column="rName"      />
+		<result property="invalidationMark"      column="invalidation_mark"       />
+		<result property="memo"      column="memo"      />
+		<result property="funclist"    column="funclist"     />
+		<result property="adder"       column="adder"         />
+		<result property="addTime"      column="addTime"       />
+		<result property="moder"     column="moder"      />
+		<result property="modTime"   column="modTime"    />
+		<result property="updatetime"   column="update_time"    />
+	</resultMap>
+
+	<resultMap type="OgPost" id="OgPostResult">
+		<id     property="postId"        column="postId"       />
+		<result property="postName"      column="post_name"     />
+		<result property="addEr"       column="adder"         />
+		<result property="addTime"      column="addTime"       />
+		<result property="moder"     column="moder"      />
+		<result property="updateTime"   column="update_time"    />
+		<result property="memo"      column="memo"      />
+		<result property="invalidationMark"      column="invalidation_mark"       />
+		<result property="serialNum"   column="serial_num"    />
+	</resultMap>
+
+	<!--<sql id="selectRoleContactVo">
+        select distinct rid,r.rname,r.adder,r.addtime,r.moder,r.modtime,r.update_time,r.invalidation_mark,r.memo,r.funclist
+        from sys_role r
+	        left join sys_user_role ur on ur.role_id = r.role_id
+	        left join sys_user u on u.user_id = ur.user_id
+	        left join sys_dept d on u.dept_id = d.dept_id
+    </sql>-->
+
+	<sql id="selectRolePostContactVo">
+		select distinct r.rid,r.rname,r.adder,r.addtime,r.moder,r.modtime,r.update_time,r.invalidation_mark,r.memo,r.funclist
+		from og_role r
+			left join OG_R_POST_ROLE pr on r.rid = pr.rid
+			left join og_post p on p.postid = pr.postid
+			left join og_r_user_post u on p.postid = u.postid
+	</sql>
+
+
+    <sql id="selectRoleVo">
+		 select r.rid,r.rname,r.adder,r.addtime,r.moder,r.modtime,r.update_time,r.invalidation_mark,r.memo,r.funclist
+		 from og_role r
+	</sql>
+
+	<select id="selectRoleList" parameterType="OgRole" resultMap="OgRoleResult">
+		<include refid="selectRolePostContactVo"/>
+		where r.invalidation_mark='1'
+		<if test="rName != null and rName != ''">
+			AND r.rName like concat('%',concat(#{rName},'%'))
+		</if>
+		<!--<if test="invalidationMark != null and invalidationMark != ''">
+			AND r.invalidation_mark = #{invalidationMark}
+		</if>-->
+		order by r.rid asc
+	</select>
+
+	<select id="selectRolesByUserId" parameterType="String" resultMap="OgRoleResult">
+		<include refid="selectRolePostContactVo"/>
+		WHERE  u.userid = #{userId}
+	</select>
+
+	<select id="selectUserIdByRoleId" parameterType="String" resultType="String">
+		select u.userId from
+		  OG_R_POST_ROLE r left join
+          OG_R_USER_POST u on r.postid=u.postid
+		where
+			 r.rid=#{roleId}
+	</select>
+	<select id="selectRoleById" parameterType="String" resultMap="OgRoleResult">
+		<include refid="selectRoleVo"/>
+		where r.rid = #{roleId}
+	</select>
+
+	<select id="selectPostsByRoleId" parameterType="OgPost" resultMap="OgPostResult">
+		select
+			p.postid,p.post_name,p.memo,p.invalidation_mark,p.addtime,p.adder,p.moder,p.update_time,p.serial_num
+		from
+			og_post p left join OG_R_POST_ROLE pr on pr.postid = p.postid
+			left join og_role r on r.rid=pr.rid
+		where
+			p.invalidation_mark = '1'
+			and r.rid = #{roleId,jdbcType=VARCHAR}
+		<if test="postId != null and postId != ''">
+			and p.postId = #{postId}
+		</if>
+		<if test="postName != null and postName != ''">
+			and p.post_name like concat('%',concat(#{postName},'%'))
+		</if>
+	</select>
+
+	<select id="checkRoleNameUnique" parameterType="String" resultMap="OgRoleResult">
+		<include refid="selectRoleVo"/>
+		 where r.rname=#{rName}
+	</select>
+
+	<select id="checkRoleKeyUnique" parameterType="String" resultMap="OgRoleResult">
+		<include refid="selectRoleVo"/>
+		 where r.rid=#{rid}
+	</select>
+
+
+	<!--//根据条件分页查询未分配角色的岗位列表-->
+	<select id="selectUnallocatedListPost" parameterType="com.ruoyi.common.core.domain.entity.OgRole" resultMap="OgRoleResult">
+		select distinct r.rid,r.rname,r.adder,r.addtime,r.moder,r.modtime,r.update_time,r.invalidation_mark,r.memo,r.funclist
+		FROM og_role r
+		LEFT JOIN og_r_post_role pr on r.rid = pr.rid
+		LEFT JOIN og_post p on p.postid = pr.postid
+		WHERE (p.postid != #{postId} or p.postid IS NULL)
+		and r.rid not in (select r.rid from og_role r inner join og_r_post_role pr on r.rid = pr.rid and pr.postid =#{postId})
+		<if test="rName != null and rName != ''">
+			AND r.rname like concat('%',concat(#{rName},'%'))
+		</if>
+		<!-- 数据范围过滤 -->
+		${params.dataScope}
+	</select>
+
+
+
+
+
+	<select id="selectAllocatedListPost" parameterType="com.ruoyi.common.core.domain.entity.OgRole" resultMap="OgRoleResult">
+		select  r.rid,r.rname,r.adder,r.addtime,r.moder,r.modtime,r.update_time,r.invalidation_mark,r.memo,r.funclist
+		from og_role r
+		LEFT JOIN og_r_post_role pr on r.rid = pr.rid
+		LEFT JOIN og_post p on p.postid = pr.postid
+		where p.postid = #{postId}
+		<if test="rName != null and rName != ''">
+			AND r.rname like concat('%',concat(#{rName},'%'))
+		</if>
+		<!-- 数据范围过滤 -->
+		${params.dataScope}
+	</select>
+
+    <select id="getroleId" parameterType="java.lang.String" resultMap="OgRoleResult">
+		<include refid="selectRolePostContactVo"/>
+		WHERE  u.userid = #{userId}
+
+	</select>
+
+
+    <delete id="deleteRoleById" parameterType="Long">
+ 		delete from og_role where rid = #{rid}
+ 	</delete>
+
+ 	<delete id="deleteRoleByIds" parameterType="String">
+		delete from og_role  where rid in
+ 	    /*update og_role set invalidation_Mark = '0' where rid in*/
+ 		<foreach collection="array" item="roleId" open="(" separator="," close=")">
+ 			#{roleId}
+        </foreach>
+ 	</delete>
+
+ 	<update id="updateRole" parameterType="OgRole">
+ 		update og_role
+ 		<set>
+ 			<if test="rName != null and rName != ''">rName = #{rName},</if>
+ 			<if test="invalidationMark != null and invalidationMark != ''">invalidation_Mark = #{invalidationMark},</if>
+ 			memo = #{memo,jdbcType=VARCHAR},
+ 			<if test="modTime != null and modTime != ''">modTime = #{modTime},</if>
+ 			<if test="moder != null and moder != ''">moder = #{moder},</if>
+ 			<if test="updatetime != null and updatetime != ''">update_time = #{updatetime}</if>
+ 		</set>
+ 		where rid = #{rid}
+	</update>
+
+ 	<insert id="insertRole" parameterType="OgRole" useGeneratedKeys="false" keyProperty="rid">
+ 		insert into og_role(
+			rid,
+			<if test="rName != null and rName != ''">rName,</if>
+			<if test="invalidationMark != null and invalidationMark != ''">invalidation_Mark,</if>
+			<if test="memo != null and memo != ''">memo,</if>
+			<if test="adder != null and adder != ''">adder,</if>
+			<if test="addTime != null and addTime != ''">addTime</if>
+ 		)values(
+			#{rid},
+ 			<if test="rName != null and rName != ''">#{rName},</if>
+ 			<if test="invalidationMark != null and invalidationMark != ''">#{invalidationMark},</if>
+ 			<if test="memo != null and memo != ''">#{memo},</if>
+ 			<if test="adder != null and adder != ''">#{adder},</if>
+ 			<if test="addTime != null and addTime != ''">#{addTime}</if>
+ 		)
+	</insert>
+
+</mapper>

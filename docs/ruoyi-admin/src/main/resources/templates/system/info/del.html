@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:include="include :: header('废止信息制度')"/>
+    <th:block th:include="include :: select2-css" />
+    <th:block th:include="include :: datetimepicker-css" />
+    <th:block th:include="include :: summernote-css" />
+</head>
+<body class="white-bg">
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+    <form class="form-horizontal m" id="form-info-del"  th:object="${info}">
+        <input id="regime_info_id" name="regime_info_id" type="hidden" th:value="${regime_info_id}"/>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label class="col-xs-2 control-label">制度摘要:</label>
+                    <div class="col-xs-10">
+                        <input class="form-control" type="text" name="regime_digest" id="regime_digest" th:value="${regime_digest}" maxlength="20">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label class="col-xs-2 control-label is-required">原因:</label>
+                    <div class="col-sm-10">
+                        <select th:name="delete_reason" id="delete_reason" required class="form-control" th:with="type=${@dict.getParaType('delteReason')}">
+                            <option value=""></option>
+                            <option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label class="col-xs-2 control-label is-required">操作时间：</label>
+                    <div class="col-sm-10">
+                        <div class="input-group date">
+                            <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                            <input name="delete_time" id="delete_time" style="background-color: #fff; opacity: 1;" class="form-control calcTotalSecondInput" type="text"  readonly   required>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label class="col-xs-2 control-label is-required">审核人:</label>
+                    <div class="col-sm-10">
+                        <select id="checker" name="checker" class="form-control" th:field="*{checker}" required>
+                            <option th:each="user : ${checkerList}" th:text="${user.pName}" th:value="${user.pId}"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<div class="row">
+    <div class="col-sm-offset-5 col-sm-10">
+        <button type="button" class="btn btn-sm btn-primary" onclick="submitHandler()"><i class="fa fa-check"></i>提交</button>&nbsp;
+        <button type="button" class="btn btn-sm btn-primary" onclick="reset()"><i class="fa fa-repeat"></i>重置</button>&nbsp;
+        <button type="button" class="btn btn-sm btn-danger" onclick="closeItem()"><i class="fa fa-window-close"></i>关闭</button>
+    </div>
+</div>
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: summernote-js" />
+<th:block th:include="include :: datetimepicker-js" />
+<th:block th:include="include :: select2-js" />
+<script type="text/javascript">
+
+    //** 关闭选项卡 */
+    function closeItem() {
+
+        var index = parent.layer.getFrameIndex(window.name);
+        parent.layer.close(index);//关闭当前页
+    }
+
+    var prefix = ctx + "system/info";
+    debugger
+    function submitHandler() {
+        var data = $("#form-info-del").serializeArray();
+        if ($.validate.form()) {
+            $.operate.save(prefix + "/del", data);
+        }
+    }
+
+        $("input[name='delete_time']").datetimepicker({
+            autoclose: true,
+            format: "yyyy-mm-dd hh:ii:ss",
+            minView:0,
+            minuteStep:1,
+            Date:new Date()
+        });
+
+    //** 重置 */
+    function reset() {
+        $("#delete_time").val('');
+        $("#delete_reason").val('');
+
+    }
+
+
+</script>
+</body>
+</html>

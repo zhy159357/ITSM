@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('账号选择岗位')" />
+</head>
+
+<body class="gray-bg">
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-12 search-collapse">
+            <form id="post-form">
+                <div class="select-list">
+                    <ul>
+                        <li>
+                            岗位名称：<input type="text" name="postName"/>
+                        </li>
+                        <li>
+                            <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                            <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                        </li>
+                    </ul>
+                </div>
+            </form>
+        </div>
+
+        <div class="col-sm-12 select-table table-striped">
+            <table id="bootstrap-table"></table>
+        </div>
+    </div>
+</div>
+<th:block th:include="include :: footer" />
+<script th:inline="javascript">
+    var prefix = ctx + "system/post";
+    var allIds = [];
+    var hasPost = [];
+    var pid = [[${pid}]];
+    $(function() {
+    	has();
+        var options = {
+            url: prefix + "/postSelectList",
+            clickToSelect: true,
+            modalName: "岗位",
+            queryParams: queryParams,
+            columns: [{
+                checkbox: true,
+                formatter: function (value, row, index) {
+			                    if(isHas(row.postId))
+			                        return {
+			                            checked : true//设置选中
+			                        };
+                			}
+            	},
+                {
+                    field: 'postId',
+                    title: '岗位代码',
+                    visible:false
+                },
+                {
+                    field: 'postName',
+                    title: '岗位名称'
+                },
+                {
+                    field: 'memo',
+                    title: '备注'
+                },
+                {
+                    field: 'serialNum',
+                    title: '顺序',
+                    visible: false
+                }]
+        };
+        $.table.init(options);
+        
+     	// 选中行时触发
+        $('#bootstrap-table').on('check.bs.table', function (e, row) {
+            if (row != undefined) {
+            	allIds.push(row.postId);
+            }
+        });
+        // 取消选中行时触发
+        $('#bootstrap-table').on('uncheck.bs.table', function (e, row) {
+            if (row != undefined) {
+                if (allIds.length > 0) {
+                    for (var n = 0; n < allIds.length; n++) {
+                        if (allIds[n] != undefined && row.postId== allIds[n]) {
+                            delete allIds[n]; // 删除元素并已undefined代替（方法固有）
+                        }
+                    }
+                }
+            }
+            // 过滤掉因为delete 删除产生的undefined元素
+            allIds = allIds.filter(function(item){
+                return item!=undefined;
+            });
+        });
+    });
+
+    function queryParams(params) {
+        var search = $.table.queryParams(params);
+        search.userId = pid;
+        return search;
+    }
+
+    function submitHandler () {
+        //判断是是否有人员选中
+        var rows = $("#bootstrap-table").bootstrapTable('getSelections');
+        if(rows.length==0){
+            //请先选择岗位信息
+            $.modal.alertError('请先选择岗位信息!')
+            return;
+        }
+        //allIds = $.common.isEmpty(table.options.uniqueId) ? $.table.selectFirstColumns() : $.table.selectColumns(table.options.uniqueId);
+        for (var m = 0; m < allIds.length; m++) {
+        	for (var n = 0; n < hasPost.length; n++) {
+	            if (allIds[m] != undefined && hasPost[n] == allIds[m]) {
+	                delete allIds[m]; // 删除元素并已undefined代替（方法固有）
+	            }
+        	}
+        }
+    	 // 过滤掉因为delete 删除产生的undefined元素
+        allIds = allIds.filter(function(item){
+            return item!=undefined;
+        });
+        var data1 = { "userId":pid,"ids": allIds.join() };
+        //保存岗位信息
+        $.post(prefix+"/batch",data1,function (result) { 
+            if(result.code==0){
+                $.modal.alertSuccess('岗位添加成功');
+            }else{
+                $.modal.alertError('岗位添加失败!');
+            }
+        });
+    }
+    
+    function has(){
+    	//当前账户目前有的岗位信息       
+        $.ajax({
+        	async:false,
+    		type:"POST",
+    		url:ctx+'accountReq/selectListPostByUserId',
+    		data:{pid:pid},
+    		success:function (result) {
+                $(result.data).each(function (index,item) {
+                	hasPost.push(item.postId);
+                })
+    		},error:function(){
+      	　　}
+        });
+    }
+    
+    function isHas(id){
+    	for(var i=0;i<hasPost.length;i++){
+    		if(id==hasPost[i])
+    		return true;
+    	}
+    	for(var i=0;i<allIds.length;i++){
+    		if(id==allIds[i])
+    		return true;
+    	}
+    	return false;
+    }
+    
+   
+</script>
+</body>
+</html>

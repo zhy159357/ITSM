@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:include="include :: header('资源变更单列表')"/>
+</head>
+<body class="gray-bg">
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-12 search-collapse">
+            <form id="formId">
+                <div class="select-list">
+                    <ul>
+                        <li>
+                            <p>单号：</p>
+                            <input type="hidden" class="form-control" id="description" placeholder="流程任务描述"
+                                   name="params[description]" value="assessor"/>
+                            <input type="text" name="changeCode"/>
+                        </li>
+                        <li>
+                            <p>变更标题：</p>
+                            <input type="text" name="changeSingleName"/>
+                        </li>
+                        <li>
+                            <p>状态：</p>
+                            <select name="changeSingleStauts" th:with="type=${@dict.getParaType('changeSingleStatus')}">
+                                <option value="">所有</option>
+                                <option th:each="dict : ${type}" th:text="${dict.valueDetail}"
+                                        th:value="${dict.value}"></option>
+                            </select>
+                        </li>
+                        <li>
+                            <p>类型：</p>
+                            <select name="changeType" th:with="type=${@dict.getParaType('change_type')}">
+                                <option value="">所有</option>
+                                <option th:each="dict : ${type}" th:text="${dict.valueDetail}"
+                                        th:value="${dict.value}"></option>
+                            </select>
+                        </li>
+                        <li>
+                            <p>是否通知业务：</p>
+                            <select name="isNotice" id="isNotice">
+                                <option value="">所有</option>
+                                <option value="0">否</option>
+                                <option value="1">是</option>
+                            </select>
+                        </li>
+                        <li>
+                            <p>变更分类：</p>
+                            <input name="changeCategoryId" id="changeCategoryId" class="form-control" type="hidden">
+                            <input name="changeCategoryName" id="changeCategoryName" class="form-control"
+                                   onclick="selectTypeInfo()" type="text" readonly style="background-color:  #ffffff">
+                        </li>
+                        <li>
+                            <a class="btn btn-primary btn-rounded btn-sm" id="searchBut" onclick="$.table.search()"><i
+                                    class="fa fa-search"></i>&nbsp;搜索</a>
+                            <a class="btn btn-warning btn-rounded btn-sm" onclick="resetForm()"><i
+                                    class="fa fa-refresh"></i>&nbsp;重置</a>
+                        </li>
+                    </ul>
+                </div>
+            </form>
+        </div>
+
+        <div class="btn-group-sm" id="toolbar" role="group">
+            <a class="btn btn-primary single disabled" onclick="saveflow()">
+                <i class="fa fa-vi"></i>评估
+            </a>
+        </div>
+        <div class="col-sm-12 select-table table-striped">
+            <table id="bootstrap-table"></table>
+        </div>
+    </div>
+</div>
+<th:block th:include="include :: footer"/>
+<script th:inline="javascript">
+
+    var changeTypeV = [[${@pubParaValue.selectPubParaValueByParaName('change_type')}]];
+    var changeStatusV = [[${@pubParaValue.selectPubParaValueByParaName('changeSingleStatus')}]];
+    var prefix = ctx + "system/single";
+
+    $(function () {
+        // 回车键搜索
+        document.onkeydown = function (e) {
+            var ev = document.all ? window.event : e;
+            if (ev.keyCode == 13) {
+                $('#searchBut').trigger('click');
+                return false;
+            }
+        };
+        var options = {
+            url: prefix + "/getassessor",
+            exportUrl: prefix + "/export",
+            singleSelect: true,
+            clickToSelect: true,
+            modalName: "资源变更单",
+            columns: [{
+                checkbox: true
+            }, {
+                field: 'changeId',
+                visible: false
+            },
+                {
+                    field: 'changeCode',
+                    title: '变更单号'
+                },
+                {
+                    field: 'changeSingleName',
+                    title: '变更标题',
+                    width: 250,
+                    formatter: function (value, row, index) {
+                        return $.table.tooltip(value);
+                    }
+                },
+                {
+                    field: 'applicantName',
+                    title: '申请人'
+                },
+                {
+                    field: 'expectStartTime',
+                    title: '计划变更时间',
+                    formatter: function (value, row, index) {
+                        var startTime = '';
+                        if (value != '' && value != null) {
+                            var pattern = /(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/;
+                            startTime = value.replace(pattern, '$1-$2-$3 $4:$5:$6');
+                        }
+                        return startTime;
+                    }
+                },
+                {
+                    field: 'changeCategoryName',
+                    width: 100,
+                    title: '变更分类'
+                },
+                {
+                    field: 'changeType',
+                    title: '类型',
+                    formatter: function (value, row, index) {
+                        return $.table.selectPubParaValueData(changeTypeV, value);
+                    }
+                },
+                {
+                    field: 'changeSingleStauts',
+                    title: '状态',
+                    formatter: function (value, row, index) {
+                        return $.table.selectPubParaValueData(changeStatusV, value);
+                    }
+                }]
+        };
+        $.table.init(options);
+    });
+
+    // 回显数据字典
+    function selectPubParaValueData(datas, value) {
+        var actions = [];
+        $.each(datas, function (index, pubParaValue) {
+            if (pubParaValue.value == ('' + value)) {
+                actions.push($.common.sprintf("<span class='%s'>%s</span>", "", pubParaValue.valueDetail));
+                return false;
+            }
+        });
+        return actions.join('');
+    }
+
+    /*评估*/
+    function saveflow() {
+        var changeId = $.table.selectFirstColumns();
+        var url = prefix + "/assessor/" + changeId;
+        $.modal.openTab("评估变更单", url);
+
+    }
+
+    /* 选择分类树 */
+    function selectTypeInfo() {
+        var url = ctx + "system/typeinfo/cmBizTree";
+        var options = {
+            title: '选择分类',
+            width: "380",
+            url: url,
+            callBack: doSubmit2
+        };
+        $.modal.openOptions(options);
+    }
+
+    function doSubmit2(index, layero) {
+        var tree = layero.find("iframe")[0].contentWindow.$._tree;
+        if (jQuery.isEmptyObject(tree)) {
+            layer.close(index);
+        }
+        var selectNode = tree.getSelectedNodes();
+        if (selectNode.length != 0) {
+            $("#changeCategoryId").val(selectNode[0].id);
+            $("#changeCategoryName").val(selectNode[0].name);
+        }
+        layer.close(index);
+    }
+
+    function resetForm() {
+        $("#changeCategoryId").val("");// 设置地址之后进行查询
+        $.form.reset();
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('事件维护列表')" />
+    <th:block th:include="include :: layout-latest-css" />
+</head>
+<body class="gray-bg">
+<div class="ui-layout-center">
+    <div class="container-div">
+        <div class="row">
+            <div class="col-sm-12 search-collapse">
+                <form id="fm-from">
+                    <div class="select-list">
+                        <ul>
+                            <li>
+                                事件标题：<input type="text" name="mTitle" maxlength="50"/>
+                            </li>
+                            <li>
+                                事件描述：<input type="text" name="mDetail" maxlength="50"/>
+                            </li>
+                            <li>
+                                <a class="btn btn-primary btn-rounded btn-sm" id="ss" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.resetAll('fm-from')"><i class="fa fa-repeat"></i>&nbsp;重置</a>
+                            </li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+
+            <div class="btn-group-sm" id="toolbar" role="group">
+                <a class="btn btn-success" onclick="add()">
+                    <i class="fa fa-plus"></i> 新增
+                </a>
+                <a class="btn btn-primary single disabled" onclick="edit()">
+                    <i class="fa fa-edit"></i> 修改
+                </a>
+                <a class="btn btn-danger multiple disabled"  onclick="$.operate.removeAll()">
+                    <i class="fa fa-remove"></i> 删除
+                </a>
+            </div>
+
+            <div class="col-sm-12 select-table table-striped">
+                <table id="bootstrap-table"></table>
+            </div>
+        </div>
+    </div>
+</div>
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: layout-latest-js" />
+<script th:inline="javascript">
+
+    var prefix = ctx + "fmbizmaint";
+
+    document.onkeydown = function(e){
+        var ev = document.all ? window.event : e;
+        if(ev.keyCode==13) {
+            $('#ss').trigger('click');
+            return false;
+        } //搜索逻辑
+    }
+
+    $(function() {
+        var options = {
+            url: prefix + "/list",
+            createUrl: prefix + "/add",
+            updateUrl: prefix + "/edit/{id}",
+            removeUrl: prefix + "/remove",
+            modalName: "事件维护",
+            clickToSelect:true,
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'mId',
+                    title: 'ID',
+                    visible:false
+                },
+                {
+                    field: 'mTitle',
+                    title: '事件标题'
+                },
+                {
+                    field: 'mDetail',
+                    title: '事件描述'
+                }
+            ]
+        };
+        $.table.init(options);
+    });
+
+    function add(id) {
+        table.set();
+        $.modal.openNoColse("添加" + table.options.modalName, $.operate.addUrl(id));
+    };
+    function edit(id) {
+        table.set();
+        $.modal.openNoColse("修改" + table.options.modalName, $.operate.editUrl(id));
+    };
+    function removeAll(id) {
+        table.set();
+        $.modal.openColse("删除" + table.options.modalName, $.operate.removeAll(id));
+    };
+
+</script>
+</body>
+</html>

@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.activiti.mapper.FmNoteMapper">
+    
+    <resultMap type="FmNote" id="FmNoteResult">
+        <result property="noteId"    column="note_id"    />
+        <result property="noteNo"    column="note_no"    />
+        <result property="noteName"    column="note_name"    />
+        <result property="noteType"    column="note_type"    />
+        <result property="noteTime"    column="note_time"    />
+        <result property="ifFeedback"    column="if_feedback"    />
+        <result property="feedbackAbortTime"    column="feedback_abort_time"    />
+        <result property="square"    column="square"    />
+        <result property="filePath"    column="file_path"    />
+        <result property="disposeTime"    column="dispose_time"    />
+        <result property="feedbackTime"    column="feedback_time"    />
+        <result property="orgid"    column="orgid"    />
+        <result property="acceptingState"    column="accepting_state"    />
+        <result property="disposeState"    column="dispose_state"    />
+        <result property="disposeId"    column="dispose_id"    />
+        <result property="ifInvolve"    column="if_involve"    />
+        <result property="feedbackDetail"    column="feedback_detail"    />
+        <result property="n1"    column="n1"    />
+        <result property="n2"    column="n2"    />
+        <result property="n3"    column="n3"    />
+        <result property="n4"    column="n4"    />
+        <result property="n5"    column="n5"    />
+        <result property="startTime"    column="start_Time"    />
+        <result property="noteState"    column="note_state"    />
+    </resultMap>
+
+    <sql id="selectFmNoteVo">
+        select note_id,
+               note_no,
+               note_name,
+               note_type,
+               note_time,
+               if_feedback,
+               feedback_abort_time,
+               square,
+               file_path,
+               dispose_time,
+               feedback_time,
+               orgid,
+               accepting_state,
+               dispose_state,
+               dispose_id,
+               if_involve,
+               feedback_detail,
+               n1,
+               n2,
+               n3,
+               n4,
+               n5,
+               start_Time,
+               note_state
+          from fm_note
+    </sql>
+
+    <select id="selectFmNoteList" parameterType="FmNote" resultMap="FmNoteResult">
+        <include refid="selectFmNoteVo"/>
+        <where>  
+            <if test="noteNo != null  and noteNo != ''"> and note_no = #{noteNo}</if>
+            <if test="noteName != null  and noteName != ''"> and note_name like concat(concat('%', #{noteName}), '%')</if>
+            <if test="noteType != null  and noteType != ''"> and note_type = #{noteType}</if>
+            <if test="noteTime != null  and noteTime != ''"> and note_time = #{noteTime}</if>
+            <if test="ifFeedback != null  and ifFeedback != ''"> and if_feedback = #{ifFeedback}</if>
+            <if test="feedbackAbortTime != null  and feedbackAbortTime != ''"> and feedback_abort_time = #{feedbackAbortTime}</if>
+            <if test="square != null  and square != ''"> and square = #{square}</if>
+            <if test="filePath != null  and filePath != ''"> and file_path = #{filePath}</if>
+            <if test="disposeTime != null  and disposeTime != ''"> and dispose_time = #{disposeTime}</if>
+            <if test="feedbackTime != null  and feedbackTime != ''"> and feedback_time = #{feedbackTime}</if>
+            <if test="orgid != null  and orgid != ''"> and orgid = #{orgid}</if>
+            <if test="acceptingState != null  and acceptingState != ''"> and accepting_state = #{acceptingState}</if>
+            <if test="disposeState != null  and disposeState != ''"> and dispose_state = #{disposeState}</if>
+            <if test="disposeId != null  and disposeId != ''"> and dispose_id = #{disposeId}</if>
+            <if test="ifInvolve != null  and ifInvolve != ''"> and if_involve = #{ifInvolve}</if>
+            <if test="feedbackDetail != null  and feedbackDetail != ''"> and feedback_detail = #{feedbackDetail}</if>
+            <if test="n1 != null  and n1 != ''"> and n1 = #{n1}</if>
+            <if test="n2 != null  and n2 != ''"> and n2 = #{n2}</if>
+            <if test="n3 != null  and n3 != ''"> and n3 = #{n3}</if>
+            <if test="n4 != null  and n4 != ''"> and n4 = #{n4}</if>
+            <if test="n5 != null  and n5 != ''"> and n5 = #{n5}</if>
+            <if test="startTime != null  and startTime != ''"> and start_time = #{startTime}</if>
+            <if test="noteState != null  and noteState != ''"> and note_state = #{noteState}</if>
+        </where>
+    </select>
+    
+    <select id="selectFmNoteById" parameterType="String" resultMap="FmNoteResult">
+        <include refid="selectFmNoteVo"/>
+        where note_id = #{noteId}
+    </select>
+        
+    <insert id="insertFmNote" parameterType="FmNote">
+        insert into fm_note
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="noteId != null  and noteId != ''">note_id,</if>
+            <if test="noteNo != null  and noteNo != ''">note_no,</if>
+            <if test="noteName != null  and noteName != ''">note_name,</if>
+            <if test="noteType != null  and noteType != ''">note_type,</if>
+            <if test="noteTime != null  and noteTime != ''">note_time,</if>
+            <if test="ifFeedback != null  and ifFeedback != ''">if_feedback,</if>
+            <if test="feedbackAbortTime != null  and feedbackAbortTime != ''">feedback_abort_time,</if>
+            <if test="square != null  and square != ''">square,</if>
+            <if test="filePath != null  and filePath != ''">file_path,</if>
+            <if test="disposeTime != null  and disposeTime != ''">dispose_time,</if>
+            <if test="feedbackTime != null  and feedbackTime != ''">feedback_time,</if>
+            <if test="orgid != null  and orgid != ''">orgid,</if>
+            <if test="acceptingState != null  and acceptingState != ''">accepting_state,</if>
+            <if test="disposeState != null  and disposeState != ''">dispose_state,</if>
+            <if test="disposeId != null  and disposeId != ''">dispose_id,</if>
+            <if test="ifInvolve != null  and ifInvolve != ''">if_involve,</if>
+            <if test="feedbackDetail != null  and feedbackDetail != ''">feedback_detail,</if>
+            <if test="n1 != null  and n1 != ''">n1,</if>
+            <if test="n2 != null  and n2 != ''">n2,</if>
+            <if test="n3 != null  and n3 != ''">n3,</if>
+            <if test="n4 != null  and n4 != ''">n4,</if>
+            <if test="n5 != null  and n5 != ''">n5,</if>
+            <if test="startTime != null  and startTime != ''">start_time,</if>
+            <if test="noteState != null  and noteState != ''">note_state,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="noteId != null  and noteId != ''">#{noteId},</if>
+            <if test="noteNo != null  and noteNo != ''">#{noteNo},</if>
+            <if test="noteName != null  and noteName != ''">#{noteName},</if>
+            <if test="noteType != null  and noteType != ''">#{noteType},</if>
+            <if test="noteTime != null  and noteTime != ''">#{noteTime},</if>
+            <if test="ifFeedback != null  and ifFeedback != ''">#{ifFeedback},</if>
+            <if test="feedbackAbortTime != null  and feedbackAbortTime != ''">#{feedbackAbortTime},</if>
+            <if test="square != null  and square != ''">#{square},</if>
+            <if test="filePath != null  and filePath != ''">#{filePath},</if>
+            <if test="disposeTime != null  and disposeTime != ''">#{disposeTime},</if>
+            <if test="feedbackTime != null  and feedbackTime != ''">#{feedbackTime},</if>
+            <if test="orgid != null  and orgid != ''">#{orgid},</if>
+            <if test="acceptingState != null  and acceptingState != ''">#{acceptingState},</if>
+            <if test="disposeState != null  and disposeState != ''">#{disposeState},</if>
+            <if test="disposeId != null  and disposeId != ''">#{disposeId},</if>
+            <if test="ifInvolve != null  and ifInvolve != ''">#{ifInvolve},</if>
+            <if test="feedbackDetail != null  and feedbackDetail != ''">#{feedbackDetail},</if>
+            <if test="n1 != null  and n1 != ''">#{n1},</if>
+            <if test="n2 != null  and n2 != ''">#{n2},</if>
+            <if test="n3 != null  and n3 != ''">#{n3},</if>
+            <if test="n4 != null  and n4 != ''">#{n4},</if>
+            <if test="n5 != null  and n5 != ''">#{n5},</if>
+            <if test="startTime != null  and startTime != ''">#{startTime},</if>
+            <if test="noteState != null  and noteState != ''">#{noteState},</if>
+         </trim>
+    </insert>
+
+    <update id="updateFmNote" parameterType="FmNote">
+        update fm_note
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="noteNo != null  and noteNo != ''">note_no = #{noteNo},</if>
+            <if test="noteName != null  and noteName != ''">note_name = #{noteName},</if>
+            <if test="noteType != null  and noteType != ''">note_type = #{noteType},</if>
+            <if test="noteTime != null  and noteTime != ''">note_time = #{noteTime},</if>
+            <if test="ifFeedback != null  and ifFeedback != ''">if_feedback = #{ifFeedback},</if>
+            <if test="feedbackAbortTime != null  and feedbackAbortTime != ''">feedback_abort_time = #{feedbackAbortTime},</if>
+            <if test="square != null  and square != ''">square = #{square},</if>
+            <if test="filePath != null  and filePath != ''">file_path = #{filePath},</if>
+            <if test="disposeTime != null  and disposeTime != ''">dispose_time = #{disposeTime},</if>
+            <if test="feedbackTime != null  and feedbackTime != ''">feedback_time = #{feedbackTime},</if>
+            <if test="orgid != null  and orgid != ''">orgid = #{orgid},</if>
+            <if test="acceptingState != null  and acceptingState != ''">accepting_state = #{acceptingState},</if>
+            <if test="disposeState != null  and disposeState != ''">dispose_state = #{disposeState},</if>
+            <if test="disposeId != null  and disposeId != ''">dispose_id = #{disposeId},</if>
+            <if test="ifInvolve != null  and ifInvolve != ''">if_involve = #{ifInvolve},</if>
+            <if test="feedbackDetail != null  and feedbackDetail != ''">feedback_detail = #{feedbackDetail},</if>
+            <if test="n1 != null  and n1 != ''">n1 = #{n1},</if>
+            <if test="n2 != null  and n2 != ''">n2 = #{n2},</if>
+            <if test="n3 != null  and n3 != ''">n3 = #{n3},</if>
+            <if test="n4 != null  and n4 != ''">n4 = #{n4},</if>
+            <if test="n5 != null  and n5 != ''">n5 = #{n5},</if>
+            <if test="startTime != null  and startTime != ''">start_time = #{startTime}</if>
+            <if test="noteState != null  and noteState != ''">note_state = #{noteState}</if>
+        </trim>
+        where note_id = #{noteId}
+    </update>
+
+    <delete id="deleteFmNoteById" parameterType="String">
+        delete from fm_note where note_id = #{noteId}
+    </delete>
+
+    <delete id="deleteFmNoteByIds" parameterType="String">
+        delete from fm_note where note_id in 
+        <foreach item="noteId" collection="array" open="(" separator="," close=")">
+            #{noteId}
+        </foreach>
+    </delete>
+    
+</mapper>

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('新增【版本部署记录】')" />
+    <th:block th:include="include :: select2-css" />
+    <th:block th:include="include :: summernote-css" />
+    <th:block th:include="include :: datetimepicker-css" />
+</head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form class="form-horizontal m" id="form-version-add">
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">版本号：</label>
+                <div class="col-sm-8">
+                    <input name="versionNo" id="versionNo" class="form-control" type="text" maxlength="30">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">系统名称：</label>
+                <div class="col-sm-8">
+                    <input name="sysName" id="sysName" class="form-control" type="text" maxlength="40">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">是否显示：</label>
+                <div class="col-sm-8">
+                    <select class="form-control" id="versionShow"  name="versionShow" th:with="type=${@dict.getParaType('Line_Isno')}">
+                        <option value=""></option>
+                        <option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">部署时间：</label>
+                <div class="col-sm-8">
+                    <input id="deploymentTime" name="deploymentTime" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label is-required" style="width:11%">版本内容：</label>
+                        <div class="col-sm-10" style="width:89%">
+                            <input id="versionContent" name="versionContent" type="hidden" readonly >
+                            <div class="summernote" id="summernote"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="row">
+        <div class="col-sm-offset-5 col-sm-10">
+            <button type="button" class="btn btn-sm btn-primary" onclick="submitHandler()"><i class="fa fa-check"></i>提 交</button>
+            <button type="button" class="btn btn-sm btn-danger" onclick="closeItem()"><i class="fa fa-reply-all"></i>关 闭</button>
+        </div>
+    </div>
+    <th:block th:include="include :: footer" />
+    <th:block th:include="include :: select2-js" />
+    <th:block th:include="include :: summernote-js" />
+    <th:block th:include="include :: datetimepicker-js" />
+
+
+    <script type="text/javascript">
+        var prefix = ctx + "sion/newly"
+
+        $("#form-version-add").validate({
+            focusCleanup: true
+        });
+
+        $("#deploymentTime").datetimepicker({
+            format: "yyyy-mm-dd hh:ii:ss",
+            autoclose: true,
+            minView:0,
+            minuteStep:1
+        });
+
+        $(function () {
+            $('.summernote').summernote({
+                placeholder: '',
+                height : 192,
+                lang : 'zh-CN',
+                followingToolbar: false,
+                callbacks: {
+                    onImageUpload: function (files) {
+                        sendFile(files[0], this);
+                    }
+                },
+                focus:true
+            });
+        });
+
+        function submitHandler() {
+            if ($.validate.form()) {
+                var code = $('#summernote').summernote('code');
+                /*if(code.length>1024){
+                    $.modal.alertError("事件内容输入长度不能大于3000!");
+                    return;
+                }*/
+                $('#versionContent').val(code);
+                $.operate.saveTab(prefix + "/add", $('#form-version-add').serialize());
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('查询数据提取单')" />
+    <th:block th:include="include :: select2-css" />
+</head>
+<body class="gray-bg">
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-12 search-collapse">
+            <form id="formId">
+                <div class="select-list">
+                    <ul>
+                        <li>
+                            <p>单号：</p>
+                            <input type="text" name="fetchNo"/>
+                        </li>
+
+                        <li>
+                            <p>需求标题：</p>
+                            <input type="text" name="titleName"/>
+                        </li>
+                        <li>
+                            <p>联系部门：</p>
+                            <input type="text" name="orgName"/>
+                        </li>
+                        <li>
+                            <p>联系人：</p>
+                            <input type="text" name="personName"/>
+                        </li>
+                        <li>
+                            <p>需求单号：</p>
+                            <input type="text" name="businessNumber"/>
+                        </li>
+
+                        <li>
+                            <p>需求类别：</p>
+                            <select id="businessType" name="businessType" class="form-control"
+                                    th:with="type=${@pubParaValue.selectPubParaValueByParaName('business_type')}">
+                                <option value="">所有</option>
+                                <option th:each="PubParaValue : ${type}" th:text="${PubParaValue.valueDetail}"
+                                        th:value="${PubParaValue.value}"></option>
+                            </select>
+                        </li>
+                        <li>
+                            <p>状态：</p>
+                            <select id="fetchState" name="fetchState" class="form-control"
+                                    th:with="type=${@pubParaValue.selectPubParaValueByParaName('fetch_state')}">
+                                <option value="">所有</option>
+                                <option th:each="PubParaValue : ${type}" th:text="${PubParaValue.valueDetail}"
+                                        th:value="${PubParaValue.value}"></option>
+                            </select>
+                        </li>
+                        <li>
+                            <p>业务部门：</p>
+                            <input type="text" name="businessOrgName"/>
+                        </li>
+                        <li>
+                            <p>业务联系人：</p>
+                            <input type="text" name="bbusinessPersonName"/>
+                        </li>
+                        <li>
+                            <p>涉及系统：</p>
+                            <input type="text" name="sysNameText"/>
+                        </li>
+                        <li>
+                            <p>需求来源：</p>
+                            <select id="sourceType" name="sourceType" class="form-control"
+                                    th:with="type=${@pubParaValue.selectPubParaValueByParaName('sourceType')}">
+                                <option value="">所有</option>
+                                <option th:each="PubParaValue : ${type}" th:text="${PubParaValue.valueDetail}"
+                                        th:value="${PubParaValue.value}"></option>
+                            </select>
+                        </li>
+                        <li>
+                            <a class="btn btn-primary btn-rounded btn-sm" id="ss" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                            <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.resetAll('formId')"><i class="fa fa-repeat"></i>&nbsp;重置</a>
+                        </li>
+                    </ul>
+                </div>
+            </form>
+        </div>
+        <div class="btn-group-sm" id="toolbar" role="group">
+            <a class="btn btn-info single disabled" onclick="fetchDetails()" id="fetchDetails">
+                <i class="fa fa-search"></i>查看详情
+            </a>
+            <!--导出所有｜当前页按钮组合-->
+            <div class="btn-group">
+                <button data-toggle="dropdown" class="btn btn-primary btn-sm dropdown-toggle"> <i class="fa fa-cloud-upload"></i> 导出<span
+                        class="caret"></span>
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a onclick="$.table.exportExcel()">导出所有</a>
+                    </li>
+                    <li><a onclick="$.table.exportExcelCurrentPage()">导出当前页</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="col-sm-12 select-table table-striped">
+            <table id="bootstrap-table"></table>
+        </div>
+    </div>
+</div>
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: select2-js" />
+<script th:inline="javascript">
+    var prefix = ctx + "fetch/demand";
+    $(function() {
+
+        document.onkeydown = function(e){
+            var ev = document.all ? window.event : e;
+            console.log(ev);
+            if(ev.keyCode==13) {
+                $('#ss').trigger('click');
+                return false;
+            } //搜索逻辑
+        }
+        var options = {
+            url: prefix + "/demandList",
+            createUrl: prefix + "/add",
+            updateUrl: prefix + "/edit/{id}",
+            removeUrl: prefix + "/remove",
+            exportUrl: prefix + "/query/export",
+            sortName: "creatTime",
+            sortOrder: "desc",
+            singleSelect:true,
+            clickToSelect:true,
+            modalName: "数据提取单",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field : 'fetchId',
+                    title : '数据提取单id',
+                    visible: false
+                },
+                {
+                    field : 'fetchNo',
+                    title : '单号',
+                    formatter: function(value, row, index) {
+                        return $.table.tooltip(value);
+                    },
+                    cellStyle: function cellStyle(value, row, index, field) {
+                        return { classes: 'text-nowrap'};
+                    }
+                },
+                {
+                    field : 'sourceTypeText',
+                    title : '需求来源',
+                    formatter: function(value, row, index) {
+                        return $.table.tooltip(value);
+                    },
+                    cellStyle: function cellStyle(value, row, index, field) {
+                        return { classes: 'text-nowrap'};
+                    }
+                },
+                {
+                    field : 'titleName',
+                    title : '需求标题',
+                    formatter: function(value, row, index) {
+                        return $.table.tooltip(value);
+                    },
+                    cellStyle: function cellStyle(value, row, index, field) {
+                        return { classes: 'text-nowrap'};
+                    }
+                },
+                {
+                    field : 'orgName',
+                    title : '联系部门',
+                    formatter: function(value, row, index) {
+                        return $.table.tooltip(value);
+                    },
+                    cellStyle: function cellStyle(value, row, index, field) {
+                        return { classes: 'text-nowrap'};
+                    }
+                },
+                {
+                    field : 'personName',
+                    title : '联系人',
+                    formatter: function(value, row, index) {
+                        return $.table.tooltip(value);
+                    },
+                    cellStyle: function cellStyle(value, row, index, field) {
+                        return { classes: 'text-nowrap'};
+                    }
+                },
+                {
+                    field : 'businessNumber',
+                    title : '需求单号',
+                    formatter: function(value, row, index) {
+                        return $.table.tooltip(value);
+                    },
+                    cellStyle: function cellStyle(value, row, index, field) {
+                        return { classes: 'text-nowrap'};
+                    }
+                },
+                {
+                    field : 'businessTypeText',
+                    title : '需求类别',
+                    formatter: function(value, row, index) {
+                        return $.table.tooltip(value);
+                    },
+                    cellStyle: function cellStyle(value, row, index, field) {
+                        return { classes: 'text-nowrap'};
+                    }
+                },
+                {
+                    field : 'businessOrgName',
+                    title : '业务部门',
+                    formatter: function(value, row, index) {
+                        return $.table.tooltip(value);
+                    },
+                    cellStyle: function cellStyle(value, row, index, field) {
+                        return { classes: 'text-nowrap'};
+                    }
+                },
+                {
+                    field : 'bbusinessPersonName',
+                    title : '业务联系人',
+                    formatter: function(value, row, index) {
+                        return $.table.tooltip(value);
+                    },
+                    cellStyle: function cellStyle(value, row, index, field) {
+                        return { classes: 'text-nowrap'};
+                    }
+                },
+                {
+                    field : 'sysName',
+                    title : '涉及系统',
+                    formatter: function(value, row, index) {
+                        return $.table.tooltip(value);
+                    },
+                    cellStyle: function cellStyle(value, row, index, field) {
+                        return { classes: 'text-nowrap'};
+                    }
+                },
+                {
+                    field : 'creatTimeText',
+                    title : '创建时间',
+                    formatter: function(value, row, index) {
+                        return $.table.tooltip(value);
+                    },
+                    cellStyle: function cellStyle(value, row, index, field) {
+                        return { classes: 'text-nowrap'};
+                    }
+                },
+                {
+                    field : 'fetchStateText',
+                    title : '数据提取单状态',
+                    formatter: function(value, row, index) {
+                        return $.table.tooltip(value);
+                    },
+                    cellStyle: function cellStyle(value, row, index, field) {
+                        return { classes: 'text-nowrap'};
+                    }
+                },
+                {
+                    field : 'dealSchdule',
+                    title : '处理进度',
+                    formatter: function(value, row, index) {
+                        return $.table.tooltip(value);
+                    },
+                    cellStyle: function cellStyle(value, row, index, field) {
+                        return { classes: 'text-nowrap'};
+                    }
+                }]
+        };
+        $.table.init(options);
+    });
+
+    function fetchDetails() {
+        //获取选中的row的Id
+        var row = $("#bootstrap-table").bootstrapTable('getSelections')[0];
+        $.modal.openTab("查看" + table.options.modalName, prefix+"/details/"+row.fetchId);
+    }
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.activiti.mapper.DutyViewMapper">
+
+    <resultMap type="DutyScheduling" id="DutySchedulingResult">
+        <result property="schedulingId" column="scheduling_id"    />
+        <result property="typeName"     column="type_name"    />
+        <result property="typeNo"       column="type_no"    />
+        <result property="typeinfoId"   column="typeinfo_id"    />
+        <result property="pid"          column="pid"    />
+        <result property="pname"        column="pname"    />
+        <result property="mobilephone"  column="mobile_phone"    />
+        <result property="dutyDate"     column="duty_date"    />
+        <result property="timeShift"    column="time_shift"    />
+        <result property="dutyNumber"   column="duty_number"    />
+        <result property="typeinfoId"   column="typeinfo_id"    />
+    </resultMap>
+
+    <resultMap type="DutyVersion" id="versionResult">
+        <result property="schedulingId"       	column="scheduling_id"    />
+        <result property="dutyDate"      		column="duty_date"	/>
+        <result property="typeinfoId"       	column="typeinfo_id"    />
+        <result property="typeNo"           	column="type_no"    />
+        <result property="typeName"           	column="type_name"    />
+        <result property="pname"           	    column="pname"    />
+        <result property="pid"           	    column="pid"    />
+        <result property="typeColumns"         	column="type_columns"    />
+        <result property="parentId"    			column="parent_id"    />
+    </resultMap>
+
+    <select id="selectViewListByDutyDate" parameterType="DutyScheduling" resultMap="DutySchedulingResult">
+        select d.time_shift,d.scheduling_id,d.pid,d.pname,d.mobile_phone,d.duty_date,t.type_name,d.type_no,d.leader
+        from duty_scheduling d left join duty_typeinfo t on t.type_no=d.type_no
+        <where>
+            <if test="dutyDate != null  and dutyDate != ''"> and d.duty_date like concat(concat('%',#{dutyDate}),'%')</if>
+            <if test="typeNo != null  and typeNo != ''"> and d.type_no = #{typeNo} </if>
+        </where>
+        order by d.type_no
+    </select>
+
+    <select id="selectVersionByParentId" parameterType="String" resultMap="versionResult">
+        select typeinfo_id,type_no,type_name,parent_id,type_columns
+        from duty_version_typeinfo t left join duty_version v on v.version_id=t.version_id
+        WHERE parent_id = #{parentId}
+        <if test="dutyDate != null  and dutyDate != ''"> and v.duty_date like concat(concat('%',#{dutyDate}),'%')</if>
+        order by t.type_no
+    </select>
+
+    <select id="selectCalendar" parameterType="String" resultMap="versionResult">
+        select s.scheduling_id,t.type_name,t.typeinfo_id,
+        to_char(to_date(s.duty_date,'YYYY-MM-dd'),'yyyy-fMMM-dd') as duty_date,s.pid,s.pname
+        from duty_scheduling s
+        left join duty_typeinfo t on t.typeinfo_id = s.typeinfo_id
+        where s.pid like concat(concat('%',#{pid}),'%')
+        and s.duty_date like concat(concat('%',#{dutyDate}),'%')
+    </select>
+    <select id="selectCalendarMysql" parameterType="String" resultMap="versionResult">
+        select s.scheduling_id,t.type_name,t.typeinfo_id,
+        date_format(str_to_date(s.duty_date,'YYYY-MM-dd'),'yyyy-fMMM-dd') as duty_date,s.pid,s.pname
+        from duty_scheduling s
+        left join duty_typeinfo t on t.typeinfo_id = s.typeinfo_id
+        where s.pid like concat(concat('%',#{pid}),'%')
+        and s.duty_date like concat(concat('%',#{dutyDate}),'%')
+    </select>
+
+    <select id="selectSchedulingById" parameterType="String" resultMap="versionResult">
+        select s.scheduling_id,t.type_no,t.type_name,t.typeinfo_id,s.duty_date,s.pid,s.pname
+        from duty_scheduling s
+        left join duty_typeinfo t on t.typeinfo_id = s.typeinfo_id
+        <where>
+            <if test="pid != null and pid != ''"> and s.pid like concat(concat('%',#{pid}),'%')</if>
+            <if test="dutyDate != null and dutyDate != ''"> and s.duty_date = #{dutyDate}</if>
+        </where>
+    </select>
+
+    <select id="selectSchedulingByNotId" parameterType="String" resultMap="versionResult">
+        select s.scheduling_id,t.type_no,t.type_name,t.typeinfo_id,s.duty_date,s.pid,s.pname
+        from duty_scheduling s
+        left join duty_typeinfo t on t.typeinfo_id = s.typeinfo_id
+        where s.scheduling_id not in (select scheduling_id from duty_substitute where scheduling_id=s.scheduling_id and status = 0)
+        <if test="pid != null and pid != ''"> and s.pid like concat(concat('%',#{pid}),'%')</if>
+        <if test="dutyDate != null and dutyDate != ''"> and s.duty_date = #{dutyDate}</if>
+    </select>
+
+    <select id="exportSchedulingList" parameterType="String" resultMap="versionResult">
+        select s.scheduling_id,t.type_no,t.type_name,t.typeinfo_id,s.duty_date,s.pid,s.pname
+        from duty_scheduling s
+        left join duty_typeinfo t on t.typeinfo_id = s.typeinfo_id
+        <where>
+            <if test="dutyDate != null and dutyDate != ''"> and s.duty_date like concat(concat('%',#{dutyDate}),'%')</if>
+        </where>
+    </select>
+
+    <select id="selectViewListByDutyDateAndTypeNo"  resultMap="DutySchedulingResult">
+        select d.scheduling_id,d.pid,d.pname,d.mobile_phone,d.duty_date,t.type_name,d.type_no,d.leader
+        from duty_scheduling d left join duty_typeinfo t on t.type_no=d.type_no
+        <where>
+            <if test="dutyDate != null  and dutyDate != ''"> and d.duty_date like concat(concat('%',#{dutyDate}),'%')</if>
+            <if test="typeNo != null  and typeNo != ''"> and d.TYPE_NO = #{typeNo}</if>
+        </where>
+        order by d.type_no
+    </select>
+
+</mapper>

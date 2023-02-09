@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:include="include :: header('监控知识模板')"/>
+    <th:block th:include="include :: select2-css" />
+</head>
+<body class="white-bg">
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+    <form class="form-horizontal m" id="form-template-edit" th:object="${cont}">
+    	<div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label class="col-xs-2 control-label" >模板内容:</label>
+                    <div class="col-xs-10">
+                        <input id ="describe" th:value="*{describe}" type="hidden">
+                    	<div id="editor"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<div class="row">
+    <div class="col-sm-offset-5 col-sm-10">
+        <button type="button" class="btn btn-sm btn-primary" onclick="submitHandler()"><i class="fa fa-check"></i>保存</button>&nbsp;
+        <button type="button" class="btn btn-sm btn-danger" onclick="closeItem()"><i class="fa fa-window-close"></i>关闭 </button>
+    </div>
+</div>
+<th:block th:include="include :: footer"/>
+<th:block th:include="include :: select2-js" />
+<script th:src="@{/ckeditor/ckeditor.js}"></script>
+<script th:src="@{/ckeditor/pasteImage.js}"></script>
+<script th:src="@{/ckeditor/pasteWord.js}"></script>
+<script th:inline="javascript">
+    var prefix = ctx + "knowledge/cont";
+    
+    var editor=CKEDITOR.replace('editor',{extraPlugins : "myplug"});//CKEDITOR4 插件初始化
+    CKPasteImage("editor");
+    CKPasteWord("editor");
+    CKAddLinks("editor");
+    CKFitHeight("editor");
+    $(function() {
+    	editor.setData($('#describe').val());
+    });
+    
+    function closeItem() {
+        var index = parent.layer.getFrameIndex(window.name);
+        parent.layer.close(index);//关闭当前页
+    }
+    
+    function submitHandler() {
+        var data = $("#form-template-edit").serializeArray();
+        data.push({name:"describe",value:editor.getData()});//富文本内容单独获取
+        if ($.validate.form()) {
+            $.operate.save(prefix + "/savetemplate", data);
+        }
+    }
+</script>
+</body>
+</html>

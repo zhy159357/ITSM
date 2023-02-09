@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.form.mapper.DesignBizShieldWarnMapper">
+    
+    <resultMap type="DesignBizShieldWarn" id="DesignBizShieldWarnResult">
+        <result property="id"    column="id"    />
+        <result property="changeTaskNo"    column="changeTaskNo"    />
+        <result property="shieldType"    column="shieldType"    />
+        <result property="pasoCode"    column="pasoCode"    />
+        <result property="net"    column="net"    />
+        <result property="ipAddress"    column="ipAddress"    />
+        <result property="indexType"    column="indexType"    />
+        <result property="systemCode"    column="systemCode"    />
+        <result property="objectName"    column="objectName"    />
+        <result property="insName"    column="insName"    />
+    </resultMap>
+
+    <sql id="selectDesignBizShieldWarnVo">
+        select id, changeTaskNo, shieldType, pasoCode, net, ipAddress, indexType, systemCode, objectName, insName from design_biz_shield_warn
+    </sql>
+
+    <select id="selectDesignBizShieldWarnByChangeTaskNo" parameterType="String" resultMap="DesignBizShieldWarnResult">
+        <include refid="selectDesignBizShieldWarnVo"/>
+        <where>
+            changeTaskNo = #{changeTaskNo}
+        </where>
+    </select>
+
+    <select id="selectCount" parameterType="DesignBizShieldWarn" resultType="Integer">
+        select count(*) as total from design_biz_shield_warn
+        <where>
+            <if test="changeTaskNo != null  and changeTaskNo != ''"> and changeTaskNo = #{changeTaskNo}</if>
+            <if test="shieldType != null  and shieldType != ''"> and shieldType = #{shieldType}</if>
+            <if test="pasoCode != null  and pasoCode != ''"> and pasoCode = #{pasoCode}</if>
+            <if test="net != null  and net != ''"> and net = #{net}</if>
+            <if test="ipAddress != null  and ipAddress != ''"> and ipAddress = #{ipAddress}</if>
+            <if test="indexType != null  and indexType != ''"> and indexType = #{indexType}</if>
+            <if test="systemCode != null  and systemCode != ''"> and systemCode = #{systemCode}</if>
+            <if test="objectName != null "> and objectName like concat(concat('%', #{objectName}), '%')</if>
+            <if test="insName != null "> and insName like concat(concat('%', #{insName}), '%')</if>
+        </where>
+    </select>
+
+    <select id="selectDesignBizShieldWarnList" parameterType="DesignBizShieldWarn" resultMap="DesignBizShieldWarnResult">
+        <include refid="selectDesignBizShieldWarnVo"/>
+        <where>  
+            <if test="changeTaskNo != null  and changeTaskNo != ''"> and changeTaskNo = #{changeTaskNo}</if>
+            <if test="shieldType != null  and shieldType != ''"> and shieldType = #{shieldType}</if>
+            <if test="pasoCode != null  and pasoCode != ''"> and pasoCode = #{pasoCode}</if>
+            <if test="net != null  and net != ''"> and net = #{net}</if>
+            <if test="ipAddress != null  and ipAddress != ''"> and ipAddress = #{ipAddress}</if>
+            <if test="indexType != null  and indexType != ''"> and indexType = #{indexType}</if>
+            <if test="systemCode != null  and systemCode != ''"> and systemCode = #{systemCode}</if>
+            <if test="objectName != null "> and objectName like concat(concat('%', #{objectName}), '%')</if>
+            <if test="insName != null "> and insName like concat(concat('%', #{insName}), '%')</if>
+            <if test="limit != null and offset!=null"> limit #{limit},#{offset}</if>
+        </where>
+    </select>
+    
+    <select id="selectDesignBizShieldWarnById" parameterType="Long" resultMap="DesignBizShieldWarnResult">
+        <include refid="selectDesignBizShieldWarnVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertDesignBizShieldWarn" parameterType="DesignBizShieldWarn">
+        insert into design_biz_shield_warn
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null ">id,</if>
+            <if test="changeTaskNo != null  and changeTaskNo != ''">changeTaskNo,</if>
+            <if test="shieldType != null  and shieldType != ''">shieldType,</if>
+            <if test="pasoCode != null  and pasoCode != ''">pasoCode,</if>
+            <if test="net != null  and net != ''">net,</if>
+            <if test="ipAddress != null  and ipAddress != ''">ipAddress,</if>
+            <if test="indexType != null  and indexType != ''">indexType,</if>
+            <if test="systemCode != null  and systemCode != ''">systemCode,</if>
+            <if test="objectName != null ">objectName,</if>
+            <if test="insName != null ">insName,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null ">#{id},</if>
+            <if test="changeTaskNo != null  and changeTaskNo != ''">#{changeTaskNo},</if>
+            <if test="shieldType != null  and shieldType != ''">#{shieldType},</if>
+            <if test="pasoCode != null  and pasoCode != ''">#{pasoCode},</if>
+            <if test="net != null  and net != ''">#{net},</if>
+            <if test="ipAddress != null  and ipAddress != ''">#{ipAddress},</if>
+            <if test="indexType != null  and indexType != ''">#{indexType},</if>
+            <if test="systemCode != null  and systemCode != ''">#{systemCode},</if>
+            <if test="objectName != null ">#{objectName},</if>
+            <if test="insName != null ">#{insName},</if>
+         </trim>
+    </insert>
+
+    <update id="updateDesignBizShieldWarn" parameterType="DesignBizShieldWarn">
+        update design_biz_shield_warn
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="changeTaskNo != null  and changeTaskNo != ''">changeTaskNo = #{changeTaskNo},</if>
+            <if test="shieldType != null  and shieldType != ''">shieldType = #{shieldType},</if>
+            <if test="pasoCode != null  and pasoCode != ''">pasoCode = #{pasoCode},</if>
+            <if test="net != null  and net != ''">net = #{net},</if>
+            <if test="ipAddress != null  and ipAddress != ''">ipAddress = #{ipAddress},</if>
+            <if test="indexType != null  and indexType != ''">indexType = #{indexType},</if>
+            <if test="systemCode != null  and systemCode != ''">systemCode = #{systemCode},</if>
+            <if test="objectName != null ">objectName = #{objectName},</if>
+            <if test="insName != null ">insName = #{insName},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <update id="updateDesignBizShieldWarnByChangeTaskNo" parameterType="DesignBizShieldWarn">
+        update design_biz_shield_warn
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="shieldType != null  and shieldType != ''">shieldType = #{shieldType},</if>
+            <if test="pasoCode != null  and pasoCode != ''">pasoCode = #{pasoCode},</if>
+            <if test="net != null  and net != ''">net = #{net},</if>
+            <if test="ipAddress != null  and ipAddress != ''">ipAddress = #{ipAddress},</if>
+            <if test="indexType != null  and indexType != ''">indexType = #{indexType},</if>
+            <if test="systemCode != null  and systemCode != ''">systemCode = #{systemCode},</if>
+            <if test="objectName != null ">objectName = #{objectName},</if>
+            <if test="insName != null ">insName = #{insName},</if>
+        </trim>
+        where changeTaskNo = #{changeTaskNo}
+    </update>
+
+    <delete id="deleteDesignBizShieldWarnById" parameterType="Long">
+        delete from design_biz_shield_warn where id = #{id}
+    </delete>
+
+    <delete id="deleteDesignBizShieldWarnByIds" parameterType="String">
+        delete from design_biz_shield_warn where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

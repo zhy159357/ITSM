@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+<meta charset="UTF-8">
+    <th:block th:include="include :: header('账号申请处理')" />
+    <th:block th:include="include :: select2-css" />
+    <th:block th:include="include :: datetimepicker-css" />
+</head>
+<body class="gray-bg">
+ <div class="container-div">
+        <div class="row">
+            <div class="col-sm-12 search-collapse">
+                <form id="formId">
+                    <div class="select-list">
+                        <ul>
+                            <li>
+                                <label style="width: 80px">姓名：</label>
+                                <input type="text" name="name"/>
+                            </li>
+                            <li>
+                                <label style="width: 80px">创建时间：</label>
+                                <input type="text" id="datetimepicker-demo-2" name="params[createTime]" readonly/>
+                            </li>
+                            <li>
+                                <label style="width: 80px">联系方式：</label>
+                                <input type="text" name="mobPhone"/>
+                            </li>
+                            <li>
+                                <a class="btn btn-primary btn-rounded btn-sm" id="searchBtn" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-repeat"></i>&nbsp;重置</a>
+                            </li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+
+            <div class="btn-group-sm" id="toolbar" role="group">
+                <a class="btn btn-primary single disabled" onclick="deal()">
+                    	 处理
+                </a>
+            </div>
+            <div class="col-sm-12 select-table table-striped">
+                <table id="bootstrap-table"></table>
+            </div>
+        </div>
+    </div>
+    <th:block th:include="include :: footer" />
+     <th:block th:include="include :: select2-js" />
+     <th:block th:include="include :: datetimepicker-js" />
+     <script th:src="@{/js/activiti.js}"></script>
+     <script th:inline="javascript">
+		var prefix = ctx + "accountReq";
+		
+
+		$(function() {
+			document.onkeydown = function(e){
+	            var ev = document.all ? window.event : e;
+	            console.log(ev);
+	            if(ev.keyCode==13) {
+	                $('#searchBtn').trigger('click');
+	                return false;
+	            }
+	        }
+		    var options = {
+		        url: prefix + "/listDeal",
+		        modalName: "",
+		        clickToSelect: true,
+		        columns: [{
+		            checkbox: true
+		        },
+		        {
+		            field: 'id',
+		            title: 'id',
+		            visible: false
+		        },
+		        {
+		            field: 'name',
+		            title: '姓名'
+		        },
+		        {
+		            field: 'gender',
+		            title: '性别',
+		            align: 'center',
+		        	formatter: function (value, row, index) {
+		        		if(row.gender == '1'){
+		        		    return '男';
+						}else{
+                            return '女';
+						}
+		        	}
+		        },
+		        {
+		            field: 'mobPhone',
+		            title: '联系方式'
+		        },
+		        {
+		            field: 'dept',
+		            title: '所属机构'
+		        },
+		        {
+		            field: 'reqUser',
+		            title: '申请人'
+		        },
+		        {
+		            field: 'auditDept',
+		            title: '受理机构'
+		        },
+		        {
+                    field: 'status',
+		        	title: '当前状态',
+		        	align: 'center',
+		        	formatter: function (value, row, index) {
+		        		if(row.status == '1'){
+		        		    return '待提交';
+						}else if(row.status == '2'){
+							return '待审核';
+						}else if(row.status == '3'){
+							return '待处理';
+						}else{
+                            return '已关闭';
+						}
+		        	}
+		        },{
+		            field: 'createTime',
+		            title: '创建日期'
+		        }]
+		    };
+		    $.table.init(options);
+		});
+		
+		function deal() {
+			var id=$.table.selectColumns("id");  
+		    var url = prefix + "/deal/" + id;
+		    $.modal.openTab("账号申请-处理", url);
+		}
+
+
+	    $("#datetimepicker-demo-2").datetimepicker({
+	        format: "yyyy-mm-dd",
+	        minView: "month",
+	        ignoreReadonly:true,
+	        autoclose: true
+	    });
+	</script>
+</body>
+</html>

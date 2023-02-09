@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+	<th:block th:include="include :: header('选择协同评估人')" />
+</head>
+<body class="gray-bg">
+<div class="container-div">
+	<div class="row">
+		<div class="col-sm-12 search-collapse">
+			<form id="account-form">
+				<div class="select-list">
+					<ul>
+						<input type="hidden" name="pflag" th:value="${putUnitDiv}">
+						<li>
+							姓名：<input type="text" name="pname"/>
+						</li>
+						<li>
+							所属机构：<input type="text" name="orgname" >
+						</li>
+						<li>
+							<a class="btn btn-primary btn-rounded btn-sm" id="searchBut" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+							<a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+						</li>
+					</ul>
+				</div>
+			</form>
+		</div>
+
+		<div class="col-sm-12 select-table table-striped">
+			<table id="bootstrap-table"></table>
+		</div>
+	</div>
+</div>
+<th:block th:include="include :: footer" />
+<script th:inline="javascript">
+	var putUnitDiv = [[${putUnitDiv}]];
+	var url = ctx + "issueList/build/selectMultiusers";
+	$(function() {
+		// 回车键搜索
+		document.onkeydown = function(e){
+			var ev = document.all ? window.event : e;
+			if(ev.keyCode==13) {
+				$('#searchBut').trigger('click');
+				return false;
+			}
+		};
+		var options = {
+			url: url,
+			clickToSelect:true,
+			rememberSelected:true,
+			sortable:false,
+			modalName: "评估人",
+			columns: [{
+				field: 'state',
+		        checkbox: true
+			},
+				{
+					field: 'pId',
+					title: '人员ID',
+					visible: false
+				},
+				{
+					field: 'pname',
+					title: '姓名'
+				},
+				{
+					field: 'sex',
+					title: '性别',
+					formatter: function (value, row, index) {
+						if(value=='2'){
+							return '未知';
+						}
+						return value=='1'?'男':'女';
+					}
+				},
+				{
+					field: 'mobilPhone',
+					title: '联系方式'
+				},
+				{
+					field: 'orgname',
+					title: '所属机构'
+				}]
+		};
+		if("1"==putUnitDiv){
+			//选择运行值班
+			options.singleSelect=true;
+			options.rememberSelected=false;
+		}
+		$.table.init(options);
+	});
+
+	function submitHandler() {
+		 if("1"==putUnitDiv){
+		 	var userName=$.table.selectColumns('pname');
+		 	var userId=$.table.selectColumns('pId');
+		 	parent.$("#pName").val(userName);
+		 	parent.$("#pid").val(userId);
+		 	parent.$("#userId").val(userId);
+			$.modal.close();
+		 }
+		 var rows = $.table.selectFirstColumns();
+            if (rows.length == 0) {
+                $.modal.alertWarning("请至少选择一条记录！");
+                return;
+            }
+            if(rows.length>20){
+				$.modal.alertWarning("选择人员超过20人，请重新选择！");
+				return;
+			}
+			var sysNameRows = $.table.selectColumns('pname');
+			// 外围系统选择赋值
+			var oldMul=parent.$('#multiusers').val();
+			var oldMulName=parent.$('#multiusersName').val();
+			if($.common.isEmpty(oldMul)){
+				parent.$('#multiusers').val(rows.join());
+            	parent.$('#multiusersName').val(sysNameRows.join());
+			}else{
+				var id=oldMul+','+rows.join();
+				var name=oldMulName+','+sysNameRows.join();
+				var ids=id.split(',');
+				var names=name.split(',');
+				var reId=[];
+            	var reName=[];
+            	//去重复
+				for(var i=0;i<ids.length;i++){
+						var id=ids[i];
+						var name=names[i];
+						if(reId.indexOf(id)<0){
+							reId.push(ids[i]);
+							reName.push(names[i]);
+						}
+				}
+				parent.$('#multiusers').val(reId);
+            	parent.$('#multiusersName').val(reName);
+			}
+		    $.modal.close();
+	}
+</script>
+</body>
+</html>

@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+	<th:block th:include="include :: header('事件单详情')" />
+	<th:block th:include="include :: select2-css" />
+    <th:block th:include="include :: summernote-css" />
+</head>
+<body>
+    <div class="main-content">
+        <form id="form-group-add" class="form-horizontal" th:object="${TelBiz}">
+            <input name="telid" th:type="hidden" th:field="*{telid}"/>
+            <input name="orgId" type="hidden" id="treeId"/>
+            <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+                <div class="panel-group">
+                    <div class="panel panel-default">
+                        <div class="panel-heading" style="green-color: #3c8dbc" data-toggle="collapse" data-target="#collapse1">
+                            <h4 class="panel-title" >
+                                电话事件单信息
+                            </h4>
+                        </div>
+                        <div id="collapse1" class="panel-collapse in">
+                            <div class="panel-body">
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label">事件单号：</label>
+                                            <div class="col-sm-8">
+                                                <input class="form-control" type="text" name="telno" id="telno" th:field="*{telno}" readonly disabled>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label">创建时间：</label> <!--接入时间-->
+                                            <div class="col-sm-8">
+                                                <input id="createTime" name="createTime" th:field="*{createTime}" class="form-control" type="text" readonly disabled>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label">挂机时间：</label>
+                                            <div class="col-sm-8">
+                                                <input id="closeTime" name="closeTime" th:field="*{closeTime}" class="form-control" type="text" readonly disabled>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label">组号：</label>
+                                            <div class="col-sm-8">
+                                                <input name="groupNo" th:field="*{groupNo}" onclick="phoneGroup" id="groupNo" class="form-control" type="text" readonly disabled>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label">来电人：</label>
+                                            <div class="col-sm-8">
+                                                <input name="contactName" id="contactName" class="form-control" th:field="*{contactName}" type="text" readonly disabled>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label">来电号码：</label>
+                                            <div class="col-sm-8">
+                                                <input name="contactPhone" id="contactPhone" class="form-control" th:field="*{contactPhone}" type="text" readonly disabled>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label">应用系统：</label>
+                                            <div class="col-sm-8">
+                                                <input id="applicationName" name="sysId" th:value="*{caption}" type="text" class="form-control" onclick="selectOneApplication()" readonly disabled />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label">来电机构：</label>
+                                            <div class="col-sm-8">
+                                                <select class="form-control"  name="contactOrg" th:with="type=${@dict.getParaType('TelBiz_Org')}" onclick="selectOneApplication()" readonly disabled>
+                                                    <option value=""></option>
+                                                    <option th:field="*{contactOrg}" th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label">事件类型：</label>
+                                            <div class="col-sm-8">
+                                                <select class="form-control" th:field="*{telType}" name="telType" th:with="type=${@dict.getParaType('TelBiz_Type')}" onchange="infor()" readonly disabled>
+                                                    <option value=""></option>
+                                                    <option th:field="*{telType}" th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label">工单类型：</label>
+                                            <div class="col-sm-8">
+                                                <select class="form-control" th:field="*{eventType}" name="eventType" th:with="type=${@dict.getParaType('TelBiz_EventType')}" readonly disabled>
+                                                    <option value=""></option>
+                                                    <option th:field="*{eventType}" th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label">业务事件单号：</label>
+                                            <div class="col-sm-8">
+                                                <input id="faultNo" name="faultNo" class="form-control" type="text" th:value="*{faultNo}" readonly>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label">创建人：</label>
+                                            <div class="col-sm-8">
+                                                <input id="startTime" name="startTime" type="text" th:field="*{startTime}"  class="form-control" readonly>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label">来电内容：</label>
+                                            <div class="col-sm-10">
+                                                <textarea rows="6" cols="20" id="content" name="content" th:field="*{content}" class="form-control" readonly disabled></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label">补充意见：</label>
+                                            <div class="col-sm-10">
+                                                <textarea rows="6" cols="20" id="closeOption" name="closeOption" class="form-control" required></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--<div class="panel panel-default">
+                                    <div class="panel-body">
+                                        &lt;!&ndash; Nav tabs &ndash;&gt;
+                                        <ul class="nav nav-tabs" role="tablist">
+                                            <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">操作日志</a></li>
+                                        </ul>
+
+                                        &lt;!&ndash; Tab panes &ndash;&gt;
+                                        <div class="tab-content">
+                                            <div role="tabpanel" class="tab-pane active" id="home">
+                                                <div class="col-sm-12 select-table table-striped">
+                                                    <table id="history-table"></table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>-->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="tabs-container">
+                        <ul class="nav nav-tabs">
+                            <li class="active"><a data-toggle="tab" href="#tab-1" aria-expanded="true">流程记录</a>
+                            </li>
+                            <li class=""><a data-toggle="tab" href="#tab-4" aria-expanded="false">关联业务单</a>
+                            </li>
+                        </ul>
+                        <div class="tab-content">
+                            <div id="tab-1" class="tab-pane active">
+                                <div class="panel-body">
+                                    <div class="col-sm-12 select-table table-striped">
+                                        <table id="history-table"></table>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="tab-4" class="tab-pane">
+                                <div class="panel-body">
+                                    <div class="btn-group-sm" id="toolbar4" role="group">
+                                    </div>
+                                    <div class="col-sm-12 select-table table-striped">
+                                        <table id="imwt-table"></table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-offset-5 col-sm-10">
+            <button type="button" class="btn btn-sm btn-primary" onclick="submit()"><i class="fa fa-check"></i>关 闭</button>&nbsp;
+            <button type="button" class="btn btn-sm btn-danger" onclick="closeItem()"><i class="fa fa-remove"></i>取 消</button>
+        </div>
+    </div>
+	<th:block th:include="include :: footer" />
+	<th:block th:include="include :: select2-js" />
+    <th:block th:include="include :: summernote-js" />
+    <th:block th:include="include :: datetimepicker-js" />
+    <script th:src="@{/js/activiti.js}"></script>
+
+    <script th:inline="javascript">
+	    var prefix = ctx + "phone/xz";
+        var datas = [[${@pubParaValue.selectPubParaValueByParaName('fmStatus')}]];
+        //流程记录查看
+        $(function () {
+            var telId = $("#telid").val();
+            var optionsqq = {
+                url: ctx + "log/list/" + $("#telid").val(),
+                id: "history-table",
+                clickToSelect: true,
+                singleSelect: true,
+                showSearch: false,
+                showRefresh: true,
+                showToggle: false,
+                showColumns: false,
+                pagination: true,
+                pageSize: 5,
+                toolbar: "toolbar3",
+                modalName: "流程记录",
+                columns: [{
+                    checkbox: true
+                },
+                    {
+                        field: 'serialNum',
+                        title: '序号',
+                    },
+                    {
+                        field: 'operationName',
+                        title: '操作名称',
+                    },
+                    {
+                        field: 'operator',
+                        title: '操作人'
+                    },
+                    {
+                        field: 'operatorTel',
+                        title: '联系电话'
+                    },
+                    {
+                        field: 'state',
+                        title: '状态',
+                    },
+                    {
+                        field: 'creatTime',
+                        title: '操作时间',
+                        formatter: function (value, row, index) {
+                            var createTime = '';
+                            if (value != '' && value != null) {
+                                var pattern = /(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/;
+                                createTime = value.replace(pattern, '$1-$2-$3 $4:$5:$6');
+                            }
+                            return createTime;
+                        }
+                    }]
+            };
+            $.table.init(optionsqq);
+        });
+
+        //关联业务事件单初始化
+        $(function () {
+            var optionsfzi = {
+                url: prefix + "/listFmBiz/" + $("#telid").val(),
+                id: "imwt-table",
+                clickToSelect: true,
+                singleSelect: true,
+                showSearch: false,
+                showRefresh: true,
+                showToggle: false,
+                showColumns: false,
+                pagination: true,
+                pageSize: 10,
+                toolbar: "toolbar4",
+                modalName: "运维事件单",
+                columns: [{
+                    checkbox: true
+                },
+                    {
+                        field: 'fmId',
+                        title: '业务单ID',
+                        visible: false
+                    },
+                    {
+                        field: 'faultNo',
+                        title: '事件单号',
+                    }, {
+                        field: 'faultDecriptSummary',
+                        title: '标题'
+                    },{
+                        field: 'currentState',
+                        width: 100,
+                        title: '当前状态',
+                        formatter: function (value, row, index) {
+                            return $.table.selectPubParaValueData(datas, value);
+                        }
+                    }, {
+                        field: 'creatTime',
+                        title: '创建时间',
+                        formatter: function (value, row, index) {
+                            var creatTime = '';
+                            if (value != '' && value != null) {
+                                var pattern = /(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/;
+                                creatTime = value.replace(pattern, '$1-$2-$3 $4:$5:$6');
+                            }
+                            return creatTime;
+                        }
+                    }]
+            };
+            $.table.init(optionsfzi);
+        });
+
+        //新增 这里根据那个下拉框来改变状态
+        function submit() {
+            debugger;
+            if ($.validate.form()) {
+                var data = $("#form-group-add").serializeArray();
+                data.push({"name":"state","value": 3 });
+                $.operate.saveTab(prefix + "/close", data);
+            }
+        }
+
+        //字符串yyyyMMddHHmmss转yyyy-MM-dd HH:mm:ss
+        $(function () {
+            var createTime = $("#createTime").val();
+            var pattern = /(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/;
+            createTime = createTime.replace(pattern, '$1-$2-$3 $4:$5:$6');
+            $("#createTime").val(createTime);
+
+            var closeTime = $("#closeTime").val();
+            var pattern = /(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/;
+            closeTime = closeTime.replace(pattern, '$1-$2-$3 $4:$5:$6');
+            $("#closeTime").val(closeTime);
+        });
+
+        // 回显数据字典
+        function selectPubParaValueData(datas, value) {
+            var actions = [];
+            $.each(datas, function (index, pubParaValue) {
+                if (pubParaValue.value == ('' + value)) {
+                    actions.push($.common.sprintf("<span class='%s'>%s</span>", "", pubParaValue.valueDetail));
+                    return false;
+                }
+            });
+            return actions.join('');
+        }
+        //接入时间
+        $("#createTime").datetimepicker({
+            format: "yyyy-mm-dd hh:mm:ss",
+            minView: "month",
+            autoclose: true
+        });
+        //挂机时间
+        $("#closeTime").datetimepicker({
+            format: "yyyy-mm-dd hh:mm:ss",
+            minView: "month",
+            autoclose: true
+        });
+
+        /**
+         * 这里选择工单类型为‘2’，显示 为‘1’，不显示（溢出组、溢出时间）
+         */
+        function infor() {
+            var telType = $('#telType').val();
+            if(telType=='2'){
+                $('#infor').show();
+            }else{
+                $('#infor').hide();
+            }
+        }
+
+        $("#form-group-add").validate({
+            focusCleanup: true
+        });
+
+        function submitHandler() {
+            if ($.validate.form()) {
+                $.operate.save(prefix + "/detail", $('#form-emerg-detail').serialize());
+            }
+        }
+
+    </script>
+</body>
+</html>

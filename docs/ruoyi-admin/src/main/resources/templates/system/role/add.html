@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+	<th:block th:include="include :: header('新增角色')" />
+	<th:block th:include="include :: ztree-css" />
+</head>
+<body class="white-bg">
+	<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+		<form class="form-horizontal m" id="form-role-add">
+			<div class="form-group">
+				<label class="col-sm-3 control-label is-required">角色代码：</label>
+				<div class="col-sm-8">
+					<input class="form-control" type="text" name="rid" id="rid" maxlength="10" isNum="true" required>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-3 control-label is-required">角色名称：</label>
+				<div class="col-sm-8">
+					<input class="form-control" type="text" name="rName" id="rName" maxlength="20" required>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-3 control-label">状态：</label>
+				<div class="col-sm-8">
+					<select class="form-control" name="invalidationMark" id="invalidationMark" >
+						<option value="1">启用</option>
+						<option value="0">停止</option>
+					</select>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-3 control-label">备注：</label>
+				<div class="col-sm-8">
+					<input id="memo" name="memo" class="form-control" maxlength="200" type="text">
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-3 control-label">菜单权限：</label>
+				<div class="col-sm-8">
+				    <label class="check-box">
+				        <input type="checkbox" value="1">展开/折叠</label>
+				    <label class="check-box">
+				        <input type="checkbox" value="2">全选/全不选</label>
+				    <label class="check-box">
+				        <input type="checkbox" value="3" checked>父子联动</label>
+				    <div id="menuTrees" class="ztree ztree-border"></div>
+				</div>
+			</div>
+		</form>
+	</div>
+	<th:block th:include="include :: footer" />
+	<th:block th:include="include :: ztree-js" />
+	<script type="text/javascript">
+	    $(function() {
+			var url = ctx + "system/menu/roleMenuTreeData";
+			var options = {
+				id: "menuTrees",
+		        url: url,
+		        check: { enable: true },
+		        expandLevel: 0
+		    };
+			$.tree.init(options);
+		});
+		
+		$("#form-role-add").validate({
+			rules:{
+				onkeyup: false,
+				rName:{
+					remote: {
+		                url: ctx + "system/role/checkRoleNameUnique",
+		                type: "post",
+		                dataType: "json",
+		                data: {
+		                	"rName" : function() {
+		                		return $.common.trim($("#rName").val());
+		                    }
+		                },
+		                dataFilter: function(data, type) {
+		                	return $.validate.unique(data);
+		                }
+		            }
+				},
+				rid:{
+					remote: {
+		                url: ctx + "system/role/checkRoleKeyUnique",
+		                type: "post",
+		                dataType: "json",
+		                data: {
+		                	"rid" : function() {
+		                        return $.common.trim($("#rid").val());
+		                    }
+		                },
+		                dataFilter: function(data, type) {
+		                	return $.validate.unique(data);
+		                }
+		            }
+				},
+				roleSort:{
+					digits:true
+				},
+			},
+			messages: {
+		        "roleName": {
+		            remote: "角色名称已经存在"
+		        },
+		        "rid": {
+		            remote: "角色代码已经存在"
+		        }
+		    },
+		    focusCleanup: true
+		});
+		
+		$('input').on('ifChanged', function(obj){
+			var type = $(this).val();
+			var checked = obj.currentTarget.checked;
+			if (type == 1) {
+			    if (checked) {
+			        $._tree.expandAll(true);
+			    } else {
+			        $._tree.expandAll(false);
+			    }
+			} else if (type == "2") {
+			    if (checked) {
+			        $._tree.checkAllNodes(true);
+			    } else {
+			        $._tree.checkAllNodes(false);
+			    }
+			} else if (type == "3") {
+			    if (checked) {
+			        $._tree.setting.check.chkboxType = { "Y": "ps", "N": "ps" };
+			    } else {
+			        $._tree.setting.check.chkboxType = { "Y": "", "N": "" };
+			    }
+			}
+		})
+		
+		function submitHandler() {
+			add();
+	    }
+	
+		function add() {
+			var rid = $("input[name='rid']").val().trim();
+			if(rid=='' || rid==null){
+				$.modal.alertError('[角色代码]不能为空 ');
+				return;
+			}
+			var rName = $("input[name='rName']").val().trim();
+			if(rName=='' || rName==null){
+				$.modal.alertError('[角色名称]不能为空 ');
+				return;
+			}
+            var invalidationMark = $("#invalidationMark").val();
+			var memo = $("input[name='memo']").val();
+			var menuIds = $.tree.getCheckedNodes();
+			$.ajax({
+				cache : true,
+				type : "POST",
+				url : ctx + "system/role/add",
+				data : {
+					"rName": rName,
+					"rid": rid,
+					"invalidationMark": invalidationMark,
+					"memo": memo,
+					"menuIds": menuIds
+				},
+				async : false,
+				error : function(request) {
+					$.modal.alertError("系统错误");
+				},
+				success : function(data) {
+					$.operate.successCallback(data);
+				}
+			});
+		}
+	</script>
+</body>
+</html>

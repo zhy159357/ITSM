@@ -1,0 +1,418 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.activiti.mapper.PatrolMapper">
+
+    <resultMap type="PatrolInspection" id="PatrolResult">
+        <id property="patrolId" column="PATROL_ID"></id>
+        <result property="patrolName" column="PATROL_NAME"></result>
+        <result property="patrolDepartname" column="PATROL_DEPARTNAME"></result>
+        <result property="createName" column="CREATE_NAME"></result>
+        <result property="telePhone" column="TELEPHONE"></result>
+        <result property="leaderName" column="LEADER_NAME"></result>
+        <result property="endUpTime" column="END_UP_TIME"></result>
+        <result property="startTime" column="START_TIME"></result>
+        <result property="endTime" column="END_TIME"></result>
+        <result property="syncData" column="SYNC_DATA"></result>
+        <result property="sysServerData" column="SYS_SERVER_DATA"></result>
+        <result property="pageData" column="PAGE_DATA"></result>
+        <result property="hotSearchData" column="HOT_SEARCH_DATA"></result>
+        <result property="emergencyData" column="EMERGENCY_DATA"></result>
+        <result property="hotTopicData" column="HOT_TOPIC_DATA"></result>
+        <result property="hotEssayData" column="HOT_ESSAY_DATA"></result>
+        <result property="contentData" column="CONTENT_DATA"></result>
+        <result property="specialData" column="SPECIAL_DATA"></result>
+        <result property="informationData" column="INFORMATION_DATA"></result>
+        <result property="remark" column="REMART"></result>
+        <result property="createId" column="CREATE_ID"></result>
+        <result property="createTime" column="CREATE_TIME"></result>
+        <result property="sysId" column="SYS_ID"></result>
+    </resultMap>
+
+    <sql id="selectPatrolVo">
+        select PATROL_ID,PATROL_NAME,PATROL_DEPARTNAME,CREATE_NAME,TELEPHONE,LEADER_NAME,SYS_ID,
+        "TO_CHAR"("TO_DATE"(pl.END_UP_TIME, 'yyyymmddhh24miss'),'yyyy-mm-dd hh24:mi:ss') END_UP_TIME,
+        "TO_CHAR"("TO_DATE"(pl.START_TIME, 'yyyymmddhh24miss'),'yyyy-mm-dd hh24:mi:ss') START_TIME,
+        "TO_CHAR"("TO_DATE"(pl.END_TIME, 'yyyymmddhh24miss'),'yyyy-mm-dd hh24:mi:ss') END_TIME,
+        SYNC_DATA,SYS_SERVER_DATA,PAGE_DATA,HOT_SEARCH_DATA,EMERGENCY_DATA,HOT_TOPIC_DATA,HOT_ESSAY_DATA,CONTENT_DATA,SPECIAL_DATA,INFORMATION_DATA,REMART,
+        "TO_CHAR"("TO_DATE"(pl.CREATE_TIME, 'yyyymmddhh24miss'),'yyyy-mm-dd hh24:mi:ss') CREATE_TIME
+        from patrol_inspection pl
+    </sql>
+
+    <sql id="selectPatrolVoMysql">
+        select PATROL_ID,PATROL_NAME,PATROL_DEPARTNAME,CREATE_NAME,TELEPHONE,LEADER_NAME,SYS_ID,
+        date_format(pl.END_UP_TIME, '%Y-%m-%d %H:%i:%s') END_UP_TIME,
+        date_format(pl.START_TIME, '%Y-%m-%d %H:%i:%s') START_TIME,
+        date_format(pl.END_TIME, '%Y-%m-%d %H:%i:%s') END_TIME,
+        SYNC_DATA,SYS_SERVER_DATA,PAGE_DATA,HOT_SEARCH_DATA,EMERGENCY_DATA,HOT_TOPIC_DATA,HOT_ESSAY_DATA,CONTENT_DATA,SPECIAL_DATA,INFORMATION_DATA,REMART,
+        date_format(pl.CREATE_TIME, '%Y-%m-%d %H:%i:%s') CREATE_TIME
+        from patrol_inspection pl
+    </sql>
+
+
+    <!--关于查询舆情监测系统巡检单的select-->
+    <select id="selectPatrolList" parameterType="PatrolInspection" resultMap="PatrolResult">
+        <include refid="selectPatrolVo"></include>
+        <where>
+
+            <if test="patrolId !=null and patrolId !='' ">
+                and patrol_Id = #{patrolId}
+            </if>
+            <if test="patrolName !=null and patrolName !='' ">
+                and patrol_Name like concat('%',concat(#{patrolName},'%'))
+            </if>
+            <if test="sysId !=null and sysId !='' ">
+                and sys_id = #{sysId}
+            </if>
+            <if test="leaderName!=null and leaderName!=''">
+                and leader_name like concat('%',concat(#{leaderName},'%'))
+            </if>
+            <if test="startTime!=null and startTime!=''">
+                and start_Time &gt;=#{startTime}
+            </if>
+            <if test="endTime!=null and endTime!=''">
+                and end_time &lt;=#{endTime}
+            </if>
+            <if test="endUpTime!=null and endUpTime!=''">
+                and end_up_time &lt;= #{endUpTime}
+            </if>
+
+        </where>
+    </select>
+    <select id="selectPatrolListMysql" parameterType="PatrolInspection" resultMap="PatrolResult">
+        <include refid="selectPatrolVoMysql"></include>
+        <where>
+            <if test="sysId !=null and sysId !='' ">
+                and sys_id = #{sysId}
+            </if>
+            <if test="patrolId !=null and patrolId !='' ">
+                and patrol_Id = #{patrolId}
+            </if>
+            <if test="patrolName !=null and patrolName !='' ">
+                and patrol_Name like concat('%',concat(#{patrolName},'%'))
+            </if>
+            <if test="leaderName!=null and leaderName!=''">
+                and leader_name like concat('%',concat(#{leaderName},'%'))
+            </if>
+            <if test="startTime!=null and startTime!=''">
+                and start_Time &gt;=#{startTime}
+            </if>
+            <if test="endTime!=null and endTime!=''">
+                and end_time &lt;=#{endTime}
+            </if>
+            <if test="endUpTime!=null and endUpTime!=''">
+                and end_up_time &lt;= #{endUpTime}
+            </if>
+
+
+        </where>
+    </select>
+    <select id="selectPatrolListByIdMysql" parameterType="String" resultMap="PatrolResult">
+        <include refid="selectPatrolVoMysql"/>
+        where PATROL_ID = #{patrolId}
+    </select>
+    <select id="selectPatrolListById" parameterType="String" resultMap="PatrolResult">
+        <include refid="selectPatrolVo"/>
+        where PATROL_ID = #{patrolId}
+    </select>
+    <insert id="insertPatrolInspection" parameterType="PatrolInspection">
+        insert into patrol_inspection
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="patrolId!=null and patrolId!=''">
+                PATROL_ID,
+            </if>
+            <if test="sysId !=null and sysId !='' ">
+                SYS_ID,
+            </if>
+            <if test="patrolName!=null and patrolName!=''">
+                PATROL_NAME,
+            </if>
+            <if test="patrolDepartname!=null and patrolDepartname!=''">
+                PATROL_DEPARTNAME,
+            </if>
+            <if test="createName!=null and createName!=''">
+                CREATE_NAME,
+            </if>
+            <if test="telePhone!=null and telePhone!=''">
+                TELEPHONE,
+            </if>
+            <if test="leaderName!=null and leaderName!=''">
+                LEADER_NAME,
+            </if>
+            <if test="endUpTime!=null and endUpTime!=''">
+                END_UP_TIME,
+            </if>
+            <if test="startTime!=null and startTime!=''">
+                START_TIME,
+            </if>
+            <if test="endTime!=null and endTime!=''">
+                END_TIME,
+            </if>
+            <if test="syncData!=null and syncData!=''">
+                SYNC_DATA,
+            </if>
+            <if test="sysServerData!=null and sysServerData!=''">
+                SYS_SERVER_DATA,
+            </if>
+            <if test="pageData!=null and pageData!=''">
+                PAGE_DATA,
+            </if>
+            <if test="hotSearchData!=null and hotSearchData!=''">
+                HOT_SEARCH_DATA,
+            </if>
+            <if test="emergencyData!=null and emergencyData!=''">
+                EMERGENCY_DATA,
+            </if>
+            <if test="hotTopicData!=null and hotTopicData!=''">
+                HOT_TOPIC_DATA,
+            </if>
+            <if test="hotEssayData!=null and hotEssayData!=''">
+                HOT_ESSAY_DATA,
+            </if>
+            <if test="contentData!=null and contentData!=''">
+                CONTENT_DATA,
+            </if>
+            <if test="specialData!=null and specialData!=''">
+                SPECIAL_DATA,
+            </if>
+            <if test="informationData!=null and informationData!=''">
+                INFORMATION_DATA,
+            </if>
+            <if test="remark!=null and remark!=''">
+                REMART,
+            </if>
+            <if test="createId!=null and createId!=''">
+                CREATE_ID,
+            </if>
+            <if test="createTime!=null and createTime!=''">
+                CREATE_TIME,
+            </if>
+
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="patrolId!=null and patrolId!=''">
+                #{patrolId},
+            </if>
+            <if test="sysId !=null and sysId !='' ">
+                #{sysId},
+            </if>
+            <if test="patrolName!=null and patrolName!=''">
+                #{patrolName},
+            </if>
+            <if test="patrolDepartname!=null and patrolDepartname!=''">
+                #{patrolDepartname},
+            </if>
+            <if test="createName!=null and createName!=''">
+                #{createName},
+            </if>
+            <if test="telePhone!=null and telePhone!=''">
+                #{telePhone},
+            </if>
+            <if test="leaderName!=null and leaderName!=''">
+                #{leaderName},
+            </if>
+            <if test="endUpTime!=null and endUpTime!=''">
+                #{endUpTime},
+            </if>
+            <if test="startTime!=null and startTime!=''">
+                #{startTime},
+            </if>
+            <if test="endTime!=null and endTime!=''">
+                #{endTime},
+            </if>
+            <if test="syncData!=null and syncData!=''">
+                #{syncData},
+            </if>
+            <if test="sysServerData!=null and sysServerData!=''">
+                #{sysServerData},
+            </if>
+            <if test="pageData!=null and pageData!=''">
+                #{pageData},
+            </if>
+            <if test="hotSearchData!=null and hotSearchData!=''">
+                #{hotSearchData},
+            </if>
+            <if test="emergencyData!=null and emergencyData!=''">
+                #{emergencyData},
+            </if>
+            <if test="hotTopicData!=null and hotTopicData!=''">
+                #{hotTopicData},
+            </if>
+            <if test="hotEssayData!=null and hotEssayData!=''">
+                #{hotEssayData},
+            </if>
+            <if test="contentData!=null and contentData!=''">
+                #{contentData},
+            </if>
+            <if test="specialData!=null and specialData!=''">
+                #{specialData},
+            </if>
+            <if test="informationData!=null and informationData!=''">
+                #{informationData},
+            </if>
+            <if test="remark!=null and remark!=''">
+                #{remark},
+            </if>
+            <if test="createId!=null and createId!=''">
+                #{createId},
+            </if>
+            <if test="createTime!=null and createTime!=''">
+                #{createTime},
+            </if>
+        </trim>
+    </insert>
+    <update id="updatePatrolInspection" parameterType="PatrolInspection">
+        update patrol_inspection
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="patrolName!=null and patrolName!=''">
+                PATROL_NAME = #{patrolName},
+            </if>
+
+            <if test="patrolName==null or patrolName==''">
+                PATROL_NAME = '',
+            </if>
+            <if test="sysId !=null and sysId !='' ">
+                sys_id = #{sysId},
+            </if>
+            <if test="sysId ==null and sysId =='' ">
+                sys_id = '',
+            </if>
+            <if test="patrolDepartname!=null and patrolDepartname!=''">
+                PATROL_DEPARTNAME = #{patrolDepartname},
+            </if>
+            <if test="patrolDepartname==null or patrolDepartname==''">
+                PATROL_DEPARTNAME = '',
+            </if>
+
+            <if test="createName!=null and createName!=''">
+                CREATE_NAME = #{createName},
+            </if>
+            <if test="createName==null or createName==''">
+                CREATE_NAME = '',
+            </if>
+
+            <if test="telePhone!=null and telePhone!=''">
+                TELEPHONE = #{telePhone},
+            </if>
+            <if test="telePhone==null or telePhone==''">
+                TELEPHONE = '',
+            </if>
+
+            <if test="leaderName!=null and leaderName!=''">
+                LEADER_NAME = #{leaderName},
+            </if>
+            <if test="leaderName==null or leaderName==''">
+                LEADER_NAME = '',
+            </if>
+
+            <if test="endUpTime!=null and endUpTime!=''">
+                END_UP_TIME = #{endUpTime},
+            </if>
+            <if test="endUpTime==null and endUpTime==''">
+                END_UP_TIME = '',
+            </if>
+            <if test="startTime!=null and startTime!=''">
+                START_TIME = #{startTime},
+            </if>
+            <if test="startTime==null or startTime==''">
+                START_TIME = '',
+            </if>
+
+            <if test="endTime!=null and endTime!=''">
+                END_TIME = #{endTime},
+            </if>
+            <if test="endTime==null and endTime==''">
+                END_TIME = '',
+            </if>
+
+            <if test="syncData!=null and syncData!=''">
+                SYNC_DATA = #{syncData},
+            </if>
+            <if test="syncData==null and syncData==''">
+                SYNC_DATA = '',
+            </if>
+
+            <if test="sysServerData!=null and sysServerData!=''">
+                SYS_SERVER_DATA = #{sysServerData},
+            </if>
+            <if test="sysServerData==null and sysServerData==''">
+                SYS_SERVER_DATA = '',
+            </if>
+
+            <if test="pageData!=null and pageData!=''">
+                PAGE_DATA = #{pageData},
+            </if>
+            <if test="pageData==null and pageData==''">
+                PAGE_DATA = '',
+            </if>
+
+            <if test="hotSearchData!=null and hotSearchData!=''">
+                HOT_SEARCH_DATA = #{hotSearchData},
+            </if>
+            <if test="hotSearchData==null and hotSearchData==''">
+                HOT_SEARCH_DATA = '',
+            </if>
+
+            <if test="emergencyData!=null and emergencyData!=''">
+                EMERGENCY_DATA = #{emergencyData},
+            </if>
+            <if test="emergencyData==null and emergencyData==''">
+                EMERGENCY_DATA = '',
+            </if>
+
+            <if test="hotTopicData!=null and hotTopicData!=''">
+                HOT_TOPIC_DATA = #{hotTopicData},
+            </if>
+            <if test="hotTopicData==null or hotTopicData==''">
+                HOT_TOPIC_DATA = '',
+            </if>
+
+            <if test="hotEssayData!=null and hotEssayData!=''">
+                HOT_ESSAY_DATA = #{hotEssayData},
+            </if>
+            <if test="hotEssayData==null or hotEssayData==''">
+                HOT_ESSAY_DATA = '',
+            </if>
+
+            <if test="contentData!=null and contentData!=''">
+                CONTENT_DATA = #{contentData},
+            </if>
+            <if test="contentData==null or contentData==''">
+                CONTENT_DATA = '',
+            </if>
+            <if test="specialData!=null and specialData!=''">
+                SPECIAL_DATA = #{specialData},
+            </if>
+            <if test="specialData==null or specialData==''">
+                SPECIAL_DATA = '',
+            </if>
+            <if test="informationData!=null and informationData!=''">
+                INFORMATION_DATA = #{informationData},
+            </if>
+            <if test="informationData==null or informationData==''">
+                INFORMATION_DATA = '',
+            </if>
+            <if test="remark!=null and remark!=''">
+                REMART = #{remark},
+            </if>
+            <if test="remark==null or remark==''">
+                REMART = '',
+            </if>
+            <if test="createTime!=null and createTime!=''">
+                CREATE_TIME = #{createTime},
+            </if>
+            <if test="createId!=null and createId!=''">
+                CREATE_ID = #{createId},
+            </if>
+        </trim>
+        where PATROL_Id = #{patrolId,jdbcType=VARCHAR}
+    </update>
+
+    <delete id="deletePatrolByIds" parameterType="String">
+        delete from patrol_inspection where PATROL_ID in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

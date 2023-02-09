@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('处理任务')" />
+    <th:block th:include="include :: summernote-css" />
+    <th:block th:include="include :: datetimepicker-css" />
+
+</head>
+<body>
+<div class="main-content">
+    <form class="form-horizontal" id="form-lxbg-edit" th:object="${bizTaskinfo}">
+        <input type="hidden" name="workBeginTime" th:field="*{workBeginTime}">
+        <input type="hidden" name="performGroup" th:value="${grpName}">
+        <input name="taskFormId" type="hidden" id="taskFormId" th:value="*{taskFormId}"/>
+        <input name="performDeptId" type="hidden" id="performDeptId" th:value="${bizTaskinfo.smBizTask.performDeptId}"/>
+        <input name="performDeptName" type="hidden" id="performDeptName" th:value="${bizTaskinfo.smBizTask.performDeptName}"/>
+        <input name="performGroupId" type="hidden" id="performGroupId" th:value="${bizTaskinfo.smBizTask.performGroupId}"/>
+        <input name="performGroupName" type="hidden" id="performGroupName" th:value="${bizTaskinfo.smBizTask.performGroupName}"/>
+        <input name="SmBizScheduling.schedulingId" type="hidden" id="schedulingId" th:value="${schedulingId}"/>
+
+
+        <!--当前事务事件单的状态-->
+        <input name="currentState" id="currentState" type="hidden"/>
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-heading" style="background-color: #3c8dbc" data-toggle="collapse" data-target="#collapse1">
+
+                    <h4 class="panel-title" >
+                        计划属性
+                    </h4>
+                </div>
+                <div id="collapse1" class="panel-collapse in">
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label  text-right ">计划单单号：</label>
+                                    <div class="col-sm-8">
+                                        <input  class="form-control" type="text"  th:field="*{smBizScheduling.schedulingNo}" id="schedulingNo" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label  text-right ">创建机构：</label>
+                                    <div class="col-sm-8">
+                                        <input  id="creatorDeptId" class="form-control" type="text" readonly
+                                               th:value="*{smBizScheduling.orgName}" >
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label  text-right ">创建人：</label>
+                                    <div class="col-sm-8">
+                                        <input  id="creatorId" class="form-control" type="text" readonly="readonly"
+                                               th:value="*{smBizScheduling.createName}" >
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label">创建时间：</label>
+                                    <div class="col-sm-8">
+                                        <div class="input-group date">
+                                            <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                            <input  class="form-control calcTotalSecondInput" type="text" th:value="*{smBizScheduling.createTime}" readonly >
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label  text-right ">所在路径：</label>
+                                    <div class="col-sm-8">
+                                        <input class="form-control" type="text"  id="path"   th:value="${sf}" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label  text-right">审核人：</label>
+                                    <div class="col-sm-8">
+                                        <input class="form-control" type="text"  id="checkPersonName"   th:field="*{smBizScheduling.checkPersonName}" readonly>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label  text-right ">计划类别：</label>
+                                    <div class="col-sm-8">
+                                        <select  class="form-control m-b" th:with="type=${@dict.getParaType('task_type_zy')}" disabled="disabled">
+                                            <option value=""></option>
+                                            <option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}" th:field="*{smBizTask.taskTypeId}" ></option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label">计划发布时间：</label>
+                                    <div class="col-sm-8">
+                                        <div class="input-group date">
+                                            <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                            <input  class="form-control calcTotalSecondInput" type="text" th:value="*{smBizTask.startTime}" readonly >
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label  text-right ">短信提醒：</label>
+                                    <div class="col-sm-8">
+                                        <select th:name="msgDoor" class="form-control m-b" th:with="type=${@dict.getParaType('msg_door')}" disabled>
+                                            <option value=""></option>
+                                            <option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}" th:field="*{smBizTask.msgDoor}"></option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label  text-right ">接收范围：</label>
+                                    <div class="col-sm-8"  id="sendRangeDiv" >
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row" id="changeArea">
+
+                    </div>
+                    </div>
+
+                </div>
+            </div>
+        <div class="panel panel-default">
+            <div class="panel-heading" style="background-color: #3c8dbc" data-toggle="collapse" data-target="#collapse2">
+
+                <h4 class="panel-title" >
+                    计划信息
+                </h4>
+            </div>
+            <div id="collapse2" class="panel-collapse in">
+
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label  text-right " style="width:12.5%">计划标题：</label>
+                                <div class="col-sm-10" style="width:83.5%">
+                                    <input name="schedulingName" id="schedulingName" class="form-control" type="text" maxlength="30" th:field="*{smBizScheduling.schedulingName}"  readonly >
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label " style="width:11.5%">计划描述：</label>
+                            <div class="col-sm-10" style="width:85.5%">
+                                <input id="schedulingDescription" name="schedulingDescription" type="hidden" th:field="*{smBizScheduling.schedulingDescription}" readonly >
+                                <div class="summernote" id="summernote"></div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading" style="background-color: #3c8dbc" data-toggle="collapse" data-target="#collapse3">
+
+                <h4 class="panel-title" >
+                    计划信息
+                </h4>
+            </div>
+            <div id="collapse3" class="panel-collapse in">
+
+                <div class="panel-body">
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label  text-right ">任务编号：</label>
+                                <div class="col-sm-8">
+                                    <input  class="form-control" type="text"  th:field="*{taskFromNo}" id="taskFromNo" readonly>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">计划发布时间：</label>
+                                <div class="col-sm-8">
+                                    <div class="input-group date">
+                                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                        <input  class="form-control calcTotalSecondInput" type="text" th:value="*{performDate}" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label  text-right ">是否关联变更单：</label>
+                                <div class="col-sm-8">
+                                    <select th:name="isChange" class="form-control m-b" th:with="type=${@dict.getParaType('isChange')}" onchange="isChangeBut(this.value)">
+                                        <option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}" th:selected="1"></option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="relateChangeOpen">
+
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label text-right is-required " style="width:12.5%">处理描述：</label>
+                                <div class="col-sm-10" style="width:83.5%">
+                                    <textarea rows="10" cols="20" id="excuteDescription"  name="params[comment]"  class="form-control"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label  text-right">处理人：</label>
+                                <div class="col-sm-8">
+
+                                    <input class="form-control" type="text"     th:value="${pName}" readonly>
+                                    <input type="hidden" name="performUserId" id="pName"   th:value="${Pid}" readonly>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">填写时间：</label>
+                                <div class="col-sm-8">
+                                    <div class="input-group date">
+                                        <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                        <input name="writeTime" class="form-control calcTotalSecondInput" type="text" th:value="${writeTime}" readonly >
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    <div class="row" >
+                    </div>
+                        <div class="col-md-6" th:if="*{performDeptId !=null}">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label  text-right">应执行机构：</label>
+                                <div class="col-sm-8">
+                                    <input class="form-control" type="text" id="performDept"   th:field="*{ogoname}"  readonly>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6" th:if="*{performGroupId !=null}">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label  text-right">应执行工作组：</label>
+                                <div class="col-sm-8">
+                                    <input class="form-control" type="text" id="performGroup" th:field="*{grpname}" readonly>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="tabs-container">
+                <ul class="nav nav-tabs">
+                    <li class="active"><a data-toggle="tab" href="#tab-1" aria-expanded="true"> 附件上传</a>
+                    </li>
+                </ul>
+                <div class="tab-content">
+                    <div id="tab-1" class="tab-pane active">
+                        <div class="panel-body">
+                            <div class="btn-group-sm" id="toolbar1" role="group">
+                                <a class="btn btn-success" type="button" onclick="upload()">
+                                    <i class="fa fa-upload"></i> 添加附件
+                                </a>
+                                <a class="btn btn-primary multiple disabled" onclick="downloadFile()">
+                                    <i class="fa fa-download"></i> 下载附件
+                                </a>
+                                <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()">
+                                    <i class="fa fa-trash"></i> 删除附件
+                                </a>
+                            </div>
+                            <div class="col-sm-12 select-table table-striped">
+                                <table id="file-table"></table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-offset-5 col-sm-10">
+            <button type="button" class="btn btn-sm btn-primary" onclick="submitHandler()" id="commit"><i class="fa fa-check"></i>确 认</button>&nbsp;
+            <button type="button" class="btn btn-sm btn-danger" onclick="closeItem()"><i class="fa fa-window-close"></i>关 闭 </button>
+        </div>
+    </div>
+
+</div>
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: summernote-js" />
+<th:block th:include="include :: datetimepicker-js" />
+
+<script th:inline="javascript">
+    var prefix = ctx + "lxbg/filllxbg"
+
+    var zy_prefix = ctx + "system/single";
+
+    var prefix_attachment = ctx + "pub/attachment";
+
+
+    var sendRangeList=[[${sendRangeList}]];
+    var sendRange=[[${bizTaskinfo.smBizTask.sendRange}]];
+
+    $(function() {
+        var selectHtm=dictToSelect(sendRangeList);
+        $("#sendRangeDiv").append(selectHtm);
+
+        var optionsfj = {
+            url: prefix_attachment + "/list",
+            id:'file-table',
+            createUrl: prefix_attachment + "/add",
+            updateUrl: prefix_attachment + "/edit/{id}",
+            removeUrl: prefix_attachment + "/remove",
+            detailUrl: prefix_attachment + "/edit/{id}",
+            sortName: "fileTime",
+            sortOrder: "desc",
+            singleSelect: true,
+            clickToSelect: true,
+            toolbar:"toolbar1",
+            queryParams:queryParams,
+            modalName: "附件列表",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field : 'atId',
+                    title : '附件ID',
+                    visible : false
+                },
+                {
+                    field : 'person.pId',
+                    title : '上传人员Id',
+                    visible: false
+                },
+                {
+                    field : 'fileName',
+                    title : '文件名称'
+                },
+                {
+                    field : 'person.pName',
+                    title : '上传人'
+                },
+                {
+                    field : 'size',
+                    title : '文件大小'
+                },
+                {
+                    field : 'memo',
+                    title : '文件描述'
+                },
+                {
+                    field : 'fileTime',
+                    title : '上传时间'
+                }]
+        };
+        $.table.init(optionsfj);
+    });
+    function queryParams(params) {
+        var search = $.table.queryParams(params);
+        search.ownerId =  $("#taskFormId").val();
+        return search;
+    }
+    // 附件上传页面
+    function upload() {
+        var url = ctx + "pub/attachment/upload/" + $("#taskFormId").val();
+        $.modal.open("例行变更计划附件上传", url);
+    }
+    // 附件下载
+    function downloadFile() {
+        var rows = $.table.selectFirstColumns();
+        var atId = rows[0];
+        var ownerId = $("#taskFormId").val();
+        var url = ctx + "pub/attachment/download/"+ownerId+"/"+atId;
+        window.location.href = url;
+    }
+
+
+
+
+    $(function () {
+        changRange(sendRange);
+        $('.summernote').summernote({
+            placeholder: '',
+            height : 192,
+            lang : 'zh-CN',
+            followingToolbar: false,
+            callbacks: {
+                onImageUpload: function (files) {
+                    sendFile(files[0], this);
+                }
+            },
+            focus:true
+        });
+        var content = $("#schedulingDescription").val();
+        $('#summernote').summernote('code', content);
+        $('.summernote').summernote('disable');
+
+        isChangeBut("1");
+    });
+
+
+    function changRange(type) {
+        $("#changeArea").html("");
+        var div1=
+            "                            <div class=\"col-sm-12\">\n" +
+            "                                <div class=\"form-group\">\n" +
+            "                                    <label class=\"col-xs-2 control-label \" style=\"width:13.5%\">执行机构名称：</label>\n" +
+            "                                    <div class=\"col-xs-10\" style=\"width:81.5%\">\n" +
+            "                                        <input id=\"multiusers\" name=\"params[masterOrgId]\"  type=\"hidden\" value=\"\"/>\n" +
+            "                                        <textarea rows=\"10\" cols=\"20\" class=\"form-control\" type=\"text\" name=\"params[masterOrgIdName]\"  id=\"multiusersName\" required readonly></textarea>\n" +
+            "                                    </div>\n" +
+            "                                </div>\n" +
+            "                            </div>";
+        var div2="                            <div class=\"col-sm-12\">\n" +
+            "                                <div class=\"form-group\">\n" +
+            "                                    <label class=\"col-sm-2 control-label \" style=\"width:13.5%\">接收工作组：</label>\n" +
+            "                                    <div class=\"col-sm-10\" style=\"width:81.5%\">\n" +
+            "                                        <input id=\"working\" name=\"params[workGroup]\" type=\"hidden\" class=\"form-control\" />\n" +
+            "                                        <input id=\"workingname\" name=\"params[workGroupName]\" type=\"text\" class=\"form-control\" onclick=\"workings()\" readonly required>\n" +
+            "                                    </div>\n" +
+            "                                </div>\n" +
+            "                            </div>"
+        if("2"==type){
+            $("#changeArea").append(div2);
+            $("#working").val($("#performGroupId").val());
+            $("#workingname").val($("#performGroupName").val())
+            $("#multiusers").val($("#performDeptId").val(''));
+            $("#multiusersName").val($("#performDeptName").val(''))
+
+        }else {
+            $("#changeArea").append(div1);
+            $("#multiusers").val($("#performDeptId").val()+$("#performGroupId").val());
+            $("#multiusersName").val($("#performDeptName").val()+$("#performGroupName").val())
+            $("#working").val($("#performGroupId").val(''));
+            $("#workingname").val($("#performGroupName").val(''))
+        }
+
+    }
+    function changeSelect(type) {
+        $("#changeArea").html("");
+        var div1=
+            "                            <div class=\"col-sm-12\">\n" +
+            "                                <div class=\"form-group\">\n" +
+            "                                    <label class=\"col-xs-2 control-label \" style=\"width:13.5%\">执行机构名称：</label>\n" +
+            "                                    <div class=\"col-xs-10\" style=\"width:81.5%\">\n" +
+            "                                        <input id=\"multiusers\" name=\"params[masterOrgId]\" type=\"hidden\" value=\"\"/>\n" +
+            "                                        <textarea rows=\"10\" cols=\"20\" class=\"form-control\" type=\"text\" name=\"params[masterOrgIdName]\" id=\"multiusersName\" required readonly></textarea>\n" +
+            "                                    </div>\n" +
+            "                                </div>\n" +
+            "                            </div>";
+        var div2="                            <div class=\"col-sm-12\">\n" +
+            "                                <div class=\"form-group\">\n" +
+            "                                    <label class=\"col-sm-2 control-label \" style=\"width:13.5%\">接收工作组：</label>\n" +
+            "                                    <div class=\"col-sm-10\" style=\"width:81.5%\">\n" +
+            "                                        <input id=\"working\" name=\"params[workGroup]\" type=\"hidden\" class=\"form-control\" />\n" +
+            "                                        <input id=\"workingname\" name=\"params[workGroupName]\" type=\"text\" class=\"form-control\" onclick=\"workings()\" readonly required>\n" +
+            "                                    </div>\n" +
+            "                                </div>\n" +
+            "                            </div>"
+        if("2"==type) {
+            $("#changeArea").append(div2);
+        }else {
+            $("#changeArea").append(div1);
+            $.ajax({
+                cache: true,
+                type: "POST",
+                url: ctx + "system/value/listPara",
+                data: {
+                    "amParaId": type
+                },
+                async: false,
+                error: function (request) {
+                    $.modal.alertError("系统错误");
+                },
+                success: function (data) {
+                    var options = "";
+                    var ids = "";
+
+                    $.each(data, function (index, dict) {
+                        if (!$.common.isEmpty(dict.orgName)) {
+                            options += dict.orgName + ",";
+                            ids += "orgId:" + dict.receivedeptid + ","
+                        }
+                        if (!$.common.isEmpty(dict.grpName)) {
+                            options += dict.grpName + ",";
+                            ids += "grpId:" + dict.receivegroupid + ","
+                        }
+                    });
+                    $("#multiusers").val(ids);
+                    $("#multiusersName").val(options);
+                    $("#working").val($("#performGroupId").val(''));
+                    $("#workingname").val($("#performGroupName").val(''))
+                }
+            });
+        }
+    }
+
+    function glbg() {
+        $.modal.open("关联变更单", prefix + "/glbg");
+    }
+    function isChangeBut(type) {
+        $("#relateChangeOpen").html("");
+        var div2="                            <div class=\"col-sm-6\">\n" +
+            "                                <div class=\"form-group\">\n" +
+            "                                    <label class=\"col-sm-3 control-label  text-right is-required\">关联变更：</label>\n" +
+            "                                    <div class=\"col-sm-8\">\n" +
+            "                                        <input id=\"change\" name=\"change\" type=\"hidden\" class=\"form-control\" />\n" +
+            "                                        <input id=\"relateChange\" name=\"relateChange\" type=\"text\" class=\"form-control\" onclick=\"glbg()\" readonly style='background-color: #ffffff' required>\n" +
+            "                                    </div>\n" +
+            "                                </div>\n" +
+            "                            </div>"
+        if("1"==type){
+            $("#relateChangeOpen").append(div2);
+            $("#change").val($("#change").val());
+            $("#relateChange").val($("#relateChange").val())
+        }
+    }
+
+    /*通过*/
+    function submitHandler() {
+        if ($.validate.form()) {
+            var disposerText = $('#excuteDescription').val();
+            var trim_disposerText = disposerText.trim();
+            if(trim_disposerText == '') {
+                    $.modal.alertError('请输入处理描述!');
+                    return
+            }
+            var result = '',
+                strlen = $('#excuteDescription').val().length, // 字符串长度
+                chrlen = $('#excuteDescription').val().replace(/[^\x00-\xff]/g, '**').length // 字节长度
+            if (chrlen <= 256) {
+                var data = $("#form-lxbg-edit").serializeArray();
+                data.disposerText =trim_disposerText;
+                $.operate.saveTab(prefix + "/tianbao",data);
+                return
+            }else {
+                return $.modal.alertError('【处理描述】最大长度不能超过256')
+            }
+        }
+    }
+
+    function dictToSelect(datas) {
+        // 数据字典转下拉框
+        var actions = [];
+        actions.push($.common.sprintf("<select onchange='changeSelect(this.value)' class='form-control' disabled name='%s'>", 'sendRange'));
+        $.each(datas, function(index, dict) {
+            actions.push($.common.sprintf("<option value='%s'", dict.id));
+            if(dict.id==sendRange){
+                actions.push($.common.sprintf("selected='%s'",true));
+            }
+            actions.push($.common.sprintf(">%s</option>", dict.value));
+        });
+        actions.push('</select>');
+        return actions.join('');
+    }
+
+</script>
+</body>
+</html>

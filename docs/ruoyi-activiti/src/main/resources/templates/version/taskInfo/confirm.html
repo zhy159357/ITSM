@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('确认完成')" />
+    <th:block th:include="include :: select2-css" />
+    <th:block th:include="include :: datetimepicker-css" />
+</head>
+<body>
+    <div class="main-content">
+        <form class="form-horizontal m" id="form-taskInfo-confirm" th:object="${vmBizTaskInfo}">
+            <input id="taskId" name="taskId" th:field="*{taskId}" type="hidden">
+            <input id="taskStatus" name="taskStatus" th:field="*{taskStatus}" type="hidden">
+            <input id="versionInfoId" name="versionInfoId" th:field="*{vmBizInfo.versionInfoId}" type="hidden">
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">任务单号：</label>
+                        <div class="col-sm-8">
+                            <input id="taskNo" name="taskNo" th:field="*{taskNo}" class="form-control" type="text" readonly>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">版本编号：</label>
+                        <div class="col-sm-8">
+                            <input id="versionInfoNo" name="versionInfoNo" th:field="*{vmBizInfo.versionInfoNo}" class="form-control" type="text" readonly>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">所属系统：</label>
+                        <div class="col-sm-8">
+                            <input id="caption" name="vmBizInfo.ogSys.caption" th:field="*{vmBizInfo.ogSys.caption}" class="form-control" type="text" readonly>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">版本类型：</label>
+                        <div class="col-sm-8">
+                            <input id="versionTypeName" name="versionTypeName" th:field="*{vmBizInfo.versionTypeName}" class="form-control" type="text" readonly>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">涉及外围系统：</label>
+                        <div class="col-sm-10">
+                            <input id="sysName" name="vmBizInfo.sysName" th:field="*{vmBizInfo.sysName}" class="form-control" type="text" readonly>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">任务标题：</label>
+                        <div class="col-sm-10">
+                            <input id="taskName" name="taskName" th:field="*{taskName}" class="form-control" type="text" readonly>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">业务需求内容：</label>
+                        <div class="col-sm-10">
+                            <textarea rows="10" cols="20" id="businessRequirementText" name="businessRequirementText" class="form-control" th:text="*{vmBizInfo.businessRequirementText}" readonly></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">测试及业务验证情况：</label>
+                        <div class="col-sm-10">
+                            <textarea rows="6" cols="20" id="businessValidationText" name="businessValidationText" class="form-control" th:text="*{vmBizInfo.businessValidationText}" readonly></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">涉及变更的内容：</label>
+                        <div class="col-sm-10">
+                            <textarea rows="10" cols="20" id="noticeText" name="noticeText" class="form-control" th:text="*{vmBizInfo.noticeText}" readonly></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">开始升级时间：</label>
+                        <div class="col-sm-8">
+                            <input id="actualStartTime" name="actualStartTime" th:field="*{actualStartTime}" style="background-color: #ffffff" class="form-control" type="text" readonly required>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">完成升级时间：</label>
+                        <div class="col-sm-8">
+                            <input id="actualFinishTime" name="actualFinishTime" th:field="*{actualFinishTime}" style="background-color: #ffffff" class="form-control" type="text" readonly required>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">任务所属机构：</label>
+                        <div class="col-sm-8">
+                            <input id="orgName" name="orgName" th:field="*{ogOrg.orgName}" class="form-control" type="text" readonly>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">发布单创建人：</label>
+                        <div class="col-sm-8">
+                            <input id="versionProducerName" name="versionProducerName" th:field="*{vmBizInfo.versionProducerName}" class="form-control" type="text" readonly>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">升级情况反馈：</label>
+                        <div class="col-sm-10">
+                            <textarea rows="10" cols="20" id="taskDealResult" name="taskDealResult" class="form-control" th:text="*{taskDealResult}" maxlength="512"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </form>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="tabs-container">
+                <ul class="nav nav-tabs">
+                    <li class="active"><a data-toggle="tab" href="#tab-1" aria-expanded="true">附件</a>
+                    </li>
+                </ul>
+                <div class="tab-content">
+                    <div id="tab-1" class="tab-pane active">
+                        <div class="panel-body">
+                            <div class="btn-group-sm" id="toolbar1" role="group">
+                                <a class="btn btn-success" type="button" onclick="upload()">
+                                    <i class="fa fa-upload"></i> 添加附件
+                                </a>
+                                <a class="btn btn-warning multiple disabled" onclick="taskDownload()">
+                                    <i class="fa fa-download"></i> 下载附件
+                                </a>
+                                <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()">
+                                    <i class="fa fa-trash"></i> 删除附件
+                                </a>
+                            </div>
+                            <div class="col-sm-12 select-table table-striped">
+                                <table id="file-table"></table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="col-sm-offset-5 col-sm-10">
+            <button type="button" class="btn btn-sm btn-primary" onclick="confirm()"><i class="fa fa-check"></i>确定完成</button>&nbsp;
+            <button type="button" class="btn btn-sm btn-danger" onclick="closeItem()"><i class="fa fa-window-close"></i>关闭</button>
+        </div>
+    </div>
+
+    <th:block th:include="include :: footer" />
+    <th:block th:include="include :: select2-js" />
+    <th:block th:include="include :: datetimepicker-js" />
+    <script th:inline="javascript">
+        var prefix = ctx + "version/taskInfo";
+        var prefix_attachment = ctx + "pub/attachment";
+        var datas = [[${@pubParaValue.selectPubParaValueByParaName('file_type')}]];
+        $(function() {
+            var options = {
+                url: prefix_attachment + "/list",
+                id: "file-table",
+                createUrl: prefix_attachment + "/add",
+                updateUrl: prefix_attachment + "/edit/{id}",
+                removeUrl: prefix_attachment + "/remove",
+                detailUrl: prefix_attachment + "/edit/{id}",
+                showSearch: false,
+                showRefresh: false,
+                showToggle: false,
+                showColumns: false,
+                sortName: "fileTime",
+                sortOrder: "desc",
+                singleSelect: true,
+                clickToSelect: true,
+                toolbar: "toolbar1",
+                queryParams: queryParams,
+                modalName: "附件列表",
+                columns: [{
+                    checkbox: true
+                },
+                    {
+                        field : 'atId',
+                        title : '附件ID',
+                        visible : false
+                    },
+                    {
+                        field : 'fileName',
+                        title : '文件名称'
+                    },
+                    {
+                        field : 'person.pName',
+                        title : '上传人'
+                    },
+                    {
+                        field : 'size',
+                        title : '文件大小'
+                    },
+                    {
+                        field : 'memo',
+                        title : '文件描述'
+                    },
+                    {
+                        field : 'fileTime',
+                        title : '上传时间',
+                        formatter: function (value, row, index) {
+                            var startTime = '';
+                            if (value != '' && value != null) {
+                                var pattern = /(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/;
+                                startTime = value.replace(pattern, '$1-$2-$3 $4:$5:$6');
+                            }
+                            return startTime;
+                        }
+                    },
+                    {
+                        field : 'fileType',
+                        title : '附件类型',
+                        formatter: function(value, row, index) {
+                            return $.table.selectPubParaValueData(datas, value);
+                        }
+                    }]
+            };
+            $.table.init(options);
+        });
+
+        // 附件上传
+        function upload() {
+            var ownerId = $("#versionInfoId").val();
+            var url = prefix_attachment + "/upload/" + ownerId;
+            $.modal.open("添加附件", url);
+        }
+
+        // 附件下载
+        function taskDownload() {
+            var rows = $.table.selectFirstColumns();
+            var atId = rows[0];
+            var ownerId = $("#versionInfoId").val();
+            var url = prefix_attachment + "/download/"+ownerId+"/"+atId;
+            window.location.href = url;
+        }
+
+        function queryParams(params) {
+            var search = $.table.queryParams(params);
+            search.ownerId = $("#versionInfoId").val() == '' ? 'version_public_add_no_owner_id' : $("#versionInfoId").val();
+            return search;
+        }
+
+        // 确定完成
+        function confirm() {
+            if ($.validate.form()) {
+                var data = $('#form-taskInfo-confirm').serializeArray();
+                // taskStatus=3为已完成
+                data.push({"name": "remark", "value": "complete"});
+                $.operate.saveTab(prefix + "/complete", data);
+            }
+        }
+
+        $("#actualStartTime").datetimepicker({
+            format: "yyyy-mm-dd hh:ii:ss",
+            autoclose: true,
+            minView:0,
+            minuteStep:1,
+            Date:new Date()
+        });
+
+        $("#actualFinishTime").datetimepicker({
+            format: "yyyy-mm-dd hh:ii:ss",
+            autoclose: true,
+            minView:0,
+            minuteStep:1,
+            Date:new Date()
+        });
+
+    </script>
+</body>
+</html>

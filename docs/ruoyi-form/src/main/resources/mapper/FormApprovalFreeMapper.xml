@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.form.mapper.FormApprovalFreeMapper">
+    
+    <resultMap type="FormApprovalFree" id="FormApprovalFreeResult">
+        <result property="flag"    column="flag"    />
+        <result property="comment"    column="comment"    />
+        <result property="type"    column="type"    />
+        <result property="defineKey"    column="define_key"    />
+        <result property="approvalName"    column="approval_name"    />
+        <result property="approval"    column="approval"    />
+        <result property="formId"    column="form_id"    />
+        <result property="formNo"    column="form_no"    />
+        <result property="id"    column="id"    />
+    </resultMap>
+
+    <sql id="selectFormApprovalFreeVo">
+        select flag, comment, type, define_key, approval_name, approval, form_id, form_no, id from form_approval_free
+    </sql>
+
+    <select id="selectFormApprovalFreeList" parameterType="FormApprovalFree" resultMap="FormApprovalFreeResult">
+        <include refid="selectFormApprovalFreeVo"/>
+        <where>  
+            <if test="flag != null "> and flag = #{flag}</if>
+            <if test="comment != null  and comment != ''"> and comment = #{comment}</if>
+            <if test="type != null  and type != ''"> and type = #{type}</if>
+            <if test="defineKey != null  and defineKey != ''"> and define_key = #{defineKey}</if>
+            <if test="approvalName != null  and approvalName != ''"> and approval_name like concat(concat('%', #{approvalName}), '%')</if>
+            <if test="approval != null  and approval != ''"> and approval = #{approval}</if>
+            <if test="formId != null  and formId != ''"> and form_id = #{formId}</if>
+            <if test="formNo != null  and formNo != ''"> and form_no = #{formNo}</if>
+        </where>
+    </select>
+    
+    <select id="selectFormApprovalFreeById" parameterType="Long" resultMap="FormApprovalFreeResult">
+        <include refid="selectFormApprovalFreeVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertFormApprovalFree" parameterType="FormApprovalFree">
+        insert into form_approval_free
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="flag != null ">flag,</if>
+            <if test="comment != null  and comment != ''">comment,</if>
+            <if test="type != null  and type != ''">type,</if>
+            <if test="defineKey != null  and defineKey != ''">define_key,</if>
+            <if test="approvalName != null  and approvalName != ''">approval_name,</if>
+            <if test="approval != null  and approval != ''">approval,</if>
+            <if test="formId != null  and formId != ''">form_id,</if>
+            <if test="formNo != null  and formNo != ''">form_no,</if>
+            <if test="id != null ">id,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="flag != null ">#{flag},</if>
+            <if test="comment != null  and comment != ''">#{comment},</if>
+            <if test="type != null  and type != ''">#{type},</if>
+            <if test="defineKey != null  and defineKey != ''">#{defineKey},</if>
+            <if test="approvalName != null  and approvalName != ''">#{approvalName},</if>
+            <if test="approval != null  and approval != ''">#{approval},</if>
+            <if test="formId != null  and formId != ''">#{formId},</if>
+            <if test="formNo != null  and formNo != ''">#{formNo},</if>
+            <if test="id != null ">#{id},</if>
+         </trim>
+    </insert>
+
+    <update id="updateFormApprovalFree" parameterType="FormApprovalFree">
+        update form_approval_free
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="flag != null ">flag = #{flag},</if>
+            <if test="comment != null  and comment != ''">comment = #{comment},</if>
+            <if test="type != null  and type != ''">type = #{type},</if>
+            <if test="defineKey != null  and defineKey != ''">define_key = #{defineKey},</if>
+            <if test="approvalName != null  and approvalName != ''">approval_name = #{approvalName},</if>
+            <if test="approval != null  and approval != ''">approval = #{approval},</if>
+            <if test="formId != null  and formId != ''">form_id = #{formId},</if>
+            <if test="formNo != null  and formNo != ''">form_no = #{formNo},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <update id="updateFormApprovalFreeByCondition" parameterType="FormApprovalFree">
+        update form_approval_free
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="flag != null ">flag = #{flag},</if>
+            <if test="comment != null  and comment != ''">comment = #{comment},</if>
+        </trim>
+        where form_id = #{formId} and approval = #{approval} and define_key = #{defineKey} and `type` = #{type}
+    </update>
+
+    <delete id="deleteFormApprovalFreeById" parameterType="Long">
+        delete from form_approval_free where id = #{id}
+    </delete>
+
+    <delete id="deleteFormApprovalFreeByIds" parameterType="String">
+        delete from form_approval_free where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

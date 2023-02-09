@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('监控事件单列表')" />
+</head>
+<body class="gray-bg">
+<div class="container-div">
+    <form id="formId">
+    <div class="row">
+        <div class="col-sm-12 search-collapse">
+                <div class="select-list">
+                    <ul>
+                        <input id="type" name="params[type]" th:value="${type}" hidden>
+                        <li>
+                            <p>单号：</p>
+                            <input type="text" name="eventNo" maxlength="20"/>
+                        </li>
+                        <li>
+                            <p>告警ID：</p>
+                            <input type="text" name="eventId" maxlength="40"/>
+                        </li>
+                        <li>
+                            <p>事件标题：</p>
+                            <input type="text" name="eventTitle" maxlength="60"/>
+                        </li>
+                        <li class="select-time">
+                            <p>创建时间：</p>
+                            <input type="text" class="time-input" id="beginCreateTime" placeholder="开始时间" name="params[beginCreateTime]" readonly style="background-color: #fdfdfd">
+                            <span>-</span>
+                            <input type="text" class="time-input" id="endCreateTime" placeholder="结束时间" name="params[endCreateTime]" readonly style="background-color: #fdfdfd">
+                        </li>
+                        <li class="select-time">
+                            <p>关闭时间：</p>
+                            <input type="text" class="time-input" id="beginCloseTime" placeholder="开始时间" name="params[beginCloseTime]" readonly style="background-color: #fdfdfd">
+                            <span>-</span>
+                            <input type="text" class="time-input" id="endCloseTime" placeholder="结束时间" name="params[endCloseTime]" readonly style="background-color: #fdfdfd">
+                        </li>
+                        <li>
+                            <p>系统名称：</p>
+                            <input id="appSystemCode" name="appSystemCode"   hidden >
+                            <input id="appSystemName" name="appSystemName" type="text"   class="form-control" onclick="selectOneApplication()" readonly style="background-color: #fdfdfd" >
+                        </li>
+                        <li>
+                            <p>事件等级：</p>
+                            <select name="eventLevel" class="form-control" th:with="type=${@pubParaValue.selectPubParaValueByParaName('dhsj_sjdj')}">
+                                <option value="">所有</option>
+                                <option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+                            </select>
+                        </li>
+                        <li>
+                            <p>事件类型：</p>
+                            <select name="eventType" class="form-control" th:with="type=${@pubParaValue.selectPubParaValueByParaName('duty_type')}">
+                                <option value="">所有</option>
+                                <option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+                            </select>
+                        </li>
+                        <li>
+                            <p>事件状态：</p>
+                            <select name="status"
+                                    class="form-control noselect2 selectpicker" data-none-selected-text="请选择状态"
+                                    multiple data-actions-box="true" data-width="200px" data-live-search="true"
+                                    th:with="type=${@pubParaValue.selectPubParaValueByParaName('Event_status')}">
+                                <option value="">所有</option>
+                                <option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+                            </select>
+                        </li>
+                    </ul>
+                </div>
+        </div>
+            <div class="col-sm-12 search-collapse">
+                <div class="select-list">
+                    <ul>
+                        <li>
+                            <div style="width:290px;height:30px;">
+                                <span style="font-size:15px;margin-top:5px;margin-left:80px;float:left;color:#337ab7;">监控事件单任务耗时查询</span>
+                            </div>
+                        </li>
+                        <li>
+                            <p style="color:#337ab7;">任务名称：</p>
+                            <select name="params[userTask]" class="form-control" th:with="type=${@pubParaValue.selectPubParaValueByParaName('YXSJ_TASKNAME')}">
+                                <option value="">请选择</option>
+                                <option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+                            </select>
+                        </li>
+                        <li class="select-time">
+                            <p style="color:#337ab7;">时间范围：</p>
+                            <input type="text"  name="params[case1]" id="case1" placeholder="只能输入数字" onkeyup="value=value.replace(/[^0-9.]/g,'')" maxlength="10" >
+                            <span>-</span>
+                            <input type="text"  name="params[case2]" id="case2" placeholder="只能输入数字" onkeyup="value=value.replace(/[^0-9.]/g,'')" maxlength="10">
+                        </li>
+                        <li>
+                            <p style="color:#337ab7;">时间单位：</p>
+                            <select name="params[unit]" class="form-control" th:with="type=${@pubParaValue.selectPubParaValueByParaName('YXSJ_UNIT')}">
+                                <option value="">请选择</option>
+                                <option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+                            </select>
+                        </li>
+                        <li>
+                            <a class="btn btn-primary btn-rounded btn-sm" id="searchBut" onclick="$.table.search()"><i class="fa fa-search"></i> 搜索</a>
+                            <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.resetAll('formId')"><i class="fa fa-refresh"></i> 重置</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+    </div>
+    </form>
+        <div class="btn-group-sm" id="toolbar" role="group">
+            <a class="btn btn-info btn-xs single disabled" onclick="view()"><i class="fa fa-search"></i>详情</a>
+            <a class="btn btn-warning btn-xs single disabled"  onclick="showProcessImgDialog()"><i class="fa fa-edit"></i> 查看流程图</a>
+            <a data-toggle="dropdown" class="btn btn-warning btn-sm dropdown-toggle" aria-expanded="false">导出<span class="caret"></span></a>
+            <ul class="dropdown-menu"><li><a onclick="$.table.exportExcel()">导出所有页</a></li><li><a onclick="$.table.exportExcelCurrentPage()">导出当前页</a></li></ul>
+            <a th:if="${admin}" class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()" shiro:hasPermission="system:phone:remove">
+                <i class="fa fa-remove"></i>清理数据并结束任务
+            </a>
+            <a th:if="${admin}" class="btn btn-danger" onclick="removeAllNotice()" shiro:hasPermission="system:phone:remove">
+                <i class="fa fa-remove"></i>清理监控系统通知
+            </a>
+        </div>
+        <div class="col-sm-12 select-table table-striped">
+            <table id="bootstrap-table"></table>
+        </div>
+    </div>
+</div>
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: datetimepicker-js" />
+<th:block th:include="include :: datetimepicker-css" />
+<th:block th:include="include :: select2-css" />
+<th:block th:include="include :: select2-js" />
+<th:block th:include="include :: bootstrap-select-js" />
+<th:block th:include="include :: bootstrap-select-css" />
+<th:block th:include="include :: jasny-bootstrap-css" />
+<th:block th:include="include :: jasny-bootstrap-js" />
+<script th:inline="javascript">
+    var prefix = ctx + "activiti/run";
+    var eventLevel=[[${@pubParaValue.selectPubParaValueByParaName('dhsj_sjdj')}]];
+    var eventType=[[${@pubParaValue.selectPubParaValueByParaName('duty_type')}]];
+    var eventStatus=[[${@pubParaValue.selectPubParaValueByParaName('Event_status')}]];
+    var eventSource=[[${@pubParaValue.selectPubParaValueByParaName('YXSJ_SOURCE')}]];
+    var admin=[[${admin}]];
+    $(function() {
+        // 回车键搜索
+        document.onkeydown = function(e){
+            var ev = document.all ? window.event : e;
+            if(ev.keyCode==13) {
+                $('#searchBut').trigger('click');
+                return false;
+            }
+        };
+        var options = {
+            url: prefix + "/allList",
+            exportUrl: prefix + "/export",
+            removeUrl: prefix + "/removeAll",
+            clickToSelect: true,               // 是否启用点击选中行
+            singleSelect: true,
+            // showColumns: false,
+            modalName: "监控事件单",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field : 'eventId',
+                    title : 'ID',
+                    visible: false
+                },
+                {
+                    field : 'eventTitle',
+                    title : '事件标题',
+                    formatter: function (value, row, index) {
+						 return $.table.tooltip(value);
+					},
+                    cellStyle: function cellStyle(value, row, index, field) {
+                        return { classes: 'text-nowrap'};
+                    }
+                },
+                {
+                    field : 'eventNo',
+                    title : '单号'
+                },
+                {
+                    field : 'createTime',
+                    title : '创建时间'
+                },
+                {
+                    field : 'eventSource',
+                    title : '来源',
+                    formatter:function (value) {
+                        return $.table.selectPubParaValueData(eventSource,value);
+                    }
+                },
+                {
+                    field : 'appSystemName',
+                    title : '应用系统名称',
+                    formatter: function (value, row, index) {
+						 return $.table.tooltip(value);
+					},
+                    cellStyle: function cellStyle(value, row, index, field) {
+                        return { classes: 'text-nowrap'};
+                    }
+                },
+                {
+                    field : 'eventLevel',
+                    title : '事件等级',
+                    formatter:function (value) {
+                        return $.table.selectPubParaValueData(eventLevel,value);
+
+                    }
+                },
+                {
+                    field : 'eventType',
+                    title : '事件类型',
+                    formatter:function (value) {
+                        return $.table.selectPubParaValueData(eventType,value);
+
+                    }
+                },
+                {
+                    field : 'closeTime',
+                    title : '告警关闭时间'
+                },
+                {
+                    field : 'status',
+                    title : '事件状态',
+                    formatter:function (value) {
+                        return $.table.selectPubParaValueData(eventStatus,value);
+
+                    }
+                }]
+        };
+        if(admin==true){
+            options.singleSelect=false;
+        }
+        $.table.init(options);
+    });
+    function removeAllNotice(){
+        var url = ctx+"system/notify/removeAll";
+        var data = { "ids":"All"};
+        $.operate.submit(url, "post", "json", data);
+    }
+    //流程图
+    function showProcessImgDialog() {
+        var eventId= $.table.selectColumns('eventId');
+        var url = ctx + 'process/processImg/' + eventId;
+        $.modal.openNoBtn("查看流程图", url, null, null, null, true);
+    }
+    function view() {
+        var eventId= $.table.selectColumns('eventId');
+        $.modal.openTab("详情",prefix+"/view/"+eventId);
+    }
+    // 选择应用系统
+	function selectOneApplication() {
+		$.modal.open("选择应用系统", prefix + "/selectOneApplication/1");
+	}
+</script>
+</body>
+</html>

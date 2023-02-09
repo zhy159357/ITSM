@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('系统线条故障展示')" />
+    <th:block th:include="include :: datetimepicker-css" />
+</head>
+<body class="gray-bg">
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-12 search-collapse">
+            <form id="formId">
+                <div class="select-list">
+                    <ul>
+                        <li>
+                            <label> 中心：</label><select class="form-control"  name="lineCore" th:with="type=${@dict.getParaType('Line_Center')}" id="lineCore">
+                            <option value=""></option>
+                            <option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+                        </select>
+                        </li>
+                        <li>
+                            <label>环境：</label><select class="form-control"  name="lineAmbient" th:with="type=${@dict.getParaType('UPGRADE_ENVIRONMENT')}" id="lineAmbient">
+                            <option value=""></option>
+                            <option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+                        </select>
+                        </li>
+                        <li>
+                            <label>故障分类：</label><select class="form-control"  name="classIfication" th:with="type=${@dict.getParaType('Line_Type')}" id="classIfication">
+                            <option value=""></option>
+                            <option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+                        </select>
+                        </li>
+                        <li>
+                            <label>故障点：</label><select class="form-control"  name="classDot" th:with="type=${@dict.getParaType('Line_Dot')}" id="classDot">
+                            <option value=""></option>
+                            <option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+                        </select>
+                        </li>
+                        <li>
+                            <label>所属公司：</label>
+                            <input id="companies" name="companies" type="text" style="display: none">
+                            <input id="orgNameOne" name="orgNameOne" type="text" onclick="selectDeptTree(this)" style="background-color: #fff; opacity: 1;" readonly required>
+                        </li>
+                        <li>
+                            <label>是否维保：</label><select class="form-control"  name="threeParties" th:with="type=${@dict.getParaType('Line_Isno')}" id="threeParties">
+                            <option value=""></option>
+                            <option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+                        </select>
+                        </li>
+                        <li>
+                            <label>系统名称：</label><input type="text" name="caption"/>
+                        </li>
+                        <li>
+                            <label>状态：</label><select class="form-control"  name="lineStart" th:with="type=${@dict.getParaType('line_start')}" id="lineStart">
+                            <option value=""></option>
+                            <option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+                        </select>
+                        </li>
+                        <li>
+                            <label>备件耗时：</label><input type="text" placeholder="默认分钟" name="spareTime"/>
+                        </li>
+                        <li>
+                            <label>处理耗时：</label><input type="text" placeholder="默认分钟" name="elapsedTime"/>
+                        </li>
+                        <li>
+                            <label>响应耗时：</label><input type="text" placeholder="默认分钟" name="personAnswerTime"/>
+                        </li>
+                        <li>
+                            <label>报修时间：</label><input id="startTime" name="startTime"  style="background-color: #fff; opacity: 1;" type="text"  readonly required>
+                        </li>
+                        <li>
+                            <a class="btn btn-primary btn-rounded btn-sm" id="ss" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                            <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-repeat"></i>&nbsp;重置</a>
+                        </li>
+                    </ul>
+                </div>
+            </form>
+        </div>
+
+        <div class="btn-group-sm" id="toolbar" role="group">
+            <!--导出所有｜当前页按钮组合-->
+            <div class="btn-group">
+                <button data-toggle="dropdown" class="btn btn-primary btn-sm dropdown-toggle">导出<span
+                        class="caret"></span>
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a onclick="$.table.exportExcel()">导出所有</a>
+                    </li>
+                    <li><a onclick="$.table.exportExcelCurrentPage()">导出当前页</a>
+                    </li>
+                </ul>
+            </div>
+            <!--<a class="btn btn-info" onclick="$.table.importTemplate()">
+                <i class="fa fa-download"></i> 下载导入模板
+            </a>
+            <a class="btn btn-info" onclick="$.table.importExcel()">
+                <i class="fa fa-upload"></i> 导入
+            </a>-->
+            <a class="btn btn-info single disabled" onclick="detailTab()">
+                <i class="fa fa-search"></i> 详情
+            </a>
+        </div>
+        <div class="col-sm-12 select-table table-striped">
+            <table id="bootstrap-table"></table>
+        </div>
+    </div>
+</div>
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: datetimepicker-js" />
+<script th:inline="javascript">
+    var classIfication =  [[${@dict.getParaType('Line_Type')}]];
+    var classDot =  [[${@dict.getParaType('Line_Dot')}]];
+    var treatment =  [[${@dict.getParaType('Line_Treatment')}]];
+    var lineCore =  [[${@dict.getParaType('Line_Center')}]];
+
+    var prefix =ctx +"line/cx";
+
+    $(function() {
+        document.onkeydown = function(e){
+            var ev = document.all ? window.event : e;
+            console.log(ev);
+            if(ev.keyCode==13) {
+                $('#ss').trigger('click');
+                return false;
+            } //搜索逻辑
+        }
+        var options = {
+            url: prefix + "/list",
+            createUrl: prefix + "/add",
+            updateUrl: prefix + "/edit/{id}",
+            removeUrl: prefix + "/remove",
+            detailUrl: prefix + "/detail/{id}",
+            exportUrl: prefix + "/export",
+            importUrl: prefix + "/importData",
+            importTemplateUrl: prefix + "/importTemplate",
+            singleSelect:true,
+            clickToSelect: true,
+            sortName: "startTime",
+            sortOrder: "desc",
+            modalName: "系统线条故障",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'lineId',
+                    title: '序号',
+                    visible:false
+                },
+                {
+                    field: 'lineCore',
+                    title: '中心',
+                    formatter: function (value,row,index) {
+                        return selectDictLabel(lineCore, value);
+                    },
+                    /*width: '1000',*/
+                    cellStyle: function cellStyle(value, row, index, field) {
+                        return { classes: 'text-nowrap'};
+                    }
+                },
+                {
+                    field: 'caption',
+                    title: '系统名称',
+                    cellStyle: function cellStyle(value, row, index, field) {
+                        return { classes: 'text-nowrap'};
+                    }
+                },
+                {
+                    field: 'purpose',
+                    title: '用途',
+                    formatter: function(value,row,index){
+                        return $.table.tooltip(value);
+                    },
+                    cellStyle: function cellStyle(value, row, index, field) {
+                        return { classes: 'text-nowrap'};
+                    }
+                },
+                {
+                    field: 'equipment',
+                    title: '设备位置',
+                    formatter: function(value,row,index){
+                        return $.table.tooltip(value);
+                    },
+                    cellStyle: function cellStyle(value, row, index, field) {
+                        return { classes: 'text-nowrap'};
+                    }
+                },
+                {
+                    field: 'startTime',
+                    title: '报修时间',
+                    cellStyle: function cellStyle(value, row, index, field) {
+                        return { classes: 'text-nowrap'};
+                    }
+                },
+                {
+                    field: 'endTime',
+                    title: '结束时间',
+                    cellStyle: function cellStyle(value, row, index, field) {
+                        return { classes: 'text-nowrap'};
+                    }
+                },
+                {
+                    field: 'spareTime',
+                    title: '备件耗时（分钟）',
+                    cellStyle: function cellStyle(value, row, index, field) {
+                        return { classes: 'text-nowrap'};
+                    }
+                },
+                {
+                    field: "elapsedTime",
+                    title: '故障处理耗时（分钟）',
+                    cellStyle: function cellStyle(value, row, index, field) {
+                        return { classes: 'text-nowrap'};
+                    }
+                },
+                {
+                    field: "personAnswerTime",
+                    title: '人员响应耗时（分钟）',
+                    cellStyle: function cellStyle(value, row, index, field) {
+                        return { classes: 'text-nowrap'};
+                    }
+                },
+                {
+                    field: 'classIfication',
+                    title: '故障分类',
+                    formatter: function (value,row,index) {
+                        return selectDictLabel(classIfication, value);
+                    },
+                    cellStyle: function cellStyle(value, row, index, field) {
+                        return { classes: 'text-nowrap'};
+                    }
+                },
+                {
+                    field: "classDot",
+                    title: '故障点',
+                    formatter: function (value,row,index) {
+                        return selectDictLabel(classDot, value);
+                    },
+                    cellStyle: function cellStyle(value, row, index, field) {
+                        return { classes: 'text-nowrap'};
+                    }
+                }]
+        };
+        $.table.init(options);
+    });
+    // 查看详情
+    function detailTab() {
+        var lineId = $.table.selectFirstColumns();
+        var url = prefix + '/detail/' + lineId;
+        $.modal.openTab("查看详情", url);
+    }
+
+    $("#startTime").datetimepicker({
+        format: "yyyy-mm-dd",
+        minView: "month",
+        autoclose: true
+    });
+
+    /* 公司 */
+    function selectDeptTree(elementObj) {
+        checkeId =  elementObj.id;
+        var treeId = $("#treeId").val();
+        var deptId = $.common.isEmpty(treeId) ? "310100001" : $("#treeId").val();
+        var url = ctx + "line/dj/selectDeptTree/" + deptId;
+        var options = {
+            title: '选择部门',
+            width: "380",
+            url: url,
+            callBack: doSubmit
+        };
+        $.modal.openOptions(options);
+    }
+
+    function doSubmit(index, layero){
+
+        $("select[disabled]").removeAttr("disabled");
+        $("div").removeAttr("onclick")
+        var tree = layero.find("iframe")[0].contentWindow.$._tree;
+        if(jQuery.isEmptyObject(tree)) {
+            layer.close(index);
+        }else{
+            var selectNode = tree.getSelectedNodes();
+            if(selectNode.length!=0){
+                $("#companies").val(selectNode[0].id);
+                $("#orgNameOne").val(selectNode[0].name);
+            }
+        }
+        layer.close(index);
+    }
+
+    //字典项
+    function selectDictLabel(datas, value) {
+        var actions = [];
+        $.each(datas, function(index, dict) {
+            if (dict.value == ('' + value)) {
+                var listClass = $.common.equals("default", dict.listClass) || $.common.isEmpty(dict.listClass) ? "" : "badge badge-" + dict.listClass;
+                actions.push($.common.sprintf("<span class='%s'>%s</span>", listClass, dict.valueDetail));
+                return false;
+            }
+        });
+        return actions.join('');
+    }
+
+</script>
+
+<!-- 导入区域 -->
+<script id="importTpl" type="text/template">
+    <form enctype="multipart/form-data" class="mt20 mb10">
+        <div class="col-xs-offset-1">
+            <input type="file" id="file" name="file"/>
+            <font color="red" class="pull-left mt10">
+                提示：仅允许导入“xls”或“xlsx”格式文件！
+            </font>
+        </div>
+    </form>
+</script>
+
+</body>
+</html>

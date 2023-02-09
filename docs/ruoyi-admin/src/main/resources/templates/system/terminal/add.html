@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('新增【请填写功能名称】')" />
+</head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form class="form-horizontal m" id="form-terminal-add"  th:object="${telTerminal}">
+            <input name="jobNumber" id="jobNumber" class="form-control" type="hidden" required>
+            <div class="form-group">
+                <div class="col-sm-6">
+                    <label class="col-sm-4 control-label">创建人：</label>
+                    <div class="col-sm-8">
+                        <input name="createId" th:field="*{ogPerson.pName}" class="form-control" type="text" required readonly>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <label class="col-sm-4 control-label">创建时间：</label>
+                    <div class="col-sm-8">
+                        <input name="createTime" th:value="*{createTime}" class="form-control" type="text" required readonly>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-sm-6">
+                    <label class="col-sm-4 control-label is-required">话机IP：</label>
+                    <div class="col-sm-8">
+                        <input name="telip" id="telip" class="form-control" type="text" required isIp="true">
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <label class="col-sm-4 control-label is-required">电话银行工号：</label>
+                    <div class="col-sm-8">
+                        <input name="serviceIp" id="serviceIp" class="form-control" type="text" required >
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-sm-6">
+                    <label class="col-sm-4 control-label is-required">分机号：</label>
+                    <div class="col-sm-8">
+                        <input name="extno" class="form-control" type="text" required>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <label class="col-sm-4 control-label is-required">工号：</label>
+                    <div class="col-sm-8">
+                        <input name="jobNumberName" id="jobNumberName" style="background-color: #ffffff" class="form-control" type="text" required readonly onclick="addUser()" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-sm-6">
+                    <label class="col-sm-4 control-label is-required">添加默认技能组：</label>
+                    <div class="col-sm-8">
+                        <select class="form-control" id="ifskillno" name="ifskillno" th:with="type=${@dict.getParaType('Line_Isno')}" required>
+                            <option value=""></option>
+                            <option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div id="userDiv" th:style="'display:' + 'none' ">
+        <form id="user-form" class="form-horizontal">
+            <input type="text" style="display: none" id="treeId" name="orgId">
+            <div class="row">
+                <div class="col-sm-12 search-collapse">
+                    <div class="select-list">
+                        <ul>
+                            <li>
+                                账号名称：<input type="text" name="username" />
+                            </li>
+                            <li>
+                                人员名称：<input type="text" name="pname"/>
+                            </li>
+                            <li>
+                                所属机构：<input type="text" name="orgname"/>
+                            </li>
+                            <li>
+                                状态：
+                                <select name="invalidationMark" th:with="type=${@dict.getParaType('sys_normal_disable')}">
+                                    <option value="">所有</option>
+                                    <option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+                                </select>
+                            </li>
+                            <li>
+                                <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search('user-form','bootstrap-table')"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset('user-form','bootstrap-table')"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="col-sm-12 select-table table-striped">
+                    <table id="bootstrap-table"></table>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <th:block th:include="include :: footer" />
+
+    <script type="text/javascript">
+        var prefixA = ctx + "system/terminal";
+
+        function addUser(){
+            $.modal.open("选择人员", prefixA + "/addlist");
+        }
+        $("#form-terminal-add").validate({
+            focusCleanup: true
+        });
+
+        function submitHandler() {
+            if ($.validate.form()) {
+                var serviceIp=$("#serviceIp").val();
+<!--                var telip = $("#telip").val();-->
+<!--                if (!isIPAvailable(telip)) {-->
+<!--                    $.modal.alertWarning("ip地址不合法！！！！！！");-->
+<!--                    return;-->
+<!--                }-->
+                if(!/^(\d{8})$/.test(serviceIp)){
+                    $.modal.msg("【电话银行工号】电话银行工号格式不正确，工号必须为8位纯数字");
+                    return;
+                }
+                $.operate.save(prefixA + "/add", $('#form-terminal-add').serialize());
+            }
+        }
+
+        	// ip校验
+        // function isIPAvailable(telip) {
+        //     var reg = /^((([1-9]\d?)|(1\d{2})|(2[0-4]\d)|(25[0-5]))\){3}(([1-9]\d?)|(1\d{2})|(2[0-4]\d)|(25[0-5]))$/;
+        //     if (!reg.test(telip)) {
+        //         return false;
+        //     } else {
+        //         return true;
+        //     }
+        // }
+        var prefix = ctx + "system/account";
+        $("#user-form").validate({
+            focusCleanup: true
+        });
+        $(function() {
+            var options = {
+                url: prefix + "/list",
+                modalName: "账号",
+                singleSelect:true,
+                onClickRow:function(row,obj){
+                    $('#jobNumber').val(row.userId);
+                    $('#jobNumberName').val(row.username);
+                    $(obj).siblings().removeClass("selected");
+                    $(obj).addClass("selected");
+                    $("#userDiv").hide();
+                },
+                columns: [
+                    {
+                        field: 'userId',
+                        title: '账号编号',
+                        visible:false
+                    },
+                    {
+                        field: 'username',
+                        title: '账号名称',
+                        sortable: true
+                    },
+                    {
+                        field: 'pname',
+                        title: '人员名称',
+                        sortable: true
+                    },
+                    {
+                        field: 'mobilPhone',
+                        title: '电话号码',
+                        sortable: true
+                    },
+                    {
+                        field: 'orgname',
+                        title: '所属机构',
+                        sortable: true
+                    },
+                    {
+                        field: 'invalidationMark',
+                        title: '状态',
+                        align: 'center',
+                        formatter: function (value, row, index) {
+                            return value == "1"?"启用":"禁用";
+                        }
+                    }]
+            };
+            $.table.init(options);
+        });
+    </script>
+</body>
+</html>

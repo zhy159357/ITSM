@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:include="include :: header('事件单组内转发')"/>
+    <th:block th:include="include :: select2-css"/>
+</head>
+<body>
+<div class="main-content">
+    <form id="form-fmbiz-add" class="form-horizontal" th:object="${fmSawo}">
+        <input id="ordId" type="hidden" name="ordId" th:value="${ordId}">
+        <input name="ownerId" type="hidden" id="ownerId"/>
+        <h4 class="form-header h4">转发</h4>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">处置人所属机构：</label>
+                    <div class="col-sm-8"><!--th:field="*{dealDept}"-->
+                        <input name="dealDept"  id="dealDept" class="form-control" onclick="selectDept()"  type="text">
+                        <input name="n1" id="n1" th:field="*{n1}" type="hidden">
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">处置人：</label>
+                    <div class="col-sm-8">
+                        <select class="form-control" id="dealId" name="dealId" required >
+                            <option value="" th:if="${not #strings.isEmpty(fmSawo.dealId)}"></option>
+                            <option th:each="OgPerson : ${personList}" th:text="${OgPerson.pName}"
+                                    th:value="${OgPerson.pId}" ></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <h4 class="form-header h4">转发信息</h4>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">转发信息：</label>
+                    <div class="col-sm-10">
+                        <textarea rows="6" cols="20" id="rem" name="rem" maxlength="150" class="form-control"></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<div class="row">
+    <div class="col-sm-offset-5 col-sm-10">
+        <button type="button" class="btn btn-sm btn-primary" onclick="submit()" id="yes" value="winClose"><i
+                class="fa fa-check"></i>转发
+        </button>&nbsp;
+    </div>
+</div>
+<th:block th:include="include :: footer"/>
+<th:block th:include="include :: select2-js"/>
+<th:block th:include="include :: datetimepicker-js"/>
+<script>
+
+    var prefix = ctx + "sawo/dispose";
+    var prefix_attachment = ctx + "pub/attachment";
+    var prefix_p = ctx + "public";
+    var prefix_show = ctx + "system/peo"
+
+    $("#form-fmbiz-add").validate({
+        onkeyup: false,
+        rules: {},
+        messages: {},
+        focusCleanup: true
+    });
+
+    function submit() {
+        if ($.validate.form()) {
+            var data = $("#form-fmbiz-add").serializeArray();
+            data.push({"name":"ordState","value": 2 });
+            //$.operate.saveTab(prefix_version + "/saveflowrepeatIn", data, asd);
+            $.operate.saveTab(prefix + "/editZf", data, asd);
+
+            function asd(a) {
+                if (a.code == 0) {
+                    var tabPanel = $(window.frameElement).attr('data-panel');
+                    var tabMain = parent.$('.menuTab[data-id="' + tabPanel + '"]').attr('data-panel');
+                    parent.$('.menuTab[data-id="' + tabMain + '"]').trigger('click');
+                    parent.$('.menuTab[data-id="' + tabPanel + '"]').remove();
+                    parent.$('.menuTab[data-panel="' + tabPanel + '"]').remove();
+                    parent.$('.mainContent .RuoYi_iframe[data-id="' + tabPanel + '"]').remove();
+                    /*if (flag == '1') {//判断是否工作台打开
+                        parent.$('.mainContent .RuoYi_iframe[name="iframe0"]').contents().find(".list01>li:nth-child(1)>a").trigger('click');
+                    }*/
+                } else {
+                    return
+                }
+            }
+        }
+    };
+
+    /* 选择审批机构树 */
+    function selectDept() {
+        debugger;
+        var orgId = $("#n1").val();
+        //var deptId = $.common.isEmpty(orgId) ? "310100001" : $("#n1").val();
+        var deptId = "310100001";
+        var url = prefix + "/selectDeptTree/" + deptId;
+        var options = {
+            title: '选择部门',
+            width: "380",
+            url: url,
+            callBack: doSubmitOne
+        };
+        $.modal.openOptions(options);
+    }
+
+    function doSubmitOne(index, layero) {
+        var tree = layero.find("iframe")[0].contentWindow.$._tree;
+        var body = layer.getChildFrame('body', index);
+        $("#n1").val(body.find('#treeId').val());
+        $("#dealDept").val(body.find('#treeName').val());
+        getchangeManager(body.find('#treeId').val());
+        layer.close(index);
+    }
+
+    //获取处置人
+    /*function selectBusinessAudit(ogrId ,rId,pflag) {
+        debugger;
+        var ogId = $("#"+ogrId+"").val();
+        var url = prefix + "/selectBusinessAudit"+"?"+"orgId="+encodeURI(encodeURI(ogId))+"&pflag="+pflag+"&rId="+rId;
+        $.modal.open("选择处置人", url);
+    }*/
+    //获取处置人
+    function getchangeManager(changeOrg) {
+        $.ajax({
+            cache: true,
+            type: "POST",
+            url: prefix_p + "/selectPersonByOrgIdOrOrgLvAndRole",
+            data: {
+                "orgId": changeOrg,
+                "rId": "88889",
+                "pflag": "1",
+                "params[isselect]": "1"
+            },
+            async: false,
+            error: function (request) {
+                $.modal.alertError("系统错误");
+            },
+            success: function (data) {
+                var options = "<option value='" + "" + "'>" + "" + "</option> \n";
+                $("#dealId").html("");
+                for (var ak = 0; ak < data.rows.length; ak++) {
+                    options += "<option value='" + data.rows[ak].pId + "'>" + data.rows[ak].pName + "</option> \n";
+                }
+                $("#dealId").append(options);
+            }
+        });
+    }
+
+</script>
+</body>
+</html>

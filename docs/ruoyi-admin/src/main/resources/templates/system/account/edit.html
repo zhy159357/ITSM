@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+	<th:block th:include="include :: header('新增账号')" />
+	<th:block th:include="include :: ztree-css" />
+	<style type="text/css">
+		.form-control[disabled], .form-control[readonly], fieldset[disabled] .form-control {
+			background-color: #ffffff;
+			opacity: 1;
+		}
+
+		.labelShow {
+			color: red;
+		}
+	</style>
+</head>
+<body class="white-bg">
+<div class="container-div">
+	<div id="accountDiv" >
+		<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+			<form class="form-horizontal m" id="form-account-edit" th:object="${ogUser}">
+				<input type="hidden" name="pId" id="pId"/>
+				<div class="form-group">
+					<label class="col-sm-3 control-label">账号名称：</label>
+					<div class="col-sm-8">
+						<input type="hidden" id="userId" name="userId" th:field="*{userId}"  class="form-control">
+						<input type="hidden" id="pId" name="pId" th:field="*{pId}"  class="form-control">
+						<input class="form-control" type="text" name="username" id="username" th:field="*{username}" readonly style="background-color:#e6e3e3">
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-3 control-label">输入密码：</label>
+					<div class="col-sm-8">
+						<input id="password" name="password"  class="form-control"  type="password">
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-3 control-label">确认密码：</label>
+					<div class="col-sm-8">
+						<input id="repassword" name="repassword"  class="form-control"  type="password" >
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-3 control-label">柜员号：</label>
+					<div class="col-sm-8">
+						<input id="custNo" name="custNo"  class="form-control" maxlength="16" th:field="*{custNo}" >
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-3 control-label" style="color: red;">人员名称：</label>
+					<div class="col-sm-8">
+						<input id="pName" name="pName"  class="form-control" th:field="*{pname}" type="text" readonly onclick="chooseUser()">
+					</div>
+				</div>
+
+				<div class="form-group">
+					<label class="col-sm-3 control-label" style="color: red;">状态：</label>
+					<div class="col-sm-8">
+						<select name="invalidationMark" id="invalidationMark" class="form-control m-b" th:with="type=${@dict.getParaType('paraState')}">
+							<option th:field="*{invalidationMark}" th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+						</select>
+					</div>
+				</div>
+			</form>
+		</div>
+		<div class="row">
+			<div class="col-sm-offset-5 col-sm-10">
+				<button type="button" class="btn btn-sm btn-primary" onclick="submitHandler()"><i class="fa fa-check"></i>保 存</button>&nbsp;
+				<button type="button" class="btn btn-sm btn-warning" onclick="resetHandler()"><i class="fa fa-repeat"></i>重置</button>&nbsp;
+				<button type="button" class="btn btn-sm btn-danger" onclick="$.modal.close()"><i class="fa fa-window-close"></i>关 闭 </button>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+
+
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: ztree-js" />
+<script th:inline="javascript">
+
+    var prefix = ctx + "system/ogperson";
+
+    $(function() {
+        var options = {
+            url: prefix + "/list",
+            createUrl: prefix + "/add",
+            updateUrl: prefix + "/edit/{id}",
+            removeUrl: prefix + "/remove",
+            exportUrl: prefix + "/export",
+            importUrl: prefix + "/importData",
+            importTemplateUrl: prefix + "/importTemplate",
+            sortName: "p.addtime",
+            sortOrder: "desc",
+            modalName: "人员",
+            singleSelect: true,
+            columns: [{
+                radio: true,
+                visible: false
+            },
+                {
+                    field: 'pId',
+                    visible: false
+                },
+                {
+                    field: 'pName',
+                    title: '姓名'
+                },
+                {
+                    field: 'sex',
+                    title: '性别',
+                    sortable: true,
+                    formatter: function (value, row, index) {
+                        return value=='0'?'男':'女'
+                    }
+                },
+                {
+                    field: 'birthPlace',
+                    title: '籍贯'
+                },
+                {
+                    field: 'mobilPhone',
+                    title: '手机号'
+                },
+                {
+                    field: 'orgname',
+                    title: '所属机构'
+                },
+                {
+                    field: 'mome',
+                    title: '备注'
+                }]
+
+        };
+        $.table.init(options);
+
+        var options = {
+            url: prefix + "/list",
+            createUrl: prefix + "/add",
+            updateUrl: prefix + "/edit/{id}",
+            removeUrl: prefix + "/remove",
+            exportUrl: prefix + "/export",
+            importUrl: prefix + "/importData",
+            importTemplateUrl: prefix + "/importTemplate",
+            sortName: "p.addtime",
+            sortOrder: "desc",
+            modalName: "人员",
+            singleSelect: true,
+            columns: [{
+                radio: true,
+                visible: false
+            },
+                {
+                    field: 'pId',
+                    visible: false
+                },
+                {
+                    field: 'pName',
+                    title: '姓名'
+                },
+                {
+                    field: 'sex',
+                    title: '性别',
+                    sortable: true,
+                    formatter: function (value, row, index) {
+                        return value=='0'?'男':'女'
+                    }
+                },
+                {
+                    field: 'birthPlace',
+                    title: '籍贯'
+                },
+                {
+                    field: 'mobilPhone',
+                    title: '手机号'
+                },
+                {
+                    field: 'orgname',
+                    title: '所属机构'
+                },
+                {
+                    field: 'mome',
+                    title: '备注'
+                }]
+
+        };
+        $.table.init(options);
+    });
+
+
+    function submitHandler() {
+        var data = {};
+        var reg = /^(?![a-zA-Z]+$)(?![A-Z0-9]+$)(?![A-Z\W_]+$)(?![a-z0-9]+$)(?![a-z\W_]+$)(?![0-9\W_]+$)[a-zA-Z0-9\W_]{8,}$/;
+
+        //判断当前是否进行了密码输入
+        var password = $('#password').val();
+        if(password.trim()!=''){
+            var repassword = $('#repassword').val().trim();
+            if(password!=repassword){
+                alert('两次密码必须一致!');
+                return;
+            }else{
+                if (!reg.test(password)) {
+                    alert('密码强度较弱，请重填，密码强度最少8位，满足数字、大小写字母、特殊字符其中的三种且不能与账号一致!')
+                    return;
+                }else{
+                    //两次密码一致 密码不能和账号相同
+                    var username = $('#username').val();
+                    if(username==password){
+                        alert('密码不能和账号相同!');
+                        return;
+                    }else{
+                        data.password = password;
+                    }
+                }
+            }
+        }
+        //判断确认密码
+        var reppwd = $('#repassword').val().trim();
+        if(reppwd!='' && reppwd!=null){
+            if(password!=repassword){
+                alert('两次密码必须一致!');
+                return;
+            }
+        }
+        var userId = $('#userId').val();
+        var pId = $('#pId').val();
+        var invalidationMark = $('#invalidationMark').val();
+        var custNo = $('#custNo').val();
+        data.userId = userId;
+        data.pId = pId;
+        data.invalidationMark = invalidationMark;
+        data.custNo = custNo;
+        $.post(ctx+"system/account/edit",data,function (result) {
+            if(result.code==0){
+                $.modal.close();
+                parent.$.modal.msgSuccess('账号修改成功');
+                //清空userId
+                parent.$('#userId').val('');
+                parent.$.table.search('user-form','bootstrap-table1')
+                parent.$.table.search('post-form','bootstrap-table2');
+            } else {
+                parent.$.modal.alertError('柜员号已被绑定');
+			}
+        });
+    }
+
+    /**
+     * 人员选择
+     */
+    function chooseUser() {
+        var url = ctx+'system/account/selectUser';
+        parent.$.modal.open("选择人员", url );
+
+    }
+
+    /**
+     * 重置
+     */
+    function resetHandler() {
+        $('#password').val('');
+        $('#repassword').val('');
+        $('#custNo').val('');
+    }
+
+
+</script>
+</body>
+</html>

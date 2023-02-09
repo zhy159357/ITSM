@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('已关闭事务事件单')" />
+    <th:block th:include="include :: datetimepicker-css" />
+    <th:block th:include="include :: select2-css" />
+    <style>
+        .form-control[disabled], fieldset[disabled] .form-control {
+            cursor: pointer;
+        }
+
+        .form-control[disabled], .form-control[readonly], fieldset[disabled] .form-control {
+            background-color: #ffffff;
+            opacity: 1;
+        }
+    </style>
+
+</head>
+<body class="gray-bg">
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-12 search-collapse">
+            <form id="fmswclosed-form">
+                <input type="text" th:id="treeId" name="createOrgId" style="display: none"/>
+                <input type="text" th:id="dealOrgId" name="dealOrgId" style="display: none"/>
+                <div class="select-list">
+                    <ul>
+                        <li>
+                            <label>事件编号： </label><input type="text" name="faultNo"/>
+                        </li>
+                        <li>
+                            <label>事件标题： </label><input type="text" name="faultTitle"/>
+                        </li>
+                        <li>
+                            <label>受理处室：</label>
+                            <input  id="dealOrgName" onclick="selectDeptTree(this)"  type="text"   readonly>
+                        </li>
+                        <li onclick="test()">
+                            <label>请求事项： </label>
+                            <select name="faultKind" class="form-control" id="faultKind"  readonly onclick="isSelect()">
+                            </select>
+                        </li>
+                        <li>
+                            <label>申请处室：</label>
+                            <input  id="treeName" onclick="selectDeptTree(this)"  type="text"    readonly>
+                        </li>
+                        <li>
+                            <label>申请人：</label>
+                            <input type="text" name="createName"/>
+                        </li>
+                        <li>
+                            <label>处理人：</label>
+                            <input type="text" name="dealname"/>
+                        </li>
+                        <li >
+                            <label>申请时间：</label>
+                            <input type="text" name="startCreateTime" id="startCreateTime" readonly style="background-color: #ffffff"/>
+                        </li>
+                        <li>
+                            <label>至：</label>
+                            <input type="text" name="endCreateTime" id="endCreateTime" readonly style="background-color: #ffffff"/>
+                        </li>
+                        <li>
+                            <label>我的标识：</label>
+                            <select name="auditResult" class="form-control" th:with="type=${@dict.getParaType('fmSw_auditRes')}">
+                                <option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}" th:selected="${dict.value=='00'}"></option>
+                            </select>
+                        </li>
+                        <li>
+                            <a class="btn btn-primary btn-rounded btn-sm" id="ss" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                            <a class="btn btn-warning btn-rounded btn-sm" onclick="resetForm()"><i class="fa fa-repeat"></i>&nbsp;重置</a>
+                        </li>
+                    </ul>
+                </div>
+            </form>
+        </div>
+
+        <div class="btn-group-sm" id="toolbar" role="group">
+            <a class="btn btn-primary multiple disabled" onclick="$.operate.commonTab('','审计')">
+                内部审计
+            </a>
+            <a class="btn btn-primary multiple disabled"  onclick="showProcessImg()" >
+                <i class="fa fa-search-plus"></i> 查看流程
+            </a>
+        </div>
+
+        <div class="col-sm-12 select-table table-striped">
+            <table id="bootstrap-table"></table>
+        </div>
+    </div>
+</div>
+
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: datetimepicker-js" />
+<th:block th:include="include :: select2-js" />
+<script th:inline="javascript">
+    var datas = [[${@dict.getParaType('fmSw_status')}]];
+    var auditDatas = [[${@dict.getParaType('fmSw_auditRes')}]];
+    var prefix_mb_show = ctx +"transmb/mb";
+    var checkeId;
+
+
+    function  isSelect() {
+        //获取受理机构是否选中
+        var dealId = $("#dealOrgId").val();
+        if(dealId==''){
+            $.modal.alertError("请先选择【受理处室】 ")
+        }
+    }
+
+    function selectDeptTree(elementObj) {
+        checkeId =  elementObj.id;
+        var treeId = $("#treeId").val();
+        var deptId = $.common.isEmpty(treeId) ? "310100001" : $("#treeId").val();
+        var url = ctx + "system/dept/selectDeptTree/" + deptId;
+        var options = {
+            title: '选择部门',
+            width: "380",
+            url: url,
+            callBack: doSubmit
+        };
+        $.modal.openOptions(options);
+    }
+
+    function doSubmit(index, layero){
+        var tree = layero.find("iframe")[0].contentWindow.$._tree;
+        if(jQuery.isEmptyObject(tree)) {
+            layer.close(index);
+        }else{
+            var selectNode = tree.getSelectedNodes();
+            if(selectNode.length!=0){
+                if("treeName"==checkeId){
+                    $("#treeId").val(selectNode[0].id);
+                    $("#treeName").val(selectNode[0].name);
+                }else{
+                    $("#dealOrgId").val(selectNode[0].id);
+                    $("#dealOrgName").val(selectNode[0].name);
+                    //获取当前选择的机构Id //获取授权人 处理人 和模板信息
+                    //发去ajax请求
+                    $.ajax({
+                        type: 'POST',
+                        url: prefix_mb_show+"/levelcodeAndMbInfo",
+                        data: {"nodeId":selectNode[0].id,"rId":"0102,0103"},
+                        success: function (result) {
+                            var swmb_opts = "<option value=''></option>";
+                            $.each(result.data[2], function (index, item){
+                                swmb_opts += "<option value='"+item.swmdId+"'>"+item.faultKind+"</option>";
+                            })
+                            $("#faultKind").html(swmb_opts);
+                        },
+                        dataType: 'json'
+                    });
+                }
+
+            }
+        }
+        layer.close(index);
+    }
+    $(function() {
+        $("#startCreateTime").datetimepicker({
+            format: "yyyy-mm-dd",
+            minView: "month",
+            autoclose: true
+
+        });
+
+        $("#endCreateTime").datetimepicker({
+            format: "yyyy-mm-dd",
+            minView: "month",
+            autoclose: true
+        });
+    })
+    var prefix = ctx + "trans/sw";
+
+
+
+    $(function() {
+        document.onkeydown = function(e){
+            var ev = document.all ? window.event : e;
+            console.log(ev);
+            if(ev.keyCode==13) {
+                $('#ss').trigger('click');
+                return false;
+            } //搜索逻辑
+        }
+        var options = {
+            url: prefix + "/list",
+            createUrl: prefix + "/add",
+            updateUrl: prefix + "/auditEdit/{id}",
+            removeUrl: prefix + "/remove",
+            exportUrl: prefix + "/export",
+            sortName: "createTime",
+            sortOrder: "desc",
+            modalName: "事务事件单",
+            singleSelect:true,
+            clickToSelect: true,
+            queryParams:queryParams,
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'fmSwId',
+                    title: '事务事件单Id',
+                    visible:false
+                },
+                {
+                    field: 'faultNo',
+                    title: '事件单编号'
+                },
+                {
+                    field: 'faultTitle',
+                    title: '事件标题',
+                    formatter: function(value,row,index){
+                        return $.table.tooltip(value);
+                    },
+                    cellStyle: function cellStyle(value, row, index, field) {
+                        return { classes: 'text-nowrap'};
+                    }
+                },
+                {
+                    field: 'faultKind',
+                    title: '请求事项',
+                    formatter: function(value,row,index){
+                        return $.table.tooltip(value);
+                    },
+                    cellStyle: function cellStyle(value, row, index, field) {
+                        return { classes: 'text-nowrap'};
+                    }
+                },
+                {
+                    field: 'createOrgName',
+                    title: '申请处室',
+                    formatter: function(value,row,index){
+                        return $.table.tooltip(value);
+                    },
+                    cellStyle: function cellStyle(value, row, index, field) {
+                        return { classes: 'text-nowrap'};
+                    }
+                },
+                {
+                    field: 'dealOrgname',
+                    title: '受理处室',
+                    formatter: function(value,row,index){
+                        return $.table.tooltip(value);
+                    },
+                    cellStyle: function cellStyle(value, row, index, field) {
+                        return { classes: 'text-nowrap'};
+                    }
+                },
+                {
+                    field: 'createName',
+                    title: '申请人',
+                    formatter: function(value,row,index){
+                        return $.table.tooltip(value);
+                    },
+                    cellStyle: function cellStyle(value, row, index, field) {
+                        return { classes: 'text-nowrap'};
+                    }
+                },
+                {
+                    field: 'dealname',
+                    title: '处理人 ',
+                    formatter: function(value,row,index){
+                        return $.table.tooltip(value);
+                    },
+                    cellStyle: function cellStyle(value, row, index, field) {
+                        return { classes: 'text-nowrap'};
+                    }
+                },
+                {
+                    field: 'currentState',
+                    title: '当前状态',
+                    formatter: function (value,row,index) {
+                        return selectDictLabel(datas, value);
+                    }
+                },
+                {
+                    field: 'createTime',
+                    title: '申请时间',
+                    formatter: function(value,row,index){
+                        return $.table.tooltip(value);
+                    },
+                    cellStyle: function cellStyle(value, row, index, field) {
+                        return { classes: 'text-nowrap'};
+                    }
+                },
+                {
+                    field: 'auditResult',
+                    title: '审计结果',
+                    formatter: function (value,row,index) {
+                        return selectDictLabel(auditDatas, value);
+                    },
+                    cellStyle: function cellStyle(value, row, index, field) {
+                        return { classes: 'text-nowrap'};
+                    }
+                }]
+        };
+        $.table.init(options);
+    });
+
+
+    function queryParams(params) {
+        var search = $.table.queryParams(params);
+        search.auditResult = '00';
+        search.currentState = '05';
+        return search;
+    }
+
+    function open(title, url, width, height, callback) {
+        //如果是移动端，就使用自适应大小弹窗
+        if ($.common.isMobile()) {
+            width = 'auto';
+            height = 'auto';
+        }
+        if ($.common.isEmpty(title)) {
+            title = false;
+        }
+        if ($.common.isEmpty(url)) {
+            url = "/404.html";
+        }
+        if ($.common.isEmpty(width)) {
+            width = 800;
+        }
+        if ($.common.isEmpty(height)) {
+            height = ($(window).height() - 50);
+        }
+        if ($.common.isEmpty(callback)) {
+            callback = function(index, layero) {
+                var iframeWin = layero.find('iframe')[0];
+                iframeWin.contentWindow.submitHandler(index, layero);
+            }
+        }
+        layer.opeshon({
+            type: 2,
+            area: [width + 'px', height + 'px'],
+            fix: false,
+            //不固定
+            maxmin: true,
+            shade: 0.3,
+            title: title,
+            content: url,
+            btn: ['关闭'],
+            // 弹层外区域关闭
+            shadeClose: true,
+            cancel: function(index) {
+                return true;
+            }
+        });
+    }
+    function showDetail() {
+        //获取选中的row的Id
+        var row = $("#bootstrap-table").bootstrapTable('getSelections')[0];
+
+        open("查看" + table.options.modalName, prefix+"/edit/"+row.swmdId+"/0");
+    }
+
+    function showProcessImg() {
+        var row = $("#bootstrap-table").bootstrapTable('getSelections')[0];
+        var url = ctx + 'process/processImg/' + row.fmSwId;
+        $.modal.openNoBtn("查看流程图", url, null, null, null, true);
+    }
+
+    function selectDictLabel(datas, value) {
+        var actions = [];
+        $.each(datas, function(index, dict) {
+            if (dict.value == ('' + value)) {
+                var listClass = $.common.equals("default", dict.listClass) || $.common.isEmpty(dict.listClass) ? "" : "badge badge-" + dict.listClass;
+                actions.push($.common.sprintf("<span class='%s'>%s</span>", listClass, dict.valueDetail));
+                return false;
+            }
+        });
+        return actions.join('');
+    }
+
+    function resetForm() {
+        $('#faultKind').val('');
+        $.form.reset()
+    }
+
+    function test() {
+        var dealOrgId = $('#dealOrgId').val()
+        var dealOrgName = $('#dealOrgName').val()
+        if(dealOrgId=='' || dealOrgName==''){
+            $.modal.alertError("请先选择【受理处室】 ")
+            return;
+        }
+    }
+</script>
+</body>
+</html>

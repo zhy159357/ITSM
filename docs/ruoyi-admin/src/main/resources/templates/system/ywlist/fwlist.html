@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('服务通讯录列表')" />
+    <th:block th:include="include :: layout-latest-css" />
+    <th:block th:include="include :: ztree-css" />
+</head>
+<body class="gray-bg">
+<div class="ui-layout-center">
+    <div class="container-div">
+        <div class="row">
+            <div class="col-sm-12 search-collapse">
+                <form id="role-form">
+                    <div class="select-list">
+                        <ul>
+                            <li>
+                                制度标题：<input type="text" name="regime_title" maxlength="20"/>
+                            </li>
+                            <li>
+                                制度摘要：<input type="text" name="regime_digest" maxlength="20"/>
+                            </li>
+                            <li>
+                                关键字：<input type="text" name="key_word" maxlength="20"/>
+                            </li>
+                            <li>
+                                提交人：<input type="text" name="orgId" maxlength="20"/>
+                            </li>
+                            <li class="select-time">
+                                <label>开始时间:</label>
+                                <input type="text" style="width:205px" class="time-input" id="step_up_operation_time" placeholder="开始时间" name="params[beginTime]"/>
+                            </li>
+                            <li class="select-time">
+                                <label>结束时间:</label>
+                                <input type="text" style="width:205px" class="time-input" id="delete_time" placeholder="结束时间" name="params[endTime]"/>
+                            </li>
+                            <li>
+                                废止原因:<select id="delete_reason" name="delete_reason" required>
+                                <option value="">所有</option>
+                                <option th:each="deletype : ${deleList}" th:text="${deletype.info}" th:value="${deletype.code}"></option>
+                            </select>
+                            </li>
+                            <li>
+                                状态:<select id="current_state" name="current_state" required>
+                                <option value="">所有</option>
+                                <option th:each="statetype : ${stateList}" th:text="${statetype.info}" th:value="${statetype.code}"></option>
+                            </select>
+                            </li>
+                            <li>
+                                <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                            </li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+
+            <div class="btn-group-sm" id="toolbar" role="group">
+                <a class="btn btn-success" onclick="add()" >
+                    <i class="fa fa-plus"></i> 新增
+                </a>
+                <a class="btn btn-primary single disabled" onclick="edit()" >
+                    <i class="fa fa-edit"></i> 修改
+                </a>
+                <a class="btn btn-danger multiple disabled" onclick="removeAll()" >
+                    <i class="fa fa-remove"></i> 删除
+                </a>
+                <a class="btn btn-primary single disabled" onclick="$.operate.detail()" >
+                    <i class="fa fa-detail"></i> 查看详情
+                </a>
+            </div>
+
+            <div class="col-sm-12 select-table table-striped">
+                <table id="bootstrap-table"></table>
+            </div>
+        </div>
+    </div>
+</div>
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: layout-latest-js" />
+<th:block th:include="include :: ztree-js" />
+<script th:inline="javascript">
+
+    var prefix = ctx + "system/info";
+    $(function() {
+        var options = {
+            url: prefix + "/list",
+            createUrl: prefix + "/add",
+            updateUrl: prefix + "/edit/{id}",
+            removeUrl: prefix + "/remove",
+            detailUrl: prefix + "/detail/{id}",
+            modalName: "信息制度",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'regime_info_id',
+                    title: 'id',
+                    visible:false,
+                    sortable: true
+                },
+                {
+                    field: 'regime_title',
+                    title: '制度标题',
+                    sortable: true
+                },
+                {
+                    field: 'key_word',
+                    title: '关键字',
+                    visible:false,
+                    sortable: true
+                },
+                {
+                    field: 'print_time',
+                    title: '印发日期',
+                    visible:false,
+                    sortable: true
+                },
+                {
+                    field: 'checker',
+                    title: '审核人',
+                    visible:false,
+                    sortable: true
+                },
+                {
+                    field: 'regime_digest',
+                    title: '制度摘要',
+                    sortable: true
+                },
+                {
+                    field: 'checker',
+                    title: '审核人',
+                    visible:false,
+                    sortable: true,
+                    formatter: function (value, row, index) {
+                        if(row.inoutsideMark == 0){
+                            return "数据中心处长1";
+                        }else if(row.inoutsideMark == 1){
+                            return "数据中心处长2";
+                        }else {
+                            return "数据中心处长3";
+                        }
+                    }
+                },
+                {
+                    field: 'type_one',
+                    title: '类型一',
+                    visible:false,
+                    sortable: true,
+                    formatter: function (value, row, index) {
+                        if(row.inoutsideMark == 0){
+                            return "基础制度与政策类";
+                        }else if(row.inoutsideMark == 1){
+                            return "管理办法与规定类";
+                        }else {
+                            return "操作规范与实施细则";
+                        }
+                    }
+                },
+                {
+                    field: 'type_two',
+                    title: '类型二',
+                    visible:false,
+                    sortable: true,
+                    formatter: function (value, row, index) {
+                        if(row.inoutsideMark == 0){
+                            return "系统";
+                        }else if(row.inoutsideMark == 1){
+                            return "网络";
+                        }else if(row.inoutsideMark == 2){
+                            return "应用";
+                        }else if(row.inoutsideMark == 3){
+                            return "安全";
+                        }else {
+                            return "动力";
+                        }
+                    }
+                },
+                {
+                    field: 'current_state',
+                    title: '状态',
+                    visible:false,
+                    sortable: true,
+                    formatter: function (value, row, index) {
+                        if(row.inoutsideMark == 0){
+                            return "正式";
+                        }else {
+                            return "试行";
+                        }
+                    }
+                },
+                {
+                    field: 'folder_',
+                    title: '印发文号',
+                    visible:false,
+                    sortable: true
+                },
+                {
+                    field: 'sytem_four',
+                    title: '四级制度',
+                    visible:false,
+                    sortable: true,
+                    formatter: function (value, row, index) {
+                        if(row.inoutsideMark == 0){
+                            return "一级";
+                        }else if(row.inoutsideMark == 1){
+                            return "二级";
+                        }else if(row.inoutsideMark == 2){
+                            return "三级";
+                        }else {
+                            return "四级";
+                        }
+                    }
+                },
+                {
+                    field: 'classify',
+                    title: '分类域',
+                    visible:false,
+                    sortable: true,
+                    formatter: function (value, row, index) {
+                        if(row.inoutsideMark == 0){
+                            return "服务治理";
+                        }else if(row.inoutsideMark == 1){
+                            return "服务管理";
+                        }else if(row.inoutsideMark == 2){
+                            return "常态运维";
+                        }else if(row.inoutsideMark == 3){
+                            return "应急态运维";
+                        }else if(row.inoutsideMark == 4){
+                            return "系统和设施运维和维护";
+                        }else if(row.inoutsideMark == 5){
+                            return "质量管理";
+                        }else {
+                            return "信息安全管理";
+                        }
+                    }
+                },
+                {
+                    field: 'commit_id',
+                    title: '提交人',
+                    sortable: true
+                },
+                {
+                    field: 'current_state',
+                    title: '状态',
+                    sortable: true
+                }
+            ]
+        };
+        $.table.init(options);
+    });
+
+    function add(id) {
+        table.set();
+        $.modal.openNoColse("添加" + table.options.modalName, $.operate.addUrl(id));
+    };
+    function edit(id) {
+        table.set();
+        $.modal.openNoColse("修改" + table.options.modalName, $.operate.editUrl(id));
+    };
+    // function remove(id) {
+    //     table.set();
+    //     $.modal.openNoColse("修改" + table.options.modalName, $.operate.removeUrl(id));
+    // };
+
+    // 删除信息
+    function removeAll(width, height){
+        table.set();
+        var rows = $.common.isEmpty(table.options.uniqueId) ? $.table.selectFirstColumns() : $.table.selectColumns(table.options.uniqueId);
+        if (rows.length != 1) {
+            $.modal.alertWarning("请选择一条记录");
+            return;
+        }
+        var id = rows.join();
+        var _url =  prefix + "/remove/"+id;
+        var _width = $.common.isEmpty(width) ? "800" : width;
+        var _height = $.common.isEmpty(height) ? "280" : height;
+        //如果是移动端，就使用自适应大小弹窗
+        if ($.common.isMobile()) {
+            _width = 'auto';
+            _height = 'auto';
+        }
+        // $.modal.openNoColse("删除" + table.options.modalName, $.operate.addUrl(id));
+
+        var options = {
+            title: table.options.modalName + "详细",
+            width: _width,
+            height: _height,
+            url: _url,
+            skin: 'layui-layer-gray',
+            btn: ['-1'],
+            yes: function (index, layero) {
+                layer.close(index);
+            }
+        };
+        $.modal.openOptions(options);
+    }
+    /* 新增-选择树 */
+    function selectDeptTree() {
+        var treeId = $("#treeId").val();
+        var deptId = $.common.isEmpty(treeId) ? "100" : $("#treeId").val();
+        var url = ctx + "system/info/selectFolderTree/" + deptId;
+        var options = {
+            title: '选择部门',
+            width: "380",
+            url: url,
+            callBack: doSubmit
+        };
+        $.modal.openOptions(options);
+    }
+    function doSubmit(index, layero){
+        var tree = layero.find("iframe")[0].contentWindow.$._tree;
+
+        if(jQuery.isEmptyObject(tree)) {
+            layer.close(index);
+        }else{
+            var selectNode = tree.getSelectedNodes();
+            if(selectNode.length!=0){
+                $("#treeId").val(selectNode[0].id);
+                $("#treeName").val(selectNode[0].name);
+            }
+        }
+        layer.close(index);
+    }
+
+    $(function() {
+        var panehHidden = false;
+        if ($(this).width() < 800) {
+            panehHidden = true;
+        }
+        $('body').layout({ initClosed: panehHidden, west__size: 185 });
+        // 回到顶部绑定
+        if ($.fn.toTop !== undefined) {
+            var opt = {
+                win:$('.ui-layout-center'),
+                doc:$('.ui-layout-center')
+            };
+            $('#scroll-up').toTop(opt);
+        }
+        queryInfoList();
+        queryDeptTree();
+    });
+
+    function queryDeptTree()
+    {
+        var url = ctx + "system/info/treeData";
+        var options = {
+            url: url,
+            expandLevel: 2,
+            onClick : zOnClick
+        };
+        $.tree.init(options);
+
+        function zOnClick(event, treeId, treeNode) {
+            $("#treeId").val(treeNode.id);
+            $("#treeName").val(treeNode.name);
+            $.table.search();
+        }
+    }
+    function queryInfoList() {
+        var options = {
+            url: prefix + "/list",
+            updateUrl: prefix + "/auditing/{id}",
+            modalName: "审核信息制度",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'regime_info_id',
+                    title: 'id',
+                    visible:false,
+                    sortable: true
+                },
+                {
+                    field: 'regime_title',
+                    title: '制度标题',
+                    sortable: true
+                },
+                {
+                    field: 'key_word',
+                    title: '关键字',
+                    visible:false,
+                    sortable: true
+                },
+                {
+                    field: 'print_time',
+                    title: '印发日期',
+                    visible:false,
+                    sortable: true
+                },
+                {
+                    field: 'checker',
+                    title: '审核人',
+                    visible:false,
+                    sortable: true
+                },
+                {
+                    field: 'regime_digest',
+                    title: '制度摘要',
+                    sortable: true
+                },
+                {
+                    field: 'checker',
+                    title: '审核人',
+                    visible:false,
+                    sortable: true,
+                    formatter: function (value, row, index) {
+                        if(row.inoutsideMark == 0){
+                            return "数据中心处长1";
+                        }else if(row.inoutsideMark == 1){
+                            return "数据中心处长2";
+                        }else {
+                            return "数据中心处长3";
+                        }
+                    }
+                },
+                {
+                    field: 'type_one',
+                    title: '类型一',
+                    visible:false,
+                    sortable: true,
+                    formatter: function (value, row, index) {
+                        if(row.inoutsideMark == 0){
+                            return "基础制度与政策类";
+                        }else if(row.inoutsideMark == 1){
+                            return "管理办法与规定类";
+                        }else {
+                            return "操作规范与实施细则";
+                        }
+                    }
+                },
+                {
+                    field: 'type_two',
+                    title: '类型二',
+                    visible:false,
+                    sortable: true,
+                    formatter: function (value, row, index) {
+                        if(row.inoutsideMark == 0){
+                            return "系统";
+                        }else if(row.inoutsideMark == 1){
+                            return "网络";
+                        }else if(row.inoutsideMark == 2){
+                            return "应用";
+                        }else if(row.inoutsideMark == 3){
+                            return "安全";
+                        }else {
+                            return "动力";
+                        }
+                    }
+                },
+                {
+                    field: 'current_state',
+                    title: '状态',
+                    visible:false,
+                    sortable: true,
+                    formatter: function (value, row, index) {
+                        if(row.inoutsideMark == 0){
+                            return "正式";
+                        }else {
+                            return "试行";
+                        }
+                    }
+                },
+                {
+                    field: 'folder_',
+                    title: '印发文号',
+                    visible:false,
+                    sortable: true
+                },
+                {
+                    field: 'sytem_four',
+                    title: '四级制度',
+                    visible:false,
+                    sortable: true,
+                    formatter: function (value, row, index) {
+                        if(row.inoutsideMark == 0){
+                            return "一级";
+                        }else if(row.inoutsideMark == 1){
+                            return "二级";
+                        }else if(row.inoutsideMark == 2){
+                            return "三级";
+                        }else {
+                            return "四级";
+                        }
+                    }
+                },
+                {
+                    field: 'classify',
+                    title: '分类域',
+                    visible:false,
+                    sortable: true,
+                    formatter: function (value, row, index) {
+                        if(row.inoutsideMark == 0){
+                            return "服务治理";
+                        }else if(row.inoutsideMark == 1){
+                            return "服务管理";
+                        }else if(row.inoutsideMark == 2){
+                            return "常态运维";
+                        }else if(row.inoutsideMark == 3){
+                            return "应急态运维";
+                        }else if(row.inoutsideMark == 4){
+                            return "系统和设施运维和维护";
+                        }else if(row.inoutsideMark == 5){
+                            return "质量管理";
+                        }else {
+                            return "信息安全管理";
+                        }
+                    }
+                },
+                {
+                    field: 'commit_id',
+                    title: '提交人',
+                    sortable: true
+                },
+                {
+                    field: 'current_state',
+                    title: '状态',
+                    sortable: true
+                }
+            ]
+        };
+        $.table.init(options);
+    };
+</script>
+</body>
+</html>

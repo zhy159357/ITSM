@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.activiti.mapper.SysDeploymentVersionMapper">
+    
+    <resultMap type="SysDeploymentVersion" id="SysDeploymentVersionResult">
+        <result property="versionNo"    column="version_no"    />
+        <result property="versionContent"    column="version_content"    />
+        <result property="sysName"    column="sys_name"    />
+        <result property="versionShow"    column="version_show"    />
+        <result property="deploymentTime"    column="deployment_time"    />
+        <result property="createrId"    column="creater_id"    />
+        <result property="dvId"    column="dv_id"    />
+    </resultMap>
+
+    <sql id="selectSysDeploymentVersionVo">
+        select version_no, version_content, sys_name, version_show, deployment_time, creater_id, dv_id from sys_deployment_version
+    </sql>
+
+    <select id="selectSysDeploymentVersionList" parameterType="SysDeploymentVersion" resultMap="SysDeploymentVersionResult">
+        <include refid="selectSysDeploymentVersionVo"/>
+        <where>  
+            <if test="versionNo != null  and versionNo != ''"> and version_no like concat(concat('%', #{versionNo}), '%')</if>
+            <if test="versionContent != null  and versionContent != ''"> and version_content like concat(concat('%', #{versionContent}), '%')</if>
+            <if test="sysName != null  and sysName != ''"> and sys_name like concat(concat('%', #{sysName}), '%')</if>
+            <if test="versionShow != null  and versionShow != ''"> and version_show = #{versionShow}</if>
+            <if test="deploymentTime != null  and deploymentTime != ''"> AND deployment_time &gt;= TO_CHAR(TO_DATE( #{deploymentTime},'YYYY-MM-DD HH24:MI:SS'), 'YYYYMMDDHH24MISS')</if>
+            <if test="createrId != null  and createrId != ''"> and creater_id = #{createrId}</if>
+        </where>
+    </select>
+
+    <select id="selectSysDeploymentVersionListNew" parameterType="SysDeploymentVersion" resultMap="SysDeploymentVersionResult">
+        <include refid="selectSysDeploymentVersionVo"/>
+        <where>
+            <if test="versionNo != null  and versionNo != ''"> and version_no = #{versionNo}</if>
+        </where>
+    </select>
+    
+    <select id="selectSysDeploymentVersionById" parameterType="String" resultMap="SysDeploymentVersionResult">
+        <include refid="selectSysDeploymentVersionVo"/>
+        where dv_id = #{dvId}
+    </select>
+        
+    <insert id="insertSysDeploymentVersion" parameterType="SysDeploymentVersion">
+        insert into sys_deployment_version
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="versionNo != null  and versionNo != ''">version_no,</if>
+            <if test="versionContent != null  and versionContent != ''">version_content,</if>
+            <if test="sysName != null  and sysName != ''">sys_name,</if>
+            <if test="versionShow != null  and versionShow != ''">version_show,</if>
+            <if test="deploymentTime != null  and deploymentTime != ''">deployment_time,</if>
+            <if test="createrId != null  and createrId != ''">creater_id,</if>
+            <if test="dvId != null  and dvId != ''">dv_id,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="versionNo != null  and versionNo != ''">#{versionNo},</if>
+            <if test="versionContent != null  and versionContent != ''">#{versionContent},</if>
+            <if test="sysName != null  and sysName != ''">#{sysName},</if>
+            <if test="versionShow != null  and versionShow != ''">#{versionShow},</if>
+            <if test="deploymentTime != null  and deploymentTime != ''">#{deploymentTime},</if>
+            <if test="createrId != null  and createrId != ''">#{createrId},</if>
+            <if test="dvId != null  and dvId != ''">#{dvId},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSysDeploymentVersion" parameterType="SysDeploymentVersion">
+        update sys_deployment_version
+        <set>
+            <if test="versionNo != null  and versionNo != ''">version_no = #{versionNo,jdbcType=VARCHAR},</if>
+            <if test="versionContent != null  and versionContent != ''">version_content = #{versionContent,jdbcType=VARCHAR},</if>
+            <if test="sysName != null  and sysName != ''">sys_name = #{sysName,jdbcType=VARCHAR},</if>
+            <if test="versionShow != null  and versionShow != ''">version_show = #{versionShow,jdbcType=VARCHAR},</if>
+            <if test="deploymentTime != null  and deploymentTime != ''">deployment_time = #{deploymentTime,jdbcType=VARCHAR},</if>
+            <if test="createrId != null  and createrId != ''">creater_id = #{createrId,jdbcType=VARCHAR},</if>
+        </set>
+        where dv_id = #{dvId,jdbcType=VARCHAR}
+    </update>
+
+    <delete id="deleteSysDeploymentVersionById" parameterType="String">
+        delete from sys_deployment_version where dv_id = #{dvId}
+    </delete>
+
+    <delete id="deleteSysDeploymentVersionByIds" parameterType="String">
+        delete from sys_deployment_version where dv_id in 
+        <foreach item="dvId" collection="array" open="(" separator="," close=")">
+            #{dvId}
+        </foreach>
+    </delete>
+    
+</mapper>

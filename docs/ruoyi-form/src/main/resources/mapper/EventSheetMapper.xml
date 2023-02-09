@@ -1,0 +1,564 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.form.mapper.EventSheetMapper">
+
+    <resultMap type="EventSheet" id="EventSheetResult">
+        <result property="eventId" column="event_id"/>
+        <result property="eventNo" column="event_no"/>
+        <result property="reportOrg" column="report_org"/>
+        <result property="reportPerson" column="report_person"/>
+        <result property="reportPhone" column="report_phone"/>
+        <result property="eventTitle" column="event_title"/>
+        <result property="eventInfo" column="event_info"/>
+        <result property="customInfo" column="custom_info"/>
+        <result property="orgFlag" column="org_flag"/>
+        <result property="sideFlag" column="side_flag"/>
+        <result property="eventCategory" column="event_category"/>
+        <result property="eventSubclass" column="event_subclass"/>
+        <result property="eventEntry" column="event_entry"/>
+        <result property="eventSubentry" column="event_subentry"/>
+        <result property="eventSource" column="event_source"/>
+        <result property="infLevel" column="inf_level"/>
+        <result property="infRange" column="inf_range"/>
+        <result property="eventPriority" column="event_priority"/>
+        <result property="targetResolveDate" column="target_resolve_date"/>
+        <result property="eventFirstType" column="event_first_type"/>
+        <result property="eventSecondType" column="event_second_type"/>
+        <result property="eventThreeType" column="event_three_type"/>
+        <result property="urgentFlag" column="urgent_flag"/>
+        <result property="financeFlag" column="finance_flag"/>
+        <result property="assignedGroup" column="assigned_group"/>
+        <result property="assignedPerson" column="assigned_person"/>
+        <result property="eventStatus" column="event_status"/>
+        <result property="eventType" column="event_type"/>
+        <result property="eventHelperResult" column="event_helper_result"/>
+        <result property="eventHealResult" column="event_heal_result"/>
+        <result property="eventSolution" column="event_solution"/>
+        <result property="eventReasonType" column="event_reason_type"/>
+        <result property="eventReason" column="event_reason"/>
+        <result property="infSystem" column="inf_system"/>
+        <result property="actualFaultSystem" column="actual_fault_system"/>
+        <result property="faultKnowPoint" column="fault_know_point"/>
+        <result property="infFace" column="inf_face"/>
+        <result property="secondOrg" column="second_org"/>
+        <result property="secondDealOrg" column="second_deal_org"/>
+        <result property="secondDealPerson" column="second_deal_person"/>
+        <result property="solutionValidFlag" column="solution_valid_flag"/>
+        <result property="dataQualityFlag" column="data_quality_flag"/>
+        <result property="closeCode" column="close_code"/>
+        <result property="eventLevel" column="event_level"/>
+        <result property="changeNo" column="change_no"/>
+        <result property="problemNo" column="problem_no"/>
+        <result property="historyEventId" column="history_event_id"/>
+        <result property="assignId" column="assign_id"/>
+        <result property="receiveGroupId" column="receive_group_id"/>
+        <result property="dealId" column="deal_id"/>
+        <result property="drawId" column="draw_id"/>
+        <result property="preSolutionId" column="pre_solution_id"/>
+        <result property="solutionId" column="solution_id"/>
+        <result property="closeId" column="close_id"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="backFlag" column="back_flag"/>
+
+        <result property="assignedGroupName" column="assignedGroupName"/>
+        <result property="receiveGroupName" column="receiveGroupName"/>
+        <result property="assignedPersonName" column="assignedPersonName"/>
+        <result property="assignName" column="assignName"/>
+        <result property="dealName" column="dealName"/>
+        <result property="drawName" column="drawName"/>
+        <result property="preSolutionName" column="preSolutionName"/>
+        <result property="solutionName" column="solutionName"/>
+        <result property="closeName" column="closeName"/>
+
+    </resultMap>
+
+    <sql id="selectEventSheetVo">
+         SELECT e.event_id,
+               e.event_no,
+               e.report_org,
+               e.report_person,
+               e.report_phone,
+               e.event_title,
+               e.event_info,
+               e.custom_info,
+               e.org_flag,
+               e.side_flag,
+               e.event_category,
+               e.event_subclass,
+               e.event_entry,
+               e.event_subentry,
+               e.event_source,
+               e.inf_level,
+               e.inf_range,
+               e.event_priority,
+               e.target_resolve_date,
+               e.event_first_type,
+               e.event_second_type,
+               e.event_three_type,
+               e.urgent_flag,
+               e.finance_flag,
+               e.assigned_group,
+               e.assigned_person,
+               e.event_status,
+               e.event_type,
+               e.event_helper_result,
+               e.event_heal_result,
+               e.event_solution,
+               e.event_reason_type,
+               e.event_reason,
+               e.inf_system,
+               e.actual_fault_system,
+               e.fault_know_point,
+               e.inf_face,
+               e.second_org,
+               e.second_deal_org,
+               e.second_deal_person,
+               e.solution_valid_flag,
+               e.data_quality_flag,
+               e.close_code,
+               e.event_level,
+               e.change_no,
+               e.problem_no,
+               e.history_event_id,
+               e.assign_id,
+               e.receive_group_id,
+               e.deal_id,
+               e.draw_id,
+               e.pre_solution_id,
+               e.solution_id,
+               e.close_id,
+               e.create_by,
+               e.create_time,
+               e.update_by,
+               e.update_time,
+               e.back_flag,
+               g.grpname assignedGroupName,
+               g1.grpname receiveGroupName,
+               p1.pname assignedPersonName,
+               p2.pname assignName,
+               p3.pname dealName,
+               p4.pname drawName,
+               p5.pname preSolutionName,
+               p6.pname solutionName,
+               p7.pname closeName
+          FROM event_sheet e
+          LEFT JOIN og_group g
+            ON e.assigned_group = g.groupid
+             LEFT JOIN og_group g1
+            ON e.receive_group_id = g1.groupid
+          LEFT JOIN og_person p1
+            ON e.assigned_person = p1.pid
+          LEFT JOIN og_person p2
+            ON e.assign_id = p2.pid
+          LEFT JOIN og_person p3
+            ON e.deal_id = p3.pid
+          LEFT JOIN og_person p4
+            ON e.draw_id = p4.pid
+          LEFT JOIN og_person p5
+            ON e.pre_solution_id = p5.pid
+          LEFT JOIN og_person p6
+            ON e.solution_id = p6.pid
+          LEFT JOIN og_person p7
+            ON e.close_id = p7.pid
+    </sql>
+
+    <select id="selectEventSheetList" parameterType="EventSheet" resultMap="EventSheetResult">
+        <include refid="selectEventSheetVo"/>
+        <where>
+            <if test="eventNo != null  and eventNo != ''">and event_no = #{eventNo}</if>
+            <if test="reportOrg != null  and reportOrg != ''">and report_org = #{reportOrg}</if>
+            <if test="reportPerson != null  and reportPerson != ''">and report_person = #{reportPerson}</if>
+            <if test="reportPhone != null  and reportPhone != ''">and report_phone = #{reportPhone}</if>
+            <if test="eventTitle != null  and eventTitle != ''">
+                and event_title like concat(concat('%',#{eventTitle}),'%')
+            </if>
+            <if test="eventInfo != null  and eventInfo != ''">
+                and event_info like concat(concat('%',#{eventInfo}),'%')
+            </if>
+            <if test="customInfo != null  and customInfo != ''">
+                and custom_info like concat(concat('%',#{customInfo}),'%')
+            </if>
+            <if test="orgFlag != null  and orgFlag != ''">and org_flag = #{orgFlag}</if>
+            <if test="sideFlag != null  and sideFlag != ''">and side_flag = #{sideFlag}</if>
+            <if test="eventCategory != null  and eventCategory != ''">and event_category = #{eventCategory}</if>
+            <if test="eventSubclass != null  and eventSubclass != ''">and event_subclass = #{eventSubclass}</if>
+            <if test="eventEntry != null  and eventEntry != ''">and event_entry = #{eventEntry}</if>
+            <if test="eventSubentry != null  and eventSubentry != ''">and event_subentry = #{eventSubentry}</if>
+            <if test="eventSource != null  and eventSource != ''">and event_source = #{eventSource}</if>
+            <if test="infLevel != null  and infLevel != ''">and inf_level = #{infLevel}</if>
+            <if test="infRange != null  and infRange != ''">and inf_range = #{infRange}</if>
+            <if test="eventPriority != null  and eventPriority != ''">and event_priority = #{eventPriority}</if>
+            <if test="targetResolveDate != null  and targetResolveDate != ''">and target_resolve_date =
+                #{targetResolveDate}
+            </if>
+            <if test="eventFirstType != null  and eventFirstType != ''">and event_first_type = #{eventFirstType}</if>
+            <if test="eventSecondType != null  and eventSecondType != ''">and event_second_type = #{eventSecondType}
+            </if>
+            <if test="eventThreeType != null  and eventThreeType != ''">and event_three_type = #{eventThreeType}</if>
+            <if test="urgentFlag != null  and urgentFlag != ''">and urgent_flag = #{urgentFlag}</if>
+            <if test="financeFlag != null  and financeFlag != ''">and finance_flag = #{financeFlag}</if>
+            <if test="assignedGroup != null  and assignedGroup != ''">and assigned_group = #{assignedGroup}</if>
+            <if test="assignedPerson != null  and assignedPerson != ''">and assigned_person = #{assignedPerson}</if>
+            <if test="eventStatus != null  and eventStatus != ''">and event_status = #{eventStatus}</if>
+            <if test="eventType != null  and eventType != ''">and event_type = #{eventType}</if>
+            <if test="eventHelperResult != null  and eventHelperResult != ''">and event_helper_result =
+                #{eventHelperResult}
+            </if>
+            <if test="eventHealResult != null  and eventHealResult != ''">and event_heal_result = #{eventHealResult}
+            </if>
+            <if test="eventSolution != null  and eventSolution != ''">and event_solution = #{eventSolution}</if>
+            <if test="eventReasonType != null  and eventReasonType != ''">and event_reason_type = #{eventReasonType}
+            </if>
+            <if test="eventReason != null  and eventReason != ''">and event_reason = #{eventReason}</if>
+            <if test="infSystem != null  and infSystem != ''">and inf_system = #{infSystem}</if>
+            <if test="actualFaultSystem != null  and actualFaultSystem != ''">and actual_fault_system =
+                #{actualFaultSystem}
+            </if>
+            <if test="faultKnowPoint != null  and faultKnowPoint != ''">and fault_know_point = #{faultKnowPoint}</if>
+            <if test="infFace != null  and infFace != ''">and inf_face = #{infFace}</if>
+            <if test="secondOrg != null  and secondOrg != ''">and second_org = #{secondOrg}</if>
+            <if test="secondDealOrg != null  and secondDealOrg != ''">and second_deal_org = #{secondDealOrg}</if>
+            <if test="secondDealPerson != null  and secondDealPerson != ''">and second_deal_person =
+                #{secondDealPerson}
+            </if>
+            <if test="solutionValidFlag != null  and solutionValidFlag != ''">and solution_valid_flag =
+                #{solutionValidFlag}
+            </if>
+            <if test="dataQualityFlag != null  and dataQualityFlag != ''">and data_quality_flag = #{dataQualityFlag}
+            </if>
+            <if test="closeCode != null  and closeCode != ''">and close_code = #{closeCode}</if>
+            <if test="eventLevel != null  and eventLevel != ''">and event_level = #{eventLevel}</if>
+            <if test="changeNo != null  and changeNo != ''">and change_no = #{changeNo}</if>
+            <if test="problemNo != null  and problemNo != ''">and problem_no = #{problemNo}</if>
+            <if test="historyEventId != null  and historyEventId != ''">and history_event_id = #{historyEventId}</if>
+            <if test="assignId != null  and assignId != ''">and assign_id = #{assignId}</if>
+            <if test="receiveGroupId != null  and receiveGroupId != ''">and receive_group_id = #{receiveGroupId}</if>
+            <if test="dealId != null  and dealId != ''">and deal_id = #{dealId}</if>
+            <if test="drawId != null  and drawId != ''">and draw_id = #{drawId}</if>
+            <if test="preSolutionId != null  and preSolutionId != ''">and pre_solution_id = #{preSolutionId}</if>
+            <if test="solutionId != null  and solutionId != ''">and solution_id = #{solutionId}</if>
+            <if test="closeId != null  and closeId != ''">and close_id = #{closeId}</if>
+            <if test="createBy != null  and createBy != ''">and create_by = #{createBy}</if>
+            <if test="backFlag != null  and backFlag != ''">and back_flag = #{backFlag}</if>
+        </where>
+        order by create_time desc
+    </select>
+
+    <select id="selectEventSheetById" parameterType="String" resultMap="EventSheetResult">
+        <include refid="selectEventSheetVo"/>
+        where event_id = #{eventId}
+    </select>
+
+    <select id="selectEventAutoCloseList" resultType="com.ruoyi.form.domain.EventSheet">
+        SELECT id,instance_id
+        FROM design_biz_event
+        where status = '5'
+    </select>
+
+    <update id="updateEvent" parameterType="EventSheet">
+        update design_biz_event
+        set updated_time = #{updatedTime},
+            updated_by = #{updatedBy},
+            status = #{eventStatus}
+        where id = #{id}
+    </update>
+
+    <select id="selectEventSheetByCondition" parameterType="EventSheet" resultMap="EventSheetResult">
+        <include refid="selectEventSheetVo"/>
+        <where>
+            <if test="eventId != null  and eventId != ''">and event_id = #{eventId}</if>
+            <if test="eventNo != null  and eventNo != ''">and event_no = #{eventNo}</if>
+            <if test="reportOrg != null  and reportOrg != ''">and report_org = #{reportOrg}</if>
+            <if test="reportPerson != null  and reportPerson != ''">and report_person = #{reportPerson}</if>
+            <if test="reportPhone != null  and reportPhone != ''">and report_phone = #{reportPhone}</if>
+            <if test="eventTitle != null  and eventTitle != ''">
+                and event_title like concat(concat('%',#{eventTitle}),'%')
+            </if>
+            <if test="eventInfo != null  and eventInfo != ''">
+                and event_info like concat(concat('%',#{eventInfo}),'%')
+            </if>
+            <if test="customInfo != null  and customInfo != ''">
+                and custom_info like concat(concat('%',#{customInfo}),'%')
+            </if>
+            <if test="orgFlag != null  and orgFlag != ''">and org_flag = #{orgFlag}</if>
+            <if test="sideFlag != null  and sideFlag != ''">and side_flag = #{sideFlag}</if>
+            <if test="eventCategory != null  and eventCategory != ''">and event_category = #{eventCategory}</if>
+            <if test="eventSubclass != null  and eventSubclass != ''">and event_subclass = #{eventSubclass}</if>
+            <if test="eventEntry != null  and eventEntry != ''">and event_entry = #{eventEntry}</if>
+            <if test="eventSubentry != null  and eventSubentry != ''">and event_subentry = #{eventSubentry}</if>
+            <if test="eventSource != null  and eventSource != ''">and event_source = #{eventSource}</if>
+            <if test="infLevel != null  and infLevel != ''">and inf_level = #{infLevel}</if>
+            <if test="infRange != null  and infRange != ''">and inf_range = #{infRange}</if>
+            <if test="eventPriority != null  and eventPriority != ''">and event_priority = #{eventPriority}</if>
+            <if test="targetResolveDate != null  and targetResolveDate != ''">and target_resolve_date =
+                #{targetResolveDate}
+            </if>
+            <if test="eventFirstType != null  and eventFirstType != ''">and event_first_type = #{eventFirstType}</if>
+            <if test="eventSecondType != null  and eventSecondType != ''">and event_second_type = #{eventSecondType}
+            </if>
+            <if test="eventThreeType != null  and eventThreeType != ''">and event_three_type = #{eventThreeType}</if>
+            <if test="urgentFlag != null  and urgentFlag != ''">and urgent_flag = #{urgentFlag}</if>
+            <if test="financeFlag != null  and financeFlag != ''">and finance_flag = #{financeFlag}</if>
+            <if test="assignedGroup != null  and assignedGroup != ''">and assigned_group = #{assignedGroup}</if>
+            <if test="assignedPerson != null  and assignedPerson != ''">and assigned_person = #{assignedPerson}</if>
+            <if test="eventStatus != null  and eventStatus != ''">and event_status = #{eventStatus}</if>
+            <if test="eventType != null  and eventType != ''">and event_type = #{eventType}</if>
+            <if test="eventHelperResult != null  and eventHelperResult != ''">and event_helper_result =
+                #{eventHelperResult}
+            </if>
+            <if test="eventHealResult != null  and eventHealResult != ''">and event_heal_result = #{eventHealResult}
+            </if>
+            <if test="eventSolution != null  and eventSolution != ''">and event_solution = #{eventSolution}</if>
+            <if test="eventReasonType != null  and eventReasonType != ''">and event_reason_type = #{eventReasonType}
+            </if>
+            <if test="eventReason != null  and eventReason != ''">and event_reason = #{eventReason}</if>
+            <if test="infSystem != null  and infSystem != ''">and inf_system = #{infSystem}</if>
+            <if test="actualFaultSystem != null  and actualFaultSystem != ''">and actual_fault_system =
+                #{actualFaultSystem}
+            </if>
+            <if test="faultKnowPoint != null  and faultKnowPoint != ''">and fault_know_point = #{faultKnowPoint}</if>
+            <if test="infFace != null  and infFace != ''">and inf_face = #{infFace}</if>
+            <if test="secondOrg != null  and secondOrg != ''">and second_org = #{secondOrg}</if>
+            <if test="secondDealOrg != null  and secondDealOrg != ''">and second_deal_org = #{secondDealOrg}</if>
+            <if test="secondDealPerson != null  and secondDealPerson != ''">and second_deal_person =
+                #{secondDealPerson}
+            </if>
+            <if test="solutionValidFlag != null  and solutionValidFlag != ''">and solution_valid_flag =
+                #{solutionValidFlag}
+            </if>
+            <if test="dataQualityFlag != null  and dataQualityFlag != ''">and data_quality_flag = #{dataQualityFlag}
+            </if>
+            <if test="closeCode != null  and closeCode != ''">and close_code = #{closeCode}</if>
+            <if test="eventLevel != null  and eventLevel != ''">and event_level = #{eventLevel}</if>
+            <if test="changeNo != null  and changeNo != ''">and change_no = #{changeNo}</if>
+            <if test="problemNo != null  and problemNo != ''">and problem_no = #{problemNo}</if>
+            <if test="historyEventId != null  and historyEventId != ''">and history_event_id = #{historyEventId}</if>
+            <if test="assignId != null  and assignId != ''">and assign_id = #{assignId}</if>
+            <if test="receiveGroupId != null  and receiveGroupId != ''">and receive_group_id = #{receiveGroupId}</if>
+            <if test="dealId != null  and dealId != ''">and deal_id = #{dealId}</if>
+            <if test="drawId != null  and drawId != ''">and draw_id = #{drawId}</if>
+            <if test="preSolutionId != null  and preSolutionId != ''">and pre_solution_id = #{preSolutionId}</if>
+            <if test="solutionId != null  and solutionId != ''">and solution_id = #{solutionId}</if>
+            <if test="closeId != null  and closeId != ''">and close_id = #{closeId}</if>
+            <if test="createBy != null  and createBy != ''">and create_by = #{createBy}</if>
+            <if test="backFlag != null  and backFlag != ''">and back_flag = #{backFlag}</if>
+        </where>
+    </select>
+
+    <insert id="insertEventSheet" parameterType="EventSheet">
+        insert into event_sheet
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="eventId != null  and eventId != ''">event_id,</if>
+            <if test="eventNo != null  and eventNo != ''">event_no,</if>
+            <if test="reportOrg != null  and reportOrg != ''">report_org,</if>
+            <if test="reportPerson != null  and reportPerson != ''">report_person,</if>
+            <if test="reportPhone != null  and reportPhone != ''">report_phone,</if>
+            <if test="eventTitle != null  and eventTitle != ''">event_title,</if>
+            <if test="eventInfo != null  and eventInfo != ''">event_info,</if>
+            <if test="customInfo != null  and customInfo != ''">custom_info,</if>
+            <if test="orgFlag != null  and orgFlag != ''">org_flag,</if>
+            <if test="sideFlag != null  and sideFlag != ''">side_flag,</if>
+            <if test="eventCategory != null  and eventCategory != ''">event_category,</if>
+            <if test="eventSubclass != null  and eventSubclass != ''">event_subclass,</if>
+            <if test="eventEntry != null  and eventEntry != ''">event_entry,</if>
+            <if test="eventSubentry != null  and eventSubentry != ''">event_subentry,</if>
+            <if test="eventSource != null  and eventSource != ''">event_source,</if>
+            <if test="infLevel != null  and infLevel != ''">inf_level,</if>
+            <if test="infRange != null  and infRange != ''">inf_range,</if>
+            <if test="eventPriority != null  and eventPriority != ''">event_priority,</if>
+            <if test="targetResolveDate != null  and targetResolveDate != ''">target_resolve_date,</if>
+            <if test="eventFirstType != null  and eventFirstType != ''">event_first_type,</if>
+            <if test="eventSecondType != null  and eventSecondType != ''">event_second_type,</if>
+            <if test="eventThreeType != null  and eventThreeType != ''">event_three_type,</if>
+            <if test="urgentFlag != null  and urgentFlag != ''">urgent_flag,</if>
+            <if test="financeFlag != null  and financeFlag != ''">finance_flag,</if>
+            <if test="assignedGroup != null  and assignedGroup != ''">assigned_group,</if>
+            <if test="assignedPerson != null  and assignedPerson != ''">assigned_person,</if>
+            <if test="eventStatus != null  and eventStatus != ''">event_status,</if>
+            <if test="eventType != null  and eventType != ''">event_type,</if>
+            <if test="eventHelperResult != null  and eventHelperResult != ''">event_helper_result,</if>
+            <if test="eventHealResult != null  and eventHealResult != ''">event_heal_result,</if>
+            <if test="eventSolution != null  and eventSolution != ''">event_solution,</if>
+            <if test="eventReasonType != null  and eventReasonType != ''">event_reason_type,</if>
+            <if test="eventReason != null  and eventReason != ''">event_reason,</if>
+            <if test="infSystem != null  and infSystem != ''">inf_system,</if>
+            <if test="actualFaultSystem != null  and actualFaultSystem != ''">actual_fault_system,</if>
+            <if test="faultKnowPoint != null  and faultKnowPoint != ''">fault_know_point,</if>
+            <if test="infFace != null  and infFace != ''">inf_face,</if>
+            <if test="secondOrg != null  and secondOrg != ''">second_org,</if>
+            <if test="secondDealOrg != null  and secondDealOrg != ''">second_deal_org,</if>
+            <if test="secondDealPerson != null  and secondDealPerson != ''">second_deal_person,</if>
+            <if test="solutionValidFlag != null  and solutionValidFlag != ''">solution_valid_flag,</if>
+            <if test="dataQualityFlag != null  and dataQualityFlag != ''">data_quality_flag,</if>
+            <if test="closeCode != null  and closeCode != ''">close_code,</if>
+            <if test="eventLevel != null  and eventLevel != ''">event_level,</if>
+            <if test="changeNo != null  and changeNo != ''">change_no,</if>
+            <if test="problemNo != null  and problemNo != ''">problem_no,</if>
+            <if test="historyEventId != null  and historyEventId != ''">history_event_id,</if>
+            <if test="assignId != null  and assignId != ''">assign_id,</if>
+            <if test="receiveGroupId != null  and receiveGroupId != ''">receive_group_id,</if>
+            <if test="dealId != null  and dealId != ''">deal_id,</if>
+            <if test="drawId != null  and drawId != ''">draw_id,</if>
+            <if test="preSolutionId != null  and preSolutionId != ''">pre_solution_id,</if>
+            <if test="solutionId != null  and solutionId != ''">solution_id,</if>
+            <if test="closeId != null  and closeId != ''">close_id,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+            <if test="backFlag != null and backFlag != ''">back_flag,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="eventId != null  and eventId != ''">#{eventId},</if>
+            <if test="eventNo != null  and eventNo != ''">#{eventNo},</if>
+            <if test="reportOrg != null  and reportOrg != ''">#{reportOrg},</if>
+            <if test="reportPerson != null  and reportPerson != ''">#{reportPerson},</if>
+            <if test="reportPhone != null  and reportPhone != ''">#{reportPhone},</if>
+            <if test="eventTitle != null  and eventTitle != ''">#{eventTitle},</if>
+            <if test="eventInfo != null  and eventInfo != ''">#{eventInfo},</if>
+            <if test="customInfo != null  and customInfo != ''">#{customInfo},</if>
+            <if test="orgFlag != null  and orgFlag != ''">#{orgFlag},</if>
+            <if test="sideFlag != null  and sideFlag != ''">#{sideFlag},</if>
+            <if test="eventCategory != null  and eventCategory != ''">#{eventCategory},</if>
+            <if test="eventSubclass != null  and eventSubclass != ''">#{eventSubclass},</if>
+            <if test="eventEntry != null  and eventEntry != ''">#{eventEntry},</if>
+            <if test="eventSubentry != null  and eventSubentry != ''">#{eventSubentry},</if>
+            <if test="eventSource != null  and eventSource != ''">#{eventSource},</if>
+            <if test="infLevel != null  and infLevel != ''">#{infLevel},</if>
+            <if test="infRange != null  and infRange != ''">#{infRange},</if>
+            <if test="eventPriority != null  and eventPriority != ''">#{eventPriority},</if>
+            <if test="targetResolveDate != null  and targetResolveDate != ''">#{targetResolveDate},</if>
+            <if test="eventFirstType != null  and eventFirstType != ''">#{eventFirstType},</if>
+            <if test="eventSecondType != null  and eventSecondType != ''">#{eventSecondType},</if>
+            <if test="eventThreeType != null  and eventThreeType != ''">#{eventThreeType},</if>
+            <if test="urgentFlag != null  and urgentFlag != ''">#{urgentFlag},</if>
+            <if test="financeFlag != null  and financeFlag != ''">#{financeFlag},</if>
+            <if test="assignedGroup != null  and assignedGroup != ''">#{assignedGroup},</if>
+            <if test="assignedPerson != null  and assignedPerson != ''">#{assignedPerson},</if>
+            <if test="eventStatus != null  and eventStatus != ''">#{eventStatus},</if>
+            <if test="eventType != null  and eventType != ''">#{eventType},</if>
+            <if test="eventHelperResult != null  and eventHelperResult != ''">#{eventHelperResult},</if>
+            <if test="eventHealResult != null  and eventHealResult != ''">#{eventHealResult},</if>
+            <if test="eventSolution != null  and eventSolution != ''">#{eventSolution},</if>
+            <if test="eventReasonType != null  and eventReasonType != ''">#{eventReasonType},</if>
+            <if test="eventReason != null  and eventReason != ''">#{eventReason},</if>
+            <if test="infSystem != null  and infSystem != ''">#{infSystem},</if>
+            <if test="actualFaultSystem != null  and actualFaultSystem != ''">#{actualFaultSystem},</if>
+            <if test="faultKnowPoint != null  and faultKnowPoint != ''">#{faultKnowPoint},</if>
+            <if test="infFace != null  and infFace != ''">#{infFace},</if>
+            <if test="secondOrg != null  and secondOrg != ''">#{secondOrg},</if>
+            <if test="secondDealOrg != null  and secondDealOrg != ''">#{secondDealOrg},</if>
+            <if test="secondDealPerson != null  and secondDealPerson != ''">#{secondDealPerson},</if>
+            <if test="solutionValidFlag != null  and solutionValidFlag != ''">#{solutionValidFlag},</if>
+            <if test="dataQualityFlag != null  and dataQualityFlag != ''">#{dataQualityFlag},</if>
+            <if test="closeCode != null  and closeCode != ''">#{closeCode},</if>
+            <if test="eventLevel != null  and eventLevel != ''">#{eventLevel},</if>
+            <if test="changeNo != null  and changeNo != ''">#{changeNo},</if>
+            <if test="problemNo != null  and problemNo != ''">#{problemNo},</if>
+            <if test="historyEventId != null  and historyEventId != ''">#{historyEventId},</if>
+            <if test="assignId != null  and assignId != ''">#{assignId},</if>
+            <if test="receiveGroupId != null  and receiveGroupId != ''">#{receiveGroupId},</if>
+            <if test="dealId != null  and dealId != ''">#{dealId},</if>
+            <if test="drawId != null  and drawId != ''">#{drawId},</if>
+            <if test="preSolutionId != null  and preSolutionId != ''">#{preSolutionId},</if>
+            <if test="solutionId != null  and solutionId != ''">#{solutionId},</if>
+            <if test="closeId != null  and closeId != ''">#{closeId},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            <if test="backFlag != null and backFlag != ''">#{backFlag},</if>
+        </trim>
+    </insert>
+
+    <update id="updateEventSheet" parameterType="EventSheet">
+        update event_sheet
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="eventNo != null  and eventNo != ''">event_no = #{eventNo},</if>
+            <if test="reportOrg != null  and reportOrg != ''">report_org = #{reportOrg},</if>
+            <if test="reportPerson != null  and reportPerson != ''">report_person = #{reportPerson},</if>
+            <if test="reportPhone != null  and reportPhone != ''">report_phone = #{reportPhone},</if>
+            <if test="eventTitle != null  and eventTitle != ''">event_title = #{eventTitle},</if>
+            <if test="eventInfo != null  and eventInfo != ''">event_info = #{eventInfo},</if>
+            <if test="customInfo != null  and customInfo != ''">custom_info = #{customInfo},</if>
+            <if test="orgFlag != null  and orgFlag != ''">org_flag = #{orgFlag},</if>
+            <if test="sideFlag != null  and sideFlag != ''">side_flag = #{sideFlag},</if>
+            <if test="eventCategory != null  and eventCategory != ''">event_category = #{eventCategory},</if>
+            <if test="eventSubclass != null  and eventSubclass != ''">event_subclass = #{eventSubclass},</if>
+            <if test="eventEntry != null  and eventEntry != ''">event_entry = #{eventEntry},</if>
+            <if test="eventSubentry != null  and eventSubentry != ''">event_subentry = #{eventSubentry},</if>
+            <if test="eventSource != null  and eventSource != ''">event_source = #{eventSource},</if>
+            <if test="infLevel != null  and infLevel != ''">inf_level = #{infLevel},</if>
+            <if test="infRange != null  and infRange != ''">inf_range = #{infRange},</if>
+            <if test="eventPriority != null  and eventPriority != ''">event_priority = #{eventPriority},</if>
+            <if test="targetResolveDate != null  and targetResolveDate != ''">target_resolve_date =
+                #{targetResolveDate},
+            </if>
+            <if test="eventFirstType != null  and eventFirstType != ''">event_first_type = #{eventFirstType},</if>
+            <if test="eventSecondType != null  and eventSecondType != ''">event_second_type = #{eventSecondType},</if>
+            <if test="eventThreeType != null  and eventThreeType != ''">event_three_type = #{eventThreeType},</if>
+            <if test="urgentFlag != null  and urgentFlag != ''">urgent_flag = #{urgentFlag},</if>
+            <if test="financeFlag != null  and financeFlag != ''">finance_flag = #{financeFlag},</if>
+            <if test="assignedGroup != null  and assignedGroup != ''">assigned_group = #{assignedGroup},</if>
+            <if test="assignedPerson != null  and assignedPerson != ''">assigned_person = #{assignedPerson},</if>
+            <if test="eventStatus != null  and eventStatus != ''">event_status = #{eventStatus},</if>
+            <if test="eventType != null  and eventType != ''">event_type = #{eventType},</if>
+            <if test="eventHelperResult != null  and eventHelperResult != ''">event_helper_result =
+                #{eventHelperResult},
+            </if>
+            <if test="eventHealResult != null  and eventHealResult != ''">event_heal_result = #{eventHealResult},</if>
+            <if test="eventSolution != null  and eventSolution != ''">event_solution = #{eventSolution},</if>
+            <if test="eventReasonType != null  and eventReasonType != ''">event_reason_type = #{eventReasonType},</if>
+            <if test="eventReason != null  and eventReason != ''">event_reason = #{eventReason},</if>
+            <if test="infSystem != null  and infSystem != ''">inf_system = #{infSystem},</if>
+            <if test="actualFaultSystem != null  and actualFaultSystem != ''">actual_fault_system =
+                #{actualFaultSystem},
+            </if>
+            <if test="faultKnowPoint != null  and faultKnowPoint != ''">fault_know_point = #{faultKnowPoint},</if>
+            <if test="infFace != null  and infFace != ''">inf_face = #{infFace},</if>
+            <if test="secondOrg != null  and secondOrg != ''">second_org = #{secondOrg},</if>
+            <if test="secondDealOrg != null  and secondDealOrg != ''">second_deal_org = #{secondDealOrg},</if>
+            <if test="secondDealPerson != null  and secondDealPerson != ''">second_deal_person = #{secondDealPerson},
+            </if>
+            <if test="solutionValidFlag != null  and solutionValidFlag != ''">solution_valid_flag =
+                #{solutionValidFlag},
+            </if>
+            <if test="dataQualityFlag != null  and dataQualityFlag != ''">data_quality_flag = #{dataQualityFlag},</if>
+            <if test="closeCode != null  and closeCode != ''">close_code = #{closeCode},</if>
+            <if test="eventLevel != null  and eventLevel != ''">event_level = #{eventLevel},</if>
+            <if test="changeNo != null  and changeNo != ''">change_no = #{changeNo},</if>
+            <if test="problemNo != null  and problemNo != ''">problem_no = #{problemNo},</if>
+            <if test="historyEventId != null  and historyEventId != ''">history_event_id = #{historyEventId},</if>
+            <if test="assignId != null  and assignId != ''">assign_id = #{assignId},</if>
+            <if test="receiveGroupId != null  and receiveGroupId != ''">receive_group_id = #{receiveGroupId},</if>
+            <if test="dealId != null  and dealId != ''">deal_id = #{dealId},</if>
+            <if test="drawId != null  and drawId != ''">draw_id = #{drawId},</if>
+            <if test="preSolutionId != null  and preSolutionId != ''">pre_solution_id = #{preSolutionId},</if>
+            <if test="solutionId != null  and solutionId != ''">solution_id = #{solutionId},</if>
+            <if test="closeId != null  and closeId != ''">close_id = #{closeId},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+            <if test="backFlag != null and backFlag != ''">back_flag = #{backFlag},</if>
+        </trim>
+        where event_id = #{eventId}
+    </update>
+
+    <delete id="deleteEventSheetById" parameterType="String">
+        delete from event_sheet where event_id = #{eventId}
+    </delete>
+
+    <delete id="deleteEventSheetByIds" parameterType="String">
+        delete from event_sheet where event_id in
+        <foreach item="eventId" collection="array" open="(" separator="," close=")">
+            #{eventId}
+        </foreach>
+    </delete>
+
+</mapper>

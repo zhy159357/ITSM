@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<th:block th:include="include :: header('角色列表')" />
+</head>
+<body class="gray-bg">
+	<div class="container-div">
+		<div class="row">
+			<div class="col-sm-6">
+				<div class="container-div">
+					<div class="row">
+						<div class="col-sm-12 search-collapse">
+							<form id="role-form">
+								<div class="select-list">
+									<ul>
+										<li>
+											角色名称：<input type="text" id="rName" name="rName"/>
+										</li>
+										<!--<li>
+											角色状态：<select name="status" th:with="type=${@dict.getType('sys_normal_disable')}">
+												<option value="">所有</option>
+												<option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+											</select>
+										</li>-->
+										<li>
+											<a class="btn btn-primary btn-rounded btn-sm" id="roleSearch" onclick="$.table.search('role-form','bootstrap-table1')"><i class="fa fa-search"></i>&nbsp;搜索</a>
+											<a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset('','bootstrap-table1')"><i class="fa fa-repeat"></i>&nbsp;重置</a>
+										</li>
+									</ul>
+								</div>
+							</form>
+						</div>
+
+						<div class="btn-group-sm" id="toolbar1" role="group">
+							<a class="btn btn-success" onclick="$.operate.add()">
+								<i class="fa fa-plus"></i> 新增
+							</a>
+							<a class="btn btn-primary single disabled" onclick="$.operate.edit()">
+								<i class="fa fa-edit"></i> 修改
+							</a>
+							<a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()">
+								<i class="fa fa-trash"></i> 删除
+							</a>
+							<div class="btn-group">
+								<button data-toggle="dropdown" class="btn btn-primary btn-sm dropdown-toggle">导出<span class="caret"></span>
+								</button>
+								<ul class="dropdown-menu">
+									<li><a class="btn btn-default" onclick="$.table.exportExcel()">导出所有</a>
+									</li>
+									<li><a class="btn btn-default" onclick="$.table.exportExcelCurrentPage()">导出当前页</a>
+									</li>
+								</ul>
+							</div>
+						</div>
+
+						<div class="col-sm-12 select-table table-striped">
+							<table id="bootstrap-table1"></table>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="col-sm-6">
+				<div class="container-div">
+					<div class="row">
+						<div class="col-sm-12 search-collapse">
+							<form id="form-post">
+								<input type="hidden" name="roleId" id="roleId">
+								<div class="select-list">
+									<ul>
+										<li>
+											岗位代码：<input type="text" id="postId" name="postId"/>
+										</li>
+										<li>
+											岗位名称：<input type="text" id="postName" name="postName"/>
+										</li>
+										<li>
+											<a class="btn btn-primary btn-rounded btn-sm" id="postSearch" onclick="$.table.search('form-post','bootstrap-table2')"><i class="fa fa-search"></i>&nbsp;搜索</a>
+											<a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset('form-post','bootstrap-table2')"><i class="fa fa-repeat"></i>&nbsp;重置</a>
+										</li>
+									</ul>
+								</div>
+							</form>
+						</div>
+
+						<div class="btn-group-sm" id="toolbar2" role="group">
+						</div>
+
+						<div class="col-sm-12 select-table table-striped">
+							<table id="bootstrap-table2"></table>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<th:block th:include="include :: footer" />
+	<script th:inline="javascript">
+		var prefix = ctx + "system/role";
+
+        var formType ='0';
+
+        $(function () {
+            oneGz();
+            twoRy();
+
+            // 角色
+            $('#rName').focus(function(){
+                formType = '1';
+            });
+            // 岗位
+            $('#postId').focus(function(){
+                formType = '2';
+            });
+            $('#postName').focus(function(){
+                formType = '2';
+            });
+
+        })
+		
+		function oneGz() {
+            formType = '2';
+            //回车搜索
+            document.onkeydown = function (e) {
+                var ev = document.all ? window.event : e;
+                if (ev.keyCode == 13) {
+                    if (formType == '1') {
+                        $('#roleSearch').trigger('click');
+                    }
+                    if (formType == '2') {
+                        $('#postSearch').trigger('click');
+                    }
+                    return false;
+                }
+            }
+
+            var options2 = {
+                url: prefix + "/postList",
+                queryParams: queryParamsPost,
+                id: 'bootstrap-table2',
+                toolbar: 'toolbar2',
+                modalName: "岗位",
+                columns: [{
+                    checkbox: true
+                },
+                    {
+                        field: 'postId',
+                        title: '岗位代码'
+                    },
+                    {
+                        field: 'postName',
+                        title: '岗位名称'
+                    },
+                    {
+                        field: 'invalidationMark',
+                        title: '状态',
+                        formatter: function (value, row, index) {
+                            if (row.invalidationMark == '1') {
+                                return "启用";
+                            } else {
+                                return "停止";
+                            }
+                        }
+                    }]
+            };
+            $.table.init(options2);
+        }
+
+        //人员
+        function twoRy(){
+
+            formType = '1';
+            //回车搜索
+            document.onkeydown = function (e) {
+                var ev = document.all ? window.event : e;
+                if (ev.keyCode == 13) {
+                    if (formType == '1') {
+                        $('#roleSearch').trigger('click');
+                    }
+                    if (formType == '2') {
+                        $('#postSearch').trigger('click');
+                    }
+                    return false;
+                }
+            }
+
+		    var options1 = {
+		        url: prefix + "/list",
+		        createUrl: prefix + "/add",
+		        updateUrl: prefix + "/edit/{id}",
+		        removeUrl: prefix + "/remove",
+		        exportUrl: prefix + "/export",
+                queryParams : queryParamsRole,
+                id: 'bootstrap-table1',
+                toolbar: 'toolbar1',
+                clickToSelect: true,
+                singleSelect: true,
+		        modalName: "角色",
+                onClickRow: onChoose,
+				onCheck: onChoose,
+		        columns: [{
+                    radio: true
+		        },
+		        {
+		            field: 'rid',
+		            title: '角色代码'
+		        },
+		        {
+		            field: 'rName',
+		            title: '角色名称'
+		        },
+		        {
+		            field: 'memo',
+		            title: '备注'
+		        },
+		        {
+                    field: 'invalidationMark',
+		        	title: '状态',
+		        	align: 'center',
+		        	formatter: function (value, row, index) {
+		        		if(row.invalidationMark == '1'){
+		        		    return '启用';
+						}else{
+                            return '停止';
+						}
+		        	}
+		        },
+		        {
+		            title: '操作',
+		            align: 'center',
+		            formatter: function(value, row, index) {
+		                var actions = [];
+		                /*actions.push('<a class="btn btn-primary btn-xs" href="javascript:void(0)" onclick="$.operate.edit(\'' + row.rid + '\')"><i class="fa fa-edit"></i>编辑</a> ');
+		                actions.push('<a class="btn btn-danger btn-xs" href="javascript:void(0)" onclick="remove(\'' + row.rid + '\')"><i class="fa fa-trash"></i>删除</a> ');*/
+		                actions.push('<a class="btn btn-default btn-xs" href="javascript:void(0)" onclick="authMenu(\'' + row.rid + '\')"><i class="fa fa-user"></i>绑定菜单</a> ');
+		                return actions.join('');
+		            }
+		        }]
+		    };
+		    $.table.init(options1);
+		};
+
+		function queryParamsPost(params) {
+            var search = $.table.queryParams(params);
+            var length = $("#bootstrap-table1").bootstrapTable('getData').length;
+            if(length == 0){
+                search.roleId = "";
+            }
+            return search;
+        }
+
+		function queryParamsRole(params) {
+            var search = $.table.queryParams(params);
+            return search;
+        }
+
+        function onChoose(row, obj) {
+            $("#roleId").val(row.rid);
+            $(obj).siblings().removeClass("selected");
+            $(obj).addClass("selected");
+            $(obj).find("input[type='radio']").prop('checked','checked');
+            $.table.search('form-post','bootstrap-table2');
+        }
+
+        // 删除信息
+        function remove(id) {
+            $.modal.confirm("确定删除该条角色信息吗？", function() {
+                var url = prefix + "/remove";
+				var data = { "ids": id };
+                $.post(url, data,function (result) {
+                    if(result.code==0) {
+                        $.form.reset('', 'bootstrap-table1');
+                        $.modal.msgSuccess(result.msg);
+                    }
+                });
+            });
+        }
+
+		/* 角色管理-分配数据权限 */
+		function authDataScope(roleId) {
+		    var url = prefix + '/authDataScope/' + roleId;
+		    $.modal.open("分配数据权限", url);
+		}
+		
+		/* 角色管理-分配用户 */
+		function authUser(roleId) {
+		    var url = prefix + '/authUser/' + roleId;
+		    $.modal.openTab("分配用户", url);
+		}
+
+		/* 角色管理-查看岗位 */
+		function authPost(roleId) {
+		    var url = prefix + '/authPost/' + roleId;
+		    $.modal.openTab("查看岗位", url);
+		}
+
+		/** 菜单授权 */
+		function authMenu(roleId) {
+            var url = prefix + '/authMenu/' + roleId;
+            $.modal.open("菜单授权", url);
+        }
+
+		
+		/* 角色状态显示 */
+		function statusTools(row) {
+		    if (row.status == 1) {
+    			return '<i class=\"fa fa-toggle-off text-info fa-2x\" onclick="enable(\'' + row.roleId + '\')"></i> ';
+    		} else {
+    			return '<i class=\"fa fa-toggle-on text-info fa-2x\" onclick="disable(\'' + row.roleId + '\')"></i> ';
+    		}
+		}
+		
+		/* 角色管理-停用 */
+		function disable(roleId) {
+			$.modal.confirm("确认要停用角色吗？", function() {
+				$.operate.post(prefix + "/changeStatus", { "roleId": roleId, "status": 1 });
+		    })
+		}
+
+		/* 角色管理启用 */
+		function enable(roleId) {
+			$.modal.confirm("确认要启用角色吗？", function() {
+				$.operate.post(prefix + "/changeStatus", { "roleId": roleId, "status": 0 });
+		    })
+		}
+	</script>
+</body>
+</html>

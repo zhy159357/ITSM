@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.es.mapper.KnowledgeRankingMapper">
+    
+    <resultMap type="KnowledgeRanking" id="KnowledgeRankingResult">
+        <result property="id"               column="id"    />
+        <result property="createId"         column="create_id"    />
+        <result property="pname"            column="pname"    />
+        <result property="docNum"           column="docNum"    />
+        <result property="goodNum"          column="goodNum"    />
+        <result property="badNum"           column="badNum"    />
+        <result property="goodRate"         column="goodRate"    />
+        <result property="visitedNum"       column="visitedNum"    />
+        <result property="cumulativecGood"  column="cumulativecGood"    />
+        <result property="cumulativeBad"    column="cumulativeBad"    />
+        <result property="totalNum"         column="totalnum"    />
+    </resultMap>
+
+    <select id="selectKnowledgeRankingList" parameterType="KnowledgeRanking" resultMap="KnowledgeRankingResult">
+        select count(1) as totalnum,c.create_id,p.pname from knowledge_content c left join og_person p on c.create_id = p.pid
+        where c.status = 2
+        <if test="pname != null and pname != ''"> and p.pname like concat('%',concat(#{pname},'%'))</if>
+        group by c.create_id,p.pname
+    </select>
+
+    <select id="selectContentByCreateId" parameterType="KnowledgeRanking" resultMap="KnowledgeRankingResult">
+        select id from knowledge_content c
+        left join og_person p on c.create_id = p.pid
+        where c.status = 2 and create_id = #{createId}
+    </select>
+
+    <select id="selectRankingById" parameterType="KnowledgeRanking" resultType="int">
+        select count(1) from knowledge_comment c
+        where c.status = #{status} and content_id =  #{id}
+    </select>
+
+    <select id="selectVisitsByCreateId" parameterType="KnowledgeRanking" resultType="int">
+        select count(1) from knowledge_visits
+        where content_id in (select id from knowledge_content where status = 2 and create_id = #{createId})
+    </select>
+
+</mapper>

@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('流程日志')" />
+    <th:block th:include="include :: select2-css" />
+</head>
+<body>
+<div class="main-content">
+    <form id="form-evenrt-run" class="form-horizontal" th:object="${pubFlowLog}">
+    <h4 class="form-header h4">基本信息</h4>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">任务名称：</label>
+                    <div class="col-sm-8">
+                        <input name="eventNo" id="eventNo" class="form-control" type="text" th:value="*{taskName}" readonly >
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">操作人：</label>
+                    <div class="col-sm-8">
+                        <input name="performerName" id="performerName" class="form-control" type="text" th:value="*{performerName}" readonly>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">操作机构：</label>
+                    <div class="col-sm-8">
+                        <input name="performerOrgName" id="performerOrgName" class="form-control" type="text" th:value="*{performerOrgName}" readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">操作组：</label>
+                    <div class="col-sm-8">
+                        <input name="performerGroupName" id="performerGroupName" class="form-control" type="text" th:value="*{performerGroupName}" readonly >
+                    </div>
+                </div>
+            </div>
+    </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">联系电话：</label>
+                    <div class="col-sm-8">
+                        <input name="performerTel" id="performerTel" class="form-control" type="text" th:value="*{performerTel}" readonly >
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">操作时长：</label>
+                    <div class="col-sm-8">
+                        <input name="sysResidenceTime" id="sysResidenceTime" class="form-control" type="text" th:value="*{sysResidenceTime}" readonly >
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">操作名称：</label>
+                    <div class="col-sm-10">
+                        <input name="performName" id="performName" class="form-control" type="text" th:value="*{performName}" readonly >
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">操作描述：</label>
+                    <div class="col-sm-10">
+                        <textarea name="performDesc" id="performDesc" class="form-control" type="text" th:text="*{performDesc}" readonly ></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <h4 class="form-header h4">下一步操作</h4>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="tabs-container">
+                    <ul class="nav nav-tabs" id="tabUl">
+<!--
+                        <li class="active"><a data-toggle="tab" href="#tab-1" aria-expanded="true">流程记录</a></li>
+-->
+                    </ul>
+                    <div class="tab-content" id="tabContent">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<th:block th:include="include :: footer" />
+<script th:inline="javascript">
+    var pubFlowLog=[[${pubFlowLog}]];
+    var taskList=[[${tasklist}]];
+    console.log(taskList);
+    var nextTaskName=pubFlowLog.nextTaskName;
+    var sysResidenceTime=pubFlowLog.sysResidenceTime;
+    var nextTask=nextTaskName.split(':');
+    $(function () {
+        if($.common.isNotEmpty(sysResidenceTime)){
+            var day=Math.floor(sysResidenceTime/(24*3600));
+            var hour=Math.floor((sysResidenceTime-day*24*3600)/3600);
+            var minute=Math.floor((sysResidenceTime-day*24*3600-hour*3600)/60);
+            var second=sysResidenceTime-day*24*3600-hour*3600-minute*60;
+            var reTime="";
+            if(day!=0){
+                reTime+=day+"天";
+            }
+            if(hour!=0){
+                reTime+=hour+"小时";
+            }
+            if(minute!=0){
+                reTime+=minute+"分钟";
+            }
+            if(second!=0){
+                reTime+=second+"秒";
+            }
+            $("#sysResidenceTime").val(reTime);
+        }
+       $.each(nextTask,function (index,dict) {
+           var options1="";
+           var options2="";
+           if(index==0){
+               options1="<li class=\"active\"><a data-toggle=\"tab\" href=\"#tab-"+index+"\" aria-expanded=\"true\">"+dict+"</a></li>";
+               options2="<div id=\"tab-"+index+"\" class=\"tab-pane active\">\n" +
+                   "                            <div class=\"panel-body\">\n" +
+                   "                                <div class=\"col-sm-12 select-table table-striped\">\n" +
+                   "                                    <table id=\"pubLogTable"+index+"\"></table>\n" +
+                   "                                </div>\n" +
+                   "                            </div>\n" +
+                   "                        </div>";
+           }else {
+               options1="<li class=\"\"><a data-toggle=\"tab\" href=\"#tab-"+index+"\" aria-expanded=\"false\">"+dict+"</a></li>";
+               options2="<div id=\"tab-"+index+"\" class=\"tab-pane\">\n" +
+                   "                            <div class=\"panel-body\">\n" +
+                   "                                <div class=\"col-sm-12 select-table table-striped\">\n" +
+                   "                                    <table id=\"pubLogTable"+index+"\"></table>\n" +
+                   "                                </div>\n" +
+                   "                            </div>\n" +
+                   "                        </div>";
+           }
+            $("#tabUl").append(options1);
+            $("#tabContent").append(options2);
+               var options = {
+                   data:taskList[index].task,
+                   id:"pubLogTable"+index,
+                   showSearch: false,
+                   showRefresh: false,
+                   showToggle: false,
+                   showColumns: false,
+                   pagination: false,
+                   columns: [
+                       {
+                           title: "序号",
+                           formatter: function (value, row, index) {
+                               return $.table.serialNumber(index);
+                           }
+                       },
+                       {
+                           field: 'type',
+                           title: '类型'
+                       },
+                       {
+                           field: 'name',
+                           title: '名称',
+                           editable: true
+                       },
+                       {
+                           field: 'phone',
+                           title: '联系方式',
+                           editable: true
+                       }
+                       ]
+               };
+               $.table.init(options);
+               /* $("#pubLogTable"+index).bootstrapTable('insertRow', {
+                   index: count,
+                   row: {
+                       index: index,
+                       nextPerformerDesc: nextPerson[index],
+                       nextPerformerTel:nextPersonTel[index]
+                   }
+               });*/
+       });
+    });
+
+</script>
+</body>
+</html>

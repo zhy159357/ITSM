@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('批量删除附件')" />
+    <th:block th:include="include :: select2-css" />
+</head>
+<body>
+<div class="main-content">
+    <form id="form-attachment-list" class="form-horizontal">
+
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label is-required">附件ID：</label>
+                    <div class="col-sm-10">
+                        <textarea rows="25" cols="45" id="atIds" name="ids" class="form-control"></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: select2-js" />
+<th:block th:include="include :: datetimepicker-js" />
+<script>
+    var prefix = ctx + "pub/attachment";
+
+    /*通过*/
+    function submitHandler() {
+        var ids = $("#atIds").val();
+        if(ids == null || ids == ""){
+            $.modal.alert("附件ID不可为空！");
+            return;
+        }
+        var data = $("#form-attachment-list").serializeArray();
+        $.operate.save(prefix + "/delete", data);
+    }
+
+
+</script>
+</body>
+</html>

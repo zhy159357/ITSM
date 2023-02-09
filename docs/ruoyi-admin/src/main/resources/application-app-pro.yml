@@ -1,0 +1,323 @@
+# 项目相关配置
+itsm:
+  # 实例演示开关
+  demoEnabled: false
+  # 文件路径 示例（ Windows配置D:/ruoyi/uploadPath，Linux配置 /itsm/itsm/file）
+  profile: /itsm/itsm/file
+  # 获取ip地址开关
+  addressEnabled: false
+  # 获取自动化路径
+  entegorUrl: http://20.200.84.91:8888
+  # 获取网络自动化路径
+  workAutoUrl: http://20.200.84.92:8888
+  #云图地址
+  cloudViewUrl: http://22.249.202.68:13307
+  # 是否启动缓存字典项
+  dictCache: false
+  # 用户同步开关
+  synchronizeUser: false
+  logs: /itsm/itsm/logs
+  nginx: http://10.232.83.154:8888
+# 开发环境配置
+# 用户配置
+user:
+  password:
+    # 密码错误{maxRetryCount}次锁定10分钟
+    maxRetryCount: 3
+  telsmscode:
+    maxRetryCount: 3
+
+# Shiro
+shiro:
+  user:
+    # 验证码开关
+    captchaEnabled: false
+    # 验证码类型 math 数组计算 char 字符
+    captchaType: char
+    # 短信验证码开关
+    telEnabled: true
+    # 是否测试环境
+    isTest: true
+    # 是否显示首页工作状态和值班组按钮
+    workDutyEnabled: true
+  sms:
+    # 短信平台信息
+    smsnode: itsm
+    # 短信主机服务器信息
+    smshost: 127.0.0.1
+    # 短信主机服务器端口信息
+    smsport: 8080
+
+foreign:
+  # adpm
+  adpm:
+    customerServiceUrl: http://10.251.52.16:12104/adpm-web/restful/omsmItsm/
+    sysUrl: http://10.251.52.16:12104/adpm-web/services/sysinfoWebService?wsdl
+    syncDate: 2020-08-09
+  # 自动化
+  entegorPyService:
+    url: http://10.240.140.238:5050
+    username: ideal
+    password: ideal
+  # 告警中心
+  monitorService:
+    url: http://10.239.84.98:8080
+  # 客服派单
+  customerServiceUrl: http://10.232.83.154:8887/wp-service/ws/
+  # 知识库
+  nlpService:
+    url:
+  #机构同步
+  dept:
+    url: http://10.251.52.47:8101/normalData/normalDataService
+    serviceCode: SyncAwebOrganization
+  #统一门户对接地址
+  user:
+    url: http://10.251.52.47:8101/normalData/normalDataService
+    serviceCode: SyncAwebUser
+  duty:
+    url: http://10.251.52.47:8101/normalData/normalDataService
+    serviceCode: SyncPortalDutyData
+    splitTime: 0830~1700
+  sms:
+    ip: 10.232.83.154
+    port: 8886
+    flag: ITSM
+    privateFlag: C
+    businessCode: 20429
+    encode: GBK
+  monitor:
+    alarmMaintenance:
+      url: http://10.239.84.98:8080
+
+#自动化接口配置(生产环境)
+automate:
+  automateUrl: http://10.251.214.11:8010
+#opnenAPI接口地址
+openApiPath:
+  #开单接口
+  url: http://10.246.83.23:8900
+  #token
+  token: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ
+
+design:
+  standalone:
+    enable: false
+  datasource:
+    enable: false
+  file:
+    file-types: [ ' doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'html', 'htm', 'txt', 'rar', 'gz', 'bz2', 'png', 'jpeg', 'jpg', 'zip', 'pdf', 'gif', 'bmp', 'mp4', 'avi', 'rmvb' ]
+    max-file-size: 209715200
+    prefix: ${FILE-PREFIX:/customerForm}
+    path: ${FILE-PATH:/itsm/itsm}
+    #host: ${FILE-HOST:http://10.240.140.241:9999}
+    host: ${FILE-HOST:http://10.232.83.154:8888}
+
+#vueIndex: ${VUE-INDEX:http://10.240.140.241:18080/#}
+vueIndex: ${VUE-INDEX:http://10.232.83.154:8888/#}
+# 测试环境vue前端页面配置地址
+#vueIndex: http://10.240.140.241:18080/#
+
+autoAddress: ${AUTO-ADDRESS:http://10.240.140.247:8888/}
+autoUser: ${AUTO-USER:ideal}
+autoPasswd: ${AUTO-PASSWD:ideal}
+
+mail:
+  # 这里换成自己的邮箱类型 例如smtp.163.com, smtp.qq.com
+  host: 10.240.98.205
+  # 发送邮件服务协议
+  protocol: smtp
+  # 编码集
+  default-encoding: UTF-8
+  # 发送邮件的账户
+  username: ywgl@bosc.cn
+  # 授权码（自己邮箱的授权码）
+  password: Admin@123
+  test-connection: true
+  properties:
+    mail:
+      smtp:
+        auth: true
+        starttls:
+          enable: true
+          required: true
+
+cmdb:
+  # cmdb测试地址http://20.200.47.213:7508/store/openapi/v2/resources/query?apikey=
+  url: http://10.245.132.56:32027
+  apikey: cb99026ca84346179c5bf0d782d52387
+  pageNum: 0
+  pageSize: 400
+  needCount: true
+  # paso:classCode
+  Field: OMSM.ITSM
+  Value: Application
+  ParaId: 4028df81737e6ed201737e7c87570001
+  valueDetail: systemType
+
+sso:
+  # 统一监控门户测试
+  url: http://10.240.172.126:8101/portal/auth/token
+  #url: https://20.200.89.85/4a-app/api/authenticate?token=
+  token: 56846269b7fd
+  clientId: 29PRwwIZvck8waA4MXKT93
+
+
+
+
+
+
+
+
+
+
+
+#技能組
+jnz:
+  #getAllByHttpClient: http://121.4.222.251:8500/eurm/if/data/transfer/list.ptc
+  #SaveOrUpdateAgentInfo: http://121.4.222.251:8500/eurm/if/data/transfer/agentInfo/receive/YMEQ.ptc
+  getAllByHttpClient: http://222.73.213.181:8500/eurm/if/data/transfer/list.ptc
+  SaveOrUpdateAgentInfo: http://222.73.213.181:8500/eurm/if/data/transfer/agentInfo/receive/YMEQ.ptc
+
+#netty配置
+netty:
+  client:
+    username: cps-forward
+    password: C5C3F46357C4FE5252377125BAF13C89
+forward:
+  encryKey: MIICdwIBADANBgkqhkiG9w0BAQEFAASCAmEwggJdAgEAAoGBAJNiOGqfM1q8VfeZDE7ZNaON7elmJk3e0KchUg8b2iJoDQ79DSrN5vrvRLCjlUfK9K9yjQwWeTYPJOkW4CDwTZkESAlEXtd1jJWfnMo5Al5n9PvgFj8FfQqvWYm51f6nspJ2Sa9h4y8TJTJNLLKyhzbEzIAndmcfUTdvAgMBAAECgYBRptTCnTiCSF0IM05SUJwa5IKuD92gvpSyQwHN1LRM8XQrKMyE3zL6PKiJYnlBVDLh9eVwUIIos38JKQG8O2yZ9pkM0LRokSRSeaw94TvOxuVas77niX9VeawykLueUfKTKLlcsAvYj8BW5YnceeBjVgfGeAPct9KO4QJBANcisLwOi3NbveG5nieGyQEsqzJlHIGO4ehYGuzEtyBO6GQtsVR2YKT8DrdMVvg5aKIoETm3l1LYLZHVZu7sCQQCvYPpapog8EhTBQbExmufWzB9xgHEWvAqkqXJU1UZEDberIgaGXtsk1xvUtKZlDu2jOYDLEIXgb7P6QuM1oXdAkA29v7Syt2SZjI7u5OWrY5xnWGpE7eBimYbOPfRjGb9P2d8mADsyHr9bxUBTScAaoVMKO6327KVTbfLKw33jX2RAkEAjTo0AOHQHUeWLRYggcizX3aa74S2DM6ZmUJa6UfZBgSe3hGVXYlvQZhzkfMzd3fxB5sbyupwVI6SQ2pBshQJBAMFfu0XsE0V8h3zga7fKifnOFXqMtDSSxzl2BDQSLlERQi24GwuqCS2DsD3bticvS2n88qAFI799prrxUxM
+  host2ip: forward1:20.200.27.97,forward2:192.168.139.151
+  ssh:
+    port: 22
+    #weblogic
+    username:
+    #weblogic
+    password:
+    pemfilepath: /app/ideal/.ssh/id_rsa
+    #pemfilepath: D:/.ssh/id_rsa
+esb:
+  file:
+    #http://127.0.0.1:8888/cps-fileserver/esbfile
+    serverUrl:
+    token: Gisft-cps-token
+    upload:
+      maxMB: 10
+  syscode: cps-fileserver
+
+upload:
+  # 从跳板机下载文件到ITSM服务器目录
+  location: file:/app/ideal/itsm
+FmYx:
+  #监控接口地址 查询监控告警详情 测试
+  url: http://20.200.47.213:7508/alert/openapi/v2/incident/query
+  monitorUrl: http://20.200.47.213:7508/alert/openapi/v2/psbc/incident/getAlert4ITSM
+  detailUrl: http://20.200.47.213:7508/udap/openapi/v1/portal/dquery/query/sql
+  #api key
+  apiKey: 9cc4871e46094635a19d26557f9bb7f4
+
+#电话银行和信用卡的接口地址
+PhoneBank:
+  #95580预演环境
+  url: http://20.200.24.87:10001
+  #95580测试环境
+  #url: http://20.200.24.86:8001
+  #95580生产地址
+  #url: http://11.16.2.169:7002
+Card:
+  #95580测试环境
+  url: http://20.200.32.3:9001
+  #95580生产地址
+  #url: http://11.16.2.170:7002
+
+#重要系统指标参数
+IndexParametersForSystem:
+  url: http://127.0.0.1:9001
+
+#查询实时告警数据
+RealTimeAlarmData:
+  #测试
+  url: http://20.200.47.213:7508/udap/openapi/v1/portal/dquery/query/sql
+  #url: http://22.249.222.6/udap/openapi/v1/portal/dquery/query/sql
+  #url: http://22.233.206.6/udap/openapi/v1/portal/dquery/query/sql
+  #api key
+  apiKey: 9cc4871e46094635a19d26557f9bb7f4
+  parmSql: select id,name,entityName,status,severity,source,description,`properties` from `最近一月未关闭告警集市` where status != 255 limit 0,1000
+  nameUrl: http://20.200.47.213:7508/tenant/openapi/v2/users/get
+  #http://22.249.222.6/udap/openapi/v1/portal/dquery/query/sql
+  #http://22.233.206.6/udap/openapi/v1/portal/dquery/query/sql
+
+#反欺诈系统
+Antifraud:
+  url: http://20.200.26.213:8081/webapp/maintain/receiveOrder
+
+#数据提取
+bigData:
+  url: http://20.200.27.83:7001/default/com.fjpsbc.drms.dataReqFlow.dataFlow.setOpinionFromMgr.biz.ext
+  #测试
+  #http://20.152.0.100:9000/default/com.fjpsbc.drms.process.notice.setOpinionFromMgr.biz.ext
+  #生产
+  #http://22.246.192.198:7001/default/com.fjpsbc.drms.process.notice.setOpinionFromMgr.biz.ext
+
+#态势感知工单
+tsgz:
+  #态势感知测试环境地址
+  url: https://20.198.81.136/openapi/v1/itsm/orderStatus
+  #签名所需
+  secret: sgqpUqbr05a2gAZz7g61cY0s8xpDggKO
+  appid: stgz0001
+  # 默认流程创建人
+  userId: 59cf1fd945a2418cacb83fb6741771f0
+  # 默认创建人  4028c4852ca26947012ca65e9d3012ec
+  createId: 59cf1fd945a2418cacb83fb6741771f0
+  # 附件的路径
+  app: /app/ideal/itsm/
+  FM_SAWO_js: 88888
+
+#接口签名配置
+signature:
+  # 自定义请求头参数名
+  header-app-id: _appId
+  header-sign: _sign
+  header-nonce: _nonce
+  header-timestamp: _timestamp
+  # 请求过期时间，单位：秒 - 防止重放请求
+  expire-time: 300
+  # 随机字符串长度 - 防止重放请求
+  nonce-len: 18
+  # 应用列表，实际场景建议放到存储介质中。
+  apps:
+    - id: 20210001
+      secret: d9d09b1f57dcb100fe69c98c93f37de4
+      remark: 备注
+    - id: 20210002
+      secret: 100af4e620024b40bbfc49214ea66509
+      remark: 备注
+    - id: 20210003
+      secret: 100af4e620024b40bbfc49214ea66508
+      remark: 95580电话银行
+
+#一体化运维平台介质接口
+operationMediaLinkage:
+  #接口路径
+  url: http://20.198.16.6:8240/tower/api/v1/releases/notice
+  #产品线（字段）
+  productLine: sit1
+
+portal:
+  url: http://10.240.172.126:8101/normalData/normalDataService
+
+dhyh:
+  # 电话银行地址
+  url:
+  # 默认创建人4028c4852ca26947012ca65e9d3012ec
+  createId:
+  # 默认创建机构8b8080f34b5a43ed014b77527e5759d1
+  createOrgId:
+
+xyk:
+  # 信用卡地址
+  url:
+  # 默认创建人8b8080f34db1e47c014de1f0024236d6
+  createId:
+  # 默认创建机构8b8080f34b5a43ed014b77527e5759d1
+  createOrgId:

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.activiti.mapper.ItsmWorkStatusMapper">
+
+
+	<resultMap type="ItsmWorkStatus" id="ItsmWorkStatusResult">
+		<result property="workId"    column="work_id"    />
+		<result property="pid"    column="pid"    />
+		<result property="userId"    column="user_id"    />
+		<result property="workStatus"    column="work_status"    />
+		<result property="operateTime"    column="operate_time"    />
+	</resultMap>
+
+	<sql id="selectItsmWorkStatusVo">
+		select work_id, pid, user_id, work_status, operate_time from itsm_work_status
+	</sql>
+
+	<select id="selectItsmWorkStatusList" parameterType="ItsmWorkStatus" resultMap="ItsmWorkStatusResult">
+		<include refid="selectItsmWorkStatusVo"/>
+	</select>
+
+	<select id="selectItsmWorkStatusByPid" parameterType="String" resultMap="ItsmWorkStatusResult">
+		<include refid="selectItsmWorkStatusVo"/>
+		where pid = #{pid,jdbcType=VARCHAR}
+	</select>
+
+
+    <select id="selectItsmWorkStatusNameById" parameterType="String" resultMap="ItsmWorkStatusResult">
+		select work_id, pid, user_id,
+			CASE work_status WHEN ('1')  THEN '签到' WHEN ('2')  THEN '签退' WHEN ('3')  THEN '午休'
+        	WHEN ('4')  THEN '午休结束'   WHEN ('5')  THEN '小休'  WHEN ('6')  THEN '小休结束'
+        	WHEN ('7')  THEN '离线' END as work_status,
+		 	operate_time from itsm_work_status
+		  	where pid = #{pid,jdbcType=VARCHAR}
+	</select>
+
+    <insert id="insertItsmWorkStatus" parameterType="ItsmWorkStatus">
+		insert into itsm_work_status
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="workId != null  and workId != ''">work_id,</if>
+			<if test="pid != null  and pid != ''">pid,</if>
+			<if test="userId != null  and userId != ''">user_id,</if>
+			<if test="workStatus != null  and workStatus != ''">work_status,</if>
+			<if test="operateTime != null  and operateTime != ''">operate_time,</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="workId != null  and workId != ''">#{workId},</if>
+			<if test="pid != null  and pid != ''">#{pid},</if>
+			<if test="userId != null  and userId != ''">#{userId},</if>
+			<if test="workStatus != null  and workStatus != ''">#{workStatus},</if>
+			<if test="operateTime != null  and operateTime != ''">#{operateTime},</if>
+		</trim>
+	</insert>
+
+	<update id="updateItsmWorkStatus" parameterType="ItsmWorkStatus">
+		update itsm_work_status
+		<trim prefix="SET" suffixOverrides=",">
+			<if test="workStatus != null  and workStatus != ''">work_status = #{workStatus},</if>
+			<if test="operateTime != null  and operateTime != ''">operate_time = #{operateTime},</if>
+		</trim>
+		where pid = #{pid,jdbcType=VARCHAR}
+	</update>
+
+	<delete id="deleteItsmWorkStatusById" parameterType="String">
+		delete from itsm_work_status where work_id = #{workId}
+	</delete>
+
+	<delete id="deleteItsmWorkStatusByIds" parameterType="String">
+		delete from itsm_work_status where work_id in
+		<foreach item="workId" collection="array" open="(" separator="," close=")">
+			#{workId}
+		</foreach>
+	</delete>
+
+
+</mapper>

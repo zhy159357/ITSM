@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('应用系统列表工作组')" />
+</head>
+<body class="gray-bg">
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-12 search-collapse">
+            <form id="role-form">
+                <input type="hidden" id="deptId" name="orgId">
+                <div class="select-list">
+                    <ul>
+                        <li>
+                            系统名称：<input type="text" name="caption"/>
+                        </li>
+                        <li>
+                            所属机构：<input id="deptName" type="text" onclick="selectDeptTree()" name="orgName" readonly style="background-color: #fdfdfd" />
+                        </li>
+                        <li>
+                            <a class="btn btn-primary btn-rounded btn-sm" id="searchBut" onclick="checked(),$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                            <a class="btn btn-warning btn-rounded btn-sm" onclick="checked(),$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                        </li>
+                    </ul>
+                </div>
+            </form>
+        </div>
+
+        <div class="col-sm-12 select-table table-striped">
+            <table id="bootstrap-table"></table>
+        </div>
+    </div>
+</div>
+<th:block th:include="include :: footer" />
+<script th:inline="javascript">
+    var prefix = ctx + "system/application";
+    var checkedId="";
+    var checkedName="";
+    $(function() {
+        // 回车键搜索
+        document.onkeydown = function(e){
+            var ev = document.all ? window.event : e;
+            if(ev.keyCode==13) {
+                $('#searchBut').trigger('click');
+                return false;
+            }
+        };
+        var options = {
+            url: prefix + "/list",
+            createUrl: prefix + "/add",
+            updateUrl: prefix + "/edit/{id}",
+            removeUrl: prefix + "/remove",
+            exportUrl: prefix + "/export",
+            rememberSelected:true,
+            showColumns: false,
+            clickToSelect:true,
+            sortable:false,
+            queryParams:queryParams,
+            modalName: "应用系统",
+            columns: [{
+                field: 'state',
+                checkbox: true
+            },
+                {
+                    field: 'sysId',
+                    title: '应用系统Id',
+                    visible : false
+                },
+                {
+                    field: 'caption',
+                    title: '系统名称',
+                },
+                {
+                    field: 'ogOrg.orgName',
+                    title: '所属机构'
+                },
+                {
+                    field: 'memo',
+                    title: '备注',
+                    formatter: function (value, row, index) {
+                        return $.table.tooltip(value);
+                    }
+                },
+                {
+                    field: 'isKeySys',
+                    title: '重要系统',
+                    formatter: function (value, row, index) {
+                        if(row.isKeySys == 1){
+                            return "是";
+                        }else{
+
+                            return "否";
+                        }
+                    }
+                },
+                {
+                    field: 'invalidationMark ',
+                    title: '状态',
+                    formatter: function (value, row, index) {
+                        if(row. invalidationMark == 1){
+                            return "启用";
+                        }else{
+                            return "停止";
+                        }
+                    }
+                }]
+        };
+        $.table.init(options);
+    });
+
+    /* 选择部门树 */
+    function selectDeptTree() {
+        var deptId = $.common.isEmpty($("#treeId").val()) ? "310100001" : $("#treeId").val();
+        var url = ctx + "system/dept/selectDeptTree/" + deptId;
+        var options = {
+            title: '选择部门',
+            width: "380",
+            url: url,
+            callBack: doSubmit
+        };
+        $.modal.openOptions(options);
+    }
+    function queryParams(params){
+        var search = $.table.queryParams(params);
+        search.invalidationMark=1 ;
+        return search;
+
+    }
+    function doSubmit(index, layero){
+        var tree = layero.find("iframe")[0].contentWindow.$._tree;
+        var body = layer.getChildFrame('body', index);
+        $("#deptId").val(body.find('#treeId').val());
+        $("#deptName").val(body.find('#treeName').val());
+        layer.close(index);
+    }
+    function checked(){
+        var rows =$.table.selectColumns("sysId");
+        var sysNameRows = $.table.selectColumns('caption');
+        if (rows.length!= 0) {
+            checkedId+=rows.join()+",";
+            checkedName+=sysNameRows.join()+",";
+        }
+    }
+
+    /* 添加应用系统-选择系统-提交 */
+    function submitHandler(index, layero) {
+        var rows = $.table.selectFirstColumns();
+        if (rows.length == 0) {
+            $.modal.alertWarning("请至少选择一条记录");
+            return;
+        }
+        var sysNameRows = $.table.selectColumns('caption');
+        $.modal.close();
+        parent.getFmKindOneList(rows.join());
+        parent.getGroupList(rows.join());
+        // 系统选择赋值
+        parent.$('#sysId').val(rows.join());
+        parent.$('#sName').val(sysNameRows.join());
+
+    }
+
+</script>
+</body>
+</html>

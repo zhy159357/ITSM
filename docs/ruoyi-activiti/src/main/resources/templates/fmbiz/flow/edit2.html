@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:include="include :: header('省中心分派退回')"/>
+    <th:block th:include="include :: select2-css"/>
+    <th:block th:include="include :: datetimepicker-css" />
+    <link th:href="@{/css/fmbizMaint.css}" rel="stylesheet"/> <!-- 自定css -->
+</head>
+<body>
+<div class="main-content">
+    <form id="form-fmbiz-add" class="form-horizontal" th:object="${fmBiz}">
+        <input name="cId" id="cId" class="form-control" type="hidden" required th:value="*{cId}">
+        <h4 class="form-header h4">基本信息</h4>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">事件单号：</label>
+                    <div class="col-sm-8">
+                        <input name="fmId" id="fmId" class="form-control" type="hidden" required th:value="*{fmId}">
+                        <input name="faultNo" id="faultNo" class="form-control" type="text"
+                               th:value="*{faultNo}" readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label ">事件单来源：</label>
+                    <div class="col-sm-8">
+                        <select name="faultSource" class="form-control"
+                                th:with="type=${@pubParaValue.selectPubParaValueByParaName('fmSource')}"
+                                th:field="*{faultSource}" disabled>
+                            <option th:each="PubParaValue : ${type}" th:text="${PubParaValue.valueDetail}"
+                                    th:value="${PubParaValue.value}"
+                                    th:selected="${PubParaValue.value eq faultSource}"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">创建机构：</label>
+                    <div class="col-sm-8">
+                        <input name="occurrenceOrgId" id="occurrenceOrgId" class="form-control" type="hidden"
+                               th:value="*{occurrenceOrgId}">
+                        <input id="occurrenceOrgName" name="occurrenceOrgName" type="text" class="form-control"
+                               onclick="selectogOrg()" th:value="*{params.createOrg}" readonly/>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">报告时间：</label>
+                    <div class="col-sm-8">
+                        <input id="reportTime" name="reportTime" class="form-control" type="text"
+                               placeholder="yyyy-MM-dd HH:mm:ss" th:value="*{reportTime}" readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">填报人：</label>
+                    <div class="col-sm-8">
+                        <input name="faultContactName" id="faultContactName" class="form-control" type="text"
+                               th:value="*{faultContactName}" maxlength="18" required>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">填报人电话：</label>
+                    <div class="col-sm-8">
+                        <input id="contactPhone" name="contactPhone" class="form-control" th:value="*{contactPhone}"
+                               maxlength="12" required>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">事件类型：</label>
+                    <div class="col-sm-8">
+                        <select name="recordType" class="form-control"
+                                th:with="type=${@pubParaValue.selectPubParaValueByParaName('fm_record_type')}"
+                                th:field="*{recordType}" disabled>
+                            <option th:each="PubParaValue : ${type}" th:text="${PubParaValue.valueDetail}"
+                                    th:value="${PubParaValue.value}" th:selected="${PubParaValue.value eq recordType}">
+                                >
+                            </option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-8">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label is-required">发生部门：</label>
+                    <div class="col-sm-10">
+                        <input id="contactAddress" name="contactAddress" placeholder="如XX支行XX部门" type="text"
+                               th:value="*{contactAddress}" class="form-control" maxlength="42" required/>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">所属应用系统：</label>
+                    <div class="col-sm-8">
+                        <input id="sysid" name="sysid" type="hidden" class="form-control" th:value="*{sysid}"/>
+                        <input id="applicationName" name="applicationName" type="text" class="form-control"
+                               th:value="*{params.sysName}"
+                               onclick="selectOgSysListByCondition()" required readonly
+                               style="background-color: #fdfdfd"/>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">一级分类：</label>
+                    <div class="col-sm-8">
+                        <select id="oneType" name="oneType" class="form-control"
+                                onchange="getFmKindTwoList()" required>
+                            <option value="" th:if="${not #strings.isEmpty(fmBiz.oneType)}"></option>
+                            <option th:each="KnowledgeTitle : ${oneTypeList}" th:text="${KnowledgeTitle.name}"
+                                    th:value="${KnowledgeTitle.id}" th:field="*{oneType}"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">二级分类：</label>
+                    <div class="col-sm-8">
+                        <select id="twoType" name="twoType" onchange="getFmKindThreeList()"
+                                class="form-control"
+                                required>
+                            <option value="" th:if="${not #strings.isEmpty(fmBiz.twoType)}"></option>
+                            <option th:each="KnowledgeTitle : ${twoTypeList}" th:text="${KnowledgeTitle.name}"
+                                    th:value="${KnowledgeTitle.id}" th:field="*{twoType}"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">三级分类：</label>
+                    <div class="col-sm-8">
+                        <select id="threeType" name="threeType"
+                                onchange="getKeywordsList()"
+                                class="form-control"
+                                required>
+                            <option value="" th:if="${not #strings.isEmpty(fmBiz.threeType)}"></option>
+                            <option th:each="KnowledgeTitle : ${threeTypeList}" th:text="${KnowledgeTitle.name}"
+                                    th:value="${KnowledgeTitle.id}" th:field="*{threeType}"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">关键字：</label>
+                    <div class="col-sm-8">
+                        <select id="keywords" name="keywords" class="form-control"
+                        >
+                            <option value="" th:if="${not #strings.isEmpty(fmBiz.keywords)}"></option>
+                            <option th:each="KnowledgeTitle : ${keyWorksList}" th:text="${KnowledgeTitle.name}"
+                                    th:value="${KnowledgeTitle.id}" th:field="*{keywords}"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">涉事笔数：</label>
+                    <div class="col-sm-8">
+                        <input id="involveScount" name="involveScount" th:value="*{involveScount}" class="form-control"
+                               maxlength="20">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">涉事金额：</label>
+                    <div class="col-sm-8">
+                        <select name="involveAmount" class="form-control"
+                                th:with="type=${@pubParaValue.selectPubParaValueByParaName('fmInvolveAmount')}"
+                                th:field="*{involveAmount}">
+                            <option th:each="PubParaValue : ${type}" th:text="${PubParaValue.valueDetail}"
+                                    th:value="${PubParaValue.value}"
+                                    th:selected="${PubParaValue.value eq involveAmount}">
+                            </option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">交易机构：</label>
+                    <div class="col-sm-8">
+                        <input id="occurrenceAddress" name="occurrenceAddress" th:value="*{occurrenceAddress}"
+                               class="form-control" maxlength="42">
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">交易名称/代码：</label>
+                    <div class="col-sm-8">
+                        <input id="tradingName" name="tradingName" th:value="*{tradingName}" class="form-control"
+                               maxlength="32">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">流水号：</label>
+                    <div class="col-sm-8">
+                        <input id="serialNumber" name="serialNumber" th:value="*{serialNumber}" class="form-control"
+                               maxlength="32">
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">客户姓名：</label>
+                    <div class="col-sm-8">
+                        <input id="customerName" name="customerName" th:value="*{customerName}" placeholder="没有填无"
+                               class="form-control" onchange="checkCustInfo()"
+                               maxlength="16" required>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">客户身份证号：</label>
+                    <div class="col-sm-8">
+                        <input id="customerIdcard" name="customerIdcard" th:value="*{customerIdcard}"
+                               class="form-control" onchange="checkIdcard()"
+                               maxlength="18">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">客户电话：</label>
+                    <div class="col-sm-8">
+                        <input name="cPhone" id="cPhone" class="form-control" th:value="*{cPhone}"
+                               onchange="checkCustInfo()"
+                               maxlength="11" required>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">客户部门：</label>
+                    <div class="col-sm-8">
+                        <input name="cDept" id="cDept" class="form-control" type="text" th:value="*{cDept}"
+                               maxlength="18">
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">客户职务：</label>
+                    <div class="col-sm-8">
+                        <input name="cPost" id="cPost" class="form-control" type="text" th:value="*{cPost}"
+                               maxlength="18">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label" style="width:11%">客户地址：</label>
+                    <div class="col-sm-10" style="width:89%">
+                        <input id="cAddress" name="cAddress" type="text" class="form-control" th:value="*{cAddress}"
+                               maxlength="64"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">交易账号：</label>
+                    <div class="col-sm-8">
+                        <input id="transactionAccount" name="transactionAccount" th:value="*{transactionAccount}"
+                               class="form-control"
+                               maxlength="64">
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">交易金额：</label>
+                    <div class="col-sm-8">
+                        <input id="transactionAmount" name="transactionAmount" th:value="*{transactionAmount}"
+                               class="form-control" maxlength="36">
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">订单号：</label>
+                    <div class="col-sm-8">
+                        <input id="orderNumber" name="orderNumber" class="form-control" th:value="*{orderNumber}"
+                               maxlength="42">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label" style="width:11%">错误信息：</label>
+                    <div class="col-sm-10" style="width:89%">
+                        <input id="errorInformation" name="errorInformation" th:value="*{errorInformation}"
+                               type="text" class="form-control" maxlength="64"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">发生时间：</label>
+                    <div class="col-sm-8">
+                        <input type="text" class="form-control" placeholder="yyyy-MM-dd HH:mm"
+                               id="occurTime" name="occurTime" th:value="*{occurTime}" onchange="ifoccTime()" required readonly
+                               style="background-color: #fdfdfd"/>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">当事人：</label>
+                    <div class="col-sm-8">
+                        <input id="faultReportName" name="faultReportName" th:value="*{faultReportName}"
+                               class="form-control" required>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">当事人电话：</label>
+                    <div class="col-sm-8">
+                        <input id="reportPhone" name="reportPhone" class="form-control" maxlength="18"
+                               th:value="*{reportPhone}">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="input-group" style="display:-webkit-box">
+                    <label class="col-sm-2 control-label is-required" style="width:10%">事件标题：</label>
+                    <div class="col-sm-10" style="position: relative;padding: 0px;width: auto">
+                        <input type="text" class="zdy_input zdy_height"  id="faultDecriptSummary" name="faultDecriptSummary" th:value="*{faultDecriptSummary}" maxlength="42" required>
+                        <div class="input-group-btn" style="display: contents">
+                            <ul style="position: absolute;left: 16px; width:max-content!important;" class="dropdown-menu dropdown-menu-right" role="menu" > </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="input-group" style="display:-webkit-box">
+                    <label class="col-sm-2 control-label is-required" style="width:10%">事件描述：</label>
+                    <div class="col-sm-10" style="position: relative;padding: 0px;width: auto">
+                        <textarea rows="10" cols="20" id="faultDecriptDetail" name="faultDecriptDetail"
+                                  th:text="*{faultDecriptDetail}" class="zdy_input" maxlength="1300" required></textarea>
+                        <div class="input-group-btn" style="display: contents">
+                            <ul style="position: absolute;left: 16px; width:max-content!important;" class="dropdown-menu dropdown-menu-right" role="menu"> </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="tabs-container">
+                <ul class="nav nav-tabs">
+                    <li class="active"><a data-toggle="tab" href="#tab-1" aria-expanded="true">流程记录</a>
+                    </li>
+                    <li class=""><a data-toggle="tab" href="#tab-2" aria-expanded="false">附件列表</a>
+                    </li>
+                </ul>
+                <div class="tab-content">
+                    <div id="tab-1" class="tab-pane active">
+                        <div class="panel-body">
+                            <div class="col-sm-12 select-table table-striped">
+                                <table id="history-table"></table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="tab-2" class="tab-pane">
+                        <div class="panel-body">
+                            <div class="btn-group-sm" id="toolbar2" role="group">
+                                <a class="btn btn-success" type="button" onclick="upload()">
+                                    <i class="fa fa-upload"></i> 添加附件
+                                </a>
+                                <a class="btn btn-warning multiple disabled" onclick="downloadAttachment()">
+                                    <i class="fa fa-download"></i> 下载附件
+                                </a>
+                                <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()">
+                                    <i class="fa fa-remove"></i> 删除附件
+                                </a>
+                            </div>
+                            <div class="col-sm-12 select-table table-striped">
+                                <table id="file-table"></table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-sm-offset-5 col-sm-10">
+        <button type="button" class="btn btn-sm btn-primary" onclick="submit()"><i class="fa fa-check"></i>重新提交</button>&nbsp;
+        <button type="button" class="btn btn-sm btn-danger" onclick="closeItem()"><i class="fa fa-remove"></i>关闭
+        </button>
+    </div>
+</div>
+<th:block th:include="include :: footer"/>
+<th:block th:include="include :: bootstrap-suggest-js" />
+<th:block th:include="include :: bootstrap-typeahead-js" />
+<th:block th:include="include :: select2-js"/>
+<th:block th:include="include :: datetimepicker-js"/>
+<script th:src="@{/js/activiti.js}"></script>
+<script th:src="@{/js/fmbizMaint.js}"></script>
+
+<script>
+    var prefix = ctx + "fmbiz";
+    var prefix_attachment = ctx + "pub/attachment";
+    var prefix_cust = ctx + "cust";
+    $(function () {
+        $("#occurTime").datetimepicker({
+            format: "yyyy-mm-dd hh:ii:ss",
+            autoclose: true,
+            minView:0,
+            minuteStep:1,
+            endDate:new Date()
+        });
+        var optionsfj = {
+            url: prefix_attachment + "/list",
+            id: 'file-table',
+            createUrl: prefix_attachment + "/add",
+            updateUrl: prefix_attachment + "/edit/{id}",
+            removeUrl: prefix_attachment + "/remove",
+            detailUrl: prefix_attachment + "/edit/{id}",
+            sortName: "fileTime",
+            sortOrder: "desc",
+            singleSelect: true,
+            clickToSelect: true,
+            toolbar: "toolbar2",
+            queryParams: queryParams,
+            modalName: "附件列表",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'atId',
+                    title: '附件ID',
+                    visible: false
+                },
+                {
+                    field: 'fileName',
+                    title: '文件名称'
+                },
+                {
+                    field: 'person.pName',
+                    title: '上传人'
+                },
+                {
+                    field: 'size',
+                    title: '文件大小'
+                },
+                {
+                    field: 'memo',
+                    title: '文件描述'
+                },
+                {
+                    field: 'fileTime',
+                    title: '上传时间',
+                    formatter: function (value, row, index) {
+                        var startTime = '';
+                        if (value != '' && value != null) {
+                            var pattern = /(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/;
+                            startTime = value.replace(pattern, '$1-$2-$3 $4:$5:$6');
+                        }
+                        return startTime;
+                    }
+                }]
+        };
+        $.table.init(optionsfj);
+        puFolwHistory($("#fmId").val());
+        var reportTime = $("#reportTime").val();
+        var pattern = /(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/;
+        reportTime = reportTime.replace(pattern, '$1-$2-$3 $4:$5:$6');
+        $("#reportTime").val(reportTime);
+        var occurTime = $("#occurTime").val();
+        var pattern = /(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/;
+        occurTime = occurTime.replace(pattern, '$1-$2-$3 $4:$5:$6');
+        $("#occurTime").val(occurTime);
+    });
+
+    function queryParams(params) {
+        var search = $.table.queryParams(params);
+        search.ownerId = $("#fmId").val() == '' ? 'version_public_add_no_owner_id' : $("#fmId").val();
+        return search;
+    }
+
+    // 附件上传页面
+    function upload() {
+        var ownerId = $("#fmId").val();
+        var url = prefix_attachment + "/upload/" + ownerId;
+        $.modal.open("附件上传", url,'1100','620');
+    }
+
+    // 附件下载
+    function downloadAttachment() {
+        var rows = $.table.selectFirstColumns();
+        var atId = rows[0];
+        var ownerId = $("#fmId").val();
+        var url = prefix_attachment + "/download/" + ownerId + "/" + atId;
+        window.location.href = url;
+    }
+
+    $("#form-fmbiz-add").validate({
+        onkeyup: false,
+        rules: {},
+        messages: {},
+        focusCleanup: true
+    });
+
+
+    /*重新提交*/
+    function submit() {
+        var idCard = checkIdcard();
+        if (!idCard) {
+            return;
+        }
+        if ($.validate.form()) {
+            var data = $("#form-fmbiz-add").serializeArray();
+            $.operate.saveTab(prefix + "/saveflowedit", data);
+        }
+    }
+
+    // 校验身份证号码
+    function checkIdcard() {
+        var customerIdcard = $("#customerIdcard").val();
+        if (customerIdcard && !idcard(customerIdcard)) {
+            $.modal.alertWarning("身份证格式不正确。");
+        } else {
+            return true;
+        }
+    }
+
+    function idcard(customerIdcard) {
+        var nd = /^[1-9]\d{7}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])\d{3}$|^[1-9]\d{5}[1-9]\d{3}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])\d{3}([0-9]|X)$/;//中国内陆地区身份证验证
+        var hk = /^((\s?[A-Za-z])|([A-Za-z]{2}))\d{6}(\([0−9aA]\)|[0-9aA])$/;//中国香港地区身份证验证
+        var mo = /^[1|5|7][0-9]{6}\([0-9Aa]\)/;//中国澳门地区身份证验证
+        var tw = /^[a-zA-Z][0-9]{9}$/; //中国台湾地区身份证验证
+        if (!nd.test(customerIdcard) && !hk.test(customerIdcard) && !mo.test(customerIdcard) && !tw.test(customerIdcard)) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    //加载一级分类
+    function getFmKindOneList(sysid) {
+        $.ajax({
+            cache: true,
+            type: "POST",
+            url: prefix + "/selectFmKindBySysid",
+            data: {
+                "sysid": sysid,
+                "category": "1",
+                "parentId": ""
+            },
+            async: false,
+            success: function (data) {
+                var options = "<option value=''>请选择</option>";
+                $("#oneType").html("");
+                for (var ak = 0; ak < data.rows.length; ak++) {
+                    options += "<option value='" + data.rows[ak].id + "'>" + data.rows[ak].name + "</option> \n";
+                }
+                $("#oneType").append(options);
+            }
+        });
+        $("#twoType").html("");
+        $("#twoType").append("<option value=''>请选择</option>");
+        $("#threeType").html("");
+        $("#threeType").append("<option value=''>请选择</option>");
+        $("#keywords").html("");
+        $("#keywords").append("<option value=''>请选择</option>");
+    }
+
+    //根据一级分类查询二级分类
+    function getFmKindTwoList() {
+        var sysid = $("#sysid").val();
+        var parentId = $("#oneType").val();
+        if (sysid && parentId) {
+            $.ajax({
+                cache: true,
+                type: "POST",
+                url: prefix + "/selectFmKindBySysid",
+                data: {
+                    "sysid": sysid,
+                    "category": "2",
+                    "parentId": parentId
+                },
+                async: false,
+                success: function (data) {
+                    var options = "<option value=''>请选择</option>";
+                    $("#twoType").html("");
+                    for (var ak = 0; ak < data.rows.length; ak++) {
+                        options += "<option value='" + data.rows[ak].id + "'>" + data.rows[ak].name + "</option> \n";
+                    }
+                    $("#twoType").append(options);
+                }
+            });
+        }
+        $("#threeType").html("");
+        $("#threeType").append("<option value=''>请选择</option>");
+        $("#keywords").html("");
+        $("#keywords").append("<option value=''>请选择</option>");
+    }
+
+    //根据二级分类查询三级分类
+    function getFmKindThreeList() {
+        var sysid = $("#sysid").val();
+        var parentId = $("#twoType").val();
+        if (sysid && parentId) {
+            $.ajax({
+                cache: true,
+                type: "POST",
+                url: prefix + "/selectFmKindBySysid",
+                data: {
+                    "sysid": sysid,
+                    "category": "3",
+                    "parentId": parentId
+                },
+                async: false,
+                success: function (data) {
+                    var options = "<option value=''>请选择</option>";
+                    $("#threeType").html("");
+                    for (var ak = 0; ak < data.rows.length; ak++) {
+                        options += "<option value='" + data.rows[ak].id + "'>" + data.rows[ak].name + "</option> \n";
+                    }
+                    $("#threeType").append(options);
+                }
+            });
+        }
+        $("#keywords").html("");
+        $("#keywords").append("<option value=''>请选择</option>");
+    }
+
+    //根据三级分类查询关键字
+    function getKeywordsList() {
+        var sysid = $("#sysid").val();
+        var parentId = $("#threeType").val();
+        if (sysid && parentId) {
+            $.ajax({
+                cache: true,
+                type: "POST",
+                url: prefix + "/selectFmKindBySysid",
+                data: {
+                    "sysid": sysid,
+                    "category": "4",
+                    "parentId": parentId
+                },
+                async: false,
+                success: function (data) {
+                    var options = "<option value=''>请选择</option>";
+                    $("#keywords").html("");
+                    for (var ak = 0; ak < data.rows.length; ak++) {
+                        options += "<option value='" + data.rows[ak].id + "'>" + data.rows[ak].name + "</option> \n";
+                    }
+                    $("#keywords").append(options);
+                }
+            });
+        }
+    }
+
+    // 选择应用系统（只能单选）
+    function selectOgSysListByCondition() {
+        $.modal.open("选择应用系统", prefix + "/sysGrouplist");
+    }
+
+    //根据系统查询工作组
+    function getGroupList(sysid) {
+    }
+    //判断发生时间不能大于当前时间
+    function ifoccTime() {
+        var occurTime = $("#occurTime").val();
+        var date1 = new Date(occurTime.replace(/-/g, '/'));
+        var date2 = new Date();
+        if (date1 > date2) {
+            $.modal.alertError("发生时间不应大于当前时间。");
+            $("#occurTime").val("");
+        }
+    }
+
+</script>
+</body>
+</html>

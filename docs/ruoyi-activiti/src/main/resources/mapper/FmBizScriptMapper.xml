@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.activiti.mapper.FmBizScriptMapper">
+
+    <resultMap type="FmBizScript" id="FmBizScriptResult">
+        <result property="fbsId" column="fbs_id"/>
+        <result property="fmId" column="fm_id"/>
+        <result property="executorId" column="executor_id"/>
+        <result property="executorName" column="executorName"/>
+        <result property="executorGroupid" column="executor_groupid"/>
+        <result property="executorGroupName" column="executorGroupName"/>
+        <result property="executorResult" column="executor_result"/>
+        <result property="resultStatus" column="result_status"/>
+        <result property="scriptName" column="script_name"/>
+        <result property="scriptPara" column="script_para"/>
+        <result property="scriptId" column="script_id"/>
+        <result property="executorTime" column="executor_time"/>
+        <result property="executorEndTime" column="executor_endtime"/>
+        <result property="flowId" column="flow_id"/>
+        <result property="scriptVersion" column="script_version"/>
+        <result property="type" column="type"/>
+    </resultMap>
+
+    <sql id="selectFmBizScriptVo">
+        select f.fbs_id,
+        f.fm_id,
+         f.executor_id,
+         p.pname executorName,
+         f.executor_groupid,
+         g.grpName executorGroupName,
+         f.executor_result,
+         f.result_status,
+         f.script_name,
+         f.script_para,
+         f.script_id,
+         f.flow_id,
+         f.type,
+         f.executor_time
+         from fm_biz_script f
+         left join og_group g on f.executor_groupid = g.groupid
+         left join og_person p on f.executor_id = p.pid
+    </sql>
+
+    <select id="selectFmBizScriptList" parameterType="FmBizScript" resultMap="FmBizScriptResult">
+        <include refid="selectFmBizScriptVo"/>
+        <where>
+            <if test="fmId != null  and fmId != ''">and fm_id = #{fmId}</if>
+            <if test="executorId != null  and executorId != ''">and executor_id = #{executorId}</if>
+            <if test="executorGroupid != null  and executorGroupid != ''">and executor_groupid = #{executorGroupid}</if>
+            <if test="executorResult != null  and executorResult != ''">and executor_result = #{executorResult}</if>
+            <if test="resultStatus != null  and resultStatus != ''">and result_status = #{resultStatus}</if>
+            <if test="scriptName != null  and scriptName != ''">and script_name like concat(concat('%', #{scriptName}),
+                '%')
+            </if>
+            <if test="scriptPara != null  and scriptPara != ''">and script_para = #{scriptPara}</if>
+            <if test="scriptId != null  and scriptId != ''">and script_id = #{scriptId}</if>
+            <if test="executorTime != null  and executorTime != ''">and executor_time = #{executorTime}</if>
+            <if test="executorEndTime != null  and executorEndTime != ''">and executor_time = #{executorEndTime}</if>
+            <if test="flowId != null  and flowId != ''">and flow_id = #{flowId}</if>
+            <if test="scriptVersion != null  and scriptVersion != ''">and script_version = #{scriptVersion}</if>
+            <if test="type != null  and type != ''">and type = #{type}</if>
+        </where>
+        order by executor_time desc
+    </select>
+
+    <select id="selectFmBizScriptById" parameterType="String" resultMap="FmBizScriptResult">
+        <include refid="selectFmBizScriptVo"/>
+        where fbs_id = #{fbsId}
+    </select>
+
+    <insert id="insertFmBizScript" parameterType="FmBizScript">
+        insert into fm_biz_script
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="fbsId != null  and fbsId != ''">fbs_id,</if>
+            <if test="fmId != null  and fmId != ''">fm_id,</if>
+            <if test="executorId != null  and executorId != ''">executor_id,</if>
+            <if test="executorGroupid != null  and executorGroupid != ''">executor_groupid,</if>
+            <if test="executorResult != null  and executorResult != ''">executor_result,</if>
+            <if test="resultStatus != null  and resultStatus != ''">result_status,</if>
+            <if test="scriptName != null  and scriptName != ''">script_name,</if>
+            <if test="scriptPara != null  and scriptPara != ''">script_para,</if>
+            <if test="scriptId != null  and scriptId != ''">script_id,</if>
+            <if test="executorTime != null  and executorTime != ''">executor_time,</if>
+            <if test="executorEndTime != null  and executorEndTime != ''">executor_endtime,</if>
+            <if test="flowId != null  and flowId != ''">flow_id,</if>
+            <if test="scriptVersion != null  and scriptVersion != ''">script_version,</if>
+            <if test="type != null  and type != ''">type,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="fbsId != null  and fbsId != ''">#{fbsId},</if>
+            <if test="fmId != null  and fmId != ''">#{fmId},</if>
+            <if test="executorId != null  and executorId != ''">#{executorId},</if>
+            <if test="executorGroupid != null  and executorGroupid != ''">#{executorGroupid},</if>
+            <if test="executorResult != null  and executorResult != ''">#{executorResult},</if>
+            <if test="resultStatus != null  and resultStatus != ''">#{resultStatus},</if>
+            <if test="scriptName != null  and scriptName != ''">#{scriptName},</if>
+            <if test="scriptPara != null  and scriptPara != ''">#{scriptPara},</if>
+            <if test="scriptId != null  and scriptId != ''">#{scriptId},</if>
+            <if test="executorTime != null  and executorTime != ''">#{executorTime},</if>
+            <if test="executorEndTime != null  and executorEndTime != ''">#{executorEndTime},</if>
+            <if test="flowId != null  and flowId != ''">#{flowId},</if>
+            <if test="scriptVersion != null  and scriptVersion != ''">#{scriptVersion},</if>
+            <if test="type != null  and type != ''">#{type},</if>
+        </trim>
+    </insert>
+
+    <update id="updateFmBizScript" parameterType="FmBizScript">
+        update fm_biz_script
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="fmId != null  and fmId != ''">fm_id = #{fmId},</if>
+            <if test="executorId != null  and executorId != ''">executor_id = #{executorId},</if>
+            <if test="executorGroupid != null  and executorGroupid != ''">executor_groupid = #{executorGroupid},</if>
+            <if test="executorResult != null  and executorResult != ''">executor_result = #{executorResult},</if>
+            <if test="resultStatus != null  and resultStatus != ''">result_status = #{resultStatus},</if>
+            <if test="scriptName != null  and scriptName != ''">script_name = #{scriptName},</if>
+            <if test="scriptPara != null  and scriptPara != ''">script_para = #{scriptPara},</if>
+            <if test="scriptId != null  and scriptId != ''">script_id = #{scriptId},</if>
+            <if test="executorTime != null  and executorTime != ''">executor_time = #{executorTime},</if>
+            <if test="executorEndTime != null  and executorEndTime != ''">executor_endtime = #{executorEndTime},</if>
+            <if test="flowId != null  and flowId != ''">flow_id = #{flowId},</if>
+            <if test="scriptVersion != null  and scriptVersion != ''">script_version = #{scriptVersion},</if>
+            <if test="type != null  and type != ''">type = #{type},</if>
+        </trim>
+        where fbs_id = #{fbsId}
+    </update>
+
+    <delete id="deleteFmBizScriptById" parameterType="String">
+        delete from fm_biz_script where fbs_id = #{fbsId}
+    </delete>
+
+    <delete id="deleteFmBizScriptByIds" parameterType="String">
+        delete from fm_biz_script where fbs_id in
+        <foreach item="fbsId" collection="array" open="(" separator="," close=")">
+            #{fbsId}
+        </foreach>
+    </delete>
+
+</mapper>

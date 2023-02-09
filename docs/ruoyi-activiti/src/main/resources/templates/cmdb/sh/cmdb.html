@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('数据库恢复登记')" />
+    <th:block th:include="include :: datetimepicker-css" />
+</head>
+<body class="gray-bg">
+     <div class="container-div">
+        <div class="row">
+            <div class="col-sm-12 search-collapse">
+                <form id="formId">
+                    <div class="select-list">
+                        <ul>
+                            <li>
+                                <label> 中心：</label><select class="form-control"  name="centreName" th:with="type=${@dict.getParaType('Line_Center')}" id="centreName">
+                                    <option value=""></option>
+                                    <option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+                                </select>
+                            </li>
+                            <li>
+                                <label> 数据库名：</label><input id="hostName" name="hostName" type="text">
+                            </li>
+                            <li>
+                                <label> 验证结果：</label><select class="form-control"  name="verificationResult" th:with="type=${@dict.getParaType('fmSw_dealRes')}" id="verificationResult">
+                                <option value=""></option>
+                                <option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+                            </select>
+                            </li>
+
+                            <li>
+                                <label>状态：</label><select class="form-control"  name="lineStart" th:with="type=${@dict.getParaType('line_start')}" id="lineStart">
+                                <option value=""></option>
+                                <option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+                            </select>
+                            </li>
+                            <li>
+                                <label>备份日期：</label><input id="backupDate" name="backupDate" type="text"  style="background-color: #fff; opacity: 1;">
+                            </li>
+                            <li>
+                                <a class="btn btn-primary btn-rounded btn-sm" id="ss" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-repeat"></i>&nbsp;重置</a>
+                            </li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+
+            <div class="btn-group-sm" id="toolbar" role="group">
+                <a class="btn btn-primary single disabled" onclick="$.operate.editTab()">
+                    <i class="fa fa-edit"></i> 审核
+                </a>
+            </div>
+            <div class="col-sm-12 select-table table-striped">
+                <table id="bootstrap-table"></table>
+            </div>
+        </div>
+    </div>
+    <th:block th:include="include :: footer" />
+     <th:block th:include="include :: datetimepicker-js" />
+    <script th:inline="javascript">
+        var lineCore =  [[${@dict.getParaType('Line_Center')}]];
+
+        var fmSwDealRes =  [[${@dict.getParaType('fmSw_dealRes')}]];
+
+        var lineStart =  [[${@dict.getParaType('line_start')}]];
+
+        var prefix = ctx + "cmdb/sh";
+
+        $(function() {
+            document.onkeydown = function(e){
+                var ev = document.all ? window.event : e;
+                console.log(ev);
+                if(ev.keyCode==13) {
+                    $('#ss').trigger('click');
+                    return false;
+                } //搜索逻辑
+            }
+            var options = {
+                url: prefix + "/list",
+                createUrl: prefix + "/add",
+                updateUrl: prefix + "/edit/{id}",
+                removeUrl: prefix + "/remove",
+                detailUrl: prefix + "/detail/{id}",
+                exportUrl: prefix + "/export",
+                sortName: "recoveryStartTime",
+                sortOrder: "desc",
+                singleSelect:true,
+                clickToSelect: true,
+                modalName: "数据库恢复登记",
+                columns: [{
+                    checkbox: true
+                },
+                {
+                    field: 'recoveryRegisterId',
+                    title: '序号',
+                    visible: false
+                },
+                    {
+                        field: 'centreName',
+                        title: '所属中心名称',
+                        formatter: function (value,row,index) {
+                            return selectDictLabel(lineCore, value);
+                        },
+                        /*width: '1000',*/
+                        cellStyle: function cellStyle(value, row, index, field) {
+                            return { classes: 'text-nowrap'};
+                        }
+                    },
+                    {
+                        field: 'sysName',
+                        title: '系统贯标名称',
+                    },
+                    {
+                        field: 'hostName',
+                        title: '数据库名',
+                    },
+                {
+                    field: 'recoveryStartTime',
+                    title: '恢复开始时间',
+                    formatter: function (value, row, index) {
+                        var createTimeTwo = '';
+                        if(value!='' && value !=null){
+                            var pattern = /(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/;
+                            createTimeTwo = value.replace(pattern, '$1-$2-$3 $4:$5:$6');
+                        }
+                        return createTimeTwo;
+                    }
+                },
+                {
+                    field: 'recoveryEndTime',
+                    title: '恢复结束时间',
+                    formatter: function (value, row, index) {
+                        var createTimeTwo = '';
+                        if(value!='' && value !=null){
+                            var pattern = /(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/;
+                            createTimeTwo = value.replace(pattern, '$1-$2-$3 $4:$5:$6');
+                        }
+                        return createTimeTwo;
+                    }
+                },
+                    {
+                        field: 'backupDate',
+                        title: '数据库备份日期',
+                        formatter: function (value, row, index) {
+                            var backupDate = '';
+                            if(value!='' && value !=null){
+                                var pattern = /^(\d{4})(\d{2})(\d{2})$/;
+                                backupDate = value.replace(pattern, '$1-$2-$3');
+                            }
+                            return backupDate;
+                        }
+                    },
+                    {
+                        field: 'recoveryTime',
+                        title: '恢复耗时（分钟）',
+                        formatter: function (value, row, index) {
+                            var createTimeTwo = '';
+                            if(value!='' && value !=null){
+                                var pattern = /(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/;
+                                createTimeTwo = value.replace(pattern, '$1-$2-$3 $4:$5:$6');
+                            }
+                            return createTimeTwo;
+                        }
+                    },
+                {
+                    field: 'verificationResult',
+                    title: '备份有效性验证结果',
+                    formatter: function (value,row,index) {
+                        return selectDictLabel(fmSwDealRes, value);
+                    },
+                    /*width: '1000',*/
+                    cellStyle: function cellStyle(value, row, index, field) {
+                        return { classes: 'text-nowrap'};
+                    }
+                },
+                    {
+                        field: 'lineStart',
+                        title: '状态',
+                        formatter: function (value,row,index) {
+                            return selectDictLabel(lineStart, value);
+                        },
+                        /*width: '1000',*/
+                        cellStyle: function cellStyle(value, row, index, field) {
+                            return { classes: 'text-nowrap'};
+                        }
+                    }
+                ]
+            };
+            $.table.init(options);
+        });
+
+        // 添加
+        function addLine(lineId) {
+            var url = prefix + '/addEmerg/' + lineId;
+            $.modal.openTab("添加", url);
+        }
+
+        //已提交的不可以删除
+        function removeAll(recoveryRegisterId) {
+            debugger;
+            table.set();
+            var rows = $.common.isEmpty(table.options.uniqueId) ? $.table.selectFirstColumns() : $.table.selectColumns(table.options.uniqueId);
+            $.ajax({
+                type: 'POST',
+                url: prefix+"/selectById",
+                data: {"recoveryRegisterId":rows[0]},
+                success: function (result) {
+                    if(result.data.lineStart=='1'){
+                        $.modal.openTab("删除" + table.options.modalName, $.operate.removeAll(recoveryRegisterId));
+                    }else{
+                        $.modal.alertError("状态为：已提交，无法删除!");
+                    }
+                },
+                dataType: 'json'
+            });
+        }
+
+        // 查看详情
+        function detailTab() {
+            var hardwareId = $.table.selectFirstColumns();
+            var url = prefix + '/detail/' + hardwareId;
+            $.modal.openTab("查看详情", url);
+        }
+
+        $("#backupDate").datetimepicker({
+            format: "yyyy-mm-dd",
+            minView: "month",
+            autoclose: true
+        });
+
+
+        //事件来源（字典项）
+        function selectDictLabel(datas, value) {
+            var actions = [];
+            $.each(datas, function(index, dict) {
+                if (dict.value == ('' + value)) {
+                    var listClass = $.common.equals("default", dict.listClass) || $.common.isEmpty(dict.listClass) ? "" : "badge badge-" + dict.listClass;
+                    actions.push($.common.sprintf("<span class='%s'>%s</span>", listClass, dict.valueDetail));
+                    return false;
+                }
+            });
+            return actions.join('');
+        }
+
+    </script>
+</body>
+</html>

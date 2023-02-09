@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('上传下载列表')" />
+    <th:block th:include="include :: layout-latest-css" />
+    <th:block th:include="include :: ztree-css" />
+</head>
+<body class="gray-bg">
+<div class="ui-layout-west">
+    <div class="box box-main">
+        <div class="box-header">
+            <div class="box-title">
+                <i class="fa icon-grid"></i> 文件夹目录
+            </div>
+            <div class="box-tools pull-right" id="toolbar1" role="group">
+
+            </div>
+        </div>
+        <div class="ui-layout-content">
+            <div id="tree" class="ztree"></div>
+        </div>
+    </div>
+</div>
+<div class="ui-layout-center">
+    <div class="container-div">
+        <div class="row">
+            <div class="col-sm-12 search-collapse">
+                <form id="file-table">
+                    <input name="id_" type="hidden" id="id_"/>
+                    <input type="text" style="display: none" id="treeId" name="folder">
+                    <input name="ownerId" type="hidden" id="ownerId" th:value="*{id_}"/>
+                    <div class="select-list">
+                        <ul>
+                            <li>
+                                文件名：<input type="text" name="file_name_" id="file_name_" maxlength="20"/>
+                            </li>
+                            <li>
+                                创建人：<input type="text" name="createName" id="createName" maxlength="20"/>
+                            </li>
+                            <li>
+                                机构：<input type="text" name="folderTest" id="folderTest" maxlength="20"/>
+                            </li>
+
+
+                            <li>
+                                <a class="btn btn-primary btn-rounded btn-sm" id="ss" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                <a class="btn btn-warning btn-rounded btn-sm" onclick="updReset('file-table')"><i class="fa fa-repeat"></i>&nbsp;重置</a>
+                            </li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+
+            <div class="btn-group-sm" id="toolbar" role="group">
+                <h4 class="form-header h4" style="color:red" >本功能仅科技人员可见！不允许批量上传交易数据，客户信息，密钥等敏感信息。</h4>
+                <h4 class="form-header h4" style="color:red" >文件上传超过40天将自动删除，请及时下载做好备份！</h4>
+            </div>
+
+            <div class="col-sm-12 select-table table-striped">
+                <table id="bootstrap-table"></table>
+            </div>
+        </div>
+    </div>
+</div>
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: layout-latest-js" />
+<th:block th:include="include :: ztree-js" />
+</body>
+</html>
+<script th:inline="javascript">
+    var prefix_updown = ctx + "system/updown";
+    var prefix_attachment = ctx + "pub/attachment";
+    var type=[[${folder}]];
+    var type2=[[${fold}]];
+    var type1=[[${folder_}]];
+
+    document.onkeydown = function(e){
+        var ev = document.all ? window.event : e;
+        if(ev.keyCode==13) {
+            $('#ss').trigger('click');
+            return false;
+        } //搜索逻辑
+    }
+
+    $('#btnExpand').click(function() {
+        $._tree.expandAll(true);
+        $(this).hide();
+        $('#btnCollapse').show();
+    });
+
+    $('#btnCollapse').click(function() {
+        $._tree.expandAll(false);
+        $(this).hide();
+        $('#btnExpand').show();
+    });
+    $('#btnRefresh').click(function() {
+        queryDeptTree();
+    });
+
+    //======================左侧树操作==============================
+    var selecttreeName="-1";
+    var selecttreeId="-1";
+
+    //左侧树编辑
+    $('#btnRefresh').click(function() {
+        queryDeptTree();
+        selecttreeId=="-1"
+    });
+    //  左侧树新建
+    function addTree(){
+        var url = ctx + "system/updAdd/"+selecttreeId;
+        $.modal.openNoColse("上传下载目录添加",url);
+    };
+
+    //左侧树编辑
+    function editTree(){
+        if(selecttreeId=="-1"){
+            $.modal.alertWarning("请先选择目录");
+        }else{
+            var url = ctx + "system/upd/"+selecttreeId;
+            $.modal.openNoColse("上传下载目录修改",url);
+        }
+    };
+
+
+    //左侧树查看详情
+    function detiTree(){
+        if(selecttreeId=="-1"){
+            $.modal.alertWarning("请先选择目录");
+        }else{
+            var url = ctx + "system/upd/detail/"+selecttreeId;
+            $.modal.openNoBtn("上传下载目录详情",url);
+        }
+    };
+
+    //左侧树节点删除
+    function removeTree() {
+        if(selecttreeId=="-1"){
+            $.modal.alertWarning("请先选择目录进行删除");
+        }else{
+            $.ajax({
+                cache: false,
+                type: "post",
+                url: ctx + "system/upDtree/treeDelete",
+                data: {
+                    "id_": selecttreeId
+                },
+                async: false,
+                error: function (request) {
+                    $.modal.alertError("系统错误");
+                },
+                success: function (data) {
+                    $.modal.alertWarning(data.msg);
+                }
+            });
+        }
+        queryDeptTree();
+        selecttreeId="-1";
+    }
+
+
+
+
+    // 左侧树
+    $(function() {
+        var panehHidden = false;
+        if ($(this).width() < 800) {
+            panehHidden = true;
+        }
+        $('body').layout({ initClosed: panehHidden, west__size: 185 });
+        // 回到顶部绑定
+        if ($.fn.toTop !== undefined) {
+            var opt = {
+                win:$('.ui-layout-center'),
+                doc:$('.ui-layout-center')
+            };
+            $('#scroll-up').toTop(opt);
+        }
+        queryDeptTree();
+        queryUpdownList();
+    });
+
+    // 左侧树
+    function queryDeptTree()
+    {
+        var url = ctx + "system/updown/treeData";
+        var options = {
+            url: url,
+            expandLevel: 2,
+            onClick : zOnClick
+        };
+        $.tree.init(options);
+
+        function zOnClick(event, treeId, treeNode) {
+            $("#treeId").val(treeNode.id);
+            selecttreeId = treeNode.id;
+            selecttreeName = treeNode.name;
+            $("#treeName").val(treeNode.name);
+            $.table.search();
+        }
+    }
+
+
+    //===================================附件==================================
+    $(function() {
+        if("1"==type1){
+            var bb =
+                "<a type=\"button\" class=\"btn btn-box-tool\" href=\"#\" onclick=\"addTree()\" title=\"新建\"><i class=\"fa fa-plus\"></i></a>\n" +
+                "                <a type=\"button\" class=\"btn btn-box-tool\" href=\"#\" onclick=\"editTree()\" title=\"编辑\"><i class=\"fa fa-edit\"></i></a>\n" +
+                "                <a type=\"button\" class=\"btn btn-box-tool\" href=\"#\" onclick=\"removeTree()\" title=\"删除\"><i class=\"fa fa-remove\"></i></a>\n"+
+                "                <a type=\"button\" class=\"btn btn-box-tool\" href=\"#\" onclick=\"detiTree()\" title=\"查看详情\"><i class=\"fa fa-search\"></i></a>\n"
+            $("#toolbar1").append(bb);
+        }else if("1"!=type1){
+            var b2 =
+                "                <a type=\"button\" class=\"btn btn-box-tool\" href=\"#\" onclick=\"detiTree()\" title=\"查看详情\"><i class=\"fa fa-search\"></i></a>\n"
+            $("#toolbar1").append(b2);
+
+        }
+
+        if("1"==type||"1"==type2){
+            var bb = "<a class=\"btn btn-success\" type=\"button\" onclick=\"upload()\">\n" +
+                "                    <i class=\"fa fa-upload\"></i> 添加附件\n" +
+                "                </a>\n" +
+                "                <a class=\"btn btn-primary single disabled\" onclick=\"editTab()\">\n" +
+                "                    <i class=\"fa fa-edit\"></i> 文件改名\n" +
+                "                </a>\n" +
+                "                <a class=\"btn btn-primary multiple disabled\"  type=\"button\" onclick=\"downloadAttachment()\">\n" +
+                "                    <i class=\"fa fa-download\"></i> 下载附件\n" +
+                "                </a>\n" +
+                "                <a class=\"btn btn-danger multiple disabled\" onclick=\"$.operate.removeAll()\">\n" +
+                "                    <i class=\"fa fa-remove\"></i> 删除附件\n" +
+                "                </a>";
+            $("#toolbar").append(bb);
+        }else if("1"!=type){
+            var bb = "<a class=\"btn btn-success\" type=\"button\" onclick=\"downloadAttachment()\">\n" +
+                "                    <i class=\"fa fa-download\"></i> 下载附件\n" +
+                "                </a>\n"
+            $("#toolbar").append(bb);
+        }else if("1"!=type2){
+            var bb = "<a class=\"btn btn-success\" type=\"button\" onclick=\"upload()\">\n" +
+                "                    <i class=\"fa fa-upload\"></i> 添加附件\n" +
+                "                </a>\n" +
+                "                <a class=\"btn btn-primary single disabled\" onclick=\"editTab()\">\n" +
+                "                    <i class=\"fa fa-edit\"></i> 文件改名\n" +
+                "                </a>\n" +
+                "                <a class=\"btn btn-danger multiple disabled\" onclick=\"$.operate.removeAll()\">\n" +
+                "                    <i class=\"fa fa-remove\"></i> 删除附件\n" +
+                "                </a>";
+            $("#toolbar").append(bb);
+        }
+
+        queryUpdownList();
+    });
+
+    function queryUpdownList() {
+        var options = {
+            url: prefix_updown + "/list",
+            createUrl: prefix_updown + "/add",
+            updateUrl: prefix_updown + "/edit/{id}",
+            removeUrl: prefix_updown + "/remove",
+            detailUrl: prefix_updown + "/edit/{id}",
+            sortOrder: "desc",
+            clickToSelect:true,
+            firstLoad: false,
+            queryParams:queryParams,
+            modalName: "附件列表",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field : 'id_',
+                    title : '附件ID',
+                    visible : false
+                },
+                {
+                    field : 'file_name_',
+                    title : '文件名称'
+                },
+                {
+                    field : 'size_',
+                    title : '文件大小'
+                },
+                {
+                    field : 'create_time_',
+                    title : '上传时间'
+                },
+                {
+                    field : 'createName',
+                    title : '创建人'
+                },
+                {
+                    field : 'folderTest',
+                    title : '机构'
+                },
+                {
+                    field : 'file_path_',
+                    title : '路径'
+                }
+            ]
+        };
+        $.table.init(options);
+    };
+
+    // 添加附件
+    function upload() {
+        if(selecttreeId=="-1"){
+            $.modal.alertWarning("请选择子节点再进行操作");
+        }else{
+            var selectId  = selecttreeId;
+            $.ajax({
+                cache: false,
+                type: "post",
+                url: ctx + "system/updown/selectParent",
+                data: {
+                    "selecttreeId": selectId
+                },
+                async: false,
+                success: function (data) {
+                    if(data.data==1){
+                        $.modal.alertWarning("请选择子节点再进行操作");
+                    }else{
+                        var url = prefix_updown + "/upload/"+selectId;
+                        $.modal.open("附件上传",url);
+                    }
+                }
+            })
+        }
+
+    };
+
+
+    // 修改附件
+    function editTab(width, height){
+        table.set();
+        var rows = $.common.isEmpty(table.options.uniqueId) ? $.table.selectFirstColumns() : $.table.selectColumns(table.options.uniqueId);
+        if (rows.length != 1) {
+            $.modal.alertWarning("请选择一条记录");
+            return;
+        }
+        var id = rows.join();
+        var _url =  prefix_updown + "/edit/"+id;
+        var _width = $.common.isEmpty(width) ? "800" : width;
+        var _height = $.common.isEmpty(height) ? "280" : height;
+        //如果是移动端，就使用自适应大小弹窗
+        if ($.common.isMobile()) {
+            _width = 'auto';
+            _height = 'auto';
+        }
+        // $.modal.openNoColse("删除" + table.options.modalName, $.operate.addUrl(id));
+
+        var options = {
+            title: table.options.modalName + "详细",
+            width: _width,
+            height: _height,
+            url: _url,
+            skin: 'layui-layer-gray',
+            btn: ['-1'],
+            yes: function (index, layero) {
+                layer.close(index);
+            }
+        };
+        $.modal.openOptions(options);
+        queryUpdownList();
+    }
+    function removeAll(id){
+        table.set(id);
+        $.modal.openClose("删除"+table.options.modalName,$.operate.removeAll(id));
+        queryUpdownList();
+    }
+
+    // 附件下载
+    function downloadAttachment() {
+        table.set();
+        var rows = $.common.isEmpty(table.options.uniqueId) ? $.table.selectFirstColumns() : $.table.selectColumns(table.options.uniqueId);
+        if (rows.length == 0) {
+            $.modal.alertWarning("请选择一条记录");
+            return;
+        }
+        for(var i=0;i<rows.length;i++){
+            var url = prefix_updown + "/download/"+rows[i];
+            downfile(url);
+        }
+    }
+
+    function downfile(hurl) {
+        var userAgent = navigator.userAgent;
+        var firefox=userAgent.indexOf("Firefox") > -1;
+        var itime = 0;
+        $("btn").attr("disabled", "disabled");
+        $("btn").html(`正在下载<i style="color:blueviolet;">${itime}</i>`);
+        var xhr = new XMLHttpRequest();
+        xhr.open('get', hurl, true);
+        xhr.responseType = "blob";
+        xhr.onload = function() {
+            if (this.status === 200) {
+                var blob = this.response;
+                var reader = new FileReader;
+                reader.readAsDataURL(blob);
+                reader.onload = function(e) {
+                    var headerName = xhr.getResponseHeader("Content-disposition");
+                    var fileName="";
+                    if(firefox){
+                        fileName = decodeURI(headerName).substring(20);
+                    }else {
+                        fileName = decodeURI(decodeURI(headerName)).substring(20);
+                    }
+                    var a = document.createElement("a");
+                    var t = new Blob([blob], {type : "application/csv"});
+                    a.download = fileName;
+                    a.href =URL.createObjectURL(t);
+                    $("body").append(a);
+                    a.click();
+                    $(a).remove();
+                    clearTimeout(downloadTimer);
+                    $("btn").html("导出Execl");
+                    $("btn").removeAttr("disabled");
+                }
+            }
+        }
+        xhr.send();
+        var downloadTimer = setInterval(() => {
+            $(btn).children("i").text(++itime);
+        }, 1000);
+    }
+    function queryParams(params) {
+        var search = $.table.queryParams(params);
+        search.folder_ =$("#folder_").val();
+        return search;
+    }
+
+    //** 关闭选项卡 */
+    function closeItem() {
+        var index = parent.layer.getFrameIndex(window.name);
+        parent.layer.close(index);//关闭当前页
+    }
+
+    function updReset(filetable) {
+        if($("#treeId").val() == null || $("#treeId").val() == ''){
+            $("#treeId").val('-2')
+            return
+        }
+        //清空id
+        $('#file_name_').val('');
+        $('#createName').val('');
+        $('#folderTest').val('');
+        $.table.search(filetable,'bootstrap-table');
+    }
+
+
+</script>

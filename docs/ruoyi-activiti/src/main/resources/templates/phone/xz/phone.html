@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('事件单展示')" />
+    <th:block th:include="include :: datetimepicker-css" />
+</head>
+<body class="gray-bg">
+     <div class="container-div">
+        <div class="row">
+            <div class="col-sm-12 search-collapse">
+                <form id="formId">
+                    <div class="select-list">
+                        <ul>
+                            <li>
+                                <label>事件单号：</label><input type="text" name="telno"/>
+                            </li>
+                            <li>
+                                <label>状态：</label><select class="form-control" name="state" th:with="type=${@dict.getParaType('TelBiz_State')}">
+                                <option value=""></option>
+                                <option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+                            </select>
+                            </li>
+                            <li class="date">
+                                <label>创建时间：</label><input class="form-control" id="createTime" name="createTime"  style="background-color: #fff; opacity: 1;" type="text"  readonly required>
+                            </li>
+                            <li>
+                                <label>至：</label><input class="form-control" id="startTimeBiz" name="startTimeBiz" style="background-color: #fff; opacity: 1;" type="text" readonly required>
+                            </li>
+                            <li>
+                                <a class="btn btn-primary btn-rounded btn-sm" id="ss" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                            </li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+
+            <div class="btn-group-sm" id="toolbar" role="group">
+                <!--<a class="btn btn-success" onclick="$.operate.addTab()">
+                    <i class="fa fa-plus"></i> 新建
+                </a>-->
+                <a class="btn btn-primary single disabled" onclick="editTab()">
+                    <i class="fa fa-edit"></i> 修改
+                </a>
+                <a class="btn btn-primary single disabled" onclick="closeTab()">
+                    <i class="fa fa-edit"></i> 关闭
+                </a>
+                <!--<a class="btn btn-danger multiple disabled" onclick="removeAll()">
+                    <i class="fa fa-trash"></i> 删除草稿
+                </a>-->
+                <a class="btn btn-primary single disabled" onclick="detailTab()">
+                    <i class="fa fa-search"></i> 详情
+                </a>
+                <!--<a class="btn btn-primary single disabled" onclick="alterTab()" >
+                    <i ></i> 转业务
+                </a>-->
+                <!--<a class="btn btn-success" onclick="sql()" >
+                    <i class="fa fa-plus"></i> 跳转执行sql
+                </a>-->
+               <!-- <a class="btn btn-primary single disabled" onclick="open_telBiz_page()" >
+                    <i class="fa fa-detail"></i> 电话接入
+                </a>-->
+            </div>
+            <div class="col-sm-12 select-table table-striped">
+                <table id="bootstrap-table"></table>
+            </div>
+        </div>
+    </div>
+    <th:block th:include="include :: footer" />
+    <th:block th:include="include :: datetimepicker-js" />
+    <script th:inline="javascript">
+        var state =  [[${@dict.getParaType('TelBiz_State')}]];
+        var contactOrg =  [[${@dict.getParaType('TelBiz_Org')}]];
+        var eventType =  [[${@dict.getParaType('TelBiz_EventType')}]];
+
+        var prefix = ctx + "phone/xz";
+
+        $(function() {
+            document.onkeydown = function(e){
+                var ev = document.all ? window.event : e;
+                console.log(ev);
+                if(ev.keyCode==13) {
+                    $('#ss').trigger('click');
+                    return false;
+                } //搜索逻辑
+            }
+            var options = {
+                url: prefix + "/list",
+                createUrl: prefix + "/add",
+                updateUrl: prefix + "/edit/{id}",
+                removeUrl: prefix + "/remove",
+                detailUrl: prefix + "/detail/{id}",
+                exportUrl: prefix + "/export",
+                alterUrl: prefix + "/alter/{id}",
+                sortName: "createTime",
+                sortOrder: "desc",
+                singleSelect:true,
+                clickToSelect: true,
+                modalName: "事件",
+                columns: [{
+                    checkbox: true
+                },
+                {
+                    field: 'telid',
+                    title: '事件ID',
+                    visible:false,
+                },
+                {
+                    field: 'telno',
+                    title: '事件单号',
+                },
+                {
+                    field: 'contactName',
+                    title: '来电人',
+                },
+                {
+                    field: 'caption',
+                    title: '所属系统',
+                },
+                {
+                    field: 'contactPhone',
+                    title: '来电号码',
+                },
+                {
+                    field: 'contactOrg',
+                    title: '来电机构',
+                    formatter: function (value,row,index) {
+                        return selectDictLabel(contactOrg, value);
+                    }
+                },
+                {
+                    field: 'createTime',
+                    title: '创建时间',
+                    formatter: function (value, row, index) {
+                        var startTime = '';
+                        if(value!='' && value !=null){
+                            var pattern = /(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/;
+                            startTime = value.replace(pattern, '$1-$2-$3 $4:$5:$6');
+                        }
+                        return startTime;
+                    }
+                },
+                    {
+                        field: 'eventType',
+                        title: '工单类型',
+                        formatter: function (value,row,index) {
+                            return selectDictLabel(eventType, value);
+                        },
+                        /*width: '1000',*/
+                        cellStyle: function cellStyle(value, row, index, field) {
+                            return { classes: 'text-nowrap'};
+                        }
+                    },
+                {
+                    field: "state",
+                    title: '状态',
+                    formatter: function (value,row,index) {
+                        return selectDictLabel(state, value);
+                    }
+                }]
+            };
+            $.table.init(options);
+        });
+
+        /* 查看事件单 */
+        function detailTab() {
+            var telid = $.table.selectFirstColumns();
+            var url = prefix + '/detail/' + telid;
+            $.modal.openTab("详情事件", url);
+        }
+
+        //支持回车搜索
+        function huichesearch(){//回车搜索
+            varevent =window.event||arguments.callee.caller.arguments[0];
+            if(event.keyCode== 13){
+                search();//搜索函数
+            }
+        }
+
+        document.onkeydown = function(e){
+            var ev = document.all ? window.event : e;
+            if(ev.keyCode==13) {
+                return false; } //搜索逻辑
+        }
+
+        //修改之前判断只有待提交的才能修改
+        function editTab(telid) {
+            table.set();
+            var rows = $.common.isEmpty(table.options.uniqueId) ? $.table.selectFirstColumns() : $.table.selectColumns(table.options.uniqueId);
+            $.ajax({
+                type: 'POST',
+                url: prefix+"/selectById",
+                data: {"telid":rows[0]},
+                success: function (result) {
+                    if(result.data.state=='1'){
+                        $.modal.openTab("修改" + table.options.modalName, $.operate.editUrl(telid));
+                    }else{
+                        $.modal.alertError("该电话事件单不是待提交状态，无法修改!");
+                    }
+                },
+                dataType: 'json'
+            });
+        }
+
+        //关闭之前判断只有待提交的才能修改
+        function closeTab() {
+            var telid = $.table.selectFirstColumns();
+            start = $.table.selectColumns("state");
+            if (start != '2') {
+                $.modal.alertWarning("该电话事件单不是未处理状态，无法关闭!");
+                return;
+            }
+            var url = prefix + "/close/" + telid;
+            $.modal.openTab("关闭事件单", url);
+        }
+
+        //状态显示（字典项）
+        function selectDictLabel(datas, value) {
+            var actions = [];
+            $.each(datas, function(index, dict) {
+                if (dict.value == ('' + value)) {
+                    var listClass = $.common.equals("default", dict.listClass) || $.common.isEmpty(dict.listClass) ? "" : "badge badge-" + dict.listClass;
+                    actions.push($.common.sprintf("<span class='%s'>%s</span>", listClass, dict.valueDetail));
+                    return false;
+                }
+            });
+            return actions.join('');
+        }
+
+        //状态为待提交的时候可以进行删除
+        function removeAll(telid) {
+            debugger;
+            table.set();
+            var rows = $.common.isEmpty(table.options.uniqueId) ? $.table.selectFirstColumns() : $.table.selectColumns(table.options.uniqueId);
+            $.ajax({
+                type: 'POST',
+                url: prefix+"/selectById",
+                data: {"telid":rows[0]},
+                success: function (result) {
+                    if(result.data.state=='1' || result.data.state=='2'){
+                        $.modal.openTab("删除" + table.options.modalName, $.operate.removeAll(telid));
+                    }else{
+                        $.modal.alertError("该电话事件单不是待提交或未处理状态，无法删除!");
+                    }
+                },
+                dataType: 'json'
+            });
+        }
+
+        //状态为待处理的时候才可以进行点击
+        function alterTab(telid) {
+            table.set();
+            var rows = $.common.isEmpty(table.options.uniqueId) ? $.table.selectFirstColumns() : $.table.selectColumns(table.options.uniqueId);
+            $.ajax({
+                type: 'POST',
+                url: prefix+"/selectById",
+                data: {"telid":rows[0]},
+                success: function (result) {
+                    if(result.data.state=='2'){
+                        $.modal.openTab("跳转" + table.options.modalName, alterTabOne());
+                    }else{
+                        $.modal.alertError("该电话事件单不是未处理状态，无法转业务!");
+                    }
+                },
+                dataType: 'json'
+            });
+        }
+
+        /*转业务事件单*/
+        function alterTabOne(){
+            var telid = $.table.selectFirstColumns();
+            var url = prefix + "/alter/" + telid;
+            $.modal.openTab("转业务",url);
+        }
+
+        /* 电话事件的测试路径 */
+        function open_telBiz_page() {
+            var url = prefix + '/addTwo';
+            alert(url);
+            $.modal.openTab("电话接入", url);
+        }
+
+        /* 跳转到执行的sql语句页面 */
+        function sql() {
+            var telid = $.table.selectFirstColumns();
+            var url = prefix + '/sql/' + telid;
+            $.modal.openTab("执行sql", url);
+        }
+
+        //接入时间
+        $("#createTime").datetimepicker({
+            format: "yyyy-mm-dd",
+            minView: "month",
+            autoclose: true
+        });
+
+        $("#startTimeBiz").datetimepicker({
+            format: "yyyy-mm-dd",
+            minView: "month",
+            autoclose: true
+        });
+
+    </script>
+</body>
+</html>

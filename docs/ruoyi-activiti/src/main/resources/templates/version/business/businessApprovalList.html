@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <!--业务主管批量审批页面-->
+    <th:block th:include="include :: header('版本信息')" />
+    <th:block th:include="include :: select2-css" />
+</head>
+<body>
+<div class="main-content">
+    <form id="form-business-approvalList" class="form-horizontal">
+        <input name="params[businessFlag]" type="hidden" id="businessFlag" value="1"/>
+        <!--判断业务主管是否批量标识-->
+        <input name="params[businessBatchFlag]" type="hidden" id="businessBatchFlag" value="1" />
+        <input name="versionInfoId" type="hidden" id="versionInfoId" th:value="*{versionInfoId}"/>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label is-required">业务领导审批意见：</label>
+                    <div class="col-sm-10">
+                        <textarea rows="6" cols="10" id="authorText" name="params[comment]" class="form-control" maxlength="100" required></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<div class="row">
+    <div class="col-sm-offset-5 col-sm-10">
+        <button type="button" class="btn btn-sm btn-primary" onclick="pass('1')"><i class="fa fa-check"></i>通 过</button>&nbsp;
+        <button type="button" class="btn btn-sm btn-danger" onclick="pass('0')"><i class="fa fa-reply-all"></i>不 通 过</button>&nbsp;
+        <button type="button" class="btn btn-sm btn-danger" onclick="closeHtml()"><i class="fa fa-window-close"></i>关 闭 </button>
+    </div>
+</div>
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: select2-js" />
+<th:block th:include="include :: datetimepicker-js" />
+<script>
+    var prefix = ctx + "version/public";
+
+    $("#form-business-approvalList").validate({
+        onkeyup: false,
+        rules:{
+            "params[comment]" : true
+        },
+        messages: {
+            "params[comment]" : "业务领导审批意见必填不可为空"
+        },
+        focusCleanup: true
+    });
+
+    /*通过*/
+    function pass(flag) {
+        if ($.validate.form()) {
+            var data = $("#form-business-approvalList").serializeArray();
+            data.push({"name": "passFlag", "value": flag});
+            $.operate.save(prefix + "/businessApprovalPass", data);
+        }
+    }
+
+    function closeHtml() {
+        $.modal.close();
+    }
+
+</script>
+</body>
+</html>

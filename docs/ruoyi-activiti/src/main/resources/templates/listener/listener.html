@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:include="include :: header('流程监听器列表')" />
+</head>
+<body class="gray-bg">
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-12 search-collapse">
+            <form id="formId">
+                <div class="select-list">
+                    <ul>
+                        <li>
+                            <p>名称：</p>
+                            <input type="text" name="listenerName"/>
+                        </li>
+                        <li>
+                            <a class="btn btn-primary btn-rounded btn-sm" id="ss" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                            <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                        </li>
+                    </ul>
+                </div>
+            </form>
+        </div>
+
+        <div class="col-sm-12 select-table table-striped">
+            <table id="bootstrap-table"></table>
+        </div>
+    </div>
+</div>
+<th:block th:include="include :: footer" />
+<script th:inline="javascript">
+    var prefix = ctx + "bmp/config";
+
+    $(function() {
+        document.onkeydown = function(e){
+            var ev = document.all ? window.event : e;
+            if(ev.keyCode==13) {
+                $('#ss').trigger('click');
+                return false;
+            } //搜索逻辑
+        };
+        var options = {
+            url: prefix + "/selectActivityListeners",
+            clickToSelect: true,
+            singleSelect: true,
+            modalName: "流程监听器",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field : 'listenerId',
+                    title : '监听器id',
+                    visible: false
+                },
+                {
+                    field : 'listenerName',
+                    title : '名称'
+                },
+                {
+                    field : 'listenerType',
+                    title : '监听器类型',
+                    formatter: function(value, row, index) {
+                        if(row.listenerType == "execution") {
+                            return "执行监听";
+                        } else {
+                            return "任务监听";
+                        }
+                    }
+                },
+                {
+                    field : 'businessTypeName',
+                    title : '监听业务类型'
+                },
+                {
+                    field : 'delegateExpression',
+                    title : '表达式'
+                }]
+        };
+        $.table.init(options);
+    });
+</script>
+</body>
+</html>

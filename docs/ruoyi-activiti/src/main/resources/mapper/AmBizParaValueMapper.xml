@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.activiti.mapper.AmBizParaValueMapper">
+    
+    <resultMap type="AmBizParaValue" id="AmBizParaValueResult">
+        <result property="amParaValueId"    column="am_para_value_id"    />
+        <result property="amParaId"    column="am_para_id"    />
+        <result property="receiveDept"    column="receive_dept"    />
+        <result property="receiveGroup"    column="receive_group"    />
+        <result property="receivedeptid"    column="receivedeptid"    />
+        <result property="receivegroupid"    column="receivegroupid"    />
+        <result property="orgName"    column="orgname"    />
+        <result property="grpName"    column="grpname"    />
+    </resultMap>
+
+    <sql id="selectAmBizParaValueVo">
+        SELECT
+            pv.am_para_value_id,
+            pv.am_para_id,
+            pv.receivedeptid,
+            pv.receivegroupid,
+            org.ORGNAME orgname,
+            og.grpname grpname
+        FROM
+            am_biz_para_value pv
+        LEFT JOIN OG_ORG org ON pv.RECEIVEDEPTID = org.ORGID
+        LEFT JOIN AM_BIZ_PARA pa ON pv.am_para_id = pa.am_para_id
+        LEFT JOIN OG_GROUP og ON pv.receivegroupid = og.groupid
+
+  </sql>
+
+    <select id="selectAmBizParaValueList" parameterType="AmBizParaValue" resultMap="AmBizParaValueResult">
+        <include refid="selectAmBizParaValueVo"/>
+        <where>
+            <if test="orgName !=null and orgName !=''">
+                and orgname like concat(concat('%', #{orgName}),'%')
+            </if>
+            <if test="grpName !=null and grpName !=''">
+                and grpname like concat(concat('%', #{grpName}),'%')
+            </if>
+            <if test="amParaId != null and amParaId != ''">
+                and  pv.am_para_id = #{amParaId}
+            </if>
+
+            <if test="amParaId == null or amParaId == ''">
+                and  pv.am_para_id =  ''
+            </if>
+        </where>
+    </select>
+    
+    <select id="selectAmBizParaValueById" parameterType="String" resultMap="AmBizParaValueResult">
+        <include refid="selectAmBizParaValueVo"/>
+        where am_para_value_id = #{amParaValueId}
+    </select>
+        
+    <insert id="insertAmBizParaValue" parameterType="AmBizParaValue">
+        insert into am_biz_para_value
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="amParaValueId != null  and amParaValueId != ''">am_para_value_id,</if>
+            <if test="amParaId != null  and amParaId != ''">am_para_id,</if>
+            <if test="receiveDept != null ">receive_dept,</if>
+            <if test="receiveGroup != null ">receive_group,</if>
+            <if test="receivedeptid != null  and receivedeptid != ''">receivedeptid,</if>
+            <if test="receivegroupid != null  and receivegroupid != ''">receivegroupid,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="amParaValueId != null  and amParaValueId != ''">#{amParaValueId},</if>
+            <if test="amParaId != null  and amParaId != ''">#{amParaId},</if>
+            <if test="receiveDept != null ">#{receiveDept},</if>
+            <if test="receiveGroup != null ">#{receiveGroup},</if>
+            <if test="receivedeptid != null  and receivedeptid != ''">#{receivedeptid},</if>
+            <if test="receivegroupid != null  and receivegroupid != ''">#{receivegroupid},</if>
+         </trim>
+    </insert>
+
+    <update id="updateAmBizParaValue" parameterType="AmBizParaValue">
+        update am_biz_para_value
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="amParaId != null  and amParaId != ''">am_para_id = #{amParaId},</if>
+            <if test="receiveDept != null ">receive_dept = #{receiveDept},</if>
+            <if test="receiveGroup != null ">receive_group = #{receiveGroup},</if>
+            <if test="receivedeptid != null  and receivedeptid != ''">receivedeptid = #{receivedeptid},</if>
+            <if test="receivegroupid != null  and receivegroupid != ''">receivegroupid = #{receivegroupid},</if>
+        </trim>
+        where am_para_value_id = #{amParaValueId}
+    </update>
+
+    <delete id="deleteAmBizParaValueById" parameterType="String">
+        delete from am_biz_para_value where am_para_value_id = #{amParaValueId}
+    </delete>
+
+    <delete id="deleteAmBizParaValueByIds" parameterType="String">
+        delete from am_biz_para_value where am_para_value_id in 
+        <foreach item="amParaValueId" collection="array" open="(" separator="," close=")">
+            #{amParaValueId}
+        </foreach>
+    </delete>
+
+    <delete id="deleteAmBizParaValueByAmParaId" parameterType="String">
+        DELETE FROM AM_BIZ_PARA_VALUE WHERE AM_PARA_ID = #{amParaId}
+    </delete>
+    
+    
+</mapper>

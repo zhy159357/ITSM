@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('隐患排查单列表')" />
+</head>
+<body class="gray-bg">
+     <div class="container-div">
+        <div class="row">
+            <div class="col-sm-12 search-collapse">
+                <form id="formId">
+                    <div class="select-list">
+                        <ul>
+                            <li>
+                                <p>单号：</p>
+                                <input type="text" name="csNo" maxlength="20"/>
+                            </li>
+                            <li>
+                                <p>状态：</p>
+                                <select name="status"
+                                        class="form-control noselect2 selectpicker" data-none-selected-text="请选择状态"
+                                        multiple data-actions-box="true" data-width="200px" data-live-search="true"
+                                        th:with="type=${@pubParaValue.selectPubParaValueByParaName('CS_STATUS')}">
+                                    <option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+                                </select>
+                            </li>
+                            <li id="myFlagLi">
+                                <p>我的标识：</p>
+                                <select id="myFlag" name="params[myFlag]" class="form-control" th:with="myFlag=${@pubParaValue.selectPubParaValueByParaName('pub_myFlag')}">
+                                    <option th:each="itype : ${myFlag}" th:text="${itype.valueDetail}" th:value="${itype.value}"></option>
+                                </select>
+                            </li>
+                            <li>
+                                <a class="btn btn-primary btn-rounded btn-sm" id="searchBut" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.resetAll('formId')"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                            </li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+
+            <div class="btn-group-sm" id="toolbar" role="group">
+                <a class="btn btn-warning single disabled" onclick="showProcessImgDialog()">
+                    <i class="fa fa-edit"></i> 查看流程图
+                </a>
+            </div>
+            <div class="col-sm-12 select-table table-striped">
+                <table id="bootstrap-table"></table>
+            </div>
+        </div>
+    </div>
+    <th:block th:include="include :: footer" />
+     <th:block th:include="include :: select2-css" />
+     <th:block th:include="include :: select2-js" />
+     <th:block th:include="include :: bootstrap-select-js" />
+     <th:block th:include="include :: bootstrap-select-css" />
+    <script th:inline="javascript">
+        var editFlag = [[${@permission.hasPermi('system:sheet:edit')}]];
+        var removeFlag = [[${@permission.hasPermi('system:sheet:remove')}]];
+        var importLevelDatas = [[${@pubParaValue.selectPubParaValueByParaName('CS_LEVEL')}]];
+        var hiddenSortDatas = [[${@pubParaValue.selectPubParaValueByParaName('CS_TYPE')}]];
+        var putUnitDatas = [[${@pubParaValue.selectPubParaValueByParaName('CS_DEPT')}]];
+        var statusDatas = [[${@pubParaValue.selectPubParaValueByParaName('CS_STATUS')}]];
+        var iStatusDatas =  [[${@dict.getType('CS_LEVEL')}]];
+        var type=[[${type}]];
+        var prefix = ctx + "activiti/sheet";
+
+        $(function() {
+            // 回车键搜索
+            document.onkeydown = function(e){
+                var ev = document.all ? window.event : e;
+                if(ev.keyCode==13) {
+                    $('#searchBut').trigger('click');
+                    return false;
+                }
+            };
+            var url=prefix + "/listMy";
+            var but="";
+            if("my"==type){
+                url=prefix + "/list";
+                    but="\t\t\t\t<a class=\"btn btn-success\" onclick=\"$.operate.addTab()\">\n" +
+						"\t                <i class=\"fa fa-plus\"></i> 新增\n" +
+						"\t            </a>\n" +
+						    "<a class=\"btn btn-info single disabled\" onclick=\"detail()\" >"+
+                            "<i class=\"fa fa-search\"></i> 详情"+
+                         "</a>"+
+						"\t            <a class=\"btn btn-primary single disabled\" onclick=\"editTab()\">\n" +
+						"\t\t            <i class=\"fa fa-edit\"></i> 修改\n" +
+						"\t\t        </a>\n" +
+						"\t\t\t\t<a class=\"btn btn-danger multiple disabled\" onclick=\"$.operate.removeAll()\">\n" +
+						"\t\t\t\t\t<i class=\"fa fa-trash\"></i> 删除\n" +
+						"\t\t\t\t</a>\n"+
+						"\t\t\t\t<a class=\"btn btn-primary multiple disabled\" onclick=\"submit()\">\n" +
+						"\t\t\t\t\t<i class=\"fa fa-check\"></i> 提交\n" +
+						"\t\t\t\t</a>";
+            }else {
+                 $("#myFlagLi").hide();
+                 but=" <a class=\"btn btn-primary single disabled\" onclick=\"deal()\"  >\n" +
+                    " <i class=\"fa fa-check\"></i>处理\n" +
+                    "</a>"
+            }
+            $("#toolbar").append(but);
+            var options = {
+                url: url,
+                detailUrl: prefix + "/view/{id}",
+                createUrl: prefix + "/add",
+                 updateUrl: prefix + "/edit/{id}",
+                removeUrl: prefix + "/remove",
+                exportUrl: prefix + "/export",
+                 clickToSelect:true,
+                singleSelect:true,
+                modalName: "隐患排查单",
+                columns: [{
+                    checkbox: true
+                },
+                {
+                    field : 'csId',
+                    title : 'id',
+                    visible: false
+                },
+                {
+                    field : 'csNo', 
+                    title : '单号'
+                },
+                {
+                    field : 'sysName',
+                    title : '系统',
+                    formatter: function (value, row, index) {
+						 return $.table.tooltip(value);
+					},
+                    cellStyle: function cellStyle(value, row, index, field) {
+                        return { classes: 'text-nowrap'};
+                    }
+                },
+                {
+                    field : 'importLevel', 
+                    title : '重要级别',
+                    formatter: function(value) {
+                       return selectPubParaValueData(importLevelDatas, value);
+                    }
+                },
+                 {
+                    field : 'createOrg',
+                    title : '责任处室'
+                },
+                {
+                    field : 'createId',
+                    title : '责任人'
+                },
+
+                {
+                    field : 'hiddenSort',
+                    title : '隐患分类',
+                    formatter: function(value) {
+                        return selectPubParaValueData(hiddenSortDatas, value);
+                    }
+                },
+                {
+                    field : 'status', 
+                    title : '状态',
+                    formatter: function(value) {
+                       return selectPubParaValueData(statusDatas, value);
+                    }
+                },
+                {
+                    field : 'createTime', 
+                    title : '创建时间'
+                } ]
+            };
+            $.table.init(options);
+        });
+        // 回显数据字典
+        function selectPubParaValueData(datas, value) {
+            var actions = [];
+            $.each(datas, function(index, pubParaValue) {
+                if (pubParaValue.value == ('' + value)) {
+                    actions.push($.common.sprintf("<span class='%s'>%s</span>", "", pubParaValue.valueDetail));
+                    return false;
+                }
+            });
+            return actions.join('');
+        }
+        function editTab(){
+           var row = $("#bootstrap-table").bootstrapTable("getSelections");
+          if("0"!=row[0].status&&"3"!=row[0].status){
+            return $.modal.alertWarning("只有未提交状态的隐患排查单可以修改！");
+          }
+            prefix + "/edit/{id}",
+             $.modal.openTab("详情",prefix + "/edit/"+row[0].csId);
+        }
+        function submit(){
+          var row = $("#bootstrap-table").bootstrapTable("getSelections");
+          if(0!=row[0].status){
+            return $.modal.alertWarning("只有未提交状态的隐患排查单可以提交！");
+          }
+            var ar=new Array();
+            var data={
+                name:'csId',
+                value:row[0].csId
+            }
+            ar.push(data)
+            $.operate.post( prefix +"/startProcess", ar);
+            $.table.refresh();
+        }
+        function detail(){
+            var row = $.table.selectFirstColumns("bootstrap-table");
+            if($.common.isEmpty(row)){
+                return $.modal.alertWarning("请选择！");
+            }
+            $.modal.openTab("详情",prefix + "/view/"+row);
+        }
+
+        function deal(csId){
+            var row = $("#bootstrap-table").bootstrapTable("getSelections");
+            var type=row[0].params.description;
+            $.modal.openTab("处理",prefix + "/deal?csId="+row[0].csId+"&&description="+type);
+        }
+        function showProcessImgDialog() {
+            var status=$("#bootstrap-table").bootstrapTable("getSelections")[0].status;
+            if("0"==status){
+                return $.modal.alertWarning("待提交状态单子，未发起流程，流程图不存在！");
+            }
+
+            var businessKey=$.table.selectFirstColumns("bootstrap-table");
+            var url = ctx + 'process/processImg/' + businessKey[0];
+            $.modal.openNoBtn("查看流程图", url, null, null, null, true);
+        }
+    </script>
+</body>
+</html>

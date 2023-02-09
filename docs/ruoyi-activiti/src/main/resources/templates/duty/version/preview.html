@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('值班视图')" />
+    <th:block th:include="include :: layout-latest-css" />
+    <th:block th:include="include :: ztree-css" />
+    <link th:href="@{/ajax/libs/calendar/simple.calendar.css}" rel="stylesheet">
+    <link th:href="@{/ajax/libs/calendar/custom_date.css}" rel="stylesheet">
+    <th:block th:include="include :: datetimepicker-css" />
+    <style>
+        #calendar{
+            width: 100%;
+        }
+        .clearfix{
+            margin-bottom: 50px !important;
+        }
+        td{
+            text-align:center;
+            /*设置bai水平居中du*/
+            vertical-align:middle;/*设置垂直居中*/
+        }
+        table {
+<!--            border:1px solid green;-->
+        }
+		.icon-arrow-left{
+			border: solid black;
+			border-width: 0 1px 1px 0;
+			display: inline-block;
+			padding:3px;
+			transform: ratate(135deg);
+			-webkit-transform: rotate(135deg);
+		}
+		.icon-arrow-right{
+			border: solid black;
+			border-width: 0 1px 1px 0;
+			display: inline-block;
+			padding:3px;
+			transform: ratate(-45deg);
+			-webkit-transform: rotate(-45deg);
+		}
+    </style>
+</head>
+<body class="gray-bg">
+<div class="ui-layout-center">
+    <div class="container-div">
+        <div class="row">
+            <div id="idiv" class="col-sm-12 select-table table-bordered">
+                <div class="col-sm-10" style="overflow-x: auto; overflow-y: auto; width:100%;" id="menu">
+                    <table id="bootstrap-table" style="border-collapse:collapse;overflow-x:auto; overflow-y:auto; height: 400px; width:3200px;" border="1">
+                        <tr id="tdhead" class="tdhead_title"></tr>
+                        <tr id="list1"></tr>
+                        <tr id="list2"></tr>
+                        <tr id="list3"></tr>
+                        <tr id="list4"></tr>
+                        <tr id="list5"></tr>
+                        <tr id="list6"></tr>
+                        <!--                        <tr id="datalist"></tr>-->
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: layout-latest-js" />
+<th:block th:include="include :: ztree-js" />
+<script th:src="@{/ajax/libs/calendar/simple.calendar.js}"></script>
+<th:block th:include="include :: datetimepicker-js" />
+<script th:src="@{/js/bootstrap-datetimepicker.zh-CN.js}"></script>
+<script type="text/javascript">
+    $('#menu').height($('body').height()-146);
+</script>
+<script th:inline="javascript">
+    var prefix = ctx + "duty/version";
+    var dutyInfo;
+
+    $(function(){
+        $.ajax({
+            cache : true,
+            type : "POST",
+            url : prefix + "/exclehead",
+            data : {
+                versionId:[[${versionId}]]
+            },
+            async : false,
+            error : function(request) {
+                $.modal.alertError("系统错误");
+            },
+            success : function(data) {
+                console.log(data);
+                var list1 = data.list1;
+                var list2 = data.list2;
+                var list3 = data.list3;
+                var list4 = data.list4;
+                var list5 = data.list5;
+                var list6 = data.list6;
+                var typeNoList = data.typeNoList;
+                var tn = "";
+                var t1 = "";
+                var t2 = "";
+                var t3 = "";
+                var t4 = "";
+                var t5 = "";
+                var t6 = "";
+                for(var i=0;i<list1.length;i++){
+                    if("1" == list1[i].leader){
+                        if(null==list1[i].typeDescription){
+                            t1 += "<td rowspan='"+list1[i].rowspan+"' colspan='"+list1[i].colspan+"'>"+list1[i].title + "</td>";
+                        }else{
+                            t1 += "<td rowspan='"+list1[i].rowspan+"' colspan='"+list1[i].colspan+"'>"+list1[i].title + "" +
+                            "<div style='color:red'>"+list1[i].typeDescription+"</div>" +
+                            "</td>";
+                        }
+                    }else{
+                        t1 += "<td rowspan='"+list1[i].rowspan+"' colspan='"+list1[i].colspan+"'>"+list1[i].title+"</td>";
+                    }
+                }
+                for(var i=0;i<list2.length;i++){
+                    t2 += "<td rowspan='"+list2[i].rowspan+"' colspan='"+list2[i].colspan+"'>"+list2[i].title+"</td>";
+                }
+                for(var i=0;i<list3.length;i++){
+                    t3 += "<td rowspan='"+list3[i].rowspan+"' colspan='"+list3[i].colspan+"'>"+list3[i].title+"</td>";
+                }
+                for(var i=0;i<list4.length;i++){
+                    if("1" == list4[i].leader){
+                        t4 += "<td style='color:red' rowspan='"+list4[i].rowspan+"' colspan='"+list4[i].colspan+"'>"+list4[i].title+"</td>";
+                    }else{
+                        t4 += "<td rowspan='"+list4[i].rowspan+"' colspan='"+list4[i].colspan+"'>"+list4[i].title+"</td>";
+                    }
+                }
+                for(var i=0;i<list5.length;i++){
+                    t5 += "<td rowspan='"+list5[i].rowspan+"' colspan='"+list5[i].colspan+"'>"+list5[i].title+"</td>";
+                }
+                for(var i=0;i<list6.length;i++){
+                    t6 += "<td rowspan='"+list6[i].rowspan+"' colspan='"+list6[i].colspan+"'>"+list6[i].title+"</td>";
+                }
+                tn += "<tr><td></td><td></td>";
+                for(var i=0;i<typeNoList.length;i++){
+                    tn += "<td>" + typeNoList[i] + "</td>";
+                }
+                tn += "</tr>";
+                $("#list6").nextAll().remove();
+                $("#tdhead").html("<td id=\"tdhead\" colspan='"+data.colnum+"'>"+data.title+"</td>")
+                $("#list1").html(t1);
+                $("#list2").html(t2);
+                $("#list3").html(t3);
+                $("#list4").html(t4);
+                $("#list5").html(t5);
+                $("#list6").html(t6);
+                $("#list6").after(tn);
+
+                $("#idiv").show();
+                $("#toolbar").show();
+            }
+        });
+    })
+
+</script>
+</body>
+</html>

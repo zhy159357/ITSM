@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('审批变更请求单')" />
+    <th:block th:include="include :: datetimepicker-css" />
+    <th:block th:include="include :: ztree-css" />
+    <th:block th:include="include :: summernote-css" />
+    <th:block th:include="include :: select2-css" />
+</head>
+<body class="white-bg">
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+    <form class="form-horizontal" id="form-qingqiu-add" th:object="${cmBizQingqiu}">
+        <input name="changeId" th:field="*{changeId}" type="hidden">
+        <input name="isNotice" th:field="*{isNotice}" type="hidden">
+        <input name="taskName" id="taskName" th:value="${taskName}" type="hidden">
+        <input name="ifCenter" id="ifCenter" th:value="${ifCenter}" type="hidden">
+        <h4 class="form-header h4">基本信息</h4>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">变更单号：</label>
+                    <div class="col-sm-8">
+                        <input name="changeCode" class="form-control" th:field="*{changeCode}" type="text" readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">申请单位：</label>
+                    <div class="col-sm-8">
+                        <input name="createrOrgId" class="form-control" type="text" th:value="*{applyOrgName}" disabled>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">受理机构：</label>
+                    <div class="col-sm-8">
+                    <input  onclick="selectDeptTree()" id="checkOrgName" type="text"  class="form-control" th:value="*{acceptanceOrgName}" disabled>
+                        <input name="checkOrg" type="hidden" id="checkOrg" value=""/>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">受理人：</label>
+                    <div class="col-sm-8">
+                        <input name="checkerName" id="checkerName" class="form-control m-b" onclick="selectBusinessAudit('checkOrg','2503','0')" th:value="*{acceptanceName}" disabled>
+                        <input name="checkerId" id="checkerId" th:value="*{checkerId}" hidden>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">变更分类：</label>
+                    <div class="col-sm-8">
+                        <input name="changeCategoryId"  id="changeCategoryId" class="form-control"  type="hidden" th:value="*{changeCategoryId}" >
+                        <input name="typeName"  id="typeName" class="form-control"  onclick="selectTypeInfo()" type="text" th:value="*{typeName}" disabled>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">变更风险等级：</label>
+                    <div class="col-sm-8">
+                        <select name="importantLev" class="form-control" th:with="type=${@pubParaValue.selectPubParaValueByParaName('issue_serious_lev')}" th:field="*{importantLev}" disabled>
+                            <option th:each="PubParaValue : ${type}" th:text="${PubParaValue.valueDetail}" th:value="${PubParaValue.value}" th:selected="${PubParaValue.value eq importantLev}"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!---->
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">所涉应用系统：</label>
+                    <div class="col-sm-10">
+                        <input name="sysname" id="sysid" class="form-control" onclick="selectOneApplication()" th:value="*{sysname}" value="" disabled>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">变更所处阶段：</label>
+                    <div class="col-sm-8">
+                        <select name="changeStage" class="form-control" th:with="type=${@pubParaValue.selectPubParaValueByParaName('change_stage')}" th:field="*{changeStage}" disabled>
+                            <option th:each="PubParaValue : ${type}" th:text="${PubParaValue.valueDetail}" th:value="${PubParaValue.value}" th:selected="${PubParaValue.value eq changeStage}">></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">变更请求来源：</label>
+                    <div class="col-sm-8">
+                        <select name="changeResource" class="form-control" th:with="type=${@pubParaValue.selectPubParaValueByParaName('change_resource')}" th:field="*{changeResource}" disabled>
+                            <option th:each="PubParaValue : ${type}" th:text="${PubParaValue.valueDetail}" th:value="${PubParaValue.value}" th:selected="${PubParaValue.value eq changeResource}">></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!---->
+        <div class="row">
+            <!--<div class="col-sm-6">-->
+                <!--<div class="form-group">-->
+                    <!--<label class="col-sm-4 control-label">是否通知业务：</label>-->
+                    <!--<div class="col-sm-8">-->
+                        <!--<select name="isNotice" class="form-control" th:with="type=${@pubParaValue.selectPubParaValueByParaName('isNotice')}" th:field="*{isNotice}" disabled>-->
+                            <!--<option th:each="PubParaValue : ${type}" th:text="${PubParaValue.valueDetail}" th:value="${PubParaValue.value}" th:selected="${PubParaValue.value eq isNotice}">></option>-->
+                        <!--</select>-->
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</div>-->
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">是否影响业务连续性：</label>
+                    <div class="col-sm-8">
+                        <select name="isStop" class="form-control" th:with="type=${@pubParaValue.selectPubParaValueByParaName('isStop')}" th:field="*{isStop}" disabled>
+                            <option th:each="PubParaValue : ${type}" th:text="${PubParaValue.valueDetail}" th:value="${PubParaValue.value}" th:selected="${PubParaValue.value eq isStop}">></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <h4 class="form-header h4">变更内容</h4>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">变更标题：</label>
+                    <div class="col-sm-10">
+                        <input id="changeSingleName" name="changeSingleName" class="form-control" type="text"  th:value="*{changeSingleName}" readonly>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">变更原因：</label>
+                    <div class="col-sm-10">
+                        <input id="changeCauseTexts" class="form-control" type="hidden" th:value="*{changeCauseText}" required>
+                        <textarea rows="10" cols="20" id="changeCauseText" class="form-control" readonly></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">变更内容：</label>
+                    <div class="col-sm-10">
+                        <input id="changeDetails" type="hidden" th:field="*{changeDetails}" readonly >
+                        <div class="summernote" id="summernote"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <h4 class="form-header h4" id="h4ForNext">下一步操作信息</h4>
+        <div class="row" id="leaderOption">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">流程选项：</label>
+                    <div class="col-sm-8">
+                        <select name="params[processOption]" id="processOption" class="form-control m-b" required>
+                            <option value="1">分管领导审批</option>
+                            <option value="0">分管领导通知</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">分管领导：</label>
+                    <div class="col-sm-8">
+                        <input name="fucheckerName" id="fucheckerName" class="form-control" style="background-color: #fff; opacity: 1;" onclick="selectBusinessAudit('FGLD','2505','1')" required readonly>
+                        <input id="fucheckerId" name="fucheckerId"  hidden>
+                        <input name="fuCheckOrgId" id="fuCheckOrgId" hidden>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label is-required">审批意见：</label>
+                    <div class="col-sm-10">
+                        <textarea rows="10" cols="20" id="authorText" name="params[comment]" maxlength="200" class="form-control"></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<h4 class="form-header h4">上传附件</h4>
+<div class="row">
+    <div class="col-sm-12">
+        <div class="tabs-container">
+            <ul class="nav nav-tabs">
+                <li class="active"><a data-toggle="tab" href="#tab-1" aria-expanded="true">流程记录</a>
+                </li>
+                <li class=""><a data-toggle="tab" href="#tab-2" aria-expanded="false">附件</a>
+                </li>
+            </ul>
+            <div class="tab-content">
+                <div id="tab-1" class="tab-pane active">
+                    <div class="panel-body">
+                        <div class="col-sm-12 select-table table-striped">
+                            <table id="history-table"></table>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="tab-2" class="tab-pane">
+                    <div class="panel-body">
+                        <div class="btn-group-sm" id="toolbar1" role="group">
+                            <a class="btn btn-primary multiple disabled" onclick="downloadFile()">
+                                <i class="fa fa-download"></i> 下载附件
+                            </a>
+                        </div>
+                        <div class="col-sm-12 select-table table-striped">
+                            <table id="file-table"></table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-offset-5 col-sm-10">
+        <button type="button" class="btn btn-sm btn-primary" onclick="pass('1')"><i class="fa fa-check"></i>通 过</button>&nbsp;
+        <button type="button" class="btn btn-sm btn-warning" id="tuihui" onclick="pass('0')"><i class="fa fa-remove"></i>退 回</button>&nbsp;
+        <!--<button type="button" class="btn btn-sm btn-primary" id="tongguo" onclick="pass('2')"><i class="fa fa-check"></i>通过待受理</button>-->
+        <button type="button" class="btn btn-sm btn-danger" onclick="closeItem()"><i class="fa fa-window-close"></i>关 闭 </button>
+    </div>
+</div>
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: datetimepicker-js" />
+<th:block th:include="include :: summernote-js" />
+<th:block th:include="include :: select2-js" />
+<script th:src="@{/js/activiti.js}"></script>
+<script type="text/javascript">
+    var prefix = ctx+"activiti/qingqiu";
+    var pub_attachment = ctx + "pub/attachment";
+
+    var taskName=$("#taskName").val();
+    $(function (){
+        if("审批"==taskName){
+            //$("#leaderOption").hide();
+            $("#tongguo").attr("style", "display:none");
+            ///$("#tongguo").after("&nbsp;");
+        } else if ("分管领导审批"==taskName) {
+            $("#leaderOption").hide();
+            $("#h4ForNext").hide();
+            $("#tongguo").attr("style", "display:none");
+        } else if("受理"==taskName){
+        }
+
+        var ifCenter = $("#ifCenter").val();
+        //不是全国中心把分管领导隐藏
+        if (ifCenter == '2') {
+            $("#leaderOption").hide();
+        }
+    } );
+
+    $(function () {
+        $('.summernote').summernote({
+            placeholder: '',
+            height : 192,
+            lang : 'zh-CN',
+            followingToolbar: false,
+            callbacks: {
+                onImageUpload: function (files) {
+                    sendFile(files[0], this);
+                }
+            },
+            focus:true
+        });
+        var content = $("#changeDetails").val();
+        $('#summernote').summernote('code', content);
+        $('.summernote').summernote('disable');
+    });
+
+    $(function() {
+        var optionsfj = {
+            url: pub_attachment + "/list",
+            id:'file-table',
+            createUrl: pub_attachment + "/add",
+            updateUrl: pub_attachment + "/edit/{id}",
+            removeUrl: pub_attachment + "/remove",
+            detailUrl: pub_attachment + "/edit/{id}",
+            sortName: "fileTime",
+            sortOrder: "desc",
+            toolbar:"toolbar1",
+            singleSelect: true,
+            clickToSelect: true,
+            queryParams:queryParams,
+            modalName: "附件列表",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field : 'atId',
+                    title : '附件ID',
+                    visible : false
+                },
+                {
+                    field : 'person.pId',
+                    title : '上传人员Id',
+                    visible: false
+                },
+                {
+                    field : 'fileName',
+                    title : '文件名称'
+                },
+                {
+                    field : 'person.pName',
+                    title : '上传人'
+                },
+                {
+                    field : 'size',
+                    title : '文件大小'
+                },
+                {
+                    field: 'memo',
+                    title: '文件描述'
+                },
+                {
+                    field: 'fileTime',
+                    title: '上传时间',
+                    formatter: function (value, row, index) {
+                        var startTime = '';
+                        if (value != '' && value != null) {
+                            var pattern = /(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/;
+                            startTime = value.replace(pattern, '$1-$2-$3 $4:$5:$6');
+                        }
+                        return startTime;
+                    }
+                }]
+        };
+        $.table.init(optionsfj);
+        var changeId = $("#changeId").val();
+        puFolwHistory(changeId);
+    });
+
+    // 附件上传页面
+    function upload() {
+        var url = ctx + "pub/attachment/upload/" + $("#changeId").val();
+        $.modal.open("调度单附件上传", url);
+    }
+
+    function queryParams(params) {
+        var search = $.table.queryParams(params);
+        search.ownerId = $("#changeId").val() == '' ? 'version_public_add_no_owner_id' : $("#changeId").val();
+        return search;
+    }
+
+    // 附件下载
+    function downloadFile() {
+        var rows = $.table.selectFirstColumns();
+        var atId = rows[0];
+        var ownerId = $("#changeId").val();
+        var url = ctx + "pub/attachment/download/"+ownerId+"/"+atId;
+        window.location.href = url;
+        $.table.refresh();
+    }
+
+    $("#form-qingqiu-add").validate({
+        focusCleanup: true
+    });
+
+    function submitHandler() {
+        $.operate.save(ctx + "activiti/qingqiu/add", $('#form-qingqiu-add').serialize());
+    }
+
+    /* 选择部门树 */
+    function selectDeptTree() {
+        var orgId = $("#orgId").val();
+        var deptId = $.common.isEmpty(orgId) ? "310100001" : $("#orgId").val();
+        var url = ctx + "system/dept/selectDeptTree/" + deptId;
+        var options = {
+            title: '选择部门',
+            width: "380",
+            url: url,
+            callBack: doSubmit
+        };
+        $.modal.openOptions(options);
+    }
+    function doSubmit(index, layero){
+        var tree = layero.find("iframe")[0].contentWindow.$._tree;
+        var body = layer.getChildFrame('body', index);
+        $("#checkOrg").val(body.find('#treeId').val());
+        $("#checkOrgName").val(body.find('#treeName').val());
+        layer.close(index);
+    }
+    /* 选择部门树 */
+    function selectDeptTree2() {
+        var orgId = $("#orgId").val();
+        var deptId = $.common.isEmpty(orgId) ? "310100001" : $("#orgId").val();
+        var url = ctx + "system/dept/selectDeptTree/" + deptId;
+        var options = {
+            title: '选择部门',
+            width: "380",
+            url: url,
+            callBack: doSubmit2
+        };
+        $.modal.openOptions(options);
+    }
+    function doSubmit2(index, layero){
+        var tree = layero.find("iframe")[0].contentWindow.$._tree;
+        var body = layer.getChildFrame('body', index);
+        $("#implementorOrgid").val(body.find('#treeId').val());
+        $("#implementorName").val(body.find('#treeName').val());
+        layer.close(index);
+    }
+
+    function selectDeptTreeCheckDept() {
+        var orgId = $("#orgId").val();
+        var deptId = $.common.isEmpty(orgId) ? "310100001" : $("#orgId").val();
+        var url = ctx + "system/dept/selectDeptTree/" + deptId;
+        var options = {
+            title: '选择部门',
+            width: "380",
+            url: url,
+            callBack: doSubmitCheckDept
+        };
+        $.modal.openOptions(options);
+    }
+
+    function doSubmitCheckDept(index, layero){
+        var tree = layero.find("iframe")[0].contentWindow.$._tree;
+        var body = layer.getChildFrame('body', index);
+        $("#fuCheckOrgId").val(body.find('#treeId').val());
+        $("#fuCheckOrgName").val(body.find('#treeName').val());
+        layer.close(index);
+    }
+
+
+    function selectBusinessAudit(ogrId ,rId,pflag) {
+        if (ogrId == "FGLD") {
+            var url = ctx + "activiti/qingqiu/selectBusinessAudit"+"?"+"orgId="+""+"&pflag="+pflag+"&rId="+rId;
+            $.modal.open("选择分管领导", url);
+        } else {
+            var ogId = $("#"+ogrId+"").val();
+            if(ogId == ''){
+                $.modal.alertWarning("请先选择所属业务部门");
+                return;
+            }
+            var url = ctx + "activiti/qingqiu/selectBusinessAudit"+"?"+"orgId="+encodeURI(encodeURI(ogId))+"&pflag="+pflag+"&rId="+rId;
+            $.modal.open("选择业务审核人", url);
+        }
+    }
+    // 选择应用系统（只能单选）
+    function selectOneApplication() {
+        $.modal.open("选择应用系统",  ctx + "version/public/selectOneApplication");
+
+    }
+    function reValue(index, layero){
+        var tree = layero.find("iframe")[0].contentWindow.$._tree;
+        var body = layer.getChildFrame('body', index);
+        $("#sysid").val(body.find('#sysid').val());
+        console.log(body.find('#deptId').val());
+        $("#sysname").val(body.find('#deptName').val());
+        console.log(body.find('#caption').val());
+        layer.close(index);
+    }
+
+    /*通过*/
+    function pass(flag) {
+        //判断处理说明是否填写
+        if($('#authorText').val() == ''||$('#authorText').val()==null) {
+            $.modal.alertError('请输入审批意见');
+            return;
+        }
+        var ifCenter = $("#ifCenter").val();
+        //不是全国中心把分管领导隐藏
+        if (ifCenter == '2') {
+            $("#processOption").val('0');
+        }
+        if (ifCenter == '1') {
+            if("分管领导审批"!=taskName && flag == "1" && $('#fucheckerName').val() == ''||$('#fucheckerName').val()==null) {
+                $.modal.alertError('请选择分管领导');
+                return;
+            }
+        }
+        var data = $("#form-qingqiu-add").serializeArray();
+        data.push({name:'passFlag',value:flag});
+        data.push({name:'params[taskName]',value:$("#taskName").val()});
+        $.operate.saveTab(prefix + "/auditPass", data);
+    }
+
+    /*变更原因初始化*/
+    $(function() {
+        var changeDetails = $("#changeDetailss").val();
+        var changeCauseText = $("#changeCauseTexts").val();
+        //changeDetails = changeDetails.replace(/<[^>]+>/g, "");
+        $("#changeDetails").val(changeDetails);
+        $("#changeCauseText").val(changeCauseText);
+    });
+</script>
+</body>
+</html>

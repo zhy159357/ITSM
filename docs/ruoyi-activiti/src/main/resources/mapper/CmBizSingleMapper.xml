@@ -1,0 +1,964 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.activiti.mapper.CmBizSingleMapper">
+
+    <resultMap type="CmBizSingle" id="CmBizSingleResult">
+        <result property="changeId" column="change_id"/>
+        <result property="changeCode" column="change_code"/>
+        <result property="createtime" column="createtime"/>
+        <result property="applicationSubmitTime" column="application_submit_time"/>
+        <result property="changeCategoryId" column="change_category_id"/>
+        <result property="changeStage" column="change_stage"/>
+        <result property="expectStartTime" column="expect_start_time"/>
+        <result property="applicantId" column="applicant_id"/>
+        <result property="changeType" column="change_type"/>
+        <result property="changeSingleStauts" column="change_single_stauts"/>
+        <result property="importantLev" column="important_lev"/>
+        <result property="expectEndTime" column="expect_end_time"/>
+        <result property="closuerOften" column="closuer_often"/>
+        <result property="changeEquipment" column="change_equipment"/>
+        <result property="equipmentFlag" column="equipment_flag"/>
+        <result property="groupPerson" column="group_person"/>
+        <result property="changeManagerId" column="change_manager_id"/>
+        <result property="changeSingleName" column="change_single_name"/>
+        <result property="changeCauseText" column="change_cause_text"/>
+        <result property="changeDetails" column="change_details"/>
+        <result property="changeProgram" column="change_program"/>
+        <result property="implementSupviserId" column="implement_supviser_id"/>
+        <result property="practicleStart" column="practicle_start"/>
+        <result property="practicleEnd" column="practicle_end"/>
+        <result property="changeAffectDesccription" column="change_affect_desccription"/>
+        <result property="accessId" column="access_id"/>
+        <result property="notesText" column="notes_text"/>
+        <result property="invalidationMark" column="invalidation_mark"/>
+        <result property="implementorId" column="implementor_id"/>
+        <result property="createrOrgId" column="creater_org_id"/>
+        <result property="performResult" column="perform_result"/>
+        <result property="checkerId" column="checker_id"/>
+        <result property="isStop" column="is_stop"/>
+        <result property="changeResource" column="change_resource"/>
+        <result property="isNotice" column="is_notice"/>
+        <result property="changeOrg" column="change_org"/>
+        <result property="implementorOrgid" column="implementor_orgid"/>
+        <result property="checkOrg" column="check_org"/>
+        <result property="isRSystem" column="is_r_system"/>
+        <result property="otherSystem" column="other_system"/>
+        <result property="isStopReal" column="is_stop_real"/>
+        <result property="sysname" column="sysname"/>
+        <result property="sysid" column="sysid"/>
+        <result property="xtchangeManagerId" column="xtchange_manager_id"/>
+        <result property="changeXtorg" column="change_xtorg"/>
+        <result property="isJjbg" column="is_jjbg"/>
+        <result property="isJs" column="is_js"/>
+        <result property="changeReason" column="change_reason"/>
+        <result property="fucheckerId" column="fuchecker_id"/>
+        <result property="ifOasis" column="if_oasis"/>
+        <result property="ifAuto" column="if_auto"/>
+        <result property="ifMastart" column="if_mastart"/>
+        <result property="checkOrgName" column="checkOrgName"/>
+        <result property="ifAddWork" column="if_add_work"/>
+        <result property="fucheckerFlag" column="fuchecker_flag"/>
+    </resultMap>
+
+    <sql id="selectCmBizSingleVo">
+        select c.change_id,
+               c.change_code,
+               to_char(to_date(c.createtime, 'YYYYMMDDHH24MISS'), 'YYYY-MM-DD HH24:MI:SS')        createtime,
+               to_char(to_date(c.application_submit_time, 'YYYYMMDDHH24MISS'),
+                       'YYYY-MM-DD HH24:MI:SS')                                                   application_submit_time,
+               c.change_category_id,
+               c.change_stage,
+               to_char(to_date(c.expect_start_time, 'YYYYMMDDHH24MISS'), 'YYYY-MM-DD HH24:MI:SS') expect_start_time,
+               c.applicant_id,
+               c.change_type,
+               c.change_single_stauts,
+               c.important_lev,
+               to_char(to_date(c.expect_end_time, 'YYYYMMDDHH24MISS'), 'YYYY-MM-DD HH24:MI:SS')   expect_end_time,
+               c.closuer_often,
+               c.change_equipment,
+               c.equipment_flag,
+               c.group_person,
+               c.change_manager_id,
+               c.change_single_name,
+               c.change_cause_text,
+               c.change_details,
+               c.change_program,
+               c.implement_supviser_id,
+               to_char(to_date(c.practicle_start, 'YYYYMMDDHH24MISS'), 'YYYY-MM-DD HH24:MI:SS')   practicle_start,
+               to_char(to_date(c.practicle_end, 'YYYYMMDDHH24MISS'), 'YYYY-MM-DD HH24:MI:SS')     practicle_end,
+               c.change_affect_desccription,
+               c.access_id,
+               c.notes_text,
+               c.invalidation_mark,
+               c.implementor_id,
+               c.creater_org_id,
+               c.perform_result,
+               c.checker_id,
+               c.is_stop,
+               c.change_resource,
+               c.is_notice,
+               c.change_org,
+               c.implementor_orgid,
+               c.check_org,
+               c.is_r_system,
+               c.other_system,
+               c.is_stop_real,
+               c.sysname,
+               c.sysid,
+               c.xtchange_manager_id,
+               c.change_xtorg,
+               c.is_jjbg,
+               c.is_js,
+               c.change_reason,
+               c.fuchecker_id,
+               c.if_oasis,
+               c.if_auto,
+               c.if_add_work,
+               c.if_mastart,
+               o.orgname changeOrgName,
+               o2.orgname checkOrgName,
+               p.pname                                                                            applicantName,
+               p2.pname                                                                            implementorName,
+               t.type_name                                                                        changeCategoryName
+        from cm_biz_single c
+                 left join og_person p on c.applicant_id = p.pid
+                 left join og_person p2 on c.implementor_id = p2.pid
+                 left join og_org o2 on c.check_org = o2.orgid
+                 left join og_org o on c.change_org = o.orgid
+                 left join og_typeinfo t on c.change_category_id = t.typeinfo_id
+    </sql>
+    <sql id="selectCmBizSingleVoMysql">
+        select c.change_id,
+               c.change_code,
+               date_format(c.createtime, '%Y-%m-%d %T')        createtime,
+               date_format(c.application_submit_time, '%Y-%m-%d %T')                                                   application_submit_time,
+               c.change_category_id,
+               c.change_stage,
+               date_format(c.expect_start_time, '%Y-%m-%d %T') expect_start_time,
+               c.applicant_id,
+               c.change_type,
+               c.change_single_stauts,
+               c.important_lev,
+               date_format(c.expect_end_time, '%Y-%m-%d %T')   expect_end_time,
+               c.closuer_often,
+               c.change_equipment,
+               c.equipment_flag,
+               c.group_person,
+               c.change_manager_id,
+               c.change_single_name,
+               c.change_cause_text,
+               c.change_details,
+               c.change_program,
+               c.implement_supviser_id,
+               date_format(c.practicle_start, '%Y-%m-%d %T')   practicle_start,
+               date_format(c.practicle_end, '%Y-%m-%d %T')     practicle_end,
+               c.change_affect_desccription,
+               c.access_id,
+               c.notes_text,
+               c.invalidation_mark,
+               c.implementor_id,
+               c.creater_org_id,
+               c.perform_result,
+               c.checker_id,
+               c.is_stop,
+               c.change_resource,
+               c.is_notice,
+               c.change_org,
+               c.implementor_orgid,
+               c.check_org,
+               c.is_r_system,
+               c.other_system,
+               c.is_stop_real,
+               c.sysname,
+               c.sysid,
+               c.xtchange_manager_id,
+               c.change_xtorg,
+               c.is_jjbg,
+               c.is_js,
+               c.change_reason,
+               c.fuchecker_id,
+               c.if_oasis,
+               c.if_auto,
+               c.if_add_work,
+               c.if_mastart,
+               o.orgname changeOrgName,
+               o2.orgname checkOrgName,
+               p.pname                                                                            applicantName,
+               p2.pname                                                                            implementorName,
+               t.type_name                                                                        changeCategoryName
+        from cm_biz_single c
+                 left join og_person p on c.applicant_id = p.pid
+                 left join og_person p2 on c.implementor_id = p2.pid
+                 left join og_org o2 on c.check_org = o2.orgid
+                 left join og_org o on c.change_org = o.orgid
+                 left join og_typeinfo t on c.change_category_id = t.typeinfo_id
+    </sql>
+
+    <select id="selectCmBizSingleList" parameterType="CmBizSingle" resultMap="CmBizSingleResult">
+        <include refid="selectCmBizSingleVo"/>
+        <where>
+            <if test="changeCode != null  and changeCode != ''">
+                and c.change_code like concat(concat('%', #{changeCode}), '%')
+            </if>
+            <if test="changeSingleName != null  and changeSingleName != ''">
+                and change_single_name like concat(concat('%', #{changeSingleName}), '%')
+            </if>
+            <if test="changeSingleStauts != null  and changeSingleStauts != ''">
+                and change_single_stauts = #{changeSingleStauts}
+            </if>
+            <if test="changeType != null  and changeType != ''">
+                and change_type = #{changeType}
+            </if>
+            <if test="isStop != null  and isStop != ''">
+                and is_stop = #{isStop}
+            </if>
+            <if test="ifAuto != null  and ifAuto != ''">
+                and if_auto = #{ifAuto}
+            </if>
+            <if test="isStopReal != null  and isStopReal != ''">
+                and is_stop_real = #{isStopReal}
+            </if>
+            <if test="changeStage != null  and changeStage != ''">
+                and change_stage = #{changeStage}
+            </if>
+            <if test="sysname != null  and sysname != ''">
+                and sysname like concat(concat('%', #{sysname}), '%')
+            </if>
+            <if test="changeResource != null  and changeResource != ''">
+                and change_resource = #{changeResource}
+            </if>
+            <if test="isNotice != null  and isNotice != ''">
+                and is_notice = #{isNotice}
+            </if>
+            <if test="applicantId != null  and applicantId != ''">
+                and applicant_id in (select p.pid from og_person p where p.pname like concat(concat('%',
+                #{applicantId}), '%') )
+            </if>
+            <if test="changeDetails != null  and changeDetails != ''">
+                and change_details like concat(concat('%', #{changeDetails}), '%')
+            </if>
+            <if test="changeReason != null  and changeReason != ''">
+                and change_reason = #{changeReason}
+            </if>
+            <if test="changeManagerId != null  and changeManagerId != ''">
+                and change_manager_id in (select p.pid from og_person p where p.pname like concat(concat('%',
+                #{changeManagerId}), '%') )
+            </if>
+            <if test="checkerId != null  and checkerId != ''">
+                and checker_id in (select p.pid from og_person p where p.pname like concat(concat('%', #{checkerId}),
+                '%') )
+            </if>
+            <if test="fucheckerId != null  and fucheckerId != ''">
+                and fuchecker_id in (select p.pid from og_person p where p.pname like concat(concat('%',
+                #{fucheckerId}), '%') )
+            </if>
+            <if test="implementorId != null  and implementorId != ''">
+                and implementor_id in (select p.pid from og_person p where p.pname like concat(concat('%',
+                #{implementorId}), '%') )
+            </if>
+            <if test="expectStartTime != null  and expectStartTime != ''">
+                and expect_start_time &gt;= #{expectStartTime}
+            </if>
+            <if test="expectEndTime != null  and expectEndTime != ''">
+                and expect_end_time &lt;= #{expectEndTime}
+            </if>
+            <if test="practicleStart != null  and practicleStart != ''">
+                and practicle_start &gt;= #{practicleStart}
+            </if>
+            <if test="practicleEnd != null  and practicleEnd != ''">
+                and practicle_end &lt;= #{practicleEnd}
+            </if>
+            <if test="changeOrg != null  and changeOrg != ''">
+                and change_org = #{changeOrg}
+            </if>
+            <if test="isJjbg != null  and isJjbg != ''">
+                and is_jjbg = #{isJjbg}
+            </if>
+            <if test="isJs != null  and isJs != ''">
+                and is_js = #{isJs}
+            </if>
+            <if test="ifOasis != null  and ifOasis != ''">
+                and if_oasis = #{ifOasis}
+            </if>
+            <if test="createtime != null  and createtime != ''">and createtime = #{createtime}</if>
+            <if test="applicationSubmitTime != null  and applicationSubmitTime != ''">and application_submit_time =
+                #{applicationSubmitTime}
+            </if>
+            <if test="changeCategoryId != null  and changeCategoryId != ''">and change_category_id =
+                #{changeCategoryId}
+            </if>
+            <if test="importantLev != null  and importantLev != ''">and important_lev = #{importantLev}</if>
+            <if test="closuerOften != null  and closuerOften != ''">and closuer_often = #{closuerOften}</if>
+            <if test="changeEquipment != null  and changeEquipment != ''">and change_equipment = #{changeEquipment}</if>
+            <if test="equipmentFlag != null  and equipmentFlag != ''">and equipment_flag = #{equipmentFlag}</if>
+            <if test="groupPerson != null  and groupPerson != ''">and group_person = #{groupPerson}</if>
+            <if test="changeCauseText != null  and changeCauseText != ''">and change_cause_text = #{changeCauseText}
+            </if>
+            <if test="changeProgram != null  and changeProgram != ''">and change_program = #{changeProgram}</if>
+            <if test="implementSupviserId != null  and implementSupviserId != ''">and implement_supviser_id =
+                #{implementSupviserId}
+            </if>
+            <if test="changeAffectDesccription != null  and changeAffectDesccription != ''">and
+                change_affect_desccription = #{changeAffectDesccription}
+            </if>
+            <if test="accessId != null  and accessId != ''">and access_id = #{accessId}</if>
+            <if test="notesText != null  and notesText != ''">and notes_text = #{notesText}</if>
+            <if test="invalidationMark != null  and invalidationMark != ''">and c.invalidation_mark =
+                #{invalidationMark}
+            </if>
+            <if test="createrOrgId != null  and createrOrgId != ''">
+                and creater_org_id in (select og.orgid from og_org og where og.level_code like
+                concat(#{createrOrgId},'%'))
+            </if>
+            <if test="performResult != null  and performResult != ''">and perform_result = #{performResult}</if>
+            <if test="implementorOrgid != null  and implementorOrgid != ''">and implementor_orgid =
+                #{implementorOrgid}
+            </if>
+            <if test="checkOrg != null  and checkOrg != ''">and check_org = #{checkOrg}</if>
+            <if test="ifAddWork != null  and ifAddWork != ''">and if_add_work = #{ifAddWork}</if>
+            <if test="isRSystem != null  and isRSystem != ''">and is_r_system = #{isRSystem}</if>
+            <if test="otherSystem != null  and otherSystem != ''">and other_system = #{otherSystem}</if>
+            <if test="sysid != null  and sysid != ''">and sysid = #{sysid}</if>
+            <if test="xtchangeManagerId != null  and xtchangeManagerId != ''">and xtchange_manager_id =
+                #{xtchangeManagerId}
+            </if>
+            <if test="changeXtorg != null  and changeXtorg != ''">and change_xtorg = #{changeXtorg}</if>
+        </where>
+        order by createtime desc
+    </select>
+    <select id="selectCmBizSingleListMysql" parameterType="CmBizSingle" resultMap="CmBizSingleResult">
+        <include refid="selectCmBizSingleVoMysql"/>
+        <where>
+            <if test="changeCode != null  and changeCode != ''">
+                and c.change_code like concat(concat('%', #{changeCode}), '%')
+            </if>
+            <if test="changeSingleName != null  and changeSingleName != ''">
+                and change_single_name like concat(concat('%', #{changeSingleName}), '%')
+            </if>
+            <if test="changeSingleStauts != null  and changeSingleStauts != ''">
+                and change_single_stauts = #{changeSingleStauts}
+            </if>
+            <if test="changeType != null  and changeType != ''">
+                and change_type = #{changeType}
+            </if>
+            <if test="isStop != null  and isStop != ''">
+                and is_stop = #{isStop}
+            </if>
+            <if test="ifAuto != null  and ifAuto != ''">
+                and if_auto = #{ifAuto}
+            </if>
+            <if test="isStopReal != null  and isStopReal != ''">
+                and is_stop_real = #{isStopReal}
+            </if>
+            <if test="changeStage != null  and changeStage != ''">
+                and change_stage = #{changeStage}
+            </if>
+            <if test="sysname != null  and sysname != ''">
+                and sysname like concat(concat('%', #{sysname}), '%')
+            </if>
+            <if test="changeResource != null  and changeResource != ''">
+                and change_resource = #{changeResource}
+            </if>
+            <if test="isNotice != null  and isNotice != ''">
+                and is_notice = #{isNotice}
+            </if>
+            <if test="applicantId != null  and applicantId != ''">
+                and applicant_id in (select p.pid from og_person p where p.pname like concat(concat('%',
+                #{applicantId}), '%') )
+            </if>
+            <if test="changeDetails != null  and changeDetails != ''">
+                and change_details like concat(concat('%', #{changeDetails}), '%')
+            </if>
+            <if test="changeReason != null  and changeReason != ''">
+                and change_reason = #{changeReason}
+            </if>
+            <if test="changeManagerId != null  and changeManagerId != ''">
+                and change_manager_id in (select p.pid from og_person p where p.pname like concat(concat('%',
+                #{changeManagerId}), '%') )
+            </if>
+            <if test="checkerId != null  and checkerId != ''">
+                and checker_id in (select p.pid from og_person p where p.pname like concat(concat('%', #{checkerId}),
+                '%') )
+            </if>
+            <if test="fucheckerId != null  and fucheckerId != ''">
+                and fuchecker_id in (select p.pid from og_person p where p.pname like concat(concat('%',
+                #{fucheckerId}), '%') )
+            </if>
+            <if test="implementorId != null  and implementorId != ''">
+                and implementor_id in (select p.pid from og_person p where p.pname like concat(concat('%',
+                #{implementorId}), '%') )
+            </if>
+            <if test="expectStartTime != null  and expectStartTime != ''">
+                and expect_start_time &gt;= #{expectStartTime}
+            </if>
+            <if test="expectEndTime != null  and expectEndTime != ''">
+                and expect_end_time &lt;= #{expectEndTime}
+            </if>
+            <if test="practicleStart != null  and practicleStart != ''">
+                and practicle_start &gt;= #{practicleStart}
+            </if>
+            <if test="practicleEnd != null  and practicleEnd != ''">
+                and practicle_end &lt;= #{practicleEnd}
+            </if>
+            <if test="changeOrg != null  and changeOrg != ''">
+                and change_org = #{changeOrg}
+            </if>
+            <if test="isJjbg != null  and isJjbg != ''">
+                and is_jjbg = #{isJjbg}
+            </if>
+            <if test="isJs != null  and isJs != ''">
+                and is_js = #{isJs}
+            </if>
+            <if test="ifOasis != null  and ifOasis != ''">
+                and if_oasis = #{ifOasis}
+            </if>
+            <if test="createtime != null  and createtime != ''">and createtime = #{createtime}</if>
+            <if test="applicationSubmitTime != null  and applicationSubmitTime != ''">and application_submit_time =
+                #{applicationSubmitTime}
+            </if>
+            <if test="changeCategoryId != null  and changeCategoryId != ''">and change_category_id =
+                #{changeCategoryId}
+            </if>
+            <if test="importantLev != null  and importantLev != ''">and important_lev = #{importantLev}</if>
+            <if test="closuerOften != null  and closuerOften != ''">and closuer_often = #{closuerOften}</if>
+            <if test="changeEquipment != null  and changeEquipment != ''">and change_equipment = #{changeEquipment}</if>
+            <if test="equipmentFlag != null  and equipmentFlag != ''">and equipment_flag = #{equipmentFlag}</if>
+            <if test="groupPerson != null  and groupPerson != ''">and group_person = #{groupPerson}</if>
+            <if test="changeCauseText != null  and changeCauseText != ''">and change_cause_text = #{changeCauseText}
+            </if>
+            <if test="changeProgram != null  and changeProgram != ''">and change_program = #{changeProgram}</if>
+            <if test="implementSupviserId != null  and implementSupviserId != ''">and implement_supviser_id =
+                #{implementSupviserId}
+            </if>
+            <if test="changeAffectDesccription != null  and changeAffectDesccription != ''">and
+                change_affect_desccription = #{changeAffectDesccription}
+            </if>
+            <if test="accessId != null  and accessId != ''">and access_id = #{accessId}</if>
+            <if test="notesText != null  and notesText != ''">and notes_text = #{notesText}</if>
+            <if test="invalidationMark != null  and invalidationMark != ''">and c.invalidation_mark =
+                #{invalidationMark}
+            </if>
+            <if test="createrOrgId != null  and createrOrgId != ''">
+                and creater_org_id in (select og.orgid from og_org og where og.level_code like
+                concat(#{createrOrgId},'%'))
+            </if>
+            <if test="performResult != null  and performResult != ''">and perform_result = #{performResult}</if>
+            <if test="implementorOrgid != null  and implementorOrgid != ''">and implementor_orgid =
+                #{implementorOrgid}
+            </if>
+            <if test="checkOrg != null  and checkOrg != ''">and check_org = #{checkOrg}</if>
+            <if test="ifAddWork != null  and ifAddWork != ''">and if_add_work = #{ifAddWork}</if>
+            <if test="isRSystem != null  and isRSystem != ''">and is_r_system = #{isRSystem}</if>
+            <if test="otherSystem != null  and otherSystem != ''">and other_system = #{otherSystem}</if>
+            <if test="sysid != null  and sysid != ''">and sysid = #{sysid}</if>
+            <if test="xtchangeManagerId != null  and xtchangeManagerId != ''">and xtchange_manager_id =
+                #{xtchangeManagerId}
+            </if>
+            <if test="changeXtorg != null  and changeXtorg != ''">and change_xtorg = #{changeXtorg}</if>
+        </where>
+        order by createtime desc
+    </select>
+
+
+    <select id="selectCmBizSingleByIdApp" parameterType="String" resultMap="CmBizSingleResult">
+        <include refid="selectCmBizSingleVo"/>
+        where c.change_id = #{changeId}
+    </select>
+
+    <select id="selectCmBizSingleById" parameterType="String" resultMap="CmBizSingleResult">
+        select c.*, p.pname applicantName
+        from cm_biz_single c
+                 left join og_person p on c.applicant_id = p.pid
+        where c.change_id = #{changeId}
+    </select>
+
+    <insert id="insertCmBizSingle" parameterType="CmBizSingle">
+        insert into cm_biz_single
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="changeId != null  and changeId != ''">change_id,</if>
+            <if test="changeCode != null  and changeCode != ''">change_code,</if>
+            <if test="createtime != null  and createtime != ''">createtime,</if>
+            <if test="applicationSubmitTime != null  and applicationSubmitTime != ''">application_submit_time,</if>
+            <if test="changeCategoryId != null  and changeCategoryId != ''">change_category_id,</if>
+            <if test="changeStage != null  and changeStage != ''">change_stage,</if>
+            <if test="expectStartTime != null  and expectStartTime != ''">expect_start_time,</if>
+            <if test="applicantId != null  and applicantId != ''">applicant_id,</if>
+            <if test="changeType != null  and changeType != ''">change_type,</if>
+            <if test="changeSingleStauts != null  and changeSingleStauts != ''">change_single_stauts,</if>
+            <if test="importantLev != null  and importantLev != ''">important_lev,</if>
+            <if test="expectEndTime != null  and expectEndTime != ''">expect_end_time,</if>
+            <if test="closuerOften != null  and closuerOften != ''">closuer_often,</if>
+            <if test="changeEquipment != null  and changeEquipment != ''">change_equipment,</if>
+            <if test="equipmentFlag != null  and equipmentFlag != ''">equipment_flag,</if>
+            <if test="groupPerson != null  and groupPerson != ''">group_person,</if>
+            <if test="changeManagerId != null  and changeManagerId != ''">change_manager_id,</if>
+            <if test="changeSingleName != null  and changeSingleName != ''">change_single_name,</if>
+            <if test="changeCauseText != null  and changeCauseText != ''">change_cause_text,</if>
+            <if test="changeDetails != null  and changeDetails != ''">change_details,</if>
+            <if test="changeProgram != null  and changeProgram != ''">change_program,</if>
+            <if test="implementSupviserId != null  and implementSupviserId != ''">implement_supviser_id,</if>
+            <if test="practicleStart != null  and practicleStart != ''">practicle_start,</if>
+            <if test="practicleEnd != null  and practicleEnd != ''">practicle_end,</if>
+            <if test="changeAffectDesccription != null  and changeAffectDesccription != ''">
+                change_affect_desccription,
+            </if>
+            <if test="accessId != null  and accessId != ''">access_id,</if>
+            <if test="notesText != null  and notesText != ''">notes_text,</if>
+            <if test="invalidationMark != null  and invalidationMark != ''">invalidation_mark,</if>
+            <if test="implementorId != null  and implementorId != ''">implementor_id,</if>
+            <if test="createrOrgId != null  and createrOrgId != ''">creater_org_id,</if>
+            <if test="performResult != null  and performResult != ''">perform_result,</if>
+            <if test="checkerId != null  and checkerId != ''">checker_id,</if>
+            <if test="isStop != null  and isStop != ''">is_stop,</if>
+            <if test="changeResource != null  and changeResource != ''">change_resource,</if>
+            <if test="isNotice != null  and isNotice != ''">is_notice,</if>
+            <if test="changeOrg != null  and changeOrg != ''">change_org,</if>
+            <if test="implementorOrgid != null  and implementorOrgid != ''">implementor_orgid,</if>
+            <if test="checkOrg != null  and checkOrg != ''">check_org,</if>
+            <if test="isRSystem != null  and isRSystem != ''">is_r_system,</if>
+            <if test="otherSystem != null  and otherSystem != ''">other_system,</if>
+            <if test="isStopReal != null  and isStopReal != ''">is_stop_real,</if>
+            <if test="sysname != null ">sysname,</if>
+            <if test="sysid != null ">sysid,</if>
+            <if test="xtchangeManagerId != null  and xtchangeManagerId != ''">xtchange_manager_id,</if>
+            <if test="changeXtorg != null  and changeXtorg != ''">change_xtorg,</if>
+            <if test="isJjbg != null  and isJjbg != ''">is_jjbg,</if>
+            <if test="isJs != null  and isJs != ''">is_js,</if>
+            <if test="changeReason != null  and changeReason != ''">change_reason,</if>
+            <if test="fucheckerId != null  and fucheckerId != ''">fuchecker_id,</if>
+            <if test="ifOasis != null  and ifOasis != ''">if_oasis,</if>
+            <if test="ifAuto != null  and ifAuto != ''">if_auto,</if>
+            <if test="ifMastart != null  and ifMastart != ''">if_mastart,</if>
+            <if test="ifAddWork != null  and ifAddWork != ''">if_add_work,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="changeId != null  and changeId != ''">#{changeId},</if>
+            <if test="changeCode != null  and changeCode != ''">#{changeCode},</if>
+            <if test="createtime != null  and createtime != ''">#{createtime},</if>
+            <if test="applicationSubmitTime != null  and applicationSubmitTime != ''">#{applicationSubmitTime},</if>
+            <if test="changeCategoryId != null  and changeCategoryId != ''">#{changeCategoryId},</if>
+            <if test="changeStage != null  and changeStage != ''">#{changeStage},</if>
+            <if test="expectStartTime != null  and expectStartTime != ''">#{expectStartTime},</if>
+            <if test="applicantId != null  and applicantId != ''">#{applicantId},</if>
+            <if test="changeType != null  and changeType != ''">#{changeType},</if>
+            <if test="changeSingleStauts != null  and changeSingleStauts != ''">#{changeSingleStauts},</if>
+            <if test="importantLev != null  and importantLev != ''">#{importantLev},</if>
+            <if test="expectEndTime != null  and expectEndTime != ''">#{expectEndTime},</if>
+            <if test="closuerOften != null  and closuerOften != ''">#{closuerOften},</if>
+            <if test="changeEquipment != null  and changeEquipment != ''">#{changeEquipment},</if>
+            <if test="equipmentFlag != null  and equipmentFlag != ''">#{equipmentFlag},</if>
+            <if test="groupPerson != null  and groupPerson != ''">#{groupPerson},</if>
+            <if test="changeManagerId != null  and changeManagerId != ''">#{changeManagerId},</if>
+            <if test="changeSingleName != null  and changeSingleName != ''">#{changeSingleName},</if>
+            <if test="changeCauseText != null  and changeCauseText != ''">#{changeCauseText},</if>
+            <if test="changeDetails != null  and changeDetails != ''">#{changeDetails},</if>
+            <if test="changeProgram != null  and changeProgram != ''">#{changeProgram},</if>
+            <if test="implementSupviserId != null  and implementSupviserId != ''">#{implementSupviserId},</if>
+            <if test="practicleStart != null  and practicleStart != ''">#{practicleStart},</if>
+            <if test="practicleEnd != null  and practicleEnd != ''">#{practicleEnd},</if>
+            <if test="changeAffectDesccription != null  and changeAffectDesccription != ''">
+                #{changeAffectDesccription},
+            </if>
+            <if test="accessId != null  and accessId != ''">#{accessId},</if>
+            <if test="notesText != null  and notesText != ''">#{notesText},</if>
+            <if test="invalidationMark != null  and invalidationMark != ''">#{invalidationMark},</if>
+            <if test="implementorId != null  and implementorId != ''">#{implementorId},</if>
+            <if test="createrOrgId != null  and createrOrgId != ''">#{createrOrgId},</if>
+            <if test="performResult != null  and performResult != ''">#{performResult},</if>
+            <if test="checkerId != null  and checkerId != ''">#{checkerId},</if>
+            <if test="isStop != null  and isStop != ''">#{isStop},</if>
+            <if test="changeResource != null  and changeResource != ''">#{changeResource},</if>
+            <if test="isNotice != null  and isNotice != ''">#{isNotice},</if>
+            <if test="changeOrg != null  and changeOrg != ''">#{changeOrg},</if>
+            <if test="implementorOrgid != null  and implementorOrgid != ''">#{implementorOrgid},</if>
+            <if test="checkOrg != null  and checkOrg != ''">#{checkOrg},</if>
+            <if test="isRSystem != null  and isRSystem != ''">#{isRSystem},</if>
+            <if test="otherSystem != null  and otherSystem != ''">#{otherSystem},</if>
+            <if test="isStopReal != null  and isStopReal != ''">#{isStopReal},</if>
+            <if test="sysname != null ">#{sysname},</if>
+            <if test="sysid != null ">#{sysid},</if>
+            <if test="xtchangeManagerId != null  and xtchangeManagerId != ''">#{xtchangeManagerId},</if>
+            <if test="changeXtorg != null  and changeXtorg != ''">#{changeXtorg},</if>
+            <if test="isJjbg != null  and isJjbg != ''">#{isJjbg},</if>
+            <if test="isJs != null  and isJs != ''">#{isJs},</if>
+            <if test="changeReason != null  and changeReason != ''">#{changeReason},</if>
+            <if test="fucheckerId != null  and fucheckerId != ''">#{fucheckerId},</if>
+            <if test="ifOasis != null  and ifOasis != ''">#{ifOasis},</if>
+            <if test="ifAuto != null  and ifAuto != ''">#{ifAuto},</if>
+            <if test="ifMastart != null  and ifMastart != ''">#{ifMastart},</if>
+            <if test="ifAddWork != null  and ifAddWork != ''">#{ifAddWork},</if>
+        </trim>
+    </insert>
+
+    <update id="updateCmBizSingle" parameterType="CmBizSingle">
+        update cm_biz_single
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="changeCode != null  and changeCode != ''">change_code = #{changeCode},</if>
+            <if test="createtime != null  and createtime != ''">createtime = #{createtime},</if>
+            <if test="applicationSubmitTime != null  and applicationSubmitTime != ''">application_submit_time =
+                #{applicationSubmitTime},
+            </if>
+            <if test="changeCategoryId != null  and changeCategoryId != ''">change_category_id = #{changeCategoryId},
+            </if>
+            <if test="changeStage != null  and changeStage != ''">change_stage = #{changeStage},</if>
+            <if test="expectStartTime != null  and expectStartTime != ''">expect_start_time = #{expectStartTime},</if>
+            <if test="applicantId != null  and applicantId != ''">applicant_id = #{applicantId},</if>
+            <if test="changeType != null  and changeType != ''">change_type = #{changeType},</if>
+            <if test="changeSingleStauts != null  and changeSingleStauts != ''">change_single_stauts =
+                #{changeSingleStauts},
+            </if>
+            <if test="importantLev != null  and importantLev != ''">important_lev = #{importantLev},</if>
+            <if test="expectEndTime != null  and expectEndTime != ''">expect_end_time = #{expectEndTime},</if>
+            <if test="closuerOften != null ">closuer_often = #{closuerOften},</if>
+            <if test="changeEquipment != null  and changeEquipment != ''">change_equipment = #{changeEquipment},</if>
+            <if test="equipmentFlag != null  and equipmentFlag != ''">equipment_flag = #{equipmentFlag},</if>
+            <if test="groupPerson != null  and groupPerson != ''">group_person = #{groupPerson},</if>
+            <if test="changeManagerId != null  and changeManagerId != ''">change_manager_id = #{changeManagerId},</if>
+            <if test="changeSingleName != null  and changeSingleName != ''">change_single_name = #{changeSingleName},
+            </if>
+            <if test="changeCauseText != null  and changeCauseText != ''">change_cause_text = #{changeCauseText},</if>
+            <if test="changeDetails != null  and changeDetails != ''">change_details = #{changeDetails},</if>
+            <if test="changeProgram != null  and changeProgram != ''">change_program = #{changeProgram},</if>
+            <if test="implementSupviserId != null  and implementSupviserId != ''">implement_supviser_id =
+                #{implementSupviserId},
+            </if>
+            <if test="practicleStart != null  and practicleStart != ''">practicle_start = #{practicleStart},</if>
+            <if test="practicleEnd != null  and practicleEnd != ''">practicle_end = #{practicleEnd},</if>
+            <if test="changeAffectDesccription != null  and changeAffectDesccription != ''">change_affect_desccription =
+                #{changeAffectDesccription},
+            </if>
+            <if test="accessId != null  and accessId != ''">access_id = #{accessId},</if>
+            <if test="notesText != null  and notesText != ''">notes_text = #{notesText},</if>
+            <if test="invalidationMark != null  and invalidationMark != ''">invalidation_mark = #{invalidationMark},
+            </if>
+            <if test="implementorId != null  and implementorId != ''">implementor_id = #{implementorId},</if>
+            <if test="createrOrgId != null  and createrOrgId != ''">creater_org_id = #{createrOrgId},</if>
+            <if test="performResult != null  and performResult != ''">perform_result = #{performResult},</if>
+            <if test="checkerId != null  and checkerId != ''">checker_id = #{checkerId},</if>
+            <if test="isStop != null  and isStop != ''">is_stop = #{isStop},</if>
+            <if test="changeResource != null  and changeResource != ''">change_resource = #{changeResource},</if>
+            <if test="isNotice != null  and isNotice != ''">is_notice = #{isNotice},</if>
+            <if test="changeOrg != null  and changeOrg != ''">change_org = #{changeOrg},</if>
+            <if test="implementorOrgid != null  and implementorOrgid != ''">implementor_orgid = #{implementorOrgid},
+            </if>
+            <if test="checkOrg != null  and checkOrg != ''">check_org = #{checkOrg},</if>
+            <if test="isRSystem != null  and isRSystem != ''">is_r_system = #{isRSystem},</if>
+            <if test="otherSystem != null  and otherSystem != ''">other_system = #{otherSystem},</if>
+            <if test="isStopReal != null  and isStopReal != ''">is_stop_real = #{isStopReal},</if>
+            <if test="sysname != null ">sysname = #{sysname},</if>
+            <if test="sysid != null ">sysid = #{sysid},</if>
+            <if test="xtchangeManagerId != null  and xtchangeManagerId != ''">xtchange_manager_id =
+                #{xtchangeManagerId},
+            </if>
+            <if test="changeXtorg != null  and changeXtorg != ''">change_xtorg = #{changeXtorg},</if>
+            <if test="isJjbg != null  and isJjbg != ''">is_jjbg = #{isJjbg},</if>
+            <if test="isJs != null  and isJs != ''">is_js = #{isJs},</if>
+            <if test="changeReason != null  and changeReason != ''">change_reason = #{changeReason},</if>
+            <if test="fucheckerId != null  and fucheckerId != ''">fuchecker_id = #{fucheckerId},</if>
+            <if test="fucheckerFlag != null  and fucheckerFlag != ''">fuchecker_flag = #{fucheckerFlag},</if>
+            <if test="ifOasis != null  and ifOasis != ''">if_oasis = #{ifOasis},</if>
+            <if test="ifAuto != null  and ifAuto != ''">if_auto = #{ifAuto},</if>
+            <if test="ifMastart != null  and ifMastart != ''">if_mastart = #{ifMastart},</if>
+            <if test="ifAddWork != null  and ifAddWork != ''">if_add_work = #{ifAddWork},</if>
+        </trim>
+        where change_id = #{changeId}
+    </update>
+
+    <delete id="deleteCmBizSingleById" parameterType="String">
+        delete
+        from cm_biz_single
+        where change_id = #{changeId}
+    </delete>
+
+    <delete id="deleteCmBizSingleByIds" parameterType="String">
+        delete from cm_biz_single where change_id in
+        <foreach item="changeId" collection="array" open="(" separator="," close=")">
+            #{changeId}
+        </foreach>
+    </delete>
+    <!-- 我的变更单查询-->
+    <select id="selectMyCmBizSingleList" parameterType="CmBizSingle" resultMap="CmBizSingleResult">
+        <include refid="selectCmBizSingleVo"/>
+        <where>
+            c.invalidation_mark='1'
+            <if test="applicantId != null  and applicantId != ''">
+                and c.applicant_id = #{applicantId}
+            </if>
+            <if test="changeSingleName != null  and changeSingleName != ''">
+                and c.change_single_name like concat(concat('%', #{changeSingleName}), '%')
+            </if>
+            <if test="changeSingleStauts != null  and changeSingleStauts != ''">
+                and c.change_single_stauts = #{changeSingleStauts}
+            </if>
+            <if test="changeType != null  and changeType != ''">
+                and c.change_type = #{changeType}
+            </if>
+            <if test="changeResource != null  and changeResource != ''">
+                and c.change_resource = #{changeResource}
+            </if>
+            <if test="isNotice != null  and isNotice != ''">
+                and c.is_notice = #{isNotice}
+            </if>
+            <if test="changeCategoryId != null  and changeCategoryId != ''">
+                and c.change_category_id = #{changeCategoryId}
+            </if>
+            <if test="params.startCreatTime != null and params.startCreatTime != ''"><!-- 创建时间起始检索 -->
+                and createtime &gt;= #{params.startCreatTime}
+            </if>
+            <if test="params.endCreatTime != null and params.endCreatTime != ''"><!-- 创建时间起始检索 -->
+                and createtime &lt;= #{params.endCreatTime}
+            </if>
+            <if test="changeManagerId != null  and changeManagerId != ''">
+                and c.change_manager_id = #{changeManagerId}
+            </if>
+            <if test="checkerId != null  and checkerId != ''">
+                and c.checker_id = #{checkerId}
+            </if>
+            <if test="params.cmbizIds != null and params.cmbizIds != ''">
+                AND c.change_id IN
+                <foreach collection="params.cmbizIds" item="cmbizId" open="(" separator="," close=")">
+                    #{cmbizId}
+                </foreach>
+            </if>
+            <if test="fucheckerId != null  and fucheckerId != ''">
+                and c.fuchecker_id = #{fucheckerId}
+            </if>
+            <if test="fucheckerFlag != null  and fucheckerFlag != ''">
+                and c.fuchecker_flag = #{fucheckerFlag}
+            </if>
+            <if test="changeCode != null  and changeCode != ''">
+                and c.change_code like concat(concat('%', #{changeCode}), '%')
+            </if>
+        </where>
+        ORDER BY createtime DESC
+    </select>
+    <select id="selectMyCmBizSingleListMysql" parameterType="CmBizSingle" resultMap="CmBizSingleResult">
+        <include refid="selectCmBizSingleVoMysql"/>
+        <where>
+            c.invalidation_mark='1'
+            <if test="applicantId != null  and applicantId != ''">
+                and c.applicant_id = #{applicantId}
+            </if>
+            <if test="changeSingleName != null  and changeSingleName != ''">
+                and c.change_single_name like concat(concat('%', #{changeSingleName}), '%')
+            </if>
+            <if test="changeSingleStauts != null  and changeSingleStauts != ''">
+                and c.change_single_stauts = #{changeSingleStauts}
+            </if>
+            <if test="changeType != null  and changeType != ''">
+                and c.change_type = #{changeType}
+            </if>
+            <if test="changeResource != null  and changeResource != ''">
+                and c.change_resource = #{changeResource}
+            </if>
+            <if test="isNotice != null  and isNotice != ''">
+                and c.is_notice = #{isNotice}
+            </if>
+            <if test="changeCategoryId != null  and changeCategoryId != ''">
+                and c.change_category_id = #{changeCategoryId}
+            </if>
+            <if test="params.startCreatTime != null and params.startCreatTime != ''"><!-- 创建时间起始检索 -->
+                and createtime &gt;= #{params.startCreatTime}
+            </if>
+            <if test="params.endCreatTime != null and params.endCreatTime != ''"><!-- 创建时间起始检索 -->
+                and createtime &lt;= #{params.endCreatTime}
+            </if>
+            <if test="changeManagerId != null  and changeManagerId != ''">
+                and c.change_manager_id = #{changeManagerId}
+            </if>
+            <if test="checkerId != null  and checkerId != ''">
+                and c.checker_id = #{checkerId}
+            </if>
+            <if test="params.cmbizIds != null and params.cmbizIds != ''">
+                AND c.change_id IN
+                <foreach collection="params.cmbizIds" item="cmbizId" open="(" separator="," close=")">
+                    #{cmbizId}
+                </foreach>
+            </if>
+            <if test="fucheckerId != null  and fucheckerId != ''">
+                and c.fuchecker_id = #{fucheckerId}
+            </if>
+            <if test="fucheckerFlag != null  and fucheckerFlag != ''">
+                and c.fuchecker_flag = #{fucheckerFlag}
+            </if>
+            <if test="changeCode != null  and changeCode != ''">
+                and c.change_code like concat(concat('%', #{changeCode}), '%')
+            </if>
+        </where>
+        ORDER BY createtime DESC
+    </select>
+
+    <!-- 给查询详情使用-->
+    <select id="selectCmBizSingleByIdById" parameterType="String" resultMap="CmBizSingleResult">
+        <include refid="selectCmBizSingleVo"/>
+        where c.change_id = #{changeId}
+    </select>
+    <select id="selectCmBizSingleByIdByIdMysql" parameterType="String" resultMap="CmBizSingleResult">
+        <include refid="selectCmBizSingleVoMysql"/>
+        where c.change_id = #{changeId}
+    </select>
+
+    <resultMap type="BgJSEfficiency" id="BgJSEfficiencyResult">
+        <result property="orgname" column="orgname"/>
+        <result property="cmBizBgNum" column="cmBizBgNum"/>
+        <result property="isJSNum" column="isJSNum"/>
+        <result property="isNotJSNum" column="isNotJSNum"/>
+        <result property="countEfficiency" column="countEfficiency"/>
+    </resultMap>
+
+    <!-- 查询及时效率报表-->
+    <select id="selectCmBizJs" parameterType="BgJSEfficiency" resultMap="BgJSEfficiencyResult">
+        select o.orgname orgname,
+        COUNT(c.CHANGE_CODE) AS cmBizBgNum,
+        sum(CASE WHEN c.IS_JS = '1' THEN 1 ELSE 0 END) AS isJSNum,
+        sum(CASE WHEN c.IS_JS = '0' THEN 1 ELSE 0 END) AS isNotJSNum,
+        ROUND((SUM(CASE WHEN c.IS_JS = '1' THEN 1 ELSE 0 END) / COUNT(c.CHANGE_CODE) * 100),2)||'%' AS countEfficiency
+        FROM CM_BIZ_SINGLE c
+        left join og_org o on c.CREATER_ORG_ID=o.orgid
+        <where>
+            and c.invalidation_mark = '1'
+            <if test="params.startCreatTime != null and params.startCreatTime != ''"><!-- 创建时间起始检索 -->
+                and c.EXPECT_END_TIME &gt;= #{params.startCreatTime}
+            </if>
+            <if test="params.endCreatTime != null and params.endCreatTime != ''"><!-- 创建时间起始检索 -->
+                and c.EXPECT_END_TIME &lt;= #{params.endCreatTime}
+            </if>
+            group by o.orgname
+        </where>
+    </select>
+
+    <resultMap type="BgJJEfficiency" id="BgJJEfficiencyResult">
+        <result property="orgname" column="orgname"/>
+        <result property="cmBizBgNum" column="cmBizBgNum"/>
+        <result property="isJJNum" column="isJJNum"/>
+        <result property="isValidJJNum" column="isValidJJNum"/>
+        <result property="countEfficiency" column="countEfficiency"/>
+    </resultMap>
+
+    <!-- 查询紧急占比报表报表-->
+    <select id="selectCmBizJJ" parameterType="BgJJEfficiency" resultMap="BgJJEfficiencyResult">
+        select o.orgname orgname,
+        COUNT(c.CHANGE_CODE) AS cmBizBgNum,
+        sum(CASE
+        WHEN c.IS_JJBG = '1' THEN
+        1
+        ELSE
+        0
+        END) AS isJJNum,
+        sum(CASE
+        WHEN c.CHANGE_REASON not in ('0100', '0200', '0300') and
+        c.IS_JJBG = '1' THEN
+        1
+        ELSE
+        0
+        END) AS isValidJJNum,
+        ROUND((SUM(CASE
+        WHEN c.CHANGE_REASON not in ('0100', '0200', '0300') and
+        c.IS_JJBG = '1' THEN
+        1
+        ELSE
+        0
+        END) / COUNT(c.CHANGE_CODE) * 100),
+        2)||'%' AS countEfficiency
+        FROM CM_BIZ_SINGLE c
+        left join og_org o on c.CREATER_ORG_ID=o.orgid
+        <where>
+            and c.invalidation_mark = '1'
+            and c.change_single_stauts in ('0801', '0802', '0803')
+            <if test="params.startCreatTime != null and params.startCreatTime != ''"><!-- 创建时间起始检索 -->
+                and c.PRACTICLE_END &gt;= #{params.startCreatTime}
+            </if>
+            <if test="params.endCreatTime != null and params.endCreatTime != ''"><!-- 创建时间起始检索 -->
+                and c.PRACTICLE_END &lt;= #{params.endCreatTime}
+            </if>
+            group by o.orgname
+        </where>
+    </select>
+    <!--查询代办任务专用-->
+    <select id="getFlowCmBiz" parameterType="CmBizSingle" resultMap="CmBizSingleResult">
+        <include refid="selectCmBizSingleVo"/>
+        <where>
+            c.invalidation_mark='1'
+            <if test="changeId != null  and changeId != ''">
+                and c.change_id = #{changeId}
+            </if>
+            <if test="changeCode != null  and changeCode != ''">
+                and c.change_code like concat(concat('%', #{changeCode}), '%')
+            </if>
+            <if test="changeSingleName != null  and changeSingleName != ''">
+                and c.change_single_name like concat(concat('%', #{changeSingleName}), '%')
+            </if>
+            <if test="changeSingleStauts != null  and changeSingleStauts != ''">
+                and c.change_single_stauts = #{changeSingleStauts}
+            </if>
+            <if test="changeType != null  and changeType != ''">
+                and c.change_type = #{changeType}
+            </if>
+            <if test="changeResource != null  and changeResource != ''">
+                and c.change_resource = #{changeResource}
+            </if>
+            <if test="isNotice != null  and isNotice != ''">
+                and c.is_notice = #{isNotice}
+            </if>
+            <if test="changeCategoryId != null  and changeCategoryId != ''">
+                and c.change_category_id = #{changeCategoryId}
+            </if>
+            <if test="createtime != null  and createtime != ''">
+                and c.createtime like concat(concat('%', #{createtime}), '%')
+            </if>
+        </where>
+    </select>
+    <select id="getFlowCmBizMysql" parameterType="CmBizSingle" resultMap="CmBizSingleResult">
+        <include refid="selectCmBizSingleVoMysql"/>
+        <where>
+            c.invalidation_mark='1'
+            <if test="changeId != null  and changeId != ''">
+                and c.change_id = #{changeId}
+            </if>
+            <if test="changeCode != null  and changeCode != ''">
+                and c.change_code like concat(concat('%', #{changeCode}), '%')
+            </if>
+            <if test="changeSingleName != null  and changeSingleName != ''">
+                and c.change_single_name like concat(concat('%', #{changeSingleName}), '%')
+            </if>
+            <if test="changeSingleStauts != null  and changeSingleStauts != ''">
+                and c.change_single_stauts = #{changeSingleStauts}
+            </if>
+            <if test="changeType != null  and changeType != ''">
+                and c.change_type = #{changeType}
+            </if>
+            <if test="changeResource != null  and changeResource != ''">
+                and c.change_resource = #{changeResource}
+            </if>
+            <if test="isNotice != null  and isNotice != ''">
+                and c.is_notice = #{isNotice}
+            </if>
+            <if test="changeCategoryId != null  and changeCategoryId != ''">
+                and c.change_category_id = #{changeCategoryId}
+            </if>
+            <if test="createtime != null  and createtime != ''">
+                and c.createtime like concat(concat('%', #{createtime}), '%')
+            </if>
+        </where>
+    </select>
+
+    <!--根据单号查询-->
+    <select id="getCmBizBycChangeCode" parameterType="String" resultMap="CmBizSingleResult">
+        <include refid="selectCmBizSingleVo"/>
+        where c.change_code = #{changeCode}
+    </select>
+    <!--根据ID集合查询变更单-->
+    <select id="selectCmBizByIdList" parameterType="CmBizSingle" resultMap="CmBizSingleResult">
+        <include refid="selectCmBizSingleVo"/>
+        where c.change_id in
+        <foreach collection="params.subList" item="subList" index="index" open="(" close=")" separator=",">
+            #{subList}
+        </foreach>
+        <if test="changeCode != null  and changeCode != ''">
+            and (c.change_code like concat(concat('%', #{changeCode}), '%') or c.change_single_name like
+            concat(concat('%', #{changeCode}), '%'))
+        </if>
+    </select>
+</mapper>

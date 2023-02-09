@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:include="include :: header('添加值班组角色')" />
+    <th:block th:include="include :: layout-latest-css" />
+    <th:block th:include="include :: ztree-css" />
+</head>
+<body class="gray-bg">
+<div class="ui-layout-center">
+    <div class="container-div">
+        <div class="row">
+            <div class="col-sm-12 select-table table-striped">
+                <table id="bootstrap-table"></table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: layout-latest-js" />
+<th:block th:include="include :: ztree-js" />
+<script th:inline="javascript">
+    var prefix = ctx + "monitor/dutyRole";
+     var dutyType=[[${@pubParaValue.selectPubParaValueByParaName('event_group_type')}]];
+    var userId=[[${userId}]];
+    $(function() {
+        var options = {
+            url: prefix + "/selectDutyList/"+userId,
+            createUrl: prefix + "/add",
+            removeUrl: prefix + "/remove",
+            singleSelect: true,
+            clickToSelect: true,
+            showSearch: false,
+            showRefresh: true,
+            showToggle: false,
+            showColumns: false,
+            pageSize: 10,
+            pageList: [10,20,50],
+            modalName: "值班组",
+            columns: [
+                {
+                    checkbox: true
+                },
+                {
+                    field: 'dutyId',
+                    title: '主键ID',
+                    visible : false
+                },
+                {
+                    field: 'groupId',
+                    title: '工作组ID',
+                    visible : false
+                },
+                {
+                    field: 'monitorTypeAccountId',
+                    title: '类型字典ID',
+                    visible : false
+                },
+                {
+                    field: 'dutyName',
+                    title: '值班组名称'
+                },
+                {
+                    field: 'dutyType',
+                    title: '值班组类型',
+                    formatter: function(value, row, index) {
+                        return $.table.selectPubParaValueData(dutyType,value);
+                    }
+                }]
+        };
+        $.table.init(options);
+    });
+
+    // 调用后台保存值班组数据
+    function submitHandler() {
+        var dutyType=$.table.selectColumns("dutyType");
+         var groupId="";
+        if($.common.isEmpty($.table.selectColumns("monitorTypeAccountId"))){
+             groupId = $.table.selectColumns("groupId");
+        }else{
+             groupId = $.table.selectColumns("monitorTypeAccountId");
+       }
+        var dutyName = $.table.selectColumns("dutyName");
+        window.parent.$("#groupId").val(groupId);
+        window.parent.$("#dutyName").val(dutyName);
+        window.parent.$("#dutyTypeOriginal").val(dutyType);
+        window.parent.changeType(dutyType);
+        $.modal.close();
+    }
+
+</script>
+</body>
+</html>

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('业务转发')" />
+    <th:block th:include="include :: datetimepicker-css" />
+    <th:block th:include="include :: ztree-css" />
+    <th:block th:include="include :: summernote-css" />
+    <th:block th:include="include :: select2-css" />
+</head>
+<body class="white-bg">
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+    <form class="form-horizontal">
+        <input type="hidden" id="changeSingleId" th:value="${changeSingleId}"/>
+        <input type="hidden" id="currentGroupId" th:value="${currentGroupId}"/>
+        <div class="form-group">
+            <label for="checkManager" class="col-sm-2 control-label" style="color: red;">业务审核人：</label>
+            <div class="col-sm-10">
+                <input type="hidden" id="checkManager">
+                <input type="text" class="form-control" id="showCheckManager" placeholder="点击选择业务审核人" style="background-color: #fff; opacity: 1;" readonly onclick="selectUser()">
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="LOG_performDesc" class="col-sm-2 control-label  text-right " style="color: red;">转发说明：</label>
+            <div class="col-sm-10">
+                <textarea class="form-control" rows="5" id="LOG_performDesc" maxlength="126"></textarea>
+            </div>
+        </div>
+        <div class="form-group">
+        <div class="col-sm-12" style="text-align: center">
+            <button type="button" class="btn btn-sm btn-success" onclick="forwardBusinessBtn()">业务转发</button>
+            </div>
+        </div>
+     </form>
+</div>
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: datetimepicker-js" />
+<th:block th:include="include :: summernote-js" />
+<th:block th:include="include :: select2-js" />
+<script type="text/javascript">
+
+    var prefix = ctx + "bg/sjbg";
+
+    /**
+     *业务转发
+     */
+    function forwardBusinessBtn() {
+
+        var checkManager = $('#checkManager').val();
+
+        if(checkManager.trim()==''){
+            $.modal.alertError('请选择业务审核人 ');
+            return;
+        }
+        var logPerformDesc = $('#LOG_performDesc').val().trim();
+        if(logPerformDesc==''){
+            $.modal.alertError('请输入转发说明 ');
+            return;
+        }
+
+        if(getValueLen(logPerformDesc)>256){
+            $.modal.alertError('【转发说明】最大长度不能超过256 ');
+            return;
+        }
+        var data = {};
+        //获取数据变更单Id
+        var changeSingleId = $('#changeSingleId').val();
+        data.changeSingleId = changeSingleId;
+        data.changeSingleStatus = '02'; //业务转发状态待审核
+        data.logPerformDesc = logPerformDesc;
+        data.checkManager = checkManager;
+        //处理通过
+        $.operate.save(prefix + "/auditPassOrReturnOrVeto",data);
+    }
+
+    function selectUser() {
+        var url = prefix+'/selectUser/1';
+        $.modal.open("选择人员", url );
+    }
+
+    /**
+     * 输入空值校验
+     * @param valueStr
+     * @returns {boolean}
+     */
+    function  isEmpty(valueStr) {
+        if(valueStr=='' || valueStr==null){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    /**
+     * 获取输入数值的长度
+     * @param valueStr
+     * @returns {number}
+     */
+    function getValueLen(valueStr){
+        return isEmpty(valueStr)?0:valueStr.length;
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,910 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+	<th:block th:include="include :: header('系统条线故障添加')" />
+	<th:block th:include="include :: select2-css" />
+    <th:block th:include="include :: summernote-css" />
+    <th:block th:include="include :: datetimepicker-css" />
+</head>
+<body>
+    <div class="main-content">
+        <form id="form-line-add" class="form-horizontal">
+            <input id="ogEmerg" type="hidden" th:value="*{ogLine}"/>
+            <input id="lineId" type="hidden" name="lineId">
+            <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+                <div class="panel-group">
+                    <div class="panel panel-default">
+                        <div class="panel-heading" style="green-color: #3c8dbc" data-toggle="collapse" data-target="#collapse1">
+                            <h4 class="panel-title" >
+                                系统线条故障登记
+                            </h4>
+                        </div>
+                        <div id="collapse1" class="panel-collapse in">
+                            <div class="panel-body">
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label is-required">中心：</label>
+                                            <div class="col-sm-8 ">
+                                                <select class="form-control" id="lineCore" name="lineCore" th:with="type=${@dict.getParaType('Line_Center')}" required>
+                                                    <option value=""></option>
+                                                    <option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label is-required">环境：</label>
+                                            <div class="col-sm-8">
+                                                <select class="form-control" id="lineAmbient" name="lineAmbient" th:with="type=${@dict.getParaType('UPGRADE_ENVIRONMENT')}" required>
+                                                    <option value=""></option>
+                                                    <option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label is-required">处室：</label>
+                                            <div class="col-sm-8">
+                                                <select class="form-control" id="lineOffice" name="lineOffice" th:with="type=${@dict.getParaType('Line_org')}" required>
+                                                    <option value=""></option>
+                                                    <option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label is-required">系统名称：</label>
+                                            <div class="col-sm-8">
+                                                <input id="sysId" name="sysId" type="hidden" class="form-control" />
+                                                <input id="sysName" name="sysName" type="text" style="background-color: #ffffff"
+                                                       class="form-control" onclick="selectOneApplication()" readonly required/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <div class="form-group" >
+                                            <label class="col-sm-4 control-label is-required">用途：</label>
+                                            <div class="col-sm-8">
+                                                <input id="purpose" name="purpose" class="form-control" maxlength="100" type="text" required>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label is-required">设备位置：</label>
+                                            <div class="col-sm-8">
+                                                <input id="equipment" name="equipment" class="form-control" maxlength="100" type="text" required>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label is-required">设备类型：</label>
+                                            <div class="col-sm-8">
+                                                <select class="form-control" id="lineTypeOne" name="lineTypeOne" th:with="type=${@dict.getParaType('Line_type_one')}">
+                                                    <option value=""></option>
+                                                    <option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}" ></option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label is-required">故障是否明确：</label>
+                                            <div class="col-sm-8">
+                                                <select class="form-control" id="lineIsnoOne" name="lineIsnoOne" th:with="type=${@dict.getParaType('Line_Isno')}">
+                                                    <option value=""></option>
+                                                    <option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}" ></option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label is-required">报修时间：</label>
+                                            <div class="col-sm-8">
+                                                <input id="startTime" name="startTime" class="form-control" onchange="jisuan()" type="text" th:value="*{nowTime}" placeholder="yyyy-MM-dd HH:mm:ss" style="background-color: #fff; opacity: 1;" readonly required>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label is-required">确认故障时间：</label>
+                                            <div class="col-sm-8">
+                                                <input id="affirmRepairsTime" name="affirmRepairsTime" class="form-control" style="background-color: #fff; opacity: 1;" type="text" placeholder="yyyy-MM-dd HH:mm:ss" readonly required>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="rwo">
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label is-required">备件到场时间：</label>
+                                            <div class="col-sm-8">
+                                                <input id="presentTime" name="presentTime" class="form-control" style="background-color: #fff; opacity: 1;" type="text" placeholder="yyyy-MM-dd HH:mm:ss" readonly required>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label is-required">人员到场时间：</label>
+                                            <div class="col-sm-8"><!--onchange="personDP()"-->
+                                                <input id="personPresentTime" name="personPresentTime" type="text" style="background-color: #fff; opacity: 1;"  placeholder="yyyy-MM-dd HH:mm:ss" class="form-control" readonly required>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label is-required">结束时间：</label>
+                                            <div class="col-sm-8">
+                                                <input id="endTime" name="endTime" type="text" style="background-color: #fff; opacity: 1;" placeholder="yyyy-MM-dd HH:mm:ss" class="form-control" readonly required>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label is-required">备件耗时（分钟）：</label>
+                                            <div class="col-sm-8">
+                                                <input id="spareTime" name="spareTime" class="form-control" type="text" readonly required>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label is-required">故障处理耗时（分钟）：</label>
+                                            <div class="col-sm-8">
+                                                <input id="elapsedTime" name="elapsedTime" type="text" class="form-control" readonly required>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label is-required">人员响应耗时（分钟）：</label>
+                                            <div class="col-sm-8">
+                                                <input id="personAnswerTime" name="personAnswerTime" type="text" class="form-control" readonly required>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label is-required">故障分类：</label>
+                                            <div class="col-sm-8">
+                                                <select class="form-control" id="classIfication" name="classIfication" th:with="type=${@dict.getParaType('Line_Type')}" required>
+                                                    <option value=""></option>
+                                                    <option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label is-required">故障点：</label>
+                                            <div class="col-sm-8">
+                                               <select class="form-control" id="classDot" name="classDot" th:with="type=${@dict.getParaType('Line_Dot')}" required>
+                                                    <option value=""></option>
+                                                    <option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+                                               </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label is-required">处置措施：</label>
+                                            <div class="col-sm-8">
+                                                <select class="form-control" id="treatment" name="treatment" th:with="type=${@dict.getParaType('Line_Treatment')}" required>
+                                                    <option value=""></option>
+                                                    <option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label is-required">通报情况：</label>
+                                            <div class="col-sm-8">
+                                                <select class="form-control" id="briefing" name="briefing" th:with="type=${@dict.getParaType('Line_Isno')}" required>
+                                                    <option value=""></option>
+                                                    <option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label is-required">是否影响业务连接性：</label>
+                                            <div class="col-sm-8">
+                                                <select class="form-control" id="continuity" name="continuity" th:with="type=${@dict.getParaType('Line_Isno')}" required>
+                                                    <option value=""></option>
+                                                    <option th:each="dict : ${type}" th:selected="${dict.value} == 2" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label is-required">值班人员：</label>
+                                            <div class="col-sm-8">
+                                                <input id="pId" name="pId" type="text" class="form-control" maxlength="12" required>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label is-required">设备型号：</label>
+                                            <div class="col-sm-8">
+                                                <input id="unitType" name="unitType" type="text" maxlength="100" class="form-control" required>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label is-required">序列号：</label>
+                                            <div class="col-sm-8">
+                                                <input id="seriesNumber" name="seriesNumber" type="text" maxlength="100" class="form-control" required>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label is-required">所属公司：</label>
+                                            <div class="col-sm-8">
+                                                <input id="companies" name="companies" type="hidden" class="form-control" />
+                                                <input id="orgNameOne" name="orgNameOne" type="text" class="form-control" onclick="selectDeptTree(this)" style="background-color: #fff; opacity: 1;" readonly required>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label is-required">监控是否正常报警：</label>
+                                            <div class="col-sm-8">
+                                                <select class="form-control" id="monitoring" name="monitoring" th:with="type=${@dict.getParaType('Line_Isno')}" required>
+                                                    <option value=""></option>
+                                                    <option th:each="dict : ${type}" th:selected="${dict.value} == 1" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label is-required">CaseID：</label>
+                                            <div class="col-sm-8">
+                                                <input id="CaseId" name="CaseId" type="text" maxlength="100" class="form-control" required>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label is-required">故障处理人：</label>
+                                            <div class="col-sm-8">
+                                                <input id="handler" name="handler" type="text" maxlength="100" class="form-control" required>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label is-required">处理结果：</label>
+                                            <div class="col-sm-8">
+                                                <select class="form-control" id="handlerStructure" name="handlerStructure" th:with="type=${@dict.getParaType('Line_Handler')}" required>
+                                                    <option value=""></option>
+                                                    <option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label">是否消磁：</label>
+                                            <div class="col-sm-8">
+                                                <select class="form-control" id="degaussing" name="degaussing" th:with="type=${@dict.getParaType('Line_Isno')}">
+                                                    <option value=""></option>
+                                                    <option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label">变更单号：</label>
+                                            <div class="col-sm-8">
+                                                <input id="bgId" name="bgId" type="text" maxlength="100" class="form-control"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label">维修超时原因：</label>
+                                            <div class="col-sm-8">
+                                                <input id="maintenance" name="maintenance" type="text" maxlength="100" class="form-control"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label is-required">是否三方维保：</label>
+                                            <div class="col-sm-8">
+                                                <select class="form-control" id="threeParties" name="threeParties" th:with="type=${@dict.getParaType('Line_Isno')}" required onchange="infor()">
+                                                    <option value=""></option>
+                                                    <option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}" ></option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group" id="forin">
+                                            <label class="col-sm-4 control-label">三方维保厂商：</label>
+                                            <div class="col-sm-8">
+                                                <input id="manufacturer" name="manufacturer" type="hidden" class="form-control" />
+                                                <input id="orgNameTwo" name="orgNameTwo" type="text" class="form-control" onclick="selectDeptTreeTwo(this)" style="background-color: #fff; opacity: 1;" readonly>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <h4 class="form-header h4">备注</h4>
+                                    <div class="col-md-12" style="margin:15px 0px;text-align: center">
+                                        <div class="col-sm-10">
+                                            <span onclick="doradio()" style="color: #ff0000;">备注方式：</span>
+                                            <input type="radio" name="remarkTwo" onchange="ChangeValue(this)" id="remerkOne" value="核实监控"> 核实监控
+                                            <input type="radio" name="remarkTwo" onchange="ChangeValue(this)" id="remarkTwo" value="核实报修流程"> 核实报修流程
+                                            <input type="radio" name="remarkTwo" onchange="ChangeValue(this)" id="remarkThree" value="和管理员协商确定更换时间"> 和管理员协商确定更换时间
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-12">
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label">备注：</label>
+                                            <div class="col-sm-10">
+                                                <textarea rows="6" cols="20" id="remark" placeholder="输入固定的信息或者自己手动输入"
+                                                          name="remark" maxlength="125" class="form-control" onchange="dochange(this.value)"></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            <h4 class="form-header h4">下一步操作信息</h4>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label class="col-sm-4 control-label text-right is-required">审批机构：</label>
+                                        <div class="col-sm-8">
+                                            <input name="orgIdNameThree"  id="orgIdNameThree" class="form-control" style="background-color: #fff; opacity: 1;" onclick="selectDept()" readonly type="text" required>
+                                            <input name="orgId" id="orgId" th:value="${orgId}" hidden >
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label class="col-sm-4 control-label text-right is-required">审批人：</label>
+                                        <div class="col-sm-8">
+                                            <!--<input name="pIdNameOne" id="pIdNameOne" class="form-control" style="background-color: #fff; opacity: 1;" onclick="selectBusinessAudit('orgId','2502','2')" required readonly>
+                                            <input id="pIdTwo" name="pIdTwo" vaule="" hidden>-->
+                                            <select class="form-control" id="pIdTwo" name="pIdTwo" required>
+                                                <option th:each="OgPerson : ${personList}" th:text="${OgPerson.pName}"
+                                                        th:value="${OgPerson.pId}"></option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="row">
+        <div class="col-sm-offset-5 col-sm-10">
+            <button type="button" class="btn btn-sm btn-primary" onclick="submit()"><i class="fa fa-check"></i>提 交</button>
+            <button type="button" class="btn btn-sm btn-primary" onclick="save()"><i class="fa fa-check"></i>暂 存</button>&nbsp;
+            <button type="button" class="btn btn-sm btn-danger" onclick="closeItem()"><i class="fa fa-reply-all"></i>关 闭</button>
+        </div>
+    </div>
+	<th:block th:include="include :: footer" />
+	<th:block th:include="include :: select2-js" />
+    <th:block th:include="include :: summernote-js" />
+    <th:block th:include="include :: datetimepicker-js" />
+	<script>
+	    var prefix = ctx + "line/dj";
+
+        //系统相关
+        var prefix_xt = ctx + "version/public";
+
+        var prefix_attachment = ctx + "pub/attachment";
+        var prefix_ss = ctx + "system/single";
+        var prefix_fmbiz = ctx + "activiti/qingqiu";
+        var prefix_p = ctx + "public";
+
+        //机构里的公司
+        var prefix_version = ctx + "fmbiz";
+
+        /* 选择审批机构树 */
+        function selectDept() {
+            var orgId = $("#orgId").val();
+            var deptId = $.common.isEmpty(orgId) ? "310100001" : $("#orgId").val();
+            var url = ctx + "activiti/qingqiu/selectCheckDeptTreeForCmbizSingle/" + deptId;
+            var options = {
+                title: '选择部门',
+                width: "380",
+                url: url,
+                callBack: doSubmitOne
+            };
+            $.modal.openOptions(options);
+        }
+
+        function doSubmitOne(index, layero) {
+            var tree = layero.find("iframe")[0].contentWindow.$._tree;
+            var body = layer.getChildFrame('body', index);
+            $("#orgId").val(body.find('#treeId').val());
+            $("#orgIdNameThree").val(body.find('#treeName').val());
+            getchangeManager(body.find('#treeId').val());
+            layer.close(index);
+        }
+
+        //获取审批人
+        function getchangeManager(changeOrg) {
+            $.ajax({
+                cache: true,
+                type: "POST",
+                url: prefix_p + "/selectPersonByOrgIdOrOrgLvAndRole",
+                data: {
+                    "orgId": changeOrg,
+                    "rId": "666666",
+                    "pflag": "1",
+                    "params[isselect]": "1"
+                },
+                async: false,
+                error: function (request) {
+                    $.modal.alertError("系统错误");
+                },
+                success: function (data) {
+                    var options = "<option value='" + "" + "'>" + "" + "</option> \n";
+                    $("#pIdTwo").html("");
+                    for (var ak = 0; ak < data.rows.length; ak++) {
+                        options += "<option value='" + data.rows[ak].pId + "'>" + data.rows[ak].pName + "</option> \n";
+                    }
+                    $("#pIdTwo").append(options);
+                }
+            });
+        }
+
+        //人员到场时间的点击事件
+        function personDP() {
+
+            debugger;
+
+            //人员到场时间
+            var personPresentTime = $('#personPresentTime').val();
+            //备件到场时间
+            var presentTime = $('#presentTime').val();
+            //人员到场时间
+            let d1 = personPresentTime.replace(/\-/g, "/");
+            let date1 = new Date(d1);
+            //备件到场时间
+            let d2 = presentTime.replace(/\-/g, "/");
+            let date2 = new Date(d2);
+
+            var dateDiff = date2.getTime() - date1.getTime(); //时间差的毫秒数
+            var dayDiff = Math.floor(dateDiff / (24 * 3600 * 1000)); //计算出相差天数
+            var leave1 = dateDiff % (24 * 3600 * 1000) //计算天数后剩余的毫秒数
+            var hours = Math.floor(leave1 / (3600 * 1000)) //计算出小时数
+
+            //计算相差分钟数
+            var leave2 = leave1 % (3600 * 1000) //计算小时数后剩余的毫秒数
+            var minutes = Math.floor(leave2 / (60 * 1000)) //计算相差分钟数
+
+            //按分钟计算
+            var numberOne = Math.floor(dateDiff / (60 * 1000));
+
+            //计算相差秒数
+            /* var leave3 = leave2 % (60 * 1000) //计算分钟数后剩余的毫秒数
+             var seconds = Math.round(leave3 / 1000)
+             var onttwo =  dayDiff + "天 " + hours + "小时 " + minutes + " 分钟" + seconds + " 秒";
+             console.log(dayDiff + "天 " + hours + "小时 " + minutes + " 分钟" + seconds + " 秒");*/
+
+            var time = "0分";
+
+            //人员到场时间比备件到场时间小
+            if(personPresentTime>presentTime){
+                alert("人员到场时间不能大于备件到场时间哟");
+                $('#personPresentTime').val(null);
+            }
+        }
+
+       /* /!* 选择审批部门树 *!/
+        function selectDeptTree2() {
+            var orgId = $("#orgId").val();
+            var deptId = $.common.isEmpty(orgId) ? "310100001" : $("#orgId").val();
+            var url = ctx + "line/dj/selectCheckDeptTree/" + deptId;
+            var options = {
+                title: '选择部门',
+                width: "380",
+                url: url,
+                callBack: doSubmit1
+            };
+            $.modal.openOptions(options);
+        }
+
+        /!*审批机构赋值*!/
+        function doSubmit1(index, layero){
+            var tree = layero.find("iframe")[0].contentWindow.$._tree;
+            var body = layer.getChildFrame('body', index);
+            $("#orgId").val(body.find('#treeId').val());
+            $("#orgIdNameThree").val(body.find('#treeName').val());
+            $("#pIdTwo").val("");
+            $("#pIdNameOne").val("");
+            layer.close(index);
+        }
+
+        //选择受理人
+        function selectBusinessAudit(ogrId ,rId,pflag) {
+            var ogId = $("#"+ogrId+"").val();
+            if(ogId == ''){
+                $.modal.alertWarning("请先选择所属部门");
+                return;
+            }
+            var url = ctx + "line/dj/selectBusinessAudit"+"?"+"orgId="+encodeURI(encodeURI(ogId))+"&pflag="+pflag+"&rId="+rId;
+            $.modal.open("选择审核人", url);
+        }*/
+
+
+        //备件到场时间
+        $("#presentTime").datetimepicker({
+            format: "yyyy-mm-dd hh:ii:ss",
+            autoclose: true,
+            minView:0,
+            minuteStep:1,
+            //endDate:new Date()
+        }).on('changeDate',function (spareTime) { //changeDate ev
+
+            var affirmRepairsTime = $('#affirmRepairsTime').val();
+            var presentTime = $('#presentTime').val();
+            // 确认故障时间
+            let d1 = affirmRepairsTime.replace(/\-/g, "/");
+            let date1 = new Date(d1);
+
+            // 备件到场时间
+            let d2 = presentTime.replace(/\-/g, "/");
+            let date2 = new Date(d2);
+
+            var dateDiff = date2.getTime() - date1.getTime(); //时间差的毫秒数
+            var dayDiff = Math.floor(dateDiff / (24 * 3600 * 1000)); //计算出相差天数
+            var leave1 = dateDiff % (24 * 3600 * 1000) //计算天数后剩余的毫秒数
+            var hours = Math.floor(leave1 / (3600 * 1000)) //计算出小时数
+
+            //计算相差分钟数
+            var leave2 = leave1 % (3600 * 1000) //计算小时数后剩余的毫秒数
+            var minutes = Math.floor(leave2 / (60 * 1000)) //计算相差分钟数
+
+            //按分钟计算   之前 是 加了个分钟   +”分钟“
+            var numberOne = Math.floor(dateDiff / (60 * 1000));
+
+            //计算相差秒数
+            /* var leave3 = leave2 % (60 * 1000) //计算分钟数后剩余的毫秒数
+             var seconds = Math.round(leave3 / 1000)
+             var onttwo =  dayDiff + "天 " + hours + "小时 " + minutes + " 分钟" + seconds + " 秒";
+             console.log(dayDiff + "天 " + hours + "小时 " + minutes + " 分钟" + seconds + " 秒");*/
+
+            var time = "0";
+
+            if(affirmRepairsTime<=presentTime){
+                $('#spareTime').val(numberOne);
+                if (numberOne=="NaN"){
+                    alert("请先输入确实故障时间哟");
+                    $('#spareTime').val(null);
+                    $('#presentTime').val(null);
+                    return false;
+                }else {
+                    return true;
+                }
+            }else if (numberOne<=time){
+                alert("备件到场时间不能小于确定故障时间哟");
+                $('#spareTime').val(null);
+                $('#presentTime').val(null);
+                return false;
+            }
+        });
+
+        //结束时间
+        $("#endTime").datetimepicker({
+            format: "yyyy-mm-dd hh:ii:ss",
+            autoclose: true,
+            minView:0,
+            minuteStep:1,
+            //endDate:new Date()
+        }).on('changeDate',function (elapsedTime) { //changeDate ev
+
+            //报修时间
+            var startTime = $('#startTime').val();
+            var endTime = $('#endTime').val();
+            // 报修时间
+            let d1 = startTime.replace(/\-/g, "/");
+            let date1 = new Date(d1);
+
+            //结束时间
+            let d3 = endTime.replace(/\-/g, "/");
+            let date3 = new Date(d3);
+
+            //计算 故障处理耗时
+            var dateDiff = date3.getTime() - date1.getTime(); //时间差的毫秒数
+            var dayDiff = Math.floor(dateDiff / (24 * 3600 * 1000)); //计算出相差天数
+            var leave1 = dateDiff % (24 * 3600 * 1000) //计算天数后剩余的毫秒数
+            var hours = Math.floor(leave1 / (3600 * 1000)) //计算出小时数
+
+            //计算相差分钟数
+            var leave2 = leave1 % (3600 * 1000) //计算小时数后剩余的毫秒数
+            var minutes = Math.floor(leave2 / (60 * 1000)) //计算相差分钟数
+
+            //按分钟计算
+            var numberTwo = Math.floor(dateDiff / (60 * 1000));
+
+            var time = "0";
+
+            if(startTime<=endTime){
+                $('#elapsedTime').val(numberTwo);
+                if (numberTwo=="NaN"){
+                    alert("请先输入报修时间哟");
+                    $('#elapsedTime').val(null);
+                    return false;
+                } else {
+                    return true;
+                }
+            }else if (numberTwo<=time){
+                alert("结束时间不能小于报修时间哟");
+                $('#elapsedTime').val(null);
+                $('#endTime').val(null);
+                return false;
+            }
+        });
+
+        //报修时间 就是之前的开始时间
+        $("#startTime").datetimepicker({
+            format: "yyyy-mm-dd hh:ii:ss",
+            autoclose: true,
+            minView:0,
+            minuteStep:1
+        });
+
+        //人员到场时间
+        $("#personPresentTime").datetimepicker({
+            format: "yyyy-mm-dd hh:ii:ss",
+            autoclose: true,
+            minView:0,
+            minuteStep:1,
+        }).on('changeDate',function (elapsedTime) { //changeDate ev
+
+            var startTime = $('#startTime').val();
+            var personPresentTime = $('#personPresentTime').val();
+            // 报修时间
+            let d1 = startTime.replace(/\-/g, "/");
+            let date1 = new Date(d1);
+
+            // 人员到场时间
+            let d3 = personPresentTime.replace(/\-/g, "/");
+            let date3 = new Date(d3);
+
+            //计算人员响应耗时
+            var dateDiff = date3.getTime() - date1.getTime(); //时间差的毫秒数
+            var dayDiff = Math.floor(dateDiff / (24 * 3600 * 1000)); //计算出相差天数
+            var leave1 = dateDiff % (24 * 3600 * 1000) //计算天数后剩余的毫秒数
+            var hours = Math.floor(leave1 / (3600 * 1000)) //计算出小时数
+
+            //计算相差分钟数
+            var leave2 = leave1 % (3600 * 1000) //计算小时数后剩余的毫秒数
+            var minutes = Math.floor(leave2 / (60 * 1000)) //计算相差分钟数
+
+            //按分钟计算
+            var numberTwo = Math.floor(dateDiff / (60 * 1000));
+
+            var time = "0";
+
+            if(startTime<=personPresentTime){
+                $('#personAnswerTime').val(numberTwo);
+                if (numberTwo=="NaN"){
+                    alert("请先输入报修时间哟");
+                    $('#personAnswerTime').val(null);
+                    return false;
+                } else {
+                    return true;
+                }
+            }else if (numberTwo<=time){
+                alert("人员到场不能小于报修时间哟");
+                $('#personAnswerTime').val(null);
+                $('#personPresentTime').val(null);
+                return false;
+            }
+        });
+
+        //确认故障时间
+        $("#affirmRepairsTime").datetimepicker({
+            format: "yyyy-mm-dd hh:ii:ss",
+            autoclose: true,
+            minView:0,
+            minuteStep:1,
+        });
+
+        function jisuan() {
+            $('#affirmRepairsTime').val(null);
+            $('#presentTime').val(null);
+            $('#personPresentTime').val(null);
+            $('#endTime').val(null);
+            $('#spareTime').val(null);
+            $('#elapsedTime').val(null);
+            $('#personAnswerTime').val(null);
+        }
+
+        //备注得功能
+        function ChangeValue(obj)
+        {
+            document.getElementById("remark").value=obj.value;
+        }
+
+        //选择否的时候进行隐藏 三方维保
+        function infor() {
+            let id = document.getElementById('threeParties');
+            //var type = $('#eventType').value;
+            if(id.value=='1'){
+                $('#forin').show();
+            }else if (id.value=='2'){
+                $('#forin').hide();
+                $("#orgNameTwo").val("");
+            }
+            //console.log(id.value);
+        }
+
+        /* 公司 */
+        function selectDeptTree(elementObj) {
+            checkeId =  elementObj.id;
+            var treeId = $("#treeId").val();
+            var deptId = $.common.isEmpty(treeId) ? "310100001" : $("#treeId").val();
+            var url = ctx + "line/dj/selectDeptTree/" + deptId;
+            var options = {
+                title: '选择部门',
+                width: "380",
+                url: url,
+                callBack: doSubmit
+            };
+            $.modal.openOptions(options);
+        }
+
+        function doSubmit(index, layero){
+
+            $("select[disabled]").removeAttr("disabled");
+            $("div").removeAttr("onclick")
+            var tree = layero.find("iframe")[0].contentWindow.$._tree;
+            if(jQuery.isEmptyObject(tree)) {
+                layer.close(index);
+            }else{
+                var selectNode = tree.getSelectedNodes();
+                if(selectNode.length!=0){
+                    $("#companies").val(selectNode[0].id);
+                    $("#orgNameOne").val(selectNode[0].name);
+                }
+            }
+            layer.close(index);
+        }
+
+        /* 厂商三方维保 */
+        function selectDeptTreeTwo(elementObj) {
+            checkeId =  elementObj.id;
+            var treeId = $("#treeId").val();
+            var deptId = $.common.isEmpty(treeId) ? "310100001" : $("#treeId").val();
+            var url = ctx + "line/dj/selectDeptTree/" + deptId;
+            var options = {
+                title: '选择部门',
+                width: "380",
+                url: url,
+                callBack: doSubmitTwo
+            };
+            $.modal.openOptions(options);
+        }
+
+        function doSubmitTwo(index, layero){
+
+            $("select[disabled]").removeAttr("disabled");
+            $("div").removeAttr("onclick")
+            var tree = layero.find("iframe")[0].contentWindow.$._tree;
+            if(jQuery.isEmptyObject(tree)) {
+                layer.close(index);
+            }else{
+                var selectNode = tree.getSelectedNodes();
+                if(selectNode.length!=0){
+                    $("#manufacturer").val(selectNode[0].id);
+                    $("#orgNameTwo").val(selectNode[0].name);
+                }
+            }
+            layer.close(index);
+        }
+
+        //审核
+       /* function sh() {
+            if ($.validate.form()) {
+                var data = $("#form-line-add").serializeArray();
+                //改变状态
+                data.push({"name":"lineStart","value": 3 });
+                $.operate.saveTab(prefix + "/add", data);
+            }
+        }*/
+
+        //新增  2 已提交
+        function submit() {
+            if ($.validate.form()) {
+                var data = $("#form-line-add").serializeArray();
+                //改变状态
+                data.push({"name":"lineStart","value": 3 });
+                $.operate.saveTab(prefix + "/add", data);
+            }
+        }
+
+        // 暂存
+        function save() {
+            var data = $("#form-line-add").serializeArray();
+            //改变状态
+            data.push({"name":"lineStart","value": 1 });
+            $.operate.saveTab(prefix + "/add",data);
+        };
+
+        //备注  长度
+        $('#remark').bind('input propertychange',function(){ //添加监听input值的改变事件
+            var tvalmum;
+            //统计input输入字段的长度
+            tvalnum = $(this).val().length;
+            //如果大于8个字直接进行字符串截取
+            if(tvalnum>255){
+                var tval = $(this).val();
+                tval = tval.substring(0,255);
+                $(this).val(tval);
+                alert('长度超过限制！');
+            }
+        });
+
+        // 选择应用系统（只能单选）
+        function selectOneApplication() {
+            $.modal.open("选择应用系统", prefix + "/selectOneApplication");
+        };
+
+        // 选择外围系统(可以多选)
+        function selectApplication() {
+            $.modal.open("选择应用系统", prefix_xt + "/selectApplication");
+        }
+
+        // 选择创建机构（只能单选）
+        function selectogOrg() {
+            $.modal.open("选择创建机构", prefix_version + "/selectogOrg");
+        }
+
+    </script>
+</body>
+</html>

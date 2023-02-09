@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('查看事件单关联的问题单')" />
+</head>
+<body class="gray-bg">
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-12 search-collapse">
+            <form id="account-form">
+                <div class="select-list">
+                    <ul>
+                        <li>
+                            <label style="width: 80px">问题单号：</label>
+                            <input type="text" name="issuefxNo" maxlength="20"/>
+                        </li>
+                        <li>
+                            <label style="width: 80px">问题标题：</label>
+                            <input type="text" name="issuefxName" maxlength="64"/>
+                        </li>
+                        <li>
+                            <label style="width: 80px">问题分类：</label>
+                            <select id="issueFenlei" name="issueFenlei"  class="form-control " th:with="issueFenleis=${@pubParaValue.selectPubParaValueByParaName('WT_FENLEI1')}">
+                                <option value="">所有</option>
+                                <option th:each="itype : ${issueFenleis}" th:text="${itype.valueDetail}" th:value="${itype.value}"></option>
+                            </select>
+                        </li>
+                        <li>
+                            <label style="width: 80px">问题类型：</label>
+                            <select id="issueType" name="issueType"  class="form-control " th:with="issue_type=${@pubParaValue.selectPubParaValueByParaName('WT_TYPE')}">
+                                <option value="">所有</option>
+                                <option th:each="itype : ${issue_type}" th:text="${itype.valueDetail}" th:value="${itype.value}"></option>
+                            </select>
+                        </li>
+                        <li>
+                            <label style="width: 80px">所属机构：</label>
+                            <select id="issueOrg" name="issueOrg" class="form-control " >
+                                <option value="">所有</option>
+                                <option th:each="itype : ${issueOrgs}" th:text="${itype.orgName}" th:value="${itype.orgId}"></option>
+                            </select>
+                        </li>
+                        <li>
+                            <label style="width: 80px">涉及系统：</label>
+                            <input type="text" name="sysName" maxlength="50"/>
+                        </li>
+                        <li>
+                            <a class="btn btn-primary btn-rounded btn-sm" id="searchBut" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                            <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.resetAll('account-form')"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                        </li>
+                    </ul>
+                </div>
+            </form>
+        </div>
+
+        <div class="btn-group-sm" id="toolbar" role="group">
+            <a class="btn btn-info multiple disabled" onclick="view()">
+                <i class="fa fa-search"></i>详情
+            </a>
+            <a class="btn btn-primary single disabled" onclick="selectRelationFmbiz()">
+                <i class="fa fa-check">查看关联的事件单</i>
+            </a>
+            <button data-toggle="dropdown" class="btn btn-primary btn-sm dropdown-toggle">导出<span
+                    class="caret"></span>
+            </button>
+            <ul class="dropdown-menu">
+                <li><a onclick="$.table.exportExcel()">导出所有</a>
+                </li>
+                <li><a onclick="$.table.exportExcelCurrentPage()">导出当前页</a>
+                </li>
+            </ul>
+        </div>
+        <div class="col-sm-12 select-table table-striped">
+            <table id="bootstrap-table" style="table-layout:fixed;"></table>
+        </div>
+    </div>
+</div>
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: datetimepicker-js" />
+<th:block th:include="include :: datetimepicker-css" />
+<th:block th:include="include :: select2-css" />
+<th:block th:include="include :: select2-js" />
+<th:block th:include="include :: bootstrap-select-js" />
+<th:block th:include="include :: bootstrap-select-css" />
+<script th:src="@{/js/activiti.js}"></script>
+<script type="text/javascript">
+</script>
+<script th:inline="javascript">
+    var issueFenlei=[[${@pubParaValue.selectPubParaValueByParaName('WT_FENLEI')}]];
+    var issueType=[[${@pubParaValue.selectPubParaValueByParaName('WT_TYPE')}]];
+    var allstatus=[[${@pubParaValue.selectPubParaValueByParaName('issue_status')}]];
+    var issuesource=[[${@pubParaValue.selectPubParaValueByParaName('WT_SOUCE')}]];
+    var prefix = ctx + "issueList/build";
+    var prefixAct=ctx+"issueList/activiti";
+    var type=[[${type}]];
+    $(function() {
+        // 回车键搜索
+        document.onkeydown = function(e){
+            var ev = document.all ? window.event : e;
+            if(ev.keyCode==13) {
+                $('#searchBut').trigger('click');
+                return false;
+            }
+        };
+        var options = {
+            url: prefix + "/relationFmbizList",
+            exportUrl: prefix + "/exportWTD",
+            clickToSelect:true,
+            striped:true,
+            showExport:true,
+            modalName: "问题单",
+            singleSelect:true,
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'issuefxId',
+                    title: '问题单ID',
+                    width : 300,
+                    visible: false
+                }, {
+                    field: 'params.type',
+                    title: '任务类型',
+                    width : 300,
+                    visible: false
+                },
+                {
+                    field: 'issuefxNo',
+                    width : 150,
+                    title: '问题单号'
+                },
+                {
+                    field: 'issuefxName',
+                    title: '问题标题',
+                    width : 300,
+                    formatter: function (value, row, index) {
+                        return $.table.tooltip(value);
+                    },
+                    cellStyle: function cellStyle(value, row, index, field) {
+                        return { classes: 'text-nowrap'};
+                    }
+                },
+                {
+                    field: 'sysName',
+                    title: '涉及系统',
+                    width : 300,
+                    formatter: function (value, row, index) {
+                        return $.table.tooltip(value);
+                    },
+                    cellStyle: function cellStyle(value, row, index, field) {
+                        return { classes: 'text-nowrap'};
+                    }
+                },
+                {
+                    field: 'issueOrgName',
+                    title: '所属机构',
+                    width : 150
+                },
+                {
+                    field: 'relationFmbizCount',
+                    title: '关联事件单个数',
+                    width : 150
+                },
+                {
+                    field: 'issueFenlei',
+                    title: '问题分类',
+                    width : 100,
+                    formatter:function (value){
+                        return selectPubParaValueData(issueFenlei,value);
+                    }
+                },
+                {
+                    field: 'issueType',
+                    title: '问题类型',
+                    width : 150,
+                    formatter:function (value){
+                        return selectPubParaValueData(issueType,value);
+                    }
+                },
+                {
+                    field: 'issuesource',
+                    title: '问题来源',
+                    width : 150,
+                    formatter:function (value){
+                        return selectPubParaValueData(issuesource,value);
+                    }
+                },
+                {
+                    field: 'creatTime',
+                    title: '创建时间',
+                    width : 150,
+                },
+                {
+                    field: 'currentState',
+                    title: '问题状态',
+                    width : 150,
+                    formatter: function (value, row, index) {
+                        return selectPubParaValueData(allstatus,value);
+                    }
+                }
+            ]
+        };
+        $.table.init(options);
+    });
+    //详情
+    function view(){
+        var url = ctx + "issueList/activiti/view?"
+
+        var row = $.table.selectFirstColumns("bootstrap-table");
+        if("list"==type){
+            url=prefix+"/view/";
+            $.modal.openTab("详情",url+row[0]);
+        }else {
+            $.modal.openTab("详情", url +"issuefxId="+ row[0]+"&&type=flowview");
+        }
+    }
+    // 回显数据字典
+    function selectPubParaValueData(datas, value) {
+        var actions = [];
+        $.each(datas, function(index, pubParaValue) {
+            if (pubParaValue.value == ('' + value)) {
+                actions.push($.common.sprintf("<span class='%s'>%s</span>", "", pubParaValue.valueDetail));
+                return false;
+            }
+        });
+        return actions.join('');
+    }
+    function showProcessImgDialog() {
+        var row = $("#bootstrap-table").bootstrapTable("getSelections");
+        if(row[0].currentState=="0"){
+            return $.modal.alertWarning("待提交状态没有流程图！");
+        }
+        var url = ctx + 'process/processImg/' + row[0].issuefxId;
+        $.modal.openNoBtn("查看流程图", url);
+    }
+
+    function selectRelationFmbiz() {
+        var row = $("#bootstrap-table").bootstrapTable("getSelections");
+        if(row[0].relationFmbizCount == "0" || row[0].relationFmbizCount == null){
+            return $.modal.alertWarning("该问题单没有关联事件单");
+        }
+        var url = prefix + "/selectRelationFmbiz/" + row[0].issuefxId;
+        $.modal.openTab("查看问题单关联的事件单", url);
+    }
+
+    //数据中心处理
+    function deal() {
+        var row=$("#bootstrap-table").bootstrapTable("getSelections");
+        if($.common.isEmpty(row)){
+            return $.modal.alertWarning("请选择！");
+        }
+        var url=prefixAct+"/goDataDeal/"+row[0].issuefxId+"/"+row[0].params.type;
+        var title="数据中心处理";
+        if("inside_yujiejue"==row[0].params.type){
+            title="预解决"
+        }
+        if("inside_jiejue"==row[0].params.type){
+            title="解决"
+        }
+        $.modal.openTab(title,url);
+    }
+</script>
+</body>
+</html>

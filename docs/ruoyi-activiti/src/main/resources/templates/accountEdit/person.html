@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('用户列表')" />
+    <th:block th:include="include :: layout-latest-css" />
+    <th:block th:include="include :: ztree-css" />
+</head>
+<body class="gray-bg">
+
+
+<div class="ui-layout-center">
+    <div class="container-div">
+        <div class="row">
+            <div class="col-sm-12 search-collapse">
+                <form id="people-form">
+                    <div class="select-list">
+                        <ul>
+                            <li>
+                                姓名：<input type="text" name="pName"/>
+                            </li>
+                            <li>
+                                移动电话：<input type="text" name="mobilPhone"/>
+                            </li>
+                            <li>
+                                用户状态：<select name="pflag" th:with="type=${@dict.getParaType('sys_people_status')}">
+                                <option value="">所有</option>
+                                <option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+                            </select>
+                            </li>
+                            <li>
+                                <a class="btn btn-primary btn-rounded btn-sm" id="searchBtn" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-repeat"></i>&nbsp;重置</a>
+                            </li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+
+            <div class="btn-group-sm" id="toolbar" role="group">
+            </div>
+
+            <div class="col-sm-12 select-table table-striped">
+                <table id="bootstrap-table"></table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: layout-latest-js" />
+<th:block th:include="include :: ztree-js" />
+<script th:inline="javascript">
+    var prefix = ctx + "system/ogperson";
+
+
+
+
+    $(function() {
+    	document.onkeydown = function(e){
+            var ev = document.all ? window.event : e;
+            console.log(ev);
+            if(ev.keyCode==13) {
+                $('#searchBtn').trigger('click');
+                return false;
+            }
+        }
+        var panehHidden = false;
+        if ($(this).width() < 769) {
+            panehHidden = true;
+        }
+        $('body').layout({ initClosed: panehHidden, west__size: 185 });
+        // 回到顶部绑定
+        if ($.fn.toTop !== undefined) {
+            var opt = {
+                win:$('.ui-layout-center'),
+                doc:$('.ui-layout-center')
+            };
+            $('#scroll-up').toTop(opt);
+        }
+        queryUserList();
+    });
+
+    function queryUserList() {
+        var options = {
+            url: prefix + "/list",
+            sortName: "p.addtime",
+            sortOrder: "desc",
+            modalName: "人员",
+            clickToSelect: true,
+            singleSelect: true,
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'pId',
+                    visible: false
+                },
+                {
+                    field: 'pName',
+                    title: '姓名'
+                },
+                {
+                    field: 'sex',
+                    title: '性别',
+                    sortable: true,
+                    formatter: function (value, row, index) {
+                        return value==1?'男':'女'
+                    }
+                },
+                {
+                    field: 'phone',
+                    title: '办公电话'
+                },
+                {
+                    field: 'mobilPhone',
+                    title: '手机号'
+                },
+                {
+                    field: 'email',
+                    title: '邮箱'
+                },
+                {
+                    field: 'orgname',
+                    title: '所属机构'
+                },
+
+                {
+                    field: 'position',
+                    title: '职务'
+                },
+                {
+                    field: 'leader',
+                    title: '负责人',
+                    formatter: function (value, row, index) {
+                        return value=='0'?'否':'是'
+                    }
+                },
+                {
+                    field: 'pOrder',
+                    title: '顺序'
+                },
+                {
+                    field: 'pflag',
+                    title: '状态',
+                    formatter: function (value, row, index) {
+                        return value=='1'?'启用':'禁用'
+                    }
+                }]
+
+        };
+        $.table.init(options);
+    }
+
+   
+</script>
+</body>
+
+</html>

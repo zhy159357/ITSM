@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('协同评估人列表')" />
+</head>
+<body class="gray-bg">
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-12 search-collapse">
+            <form id="account-form">
+                <div class="select-list">
+                    <ul>
+                        <li>
+                            所属机构：<input type="text" name="orgname"/>
+                        </li>
+
+                        <li>
+                            人员名称：<input type="text" name="pName"/>
+                        </li>
+
+                        <li>
+                            <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()" id="searchBut"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                            <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                        </li>
+                    </ul>
+                </div>
+                </p>
+            </form>
+            <div class="col-sm-12 select-table table-striped">
+                <table id="bootstrap-table"></table>
+            </div>
+        </div>
+
+
+
+
+    </div>
+</div>
+<th:block th:include="include :: footer" />
+<script th:inline="javascript">
+
+    var prfix_dispose = ctx + "system/single";
+
+    $(function() {
+        // 回车键搜索
+        document.onkeydown = function (e) {
+            var ev = document.all ? window.event : e;
+            if (ev.keyCode == 13) {
+                $('#searchBut').trigger('click');
+                return false;
+            }
+        };
+        var options = {
+            url: prfix_dispose + "/assessorperson",
+            sortOrder: "desc",
+            showSearch: false,
+            showRefresh: false,
+            showToggle: false,
+            showColumns: false,
+            clickToSelect: true,
+            rememberSelected: true,
+            columns: [{
+                field: 'state',
+                checkbox: true
+            },
+                {
+                    field: 'userid',
+                    title: '账号编号',
+                    visible:false
+                },
+                {
+                    field: 'pName',
+                    title: '人员名称',
+                },
+                {
+                    field: 'orgname',
+                    title: '所属机构',
+                }]
+        };
+        $.table.init(options);
+    });
+
+    function submitHandler() {
+        // 选中数据
+        var arrays = $("#bootstrap-table").bootstrapTable('getSelections');
+        window.parent.insertRow(arrays);
+        $.modal.close();
+    }
+
+
+
+</script>
+</body>
+</html>

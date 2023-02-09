@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+	<th:block th:include="include :: header('牵头部门')" />
+	<th:block th:include="include :: ztree-css" />
+</head>
+<body class="white-bg">
+	<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+<!--		<form class="form-horizontal m" id="form-role-edit" th:object="${role}">
+			<input type="hidden" name="rid" id="rid" th:field="*{rid}">-->
+			<div class="form-group">
+				<label class="col-sm-3 control-label">牵头部门：</label>
+				<div class="col-sm-8">
+				    <label class="check-box">
+				        <input type="checkbox" value="1">展开/折叠</label>
+				    <label class="check-box">
+				        <input type="checkbox" value="2">全选/全不选</label>
+				    <label class="check-box">
+				        <input type="checkbox" value="3" checked>父子联动44444</label>
+				    <div id="menuTrees" class="ztree ztree-border"></div>
+				</div>
+			</div>
+		</form>
+	</div>
+	<th:block th:include="include :: footer" />
+	<th:block th:include="include :: ztree-js" />
+	<script type="text/javascript">
+	     $(function() {
+
+			var url = ctx + "system/dept/treeData4Configlp";
+
+			var options = {
+				id: "menuTrees",
+		        url: url,
+		        check: { enable: true },
+		        expandLevel: 0
+		    };
+			$.tree.init(options);
+		});
+
+		$("#form-role-edit").validate({
+			onkeyup: false,
+			rules:{
+			},
+			messages: {
+		    },
+		    focusCleanup: true
+		});
+		
+		$('input').on('ifChanged', function(obj){
+			var type = $(this).val();
+			var checked = obj.currentTarget.checked;
+			if (type == 1) {
+			    if (checked) {
+			        $._tree.expandAll(true);
+			    } else {
+			        $._tree.expandAll(false);
+			    }
+			} else if (type == "2") {
+			    if (checked) {
+			        $._tree.checkAllNodes(true);
+			    } else {
+			        $._tree.checkAllNodes(false);
+			    }
+			} else if (type == "3") {
+			    if (checked) {
+			        $._tree.setting.check.chkboxType = { "Y": "ps", "N": "ps" };
+			    } else {
+			        $._tree.setting.check.chkboxType = { "Y": "", "N": "" };
+			    }
+			}
+		})
+
+		function edit() {
+            var menuIds = $.tree.getCheckedNodes();
+            var rid = $("#rid").val();
+			$.ajax({
+				cache : true,
+				type : "POST",
+				url : ctx + "system/leadingdepartment/add",
+				data : {
+                    "menuIds": menuIds,
+					 "rid": rid
+				},
+				async : false,
+				error : function(request) {
+					$.modal.alertError("系统错误");
+				},
+				success : function(data) {
+					$.operate.successCallback(data);
+				}
+			});
+		}
+		
+		function submitHandler() {
+			edit();
+	    }
+	</script>
+</body>
+</html>

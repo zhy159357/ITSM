@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.SysNoticeReceiveMapper">
+
+    <resultMap type="SysNoticeReceive" id="SysNoticeReceiveResult">
+        <result property="amReceiveId"       column="AM_RECEIVE_ID"       />
+        <result property="amBizId"    column="AM_BIZ_ID"    />
+        <result property="receiveDept"     column="RECEIVE_DEPT"     />
+        <result property="receiveGroup"  column="RECEIVE_GROUP"  />
+        <result property="receiveTime"         column="RECEIVE_TIME"          />
+        <result property="ifReceive"         column="IF_RECEIVE"          />
+        <result property="receiveReply"       column="RECEIVE_REPLY"       />
+        <result property="invalidationMark"     column="INVALIDATION_MARK"     />
+        <result property="editTime"       column="UPDATE_TIME"       />
+        <result property="receivePersonList"       column="RECEIVE_PERSON_LIST"       />
+        <result property="dealer"       column="DEALER"       />
+        <result property="dealerName"       column="DEALER_NAME"       />
+        <result property="amCode"       column="AM_CODE"       />
+        <result property="amTitle"       column="AM_TITLE"       />
+        <result property="pName"       column="PNAME"       />
+        <result property="orgName"       column="ORGNAME"       />
+        <result property="releaseDate"       column="RELEASE_DATE"       />
+        <result property="currentStatus"       column="CURRENT_STATUS"       />
+        <result property="receiveDeptName"       column="RECEIVE_DEPT_NAME"       />
+        <result property="receiveGroupName"       column="RECEIVE_GROUP_NAME"       />
+        <result property="noticeDeptName"       column="NOTICE_DEPT_NAME"       />
+        <result property="noticeGroupName"       column="NOTICE_GROUP_NAME"       />
+        <result property="sms"       column="SMS"       />
+        <result property="sendRange"       column="SEND_RANGE"       />
+        <result property="urgentLev"       column="URGENT_LEV"       />
+        <result property="secretLev"       column="SECRET_LEV"       />
+        <result property="summry"       column="SUMMRY"       />
+        <result property="description"       column="DESCRIPTION"       />
+        <result property="contactPhone"     column="CONTACT_PHONE"     />
+        <result property="otherPhone"       column="OTHER_PHONE"       />
+        <result property="amType"     column="AM_TYPE"     />
+        <result property="dealerPhone"     column="MOBIL_PHONE"     />
+        <result property="dealerDept"     column="DEALER_DEPT"     />
+        <result property="addTime"     column="CREATE_TIME"     />
+    </resultMap>
+
+    <sql id="selectNoticeReceiveVo">
+        SELECT
+        T.AM_RECEIVE_ID AS AM_RECEIVE_ID,
+        T.AM_BIZ_ID AS AM_BIZ_ID,
+        T.RECEIVE_DEPT AS RECEIVE_DEPT,
+		ORG.ORGNAME AS RECEIVE_DEPT_NAME,
+        T.RECEIVE_GROUP AS RECEIVE_GROUP,
+		G.GRPNAME AS RECEIVE_GROUP_NAME,
+        T.RECEIVE_TIME AS RECEIVE_TIME,
+        T.IF_RECEIVE AS IF_RECEIVE,
+        T.RECEIVE_REPLY AS RECEIVE_REPLY,
+        T.INVALIDATION_MARK AS INVALIDATION_MARK,
+        T.UPDATE_TIME AS UPDATE_TIME,
+        T.RECEIVE_PERSON_LIST AS RECEIVE_PERSON_LIST,
+        T.DEALER AS DEALER,
+        PS.PNAME AS DEALER_NAME,
+        A.AM_CODE AS AM_CODE,
+        A.AM_TITLE AS AM_TITLE,
+        p.PNAME AS PNAME,
+        o.ORGNAME AS ORGNAME,
+        A.RELEASE_DATE AS RELEASE_DATE,
+        A.CURRENT_STATUS AS CURRENT_STATUS,
+        A.URGENT_LEV AS URGENT_LEV,
+        A.SECRET_LEV AS SECRET_LEV,
+        A.AM_TYPE AS AM_TYPE,
+        A.CONTACT_PHONE AS CONTACT_PHONE,
+        A.OTHER_PHONE AS OTHER_PHONE,
+        A.SMS AS SMS,
+        A.SEND_RANGE AS SEND_RANGE,
+        A.SUMMRY AS SUMMRY,
+        A.DESCRIPTION AS DESCRIPTION,
+        A .RECEIVE_DEPT_NAME AS NOTICE_DEPT_NAME,
+        A .RECEIVE_GROUP_NAME AS NOTICE_GROUP_NAME,
+        A .CREATE_TIME AS CREATE_TIME
+        FROM
+        AM_BIZ_RECEIVE T
+        LEFT JOIN AM_BIZ_ANNOUNCEMENT A  ON T.AM_BIZ_ID = A.AM_BIZ_ID
+        LEFT JOIN OG_ORG O ON A.RELEASE_ORG = O.ORGID
+        LEFT JOIN OG_PERSON P ON A.CREATE_ID = P.PID
+        LEFT JOIN OG_PERSON PS ON T.DEALER = PS.PID
+        LEFT JOIN OG_ORG ORG ON T.RECEIVE_DEPT = ORG.ORGID
+        LEFT JOIN OG_GROUP G ON T.RECEIVE_GROUP = G.GROUPID
+    </sql>
+
+    <select id="selectNoticeReceiveById" parameterType="String" resultMap="SysNoticeReceiveResult">
+        <include refid="selectNoticeReceiveVo"/>
+        WHERE am_receive_Id = #{amReceiveId}
+    </select>
+
+    <select id="selectNoticeReceiveList" parameterType="SysNoticeReceive" resultMap="SysNoticeReceiveResult">
+        <include refid="selectNoticeReceiveVo"/>
+        WHERE 1 = 1
+        <if test="amReceiveId != null and amReceiveId != ''">
+            AND T.AM_RECEIVE_ID = #{amReceiveId}
+        </if>
+        <if test="amBizId != null and amBizId != ''">
+            AND T.am_biz_Id = #{amBizId}
+        </if>
+        <if test="amBizIds != null and amBizIds != ''">
+            AND a.am_biz_Id in
+            <foreach collection="amBizIds" item="amBizId" open="(" separator="," close=")">
+                #{amBizId}
+            </foreach>
+        </if>
+        <if test="amTitle != null and amTitle != ''">
+            AND a.am_title like concat(concat('%',#{amTitle}),'%')
+        </if>
+        <if test="amCode != null and amCode != ''">
+            AND a.am_code like concat(concat('%',#{amCode}),'%')
+        </if>
+        <if test="params.currentStatus != null and params.currentStatus != ''">
+            AND a.current_status != #{params.currentStatus}
+        </if>
+        <if test="currentStatus != null and currentStatus != ''">
+            AND a.current_status like concat(concat('%',#{currentStatus}),'%')
+        </if>
+        <if test="pName != null and pName != ''">
+            AND p.pName like concat(concat('%',#{pName}),'%')
+        </if>
+        <if test="orgName != null and orgName != ''">
+            AND o.orgName like concat(concat('%',#{orgName}),'%')
+        </if>
+        <if test="ifReceive != null and ifReceive != ''">
+            AND T.IF_RECEIVE = #{ifReceive}
+        </if>
+        <if test="receiveDeptName != null and receiveDeptName != ''">
+            AND ORG.ORGNAME like concat(concat('%',#{receiveDeptName}),'%')
+        </if>
+        <if test="receiveGroupName != null and receiveGroupName != ''">
+            AND G.GRPNAME like concat(concat('%',#{receiveGroupName}),'%')
+        </if>
+        <if test="params.beginTime != null and params.beginTime != ''"><!-- 开始时间检索 -->
+            AND A .CREATE_TIME &gt;= #{params.beginTime}
+        </if>
+        <if test="params.endTime != null and params.endTime != ''"><!-- 时间检索 -->
+            AND A .CREATE_TIME &lt;= #{params.endTime}
+        </if>
+        ORDER BY T.UPDATE_TIME DESC
+    </select>
+
+    <select id="selectNoticeReceives" parameterType="SysNoticeReceive" resultMap="SysNoticeReceiveResult">
+        <include refid="selectNoticeReceiveVo"/>
+        WHERE 1 = 1
+        <if test="amReceiveId != null and amReceiveId != ''">
+            AND T.AM_RECEIVE_ID = #{amReceiveId}
+        </if>
+        <if test="amBizId != null and amBizId != ''">
+            AND T.am_biz_Id = #{amBizId}
+        </if>
+        <if test="amBizId == null">
+            AND T.am_biz_Id = ''
+        </if>
+        <if test="amBizIds != null and amBizIds != ''">
+            AND a.am_biz_Id in
+            <foreach collection="amBizIds" item="amBizId" open="(" separator="," close=")">
+                #{amBizId}
+            </foreach>
+        </if>
+        <if test="amTitle != null and amTitle != ''">
+            AND a.am_title like concat(concat('%',#{amTitle}),'%')
+        </if>
+        <if test="amCode != null and amCode != ''">
+            AND a.am_code like concat(concat('%',#{amCode}),'%')
+        </if>
+        <if test="currentStatus != null and currentStatus != ''">
+            AND a.current_status like concat(concat('%',#{currentStatus}),'%')
+        </if>
+        <if test="pName != null and pName != ''">
+            AND p.pName like concat(concat('%',#{pName}),'%')
+        </if>
+        <if test="orgName != null and orgName != ''">
+            AND o.orgName like concat(concat('%',#{orgName}),'%')
+        </if>
+        <if test="ifReceive != null and ifReceive != ''">
+            AND T.IF_RECEIVE = #{ifReceive}
+        </if>
+        <if test="receiveDeptName != null and receiveDeptName != ''">
+            AND ORG.ORGNAME like concat(concat('%',#{receiveDeptName}),'%')
+        </if>
+        <if test="receiveGroupName != null and receiveGroupName != ''">
+            AND G.GRPNAME like concat(concat('%',#{receiveGroupName}),'%')
+        </if>
+        <if test="params.beginTime != null and params.beginTime != ''"><!-- 开始时间检索 -->
+            AND T.RECEIVE_TIME &gt;= #{params.beginTime}
+        </if>
+        <if test="params.endTime != null and params.endTime != ''"><!-- 时间检索 -->
+            AND T.RECEIVE_TIME &lt;= #{params.endTime}
+        </if>
+        ORDER BY T.UPDATE_TIME DESC
+    </select>
+
+
+    <insert id="insertNoticeReceive" parameterType="SysNoticeReceive">
+        insert into am_biz_receive (
+        am_receive_Id,
+        <if test="amBizId != null and amBizId != '' ">am_biz_id, </if>
+        <if test="receiveDept != null and receiveDept != '' ">receive_dept, </if>
+        <if test="receiveGroup != null and receiveGroup != '' ">receive_group, </if>
+        <if test="receiveTime != null and receiveTime != '' ">receive_Time, </if>
+        <if test="ifReceive != null and ifReceive != '' ">if_receive, </if>
+        <if test="receiveReply != null and receiveReply != ''">receive_reply,</if>
+        <if test="invalidationMark != null and invalidationMark != ''">invalidation_mark,</if>
+        <if test="receivePersonList != null and receivePersonList != '' ">receive_person_list, </if>
+        <if test="dealer != null and dealer != '' ">dealer,</if>
+        <if test="editTime != null and editTime != '' ">update_time</if>
+        )values(
+        #{amReceiveId},
+        <if test="amBizId != null and amBizId != '' ">#{amBizId}, </if>
+        <if test="receiveDept != null and receiveDept != '' ">#{receiveDept}, </if>
+        <if test="receiveGroup != null and receiveGroup != '' ">#{receiveGroup}, </if>
+        <if test="receiveTime != null and receiveTime != '' ">#{receiveTime}, </if>
+        <if test="ifReceive != null and ifReceive != '' ">#{ifReceive}, </if>
+        <if test="receiveReply != null and receiveReply != ''">#{receiveReply},</if>
+        <if test="invalidationMark != null and invalidationMark != ''">#{invalidationMark},</if>
+        <if test="receivePersonList != null and receivePersonList != '' ">#{receivePersonList}, </if>
+        <if test="dealer != null and dealer != '' ">#{dealer}, </if>
+        <if test="editTime != null and editTime != '' ">#{editTime}</if>
+        )
+    </insert>
+
+    <update id="updateNoticeReceive" parameterType="SysNoticeReceive">
+        update am_biz_receive
+        <set>
+            <if test="receiveDept != null and receiveDept != '' ">receive_dept = #{receiveDept}, </if>
+            <if test="receiveGroup != null and receiveGroup != '' ">receive_group = #{receiveGroup}, </if>
+            <if test="amBizId != null and amBizId != '' ">am_biz_id = #{amBizId}, </if>
+            <if test="receiveTime != null and receiveTime != '' ">receive_Time = #{receiveTime}, </if>
+            <if test="ifReceive != null and ifReceive != '' ">if_receive = #{ifReceive}, </if>
+            <if test="receiveReply != null and receiveReply != '' ">receive_reply = #{receiveReply}, </if>
+            <if test="invalidationMark != null and invalidationMark != '' ">invalidation_mark = #{invalidationMark}, </if>
+            <if test="receivePersonList != null and receivePersonList != ''">receive_person_list = #{receivePersonList},</if>
+            <if test="dealer != null and dealer != ''">dealer = #{dealer}, </if>
+            <if test="editTime != null and editTime != '' ">update_time = #{editTime}</if>
+        </set>
+        where am_receive_Id = #{amReceiveId}
+    </update>
+
+    <update id="updateNoticeReceiveReceiveTime" parameterType="SysNoticeReceive">
+        update am_biz_receive
+        <set>
+            <if test="receiveDept != null and receiveDept != '' ">receive_dept = #{receiveDept}, </if>
+            <if test="receiveGroup != null and receiveGroup != '' ">receive_group = #{receiveGroup}, </if>
+            <if test="amBizId != null and amBizId != '' ">am_biz_id = #{amBizId}, </if>
+            <if test="receiveTime != null and receiveTime != '' ">receive_Time = #{receiveTime}, </if>
+            <if test="ifReceive != null and ifReceive != '' ">if_receive = #{ifReceive}, </if>
+            <if test="receiveReply != null and receiveReply != '' ">receive_reply = #{receiveReply}, </if>
+            <if test="invalidationMark != null and invalidationMark != '' ">invalidation_mark = #{invalidationMark}, </if>
+            <if test="receivePersonList != null and receivePersonList != ''">receive_person_list = #{receivePersonList},</if>
+            <if test="dealer != null and dealer != ''">dealer = #{dealer}, </if>
+            <if test="editTime != null and editTime != '' ">update_time = #{editTime}</if>
+        </set>
+        where AM_RECEIVE_ID = #{amReceiveId}
+    </update>
+
+    <select id="smsNoticePersonById" parameterType="String" resultMap="SysNoticeReceiveResult">
+        SELECT
+        P.PID AS DEALER,
+        P.PNAME AS DEALER_NAME,
+        P.MOBIL_PHONE AS MOBIL_PHONE,
+        O.ORGNAME AS DEALER_DEPT
+        FROM
+        OG_PERSON P
+        LEFT JOIN OG_ORG O ON P.ORGID = O.ORGID
+        LEFT JOIN OG_USER U ON P.PID = U.USERID
+        WHERE P.PID = #{pid}
+        AND U.INVALIDATION_MARK = '1'
+    </select>
+</mapper>

@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.OgSysLogMapper">
+
+    <resultMap type="OgSysLog" id="OgSysLogResult">
+        <result property="logId"    column="log_id"    />
+        <result property="isexamination"    column="isexamination"    />
+        <result property="dept"    column="dept"    />
+        <result property="pid"    column="pid"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="businessid"    column="businessid"    />
+        <result property="isKeySys"    column="is_key_sys"    />
+        <result property="sysType"    column="sys_type"    />
+        <result property="upgradeTime"    column="upgrade_time"    />
+        <result property="systemStage"    column="system_stage"    />
+        <result property="frontlineDate"    column="frontline_date"    />
+        <result property="secondlineDate"    column="secondline_date"    />
+        <result property="isOutChannel"    column="is_out_channel"    />
+        <result property="sysid"    column="sysid"    />
+        <result property="orgid"    column="orgid"    />
+        <result property="code"    column="code"    />
+        <result property="caption"    column="caption"    />
+        <result property="memo"    column="memo"    />
+        <result property="adder"    column="adder"    />
+        <result property="addtime"    column="addtime"    />
+        <result property="moder"    column="moder"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="invalidationMark"    column="invalidation_mark"    />
+    </resultMap>
+
+
+    <sql id="selectOgSysLogVo">
+        SELECT
+            o.log_id,
+            o.sysid,
+            o.orgid,
+            o.code,
+            o.caption,
+            o.memo,
+            o.invalidation_mark,
+            o.isexamination,
+            o.upgrade_time,
+            o.dept,
+            o.pid,
+            o.businessid,
+            o.is_key_sys,
+            o.sys_type,
+            o.is_out_channel,
+            o.system_stage
+        FROM
+            og_sys_log o
+    </sql>
+
+
+    <select id="selectOgSysLogList" parameterType="OgSysLog" resultMap="OgSysLogResult">
+        <include refid="selectOgSysLogVo"/>
+        <where>
+            <if test="isexamination != null  and isexamination != ''"> and isexamination = #{isexamination}</if>
+            <if test="dept != null  and dept != ''"> and dept = #{dept}</if>
+            <if test="pid != null  and pid != ''"> and pid = #{pid}</if>
+            <if test="businessid != null  and businessid != ''"> and businessid = #{businessid}</if>
+            <if test="isKeySys != null  and isKeySys != ''"> and is_key_sys = #{isKeySys}</if>
+            <if test="sysType != null  and sysType != ''"> and sys_type = #{sysType}</if>
+            <if test="upgradeTime != null  and upgradeTime != ''"> and upgrade_time = #{upgradeTime}</if>
+            <if test="systemStage != null  and systemStage != ''"> and system_stage = #{systemStage}</if>
+            <if test="frontlineDate != null  and frontlineDate != ''"> and frontline_date = #{frontlineDate}</if>
+            <if test="secondlineDate != null  and secondlineDate != ''"> and secondline_date = #{secondlineDate}</if>
+            <if test="isOutChannel != null  and isOutChannel != ''"> and is_out_channel = #{isOutChannel}</if>
+            <if test="sysid != null  and sysid != ''"> and sysid = #{sysid}</if>
+            <if test="orgid != null  and orgid != ''"> and orgid = #{orgid}</if>
+            <if test="code != null  and code != ''"> and code = #{code}</if>
+            <if test="caption != null  and caption != ''"> and caption = #{caption}</if>
+            <if test="memo != null  and memo != ''"> and memo = #{memo}</if>
+            <if test="adder != null  and adder != ''"> and adder = #{adder}</if>
+            <if test="addtime != null  and addtime != ''"> and addtime = #{addtime}</if>
+            <if test="moder != null  and moder != ''"> and moder = #{moder}</if>
+            <if test="invalidationMark != null  and invalidationMark != ''"> and invalidation_mark = #{invalidationMark}</if>
+        </where>
+    </select>
+
+    <select id="selectOgSysLogById" parameterType="String" resultMap="OgSysLogResult">
+        <include refid="selectOgSysLogVo"/>
+        where log_id = #{logId}
+    </select>
+
+    <insert id="insertOgSysLog" parameterType="OgSysLog">
+        insert into og_sys_log
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="logId != null  and logId != ''">log_id,</if>
+            <if test="isexamination != null  and isexamination != ''">isexamination,</if>
+            <if test="dept != null  and dept != ''">dept,</if>
+            <if test="pid != null  and pid != ''">pid,</if>
+            <if test="businessid != null  and businessid != ''">businessid,</if>
+            <if test="isKeySys != null  and isKeySys != ''">is_key_sys,</if>
+            <if test="sysType != null  and sysType != ''">sys_type,</if>
+            <if test="upgradeTime != null  and upgradeTime != ''">upgrade_time,</if>
+            <if test="systemStage != null  and systemStage != ''">system_stage,</if>
+            <if test="frontlineDate != null  and frontlineDate != ''">frontline_date,</if>
+            <if test="secondlineDate != null  and secondlineDate != ''">secondline_date,</if>
+            <if test="isOutChannel != null  and isOutChannel != ''">is_out_channel,</if>
+            <if test="sysid != null  and sysid != ''">sysid,</if>
+            <if test="orgid != null  and orgid != ''">orgid,</if>
+            <if test="code != null  and code != ''">code,</if>
+            <if test="caption != null  and caption != ''">caption,</if>
+            <if test="memo != null  and memo != ''">memo,</if>
+            <if test="adder != null  and adder != ''">adder,</if>
+            <if test="addtime != null  and addtime != ''">addtime,</if>
+            <if test="moder != null  and moder != ''">moder,</if>
+            <if test="updateTime != null  and updateTime != ''">update_time,</if>
+            <if test="invalidationMark != null  and invalidationMark != ''">invalidation_mark,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="logId != null  and logId != ''">#{logId},</if>
+            <if test="isexamination != null  and isexamination != ''">#{isexamination},</if>
+            <if test="dept != null  and dept != ''">#{dept},</if>
+            <if test="pid != null  and pid != ''">#{pid},</if>
+            <if test="businessid != null  and businessid != ''">#{businessid},</if>
+            <if test="isKeySys != null  and isKeySys != ''">#{isKeySys},</if>
+            <if test="sysType != null  and sysType != ''">#{sysType},</if>
+            <if test="upgradeTime != null  and upgradeTime != ''">#{upgradeTime},</if>
+            <if test="systemStage != null  and systemStage != ''">#{systemStage},</if>
+            <if test="frontlineDate != null  and frontlineDate != ''">#{frontlineDate},</if>
+            <if test="secondlineDate != null  and secondlineDate != ''">#{secondlineDate},</if>
+            <if test="isOutChannel != null  and isOutChannel != ''">#{isOutChannel},</if>
+            <if test="sysid != null  and sysid != ''">#{sysid},</if>
+            <if test="orgid != null  and orgid != ''">#{orgid},</if>
+            <if test="code != null  and code != ''">#{code},</if>
+            <if test="caption != null  and caption != ''">#{caption},</if>
+            <if test="memo != null  and memo != ''">#{memo},</if>
+            <if test="adder != null  and adder != ''">#{adder},</if>
+            <if test="addtime != null  and addtime != ''">#{addtime},</if>
+            <if test="moder != null  and moder != ''">#{moder},</if>
+            <if test="updateTime != null  and updateTime != ''">#{updateTime},</if>
+            <if test="invalidationMark != null  and invalidationMark != ''">#{invalidationMark},</if>
+        </trim>
+    </insert>
+
+    <update id="updateOgSysLog" parameterType="OgSysLog">
+        update og_sys_log
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="isexamination != null  and isexamination != ''">isexamination = #{isexamination},</if>
+            <if test="dept != null  and dept != ''">dept = #{dept},</if>
+            <if test="pid != null  and pid != ''">pid = #{pid},</if>
+            <if test="businessid != null  and businessid != ''">businessid = #{businessid},</if>
+            <if test="isKeySys != null  and isKeySys != ''">is_key_sys = #{isKeySys},</if>
+            <if test="sysType != null  and sysType != ''">sys_type = #{sysType},</if>
+            <if test="upgradeTime != null  and upgradeTime != ''">upgrade_time = #{upgradeTime},</if>
+            <if test="systemStage != null  and systemStage != ''">system_stage = #{systemStage},</if>
+            <if test="frontlineDate != null  and frontlineDate != ''">frontline_date = #{frontlineDate},</if>
+            <if test="secondlineDate != null  and secondlineDate != ''">secondline_date = #{secondlineDate},</if>
+            <if test="isOutChannel != null  and isOutChannel != ''">is_out_channel = #{isOutChannel},</if>
+            <if test="sysid != null  and sysid != ''">sysid = #{sysid},</if>
+            <if test="orgid != null  and orgid != ''">orgid = #{orgid},</if>
+            <if test="code != null  and code != ''">code = #{code},</if>
+            <if test="caption != null  and caption != ''">caption = #{caption},</if>
+            <if test="memo != null  and memo != ''">memo = #{memo},</if>
+            <if test="adder != null  and adder != ''">adder = #{adder},</if>
+            <if test="addtime != null  and addtime != ''">addtime = #{addtime},</if>
+            <if test="moder != null  and moder != ''">moder = #{moder},</if>
+            <if test="updateTime != null  and updateTime != ''">update_time = #{updateTime},</if>
+            <if test="invalidationMark != null  and invalidationMark != ''">invalidation_mark = #{invalidationMark},</if>
+        </trim>
+        where log_id = #{logId}
+    </update>
+
+    <delete id="deleteOgSysLogById" parameterType="String">
+        delete from og_sys_log where log_id = #{logId}
+    </delete>
+
+    <delete id="deleteOgSysLogByIds" parameterType="String">
+        delete from og_sys_log where log_id in
+        <foreach item="logId" collection="array" open="(" separator="," close=")">
+            #{logId}
+        </foreach>
+    </delete>
+
+
+</mapper>

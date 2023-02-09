@@ -1,0 +1,289 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.activiti.mapper.PubAttachmentMapper">
+
+    <resultMap type="Attachment" id="AttachmentResult">
+        <result property="atId" column="at_id"/>
+        <result property="createId" column="create_id"/>
+        <result property="ownerId" column="owner_id"/>
+        <result property="memo" column="memo"/>
+        <result property="filePath" column="file_Path"/>
+        <result property="fileName" column="file_Name"/>
+        <result property="fileTime" column="file_Time"/>
+        <result property="flag" column="flag"/>
+        <result property="size" column="size_"/>
+        <result property="fileStatus" column="file_Status"/>
+        <result property="fileCiphertext" column="file_Ciphertext"/>
+        <result property="fileRetryCount" column="file_Retry_Count"/>
+        <result property="fileType" column="file_Type"/>
+        <result property="groupName" column="group_name"/>
+        <result property="changeReason" column="change_reason"/>
+        <result property="automateStatus" column="automate_status"/>
+        <result property="automateResultMsg" column="automate_result_msg"/>
+        <result property="sysName" column="sys_name"/>
+        <result property="md5" column="md5"/>
+        <association property="person" column="create_id" javaType="OgPerson" resultMap="OgPersonResult"/>
+    </resultMap>
+
+    <resultMap type="OgPerson" id="OgPersonResult">
+        <id property="pId" column="PID"/>
+        <result property="orgId" column="ORGID"/>
+        <result property="pName" column="PNAME"/>
+        <result property="sex" column="SEX"/>
+        <result property="edu" column="EDU"/>
+        <result property="birthday" column="BIRTHDAY"/>
+        <result property="birthPlace" column="BIRTHPLACE"/>
+        <result property="phone" column="PHONE"/>
+        <result property="mobilPhone" column="MOBIL_PHONE"/>
+        <result property="email" column="EMAIL"/>
+        <result property="address" column="ADDRESS"/>
+        <result property="createBy" column="create_by"/>
+        <result property="momer" column="MOMER"/>
+        <result property="memo" column="MEMO"/>
+        <result property="updatetime" column="UPDATE_TIME"/>
+        <result property="invalidationMark" column="INVALIDATION_MARK"/>
+        <result property="position" column="POSITION"/>
+        <result property="leader" column="LEADER"/>
+        <result property="pOrder" column="P_ORDER"/>
+        <result property="pflag" column="P_FLAG"/>
+    </resultMap>
+
+    <sql id="selectAttachment">
+        select a.at_id,
+               a.create_id,
+               a.owner_id,
+               a.memo,
+               a.file_path,
+               a.file_name,
+        to_date(a.file_time,'YYYY-MM-DD hh24:mi:ss') as file_time,
+               a.flag,
+               a.size_,
+               a.file_status,
+               a.file_ciphertext,
+               a.file_retry_count,
+               a.file_type,
+               a.group_name,
+               a.change_reason,
+               a.automate_status,
+               a.automate_result_msg,
+               a.sys_name,
+               a.md5,
+               p.pname,
+               p.pid
+        from PUB_ATTACHMENT a
+                 left join og_person p
+                 on a.create_id = p.pid
+    </sql>
+    <sql id="selectAttachmentMysql">
+        select a.at_id,
+               a.create_id,
+               a.owner_id,
+               a.memo,
+               a.file_path,
+               a.file_name,
+               date_format(a.file_time,'%Y-%m-%d %T') as file_time,
+               a.flag,
+               a.size_,
+               a.file_status,
+               a.file_ciphertext,
+               a.file_retry_count,
+               a.file_type,
+               a.group_name,
+               a.change_reason,
+               a.automate_status,
+               a.automate_result_msg,
+               a.sys_name,
+               a.md5,
+               p.pname,
+               p.pid
+        from PUB_ATTACHMENT a
+                 left join og_person p
+                           on a.create_id = p.pid
+    </sql>
+
+    <select id="selectAttachmentList" parameterType="Attachment" resultMap="AttachmentResult">
+        <include refid="selectAttachment"/>
+        <where>
+            <if test="atId != null  and atId != ''">
+                and a.at_id = #{atId}
+            </if>
+            <if test="ownerId != null  and ownerId != ''">
+                and a.owner_id = #{ownerId}
+            </if>
+            <if test="fileType != null  and fileType != ''">
+                and a.file_type = #{fileType}
+            </if>
+            <if test="createId != null  and createId != ''">
+                and a.create_id = #{createId}
+            </if>
+
+            <if test="fileStatus != null  and fileStatus != ''">
+                and a.file_status = #{fileStatus}
+            </if>
+            <if test="fileName != null  and fileName != ''">
+                and a.file_name like concat(concat('%',#{fileName}),'%')
+            </if>
+            <if test="automateStatus != null  and automateStatus != ''">
+                and a.automate_status = #{automateStatus}
+            </if>
+            <if test="params.fileTimeStart != null  and params.fileTimeStart != ''">
+                and a.file_time >= #{params.fileTimeStart}
+            </if>
+            <if test="fileTime != null  and fileTime != ''">
+                and a.file_time &lt;= #{fileTime}
+            </if>
+        </where>
+        order by a.file_time desc
+    </select>
+    <select id="selectAttachmentListMysql" parameterType="Attachment" resultMap="AttachmentResult">
+        <include refid="selectAttachmentMysql"/>
+        <where>
+            <if test="atId != null  and atId != ''">
+                and a.at_id = #{atId}
+            </if>
+            <if test="ownerId != null  and ownerId != ''">
+                and a.owner_id = #{ownerId}
+            </if>
+            <if test="fileType != null  and fileType != ''">
+                and a.file_type = #{fileType}
+            </if>
+            <if test="createId != null  and createId != ''">
+                and a.create_id = #{createId}
+            </if>
+
+            <if test="fileStatus != null  and fileStatus != ''">
+                and a.file_status = #{fileStatus}
+            </if>
+            <if test="fileName != null  and fileName != ''">
+                and a.file_name like concat(concat('%',#{fileName}),'%')
+            </if>
+            <if test="automateStatus != null  and automateStatus != ''">
+                and a.automate_status = #{automateStatus}
+            </if>
+            <if test="params.fileTimeStart != null  and params.fileTimeStart != ''">
+                and a.file_time >= #{params.fileTimeStart}
+            </if>
+            <if test="fileTime != null  and fileTime != ''">
+                and a.file_time &lt;= #{fileTime}
+            </if>
+        </where>
+        order by a.file_time desc
+    </select>
+
+
+    <select id="selectAttachmentById" parameterType="String" resultMap="AttachmentResult">
+        <include refid="selectAttachment"/>
+        where a.at_id = #{atId}
+    </select>
+
+    <select id="selectAttachmentByIdMysql" parameterType="String" resultMap="AttachmentResult">
+        <include refid="selectAttachmentMysql"/>
+        where a.at_id = #{atId}
+    </select>
+
+    <insert id="insertAttachment" parameterType="Attachment" useGeneratedKeys="false" keyProperty="atId">
+        insert into PUB_ATTACHMENT(
+        <if test="createId != null and createId != ''">create_Id,</if>
+        <if test="ownerId != null  and ownerId != ''">owner_Id,</if>
+        <if test="memo != null  and memo != ''">memo,</if>
+        <if test="filePath != null and filePath != '' ">file_Path,</if>
+        <if test="fileName != null and fileName != '' ">file_Name,</if>
+        <if test="fileTime != null and fileTime != ''">file_Time,</if>
+        <if test="flag != null  and flag != ''">flag,</if>
+        <if test="size != null  and size != ''">size_,</if>
+        <if test="fileStatus != null and fileStatus != ''">file_Status,</if>
+        <if test="fileCiphertext != null and fileCiphertext != ''">file_Ciphertext,</if>
+        <if test="fileRetryCount != null and fileRetryCount != 0">file_Retry_Count,</if>
+        <if test="fileType != null and fileType != ''">file_Type,</if>
+        <if test="groupName != null and groupName != ''">group_name,</if>
+        <if test="changeReason != null and changeReason != ''">change_reason,</if>
+        <if test="automateStatus != null and automateStatus != ''">automate_status,</if>
+        <if test="automateResultMsg != null and automateResultMsg != ''">automate_result_msg,</if>
+        <if test="sysName != null and sysName != ''">sys_name,</if>
+        <if test="md5 != null and md5 != ''">md5,</if>
+        at_id
+        )
+        values(
+        <if test="createId != null  and createId != ''">#{createId},</if>
+        <if test="ownerId != null  and ownerId != ''">#{ownerId,jdbcType=VARCHAR},</if>
+        <if test="memo != null  and memo != ''">#{memo},</if>
+        <if test="filePath != null and filePath != ''">#{filePath},</if>
+        <if test="fileName != null and fileName != ''">#{fileName},</if>
+        <if test="fileTime != null and fileTime != ''">#{fileTime},</if>
+        <if test="flag != null  and flag != ''">#{flag},</if>
+        <if test="size != null  and size != ''">#{size},</if>
+        <if test="fileStatus != null and fileStatus != ''">#{fileStatus},</if>
+        <if test="fileCiphertext != null  and fileCiphertext != ''">#{fileCiphertext},</if>
+        <if test="fileType != null and fileType != ''">#{fileType},</if>
+        <if test="groupName != null and groupName != ''">#{groupName},</if>
+        <if test="changeReason != null and changeReason != ''">#{changeReason},</if>
+        <if test="automateStatus != null and automateStatus != ''">#{automateStatus},</if>
+        <if test="automateResultMsg != null and automateResultMsg != ''">#{automateResultMsg},</if>
+        <if test="sysName != null and sysName != ''">#{sysName},</if>
+        <if test="md5 != null and md5 != ''">#{md5},</if>
+        #{atId,jdbcType=VARCHAR}
+        )
+    </insert>
+
+    <update id="updateAttachment" parameterType="Attachment">
+        update PUB_ATTACHMENT
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="createId != null  and createId != ''">create_Id = #{createId},</if>
+            <if test="ownerId != null  and ownerId != ''">owner_Id=#{ownerId},</if>
+            <if test="memo != null  and memo != ''">memo=#{memo},</if>
+            <if test="filePath != null and filePath != '' ">file_Path=#{filePath},</if>
+            <if test="fileName != null and fileName != '' ">file_Name=#{fileName},</if>
+            <if test="fileTime != null and fileTime != ''">file_Time=#{fileTime},</if>
+            <if test="flag != null  and flag != ''">flag=#{flag},</if>
+            <if test="size != null  and size != ''">size_=#{size},</if>
+            <if test="fileStatus != null and fileStatus != ''">file_Status=#{fileStatus},</if>
+            <if test="fileCiphertext != null and fileCiphertext != ''">file_Ciphertext=#{fileCiphertext},</if>
+            <if test="fileRetryCount != null and fileRetryCount != 0">file_Retry_Count=#{fileRetryCount},</if>
+            <if test="fileType != null and fileType != ''">file_Type=#{fileType},</if>
+            <if test="groupName != null and groupName != ''">group_name=#{groupName},</if>
+            <if test="md5 != null and md5 != ''">md5=#{md5},</if>
+            <if test="changeReason != null and changeReason != ''">change_reason=#{changeReason},</if>
+            <!-- 对于撤回的自动化附件需要清空变更原因，再提交时还需要重新校验 -->
+            <if test="params.isCleanChangeReason != null">change_reason=null,</if>
+            <if test="automateStatus != null and automateStatus != ''">automate_status=#{automateStatus},</if>
+            <if test="automateResultMsg != null and automateResultMsg != ''">automate_result_msg=#{automateResultMsg},</if>
+            <if test="sysName != null and sysName != ''">sys_name=#{sysName},</if>
+        </trim>
+        where at_id = #{atId}
+    </update>
+
+    <delete id="deleteAttachmentByIds" parameterType="String">
+        delete from PUB_ATTACHMENT where at_id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <delete id="deleteAttachmentByOwnerIds" parameterType="String">
+        delete from PUB_ATTACHMENT where owner_id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <!-- 查询附件条件为版本单状态已作废，有效标识0或TK（标识已删除或定时任务作废） -->
+    <select id="selectAttachmentByVersionCancel" resultMap="AttachmentResult">
+        <include refid="selectAttachment"/>
+        where a.owner_id in
+        (
+          select v.VERSION_INFO_ID from VM_BIZ_INFO v where v.VERSION_STATUS='14'
+            or v.INVALIDATION_MARK in('0','TK')
+        )
+    </select>
+
+    <select id="selectAttachmentByOwnerIds" parameterType="String" resultMap="AttachmentResult">
+        <include refid="selectAttachment"/>
+        where a.owner_id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+
+</mapper>

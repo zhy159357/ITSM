@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:include="include :: header('分派事件单')"/>
+    <th:block th:include="include :: select2-css"/>
+</head>
+<body>
+<div class="main-content">
+    <form id="form-fmbiz-add" class="form-horizontal" th:object="${fmBiz}">
+        <input name="fmId" id="fmId" class="form-control" type="hidden" required th:value="*{fmId}">
+        <input name="taskId" id="taskId" class="form-control" type="hidden" required th:value="${taskId}">
+        <input name="flag" id="flag" class="form-control" type="hidden" required th:value="${flag}">
+        <h4 class="form-header h4">基本信息</h4>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">事件单号：</label>
+                    <div class="col-sm-8">
+                        <input name="faultNo" id="faultNo" class="form-control" type="text" required
+                               th:value="*{faultNo}" readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label ">事件单来源：</label>
+                    <div class="col-sm-8">
+                        <select name="faultSource" class="form-control"
+                                th:with="type=${@pubParaValue.selectPubParaValueByParaName('fmSource')}" disabled>
+                            <option th:each="PubParaValue : ${type}" th:text="${PubParaValue.valueDetail}"
+                                    th:value="${PubParaValue.value}"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">发生时间：</label>
+                    <div class="col-sm-8">
+                        <input id="occurTime" name="occurTime" class="form-control" type="text"
+                               placeholder="yyyy-MM-dd HH:mm:ss" th:value="*{occurTime}" readonly>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">填报人：</label>
+                    <div class="col-sm-8">
+                        <input name="faultContactName" id="faultContactName" class="form-control" type="text"
+                               th:value="*{faultContactName}" readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label ">填报人电话：</label>
+                    <div class="col-sm-8">
+                        <input id="contactPhone" name="contactPhone" class="form-control" th:value="*{contactPhone}"
+                               readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">当事人：</label>
+                    <div class="col-sm-8">
+                        <input id="faultReportName" name="faultReportName" th:value="*{faultReportName}"
+                               class="form-control" readonly>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label" style="width:11%">发生部门：</label>
+                    <div class="col-sm-10" style="width:89%">
+                        <input id="contactAddress" name="contactAddress" type="text" class="form-control"
+                               th:value="*{contactAddress}" readonly/>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">所属系统：</label>
+                    <div class="col-sm-8">
+                        <input id="sysid" name="sysid" class="form-control" th:value="*{params.sysName}" readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">一级分类：</label>
+                    <div class="col-sm-8">
+                        <input id="oneType" name="oneType" type="text" class="form-control"
+                               th:value="*{params.oneTypeName}" readonly/>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">二级分类：</label>
+                    <div class="col-sm-8">
+                        <input id="twoType" name="twoType" type="text" class="form-control"
+                               th:value="*{params.twoTypeName}" readonly/>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">三级分类：</label>
+                    <div class="col-sm-8">
+                        <input id="threeType" name="threeType" type="text" class="form-control"
+                               th:value="*{params.threeTypeName}" readonly/>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">客户姓名：</label>
+                    <div class="col-sm-8">
+                        <input id="customerName" name="customerName" th:value="*{customerName}" class="form-control"
+                               readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">客户电话：</label>
+                    <div class="col-sm-8">
+                        <input id="cPhone" name="cPhone" th:value="*{cPhone}" class="form-control"
+                               readonly>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label" style="width:11%">事件标题：</label>
+                    <div class="col-sm-10" style="width:89%">
+                        <input id="faultDecriptSummary" name="faultDecriptSummary" th:value="*{faultDecriptSummary}"
+                               type="text"
+                               class="form-control" readonly/>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label" style="width:11%">事件描述：</label>
+                    <div class="col-sm-10" style="width:89%">
+                            <textarea rows="10" cols="20" id="faultDecriptDetail" th:text="*{faultDecriptDetail}"
+                                      name="faultDecriptDetail"
+                                      class="form-control" readonly></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<div class="row">
+    <div class="col-sm-12">
+        <div class="tabs-container">
+            <ul class="nav nav-tabs">
+                <li class="active"><a data-toggle="tab" href="#tab-1" aria-expanded="true">流程记录</a>
+                </li>
+                <li class=""><a data-toggle="tab" href="#tab-2" aria-expanded="false">附件</a>
+                </li>
+            </ul>
+            <div class="tab-content">
+                <div id="tab-1" class="tab-pane active">
+                    <div class="panel-body">
+                        <div class="col-sm-12 select-table table-striped">
+                            <table id="history-table"></table>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="tab-2" class="tab-pane">
+                    <div class="panel-body">
+                        <div class="btn-group-sm" id="toolbar2" role="group">
+                            <a class="btn btn-success" type="button" onclick="upload()">
+                                <i class="fa fa-upload"></i> 添加附件
+                            </a>
+                            <a class="btn btn-warning multiple disabled" onclick="downloadAttachment()">
+                                <i class="fa fa-download"></i> 下载附件
+                            </a>
+                            <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()">
+                                <i class="fa fa-remove"></i> 删除附件
+                            </a>
+                        </div>
+                        <div class="col-sm-12 select-table table-striped">
+                            <table id="file-table"></table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-offset-5 col-sm-10">
+        <button type="button" class="btn btn-sm btn-primary" onclick="assign()"><i class="fa fa-check"></i>转省中心处理
+        </button>&nbsp;
+        <button type="button" class="btn btn-sm btn-primary" onclick="toCentre()"><i class="fa fa-check"></i>转全国中心处理
+        </button>
+        <button type="button" class="btn btn-sm btn-primary" onclick="pbackEdit()"><i class="fa fa-retweet"></i>退回
+        </button>
+        <button type="button" class="btn btn-sm btn-danger" onclick="closeItem()"><i class="fa fa-remove"></i>关闭
+        </button>
+    </div>
+</div>
+<th:block th:include="include :: footer"/>
+<th:block th:include="include :: select2-js"/>
+<th:block th:include="include :: datetimepicker-js"/>
+<script th:src="@{/js/activiti.js}"></script>
+<script>
+    var prefix_attachment = ctx + "pub/attachment";
+    var prefix = ctx + "fmbiz";
+    $(function () {
+        var optionsfj = {
+            url: prefix_attachment + "/list",
+            id: 'file-table',
+            createUrl: prefix_attachment + "/add",
+            updateUrl: prefix_attachment + "/edit/{id}",
+            removeUrl: prefix_attachment + "/remove",
+            detailUrl: prefix_attachment + "/edit/{id}",
+            sortName: "fileTime",
+            sortOrder: "desc",
+            singleSelect: true,
+            clickToSelect: true,
+            toolbar: "toolbar2",
+            queryParams: queryParams,
+            modalName: "附件列表",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'atId',
+                    title: '附件ID',
+                    visible: false
+                },
+                {
+                    field: 'fileName',
+                    title: '文件名称'
+                },
+                {
+                    field: 'person.pName',
+                    title: '上传人'
+                },
+                {
+                    field: 'size',
+                    title: '文件大小'
+                },
+                {
+                    field: 'memo',
+                    title: '文件描述'
+                },
+                {
+                    field: 'fileTime',
+                    title: '上传时间',
+                    formatter: function (value, row, index) {
+                        var startTime = '';
+                        if (value != '' && value != null) {
+                            var pattern = /(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/;
+                            startTime = value.replace(pattern, '$1-$2-$3 $4:$5:$6');
+                        }
+                        return startTime;
+                    }
+                }]
+        };
+        $.table.init(optionsfj);
+        var fmId = $("#fmId").val();
+        puFolwHistory(fmId);
+        var reportTime = $("#reportTime").val();
+        var pattern = /(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/;
+        reportTime = reportTime.replace(pattern, '$1-$2-$3 $4:$5:$6');
+        $("#reportTime").val(reportTime);
+        var occurTime = $("#occurTime").val();
+        var pattern = /(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/;
+        occurTime = occurTime.replace(pattern, '$1-$2-$3 $4:$5:$6');
+        $("#occurTime").val(occurTime);
+    });
+
+    // 附件上传页面
+    function upload() {
+        var ownerId = $("#fmId").val();
+        var url = prefix_attachment + "/upload/" + ownerId;
+        $.modal.open("附件上传", url, '1100', '620');
+    }
+
+    // 附件下载
+    function downloadAttachment() {
+        var rows = $.table.selectFirstColumns();
+        var atId = rows[0];
+        var ownerId = $("#fmId").val();
+        var url = prefix_attachment + "/download/" + ownerId + "/" + atId;
+        window.location.href = url;
+    }
+
+    function queryParams(params) {
+        var search = $.table.queryParams(params);
+        search.ownerId = $("#fmId").val() == '' ? 'version_public_add_no_owner_id' : $("#fmId").val();
+        return search;
+    }
+
+    $("#form-fmbiz-add").validate({
+        onkeyup: false,
+        rules: {},
+        messages: {},
+        focusCleanup: true
+    });
+
+
+    /*转省中心*/
+    function assign() {
+        var fmId = $("#fmId").val();
+        var taskId = $("#taskId").val();
+        var flag = $("#flag").val();
+        $.modal.openTab("打开转省中心按钮页面", prefix + "/saveassign?id=" + fmId + "&&taskId=" + taskId + "&&flag=" + flag);
+    }
+
+    /*转全国中心*/
+    function toCentre() {
+        var fmId = $("#fmId").val();
+        var taskId = $("#taskId").val();
+        var flag = $("#flag").val();
+        $.modal.openTab("打开转全国中心按钮页面", prefix + "/savetoCenter?id=" + fmId + "&&taskId=" + taskId + "&&flag=" + flag);
+    }
+
+    /*退回*/
+    function pbackEdit() {
+        var fmId = $("#fmId").val();
+        var taskId = $("#taskId").val();
+        var flag = $("#flag").val();
+        $.modal.openTab("打开退回按钮页面", prefix + "/savepbackEdit?id=" + fmId + "&&taskId=" + taskId + "&&flag=" + flag);
+    }
+
+    window.onunload = function (e) {
+        var src = ctx + "fmbiz/passign";
+        var tab = window.top.$("iframe[src='" + src + "']");
+        eg:tab.contents().find("#searchBut").click();
+    }
+</script>
+</body>
+</html>

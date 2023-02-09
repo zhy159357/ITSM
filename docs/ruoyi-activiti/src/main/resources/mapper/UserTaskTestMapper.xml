@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.activiti.mapper.UserTaskTestMapper">
+    
+    <resultMap type="UserTaskTest" id="UserTaskTestResult">
+        <result property="id"    column="id"    />
+        <result property="userName"    column="userName"    />
+        <result property="userid"    column="userid"    />
+        <result property="comeplete"    column="comeplete"    />
+        <result property="uncomeplete"    column="uncomeplete"    />
+        <result property="timeout"    column="timeout"    />
+        <result property="tasktype"    column="tasktype"    />
+        <result property="time"    column="time"    />
+        <result property="orgName" column="orgName" />
+    </resultMap>
+
+    <sql id="selectUserTaskTestVo">
+        select id, user, userid, comeplete, uncomeplete, timeout, tasktype, time from user_task_test
+    </sql>
+
+    <select id="selectUserTaskTestList" parameterType="UserTaskTest" resultMap="UserTaskTestResult">
+        SELECT
+            t1.comeplete,
+            t2.uncomeplete,
+            t5.timeout,
+            t1.performer_id AS userid,
+            t3.pname AS userName ,
+            t4.orgname
+        FROM
+            (
+                SELECT
+                    count( * ) AS comeplete,
+                    t.performer_id
+                FROM
+                    PUB_FLOW_LOG t
+                WHERE
+                    t.log_type = #{tasktype}
+                  AND t.performer_id IS NOT NULL
+            <if test="params.beginTime != null and params.beginTime != ''"><!-- 开始时间检索 -->
+                and to_date(t.performer_time,'yyyy-MM-dd hh24:mi:ss') &gt;= to_date(#{params.beginTime},'yyyy-MM-dd hh24:mi:ss')
+            </if>
+            <if test="params.endTime != null and params.endTime != ''"><!-- 结束时间检索 -->
+                and to_date(t.performer_time,'yyyy-MM-dd hh24:mi:ss') &lt;= to_date(#{params.endTime},'yyyy-MM-dd hh24:mi:ss')
+            </if>
+                GROUP BY
+                    t.performer_id
+            ) t1
+                LEFT JOIN (
+                SELECT
+                    count( * ) AS uncomeplete,
+                    t.handle_person
+                FROM
+                    event_run t
+                WHERE
+                    t.status IN ( '1', '2', '3', '4', '9' )
+                GROUP BY
+                    t.handle_person
+            ) t2 ON t1.performer_id = t2.handle_person
+                LEFT JOIN(
+                select count(*) as timeout,u1.userId  from USER_TASK_TEST u1  GROUP BY u1.userId
+            ) t5 on t1.performer_id=t5.userId
+                LEFT JOIN og_person t3 ON t1.performer_id = t3.pid
+                left join og_org t4 on t3.orgid = t4.orgid
+    </select>
+    
+    <select id="selectUserTaskTestById" parameterType="String" resultMap="UserTaskTestResult">
+        <include refid="selectUserTaskTestVo"/>
+        where id = #{id}
+    </select>
+    <select id="selectOrgTaskTestList" resultType="com.ruoyi.activiti.domain.OrgTaskTest"
+            parameterType="com.ruoyi.activiti.domain.UserTaskTest">
+        select
+                sum(comeplete) as comeplete,
+                sum(uncomeplete) as uncomeplete,
+                sum(timeout) as timeout,
+        orgname from(
+        SELECT
+        t1.comeplete,
+        t2.uncomeplete,
+        t5.timeout,
+        t1.performer_id AS userid,
+        t3.pname AS userName ,
+        t4.orgname
+        FROM
+        (
+        SELECT
+        count( * ) AS comeplete,
+        t.performer_id
+        FROM
+        PUB_FLOW_LOG t
+        WHERE
+        t.log_type = #{tasktype}
+        AND t.performer_id IS NOT NULL
+        <if test="params.beginTime != null and params.beginTime != ''"><!-- 开始时间检索 -->
+            and to_date(t.performer_time,'yyyy-MM-dd hh24:mi:ss') &gt;= to_date(#{params.beginTime},'yyyy-MM-dd hh24:mi:ss')
+        </if>
+        <if test="params.endTime != null and params.endTime != ''"><!-- 结束时间检索 -->
+            and to_date(t.performer_time,'yyyy-MM-dd hh24:mi:ss') &lt;= to_date(#{params.endTime},'yyyy-MM-dd hh24:mi:ss')
+        </if>
+        GROUP BY
+        t.performer_id
+        ) t1
+        LEFT JOIN (
+        SELECT
+        count( * ) AS uncomeplete,
+        t.handle_person
+        FROM
+        event_run t
+        WHERE
+        t.status IN ( '1', '2', '3', '4', '9' )
+        GROUP BY
+        t.handle_person
+        ) t2 ON t1.performer_id = t2.handle_person
+        LEFT JOIN(
+        select count(*) as timeout,u1.userId  from USER_TASK_TEST u1  GROUP BY u1.userId
+        ) t5 on t1.performer_id=t5.userId
+        LEFT JOIN og_person t3 ON t1.performer_id = t3.pid
+        left join og_org t4 on t3.orgid = t4.orgid) group by orgname
+    </select>
+
+    <insert id="insertUserTaskTest" parameterType="UserTaskTest">
+        insert into user_task_test
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null  and id != ''">id,</if>
+            <if test="userName != null  and userName != ''">userName,</if>
+            <if test="userid != null  and userid != ''">userid,</if>
+            <if test="comeplete != null  and comeplete != ''">comeplete,</if>
+            <if test="uncomeplete != null  and uncomeplete != ''">uncomeplete,</if>
+            <if test="timeout != null  and timeout != ''">timeout,</if>
+            <if test="tasktype != null  and tasktype != ''">tasktype,</if>
+            <if test="time != null ">time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null  and id != ''">#{id},</if>
+            <if test="userName != null  and userName != ''">#{userName},</if>
+            <if test="userid != null  and userid != ''">#{userid},</if>
+            <if test="comeplete != null  and comeplete != ''">#{comeplete},</if>
+            <if test="uncomeplete != null  and uncomeplete != ''">#{uncomeplete},</if>
+            <if test="timeout != null  and timeout != ''">#{timeout},</if>
+            <if test="tasktype != null  and tasktype != ''">#{tasktype},</if>
+            <if test="time != null ">#{time},</if>
+         </trim>
+    </insert>
+
+    <update id="updateUserTaskTest" parameterType="UserTaskTest">
+        update user_task_test
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="user != null  and user != ''">user = #{user},</if>
+            <if test="userid != null  and userid != ''">userid = #{userid},</if>
+            <if test="comeplete != null  and comeplete != ''">comeplete = #{comeplete},</if>
+            <if test="uncomeplete != null  and uncomeplete != ''">uncomeplete = #{uncomeplete},</if>
+            <if test="timeout != null  and timeout != ''">timeout = #{timeout},</if>
+            <if test="tasktype != null  and tasktype != ''">tasktype = #{tasktype},</if>
+            <if test="time != null ">time = #{time},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteUserTaskTestById" parameterType="String">
+        delete from user_task_test where id = #{id}
+    </delete>
+
+    <delete id="deleteUserTaskTestByIds" parameterType="String">
+        delete from user_task_test where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

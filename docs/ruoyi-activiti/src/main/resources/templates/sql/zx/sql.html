@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('执行界面')" />
+    <th:block th:include="include :: select2-css" />
+    <th:block th:include="include :: summernote-css" />
+    <th:block th:include="include :: datetimepicker-css" />
+    <!--<script src="../../../static/ajax/libs/datetimepicker/datepicker.js"></script>
+    <script src="../../../static/ajax/libs/datetimepicker/datepicker.zh.js"></script>
+    <script src="../../../static/js/grid.locale-cn.js"></script>
+    <script src="../../../static/js/grid.js"></script>-->
+</head>
+<body>
+<div class="main-content">
+    <form id="form-group-add" class="form-horizontal">
+        <input name="orgId" type="hidden" id="treeId"/>
+        <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+            <div class="panel-group">
+
+                <div class="panel panel-default">
+                    <div class="panel-heading" style="green-color: #3c8dbc" data-toggle="collapse" data-target="#collapse1">
+                        <h4 class="panel-title" >
+                            执行sql
+                        </h4>
+                    </div>
+                    <div id="collapse1" class="panel-collapse in">
+                        <input name="telid" id="telid" class="form-control" type="hidden" readonly>
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">输入sql语句：</label>
+                                        <div class="col-sm-10">
+                                            <textarea rows="5" cols="20" placeholder="首单词请大写" id="sqlName" name="sqlName"  class="form-control" ></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">执行结果：</label>
+                                        <div class="col-sm-10">
+                                            <textarea rows="10" cols="20" id="sqlContent" name="sqlContent" class="form-control" ></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<div class="row">
+    <div class="col-sm-offset-5 col-sm-10">
+        <button  style="width: 150px; height: 100px;" size="50" type="button" whid="exec_id" class="btn btn-sm btn-primary " onclick="submit()"><i class="fa fa-check "></i>执 行</button>&nbsp;
+
+        <!--<button  style="width: 150px; height: 100px;" size="50" type="button" whid="exec_id" class="btn btn-sm btn-primary " onclick="getadpmid()"><i class="fa fa-check "></i>1.组织adpmid</button>&nbsp;-->
+        <!--<button  style="width: 150px; height: 100px;" size="50" type="button" whid="exec_id" class="btn btn-sm btn-primary " onclick="resetsydid()"><i class="fa fa-check "></i>2 重构sysid</button>&nbsp;-->
+
+    </div>
+</div>
+<th:block th:include="include :: select2-js" />
+<th:block th:include="include :: summernote-js" />
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: datetimepicker-js" />
+<script type="text/javascript">
+    //本地的路径
+    var prefix = ctx + "sql/zx";
+
+
+    function submit() {
+        $("#exec_id").attr("disabled","true");
+        $.ajax({
+            type: 'POST',
+            dataType: 'text',
+            url: prefix +"/transactionFlow/informationQuery1",
+            data: {"sql":$('#sqlName').val()},
+            success: function (result) {
+                $('#sqlContent').val(result.sql);
+                $("#exec_id").attr("disabled","false");
+            },
+            dataType: 'json'
+        });
+
+    }
+
+    /*获取adpmid*/
+    function getadpmid() {
+        $.ajax({
+            type:"post",
+            url: ctx + "system/work/getadpmid",
+            dateType:"json",
+            contentType : 'application/json',
+            data: {"sql":$('#sqlName').val()},
+            success:function(result){
+                console.log (result.msg)
+
+            }
+        });
+    }
+
+    /*根据paso号,重构sysid*/
+    function resetsydid() {
+        $.ajax({
+            type:"post",
+            url: ctx + "system/work/resetsydid",
+            dateType:"json",
+            contentType : 'application/json',
+            data: {"sql":$('#sqlName').val()},
+            success:function(result){
+                console.log (result.msg)
+
+            }
+        });
+    }
+
+
+
+</script>
+</body>
+
+<!--<body>
+<div>
+    <nobr>
+        <div>
+            &lt;!&ndash;<form-item label="SQL:  ">
+                <input v-model="sqls" placeholder="请输入sql" clearable size="small"></input>
+            </form-item>
+            <form-item>
+                <button type="primary" onclick="getSql1()" size="mini" >执行</button>
+            </form-item>
+            <form-item label="返回信息:">
+                <input v-model="msgs" size="small"></input>
+            </form-item>&ndash;&gt;
+
+                <div class="row">
+                    <div class="col-md-10">
+                            <textarea name="sql" STYLE="width: 1000px;height: 100px" id="sql"
+                                      onfocus="ClearDefault(this)" placeholder="输入查询语句"
+                                      onblur="AddDefault(this)">${sql}</textarea>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-2">
+                        </button>
+                    </div>
+                    <button class="btn btn-primary btn-block" id="sureId">确定
+                    <div class="col-md-2">
+                        <button id="back" type="reset" class="btn btn-primary btn-block">重置
+                        </button>
+                    </div>
+                    <div class="col-md-2">
+                        <p id="message" style="height: 28px" align="center"></p>
+                    </div>
+                </div>
+
+        </div>
+    </nobr>
+    <hr style="background-color: #0c0c0c;height: 1px;width: 2000px;">
+
+
+
+
+
+        <script type="text/javascript">
+
+            //加载的主表（对表格进行遍历
+            $(document).ready(function () {
+                //确定重置按钮
+                $("#sureId").click(function () {
+
+                    alert($("#sql").value());
+                });
+            });
+            //点击重置按钮
+            $("#back").click(function () {
+                $("#sql").empty();
+            });
+
+
+        </script>
+
+</div>
+</body>-->
+
+</html>

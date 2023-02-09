@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:include="include :: header('我的值班组角色')" />
+    <th:block th:include="include :: layout-latest-css" />
+    <th:block th:include="include :: ztree-css" />
+</head>
+<body class="gray-bg">
+<div class="ui-layout-center">
+    <div class="container-div">
+        <div class="row">
+            <div class="col-sm-12 search-collapse">
+                <form id="group-form">
+                    <div class="select-list">
+                        <ul>
+                            <li>
+                                值班组名称：<input type="text" name="dutyName"/>
+                            </li>
+                            <li>
+                                <p>值班组类型：</p>
+                                <select id="dutyType" name="dutyType"  class="form-control " th:with="dutyType=${@pubParaValue.selectPubParaValueByParaName('event_group_type')}" >
+                                    <option value="">请选择</option>
+                                    <option th:each="itype : ${dutyType}" th:text="${itype.valueDetail}" th:value="${itype.value}"></option>
+                                </select>
+                            </li>
+                            <li>
+                                <a class="btn btn-primary btn-rounded btn-sm" id="ss" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                            </li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+
+            <div class="btn-group-sm" id="toolbar" role="group">
+                <a class="btn btn-success" onclick="addGain()">
+                    <i class="fa fa-plus"></i> 添加
+                </a>
+                <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()">
+                    <i class="fa fa-trash"></i> 删除
+                </a>
+            </div>
+            <div class="col-sm-12 select-table table-striped">
+                <table id="bootstrap-table"></table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: layout-latest-js" />
+<th:block th:include="include :: ztree-js" />
+<script th:inline="javascript">
+    var prefix = ctx + "monitor/dutyRole";
+    var eventGroupType=[[${@pubParaValue.selectPubParaValueByParaName('event_group_type')}]];
+    $(function() {
+        var options = {
+            url: prefix + "/selectMyDutyList",
+            createUrl: prefix + "/add",
+            removeUrl: prefix + "/remove",
+            clickToSelect: true,
+            modalName: "获取值班组角色",
+            columns: [
+                {
+                    checkbox: true
+                },
+                {
+                    field: 'dutyId',
+                    title: '主键ID',
+                    visible : false
+                },
+                {
+                    field: 'groupId',
+                    title: '工作组ID',
+                    visible : false
+                },
+                {
+                    field: 'monitorTypeAccountId',
+                    title: '类型字典ID',
+                    visible : false
+                },
+                {
+                    field: 'dutyName',
+                    title: '值班组名称'
+                },
+                {
+                    field: 'dutyType',
+                    title: '值班组类型',
+                     formatter:function (value) {
+                        return $.table.selectPubParaValueData(eventGroupType,value);
+                    }
+                },
+                {
+                    field: 'operateTime',
+                    title: '添加值班组时间'
+                }]
+        };
+        $.table.init(options);
+    });
+
+    // 添加页面查询所有符合的值班组角色
+    function addGain() {
+        var url = prefix + "/addGain";
+        $.modal.open("添加值班组角色", url);
+    }
+
+</script>
+</body>
+</html>

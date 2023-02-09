@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('个人中心修改人员')" />
+    <th:block th:include="include :: select2-css" />
+    <th:block th:include="include :: header('日期和时间')" />
+    <th:block th:include="include :: datetimepicker-css" />
+    <style>
+        .form-control[disabled], .form-control[readonly], fieldset[disabled] .form-control {
+            background-color: #e6e3e3;
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+<div class="main-content">
+    <form id="form-ogperson-edit" class="form-horizontal" th:object="${ogPerson}">
+        <input name="pId"  type="hidden" th:field="*{pId}"/>
+        <input name="orgId" type="hidden" id="treeId" th:field="*{orgId}"/>
+        <input name="agencySwitchFlag" type="hidden" id="agencySwitchFlag" th:field="*{agencySwitch}"/>
+        <h4 class="form-header h4">基本信息</h4>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">姓名：</label>
+                    <div class="col-sm-8">
+                        <input name="pName" placeholder="请输入人员姓名" class="form-control" type="text" th:field="*{pName}" maxlength="30" required />
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">性别：</label>
+                    <div class="col-sm-8">
+                        <select name="sex" class="form-control m-b" th:with="type=${@dict.getParaType('sex')}">
+                            <option th:field="*{sex}" th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">所属机构：</label>
+                    <div class="col-sm-8">
+                        <div class="input-group">
+                            <input  onclick="selectDeptTree()" th:field="*{orgname}" th:id="treeName" disabled type="text" placeholder="请选择所属机构" class="form-control" readonly  >
+                            <span class="input-group-addon"><i class="fa fa-search"></i></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">职位：</label>
+                    <div class="col-sm-8">
+                        <input name="position"  class="form-control" type="text" maxlength="30" th:field="*{position}">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">籍贯：</label>
+                    <div class="col-sm-8">
+                        <input name="birthPlace" class="form-control" type="text" maxlength="30" th:field="*{birthPlace}">
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">学历：</label>
+                    <div class="col-sm-8">
+                        <select name="edu" class="form-control m-b" th:with="type=${@dict.getParaType('education')}">
+                            <option></option>
+                            <option th:field="*{edu}" th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">负责人：</label>
+                    <div class="col-sm-8">
+                        <select name="leader" class="form-control m-b" th:with="type=${@dict.getParaType('sys_leader_flag')}" disabled >
+                            <option th:field="*{leader}"  th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}" ></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">顺序：</label>
+                    <div class="col-sm-8">
+                        <input th:field="*{pOrder}" id="order" name="pOrder"  class="form-control" type="text" maxlength="30" required>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">状态：</label>
+                    <div class="col-sm-8">
+                        <select name="invalidationMark" class="form-control m-b" th:with="type=${@dict.getParaType('sys_people_status')}" disabled >
+                            <option th:field="*{invalidationMark}"  th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">生日：</label>
+                    <div class="col-sm-8">
+                        <div class="input-group date">
+                            <input th:value="*{birthday}" name="birthday" type="text" class="form-control" id="datetimepicker-demo-2" style="background-color: #fff; opacity: 1;" readonly>
+                            <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">办公电话：</label>
+                    <div class="col-sm-8">
+                        <div class="input-group">
+                            <input th:field= "*{phone}" id="phone" name="phone"  class="form-control" type="text">
+                            <span class="input-group-addon"><i class="fa fa-mobile"></i></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">移动电话：</label>
+                    <div class="col-sm-8">
+                        <div class="input-group">
+                            <input th:field="*{mobilPhone}" id="mobilPhone" name="mobilPhone" placeholder="请输入移动电话" class="form-control" type="text"  disabled required isPhone="true">
+                            <span class="input-group-addon"><i class="fa fa-mobile"></i></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">邮箱：</label>
+                    <div class="col-sm-8">
+                        <div class="input-group">
+                            <input th:field="*{email}" id="email" name="email" class="form-control email" type="text" maxlength="50" placeholder="请输入邮箱">
+                            <span class="input-group-addon"><i class="fa fa-envelope"></i></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">家庭住址：</label>
+                    <div class="col-sm-8">
+                        <input th:field="*{address}" id="address" name="address" class="form-control" type="text" maxlength="50">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">代理人开关：</label>
+                    <div class="col-sm-8">
+                        <label class="toggle-switch switch-solid">
+                            <input type="checkbox" id="agencySwitch" onclick="agencyButton()"
+                                   th:checked="*{agencySwitch == 1 ? true : false}">
+                            <span></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6" id="agencyPersonDev">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">代办人选：</label>
+                    <div class="col-sm-8">
+                        <input name="agencyPname" id="agencyPname" th:field="*{agencyPname}" class="form-control" style="background-color: #fff; opacity: 1;" onclick="selectPerson()" readonly required>
+                        <input name="agencyPid" id="agencyPid" th:field="*{agencyPid}" hidden>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row" id="agencyTimeDev">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">代理开始时间：</label>
+                    <div class="col-sm-8">
+                        <input class="form-control" id="agencyStrTime" name="agencyStrTime" th:field="*{agencyStrTime}" onchange="compareDate()"
+                               placeholder="yyyy-MM-dd HH:mm:ss" required type="text" readonly
+                               style="background-color: #fdfdfd"/>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">代理结束时间：</label>
+                    <div class="col-sm-8">
+                        <input class="form-control" id="agencyEndTime" name="agencyEndTime" th:field="*{agencyEndTime}" onchange="compareDate()"
+                               placeholder="yyyy-MM-dd HH:mm:ss" required type="text" readonly
+                               style="background-color: #fdfdfd"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <h4 class="form-header h4">其他信息</h4>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label class="col-xs-2 control-label">备注：</label>
+                    <div class="col-xs-10">
+                        <textarea th:field="*{memo}" name="remark" id="memo" class="form-control" rows="3"></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<div class="row">
+    <div class="col-sm-offset-5 col-sm-10">
+        <button type="button" class="btn btn-sm btn-primary" onclick="submitHandler()"><i class="fa fa-check"></i>保 存</button>&nbsp;
+        <button type="button" class="btn btn-sm btn-danger" onclick="closeItem()"><i class="fa fa-reply-all"></i>关 闭 </button>
+    </div>
+</div>
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: select2-js" />
+<th:block th:include="include :: datetimepicker-js" />
+<script type="text/javascript">
+    var prefix = ctx + "system/ogperson";
+    $("#form-ogperson-edit").validate({
+        onkeyup: true,
+        focusCleanup: true,    //如果是 true 那么当未通过验证的元素获得焦点时，移除错误提示
+        rules: {
+            pOrder: {
+                required: true,
+                isSortNum: true,
+                maxlength: 8
+            },
+            pName: {
+                required: true,
+                maxlength: 12
+            },
+            sex: {
+                required: true
+            },
+            birthPlace: {
+                maxlength: 32
+            },
+            position: {
+                maxlength: 12
+            },
+            leader: {
+                required: true
+            },
+            mobilPhone: {
+                required: true,
+                isPhone: true,
+                remote: {
+                    url: prefix + "/checkEditPhoneUnique",
+                    type: "post",
+                    dataType: "json",
+                    data: {
+                        "mobilPhone": function() {
+                            return $.common.trim($("#mobilPhone").val());
+                        },
+                        "pId": function () {
+                            return $("#pId").val();
+                        }
+                    },
+                    async:false,
+                    dataFilter: function(data, type) {
+                        return $.validate.unique(data);
+                    },
+                    cache :false
+                }
+
+            },
+            email: {
+                email: true,
+                remote: {
+                    url: prefix + "/checkEmailUnique",
+                    type: "post",
+                    dataType: "json",
+                    data: {
+                        "email": function() {
+                            return $.common.trim($("#email").val());
+                        }
+                    }
+                }
+            },
+            address: {
+                maxlength: 32
+            },
+            memo: {
+                maxlength: 512
+            }
+        },
+        messages: {
+            "mobilPhone":{
+                remote: "手机号码已经存在"
+            }
+        },
+    });
+
+    function submitHandler() {
+        var agencySwitch = $("input[id='agencySwitch']").is(':checked') == true ? 1 : 0;
+        $("#agencySwitchFlag").val(agencySwitch);
+
+        if(invadateSortNum()){
+            if ($.validate.form()) {
+                var data = $("#form-ogperson-edit").serializeArray();
+                //location.reload();
+                location.replace(location);
+                $.operate.saveTab(prefix + "/edit", data);
+                closeItem();
+            }
+        }
+
+    }
+
+    /* 用户管理-修改-选择部门树 */
+    function selectDeptTree() {
+        var deptId = $.common.isEmpty($("#treeId").val()) ? "100" : $("#treeId").val();
+        var url = ctx + "system/dept/selectDeptTree/" + deptId;
+        var options = {
+            title: '选择部门',
+            width: "380",
+            url: url,
+            callBack: doSubmit
+        };
+        $.modal.openOptions(options);
+    }
+
+    function doSubmit(index, layero){
+        var tree = layero.find("iframe")[0].contentWindow.$._tree;
+        var body = layer.getChildFrame('body', index);
+        $("#treeId").val(body.find('#treeId').val());
+        $("#treeName").val(body.find('#treeName').val());
+        layer.close(index);
+    }
+
+    $(function() {
+        $('#post').select2({
+            placeholder: "请选择岗位",
+            allowClear: true
+        });
+        $("#datetimepicker-demo-2").datetimepicker({
+            format: "yyyy-mm-dd",
+            minView: "month",
+            autoclose: true
+        });
+
+
+
+        var agencySwitchFlag = $("#agencySwitchFlag").val();
+        $("#agencySwitch").val(agencySwitchFlag);
+        var agencySwitch = $("#agencySwitch").val();
+        if (agencySwitch == '1') {
+            $("#agencyPersonDev").show();
+            $("#agencyTimeDev").show();
+            $("#agencySwitch").prop("checked", true);
+        } else {
+            $("#agencyPid").val('');
+            $("#agencyPname").val('');
+            $("#agencyStrTime").val('');
+            $("#agencyEndTime").val('');
+            $("#agencyPersonDev").hide();
+            $("#agencyTimeDev").hide();
+            $("#agencySwitch").prop("checked", false);
+        }
+
+    })
+    
+    function invadateSortNum() {
+        var order = $('#order').val();
+        var sortnums = /^[1-9]\d*$/;
+        return sortnums.test(order);
+    }
+
+    $("input[name='agencyStrTime']").datetimepicker({
+        format: "yyyy-mm-dd hh:ii:ss",
+        autoclose: true
+    });
+
+    $("input[name='agencyEndTime']").datetimepicker({
+        format: "yyyy-mm-dd hh:ii:ss",
+        autoclose: true
+    });
+
+    //判断计划时间是否符合要求
+    function compareDate() {
+        var agencyStrTime = $("#agencyStrTime").val();
+        var agencyEndTime = $("#agencyEndTime").val();
+        var agencyStrTimeDate = new Date(agencyStrTime);// 开始时间
+        var agencyEndTimeDate = new Date(agencyEndTime);// 结束时间
+        var nowDate = new Date();// 当前时间
+
+        if (agencyStrTimeDate <= nowDate.getTime()) {
+            $.modal.alertWarning("代理开始时间必须大于当前时间。");
+            $("#agencyStrTime").val("");
+            return false;
+        }
+
+        if (agencyStrTimeDate.getTime() >= agencyEndTimeDate.getTime()) {
+            $.modal.alertWarning("代理结束时间必须大于代理开始时间。");
+            $("#agencyEndTime").val("");
+            return false;
+        }
+        return true;
+    }
+
+    //选择代办人  范围默认为当前登录人所处机构
+    function selectPerson() {
+
+        var url = prefix + "/selectAgencyPerson";
+        $.modal.open("选择代办人", url);
+    }
+
+    //选择代办人  范围默认为当前登录人所处机构
+    function agencyButton() {
+
+        //alert("dianjikaiguan");
+        var agencySwitch = $("#agencySwitch").val();
+
+        if (agencySwitch == 0) {
+            $("#agencyPersonDev").show();
+            $("#agencyTimeDev").show();
+            $("#agencySwitch").val('1');
+        } else {
+            $("#agencyPid").val('');
+            $("#agencyPname").val('');
+            $("#agencyStrTime").val('');
+            $("#agencyEndTime").val('');
+            $("#agencyPersonDev").hide();
+            $("#agencyTimeDev").hide();
+            $("#agencySwitch").val('0');
+        }
+
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.CustomFormJsonMapper">
+	<resultMap type="CustomFormJsonVo" id="CustomFormJsonResult">
+		<id property="id" column="id" />
+		<result property="form_id" column="form_id" />
+		<result property="version" column="version" />
+		<result property="data" column="data" />
+		<result property="increased_data" column="increased_data" />
+		<result property="is_current" column="is_current" />
+		<result property="name" column="name" />
+		<result property="type" column="type" />
+		<result property="code" column="code" />
+		<result property="charset" column="charset" />
+		<result property="html" column="html" />
+		<result property="json" column="json" />
+		<result property="status" column="status" />
+	</resultMap>
+	<insert id="insert" parameterType="CustomFormJsonVo">
+		insert into design_form_version_edit(
+		from_id,
+		form_id,
+		version,
+		data,
+		is_current,
+		name,
+		code,
+		html,
+		json
+		)values(
+		#{id},
+		#{form_id},
+		#{version},
+		#{data},
+		#{is_current},
+		#{name},
+		#{code},
+		#{html},
+		#{json}
+		)
+	</insert>
+
+	<update id="edit" parameterType="CustomFormJsonVo">
+		update design_form_version
+		<set>
+			<if test="html != null and html != ''">html= #{html},</if>
+			json= #{json}
+		</set>
+		where id = #{id}
+	</update>
+
+	<!--展示节假日列表 -->
+		<select id="select" parameterType="CustomFormJsonVo"
+		resultMap="CustomFormJsonResult">
+		select id,form_id,version,data,increased_data,is_current,name,type,code,charset,html,json,status from design_form_version where is_current=1 order by name
+	</select>
+	
+	<!--根据id查询 -->
+	<select id="selectById" parameterType="CustomFormJsonVo"
+		resultMap="CustomFormJsonResult">
+		select id,form_id,version,data,increased_data,is_current,name,type,code,charset,html,json,status from design_form_version where id=#{id}
+	</select>
+	<update id="editTemplate" parameterType="CustomFormJsonVo">
+		update approve_template
+		<set>
+			json= #{json}
+		</set>
+		where id = #{id}
+	</update>
+
+	<!--展示节假日列表 -->
+		<select id="selectTemplate" parameterType="CustomFormJsonVo"
+		resultMap="CustomFormJsonResult">
+		select id,template_name as name,json from approve_template order by template_name
+	</select>
+	
+	<!--根据id查询 -->
+	<select id="selectByIdTemplate" parameterType="CustomFormJsonVo"
+		resultMap="CustomFormJsonResult">
+		select id,template_name as name,json from approve_template where id=#{id}
+	</select>
+	<insert id="insertTemplate" parameterType="CustomFormJsonVo">
+		insert into approve_template_edit(
+		from_id,
+		template_name,
+		json
+		)values(
+		#{id},
+		#{name},
+		#{json}
+		)
+	</insert>
+</mapper>

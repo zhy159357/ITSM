@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:include="include :: header('审核信息制度')"/>
+    <th:block th:include="include :: ztree-css"/>
+</head>
+<body class="white-bg">
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+    <form class="form-horizontal m" id="form-info-edit"  th:object="${info}">
+    <input id="regime_info_id" name="regime_info_id" type="hidden" th:value="${regime_info_id}"/>
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="form-group">
+                <label class="col-sm-4 control-label is-required">制度标题:</label>
+                <div class="col-sm-8">
+                    <input class="form-control" type="text" name="regime_title" id="regime_title" th:field="*{regime_title}"required >
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="form-group">
+                <label class="col-sm-4 control-label ">关键字:</label>
+                <div class="col-sm-8">
+                    <input class="form-control" type="text" name="key_word" id="key_word" th:field="*{key_word}"  >
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="form-group">
+                <label class="col-xs-2 control-label">制度摘要:</label>
+                <div class="col-xs-10">
+                    <textarea name="regime_digest" maxlength="500" class="form-control" rows="5" th:field="*{regime_digest}" required></textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="form-group">
+                <label class="col-sm-4 control-label is-required">类型一:</label>
+                <div class="col-sm-8">
+                    <select id="type_one" name="type_one" class="form-control m-b" th:field="*{type_one}" required >
+                        <option value="0">基础制度与政策类</option>
+                        <option value="1">管理办法与规定类</option>
+                        <option value="2">操作规范与实施细则嘞</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="form-group">
+                <label class="col-sm-4 control-label is-required">类型二:</label>
+                <div class="col-sm-8">
+                    <select id="type_two" name="type_two" class="form-control m-b" th:field="*{type_two}" required >
+                        <option value="0">系统</option>
+                        <option value="1">网络</option>
+                        <option value="2">应用</option>
+                        <option value="3">安全</option>
+                        <option value="4">动力</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="form-group">
+                <label class="col-sm-4 control-label is-required">印发日期:</label>
+                <div class="col-sm-8">
+                    <input type="text" class="layui-input form-control" th:field="*{print_time}" id="print_time" name="print_time"  >
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="form-group">
+                <label class="col-sm-4 control-label ">印发文号:</label>
+                <div class="col-sm-8">
+                    <input class="form-control" type="text" name="folder_" id="folder_" th:field="*{folder_}"  >
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="form-group">
+                <label class="col-sm-4 control-label is-required">四级制度:</label>
+                <div class="col-sm-8">
+                    <select id="sytem_four" name="sytem_four" class="form-control m-b" th:field="*{sytem_four}"  >
+                        <option value="0">一级</option>
+                        <option value="1">二级</option>
+                        <option value="2">三级</option>
+                        <option value="3">四级</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="form-group">
+                <label class="col-sm-4 control-label is-required">分类域:</label>
+                <div class="col-sm-8">
+                    <select id="classify" name="classify" class="form-control m-b" th:field="*{classify}"  >
+                        <option value="0">服务治理</option>
+                        <option value="1">服务管理</option>
+                        <option value="2">常态运维</option>
+                        <option value="3">应急态运维</option>
+                        <option value="4">系统和设施运维和维护</option>
+                        <option value="5">质量管理</option>
+                        <option value="6">信息安全管理</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="form-group">
+                <label class="col-sm-4 control-label ">提交人:</label>
+                <div class="col-sm-8">
+                    <input class="form-control" id="commit_id" name="commit_id" th:value="${commit_id}" required readonly>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="form-group">
+                <label class="col-sm-4 control-label ">提交时间:</label>
+                <div class="col-sm-8">
+                    <input class="form-control" type="text" name="commit_time" id="commit_time" th:field="*{commit_time}" readonly>
+                </div>
+            </div>
+        </div>
+    </div>
+    </form>
+</div>
+<div class="row">
+    <div class="col-sm-offset-5 col-sm-10">
+        <button type="button" class="btn btn-sm btn-primary" onclick="submitHandler()"><i class="fa fa-check"></i>通 过</button>&nbsp;
+        <button type="button" class="btn btn-sm btn-primary" onclick="submitHandler(1)"><i class="fa fa-check"></i>不通过</button>&nbsp;
+        <button type="button" class="btn btn-sm btn-danger" onclick="closeItem()"><i class="fa fa-reply-all"></i>取 消</button>
+    </div>
+</div>
+<th:block th:include="include :: footer"/>
+<th:block th:include="include :: ztree-js"/>
+<script type="text/javascript">
+
+    //** 关闭选项卡 */
+    function closeItem() {
+
+        var index = parent.layer.getFrameIndex(window.name);
+        parent.layer.close(index);//关闭当前页
+    }
+    //获取当前时间添加到input中
+    var _input = document.getElementById('commit_time');
+    var currentDate = new Date();
+    currentDate = currentDate.getFullYear() + "-" + (currentDate.getMonth() + 1) + "-" + currentDate.getDate() + " " + currentDate.getHours() + ":" + currentDate.getMinutes() + ":" + currentDate.getSeconds();
+    _input.value = currentDate; //赋值给input.value
+
+
+    $('input').on('ifChanged', function (obj) {
+        var type = $(this).val();
+        var checked = obj.currentTarget.checked;
+        if (type == 1) {
+            if (checked) {
+                $._tree.expandAll(true);
+            } else {
+                $._tree.expandAll(false);
+            }
+        } else if (type == "2") {
+            if (checked) {
+                $._tree.checkAllNodes(true);
+            } else {
+                $._tree.checkAllNodes(false);
+            }
+        } else if (type == "3") {
+            if (checked) {
+                $._tree.setting.check.chkboxType = {"Y": "ps", "N": "ps"};
+            } else {
+                $._tree.setting.check.chkboxType = {"Y": "", "N": ""};
+            }
+        }
+    })
+
+    // function edit() {
+    //     var regime_info_id = $("input[name='regime_info_id']").val();
+    //     var commit_id = $("input[name='commit_id']").val();
+    //     var folder_ = $("input[name='folder_']").val();
+    //     var regime_title = $("input[name='regime_title']").val();
+    //     var key_word = $("input[name='key_word']").val();
+    //     var regime_digest = $("input[name='regime_digest']").val();
+    //     var type_one = $("#type_one").find("option:selected").text();
+    //     var type_two = $("#type_two").find("option:selected").text();
+    //     var current_state = $("#current_state").find("option:selected").text();
+    //     var sytem_four = $("#sytem_four").find("option:selected").text();
+    //     var classify = $("#classify").find("option:selected").text();
+    //     var commit_time = $("input[name='commit_time']").val();
+    //     $.ajax({
+    //         cache: true,
+    //         type: "POST",
+    //         url: ctx + "system/info/edit",
+    //         data: {
+    //             "regime_info_id": regime_info_id,
+    //             "commit_id": commit_id,
+    //             "checker": commit_id,
+    //             "folder_": folder_,
+    //             "regime_title": regime_title,
+    //             "key_word": key_word,
+    //             "regime_digest": regime_digest,
+    //             "type_one": type_one,
+    //             "current_state": current_state,
+    //             "type_two": type_two,
+    //             "sytem_four": sytem_four,
+    //             "classify": classify
+    //         },
+    //         async: false,
+    //         error: function (request) {
+    //             $.modal.alertError("信息制度错误");
+    //         },
+    //         success: function (data) {
+    //             $.operate.successCallback(data);
+    //         }
+    //     });
+    // }
+    //
+    // function submitHandler() {
+    //     if ($.validate.form()) {
+    //         edit();
+    //     }
+    // }
+    var prefix = ctx + "system/info";
+    function submitHandler() {
+        var data = $("#form-info-edit").serializeArray();
+        if ($.validate.form()) {
+            $.operate.save(prefix + "/edit", data);
+        }
+    }
+</script>
+</body>
+</html>

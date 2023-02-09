@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.activiti.mapper.FmBizOvertimeMapper">
+
+    <resultMap type="FmBizOvertime" id="FmBizOvertimeResult">
+        <result property="singelNumber" column="singel_number"/>
+        <result property="datetime" column="datetime"/>
+        <result property="systemId" column="system_id"/>
+        <result property="proportion" column="proportion"/>
+        <result property="ifjjtype" column="ifjjtype"/>
+        <result property="id" column="id"/>
+        <result property="sysName" column="sysName"/>
+    </resultMap>
+
+    <sql id="selectFmBizOvertimeVo">
+        select singel_number,
+        datetime,
+        system_id,
+        proportion,
+        ifjjtype,
+        s.caption sysName,
+        id
+        from fm_biz_overtime k
+        left join og_sys s on k.system_id=s.sysid
+    </sql>
+
+    <select id="selectFmBizOvertimeList" parameterType="FmBizOvertime" resultMap="FmBizOvertimeResult">
+        <include refid="selectFmBizOvertimeVo"/>
+        <where>
+            <if test="singelNumber != null  and singelNumber != ''">and singel_number = #{singelNumber}</if>
+            <if test="datetime != null  and datetime != ''">and datetime = #{datetime}</if>
+            <if test="systemId != null  and systemId != ''">and system_id = #{systemId}</if>
+            <if test="proportion != null  and proportion != ''">and proportion = #{proportion}</if>
+            <if test="ifjjtype != null  and ifjjtype != ''">and ifjjtype = #{ifjjtype}</if>
+        </where>
+    </select>
+
+    <select id="selectFmBizOvertimeById" parameterType="String" resultMap="FmBizOvertimeResult">
+        <include refid="selectFmBizOvertimeVo"/>
+        where singel_number = #{singelNumber}
+    </select>
+
+    <insert id="insertFmBizOvertime" parameterType="FmBizOvertime">
+        insert into fm_biz_overtime
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="singelNumber != null  and singelNumber != ''">singel_number,</if>
+            <if test="datetime != null  and datetime != ''">datetime,</if>
+            <if test="systemId != null  and systemId != ''">system_id,</if>
+            <if test="proportion != null  and proportion != ''">proportion,</if>
+            <if test="ifjjtype != null  and ifjjtype != ''">ifjjtype,</if>
+            <if test="id != null  and id != ''">id,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="singelNumber != null  and singelNumber != ''">#{singelNumber},</if>
+            <if test="datetime != null  and datetime != ''">#{datetime},</if>
+            <if test="systemId != null  and systemId != ''">#{systemId},</if>
+            <if test="proportion != null  and proportion != ''">#{proportion},</if>
+            <if test="ifjjtype != null  and ifjjtype != ''">#{ifjjtype},</if>
+            <if test="id != null  and id != ''">#{id},</if>
+        </trim>
+    </insert>
+
+    <update id="updateFmBizOvertime" parameterType="FmBizOvertime">
+        update fm_biz_overtime
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="datetime != null  and datetime != ''">datetime = #{datetime},</if>
+            <if test="systemId != null  and systemId != ''">system_id = #{systemId},</if>
+            <if test="proportion != null  and proportion != ''">proportion = #{proportion},</if>
+            <if test="ifjjtype != null  and ifjjtype != ''">ifjjtype = #{ifjjtype},</if>
+            <if test="id != null  and id != ''">id = #{id},</if>
+        </trim>
+        where singel_number = #{singelNumber}
+    </update>
+
+    <delete id="deleteFmBizOvertimeById" parameterType="String">
+        delete from fm_biz_overtime where singel_number = #{singelNumber}
+    </delete>
+
+    <delete id="deleteFmBizOvertimeByIds" parameterType="String">
+        delete from fm_biz_overtime where singel_number in
+        <foreach item="singelNumber" collection="array" open="(" separator="," close=")">
+            #{singelNumber}
+        </foreach>
+    </delete>
+    <select id="findIfjjCount" parameterType="FmBizOvertime" resultMap="FmBizOvertimeResult">
+        select sum(proportion) proportion from fm_biz_overtime
+        <where>
+            1=1
+            <if test="datetime != null  and datetime != ''">and datetime = #{datetime}</if>
+            <if test="systemId != null  and systemId != ''">and system_id = #{systemId}</if>
+            <if test="ifjjtype != null  and ifjjtype != ''">and ifjjtype = #{ifjjtype}</if>
+        </where>
+    </select>
+</mapper>

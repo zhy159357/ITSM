@@ -1,0 +1,1097 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.activiti.mapper.FmSwMapper">
+
+    <resultMap type="FmSw" id="FmSwResult">
+        <id property="fmSwId" column="FM_SW_ID"></id>
+        <result property="checkedId" column="CHECKER_ID"></result>
+        <result property="authId" column="AUTH_ID"></result>
+        <result property="createOrgId" column="CREATE_ORG_ID"></result>
+        <result property="dealOrgId" column="DEAL_ORG_ID"></result>
+        <result property="createId" column="CREATE_ID"></result>
+        <result property="dealerId" column="DEALER_ID"></result>
+        <result property="auditorId" column="AUDITOR_ID"></result>
+        <result property="auditorName" column="AUDITOR_NAME"></result>
+        <result property="faultNo" column="FAULT_NO"></result>
+        <result property="faultTitle" column="FAULT_TITLE"></result>
+        <result property="createTime" column="CREATE_TIME"></result>
+        <result property="showCreateTime" column="SHOW_CREATE_TIME"></result>
+        <result property="dealResult" column="DEAL_RESULT"></result>
+        <result property="dealContent" column="DEAL_CONTENT"></result>
+        <result property="auditResult" column="AUDIT_RESULT"></result>
+        <result property="auditTime" column="AUDIT_TIME"></result>
+        <result property="currentState" column="CURRENT_STATE"></result>
+        <result property="currentStateName" column="CURRENT_STATE_NAME"></result>
+        <result property="faultDescription" column="FAULT_DESCRIPTION"></result>
+        <result property="faultKind" column="FAULT_KIND"></result>
+        <result property="authName" column="AUTH_NAME"></result>
+        <result property="participatorIds" column="PARTICIPATOR_IDS"></result>
+        <result property="invalidationMark" column="INVALIDATION_MARK"></result>
+        <result property="pname" column="pname"></result>
+        <result property="orgname" column="orgname"></result>
+        <result property="checkedName" column="checkedname"></result>
+        <result property="checkedOrgname" column="checkedorgname"></result>
+        <!--受理处室名称-->
+        <result property="dealOrgname" column="dealorgname"></result>
+        <!--申请处室名称-->
+        <result property="createOrgName" column="createorgname"></result>
+        <!--创建人名称-->
+        <result property="createName" column="createname"></result>
+        <!--处理人-->
+        <result property="dealname" column="DEAL_NAME"></result>
+        <!--处理人5-->
+        <result property="dealerFiveName" column="DEALER_FIVE_NAME"></result>
+        <result property="checkerTwoId" column="CHECKER_TWO_ID"></result>
+        <result property="checkerThreeId" column="CHECKER_THREE_ID"></result>
+        <result property="checkerFourId" column="CHECKER_FOUR_ID"></result>
+        <result property="processStatus" column="PROCESS_STATUS"></result>
+        <result property="dealerFiveId" column="DEALER_FIVE_ID"></result>
+        <result property="checkerTwoName" column="CHECKER_TWO_NAME"></result>
+        <result property="checkerThreeName" column="CHECKER_THREE_NAME"></result>
+        <result property="checkerFourName" column="CHECKER_FOUR_NAME"></result>
+    </resultMap>
+
+    <sql id="selectFmSwVo">
+        select * from (
+
+            select  INVALIDATION_MARK,AUDIT_TIME,AUDITOR_ID,AUDIT_RESULT,CREATE_ID,CURRENT_STATE,CHECKER_ID,DEALER_ID,AUTH_ID,FAULT_DESCRIPTION,CREATE_ORG_ID,DEAL_ORG_ID,FM_SW_ID,FAULT_NO,FAULT_TITLE,FAULT_KIND,PROCESS_STATUS,DEALER_FIVE_ID,(
+        select orgname from OG_ORG
+        where orgid = fs.create_org_id
+        ) createOrgName,
+        (
+        select pname from OG_PERSON
+        where pid = fs.create_id
+        ) createName,
+        (
+        select pname from OG_PERSON
+        where pid = fs.checker_id
+        ) checkedName,
+        (
+        select orgname from OG_ORG
+        where orgid = fs.deal_org_id
+        ) dealOrgName,
+        (
+        select pname from OG_PERSON
+        where pid = fs.auth_id
+        ) AUTH_NAME,
+        (
+        select pname from OG_PERSON
+        where pid = fs.dealer_id
+        ) DEAL_NAME,(
+        select VALUE_DETAIL from PUB_PARAVALUE
+        where para_id = 'ff808081559f01c501559f0f9f5d0005' and "VALUE" = fs.CURRENT_STATE
+        )
+        CURRENT_STATE_NAME,deal_content,
+        (
+        select VALUE_DETAIL from PUB_PARAVALUE
+        where para_id = '4028ab5255fb84b40155fd8f3d750021' and "VALUE" = fs.deal_result
+        ) deal_result ,"TO_CHAR"("TO_DATE"(fs.create_time, 'yyyymmddhh24miss'),'yyyy-mm-dd hh24:mi:ss') SHOW_CREATE_TIME,
+        fs.create_time CREATE_TIME,
+        (
+            select pname from OG_PERSON
+            where pid = fs.auditor_id
+        ) auditorName
+
+        from FM_SW fs
+        )
+
+
+    </sql>
+    <sql id="selectFmSwVoMysql">
+        select * from (
+
+            select  INVALIDATION_MARK,AUDIT_TIME,AUDITOR_ID,AUDIT_RESULT,CREATE_ID,CURRENT_STATE,CHECKER_ID,DEALER_ID,AUTH_ID,FAULT_DESCRIPTION,CREATE_ORG_ID,DEAL_ORG_ID,FM_SW_ID,FAULT_NO,FAULT_TITLE,FAULT_KIND,PROCESS_STATUS,DEALER_FIVE_ID,(
+        select orgname from OG_ORG
+        where orgid = fs.create_org_id
+        ) createOrgName,
+        (
+        select pname from OG_PERSON
+        where pid = fs.create_id
+        ) createName,
+        (
+        select pname from OG_PERSON
+        where pid = fs.checker_id
+        ) checkedName,
+        (
+        select orgname from OG_ORG
+        where orgid = fs.deal_org_id
+        ) dealOrgName,
+        (
+        select pname from OG_PERSON
+        where pid = fs.auth_id
+        ) AUTH_NAME,
+        (
+        select pname from OG_PERSON
+        where pid = fs.dealer_id
+        ) DEAL_NAME,(
+        select VALUE_DETAIL from PUB_PARAVALUE
+        where para_id = 'ff808081559f01c501559f0f9f5d0005' and "VALUE" = fs.CURRENT_STATE
+        )
+        CURRENT_STATE_NAME,deal_content,
+        (
+        select VALUE_DETAIL from PUB_PARAVALUE
+        where para_id = '4028ab5255fb84b40155fd8f3d750021' and "VALUE" = fs.deal_result
+        ) deal_result ,date_format(fs.create_time, '%y%m%d') SHOW_CREATE_TIME,
+        fs.create_time CREATE_TIME,
+        (
+            select pname from OG_PERSON
+            where pid = fs.auditor_id
+        ) auditorName
+
+        from FM_SW fs
+        ) t
+
+
+    </sql>
+
+
+    <!--关于查询事务事件单的select-->
+    <select id="selectList" parameterType="FmSw" resultMap="FmSwResult">
+        <include refid="selectFmSwVo"></include>
+        <where>
+            <if test="label!=null and label!=''">
+                (create_org_id = #{createOrgId} or deal_org_id = #{dealOrgId})
+                <if test="faultNo!=null and faultNo!=''">
+                    and fault_no like concat('%',concat(#{faultNo},'%'))
+                </if>
+                <if test="faultTitle!=null and faultTitle!=''">
+                    and fault_title like concat('%',concat(#{faultTitle},'%'))
+                </if>
+                <if test="dealOrgname!=null and dealOrgname!=''">
+                    and  dealorgname like  concat('%',concat(#{dealOrgname},'%'))
+                </if>
+                <if test="createOrgName !=null and createOrgName !='' ">
+                    and createorgname like concat('%',concat(#{createOrgName},'%'))
+                </if>
+                <if test="faultKind!=null and faultKind!=''">
+                    and fault_kind = #{faultKind}
+                </if>
+
+                <if test="createName !=null and createName !='' ">
+                    and createname like concat('%',concat(#{createName},'%'))
+                </if>
+                <if test="authName !=null and authName !='' ">
+                    and auth_name like concat('%',concat(#{authName},'%'))
+                </if>
+                <if test="dealname!=null and dealname!=''">
+                    and DEAL_NAME like concat('%',concat(#{dealname},'%'))
+                </if>
+                <if test="startCreateTime!=null and startCreateTime!=''">
+                    and create_time &gt;=#{startCreateTime}
+                </if>
+                <if test="endCreateTime!=null and endCreateTime!=''">
+                    and create_time &lt;=#{endCreateTime}
+                </if>
+                <if test="currentState!=null and currentState!=''">
+                    and CURRENT_STATE = #{currentState}
+                </if>
+            </if>
+
+            <if test="label==null or label==''">
+                <if test="faultNo!=null and faultNo!=''">
+                    and fault_no like concat('%',concat(#{faultNo},'%'))
+                </if>
+                <if test="faultTitle!=null and faultTitle!=''">
+                    and fault_title like concat('%',concat(#{faultTitle},'%'))
+                </if>
+                <if test="dealOrgname!=null and dealOrgname!=''">
+                    and  dealorgname  =  #{dealOrgname}
+                </if>
+                <if test="createOrgName !=null and createOrgName !='' ">
+                    and createorgname =  #{createOrgName}
+                </if>
+                <if test="faultKind!=null and faultKind!=''">
+                    and fault_kind = #{faultKind}
+                </if>
+                <if test="createName !=null and createName !='' ">
+                    and createname like concat('%',concat(#{createName},'%'))
+                </if>
+                <if test="authName !=null and authName !='' ">
+                    and auth_name like concat('%',concat(#{authName},'%'))
+                </if>
+                <if test="dealname!=null and dealname!=''">
+                    and DEAL_NAME like concat('%',concat(#{dealname},'%'))
+                </if>
+                <if test="startCreateTime!=null and startCreateTime!=''">
+                    and create_time &gt;=#{startCreateTime}
+                </if>
+                <if test="endCreateTime!=null and endCreateTime!=''">
+                    and create_time &lt;=#{endCreateTime}
+                </if>
+                <if test="currentState!=null and currentState!=''">
+                    and CURRENT_STATE = #{currentState}
+                </if>
+            </if>
+
+
+
+        </where>
+    </select>
+    <select id="selectListMysql" parameterType="FmSw" resultMap="FmSwResult">
+        <include refid="selectFmSwVoMysql"></include>
+        <where>
+            <if test="label!=null and label!=''">
+                (create_org_id = #{createOrgId} or deal_org_id = #{dealOrgId})
+                <if test="faultNo!=null and faultNo!=''">
+                    and fault_no like concat('%',concat(#{faultNo},'%'))
+                </if>
+                <if test="faultTitle!=null and faultTitle!=''">
+                    and fault_title like concat('%',concat(#{faultTitle},'%'))
+                </if>
+                <if test="dealOrgname!=null and dealOrgname!=''">
+                    and  dealorgname like  concat('%',concat(#{dealOrgname},'%'))
+                </if>
+                <if test="createOrgName !=null and createOrgName !='' ">
+                    and createorgname like concat('%',concat(#{createOrgName},'%'))
+                </if>
+                <if test="faultKind!=null and faultKind!=''">
+                    and fault_kind = #{faultKind}
+                </if>
+
+                <if test="createName !=null and createName !='' ">
+                    and createname like concat('%',concat(#{createName},'%'))
+                </if>
+                <if test="authName !=null and authName !='' ">
+                    and auth_name like concat('%',concat(#{authName},'%'))
+                </if>
+                <if test="dealname!=null and dealname!=''">
+                    and DEAL_NAME like concat('%',concat(#{dealname},'%'))
+                </if>
+                <if test="startCreateTime!=null and startCreateTime!=''">
+                    and create_time &gt;=#{startCreateTime}
+                </if>
+                <if test="endCreateTime!=null and endCreateTime!=''">
+                    and create_time &lt;=#{endCreateTime}
+                </if>
+                <if test="currentState!=null and currentState!=''">
+                    and CURRENT_STATE = #{currentState}
+                </if>
+            </if>
+
+            <if test="label==null or label==''">
+                <if test="faultNo!=null and faultNo!=''">
+                    and fault_no like concat('%',concat(#{faultNo},'%'))
+                </if>
+                <if test="faultTitle!=null and faultTitle!=''">
+                    and fault_title like concat('%',concat(#{faultTitle},'%'))
+                </if>
+                <if test="dealOrgname!=null and dealOrgname!=''">
+                    and  dealorgname  =  #{dealOrgname}
+                </if>
+                <if test="createOrgName !=null and createOrgName !='' ">
+                    and createorgname =  #{createOrgName}
+                </if>
+                <if test="faultKind!=null and faultKind!=''">
+                    and fault_kind = #{faultKind}
+                </if>
+                <if test="createName !=null and createName !='' ">
+                    and createname like concat('%',concat(#{createName},'%'))
+                </if>
+                <if test="authName !=null and authName !='' ">
+                    and auth_name like concat('%',concat(#{authName},'%'))
+                </if>
+                <if test="dealname!=null and dealname!=''">
+                    and DEAL_NAME like concat('%',concat(#{dealname},'%'))
+                </if>
+                <if test="startCreateTime!=null and startCreateTime!=''">
+                    and create_time &gt;=#{startCreateTime}
+                </if>
+                <if test="endCreateTime!=null and endCreateTime!=''">
+                    and create_time &lt;=#{endCreateTime}
+                </if>
+                <if test="currentState!=null and currentState!=''">
+                    and CURRENT_STATE = #{currentState}
+                </if>
+            </if>
+
+
+
+        </where>
+    </select>
+
+    <!--关于查询事务事件单的select-->
+    <select id="fmListByStatus" parameterType="FmSw" resultMap="FmSwResult">
+        SELECT f.*,p.pname createName FROM FM_SW f
+        left join og_person p on f.create_id=p.pid
+        where f.CURRENT_STATE not in ('01','07')
+        <if test="faultNo!=null and faultNo!=''">
+            and f.FAULT_NO like concat('%',concat(#{faultNo},'%'))
+        </if>
+        <if test="faultTitle!=null and faultTitle!=''">
+            and f.FAULT_TITLE like concat('%',concat(#{faultTitle},'%'))
+        </if>
+    </select>
+    <!--关于流程中的事务事件单进行过滤-->
+    <select id="selectFmSwListByTask" parameterType="FmSw" resultMap="FmSwResult">
+        select * from (
+            select deal_result,deal_content,audit_time,auditor_id,audit_result,create_id,create_time,current_state,fault_description,auth_id,dealer_id,checker_id,deal_org_id,create_org_id,fm_sw_id,fault_no,fault_title,fault_kind,og.orgname createorgname,op.pname createname,ops.pname checkedname,org.orgname dealorgname,dop.pname dealname,fs.invalidation_mark,fs.auth_name,owi.pname CHECKER_TWO_NAME,ohi.pname CHECKER_THREE_NAME,ofi.pname CHECKER_FOUR_NAME,dfi.pname DEALER_FIVE_NAME from FM_SW fs
+            left join OG_ORG og
+            on fs.create_org_id = og.ORGID
+            left join OG_ORG org
+            on fs.deal_org_id = org.orgid
+            left join OG_PERSON op
+            on op.pid = fs.create_id
+            left join OG_PERSON ops
+            on ops.pid = fs.CHECKER_ID
+            left join OG_PERSON dop
+            on dop.pid = fs.dealer_id
+            left join OG_PERSON owi
+            on dop.pid = fs.checker_two_id
+            left join OG_PERSON ohi
+            on dop.pid = fs.checker_three_id
+            left join OG_PERSON ofi
+            on dop.pid = fs.checker_four_id
+            left join OG_PERSON dfi
+            on dop.pid = fs.dealer_five_id
+        ) t
+
+        <where>
+            <if test="ids !=null and ids!=''">
+                and FM_SW_ID
+                <trim prefix="in (" suffix=")" suffixOverrides=",">
+                    <foreach collection="ids" item="id">
+                        #{id},
+                    </foreach>
+                </trim>
+            </if>
+            <if test="faultNo!=null and faultNo!=''">
+                and fault_no like concat('%',concat(#{faultNo},'%'))
+            </if>
+            <if test="faultTitle!=null and faultTitle!=''">
+                and fault_title like concat('%',concat(#{faultTitle},'%'))
+            </if>
+            <if test="createOrgName !=null and createOrgName !='' ">
+                and createorgname like concat('%',concat(#{createOrgName},'%'))
+            </if>
+            <if test="dealOrgname !=null and dealOrgname !='' ">
+                and  dealorgname like concat('%',concat(#{dealOrgname},'%'))
+            </if>
+            <if test="createName !=null and createName !='' ">
+                and createname like concat('%',concat(#{createName},'%'))
+            </if>
+            <if test="startCreateTime!=null and startCreateTime!=''">
+                and create_time &gt;=#{startCreateTime}
+            </if>
+            <if test="endCreateTime!=null and endCreateTime!=''">
+                and create_time &lt;=#{endCreateTime}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectFmSwList" parameterType="FmSw" resultMap="FmSwResult">
+
+        select * from
+        (
+
+        select  CREATE_TIME DATE_TIME,PARTICIPATOR_IDS,INVALIDATION_MARK,AUDIT_TIME,AUDITOR_ID,AUDIT_RESULT,CREATE_ID,CURRENT_STATE,CHECKER_ID,DEALER_ID,AUTH_ID,FAULT_DESCRIPTION,CREATE_ORG_ID,DEAL_ORG_ID,FM_SW_ID,FAULT_NO,FAULT_TITLE,FAULT_KIND,PROCESS_STATUS,CHECKER_TWO_ID,CHECKER_THREE_ID,CHECKER_FOUR_ID,DEALER_FIVE_ID,(
+        select orgname from OG_ORG
+        where orgid = fs.create_org_id
+        ) createOrgName,
+        (
+        select pname from OG_PERSON
+        where pid = fs.create_id
+        ) createName,
+        (
+        select pname from OG_PERSON
+        where pid = fs.checker_id
+        ) checkedName,
+        (
+        select orgname from OG_ORG
+        where orgid = fs.deal_org_id
+        ) dealOrgName,
+        (
+        select pname from OG_PERSON
+        where pid = fs.auth_id
+        ) AUTH_NAME,
+        (
+        select pname from OG_PERSON
+        where pid = fs.dealer_id
+        ) DEAL_NAME,(
+        select pname from OG_PERSON
+        where pid = fs.checker_two_id
+        ) CHECKER_TWO_NAME,(
+        select pname from OG_PERSON
+        where pid = fs.checker_three_id
+        ) CHECKER_THREE_NAME,(
+        select pname from OG_PERSON
+        where pid = fs.checker_four_id
+        ) CHECKER_FOUR_NAME,(
+        select pname from OG_PERSON
+        where pid = fs.dealer_five_id
+        ) DEALER_FIVE_NAME,(
+        select VALUE_DETAIL from PUB_PARAVALUE
+        where para_id = 'ff808081559f01c501559f0f9f5d0005' and "VALUE" = fs.CURRENT_STATE
+        )
+        CURRENT_STATE_NAME,deal_content,
+        (
+        select VALUE_DETAIL from PUB_PARAVALUE
+        where para_id = '4028ab5255fb84b40155fd8f3d750021' and "VALUE" = fs.deal_result
+        ) deal_result ,"TO_CHAR"("TO_DATE"(fs.create_time, 'yyyymmddhh24miss'),'yyyy-mm-dd hh24:mi:ss') CREATE_TIME,
+        (
+        select pname from OG_PERSON
+        where pid = fs.auditor_id
+        ) auditorName
+
+        from FM_SW fs
+        ) t
+
+        <where>
+              <if test="participatorIds != null  and participatorIds != ''">
+                and t.participator_ids like concat('%',concat(#{participatorIds},'%'))
+              </if>
+              <if test="invalidationMark !=null and invalidationMark!=''">
+                  and t.INVALIDATION_MARK = #{invalidationMark}
+              </if>
+              <if test="faultNo!=null and faultNo!=''">
+                  and t.fault_no like concat('%',concat(#{faultNo},'%'))
+              </if>
+              <if test="faultTitle!=null and faultTitle!=''">
+                  and t.fault_title like concat('%',concat(#{faultTitle},'%'))
+              </if>
+              <if test="checkedOrgname!=null and checkedOrgname!=''">
+                  and t.checkedOrgname like concat('%',concat(#{checkedOrgname},'%'))
+              </if>
+              <if test="faultKind!=null and faultKind!=''">
+                  and t.fault_kind = #{faultKind}
+              </if>
+              <if test="orgname!=null and orgname!=''">
+                  and t.orgname like concat('%',concat(#{orgname},'%'))
+              </if>
+              <if test="currentState!=null and currentState!=''">
+                  and t.CURRENT_STATE = #{currentState}
+              </if>
+              <if test="pname!=null and pname!=''">
+                  and t.pname like concat('%',concat(#{pname},'%'))
+              </if>
+              <if test="dealname!=null and dealname!=''">
+                  and t.DEAL_NAME like concat('%',concat(#{dealname},'%'))
+              </if>
+              <if test="createOrgName !=null and createOrgName !='' ">
+                  and t.createorgname like concat('%',concat(#{createOrgName},'%'))
+              </if>
+                <if test="createName !=null and createName !='' ">
+                    and t.createname like concat('%',concat(#{createName},'%'))
+                </if>
+              <if test="startCreateTime!=null and startCreateTime!=''">
+                  and t.DATE_TIME &gt;=#{startCreateTime}
+              </if>
+              <if test="endCreateTime!=null and endCreateTime!=''">
+                  and t.DATE_TIME &lt;=#{endCreateTime}
+              </if>
+              <if test="dealerId!=null and dealerId!=''">
+                  and t.DEALER_ID = #{dealerId}
+              </if>
+              <if test="createId!=null and createId!=''">
+                 and  t.CREATE_ID  = #{createId}
+              </if>
+              <if test="dealOrgname!=null and dealOrgname!=''">
+                and  t.dealorgname like  concat('%',concat(#{dealOrgname},'%'))
+              </if>
+              <if test="fmSwId !=null and fmSwId !=''">
+                  and t.FM_SW_ID = #{fmSwId}
+              </if>
+              <if test="auditResult !=null and auditResult !=''">
+                and t.AUDIT_RESULT = #{auditResult}
+              </if>
+              <if test="createOrgId !=null and createOrgId !=''">
+                and t.CREATE_ORG_ID = #{createOrgId}
+              </if>
+              <if test="dealOrgId !=null and dealOrgId !=''">
+                and t.DEAL_ORG_ID = #{dealOrgId}
+              </if>
+              <if test="dealerFiveName!=null and dealerFiveName!=''">
+                and t.DEALER_FIVE_NAME like concat('%',concat(#{dealerFiveName},'%'))
+              </if>
+        </where>
+    </select>
+    <select id="selectFmSwListMysql" parameterType="FmSw" resultMap="FmSwResult">
+
+        select * from
+        (
+
+        select  CREATE_TIME DATE_TIME,PARTICIPATOR_IDS,INVALIDATION_MARK,AUDIT_TIME,AUDITOR_ID,AUDIT_RESULT,CREATE_ID,CURRENT_STATE,CHECKER_ID,DEALER_ID,AUTH_ID,FAULT_DESCRIPTION,CREATE_ORG_ID,DEAL_ORG_ID,FM_SW_ID,FAULT_NO,FAULT_TITLE,FAULT_KIND,PROCESS_STATUS,CHECKER_TWO_ID,CHECKER_THREE_ID,CHECKER_FOUR_ID,DEALER_FIVE_ID,(
+        select orgname from OG_ORG
+        where orgid = fs.create_org_id
+        ) createOrgName,
+        (
+        select pname from OG_PERSON
+        where pid = fs.create_id
+        ) createName,
+        (
+        select pname from OG_PERSON
+        where pid = fs.checker_id
+        ) checkedName,
+        (
+        select orgname from OG_ORG
+        where orgid = fs.deal_org_id
+        ) dealOrgName,
+        (
+        select pname from OG_PERSON
+        where pid = fs.auth_id
+        ) AUTH_NAME,
+        (
+        select pname from OG_PERSON
+        where pid = fs.dealer_id
+        ) DEAL_NAME,(
+        select pname from OG_PERSON
+        where pid = fs.checker_two_id
+        ) CHECKER_TWO_NAME,(
+        select pname from OG_PERSON
+        where pid = fs.checker_three_id
+        ) CHECKER_THREE_NAME,(
+        select pname from OG_PERSON
+        where pid = fs.checker_four_id
+        ) CHECKER_FOUR_NAME,(
+        select pname from OG_PERSON
+        where pid = fs.dealer_five_id
+        ) DEALER_FIVE_NAME,(
+        select VALUE_DETAIL from PUB_PARAVALUE
+        where para_id = 'ff808081559f01c501559f0f9f5d0005' and "VALUE" = fs.CURRENT_STATE
+        )
+        CURRENT_STATE_NAME,deal_content,
+        (
+        select VALUE_DETAIL from PUB_PARAVALUE
+        where para_id = '4028ab5255fb84b40155fd8f3d750021' and "VALUE" = fs.deal_result
+        ) deal_result ,date_format(fs.create_time, '%y%m%d') CREATE_TIME,
+        (
+        select pname from OG_PERSON
+        where pid = fs.auditor_id
+        ) auditorName
+
+        from FM_SW fs
+        ) t
+
+        <where>
+            <if test="participatorIds != null  and participatorIds != ''">
+                and t.participator_ids like concat('%',concat(#{participatorIds},'%'))
+            </if>
+            <if test="invalidationMark !=null and invalidationMark!=''">
+                and t.INVALIDATION_MARK = #{invalidationMark}
+            </if>
+            <if test="faultNo!=null and faultNo!=''">
+                and t.fault_no like concat('%',concat(#{faultNo},'%'))
+            </if>
+            <if test="faultTitle!=null and faultTitle!=''">
+                and t.fault_title like concat('%',concat(#{faultTitle},'%'))
+            </if>
+            <if test="checkedOrgname!=null and checkedOrgname!=''">
+                and t.checkedOrgname like concat('%',concat(#{checkedOrgname},'%'))
+            </if>
+            <if test="faultKind!=null and faultKind!=''">
+                and t.fault_kind = #{faultKind}
+            </if>
+            <if test="orgname!=null and orgname!=''">
+                and t.orgname like concat('%',concat(#{orgname},'%'))
+            </if>
+            <if test="currentState!=null and currentState!=''">
+                and t.CURRENT_STATE = #{currentState}
+            </if>
+            <if test="pname!=null and pname!=''">
+                and t.pname like concat('%',concat(#{pname},'%'))
+            </if>
+            <if test="dealname!=null and dealname!=''">
+                and t.DEAL_NAME like concat('%',concat(#{dealname},'%'))
+            </if>
+            <if test="createOrgName !=null and createOrgName !='' ">
+                and t.createorgname like concat('%',concat(#{createOrgName},'%'))
+            </if>
+            <if test="createName !=null and createName !='' ">
+                and t.createname like concat('%',concat(#{createName},'%'))
+            </if>
+            <if test="startCreateTime!=null and startCreateTime!=''">
+                and t.DATE_TIME &gt;=#{startCreateTime}
+            </if>
+            <if test="endCreateTime!=null and endCreateTime!=''">
+                and t.DATE_TIME &lt;=#{endCreateTime}
+            </if>
+            <if test="dealerId!=null and dealerId!=''">
+                and t.DEALER_ID = #{dealerId}
+            </if>
+            <if test="createId!=null and createId!=''">
+                and  t.CREATE_ID  = #{createId}
+            </if>
+            <if test="dealOrgname!=null and dealOrgname!=''">
+                and  t.dealorgname like  concat('%',concat(#{dealOrgname},'%'))
+            </if>
+            <if test="fmSwId !=null and fmSwId !=''">
+                and t.FM_SW_ID = #{fmSwId}
+            </if>
+            <if test="auditResult !=null and auditResult !=''">
+                and t.AUDIT_RESULT = #{auditResult}
+            </if>
+            <if test="createOrgId !=null and createOrgId !=''">
+                and t.CREATE_ORG_ID = #{createOrgId}
+            </if>
+            <if test="dealOrgId !=null and dealOrgId !=''">
+                and t.DEAL_ORG_ID = #{dealOrgId}
+            </if>
+            <if test="dealerFiveName!=null and dealerFiveName!=''">
+                and t.DEALER_FIVE_NAME like concat('%',concat(#{dealerFiveName},'%'))
+            </if>
+        </where>
+    </select>
+    <select id="selectFmSwById" parameterType="java.lang.String" resultMap="FmSwResult">
+        <include refid="selectFmSwVo"/>
+        where FM_SW_ID = #{FM_SW_ID,jdbcType=VARCHAR}
+    </select>
+
+    <select id="selectFmSwByIdMysql" parameterType="java.lang.String" resultMap="FmSwResult">
+        <include refid="selectFmSwVoMysql"/>
+        where t.FM_SW_ID = #{FM_SW_ID,jdbcType=VARCHAR}
+    </select>
+
+    <insert id="insertFmSw" parameterType="FmSw">
+        insert into fm_sw
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="fmSwId!=null and fmSwId!=''">
+                FM_SW_ID,
+            </if>
+            <if test="checkedId!=null and checkedId!=''">
+                CHECKER_ID,
+            </if>
+            <if test="authId!=null and authId!=''">
+                AUTH_ID,
+            </if>
+            <if test="createOrgId!=null and createOrgId!=''">
+                CREATE_ORG_ID,
+            </if>
+            <if test="dealOrgId!=null and dealOrgId!=''">
+                DEAL_ORG_ID,
+            </if>
+            <if test="createId!=null and createId!=''">
+                CREATE_ID,
+            </if>
+            <if test="dealerId!=null and dealerId!=''">
+                DEALER_ID,
+            </if>
+            <if test="auditorId!=null and auditorId!=''">
+                AUDITOR_ID,
+            </if>
+            <if test="faultNo!=null and faultNo!=''">
+                FAULT_NO,
+            </if>
+            <if test="faultTitle!=null and faultTitle!=''">
+                FAULT_TITLE,
+            </if>
+            <if test="createTime!=null and createTime!=''">
+                CREATE_TIME,
+            </if>
+            <if test="dealResult!=null and dealResult!=''">
+                DEAL_RESULT,
+            </if>
+            <if test="dealContent!=null and dealContent!=''">
+                DEAL_CONTENT,
+            </if>
+            <if test="auditResult!=null and auditResult!=''">
+                AUDIT_RESULT,
+            </if>
+            <if test="auditTime!=null and auditTime!=''">
+                AUDIT_TIME,
+            </if>
+            <if test="currentState!=null and currentState!=''">
+                CURRENT_STATE,
+            </if>
+            <if test="faultDescription!=null and faultDescription!=''">
+                FAULT_DESCRIPTION,
+            </if>
+            <if test="faultKind!=null and faultKind!=''">
+                FAULT_KIND,
+            </if>
+            <if test="authName!=null and authName!=''">
+                AUTH_NAME,
+            </if>
+            <if test="participatorIds!=null and participatorIds!=''">
+                PARTICIPATOR_IDS,
+            </if>
+            <if test="invalidationMark!=null and invalidationMark!=''">
+                INVALIDATION_MARK,
+            </if>
+            <if test="checkerTwoId!=null and checkerTwoId!=''">
+                CHECKER_TWO_ID,
+            </if>
+            <if test="checkerThreeId!=null and checkerThreeId!=''">
+                CHECKER_THREE_ID,
+            </if>
+            <if test="checkerFourId!=null and checkerFourId!=''">
+                CHECKER_FOUR_ID,
+            </if>
+            <if test="processStatus!=null and processStatus!=''">
+                PROCESS_STATUS,
+            </if>
+            <if test="dealerFiveId!=null and dealerFiveId!=''">
+                DEALER_FIVE_ID,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="fmSwId!=null and fmSwId!=''">
+                #{fmSwId},
+            </if>
+            <if test="checkedId!=null and checkedId!=''">
+                #{checkedId},
+            </if>
+            <if test="authId!=null and authId!=''">
+                #{authId},
+            </if>
+            <if test="createOrgId!=null and createOrgId!=''">
+                #{createOrgId},
+            </if>
+            <if test="dealOrgId!=null and dealOrgId!=''">
+                #{dealOrgId},
+            </if>
+            <if test="createId!=null and createId!=''">
+                #{createId},
+            </if>
+            <if test="dealerId!=null and dealerId!=''">
+                #{dealerId},
+            </if>
+            <if test="auditorId!=null and auditorId!=''">
+                #{auditorId},
+            </if>
+            <if test="faultNo!=null and faultNo!=''">
+                #{faultNo},
+            </if>
+            <if test="faultTitle!=null and faultTitle!=''">
+                #{faultTitle},
+            </if>
+            <if test="createTime!=null and createTime!=''">
+                #{createTime},
+            </if>
+            <if test="dealResult!=null and dealResult!=''">
+                #{dealResult},
+            </if>
+            <if test="dealContent!=null and dealContent!=''">
+                #{dealContent},
+            </if>
+            <if test="auditResult!=null and auditResult!=''">
+                #{auditResult},
+            </if>
+            <if test="auditTime!=null and auditTime!=''">
+                #{auditTime},
+            </if>
+            <if test="currentState!=null and currentState!=''">
+                #{currentState},
+            </if>
+            <if test="faultDescription!=null and faultDescription!=''">
+                #{faultDescription},
+            </if>
+            <if test="faultKind!=null and faultKind!=''">
+                #{faultKind},
+            </if>
+            <if test="authName!=null and authName!=''">
+                #{authName},
+            </if>
+            <if test="participatorIds!=null and participatorIds!=''">
+                #{participatorIds},
+            </if>
+            <if test="invalidationMark!=null and invalidationMark!=''">
+                #{invalidationMark},
+            </if>
+            <if test="checkerTwoId!=null and checkerTwoId!=''">
+                #{checkerTwoId},
+            </if>
+            <if test="checkerThreeId!=null and checkerThreeId!=''">
+                #{checkerThreeId},
+            </if>
+            <if test="checkerFourId!=null and checkerFourId!=''">
+                #{checkerFourId},
+            </if>
+            <if test="processStatus!=null and processStatus!=''">
+                #{processStatus},
+            </if>
+            <if test="dealerFiveId!=null and dealerFiveId!=''">
+                #{dealerFiveId},
+            </if>
+         </trim>
+    </insert>
+
+    <update id="updateFmSw" parameterType="FmSw">
+        update fm_sw
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="faultNo!=null and faultNo!=''">
+                FAULT_NO = #{faultNo},
+            </if>
+            <if test="faultNo==null or faultNo==''">
+                FAULT_NO = '',
+            </if>
+
+            <if test="createOrgId!=null and createOrgId!=''">
+                CREATE_ORG_ID = #{createOrgId},
+            </if>
+            <if test="createOrgId==null or createOrgId==''">
+                CREATE_ORG_ID = '',
+            </if>
+
+            <if test="dealOrgId!=null and dealOrgId!=''">
+                DEAL_ORG_ID = #{dealOrgId},
+            </if>
+            <if test="dealOrgId==null or dealOrgId==''">
+                DEAL_ORG_ID = '',
+            </if>
+
+            <if test="faultKind!=null and faultKind!=''">
+                FAULT_KIND = #{faultKind},
+            </if>
+            <if test="faultKind==null or faultKind==''">
+                FAULT_KIND = '',
+            </if>
+
+            <if test="checkedId!=null and checkedId!=''">
+                CHECKER_ID = #{checkedId},
+            </if>
+            <if test="checkedId==null or checkedId==''">
+                CHECKER_ID = '',
+            </if>
+
+            <if test="authId!=null and authId!=''">
+                AUTH_ID = #{authId},
+            </if>
+            <if test="authId==null or authId==''">
+                AUTH_ID = '',
+            </if>
+
+            <if test="dealerId!=null and dealerId!=''">
+                DEALER_ID = #{dealerId},
+            </if>
+            <if test="dealerId==null or dealerId==''">
+                DEALER_ID = '',
+            </if>
+
+            <if test="faultTitle!=null and faultTitle!=''">
+                FAULT_TITLE = #{faultTitle},
+            </if>
+            <if test="faultTitle==null or faultTitle==''">
+                FAULT_TITLE = '',
+            </if>
+
+            <if test="faultDescription!=null and faultDescription!=''">
+                FAULT_DESCRIPTION = #{faultDescription},
+            </if>
+            <if test="faultDescription==null or faultDescription==''">
+                FAULT_DESCRIPTION = '',
+            </if>
+
+            <if test="currentState!=null and currentState!=''">
+                CURRENT_STATE = #{currentState},
+            </if>
+            <if test="currentState==null or currentState==''">
+                CURRENT_STATE = '',
+            </if>
+
+            <if test="dealContent!=null and dealContent!=''">
+                DEAL_CONTENT = #{dealContent},
+            </if>
+            <if test="dealContent==null or dealContent==''">
+                DEAL_CONTENT = '',
+            </if>
+
+            <if test="dealResult!=null and dealResult!=''">
+                DEAL_RESULT = #{dealResult},
+            </if>
+            <if test="dealResult==null or dealResult==''">
+                DEAL_RESULT = '',
+            </if>
+
+            <if test="auditResult!=null and auditResult!=''">
+                AUDIT_RESULT = #{auditResult},
+            </if>
+            <if test="auditResult==null or auditResult==''">
+                AUDIT_RESULT = '',
+            </if>
+
+            <if test="auditorId!=null and auditorId!=''">
+                AUDITOR_ID = #{auditorId},
+            </if>
+            <if test="auditorId==null or auditorId==''">
+                AUDITOR_ID = '',
+            </if>
+
+            <if test="auditTime!=null and auditTime!=''">
+                AUDIT_TIME = #{auditTime},
+            </if>
+            <if test="auditTime==null or auditTime==''">
+                AUDIT_TIME = '',
+            </if>
+
+            <if test="authName!=null and authName!=''">
+                AUTH_NAME = #{authName},
+            </if>
+            <if test="authName==null or authName==''">
+                AUTH_NAME = '',
+            </if>
+            <if test="checkerTwoId!=null and checkerTwoId!=''">
+                CHECKER_TWO_ID = #{checkerTwoId},
+            </if>
+            <if test="checkerTwoId==null or checkerTwoId==''">
+                CHECKER_TWO_ID = '',
+            </if>
+            <if test="checkerThreeId!=null and checkerThreeId!=''">
+                CHECKER_THREE_ID = #{checkerThreeId},
+            </if>
+            <if test="checkerThreeId==null or checkerThreeId==''">
+                CHECKER_THREE_ID = '',
+            </if>
+            <if test="checkerFourId!=null and checkerFourId!=''">
+                CHECKER_FOUR_ID = #{checkerFourId},
+            </if>
+            <if test="checkerFourId==null or checkerFourId==''">
+                CHECKER_FOUR_ID = '',
+            </if>
+            <if test="processStatus!=null and processStatus!=''">
+                PROCESS_STATUS = #{processStatus},
+            </if>
+            <if test="dealerFiveId!=null and dealerFiveId!=''">
+                DEALER_FIVE_ID = #{dealerFiveId},
+            </if>
+            <if test="dealerFiveId==null or dealerFiveId==''">
+                DEALER_FIVE_ID = '',
+            </if>
+        </trim>
+        where FM_SW_ID = #{fmSwId,jdbcType=VARCHAR}
+    </update>
+
+    <update id="checkUpdateFmSw" parameterType="FmSw">
+        update fm_sw
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="authId!=null and authId!=''">
+                AUTH_ID = #{authId,jdbcType=VARCHAR},
+            </if>
+            <if test="currentState!=null and currentState!=''">
+                CURRENT_STATE = #{currentState,jdbcType=VARCHAR},
+            </if>
+            <if test="dealerId!=null and dealerId!=''">
+                DEALER_ID = #{dealerId,jdbcType=VARCHAR},
+            </if>
+            <if test="checkerTwoId!=null and checkerTwoId!=''">
+                CHECKER_TWO_ID = #{checkerTwoId,jdbcType=VARCHAR},
+            </if>
+            <if test="checkerThreeId!=null and checkerThreeId!=''">
+                CHECKER_THREE_ID = #{checkerThreeId,jdbcType=VARCHAR},
+            </if>
+            <if test="checkerFourId!=null and checkerFourId!=''">
+                CHECKER_FOUR_ID = #{checkerFourId,jdbcType=VARCHAR},
+            </if>
+            <if test="dealerFiveId!=null and dealerFiveId!=''">
+                DEALER_FIVE_ID = #{dealerFiveId,jdbcType=VARCHAR},
+            </if>
+        </trim>
+        where FM_SW_ID = #{fmSwId,jdbcType=VARCHAR}
+    </update>
+    <update id="checkNoAuthUpdateFmSw" parameterType="FmSw">
+        update fm_sw
+        <trim prefix="SET" suffixOverrides=",">
+            CURRENT_STATE = #{currentState,jdbcType=VARCHAR},
+            DEALER_ID = #{dealerId,jdbcType=VARCHAR},
+        </trim>
+        where FM_SW_ID = #{fmSwId,jdbcType=VARCHAR}
+    </update>
+    <update id="returnEditUpdateFmSw" parameterType="FmSw">
+        update fm_sw
+        <trim prefix="SET" suffixOverrides=",">
+            FAULT_KIND = #{faultKind},
+            CHECKER_ID = #{checkedId},
+            AUTH_ID = #{authId},
+            DEALER_ID = #{dealerId},
+            CURRENT_STATE = #{currentState},
+            FAULT_TITLE = #{faultTitle},
+            FAULT_DESCRIPTION = #{faultDescription},
+            CHECKER_TWO_ID = #{checkerTwoId},
+            CHECKER_THREE_ID = #{checkerThreeId},
+            CHECKER_FOUR_ID = #{checkerFourId},
+            PROCESS_STATUS = #{processStatus},
+            DEALER_FIVE_ID = #{dealerFiveId},
+        </trim>
+        where FM_SW_ID = #{fmSwId,jdbcType=VARCHAR}
+    </update>
+    <update id="checkReturnUpdateFmSw" parameterType="FmSw">
+        update fm_sw
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="currentState!=null and currentState!=''">
+                CURRENT_STATE = #{currentState},
+            </if>
+            <if test="dealerId!=null and dealerId!=''">
+                DEALER_ID = #{dealerId},
+            </if>
+            <if test="checkerTwoId!=null and checkerTwoId!=''">
+                CHECKER_TWO_ID = #{checkerTwoId},
+            </if>
+            <if test="checkerThreeId!=null and checkerThreeId!=''">
+                CHECKER_THREE_ID = #{checkerThreeId},
+            </if>
+            <if test="checkerFourId!=null and checkerFourId!=''">
+                CHECKER_FOUR_ID = #{checkerFourId},
+            </if>
+            <if test="dealerFiveId!=null and dealerFiveId!=''">
+                DEALER_FIVE_ID = #{dealerFiveId},
+            </if>
+        </trim>
+        where FM_SW_ID = #{fmSwId,jdbcType=VARCHAR}
+    </update>
+    <update id="invalidateUpdateFmSw" parameterType="FmSw">
+        update fm_sw
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="currentState!=null and currentState!=''">
+                CURRENT_STATE = #{currentState},
+            </if>
+        </trim>
+        where FM_SW_ID = #{fmSwId,jdbcType=VARCHAR}
+    </update>
+    <update id="dealUpdateFmSw" parameterType="FmSw">
+        update fm_sw
+        <trim prefix="SET" suffixOverrides=",">
+            CURRENT_STATE = #{currentState},
+            AUTH_ID = #{authId},
+        </trim>
+        where FM_SW_ID = #{fmSwId,jdbcType=VARCHAR}
+    </update>
+    <update id="dealPassUpdateFmSw" parameterType="FmSw">
+        update fm_sw
+        <trim prefix="SET" suffixOverrides=",">
+            CURRENT_STATE = #{currentState},
+            DEAL_RESULT = #{dealResult},
+            DEAL_CONTENT = #{dealContent},
+            AUDIT_RESULT = #{auditResult},
+        </trim>
+        where FM_SW_ID = #{fmSwId,jdbcType=VARCHAR}
+    </update>
+    <update id="auditUpdateFmSw" parameterType="FmSw">
+        update fm_sw
+        <trim prefix="SET" suffixOverrides=",">
+            AUDIT_RESULT = #{auditResult},
+            AUDITOR_ID = #{auditorId},
+            AUDIT_TIME = #{auditTime},
+        </trim>
+        where FM_SW_ID = #{fmSwId,jdbcType=VARCHAR}
+    </update>
+    
+    <update id="updateFmSwByInvalidationMark" parameterType="java.lang.String">
+        update FM_SW
+        <trim prefix="SET" suffixOverrides=",">
+            INVALIDATION_MARK = '0'
+        </trim>
+        where FM_SW_ID = #{fmSwId,jdbcType=VARCHAR}
+    </update>
+
+    <delete id="deleteFmSwById" parameterType="java.lang.String">
+        delete from fm_sw where FM_SW_ID = #{FM_SW_ID}
+    </delete>
+
+    <delete id="deleteFmSwByIds" parameterType="String">
+        delete from fm_sw where FM_SW_ID in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+
+
+    <select id="selectFmSwListTwo" parameterType="FmSw" resultMap="FmSwResult">
+        select count(*) from FM_SW
+    </select>
+
+    <select id="getProcessStatus" resultMap="FmSwResult">
+        select CURRENT_STATE,PROCESS_STATUS from FM_SW where FM_SW_ID=#{fmSwId}
+    </select>
+
+</mapper>

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.activiti.mapper.DutyAccountMapper">
+
+    <resultMap type="DutyAccount" id="DutyAccountResult">
+        <result property="id"           column="id"    />
+        <result property="pid"          column="pid"    />
+        <result property="accountPid"   column="account_pid"/>
+    </resultMap>
+
+    <select id="selectDutyAccountByPid" parameterType="DutyAccount" resultMap="DutyAccountResult">
+        select id,pid,account_pid from duty_account
+        where pid = #{pid}
+    </select>
+    <select id="selectDutyAccountByAccountId" parameterType="String" resultMap="DutyAccountResult">
+        select id,pid,account_pid from duty_account
+        where account_pid = #{accountId}
+    </select>
+    <insert id="insertDutyAccount" parameterType="DutyAccount">
+        insert into duty_account
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null  and id != ''">id,</if>
+            <if test="pid != null and pid != ''">pid,</if>
+            <if test="accountPid != null and accountPid != ''">account_pid</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null  and id != ''">#{id},</if>
+            <if test="pid != null  and pid != ''">#{pid},</if>
+            <if test="accountPid != null and accountPid != ''">#{accountPid},</if>
+        </trim>
+    </insert>
+
+    <update id="updateDutyAccount" parameterType="DutyAccount">
+        update duty_account
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="pid != null  and pid != ''">pid = #{pid},</if>
+            <if test="accountPid != null  and accountPid != ''">account_pid = #{accountPid}</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+</mapper>

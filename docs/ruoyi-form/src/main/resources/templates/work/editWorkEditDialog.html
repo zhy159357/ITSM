@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:include="include :: header('节点-新建任务')"/>
+    <th:block th:include="include :: select2-css"/>
+    <th:block th:include="include :: ztree-css"/>
+    <th:block th:include="include :: footer"/>
+    <th:block th:include="include :: ztree-js"/>
+    <th:block th:include="include :: select2-js"/>
+    <th:block th:include="include :: jquery-cxselect-js"/>
+    <th:block th:include="include :: bootstrap-fileinput-js"/>
+    <th:block th:include="include :: datetimepicker-js"/>
+    <th:block th:include="include :: datetimepicker-css"/>
+    <!-- <script src="./jquery-3.5.1.min.js"></script> -->
+    <style>
+        #select-option-2 {
+            display: none;
+        }
+    </style>
+</head>
+<body class="gray-bg">
+<div class="container-div">
+    <form class="form-horizontal m1" id="form-issue-add1">
+        <input id="id" name="id" type="hidden" th:value="${twTaskEntity.id}"/>
+        <input id="workNodeId" name="workNodeId" type="hidden" th:value="${twTaskEntity.workNodeId}"/>
+        <input id="workOrderId" name="workOrderId" type="hidden" th:value="${twTaskEntity.workOrderId}"/>
+        <div class="row">
+            <div class="col-sm-6">
+                <label class="col-sm-4 control-label">选择场景：</label>
+                <div class="col-sm-8">
+                    <select class="form-control" id="cjChange" name="cjChange" th:value="${twTaskEntity.cjChange}" onchange="changeSelect()">
+                        <option value="1">虚拟机创建</option>
+                        <option value="2">通用场景创建</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="select-option-all" id="select-option-1">
+            <div class="row">
+                <div class="col-sm-12" style="height: 10px"></div>
+                <div class="col-sm-6">
+                    <label class="col-sm-4 control-label">任务名称：</label>
+                    <div class="col-sm-8">
+                        <input name="taskName" th:value="${twTaskEntity.taskName}" class="form-control">
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <label class="col-sm-4 control-label">IP：</label>
+                    <div class="col-sm-8">
+                        <input name="vmIp" th:value="${twTaskEntity.vmIp}" class="form-control">
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <label class="col-sm-4 control-label">core（个数）：</label>
+                    <div class="col-sm-8">
+                        <input name="vmCpu"  th:value="${twTaskEntity.vmCpu}" class="form-control">
+                    </div>
+                </div>
+                <div class="col-sm-12" style="height: 10px"></div>
+                <div class="col-sm-6">
+                    <label class="col-sm-4 control-label">memory（G）：</label>
+                    <div class="col-sm-8">
+                        <input name="vmMemory" th:value="${twTaskEntity.vmMemory}" class="form-control">
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <label class="col-sm-4 control-label">本地存储容量（G）：</label>
+                    <div class="col-sm-8">
+                        <input name="vmDisk" th:value="${twTaskEntity.vmDisk}" class="form-control">
+                    </div>
+                </div>
+                <div class="col-sm-12" style="height: 10px"></div>
+                <div class="col-sm-6">
+                    <label class="col-sm-4 control-label">网关：</label>
+                    <div class="col-sm-8">
+                        <input name="vmGateway" th:value="${twTaskEntity.vmGateway}" class="form-control">
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <label class="col-sm-4 control-label">虚拟机路径：</label>
+                    <div class="col-sm-8">
+                        <input name="fileName" th:value="${twTaskEntity.fileName}" class="form-control">
+                    </div>
+                </div>
+                <div class="col-sm-12" style="height: 10px"></div>
+                <div class="col-sm-6">
+                    <label class="col-sm-4 control-label">主机名：</label>
+                    <div class="col-sm-8">
+                        <input name="vmHostname" th:value="${twTaskEntity.vmHostname}" class="form-control">
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <label class="col-sm-4 control-label">网桥：</label>
+                    <div class="col-sm-8">
+                        <input name="bridge" th:value="${twTaskEntity.bridge}" class="form-control">
+                    </div>
+                </div>
+                <div class="col-sm-12" style="height: 10px"></div>
+                <div class="col-sm-6">
+                    <label class="col-sm-4 control-label">宿主机：</label>
+                    <div class="col-sm-8">
+                        <input name="agentIp" th:value="${twTaskEntity.agentIp}" class="form-control">
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <label class="col-sm-4 control-label">模板：</label>
+                    <div class="col-sm-8">
+                        <input name="templateVersion" th:value="${twTaskEntity.templateVersion}" class="form-control">
+                    </div>
+                </div>
+                <div class="col-sm-12" style="height: 10px"></div>
+                <div class="col-sm-6">
+                    <label class="col-sm-4 control-label">CPU控制阈值：</label>
+                    <div class="col-sm-8">
+                        <input name="cpuWarn" th:value="${twTaskEntity.cpuWarn}" class="form-control">
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <label class="col-sm-4 control-label">MEM控制阈值：</label>
+                    <div class="col-sm-8">
+                        <input name="memWarn" th:value="${twTaskEntity.memWarn}" class="form-control">
+                    </div>
+                </div>
+                <div class="col-sm-12" style="height: 10px"></div>
+            </div>
+        </div>
+        <div class="row select-option-all" id="select-option-2">
+            通用
+        </div>
+    </form>
+    <th:block th:include="include :: footer"/>
+    <th:block th:include="include :: select2-js"/>
+    <script th:src="@{/js/activiti.js}"></script>
+    <script th:src="@{/js/issue.js}"></script>
+    <script>
+        var user_prefix = ctx + "twTask";
+
+        // var workOrderId = [[${workOrderId}]];
+        //
+        // var workNodeId = [[${workNodeId}]];
+
+        function changeSelect() {
+            var value = $("#cjChange").val();
+            if (value == 1) {
+                $("#select-option-1").show();
+                $("#select-option-2").hide();
+            } else {
+                $("#select-option-2").show();
+                $("#select-option-1").hide();
+            }
+        }
+
+        function submitHandler() {
+            var workOrderIds = $("#workOrderId").val();
+            var workOrder = $("#workOrderId").val(workOrderIds);
+            var workNodeIds = $("#workNodeId").val();
+            var workNode = $("#workNodeId").val(workNodeIds);
+            var data = $("#form-issue-add1").serializeArray();
+            console.log('子====' + data);
+            $.operate.saveTab(user_prefix + "/addTask", data);
+            //parent.saveSelect(data);
+            $.modal.close();
+            parent.$("#bootstrap-table5").bootstrapTable('refreshOptions',{pageNumber:1});
+        }
+    </script>
+</div>
+</body>
+</html>

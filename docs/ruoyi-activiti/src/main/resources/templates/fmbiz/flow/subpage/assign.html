@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:include="include :: header('分派省中心')"/>
+    <th:block th:include="include :: select2-css"/>
+</head>
+<body>
+<div class="main-content">
+    <form id="form-fmbiz-add" class="form-horizontal" th:object="${fmbiz}">
+        <input name="fmId" id="fmId" class="form-control" type="hidden" required th:value="*{fmId}">
+        <input name="taskId" id="taskId" class="form-control" type="hidden" required th:value="${taskId}">
+        <input name="flag" id="flag" class="form-control" type="hidden" required th:value="${flag}">
+        <h4 class="form-header h4">转省中心处理</h4>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">工作组：</label>
+                    <div class="col-sm-8">
+                        <select id="dealGroupId" name="params[flowGroup]" class="form-control"
+                                onchange="selectGroupByPerson()" required>
+                            <option></option>
+                            <option th:each="OgGroup : ${dealGroup}" th:text="${OgGroup.grpName}"
+                                    th:value="${OgGroup.groupId}"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">处理人：</label>
+                    <div class="col-sm-8">
+                        <select id="dealerId" name="dealerId" class="form-control">
+                            <option value=" "></option>
+                            <option th:each="OgPerson : ${type}" th:text="${OgPerson.pName}"
+                                    th:value="${OgPerson.pId}"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label is-required">操作意见：</label>
+                    <div class="col-sm-10">
+                        <textarea id="comment" rows="3" maxlength="1000" cols="20" name="params[comment]"
+                                  class="form-control" required></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<div class="row">
+    <div class="col-sm-offset-5 col-sm-10">
+        <button type="button" class="btn btn-sm btn-primary" id="yes" onclick="submit()" value="winClose"><i
+                class="fa fa-check"></i>分派
+        </button>&nbsp;
+    </div>
+</div>
+<th:block th:include="include :: footer"/>
+<th:block th:include="include :: select2-js"/>
+<th:block th:include="include :: datetimepicker-js"/>
+<script>
+    var prefix_version = ctx + "fmbiz";
+
+    $("#form-fmbiz-add").validate({
+        onkeyup: false,
+        rules: {},
+        messages: {},
+        focusCleanup: true
+    });
+
+    // 分派
+    function submit() {
+        if ($.validate.form()) {
+            var flag = $("#flag").val();
+            var data = $("#form-fmbiz-add").serializeArray();
+            var taskId = {
+                name: 'params[taskId]',
+                value: $("#taskId").val()
+            }
+            data.push(taskId);
+            $.operate.saveTab(prefix_version + "/saveFlowAssign", data, asd);
+
+            function asd(a) {
+                if (a.code == 0) {
+                    var tabPanel = $(window.frameElement).attr('data-panel');
+                    var tabMain = parent.$('.menuTab[data-id="' + tabPanel + '"]').attr('data-panel');
+                    parent.$('.menuTab[data-id="' + tabMain + '"]').trigger('click');
+                    parent.$('.menuTab[data-id="' + tabPanel + '"]').remove();
+                    parent.$('.menuTab[data-panel="' + tabPanel + '"]').remove();
+                    parent.$('.mainContent .RuoYi_iframe[data-id="' + tabPanel + '"]').remove();
+                    if (flag == '1') {//判断是否工作台打开
+                        parent.$('.mainContent .RuoYi_iframe[name="iframe0"]').contents().find(".list01>li:nth-child(1)>a").trigger('click');
+                    }
+                } else {
+                    return
+                }
+            }
+        }
+    };
+
+    // 根据工作组查询组内人
+    function selectGroupByPerson() {
+        var dealGroupId = $("#dealGroupId").val();
+        $.ajax({
+            cache: true,
+            type: "POST",
+            url: prefix_version + "/selectGroupByPerson",
+            data: {
+                "groupId": dealGroupId
+            },
+            async: false,
+            error: function (request) {
+                $.modal.alertError("系统错误");
+            },
+            success: function (data) {
+                var options = "<option value='" + "" + "'>" + "" + "</option> \n";
+                $("#dealerId").html("");
+                for (var ak = 0; ak < data.rows.length; ak++) {
+                    options += "<option value='" + data.rows[ak].pId + "'>" + data.rows[ak].pName + "</option> \n";
+                }
+                $("#dealerId").append(options);
+            }
+        });
+    }
+</script>
+</body>
+</html>

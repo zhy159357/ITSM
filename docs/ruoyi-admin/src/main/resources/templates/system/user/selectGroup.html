@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+	<th:block th:include="include :: header('修改工作组')" />
+	<th:block th:include="include :: select2-css" />
+</head>
+<body>
+<div class="main-content">
+	<form class="form-horizontal" id="form-user-selectGroup" th:object="${group}">
+		<h4 class="form-header h4">基本信息</h4>
+		<div class="row">
+			<div class="col-sm-6">
+				<div class="form-group">
+					<label class="col-sm-4 control-label is-required">工作组名称：</label>
+					<div class="col-sm-8">
+						<input id="grpName" name="grpName" class="form-control" type="text" th:field="*{grpName}" readonly>
+					</div>
+				</div>
+			</div>
+			<div class="col-sm-6">
+				<div class="form-group">
+					<label class="col-sm-4 control-label is-required">创建时间：</label>
+					<div class="col-sm-8">
+						<input id="tel" name="tel" class="form-control" type="text" th:field="*{createTimeStr}" readonly>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-sm-6">
+				<div class="form-group">
+					<label class="col-sm-4 control-label">职位：</label>
+					<div class="col-sm-8">
+						<input class="form-control" type="text" name="grpLeader" id="grpLeader" th:field="*{grpLeader}" readonly>
+					</div>
+				</div>
+			</div>
+		</div>
+
+	</form>
+</div>
+<div class="row">
+	<div class="col-sm-offset-5 col-sm-10">
+		<button type="button" class="btn btn-sm btn-danger" onclick="closeItem()"><i class="fa fa-reply-all"></i>关 闭 </button>
+	</div>
+</div>
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: select2-js" />
+<script type="text/javascript">
+
+</script>
+</body>
+</html>

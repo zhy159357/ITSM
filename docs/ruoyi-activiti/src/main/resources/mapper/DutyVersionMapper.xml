@@ -1,0 +1,384 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.activiti.mapper.DutyVersionMapper">
+
+	<resultMap type="DutyVersion" id="versionResult">
+		<id     property="versionId"     		column="version_id"	/>
+		<result property="versionNo"     		column="version_no"	/>
+		<result property="versionName"			column="version_name"/>
+		<result property="dutyDate"      		column="duty_date"	/>
+		<result property="addTime"    			column="addtime"	/>
+		<result property="remark"    			column="remark"	/>
+		<result property="typeinfoId"       	column="typeinfo_id"    />
+		<result property="typeNo"           	column="type_no"    />
+		<result property="typeName"         	column="type_name"    />
+		<result property="typeDescription"  	column="type_description"    />
+		<result property="leader"  				column="leader"    />
+		<result property="updateTime"    		column="update_time"    />
+		<result property="invalidationMark" 	column="invalidation_mark"    />
+		<result property="serial"    			column="serial"    />
+		<result property="parentId"    			column="parent_id"    />
+		<result property="parentTypeName"   	column="parent_type_name"    />
+		<result property="parentName"    		column="parent_name"    />
+		<result property="pid"    				column="pid"    />
+		<result property="versionTypeinfoId"	column="version_typeinfo_id"    />
+		<result property="mobilephone"			column="mobile_phone"    />
+		<result property="dutyNumber"			column="duty_number"    />
+		<result property="typeRows"    			column="type_rows"    />
+		<result property="typeColumns"    		column="type_columns"    />
+	</resultMap>
+
+	<resultMap type="OgPost" id="OgPostResult">
+		<id     property="postId"        column="postId"       />
+		<result property="postName"      column="post_name"     />
+		<result property="addEr"       column="adder"         />
+		<result property="addTime"      column="addTime"       />
+		<result property="moder"     column="moder"      />
+		<result property="updateTime"   column="update_time"    />
+		<result property="memo"      column="memo"      />
+		<result property="invalidationMark"      column="invalidation_mark"       />
+		<result property="serialNum"   column="serial_num"    />
+	</resultMap>
+
+	<sql id="selectContactVo">
+		 select version_id,version_no,version_name,duty_date,to_date(addtime,'YYYY-MM-DD hh24:mi:ss') as addtime,remark from duty_version
+	</sql>
+	<sql id="selectContactMysqlVo">
+		 select version_id,version_no,version_name,duty_date,STR_TO_DATE(addtime,'%Y%m%d%H%i%s') as addtime,remark from duty_version
+	</sql>
+
+	<select id="selectVersionList" parameterType="DutyVersion" resultMap="versionResult">
+		<include refid="selectContactVo"/>
+		<where>
+			<if test="versionName != null and versionName != ''"> and version_name like concat('%',concat(#{versionName},'%'))</if>
+			<if test="dutyDate != null and dutyDate != ''"> and duty_date like concat(concat('%',#{dutyDate}),'%')</if>
+		</where>
+		order by addtime desc
+	</select>
+	<select id="selectVersionMysqlList" parameterType="DutyVersion" resultMap="versionResult">
+		<include refid="selectContactMysqlVo"/>
+		<where>
+			<if test="versionName != null and versionName != ''"> and version_name like concat('%',concat(#{versionName},'%'))</if>
+			<if test="dutyDate != null and dutyDate != ''"> and duty_date like concat(concat('%',#{dutyDate}),'%')</if>
+		</where>
+		order by addtime desc
+	</select>
+
+	<select id="selectMaxTypeNo" parameterType="DutyVersion" resultMap="versionResult">
+		select max(version_no)+1 as version_no from duty_version
+	</select>
+
+	<select id="selectVersionById" parameterType="String" resultMap="versionResult">
+		<include refid="selectContactVo"/>
+		WHERE version_id = #{versionId}
+	</select>
+	<!--mysql-->
+	<select id="selectVersionByIdMysql" parameterType="String" resultMap="versionResult">
+		<include refid="selectContactMysqlVo"/>
+		WHERE version_id = #{versionId}
+	</select>
+
+	<select id="checkVersionNoUnique" parameterType="String" resultMap="versionResult">
+		<include refid="selectContactVo"/>
+		 where version_no = #{versionNo}
+	</select>
+	<select id="checkVersionNoUniqueMysql" parameterType="String" resultMap="versionResult">
+		<include refid="selectContactMysqlVo"/>
+		where version_no = #{versionNo}
+	</select>
+
+	<select id="checkDutyDateUnique" parameterType="String" resultMap="versionResult">
+		<include refid="selectContactVo"/>
+		where duty_date like concat(concat('%',#{dutyDate}),'%')
+	</select>
+	<select id="checkDutyDateUniqueMysql" parameterType="String" resultMap="versionResult">
+		<include refid="selectContactMysqlVo"/>
+		where duty_date like concat(concat('%',#{dutyDate}),'%')
+	</select>
+
+    <delete id="deleteVersionById" parameterType="Long">
+ 		delete from duty_version where version_id = #{versionId}
+ 	</delete>
+
+ 	<delete id="deleteVersionByIds" parameterType="String">
+		delete from duty_version  where version_id in
+ 		<foreach collection="array" item="versionId" open="(" separator="," close=")">
+ 			#{versionId}
+        </foreach>
+ 	</delete>
+
+ 	<delete id="deleteVersionTypeinfos" parameterType="String">
+		delete from duty_version_typeinfo  where version_typeinfo_id in
+ 		<foreach collection="array" item="versionTypeinfoId" open="(" separator="," close=")">
+ 			#{versionTypeinfoId}
+        </foreach>
+ 	</delete>
+
+ 	<update id="updateVersion" parameterType="DutyVersion">
+ 		update duty_version
+ 		<set>
+ 			<if test="versionName != null and versionName != ''">version_name = #{versionName},</if>
+ 			<if test="dutyDate != null and dutyDate != ''">duty_date = #{dutyDate},</if>
+			<if test="remark != null and remark != ''">remark = #{remark},</if>
+ 			update_time = TO_CHAR(SYSDATE,'YYYYMMDDHHMISS')
+ 		</set>
+ 		where version_id = #{versionId}
+	</update>
+	<!--mysql-->
+	<update id="updateVersionMysql" parameterType="DutyVersion">
+		update duty_version
+		<set>
+			<if test="versionName != null and versionName != ''">version_name = #{versionName},</if>
+			<if test="dutyDate != null and dutyDate != ''">duty_date = #{dutyDate},</if>
+			<if test="remark != null and remark != ''">remark = #{remark},</if>
+			update_time = date_format(now(),'%Y%m%d%H%i%s')
+		</set>
+		where version_id = #{versionId}
+	</update>
+
+ 	<insert id="insertVersion" parameterType="DutyVersion" useGeneratedKeys="false" keyProperty="rid">
+ 		insert into duty_version(
+			version_id,
+			<if test="versionNo != null and versionNo != ''">version_no,</if>
+			<if test="versionName != null and versionName != ''">version_name,</if>
+			<if test="dutyDate != null and dutyDate != ''">duty_date,</if>
+			<if test="remark != null and remark != ''">remark,</if>
+			<if test="addTime != null and addTime != ''">addTime</if>
+ 		)values(
+			#{versionId},
+			<if test="versionNo != null and versionNo != ''">#{versionNo},</if>
+			<if test="versionName != null and versionName != ''">#{versionName},</if>
+			<if test="dutyDate != null and dutyDate != ''">#{dutyDate},</if>
+			<if test="remark != null and remark != ''">#{remark},</if>
+			<if test="addTime != null and addTime != ''">#{addTime}</if>
+ 		)
+	</insert>
+
+	<select id="selectTypeinfoByVersionTypeinfo" parameterType="DutyVersion" resultMap="versionResult">
+		select typeinfo_id,type_no,type_name,type_description,mobile_phone,leader,update_time,
+		invalidation_mark,serial,parent_id,pid,duty_number
+		from duty_typeinfo
+		where typeinfo_id not in (select typeinfo_id from duty_version_typeinfo where version_id = #{versionId})
+	</select>
+
+	<select id="selectTypeinfoByVersionId" parameterType="DutyVersion" resultMap="versionResult">
+		select version_typeinfo_id, typeinfo_id, type_no, type_name, type_description,mobile_phone,leader,type_description,
+			update_time,invalidation_mark,serial,parent_id,duty_number,
+			(select v.type_name from duty_version_typeinfo v where v.typeinfo_id = t.parent_id and rownum = 1) as parent_name
+		from duty_version_typeinfo t
+		where version_id = #{versionId}
+		<if test="typeName != null and typeName != ''">and type_name like concat('%',concat(#{typeName},'%'))</if>
+		<if test="typeNo != null and typeNo != ''">and type_no like concat('%',concat(#{typeNo},'%'))</if>
+		order by serial
+	</select>
+	<select id="selectTypeinfoByVersionIdMysql" parameterType="DutyVersion" resultMap="versionResult">
+		select version_typeinfo_id, typeinfo_id, type_no, type_name, type_description,mobile_phone,leader,type_description,
+			update_time,invalidation_mark,serial,parent_id,duty_number,
+			(select v.type_name from duty_typeinfo v where v.typeinfo_id = t.parent_id limit 1) as parent_name
+		from duty_version_typeinfo t
+		where version_id = #{versionId}
+		<if test="typeName != null and typeName != ''">and type_name like concat('%',concat(#{typeName},'%'))</if>
+		<if test="typeNo != null and typeNo != ''">and type_no like concat('%',concat(#{typeNo},'%'))</if>
+		order by serial
+	</select>
+
+	<insert id="insertVersionTypeinfo" parameterType="ArrayList" useGeneratedKeys="false">
+		insert into duty_version_typeinfo(version_typeinfo_id,version_id,typeinfo_id,pid,type_no,type_name,mobile_phone,leader,
+		invalidation_mark,parent_id,serial,duty_number,type_rows,type_columns,type_description)
+			SELECT A.* FROM (
+			<foreach collection="list" item="item" index="index" separator="UNION">
+				SELECT #{item.versionTypeinfoId,jdbcType = VARCHAR},#{item.versionId,jdbcType = VARCHAR},#{item.typeinfoId,jdbcType = VARCHAR},#{item.pid,jdbcType = VARCHAR},#{item.typeNo,jdbcType = VARCHAR},
+				#{item.typeName,jdbcType = VARCHAR},#{item.mobilephone,jdbcType = VARCHAR},#{item.leader,jdbcType = VARCHAR},#{item.invalidationMark,jdbcType = VARCHAR},#{item.parentId,jdbcType = VARCHAR},
+				#{item.serial,jdbcType = DOUBLE},#{item.dutyNumber,jdbcType = VARCHAR},#{item.typeRows,jdbcType = VARCHAR},
+				#{item.typeColumns,jdbcType = VARCHAR},#{item.typeDescription,jdbcType = VARCHAR} FROM DUAL
+			</foreach>
+			) A
+	</insert>
+	<insert id="insertVersionTypeinfoMysql" parameterType="ArrayList" useGeneratedKeys="false">
+		insert into duty_version_typeinfo(version_typeinfo_id,version_id,typeinfo_id,pid,type_no,type_name,mobile_phone,leader,
+		invalidation_mark,parent_id,serial,duty_number,type_rows,type_columns,type_description)
+		<foreach collection="list" item="item" index="index" separator="UNION">
+			SELECT #{item.versionTypeinfoId,jdbcType = VARCHAR},#{item.versionId,jdbcType = VARCHAR},#{item.typeinfoId,jdbcType = VARCHAR},#{item.pid,jdbcType = VARCHAR},#{item.typeNo,jdbcType = VARCHAR},
+			#{item.typeName,jdbcType = VARCHAR},#{item.mobilephone,jdbcType = VARCHAR},#{item.leader,jdbcType = VARCHAR},#{item.invalidationMark,jdbcType = VARCHAR},#{item.parentId,jdbcType = VARCHAR},
+			#{item.serial,jdbcType = DOUBLE},#{item.dutyNumber,jdbcType = VARCHAR},#{item.typeRows,jdbcType = VARCHAR},
+			#{item.typeColumns,jdbcType = VARCHAR},#{item.typeDescription,jdbcType = VARCHAR} FROM DUAL
+		</foreach>
+	</insert>
+
+	<select id="selectVersionTypeinfoById" parameterType="String" resultMap="versionResult">
+		select version_typeinfo_id,version_id,typeinfo_id,type_no,type_name,type_description, mobile_phone,leader,invalidation_mark,
+		 serial,parent_id,pid,(select v.type_name from duty_version_typeinfo v where v.typeinfo_id = t.parent_id
+		 and rownum = 1) as parent_name,duty_number,type_rows,type_columns
+    	 from duty_version_typeinfo t
+		WHERE t.version_typeinfo_id = #{versionTypeinfoId}
+	</select>
+	<select id="selectVersionTypeinfoMysqlById" parameterType="String" resultMap="versionResult">
+		select version_typeinfo_id,version_id,typeinfo_id,type_no,type_name,type_description, mobile_phone,leader,invalidation_mark,
+		 serial,parent_id,pid,(select v.type_name from duty_typeinfo v where v.typeinfo_id = t.parent_id
+		 limit 1) as parent_name,duty_number,type_rows,type_columns
+    	 from duty_version_typeinfo t
+		WHERE t.version_typeinfo_id = #{versionTypeinfoId}
+	</select>
+
+	<select id="selectTypeinfoById" parameterType="String" resultMap="versionResult">
+		select version_typeinfo_id,version_id,typeinfo_id,type_no,type_name,type_description, mobile_phone,leader,
+			invalidation_mark,serial,parent_id,pid,duty_number
+    	from duty_version_typeinfo
+		WHERE version_typeinfo_id = #{versionTypeinfoId}
+	</select>
+
+	<select id="selectTypeinfoList" parameterType="DutyVersion" resultMap="versionResult">
+		select version_typeinfo_id,version_id,typeinfo_id,type_no,type_name,type_description, mobile_phone,leader,
+			invalidation_mark,serial,parent_id,pid,duty_number,type_rows,type_columns
+    	from duty_version_typeinfo t
+		where version_id = #{versionId}
+		order by serial
+	</select>
+
+	<select id="selectVersionByIds" parameterType="String" resultMap="versionResult">
+		select duty_date from duty_version where version_id in
+		<foreach item="versionId" collection="array" open="(" separator="," close=")">
+			#{versionId}
+		</foreach>
+	</select>
+
+	<select id="selectVersionByVersionTypeinfoIds" parameterType="String" resultMap="versionResult">
+		select v.duty_date from duty_version_typeinfo t
+		left join duty_version v on v.version_id=t.version_id
+		where t.version_typeinfo_id in
+		<foreach item="versionTypeinfoIds" collection="array" open="(" separator="," close=")">
+			#{versionTypeinfoIds}
+		</foreach>
+	</select>
+
+	<update id="updateVersionTypeinfo" parameterType="DutyVersion">
+		update duty_version_typeinfo
+		<set>
+			<if test="parentId != null and parentId != ''">parent_id = #{parentId},</if>
+			<if test="pid != null and pid != ''">pid = #{pid},</if>
+			<if test="leader != null and leader != ''">leader = #{leader},</if>
+			<if test="mobilephone != null and mobilephone != ''">mobile_phone = #{mobilephone},</if>
+			<if test="serial != null and serial != ''">serial = #{serial},</if>
+			type_description = #{typeDescription},
+			<if test="dutyNumber != null and dutyNumber != ''">duty_number = #{dutyNumber},</if>
+			<if test="typeRows != null and typeRows != ''">type_rows = #{typeRows},</if>
+			<if test="typeColumns != null and typeColumns != ''">type_columns = #{typeColumns},</if>
+		</set>
+		where version_typeinfo_id = #{versionTypeinfoId}
+	</update>
+
+	<select id="selectVersionByDutyDate" parameterType="String" resultMap="versionResult">
+		select t.VERSION_ID,type_no,type_name,type_rows,type_columns,typeinfo_id,parent_id,t.leader,t.type_description
+        from duty_version_typeinfo t left join duty_version v
+        on v.version_id = t.version_id
+        where v.duty_date like concat(concat('%', #{dutyDate}), '%')
+        and t.parent_id = (select typeinfo_id from duty_typeinfo where type_no= #{typeNo} )
+        order by t.serial
+	</select>
+
+	<select id="selectVersionByParentId" parameterType="String" resultMap="versionResult">
+		select typeinfo_id,type_no,type_name,parent_id,type_columns
+		from duty_version_typeinfo t left join duty_version v on v.version_id=t.version_id
+		WHERE parent_id = (select parent_id from duty_version_typeinfo  t left join duty_version v on v.version_id=t.version_id where typeinfo_id = #{typeinfoId}  and duty_date like concat(concat('%',#{dutyDate}),'%'))
+			and v.duty_date like concat(concat('%',#{dutyDate}),'%')
+			and type_columns = 1
+			and typeinfo_id != #{typeinfoId}
+		order by t.type_no
+	</select>
+	<select id="selectVersionByDutyDateAndTypeNo" resultType="java.lang.String">
+		select
+			d.type_no
+		from
+			(
+				SELECT
+					t.VERSION_ID,type_no,type_name,type_rows,type_columns,typeinfo_id,parent_id,t.leader,v.duty_date,t.type_description
+				FROM
+					duty_version_typeinfo t
+						LEFT JOIN duty_version v ON v.version_id = t.version_id
+				WHERE
+					v.duty_date like concat(concat('%',#{dutyDate}),'%')
+			)d
+			start with d.type_no = #{typeNo}  connect by prior d.typeinfo_id =d.parent_id
+	</select>
+	<select id="findDutyVersionByTypeInfoId" resultMap="versionResult">
+		SELECT
+			t.VERSION_ID,
+			type_no,
+			type_name,
+			type_rows,
+			type_columns,
+			typeinfo_id,
+			parent_id,
+			t.leader,
+			v.duty_date,
+			t.type_description
+		FROM
+			duty_version_typeinfo t
+				LEFT JOIN duty_version v ON v.version_id = t.version_id
+		WHERE
+			v.duty_date like concat(concat('%',#{dutyDate}),'%')
+		  AND
+			parent_id = #{typeInfoId}
+	</select>
+	<select id="findDutyVersionByTypeNoAndDate" resultMap="versionResult">
+		SELECT
+			t.VERSION_ID,
+			type_no,
+			type_name,
+			type_rows,
+			type_columns,
+			typeinfo_id,
+			parent_id,
+			t.leader,
+			v.duty_date,
+			t.type_description
+		FROM
+			duty_version_typeinfo t
+				LEFT JOIN duty_version v ON v.version_id = t.version_id
+		WHERE
+			v.duty_date like concat(concat('%',#{dutyDate}),'%')
+		  AND
+			type_no = #{typeNo}
+	</select>
+	<select id="selectDutyTypeInfoById" resultMap="versionResult">
+		SELECT
+			t.VERSION_ID,
+			type_no,
+			type_name,
+			type_rows,
+			type_columns,
+			typeinfo_id,
+			parent_id,
+			t.leader,
+			v.duty_date,
+			t.type_description
+		FROM
+			duty_version_typeinfo t
+				LEFT JOIN duty_version v ON v.version_id = t.version_id
+		WHERE
+			v.duty_date like concat(concat('%',#{dutyDate}),'%')
+		  AND
+			typeinfo_id = #{typeInfoId}
+	</select>
+	<select id="selectDutyVersionList" resultMap="versionResult">
+		SELECT
+			t.VERSION_ID,
+			type_no,
+			type_name,
+			type_rows,
+			type_columns,
+			typeinfo_id,
+			parent_id,
+			t.leader,
+			v.duty_date,
+			t.type_description
+		FROM
+			duty_version_typeinfo t
+				LEFT JOIN duty_version v ON v.version_id = t.version_id
+		WHERE
+			v.duty_date like concat(concat('%',#{dutyDate}),'%')
+	</select>
+
+</mapper>

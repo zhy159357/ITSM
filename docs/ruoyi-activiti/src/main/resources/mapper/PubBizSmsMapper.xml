@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.activiti.mapper.PubBizSmsMapper">
+    
+    <resultMap type="PubBizSms" id="PubBizSmsResult">
+        <result property="pubBizSmsId"    column="pub_biz_sms_id"    />
+        <result property="pubBizPresmsId"    column="pub_biz_presms_id"    />
+        <result property="serialNumber"    column="serial_number"    />
+        <result property="telephone"    column="telephone"    />
+        <result property="name"    column="name"    />
+        <result property="smsText"    column="sms_text"    />
+        <result property="smsTime"    column="sms_time"    />
+        <result property="smsState"    column="sms_state"    />
+        <result property="createrId"    column="creater_id"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="invalidationMark"    column="invalidation_mark"    />
+    </resultMap>
+
+    <sql id="selectPubBizSmsVo">
+        select pub_biz_sms_id, pub_biz_presms_id, serial_number, telephone, name, sms_text, sms_time, sms_state, creater_id, update_time, invalidation_mark from pub_biz_sms
+    </sql>
+
+    <sql id="selectPubBizSmsVoTwo">
+        select
+        pub_biz_sms_id, pub_biz_presms_id, serial_number, telephone, name, sms_text,
+        sms_time, sms_state, creater_id, update_time, invalidation_mark
+        from (select pub_biz_sms_id, pub_biz_presms_id, serial_number, telephone, name, sms_text,
+        sms_time, sms_state, creater_id, update_time, invalidation_mark  from pub_biz_sms order by pub_biz_sms_id)
+    </sql>
+
+    <select id="selectPubBizSmsList" parameterType="PubBizSms" resultMap="PubBizSmsResult">
+        <include refid="selectPubBizSmsVo"/>
+        <where>
+            <if test="pubBizPresmsId != null  and pubBizPresmsId != ''"> and pub_biz_presms_id = #{pubBizPresmsId}</if>
+            <if test="serialNumber != null "> and serial_number = #{serialNumber}</if>
+            <if test="telephone != null  and telephone != ''"> and telephone = #{telephone}</if>
+            <if test="name != null  and name != ''"> and name like concat(concat('%', #{name}), '%')</if>
+            <if test="smsText != null  and smsText != ''"> and sms_text = #{smsText}</if>
+            <if test="smsTime != null  and smsTime != ''"> and sms_time = #{smsTime}</if>
+            <if test="smsState != null  and smsState != ''"> and sms_state = #{smsState}</if>
+            <if test="createrId != null  and createrId != ''"> and creater_id = #{createrId}</if>
+            <if test="invalidationMark != null  and invalidationMark != ''"> and invalidation_mark = #{invalidationMark}</if>
+        </where>
+    </select>
+
+    <select id="selectPubBizSmsListTwo" parameterType="PubBizSms" resultMap="PubBizSmsResult">
+        select
+            b.pub_biz_sms_id,
+            b.pub_biz_presms_id,
+            b.serial_number,
+            b.telephone,
+            b.name,
+            b.sms_text,
+            b.sms_time,
+            b.sms_state,
+            b.creater_id,
+            b.update_time,
+            b.invalidation_mark
+        from pub_biz_sms b
+        <where>
+            <if test="telephone != null  and telephone != ''"> and telephone like concat(concat('%', #{telephone}), '%')</if>
+            <if test="smsText != null  and smsText != ''"> and sms_text like concat(concat('%', #{smsText}), '%')</if>
+        </where>
+        order by b.sms_time desc
+    </select>
+    
+    <select id="selectPubBizSmsById" parameterType="String" resultMap="PubBizSmsResult">
+        <include refid="selectPubBizSmsVo"/>
+        where pub_biz_sms_id = #{pubBizSmsId}
+    </select>
+        
+    <insert id="insertPubBizSms" parameterType="PubBizSms">
+        insert into pub_biz_sms
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="pubBizSmsId != null  and pubBizSmsId != ''">pub_biz_sms_id,</if>
+            <if test="pubBizPresmsId != null  and pubBizPresmsId != ''">pub_biz_presms_id,</if>
+            <if test="serialNumber != null ">serial_number,</if>
+            <if test="telephone != null  and telephone != ''">telephone,</if>
+            <if test="name != null  and name != ''">name,</if>
+            <if test="smsText != null  and smsText != ''">sms_text,</if>
+            <if test="smsTime != null  and smsTime != ''">sms_time,</if>
+            <if test="smsState != null  and smsState != ''">sms_state,</if>
+            <if test="createrId != null  and createrId != ''">creater_id,</if>
+            <if test="updateTime != null  and updateTime != ''">update_time,</if>
+            <if test="invalidationMark != null  and invalidationMark != ''">invalidation_mark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="pubBizSmsId != null  and pubBizSmsId != ''">#{pubBizSmsId},</if>
+            <if test="pubBizPresmsId != null  and pubBizPresmsId != ''">#{pubBizPresmsId},</if>
+            <if test="serialNumber != null ">#{serialNumber},</if>
+            <if test="telephone != null  and telephone != ''">#{telephone},</if>
+            <if test="name != null  and name != ''">#{name},</if>
+            <if test="smsText != null  and smsText != ''">#{smsText},</if>
+            <if test="smsTime != null  and smsTime != ''">#{smsTime},</if>
+            <if test="smsState != null  and smsState != ''">#{smsState},</if>
+            <if test="createrId != null  and createrId != ''">#{createrId},</if>
+            <if test="updateTime != null  and updateTime != ''">#{updateTime},</if>
+            <if test="invalidationMark != null  and invalidationMark != ''">#{invalidationMark},</if>
+         </trim>
+    </insert>
+
+    <update id="updatePubBizSms" parameterType="PubBizSms">
+        update pub_biz_sms
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="pubBizPresmsId != null  and pubBizPresmsId != ''">pub_biz_presms_id = #{pubBizPresmsId},</if>
+            <if test="serialNumber != null ">serial_number = #{serialNumber},</if>
+            <if test="telephone != null  and telephone != ''">telephone = #{telephone},</if>
+            <if test="name != null  and name != ''">name = #{name},</if>
+            <if test="smsText != null  and smsText != ''">sms_text = #{smsText},</if>
+            <if test="smsTime != null  and smsTime != ''">sms_time = #{smsTime},</if>
+            <if test="smsState != null  and smsState != ''">sms_state = #{smsState},</if>
+            <if test="createrId != null  and createrId != ''">creater_id = #{createrId},</if>
+            <if test="updateTime != null  and updateTime != ''">update_time = #{updateTime},</if>
+            <if test="invalidationMark != null  and invalidationMark != ''">invalidation_mark = #{invalidationMark},</if>
+        </trim>
+        where pub_biz_sms_id = #{pubBizSmsId}
+    </update>
+
+    <delete id="deletePubBizSmsById" parameterType="String">
+        delete from pub_biz_sms where pub_biz_sms_id = #{pubBizSmsId}
+    </delete>
+
+    <delete id="deletePubBizSmsByIds" parameterType="String">
+        delete from pub_biz_sms where pub_biz_sms_id in 
+        <foreach item="pubBizSmsId" collection="array" open="(" separator="," close=")">
+            #{pubBizSmsId}
+        </foreach>
+    </delete>
+    
+</mapper>

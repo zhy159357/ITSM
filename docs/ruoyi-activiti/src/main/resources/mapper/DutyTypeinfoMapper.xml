@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.activiti.mapper.DutyTypeinfoMapper">
+    
+    <resultMap type="DutyTypeinfo" id="DutyTypeinfoResult">
+        <result property="typeinfoId"    column="typeinfo_id"    />
+        <result property="typeNo"    column="type_no"    />
+        <result property="typeName"    column="type_name"    />
+        <result property="typeDescription"    column="type_description"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="invalidationMark"    column="invalidation_mark"    />
+        <result property="serial"    column="serial"    />
+        <result property="parentId"    column="parent_id"    />
+        <result property="parentTypeName"    column="parent_type_name"    />
+        <result property="parentName"    column="parent_name"    />
+        <result property="pid"    column="pid"    />
+        <result property="pname"    column="pname"    />
+        <result property="dutyNumber"    column="duty_number"    />
+        <result property="mobilephone"    column="mobile_phone"    />
+        <result property="typeRows"    column="type_rows"    />
+        <result property="typeColumns"    column="type_columns"    />
+    </resultMap>
+
+    <sql id="selectDutyTypeinfoVo">
+        select typeinfo_id, type_no, type_name, type_description, mobile_phone, leader, update_time, invalidation_mark, serial, parent_id, pid, duty_number, type_rows, type_columns
+    </sql>
+
+    <select id="selectUserList" parameterType="String" resultMap="DutyTypeinfoResult">
+        select pe.pid,pe.pname,pe.mobil_phone,og.orgname
+        from OG_USER u
+        left join OG_PERSON pe on  u.pid = pe.pid
+        left join og_org og on pe.orgid = OG.orgid
+        LEFT join og_r_user_post up on u.userid = up.userid
+        LEFT JOIN og_post p on p.postid = up.postid
+        LEFT JOIN og_r_post_role pr on p.postid = pr.postid
+        where pr.rid =  #{rid} and pe.pid is not null
+    </select>
+
+    <select id="selectDutyTypeinfoList" parameterType="DutyTypeinfo" resultMap="DutyTypeinfoResult">
+        <include refid="selectDutyTypeinfoVo"/>
+        ,(select o.type_name from duty_typeinfo o WHERE o.typeinfo_id = m.parent_id) as parent_type_name
+        from duty_typeinfo m
+        <where>
+            <if test="typeinfoId != null  and typeinfoId != ''"> and (parent_id = #{typeinfoId} or typeinfo_id = #{typeinfoId})</if>
+            <if test="typeNo != null  and typeNo != ''"> and type_no like concat('%',concat(#{typeNo},'%'))</if>
+            <if test="typeName != null  and typeName != ''"> and type_name like concat('%',concat(#{typeName},'%'))</if>
+            <if test="typeDescription != null  and typeDescription != ''"> and type_description like '%${typeDescription}%'</if>
+            <if test="invalidationMark != null  and invalidationMark != ''"> and invalidation_mark = #{invalidationMark}</if>
+            <if test="serial != null "> and serial = #{serial}</if>
+        </where>
+    </select>
+    
+    <select id="selectDutyTypeinfoById" parameterType="String" resultMap="DutyTypeinfoResult">
+        <include refid="selectDutyTypeinfoVo"/>
+        , m.type_name as parent_type_name
+        ,(select o.type_name from duty_typeinfo o WHERE o.typeinfo_id = m.parent_id) as parent_name
+        from duty_typeinfo m
+        where typeinfo_id = #{typeinfoId}
+    </select>
+
+    <select id="selectTypeNo" parameterType="String" resultMap="DutyTypeinfoResult">
+        select type_no,type_name from duty_typeinfo
+        where type_no != '000000' order by type_no
+    </select>
+
+    <select id="selectDutyTypeinfoByParentId" parameterType="String" resultMap="DutyTypeinfoResult">
+        <include refid="selectDutyTypeinfoVo"/>
+        ,(select o.type_name from duty_typeinfo o WHERE o.typeinfo_id = #{parentId}) as parent_type_name
+        from duty_typeinfo m
+        where parent_id = #{parentId}
+    </select>
+
+    <select id="selectVersionTypeinfoByParentId" parameterType="DutyTypeinfo" resultMap="DutyTypeinfoResult">
+		select typeinfo_id,type_no,type_name,type_description,mobile_phone,leader,update_time,
+		invalidation_mark,serial,parent_id,pid,duty_number
+		from duty_typeinfo
+		where parent_id = #{parentId}
+		order by serial
+	</select>
+
+    <insert id="insertDutyTypeinfo" parameterType="DutyTypeinfo">
+        insert into duty_typeinfo
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="typeinfoId != null  and typeinfoId != ''">typeinfo_id,</if>
+            <if test="pid != null  and pid != ''">pid,</if>
+            <if test="typeNo != null  and typeNo != ''">type_no,</if>
+            <if test="typeName != null  and typeName != ''">type_name,</if>
+            <if test="mobilephone != null  and mobilephone != ''">mobile_phone,</if>
+            <if test="leader != null  and leader != ''">leader,</if>
+            <if test="updateTime != null  and updateTime != ''">update_time,</if>
+            <if test="invalidationMark != null  and invalidationMark != ''">invalidation_mark,</if>
+            <if test="parentId != null  and parentId != ''">parent_id,</if>
+            <if test="serial != null  and serial != ''">serial,</if>
+            <if test="dutyNumber != null and dutyNumber != ''">duty_number,</if>
+            <if test="typeRows != null and typeRows != ''">type_rows,</if>
+            <if test="typeColumns != null and typeColumns != ''">type_columns,</if>
+            type_description
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="typeinfoId != null  and typeinfoId != ''">#{typeinfoId},</if>
+            <if test="pid != null  and pid != ''">#{pid},</if>
+            <if test="typeNo != null  and typeNo != ''">#{typeNo},</if>
+            <if test="typeName != null  and typeName != ''">#{typeName},</if>
+            <if test="mobilephone != null  and mobilephone != ''">#{mobilephone},</if>
+            <if test="leader != null  and leader != ''">#{leader},</if>
+            <if test="updateTime != null  and updateTime != ''">#{updateTime},</if>
+            <if test="invalidationMark != null  and invalidationMark != ''">#{invalidationMark},</if>
+            <if test="parentId != null  and parentId != ''">#{parentId},</if>
+            <if test="serial != null  and serial != ''">#{serial},</if>
+            <if test="dutyNumber != null and dutyNumber != ''">#{dutyNumber},</if>
+            <if test="typeRows != null and typeRows != ''">#{typeRows},</if>
+            <if test="typeColumns != null and typeColumns != ''">#{typeColumns},</if>
+            #{typeDescription}
+         </trim>
+    </insert>
+
+    <update id="updateDutyTypeinfo" parameterType="DutyTypeinfo">
+        update duty_typeinfo
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="pid != null  and pid != ''">pid = #{pid},</if>
+            <if test="typeNo != null  and typeNo != ''">type_no = #{typeNo},</if>
+            <if test="typeName != null  and typeName != ''">type_name = #{typeName},</if>
+            type_description = #{typeDescription},
+            <if test="mobilephone != null  and mobilephone != ''">mobile_phone = #{mobilephone},</if>
+            <if test="leader != null  and leader != ''">leader = #{leader},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+            <if test="invalidationMark != null  and invalidationMark != ''">invalidation_mark = #{invalidationMark},</if>
+            <if test="parentId != null  and parentId != ''">parent_id = #{parentId},</if>
+            <if test="serial != null  and serial != ''">serial = #{serial},</if>
+            <if test="dutyNumber != null and dutyNumber != ''">duty_number = #{dutyNumber},</if>
+            <if test="typeRows != null and typeRows != ''">type_rows = #{typeRows},</if>
+            <if test="typeColumns != null and typeColumns != ''">type_columns = #{typeColumns},</if>
+        </trim>
+        where typeinfo_id = #{typeinfoId}
+    </update>
+
+    <delete id="deleteDutyTypeinfoById" parameterType="String">
+        delete from duty_typeinfo where typeinfo_id = #{typeinfoId}
+    </delete>
+
+    <delete id="deleteDutyTypeinfoByIds" parameterType="String">
+        delete from duty_typeinfo where typeinfo_id in 
+        <foreach item="typeinfoId" collection="array" open="(" separator="," close=")">
+            #{typeinfoId}
+        </foreach>
+    </delete>
+
+    <select id="selectTypeinfoTree" parameterType="DutyTypeinfo" resultMap="DutyTypeinfoResult">
+        <include refid="selectDutyTypeinfoVo"/>
+        from duty_typeinfo m
+        where invalidation_mark !='0'
+        order by serial asc
+    </select>
+
+    <select id="checkTypeNoUnique" parameterType="String" resultMap="DutyTypeinfoResult">
+        <include refid="selectDutyTypeinfoVo"/>
+        from duty_typeinfo
+        where type_no = #{typeNo}
+    </select>
+    <select id="selectDutyTypeInfoListByParentId" parameterType="String" resultMap="DutyTypeinfoResult">
+        <include refid="selectDutyTypeinfoVo"/>
+        from duty_typeinfo
+        where parent_id = #{parentId}
+    </select>
+
+
+</mapper>

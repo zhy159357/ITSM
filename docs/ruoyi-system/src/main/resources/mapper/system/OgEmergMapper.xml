@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.OgEmergMapper">
+
+	<resultMap type="OgEmerg" id="OgEmergResult">
+		<id     property="emergId"     column="EMERG_ID"     />
+		<result property="xtId"   column="XT_ID"  />
+		<result property="emergMemo"  column="EMERG_MEMO"   />
+		<result property="emergLy"   column="EMERG_LY"   />
+		<result property="emergMark"     column="EMERG_MARK" />
+		<result property="emergGrade" column="EMERG_GRADE"/>
+		<result property="emergType" column="EMERG_TYPE"/>
+		<result property="occurTime" column="OCCUR_TIME"/>
+		<result property="emergSystem" column="EMERG_SYSTEM"/>
+		<result property="emergWork" column="EMERG_WORK"/>
+		<result property="emergHandler" column="EMERG_HANDLER"/>
+		<result property="emergPhone" column="EMERG_PHONE"/>
+		<result property="emergSort" column="EMERG_SORT"/>
+		<result property="emergTitle" column="EMERG_TITLE"/>
+		<result property="systemRank" column="SYSTEM_RANK"/>
+		<result property="startTime" column="START_TIME"/>
+		<result property="endTime" column="END_TIME"/>
+		<result property="emergFault" column="EMERG_FAULT"/>
+		<result property="startSystem" column="START_SYSTEM"/>
+		<result property="PersonemergId" column="PERSONEMERG_ID"/>
+		<result property="runId" column="RUN_ID"/>
+		<result property="emergCaution" column="EMERG_CAUTION"/>
+		<result property="emergSolve" column="EMERG_SOLVE"/>
+		<result property="emergComplaint" column="EMERG_COMPLAINT"/>
+		<result property="emergRisk" column="EMERG_RISK"/>
+		<result property="emergSubmitter" column="EMERG_SUBMITTER"/>
+	</resultMap>
+
+	<resultMap type="OgSys" id="OgSysResult">
+		<id     property="sysId"                column="sysId"         />
+		<result property="orgId"                column="orgId"         />
+		<result property="code"                 column="code"      />
+		<result property="caption"              column="caption"       />
+		<result property="memo"                 column="memo"       />
+		<result property="invalidationMark"     column="invalidation_Mark"           />
+		<result property="isExamination"        column="isExamination"     />
+		<result property="dept"                 column="dept"        />
+		<result property="pid"                  column="pid"            />
+		<result property="businessId"           column="businessId"          />
+		<result property="isKeySys"             column="is_Key_Sys"        />
+		<result property="sysType"              column="sys_Type"        />
+	</resultMap>
+
+	<insert id="insertOgEmerg" parameterType="OgEmerg">
+		insert into OG_EMERG
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="emergId != null  and emergId != ''">EMERG_ID,</if>
+			<if test="emergLy != null  and emergLy != ''">EMERG_LY,</if>
+			<if test="emergGrade != null  and emergGrade != ''">EMERG_GRADE,</if>
+			<if test="xtId != null  and xtId != ''">XT_ID,</if>
+			<if test="emergWork != null  and emergWork != ''">EMERG_WORK,</if>
+			<if test="emergHandler != null  and emergHandler != ''">EMERG_HANDLER,</if>
+			<if test="emergPhone != null  and emergPhone != ''">EMERG_PHONE,</if>
+			<if test="emergSort != null  and emergSort != ''">EMERG_SORT,</if>
+			<if test="emergTitle != null  and emergTitle != ''">EMERG_TITLE,</if>
+			<if test="startTime != null and startTime != ''">START_TIME,</if>
+			<if test="endTime != null  and endTime != ''">END_TIME,</if>
+			<if test="systemRank != null and systemRank != ''">SYSTEM_RANK,</if>
+			<if test="emergFault != null  and emergFault != ''">EMERG_FAULT,</if>
+			<if test="emergMemo != null ">EMERG_MEMO,</if>
+			<if test="emergType != null  and emergType != ''">EMERG_TYPE,</if>
+			<if test="personemergId != null  and personemergId != ''">PERSONEMERG_ID,</if>
+			<if test="runId != null and runId != ''">RUN_ID,</if>
+			<if test="emergCaution != null  and emergCaution != ''">EMERG_CAUTION,</if>
+			<if test="emergSolve != null and emergSolve != ''">EMERG_SOLVE,</if>
+			<if test="emergComplaint != null  and emergComplaint != ''">EMERG_COMPLAINT,</if>
+			<if test="emergRisk != null and emergRisk != '' ">EMERG_RISK,</if>
+			<if test="emergSubmitter != null  and emergSubmitter != ''">EMERG_SUBMITTER,</if>
+			<if test="emergMark != null  and emergMark != ''">EMERG_MARK</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="emergId != null  and emergId != ''">#{emergId},</if>
+			<if test="emergLy != null  and emergLy != ''">#{emergLy},</if>
+			<if test="emergGrade != null  and emergGrade != ''">#{emergGrade},</if>
+			<if test="xtId != null  and xtId != ''">#{xtId},</if>
+			<if test="emergWork != null  and emergWork != ''">#{emergWork},</if>
+			<if test="emergHandler != null  and emergHandler != ''">#{emergHandler},</if>
+			<if test="emergPhone != null  and emergPhone != ''">#{emergPhone},</if>
+			<if test="emergSort != null  and emergSort != ''">#{emergSort},</if>
+			<if test="emergTitle != null  and emergTitle != ''">#{emergTitle},</if>
+			<if test="startTime != null and startTime != ''">#{startTime},</if>
+			<if test="endTime != null  and endTime != ''">#{endTime},</if>
+			<if test="systemRank != null and systemRank != ''">#{systemRank},</if>
+			<if test="emergFault != null  and emergFault != ''">#{emergFault},</if>
+			<if test="emergMemo != null ">#{emergMemo},</if>
+			<if test="emergType != null  and emergType != ''">#{emergType},</if>
+			<if test="personemergId != null  and personemergId != ''">#{personemergId},</if>
+			<if test="runId != null and runId != ''">#{runId},</if>
+			<if test="emergCaution != null  and emergCaution != ''">#{emergCaution},</if>
+			<if test="emergSolve != null and emergSolve != ''">#{emergSolve},</if>
+			<if test="emergComplaint != null  and emergComplaint != ''">#{emergComplaint},</if>
+			<if test="emergRisk != null and emergRisk != '' ">#{emergRisk},</if>
+			<if test="emergSubmitter != null  and emergSubmitter != ''">#{emergSubmitter},</if>
+			<if test="emergMark != null  and emergMark != ''">#{emergMark}</if>
+		</trim>
+	</insert>
+
+	<!--select
+			e.EMERG_ID,
+			e.XT_ID,
+			e.EMERG_MEMO,
+			e.EMERG_LY,
+			e.EMERG_MARK,
+			e.EMERG_GRADE,
+			e.EMERG_TYPE,
+			e.OCCUR_TIME,
+			e.EMERG_SYSTEM,
+			e.EMERG_WORK,
+			e.EMERG_HANDLER,
+			e.EMERG_PHONE,
+			e.EMERG_SORT,
+			e.EMERG_TITLE,
+			e.SYSTEM_RANK,
+			e.START_TIME,
+			e.END_TIME,
+			e.EMERG_FAULT,
+			e.START_SYSTEM,
+			e.PERSONEMERG_ID,
+			e.RUN_ID,
+			e.EMERG_COMPLAINT,
+			e.EMERG_SOLVE,
+			e.EMERG_COMPLAINT,
+			e.EMERG_RISK,
+			e.EMERG_SUBMITTER,
+			s.CAPTION
+		from OG_EMERG e
+		left join
+			OG_EMERGMARK m
+		on
+			e.EMERG_MARK=m.MARKID
+		left join
+			OG_SYS s
+		on
+		 e.XT_ID=s.SYSID-->
+
+	<!--select e.EMERG_ID,e.XT_ID,e.EMERG_MEMO,e.START_TIME,e.EMERG_LY,e.EMERG_MARK,s.CAPTION,m.MARKNAME
+		from OG_EMERG e
+		left join OG_EMERGMARK m
+		on e.EMERG_MARK=m.MARKID
+		left join OG_SYS s
+		on e.XT_ID=s.SYSID-->
+
+	<sql id="selectEmergVo">
+		select e.EMERG_ID,e.XT_ID,e.EMERG_MEMO,e.START_TIME,e.EMERG_LY,e.EMERG_MARK,s.CAPTION,m.MARKNAME
+				from OG_EMERG e
+				left join OG_EMERGMARK m
+				on e.EMERG_MARK=m.MARKID
+				left join OG_SYS s
+				on e.XT_ID=s.SYSID
+	</sql>
+
+
+	<select id="selectEmergById" parameterType="java.lang.String" resultMap="OgEmergResult">
+		<include refid="selectEmergVo"/>
+		where EMERG_ID = #{emergId}
+	</select>
+
+	<select id="selectById" parameterType="java.lang.String" resultMap="OgEmergResult">
+		<include refid="selectEmergVo"/>
+		where EMERG_ID = #{emergId}
+	</select>
+
+	<select id="selectOgEmergById" parameterType="String" resultMap="OgEmergResult">
+		<include refid="selectEmergVo"/>
+		where EMERG_ID = #{emergId}
+	</select>
+
+	<update id="updateEmerg" parameterType="com.ruoyi.system.domain.OgEmerg">
+		update OG_EMERG
+		<set>
+			XT_ID = #{xtId},
+			EMERG_MEMO = #{emergMemo},
+			START_TIME = #{startTime},
+			EMERG_LY = #{emergLy},
+			EMERG_MARK = #{emergMark}
+		</set>
+		where EMERG_ID = #{emergId}
+	</update>
+
+	<select id="selectEmergList" parameterType="OgEmerg" resultMap="OgEmergResult">
+        <include refid="selectEmergVo"/>
+        where 1=1
+        <if test="emergId != null and emergId != ''">
+			AND e.EMERG_ID like '%${emergId}%'
+		</if>
+		<if test="emergMemo != null and emergMemo != ''">
+			AND e.EMERG_MEMO like '%${emergMemo}%'
+		</if>
+		<if test="emergLy!=null and emergLy!=''">
+			AND e.EMERG_LY = #{emergLy}
+		</if>
+		order by e.START_TIME
+    </select>
+
+	<delete id="deleteEmergByIds" parameterType="String">
+		delete from OG_EMERG where EMERG_ID in
+		<foreach collection="array" item="emergId" open="(" separator="," close=")">
+			#{emergId}
+		</foreach>
+	</delete>
+
+
+
+	
+</mapper>

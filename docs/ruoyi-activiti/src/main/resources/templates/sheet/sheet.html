@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('隐患排查单列表')" />
+    <th:block th:include="include :: select2-css" />
+</head>
+<body class="gray-bg">
+     <div class="container-div">
+        <div class="row">
+            <div class="col-sm-12 search-collapse">
+                <form id="formId">
+                    <div class="select-list">
+                        <ul>
+                            <li>
+                                <label style="width: 80px">单号：</label>
+                                <input type="text" name="csNo" maxlength="20"/>
+                            </li>
+                            <li>
+                                <label style="width: 80px">系统：</label>
+                                <input type="text" name="sysName" id="sysName" onclick="selectOneApplication()" readonly />
+                                <input type="hidden" name="sysid" id="sysid"/>
+                            </li>
+                            <li>
+                                <label style="width: 80px">重要级别：</label>
+                                <select name="importLevel" class="form-control m-b" th:with="type=${@pubParaValue.selectPubParaValueByParaName('CS_LEVEL')}">
+                                    <option value="">所有</option>
+                                    <option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+                                </select>
+                            </li>
+                            <li>
+                                <label style="width: 80px">责任处室：</label>
+                                <input type="text" name="createOrg" maxlength="50"/>
+                            </li>
+                            <li>
+                                <label style="width: 80px">责任人：</label>
+                                <input type="text" name="createName" maxlength="5"/>
+                            </li>
+                            <li>
+                                <label style="width: 80px">隐患分类：</label>
+                                <select name="hiddenSort"  class="form-control select2-hidden-accessible" th:with="type=${@pubParaValue.selectPubParaValueByParaName('CS_TYPE')}">
+                                    <option value="">所有</option>
+                                    <option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+                                </select>
+                            </li>
+                            <li>
+                                <label style="width: 80px">整改单位：</label>
+                                <select name="putUnit" class="form-control m-b" th:with="type=${@pubParaValue.selectPubParaValueByParaName('CS_DEPT')}" >
+                                    <option value="">所有</option>
+                                    <option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+                                </select>
+                            </li>
+                            <li class="select-time">
+                                <label style="width: 80px">创建时间：</label>
+                                <input type="text" class="time-input" id="beginCreateTime" placeholder="开始时间" name="params[beginCreateTime]" readonly>
+                                <span style="width:5px">-</span>
+                                <input type="text" class="time-input" id="endCreateTime" placeholder="结束时间" name="params[endCreateTime]" readonly>
+                            </li>
+                            <li>
+                                <label style="width: 80px">状态：</label>
+                                <select name="status"
+                                        class="noselect2 selectpicker" data-none-selected-text="请选择状态"
+                                        multiple data-actions-box="true" data-width="200px" data-live-search="true"
+                                        th:with="type=${@pubParaValue.selectPubParaValueByParaName('CS_STATUS')}">
+                                    <option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+                                </select>
+                            </li>
+                            <li>
+                                <label style="width: 80px">整改实施&nbsp;&nbsp;<br>状态：</label>
+                                <select name="iStatus" class="form-control m-b" th:with="type=${@pubParaValue.selectPubParaValueByParaName('CS_I_STATUS')}">
+                                    <option value="">所有</option>
+                                    <option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+                                </select>
+                            </li>
+                            <li>
+                                <label style="width: 80px">是否提交&nbsp;&nbsp;<br>运维建议函：</label>
+                                <select name="maintLetter"  class="form-control m-b" th:with="type=${@pubParaValue.selectPubParaValueByParaName('CS_ISNO')}">
+                                    <option value="">所有</option>
+                                    <option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+                                </select>
+                            </li>
+                            <li class="select-time">
+                                <label style="width: 80px">预计解决&nbsp;&nbsp;<br>时间：</label>
+                                <input type="text" class="time-input" id="beginJjTime" placeholder="开始时间" name="params[beginJjTime]" readonly>
+                                <span style="width:5px">-</span>
+                                <input type="text" class="time-input" id="endJjTime" placeholder="结束时间" name="params[endJjTime]" readonly>
+                            </li>
+                            <li>
+                                <label style="width: 80px">处理人：</label>
+                                <input type="text" name="technologyauditName"/>
+                            </li>
+                            <li>
+                                <label style="width: 80px">是否提交&nbsp;&nbsp;<br>问题单：</label>
+                                <select name="issuefxNo"  class="form-control m-b" th:with="type=${@pubParaValue.selectPubParaValueByParaName('CS_ISNO')}">
+                                    <option value="">所有</option>
+                                    <option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+                                </select>
+                            </li>
+                            <li class="select-time">
+                                <label style="width: 80px">更新时间：</label>
+                                <input type="text" class="time-input" id="bUpdateTime" placeholder="开始时间" name="params[beginUpdateTime]"readonly>
+                                <span style="width:5px">-</span>
+                                <input type="text" class="time-input" id="eUpdateTime" placeholder="结束时间" name="params[endUpdateTime]" readonly>
+                            </li>
+                            <li>
+                                <a class="btn btn-primary btn-rounded btn-sm" id="searchBut" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.resetAll('formId')"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                            </li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+
+            <div class="btn-group-sm" id="toolbar" role="group">
+                <a class="btn btn-info single disabled" onclick="detail()"  >
+                    <i class="fa fa-search"></i> 详情
+                </a>
+                <a data-toggle="dropdown" class="btn btn-warning btn-sm dropdown-toggle">导出<span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                    <li><a onclick="$.table.exportExcel()">导出所有页</a></li>
+                    <li><a onclick="$.table.exportExcelCurrentPage()">导出当前页</a></li>
+                    </ul>
+            </div>
+            <div class="col-sm-12 select-table table-striped">
+                <table id="bootstrap-table"></table>
+            </div>
+        </div>
+     </div>
+     <th:block th:include="include :: footer" />
+     <th:block th:include="include :: select2-css" />
+     <th:block th:include="include :: select2-js" />
+     <th:block th:include="include :: bootstrap-select-js" />
+     <th:block th:include="include :: bootstrap-select-css" />
+     <script th:inline="javascript">
+        var editFlag = [[${@permission.hasPermi('system:sheet:edit')}]];
+        var removeFlag = [[${@permission.hasPermi('system:sheet:remove')}]];
+        var importLevelDatas = [[${@pubParaValue.selectPubParaValueByParaName('CS_LEVEL')}]];
+        var hiddenSortDatas = [[${@pubParaValue.selectPubParaValueByParaName('CS_TYPE')}]];
+        var statusDatas = [[${@pubParaValue.selectPubParaValueByParaName('CS_STATUS')}]];
+         var putDatas= [[${@pubParaValue.selectPubParaValueByParaName('CS_DEPT')}]];
+        var putUnitDatas = [[${@pubParaValue.selectPubParaValueByParaName('CS_DEPT')}]];
+
+        var iStatusDatas =  [[${@dict.getType('CS_LEVEL')}]];
+
+        var prefix = ctx + "activiti/sheet";
+
+        $(function() {
+            // 回车键搜索
+            document.onkeydown = function(e){
+                var ev = document.all ? window.event : e;
+                if(ev.keyCode==13) {
+                    $('#searchBut').trigger('click');
+                    return false;
+                }
+            };
+            var options = {
+                url: prefix + "/listAll",
+                createUrl: prefix + "/add",
+                updateUrl: prefix + "/edit/{id}",
+                removeUrl: prefix + "/remove",
+                detailUrl: prefix + "/view/{id}",
+                 exportUrl: prefix + "/export",
+                 singleSelect:true,
+                  clickToSelect:true,
+                modalName: "隐患排查单",
+                columns: [{
+                    checkbox: true
+                },
+                {
+                    field : 'csId',
+                    title : 'id',
+                    visible: false
+                },
+                {
+                    field : 'csNo',
+                    title : '单号'
+                },
+                {
+                    field : 'sysName',
+                    title : '系统'
+                },
+                {
+                    field : 'importLevel',
+                    title : '重要级别',
+                    formatter: function(value) {
+                       return selectPubParaValueData(importLevelDatas, value);
+                    }
+                },
+                 {
+                    field : 'createOrg',
+                    title : '责任处室'
+                },
+                {
+                    field : 'createId',
+                    title : '责任人'
+                },
+                {
+                    field : 'technologyauditName',
+                    title : '处理人'
+                },
+                {
+                    field : 'hiddenSort',
+                    title : '隐患分类',
+                    formatter: function(value) {
+                        return selectPubParaValueData(hiddenSortDatas, value);
+                    }
+                },
+                {
+                    field : 'putUnit',
+                    title : '整改实施单位',
+                    formatter: function(value) {
+                        return selectPubParaValueData(putDatas, value);
+                    }
+                },
+                 {
+                    field : 'leadName',
+                    title : '分管领导'
+                },
+                {
+                    field : 'status',
+                    title : '状态',
+                    formatter: function(value) {
+                       return selectPubParaValueData(statusDatas, value);
+                    }
+                },
+                {
+                    field : 'createTime',
+                    title : '创建时间'
+                }]
+            };
+            $.table.init(options);
+        });
+        // 回显数据字典
+        function selectPubParaValueData(datas, value) {
+            var actions = [];
+            $.each(datas, function(index, pubParaValue) {
+                if (pubParaValue.value == ('' + value)) {
+                    actions.push($.common.sprintf("<span class='%s'>%s</span>", "", pubParaValue.valueDetail));
+                    return false;
+                }
+            });
+            return actions.join('');
+        }
+        function submit(csId){
+            var ar=new Array();
+            var data={
+                name:'csId',
+                value:csId
+            }
+            ar.push(data)
+            $.operate.saveTab( prefix +"/startProcess", ar,closeItem );
+        }
+        /** 关闭 */
+        function closeItem(){
+            $.modal.closeLoading();
+            $.table.refresh();
+        }
+        function detail(){
+            var row = $.table.selectFirstColumns("bootstrap-table");
+            if($.common.isEmpty(row)){
+                if($.common.isEmpty(row)){
+                    return $.modal.alertWarning("请选择！");
+                }
+            }
+            $.modal.openTab("详情",prefix + "/view/"+row);
+        }
+        function showProcessImgDialog() {
+            var status=$("#bootstrap-table").bootstrapTable("getSelections")[0].status;
+            if("0"==status){
+                return $.modal.alertWarning("待提交状态单子，未发起流程，流程图不存在！");
+            }
+            var businessKey=$.table.selectFirstColumns("bootstrap-table");
+            var url = ctx + 'process/processImg/' + businessKey[0];
+            $.modal.openNoBtn("查看流程图", url, null, null, null, true);
+        }
+         // 选择应用系统单选
+        function selectOneApplication() {
+            $.modal.open("选择应用系统", prefix+ "/selectOneApplication");
+
+        }
+    </script>
+</body>
+</html>

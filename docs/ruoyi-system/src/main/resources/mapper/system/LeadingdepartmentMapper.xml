@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.LeadingdepartmentMapper">
+
+	<resultMap type="leadingdepartment" id="leadingdepartmentResult">
+		<id     property="lpid"        column="lp_id"         />
+		<result property="orgId"        column="org_id"         />
+		<result property="orgName"     column="org_name"      />
+		<result property="porgName"      column="porg_name"       />
+	</resultMap>
+
+    <!--添加牵头部门 -->
+	<insert id="insert" parameterType="Leadingdepartment" >
+		insert into pub_leadingdepartment(lp_id, org_id, org_name, porg_name)values(
+		#{lpid},#{orgId},#{orgName},#{porgName}
+		)
+	</insert>
+
+
+
+
+	<!--删除牵头部门-->
+	<delete id="deletelpByIds"  parameterType="String">
+		delete from pub_leadingdepartment where lpid in
+		<foreach collection="array" item="lpid" open="(" separator="," close=")">
+			#{lpid}
+		</foreach>
+	</delete>
+
+
+
+	<!--展示牵头部门列表 -->
+	<select id="selectLpList" parameterType="Leadingdepartment" resultMap="leadingdepartmentResult">
+
+		SELECT lp_id, org_id, org_name, porg_name
+		from pub_leadingdepartment
+		<where>
+			<if test="orgName != null and orgName != ''">
+				AND org_name = #{orgName}
+			</if>
+			<if test="porgName != null and porgName != ''">
+				AND porg_name = #{porgName}
+			</if>
+		</where>
+
+		ORDER BY org_id desc
+
+	</select>
+
+
+</mapper>

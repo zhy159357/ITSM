@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('账号列表6')" />
+</head>
+<body class="gray-bg">
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-12 search-collapse">
+            <form id="account-form">
+                <input type="text" style="display: none" id="treeId" name="orgId">
+                <input id="fmddId" name="fmddId" th:value="${fmddId}" hidden>
+                <div class="panel panel-default">
+                    <div class="panel-heading" style="background-color: #3c8dbc" data-toggle="collapse" data-target="#demo2">
+
+                        <h4 class="panel-title" >
+                            协同处理意见
+                        </h4>
+                    </div>
+                    <div id="demo2" class="in">
+
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">操作意见：</label>
+                                    <div class="col-sm-10">
+                                        <textarea rows="3" id="ccAuthorText" name="AuthorText" th:text="请处理！" class="form-control"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="panel panel-default">
+                    <div class="panel-heading" style="background-color: #3c8dbc" data-toggle="collapse" data-target="#demo3">
+                        <h4 class="panel-title" >
+                            协同处理人
+                        </h4>
+                    </div>
+
+                </div>
+
+            </form>
+        </div>
+
+        <div class="btn-group-sm" id="toolbar" role="group">
+            <a class="btn btn-success" onclick="selectAccount()">
+                <i class="fa fa-plus"></i> 添加
+            </a>
+            <a class="btn btn-danger multiple disabled" onclick="removeyw()">
+                <i class="fa fa-remove"></i> 删除
+            </a>
+
+        </div>
+
+        <div class="col-sm-12 select-table table-striped">
+            <table id="xietong-table"></table>
+        </div>
+    </div>
+</div>
+<th:block th:include="include :: footer" />
+<script th:inline="javascript">
+
+    var add_prefix = ctx + "dispatch/addfeed";
+
+
+
+    $(function() {
+        var options = {
+            id:"xietong-table",
+            url: add_prefix + "/getAccountList/" + $("#fmddId").val(),
+            modalName: "账号",
+            clickToSelect: true,
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'userid',
+                    title: '账号id',
+                    visible:false
+                },
+                {
+                    field: 'pName',
+                    title: '人员名称',
+                },
+                {
+                    field: 'orgname',
+                    title: '所属机构',
+                }]
+        };
+        $.table.init(options);
+    });
+
+
+    // 添加（可以多选）
+    function selectAccount() {
+        $.modal.open("选择协同处理人员", add_prefix + "/selectAccount") ;
+    }
+
+    /* 新增表格行 */
+    function insertRow(arrays){
+
+        var oldarrays = $("#xietong-table").bootstrapTable('getData');
+        var  reArray=new Array();
+        if(oldarrays!=null&&oldarrays.length>0){
+            for(var j=0;j<oldarrays.length;j++){
+                reArray.push(oldarrays[j]);
+            }
+        }else{
+            for(var j=0;j<arrays.length;j++){
+                reArray.push(arrays[j]);
+            }
+        }
+        for(var i=0;i<arrays.length;i++){
+            if(oldarrays!=null&&oldarrays.length>0){
+                var flag = 0;
+                for(var j=0;j<oldarrays.length;j++){
+                    if(arrays[i].pId==oldarrays[j].pId){
+                        flag = 1 ;
+                        break;
+                    }
+                }
+                if(flag == 0){
+                    reArray.push(arrays[i]);
+                }
+              }
+        }
+
+        $("#xietong-table").bootstrapTable("removeAll");
+        $("#xietong-table").bootstrapTable('append',reArray) ;
+    }
+
+
+    function submitHandler() {
+
+        var fmnos=$("#xietong-table").bootstrapTable('getData');
+        var userIds='';
+        $.each(fmnos,function(i,e){
+            userIds+=e.userid+',';
+        })
+
+        userIds = userIds.substr(0, userIds.length - 1);
+
+        var businessKey=$("#fmddId").val();
+
+        var result = '',
+            strlen = $('#ccAuthorText').val().length, // 字符串长度
+            chrlen = $('#ccAuthorText').val().replace(/[^\x00-\xff]/g, '**').length // 字节长度
+        if (chrlen <= 256) {
+            $.ajax({
+                cache : true,
+                type : "POST",
+                url : add_prefix+"/dealzhuanfa",
+                data : {
+                    "userId": userIds,
+                    "ccAuthorText": $("#ccAuthorText").val(),
+                    "businessKey":businessKey
+                },
+                async : false,
+                error : function(request) {
+                    $.modal.alertError("系统错误");
+                },
+                success : function(data) {
+                    $.modal.close();
+                    window.parent.$.modal.close();
+                }
+            });
+            return true
+        }else {
+            return $.modal.alertError('【操作意见】最大长度不能超过256')
+        }
+
+    }
+
+    //移除选中的人员
+    function removeyw(){
+        var fmnos=$("#xietong-table").bootstrapTable('getData');//页面数据
+        var selects = $("#xietong-table").bootstrapTable('getSelections');//选中的数据
+        if(fmnos.length - selects.length <1){
+            $.modal.alertWarning("请至少保留一条记录");
+            return;
+        }
+        var re=new Array();
+        if (selects.length == 0) {
+            $.modal.alertWarning("请至少选择一条记录");
+            return;
+        }
+        $.each(fmnos,function(i,e){
+            if($.inArray(fmnos[i], selects)==-1){
+                re.push(fmnos[i]);
+            }
+        })
+        $("#xietong-table").bootstrapTable("removeAll")
+        $("#xietong-table").bootstrapTable('append',re);
+    }
+
+
+
+
+
+
+</script>
+</body>
+</html>

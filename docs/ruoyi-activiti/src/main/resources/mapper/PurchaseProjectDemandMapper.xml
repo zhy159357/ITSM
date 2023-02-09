@@ -1,0 +1,690 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.activiti.mapper.PurchaseProjectDemandMapper">
+    
+    <resultMap type="PurchaseProjectDemandChange" id="PurchaseProjectDemandChangeResult">
+        <result property="changeId"    column="change_id"    />
+        <result property="purchaseNo"    column="purchase_no"    />
+        <result property="purchaseProjectType"    column="purchase_project_type"    />
+        <result property="projectName"    column="project_name"    />
+        <result property="purchaseContent"    column="purchase_content"    />
+        <result property="purchaseBackground"    column="purchase_background"    />
+        <result property="purchaseMode"    column="purchase_mode"    />
+        <result property="purchasePlanStatus"    column="purchase_plan_status"    />
+        <result property="techSubmitTime"    column="tech_submit_time"    />
+        <result property="implStartTime"    column="impl_start_time"    />
+        <result property="implEndTime"    column="impl_end_time"    />
+        <result property="planSubmitTime"    column="plan_submit_time"    />
+        <result property="contractSignTime"    column="contract_sign_time"    />
+        <result property="serviceProvideTime"    column="service_provide_time"    />
+        <result property="purchaseEffectivePeriod"    column="purchase_effective_period"    />
+        <result property="projectTotalAmount"    column="project_total_amount"    />
+        <result property="payTotalAmount"    column="pay_total_amount"    />
+        <result property="capitalImplSituation"    column="capital_impl_situation"    />
+        <result property="demandDept"    column="demand_dept"    />
+        <result property="demandPerson"    column="demand_person"    />
+        <result property="demandMobilPhone"    column="demand_mobil_phone"    />
+        <result property="adjustContent"    column="adjust_content"    />
+        <result property="adjustReason"    column="adjust_reason"    />
+        <result property="formalSubmitTime"    column="formal_submit_time"    />
+        <result property="estimateContractSignTime"    column="estimate_contract_sign_time"    />
+        <result property="purchaseOppositePerson"    column="purchase_opposite_person"    />
+        <result property="currentProgress"    column="current_progress"    />
+        <result property="riskWarning"    column="risk_warning"    />
+        <result property="memo"    column="memo"    />
+        <result property="purchaseApproveId"    column="purchase_approve_id"    />
+        <result property="purchaseApproveName"    column="purchase_approve_name"    />
+        <result property="purchaseStatus"    column="purchase_status"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="updateBy"    column="update_by"    />
+    </resultMap>
+
+    <resultMap type="PurchaseProjectDemand" id="PurchaseProjectDemandResult">
+        <result property="purchaseId"    column="purchase_id"    />
+        <result property="changeId"    column="change_id"    />
+        <result property="purchaseNo"    column="purchase_no"    />
+        <result property="purchaseProjectType"    column="purchase_project_type"    />
+        <result property="projectName"    column="project_name"    />
+        <result property="purchaseContent"    column="purchase_content"    />
+        <result property="purchaseBackground"    column="purchase_background"    />
+        <result property="purchaseMode"    column="purchase_mode"    />
+        <result property="purchasePlanStatus"    column="purchase_plan_status"    />
+        <result property="techSubmitTime"    column="tech_submit_time"    />
+        <result property="implStartTime"    column="impl_start_time"    />
+        <result property="implEndTime"    column="impl_end_time"    />
+        <result property="planSubmitTime"    column="plan_submit_time"    />
+        <result property="implPurchaseMode"    column="impl_purchase_mode"    />
+        <result property="contractSignTime"    column="contract_sign_time"    />
+        <result property="serviceProvideTime"    column="service_provide_time"    />
+        <result property="purchaseEffectivePeriod"    column="purchase_effective_period"    />
+        <result property="projectTotalAmount"    column="project_total_amount"    />
+        <result property="payTotalAmount"    column="pay_total_amount"    />
+        <result property="capitalImplSituation"    column="capital_impl_situation"    />
+        <result property="demandDept"    column="demand_dept"    />
+        <result property="demandPerson"    column="demand_person"    />
+        <result property="demandMobilPhone"    column="demand_mobil_phone"    />
+        <result property="adjustContent"    column="adjust_content"    />
+        <result property="adjustReason"    column="adjust_reason"    />
+        <result property="formalSubmitTime"    column="formal_submit_time"    />
+        <result property="estimateContractSignTime"    column="estimate_contract_sign_time"    />
+        <result property="purchaseOppositePerson"    column="purchase_opposite_person"    />
+        <result property="currentProgress"    column="current_progress"    />
+        <result property="riskWarning"    column="risk_warning"    />
+        <result property="memo"    column="memo"    />
+        <result property="purchaseApproveId"    column="purchase_approve_id"    />
+        <result property="purchaseApproveName"    column="purchase_approve_name"    />
+        <result property="purchaseStatus"    column="purchase_status"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="updateBy"    column="update_by"    />
+    </resultMap>
+
+    <sql id="selectPurchaseProjectDemandChangeVo">
+        select d.change_id,
+           d.purchase_no,
+           d.purchase_project_type,
+           d.project_name,
+           d.purchase_content,
+           d.purchase_background,
+           d.purchase_mode,
+           d.purchase_plan_status,
+           d.tech_submit_time,
+           d.impl_start_time,
+           d.impl_end_time,
+           d.plan_submit_time,
+           d.contract_sign_time,
+           d.service_provide_time,
+           d.purchase_effective_period,
+           d.project_total_amount,
+           d.pay_total_amount,
+           d.capital_impl_situation,
+           d.demand_dept,
+           d.demand_person,
+           d.demand_mobil_phone,
+           d.adjust_content,
+           d.adjust_reason,
+           d.formal_submit_time,
+           d.estimate_contract_sign_time,
+           d.purchase_opposite_person,
+           d.current_progress,
+           d.risk_warning,
+           d.memo,
+           d.purchase_approve_id,
+           d.purchase_status,
+           d.create_time,
+           d.create_by,
+           d.update_time,
+           d.update_by,
+           p.pname purchase_approve_name
+        from purchase_project_demand_change d
+        left join og_person p
+          on d.purchase_approve_id = p.pid
+    </sql>
+
+    <sql id="selectPurchaseProjectDemandVo">
+        select d.purchase_id,
+           d.change_id,
+           d.purchase_no,
+           d.purchase_project_type,
+           d.project_name,
+           d.purchase_content,
+           d.purchase_background,
+           d.purchase_mode,
+           d.purchase_plan_status,
+           d.tech_submit_time,
+           d.impl_start_time,
+           d.impl_end_time,
+           d.plan_submit_time,
+           d.contract_sign_time,
+           d.service_provide_time,
+           d.purchase_effective_period,
+           d.project_total_amount,
+           d.pay_total_amount,
+           d.capital_impl_situation,
+           d.demand_dept,
+           d.demand_person,
+           d.demand_mobil_phone,
+           d.adjust_content,
+           d.adjust_reason,
+           d.formal_submit_time,
+           d.estimate_contract_sign_time,
+           d.purchase_opposite_person,
+           d.current_progress,
+           d.risk_warning,
+           d.memo,
+           d.purchase_approve_id,
+           d.purchase_status,
+           d.create_time,
+           d.create_by,
+           d.update_time,
+           d.update_by,
+           p.pname purchase_approve_name
+        from purchase_project_demand d
+        left join og_person p
+          on d.purchase_approve_id = p.pid
+    </sql>
+
+    <select id="selectPurchaseProjectDemandChangeList" parameterType="PurchaseProjectDemandChange" resultMap="PurchaseProjectDemandChangeResult">
+        <include refid="selectPurchaseProjectDemandChangeVo"/>
+        <where>
+            <if test="purchaseNo != null  and purchaseNo != ''"> and purchase_no like concat(concat('%',#{purchaseNo}),'%')</if>
+            <if test="projectName != null  and projectName != ''"> and project_name like concat(concat('%', #{projectName}), '%')</if>
+            <if test="purchaseProjectType != null  and purchaseProjectType != ''"> and purchase_project_type = #{purchaseProjectType}</if>
+            <if test="purchaseContent != null  and purchaseContent != ''"> and purchase_content = #{purchaseContent}</if>
+            <if test="purchaseBackground != null  and purchaseBackground != ''"> and purchase_background = #{purchaseBackground}</if>
+            <if test="purchaseMode != null  and purchaseMode != ''"> and purchase_mode = #{purchaseMode}</if>
+            <if test="purchasePlanStatus != null  and purchasePlanStatus != ''"> and purchase_plan_status = #{purchasePlanStatus}</if>
+            <if test="techSubmitTime != null  and techSubmitTime != ''"> and tech_submit_time = #{techSubmitTime}</if>
+            <if test="implStartTime != null  and implStartTime != ''"> and impl_start_time = #{implStartTime}</if>
+            <if test="implEndTime != null  and implEndTime != ''"> and impl_end_time = #{implEndTime}</if>
+            <if test="contractSignTime != null  and contractSignTime != ''"> and contract_sign_time = #{contractSignTime}</if>
+            <if test="serviceProvideTime != null  and serviceProvideTime != ''"> and service_provide_time = #{serviceProvideTime}</if>
+            <if test="purchaseEffectivePeriod != null  and purchaseEffectivePeriod != ''"> and purchase_effective_period = #{purchaseEffectivePeriod}</if>
+            <if test="projectTotalAmount != null  and projectTotalAmount != ''"> and project_total_amount = #{projectTotalAmount}</if>
+            <if test="payTotalAmount != null  and payTotalAmount != ''"> and pay_total_amount = #{payTotalAmount}</if>
+            <if test="capitalImplSituation != null  and capitalImplSituation != ''"> and capital_impl_situation = #{capitalImplSituation}</if>
+            <if test="demandDept != null  and demandDept != ''"> and demand_dept = #{demandDept}</if>
+            <if test="demandPerson != null  and demandPerson != ''"> and demand_person = #{demandPerson}</if>
+            <if test="demandMobilPhone != null  and demandMobilPhone != ''"> and demand_mobil_phone = #{demandMobilPhone}</if>
+            <if test="adjustContent != null  and adjustContent != ''"> and adjust_content = #{adjustContent}</if>
+            <if test="adjustReason != null  and adjustReason != ''"> and adjust_reason = #{adjustReason}</if>
+            <if test="formalSubmitTime != null  and formalSubmitTime != ''"> and formal_submit_time = #{formalSubmitTime}</if>
+            <if test="estimateContractSignTime != null  and estimateContractSignTime != ''"> and estimate_contract_sign_time = #{estimateContractSignTime}</if>
+            <if test="purchaseOppositePerson != null  and purchaseOppositePerson != ''"> and purchase_opposite_person = #{purchaseOppositePerson}</if>
+            <if test="currentProgress != null  and currentProgress != ''"> and current_progress = #{currentProgress}</if>
+            <if test="riskWarning != null  and riskWarning != ''"> and risk_warning = #{riskWarning}</if>
+            <if test="memo != null  and memo != ''"> and memo = #{memo}</if>
+            <if test="purchaseApproveId != null  and purchaseApproveId != ''"> and purchase_approve_id = #{purchaseApproveId}</if>
+            <!--<if test="purchaseStatus != null  and purchaseStatus != ''"> and purchase_status = #{purchaseStatus}</if>-->
+            <if test="params.statusArray != null">
+                and purchase_status in
+                <foreach collection="params.statusArray" item="status" open="(" separator="," close=")">
+                    #{status}
+                </foreach>
+            </if>
+            <if test="params.createTimeStart != null and params.createTimeStart != ''">
+                and create_time &gt;= to_date(#{params.createTimeStart},'yyyy-mm-dd hh24:mi:ss')
+            </if>
+            <if test="params.createTimeEnd != null and params.createTimeEnd != ''">
+                and create_time &lt;= to_date(#{params.createTimeEnd},'yyyy-mm-dd hh24:mi:ss')
+            </if>
+            <!-- 查询创建人 -->
+            <if test="createBy != null and createBy != ''">
+                and create_by = #{createBy}
+            </if>
+        </where>
+        order by d.create_time desc
+    </select>
+    
+    <select id="selectPurchaseProjectDemandChangeById" parameterType="String" resultMap="PurchaseProjectDemandChangeResult">
+        <include refid="selectPurchaseProjectDemandChangeVo"/>
+        where change_id = #{changeId}
+    </select>
+        
+    <insert id="insertPurchaseProjectDemandChange" parameterType="PurchaseProjectDemandChange">
+        insert into purchase_project_demand_change
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="changeId != null  and changeId != ''">change_id,</if>
+            <if test="purchaseNo != null  and purchaseNo != ''">purchase_no,</if>
+            <if test="projectName != null  and projectName != ''">project_name,</if>
+            <if test="purchaseProjectType != null  and purchaseProjectType != ''">purchase_project_type,</if>
+            <if test="purchaseContent != null  and purchaseContent != ''">purchase_content,</if>
+            <if test="purchaseBackground != null  and purchaseBackground != ''">purchase_background,</if>
+            <if test="purchaseMode != null  and purchaseMode != ''">purchase_mode,</if>
+            <if test="purchasePlanStatus != null  and purchasePlanStatus != ''">purchase_plan_status,</if>
+            <if test="techSubmitTime != null  and techSubmitTime != ''">tech_submit_time,</if>
+            <if test="implStartTime != null  and implStartTime != ''">impl_start_time,</if>
+            <if test="implEndTime != null  and implEndTime != ''">impl_end_time,</if>
+            <if test="planSubmitTime != null  and planSubmitTime != ''">plan_submit_time,</if>
+            <if test="contractSignTime != null  and contractSignTime != ''">contract_sign_time,</if>
+            <if test="serviceProvideTime != null  and serviceProvideTime != ''">service_provide_time,</if>
+            <if test="purchaseEffectivePeriod != null  and purchaseEffectivePeriod != ''">purchase_effective_period,</if>
+            <if test="projectTotalAmount != null  and projectTotalAmount != ''">project_total_amount,</if>
+            <if test="payTotalAmount != null  and payTotalAmount != ''">pay_total_amount,</if>
+            <if test="capitalImplSituation != null  and capitalImplSituation != ''">capital_impl_situation,</if>
+            <if test="demandDept != null  and demandDept != ''">demand_dept,</if>
+            <if test="demandPerson != null  and demandPerson != ''">demand_person,</if>
+            <if test="demandMobilPhone != null  and demandMobilPhone != ''">demand_mobil_phone,</if>
+            <if test="adjustContent != null  and adjustContent != ''">adjust_content,</if>
+            <if test="adjustReason != null  and adjustReason != ''">adjust_reason,</if>
+            <if test="formalSubmitTime != null  and formalSubmitTime != ''">formal_submit_time,</if>
+            <if test="estimateContractSignTime != null  and estimateContractSignTime != ''">estimate_contract_sign_time,</if>
+            <if test="purchaseOppositePerson != null  and purchaseOppositePerson != ''">purchase_opposite_person,</if>
+            <if test="currentProgress != null  and currentProgress != ''">current_progress,</if>
+            <if test="riskWarning != null  and riskWarning != ''">risk_warning,</if>
+            <if test="memo != null  and memo != ''">memo,</if>
+            <if test="purchaseApproveId != null  and purchaseApproveId != ''">purchase_approve_id,</if>
+            <if test="purchaseStatus != null  and purchaseStatus != ''">purchase_status,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="changeId != null  and changeId != ''">#{changeId},</if>
+            <if test="purchaseNo != null  and purchaseNo != ''">#{purchaseNo},</if>
+            <if test="projectName != null  and projectName != ''">#{projectName},</if>
+            <if test="purchaseProjectType != null  and purchaseProjectType != ''">#{purchaseProjectType},</if>
+            <if test="purchaseContent != null  and purchaseContent != ''">#{purchaseContent},</if>
+            <if test="purchaseBackground != null  and purchaseBackground != ''">#{purchaseBackground},</if>
+            <if test="purchaseMode != null  and purchaseMode != ''">#{purchaseMode},</if>
+            <if test="purchasePlanStatus != null  and purchasePlanStatus != ''">#{purchasePlanStatus},</if>
+            <if test="techSubmitTime != null  and techSubmitTime != ''">#{techSubmitTime},</if>
+            <if test="implStartTime != null  and implStartTime != ''">#{implStartTime},</if>
+            <if test="implEndTime != null  and implEndTime != ''">#{implEndTime},</if>
+            <if test="planSubmitTime != null  and planSubmitTime != ''">#{planSubmitTime},</if>
+            <if test="contractSignTime != null  and contractSignTime != ''">#{contractSignTime},</if>
+            <if test="serviceProvideTime != null  and serviceProvideTime != ''">#{serviceProvideTime},</if>
+            <if test="purchaseEffectivePeriod != null  and purchaseEffectivePeriod != ''">#{purchaseEffectivePeriod},</if>
+            <if test="projectTotalAmount != null  and projectTotalAmount != ''">#{projectTotalAmount},</if>
+            <if test="payTotalAmount != null  and payTotalAmount != ''">#{payTotalAmount},</if>
+            <if test="capitalImplSituation != null  and capitalImplSituation != ''">#{capitalImplSituation},</if>
+            <if test="demandDept != null  and demandDept != ''">#{demandDept},</if>
+            <if test="demandPerson != null  and demandPerson != ''">#{demandPerson},</if>
+            <if test="demandMobilPhone != null  and demandMobilPhone != ''">#{demandMobilPhone},</if>
+            <if test="adjustContent != null  and adjustContent != ''">#{adjustContent},</if>
+            <if test="adjustReason != null  and adjustReason != ''">#{adjustReason},</if>
+            <if test="formalSubmitTime != null  and formalSubmitTime != ''">#{formalSubmitTime},</if>
+            <if test="estimateContractSignTime != null  and estimateContractSignTime != ''">#{estimateContractSignTime},</if>
+            <if test="purchaseOppositePerson != null  and purchaseOppositePerson != ''">#{purchaseOppositePerson},</if>
+            <if test="currentProgress != null  and currentProgress != ''">#{currentProgress},</if>
+            <if test="riskWarning != null  and riskWarning != ''">#{riskWarning},</if>
+            <if test="memo != null  and memo != ''">#{memo},</if>
+            <if test="purchaseApproveId != null  and purchaseApproveId != ''">#{purchaseApproveId},</if>
+            <if test="purchaseStatus != null  and purchaseStatus != ''">#{purchaseStatus},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+         </trim>
+    </insert>
+
+    <update id="updatePurchaseProjectDemandChange" parameterType="PurchaseProjectDemandChange">
+        update purchase_project_demand_change
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="purchaseNo != null  and purchaseNo != ''">purchase_no = #{purchaseNo},</if>
+            <if test="projectName != null  and projectName != ''">project_name = #{projectName},</if>
+            <if test="purchaseProjectType != null  and purchaseProjectType != ''">purchase_project_type = #{purchaseProjectType},</if>
+            <if test="purchaseContent != null  and purchaseContent != ''">purchase_content = #{purchaseContent},</if>
+            <if test="purchaseBackground != null  and purchaseBackground != ''">purchase_background = #{purchaseBackground},</if>
+            <if test="purchaseMode != null  and purchaseMode != ''">purchase_mode = #{purchaseMode},</if>
+            <if test="purchasePlanStatus != null  and purchasePlanStatus != ''">purchase_plan_status = #{purchasePlanStatus},</if>
+            <if test="techSubmitTime != null  and techSubmitTime != ''">tech_submit_time = #{techSubmitTime},</if>
+            <if test="implStartTime != null  and implStartTime != ''">impl_start_time = #{implStartTime},</if>
+            <if test="implEndTime != null  and implEndTime != ''">impl_end_time = #{implEndTime},</if>
+            <if test="planSubmitTime != null  and planSubmitTime != ''">plan_submit_time = #{planSubmitTime},</if>
+            <if test="contractSignTime != null  and contractSignTime != ''">contract_sign_time = #{contractSignTime},</if>
+            <if test="serviceProvideTime != null  and serviceProvideTime != ''">service_provide_time = #{serviceProvideTime},</if>
+            <if test="purchaseEffectivePeriod != null  and purchaseEffectivePeriod != ''">purchase_effective_period = #{purchaseEffectivePeriod},</if>
+            <if test="projectTotalAmount != null  and projectTotalAmount != ''">project_total_amount = #{projectTotalAmount},</if>
+            <if test="payTotalAmount != null  and payTotalAmount != ''">pay_total_amount = #{payTotalAmount},</if>
+            <if test="capitalImplSituation != null  and capitalImplSituation != ''">capital_impl_situation = #{capitalImplSituation},</if>
+            <if test="demandDept != null  and demandDept != ''">demand_dept = #{demandDept},</if>
+            <if test="demandPerson != null  and demandPerson != ''">demand_person = #{demandPerson},</if>
+            <if test="demandMobilPhone != null  and demandMobilPhone != ''">demand_mobil_phone = #{demandMobilPhone},</if>
+            <if test="adjustContent != null  and adjustContent != ''">adjust_content = #{adjustContent},</if>
+            <if test="adjustReason != null  and adjustReason != ''">adjust_reason = #{adjustReason},</if>
+            <if test="formalSubmitTime != null  and formalSubmitTime != ''">formal_submit_time = #{formalSubmitTime},</if>
+            <if test="estimateContractSignTime != null  and estimateContractSignTime != ''">estimate_contract_sign_time = #{estimateContractSignTime},</if>
+            <if test="purchaseOppositePerson != null  and purchaseOppositePerson != ''">purchase_opposite_person = #{purchaseOppositePerson},</if>
+            <if test="currentProgress != null  and currentProgress != ''">current_progress = #{currentProgress},</if>
+            <if test="riskWarning != null  and riskWarning != ''">risk_warning = #{riskWarning},</if>
+            <if test="memo != null  and memo != ''">memo = #{memo},</if>
+            <if test="purchaseApproveId != null  and purchaseApproveId != ''">purchase_approve_id = #{purchaseApproveId},</if>
+            <if test="purchaseStatus != null  and purchaseStatus != ''">purchase_status = #{purchaseStatus},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+        </trim>
+        where change_id = #{changeId}
+    </update>
+
+    <delete id="deletePurchaseProjectDemandChangeById" parameterType="String">
+        delete from purchase_project_demand_change where change_id = #{changeId}
+    </delete>
+
+    <delete id="deletePurchaseProjectDemandChangeByIds" parameterType="String">
+        delete from purchase_project_demand_change where change_id in
+        <foreach item="changeId" collection="array" open="(" separator="," close=")">
+            #{changeId}
+        </foreach>
+    </delete>
+
+    <select id="selectPurchaseProjectDemandList" parameterType="PurchaseProjectDemand" resultMap="PurchaseProjectDemandResult">
+        <include refid="selectPurchaseProjectDemandVo"/>
+        <where>
+            <if test="purchaseNo != null  and purchaseNo != ''"> and purchase_no like concat(concat('%',#{purchaseNo}),'%')</if>
+            <if test="projectName != null  and projectName != ''"> and project_name like concat(concat('%', #{projectName}), '%')</if>
+            <if test="purchaseProjectType != null  and purchaseProjectType != ''"> and purchase_project_type = #{purchaseProjectType}</if>
+            <if test="purchaseContent != null  and purchaseContent != ''"> and purchase_content = #{purchaseContent}</if>
+            <if test="purchaseBackground != null  and purchaseBackground != ''"> and purchase_background = #{purchaseBackground}</if>
+            <if test="purchaseMode != null  and purchaseMode != ''"> and purchase_mode = #{purchaseMode}</if>
+            <if test="purchasePlanStatus != null  and purchasePlanStatus != ''"> and purchase_plan_status = #{purchasePlanStatus}</if>
+            <if test="techSubmitTime != null  and techSubmitTime != ''"> and tech_submit_time = #{techSubmitTime}</if>
+            <if test="implStartTime != null  and implStartTime != ''"> and impl_start_time = #{implStartTime}</if>
+            <if test="implEndTime != null  and implEndTime != ''"> and impl_end_time = #{implEndTime}</if>
+            <if test="planSubmitTime != null  and planSubmitTime != ''"> and plan_submit_time = #{planSubmitTime}</if>
+            <if test="contractSignTime != null  and contractSignTime != ''"> and contract_sign_time = #{contractSignTime}</if>
+            <if test="serviceProvideTime != null  and serviceProvideTime != ''"> and service_provide_time = #{serviceProvideTime}</if>
+            <if test="purchaseEffectivePeriod != null  and purchaseEffectivePeriod != ''"> and purchase_effective_period = #{purchaseEffectivePeriod}</if>
+            <if test="projectTotalAmount != null  and projectTotalAmount != ''"> and project_total_amount = #{projectTotalAmount}</if>
+            <if test="payTotalAmount != null  and payTotalAmount != ''"> and pay_total_amount = #{payTotalAmount}</if>
+            <if test="capitalImplSituation != null  and capitalImplSituation != ''"> and capital_impl_situation = #{capitalImplSituation}</if>
+            <if test="demandDept != null  and demandDept != ''"> and demand_dept = #{demandDept}</if>
+            <if test="demandPerson != null  and demandPerson != ''"> and demand_person = #{demandPerson}</if>
+            <if test="demandMobilPhone != null  and demandMobilPhone != ''"> and demand_mobil_phone = #{demandMobilPhone}</if>
+            <if test="adjustContent != null  and adjustContent != ''"> and adjust_content = #{adjustContent}</if>
+            <if test="adjustReason != null  and adjustReason != ''"> and adjust_reason = #{adjustReason}</if>
+            <if test="formalSubmitTime != null  and formalSubmitTime != ''"> and formal_submit_time = #{formalSubmitTime}</if>
+            <if test="estimateContractSignTime != null  and estimateContractSignTime != ''"> and estimate_contract_sign_time = #{estimateContractSignTime}</if>
+            <if test="purchaseOppositePerson != null  and purchaseOppositePerson != ''"> and purchase_opposite_person = #{purchaseOppositePerson}</if>
+            <if test="currentProgress != null  and currentProgress != ''"> and current_progress = #{currentProgress}</if>
+            <if test="riskWarning != null  and riskWarning != ''"> and risk_warning = #{riskWarning}</if>
+            <if test="memo != null  and memo != ''"> and memo = #{memo}</if>
+            <if test="purchaseApproveId != null  and purchaseApproveId != ''"> and purchase_approve_id = #{purchaseApproveId}</if>
+            <!--<if test="purchaseStatus != null  and purchaseStatus != ''"> and purchase_status = #{purchaseStatus}</if>-->
+            <if test="params.statusArray != null">
+                and purchase_status in
+                <foreach collection="params.statusArray" item="status" open="(" separator="," close=")">
+                    #{status}
+                </foreach>
+            </if>
+            <if test="params.createTimeStart != null and params.createTimeStart != ''">
+                and create_time &gt;= to_date(#{params.createTimeStart},'yyyy-mm-dd hh24:mi:ss')
+            </if>
+            <if test="params.createTimeEnd != null and params.createTimeEnd != ''">
+                and create_time &lt;= to_date(#{params.createTimeEnd},'yyyy-mm-dd hh24:mi:ss')
+            </if>
+            <!-- 查询创建人 -->
+            <if test="createBy != null and createBy != ''">
+                and create_by = #{createBy}
+            </if>
+        </where>
+        order by d.create_time desc
+    </select>
+
+    <insert id="insertPurchaseProjectDemand" parameterType="PurchaseProjectDemand">
+        insert into purchase_project_demand
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="purchaseId != null  and purchaseId != ''">purchase_id,</if>
+            <if test="changeId != null  and changeId != ''">change_id,</if>
+            <if test="purchaseNo != null  and purchaseNo != ''">purchase_no,</if>
+            <if test="projectName != null  and projectName != ''">project_name,</if>
+            <if test="purchaseProjectType != null  and purchaseProjectType != ''">purchase_project_type,</if>
+            <if test="purchaseContent != null  and purchaseContent != ''">purchase_content,</if>
+            <if test="purchaseBackground != null  and purchaseBackground != ''">purchase_background,</if>
+            <if test="purchaseMode != null  and purchaseMode != ''">purchase_mode,</if>
+            <if test="purchasePlanStatus != null  and purchasePlanStatus != ''">purchase_plan_status,</if>
+            <if test="techSubmitTime != null  and techSubmitTime != ''">tech_submit_time,</if>
+            <if test="implStartTime != null  and implStartTime != ''">impl_start_time,</if>
+            <if test="implEndTime != null  and implEndTime != ''">impl_end_time,</if>
+            <if test="planSubmitTime != null  and planSubmitTime != ''">plan_submit_time,</if>
+            <if test="contractSignTime != null  and contractSignTime != ''">contract_sign_time,</if>
+            <if test="serviceProvideTime != null  and serviceProvideTime != ''">service_provide_time,</if>
+            <if test="purchaseEffectivePeriod != null  and purchaseEffectivePeriod != ''">purchase_effective_period,</if>
+            <if test="projectTotalAmount != null  and projectTotalAmount != ''">project_total_amount,</if>
+            <if test="payTotalAmount != null  and payTotalAmount != ''">pay_total_amount,</if>
+            <if test="capitalImplSituation != null  and capitalImplSituation != ''">capital_impl_situation,</if>
+            <if test="demandDept != null  and demandDept != ''">demand_dept,</if>
+            <if test="demandPerson != null  and demandPerson != ''">demand_person,</if>
+            <if test="demandMobilPhone != null  and demandMobilPhone != ''">demand_mobil_phone,</if>
+            <if test="adjustContent != null  and adjustContent != ''">adjust_content,</if>
+            <if test="adjustReason != null  and adjustReason != ''">adjust_reason,</if>
+            <if test="formalSubmitTime != null  and formalSubmitTime != ''">formal_submit_time,</if>
+            <if test="estimateContractSignTime != null  and estimateContractSignTime != ''">estimate_contract_sign_time,</if>
+            <if test="purchaseOppositePerson != null  and purchaseOppositePerson != ''">purchase_opposite_person,</if>
+            <if test="currentProgress != null  and currentProgress != ''">current_progress,</if>
+            <if test="riskWarning != null  and riskWarning != ''">risk_warning,</if>
+            <if test="memo != null  and memo != ''">memo,</if>
+            <if test="purchaseApproveId != null  and purchaseApproveId != ''">purchase_approve_id,</if>
+            <if test="purchaseStatus != null  and purchaseStatus != ''">purchase_status,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="purchaseId != null  and purchaseId != ''">#{purchaseId},</if>
+            <if test="changeId != null  and changeId != ''">#{changeId},</if>
+            <if test="purchaseNo != null  and purchaseNo != ''">#{purchaseNo},</if>
+            <if test="projectName != null  and projectName != ''">#{projectName},</if>
+            <if test="purchaseProjectType != null  and purchaseProjectType != ''">#{purchaseProjectType},</if>
+            <if test="purchaseContent != null  and purchaseContent != ''">#{purchaseContent},</if>
+            <if test="purchaseBackground != null  and purchaseBackground != ''">#{purchaseBackground},</if>
+            <if test="purchaseMode != null  and purchaseMode != ''">#{purchaseMode},</if>
+            <if test="purchasePlanStatus != null  and purchasePlanStatus != ''">#{purchasePlanStatus},</if>
+            <if test="techSubmitTime != null  and techSubmitTime != ''">#{techSubmitTime},</if>
+            <if test="implStartTime != null  and implStartTime != ''">#{implStartTime},</if>
+            <if test="implEndTime != null  and implEndTime != ''">#{implEndTime},</if>
+            <if test="planSubmitTime != null  and planSubmitTime != ''">#{planSubmitTime},</if>
+            <if test="contractSignTime != null  and contractSignTime != ''">#{contractSignTime},</if>
+            <if test="serviceProvideTime != null  and serviceProvideTime != ''">#{serviceProvideTime},</if>
+            <if test="purchaseEffectivePeriod != null  and purchaseEffectivePeriod != ''">#{purchaseEffectivePeriod},</if>
+            <if test="projectTotalAmount != null  and projectTotalAmount != ''">#{projectTotalAmount},</if>
+            <if test="payTotalAmount != null  and payTotalAmount != ''">#{payTotalAmount},</if>
+            <if test="capitalImplSituation != null  and capitalImplSituation != ''">#{capitalImplSituation},</if>
+            <if test="demandDept != null  and demandDept != ''">#{demandDept},</if>
+            <if test="demandPerson != null  and demandPerson != ''">#{demandPerson},</if>
+            <if test="demandMobilPhone != null  and demandMobilPhone != ''">#{demandMobilPhone},</if>
+            <if test="adjustContent != null  and adjustContent != ''">#{adjustContent},</if>
+            <if test="adjustReason != null  and adjustReason != ''">#{adjustReason},</if>
+            <if test="formalSubmitTime != null  and formalSubmitTime != ''">#{formalSubmitTime},</if>
+            <if test="estimateContractSignTime != null  and estimateContractSignTime != ''">#{estimateContractSignTime},</if>
+            <if test="purchaseOppositePerson != null  and purchaseOppositePerson != ''">#{purchaseOppositePerson},</if>
+            <if test="currentProgress != null  and currentProgress != ''">#{currentProgress},</if>
+            <if test="riskWarning != null  and riskWarning != ''">#{riskWarning},</if>
+            <if test="memo != null  and memo != ''">#{memo},</if>
+            <if test="purchaseApproveId != null  and purchaseApproveId != ''">#{purchaseApproveId},</if>
+            <if test="purchaseStatus != null  and purchaseStatus != ''">#{purchaseStatus},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+        </trim>
+    </insert>
+
+    <update id="updatePurchaseProjectDemand" parameterType="PurchaseProjectDemand">
+        update purchase_project_demand
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="purchaseNo != null  and purchaseNo != ''">purchase_no = #{purchaseNo},</if>
+            <if test="projectName != null  and projectName != ''">project_name = #{projectName},</if>
+            <if test="purchaseProjectType != null  and purchaseProjectType != ''">purchase_project_type = #{purchaseProjectType},</if>
+            <if test="purchaseContent != null  and purchaseContent != ''">purchase_content = #{purchaseContent},</if>
+            <if test="purchaseBackground != null  and purchaseBackground != ''">purchase_background = #{purchaseBackground},</if>
+            <if test="purchaseMode != null  and purchaseMode != ''">purchase_mode = #{purchaseMode},</if>
+            <if test="purchasePlanStatus != null  and purchasePlanStatus != ''">purchase_plan_status = #{purchasePlanStatus},</if>
+            <if test="techSubmitTime != null  and techSubmitTime != ''">tech_submit_time = #{techSubmitTime},</if>
+            <if test="implStartTime != null  and implStartTime != ''">impl_start_time = #{implStartTime},</if>
+            <if test="implEndTime != null  and implEndTime != ''">impl_end_time = #{implEndTime},</if>
+            <if test="planSubmitTime != null  and planSubmitTime != ''">plan_submit_time = #{planSubmitTime},</if>
+            <if test="contractSignTime != null  and contractSignTime != ''">contract_sign_time = #{contractSignTime},</if>
+            <if test="serviceProvideTime != null  and serviceProvideTime != ''">service_provide_time = #{serviceProvideTime},</if>
+            <if test="purchaseEffectivePeriod != null  and purchaseEffectivePeriod != ''">purchase_effective_period = #{purchaseEffectivePeriod},</if>
+            <if test="projectTotalAmount != null  and projectTotalAmount != ''">project_total_amount = #{projectTotalAmount},</if>
+            <if test="payTotalAmount != null  and payTotalAmount != ''">pay_total_amount = #{payTotalAmount},</if>
+            <if test="capitalImplSituation != null  and capitalImplSituation != ''">capital_impl_situation = #{capitalImplSituation},</if>
+            <if test="demandDept != null  and demandDept != ''">demand_dept = #{demandDept},</if>
+            <if test="demandPerson != null  and demandPerson != ''">demand_person = #{demandPerson},</if>
+            <if test="demandMobilPhone != null  and demandMobilPhone != ''">demand_mobil_phone = #{demandMobilPhone},</if>
+            <if test="adjustContent != null  and adjustContent != ''">adjust_content = #{adjustContent},</if>
+            <if test="adjustReason != null  and adjustReason != ''">adjust_reason = #{adjustReason},</if>
+            <if test="formalSubmitTime != null  and formalSubmitTime != ''">formal_submit_time = #{formalSubmitTime},</if>
+            <if test="estimateContractSignTime != null  and estimateContractSignTime != ''">estimate_contract_sign_time = #{estimateContractSignTime},</if>
+            <if test="purchaseOppositePerson != null  and purchaseOppositePerson != ''">purchase_opposite_person = #{purchaseOppositePerson},</if>
+            <if test="currentProgress != null  and currentProgress != ''">current_progress = #{currentProgress},</if>
+            <if test="riskWarning != null  and riskWarning != ''">risk_warning = #{riskWarning},</if>
+            <if test="memo != null  and memo != ''">memo = #{memo},</if>
+            <if test="purchaseApproveId != null  and purchaseApproveId != ''">purchase_approve_id = #{purchaseApproveId},</if>
+            <if test="purchaseStatus != null  and purchaseStatus != ''">purchase_status = #{purchaseStatus},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+        </trim>
+        where purchase_id = #{purchaseId}
+    </update>
+
+    <select id="selectPurchaseProjectDemandById" parameterType="String" resultMap="PurchaseProjectDemandResult">
+        <include refid="selectPurchaseProjectDemandVo"/>
+        where purchase_id = #{purchaseId}
+    </select>
+
+    <insert id="insertPurchaseCurrentProgress">
+        insert into purchase_current_progress
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="currentProgressId != null  and currentProgressId != ''">current_progress_id,</if>
+            <if test="purchaseId != null  and purchaseId != ''">purchase_id,</if>
+            <if test="currentProgress != null  and currentProgress != ''">current_progress,</if>
+            <if test="riskWarning != null  and riskWarning != ''">risk_warning,</if>
+            <if test="memo != null  and memo != ''">memo,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="currentProgressId != null  and currentProgressId != ''">#{currentProgressId},</if>
+            <if test="purchaseId != null  and purchaseId != ''">#{purchaseId},</if>
+            <if test="currentProgress != null  and currentProgress != ''">#{currentProgress},</if>
+            <if test="riskWarning != null  and riskWarning != ''">#{riskWarning},</if>
+            <if test="memo != null  and memo != ''">#{memo},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+        </trim>
+    </insert>
+
+    <resultMap type="PurchaseCurrentProgress" id="PurchaseCurrentProgressResult">
+        <result property="currentProgressId"  column="current_progress_id"    />
+        <result property="purchaseId"         column="purchase_id"    />
+        <result property="currentProgress"    column="current_progress"/>
+        <result property="riskWarning"        column="risk_warning"/>
+        <result property="memo"               column="memo"/>
+        <result property="createTime"         column="create_time"    />
+        <result property="createBy"           column="create_by"    />
+    </resultMap>
+
+    <resultMap type="PurchaseApproveLog" id="PurchaseApproveLogResult">
+        <result property="approveLogId"       column="approve_log_id"    />
+        <result property="changeId"           column="change_id"    />
+        <result property="purchaseId"         column="purchase_id"    />
+        <result property="memo"               column="memo"/>
+        <result property="createTime"         column="create_time"    />
+        <result property="createBy"           column="create_by"    />
+        <result property="createName"         column="pname"    />
+    </resultMap>
+
+    <select id="selectPurchaseCurrentProgressListByPurchaseId" parameterType="PurchaseCurrentProgress" resultMap="PurchaseCurrentProgressResult">
+        select current_progress_id,purchase_id,current_progress,risk_warning,memo,create_time,create_by from purchase_current_progress
+        where purchase_id=#{purchaseId}
+        order by create_time desc
+    </select>
+
+    <insert id="insertPurchaseProjectDemandList" parameterType="java.util.List" useGeneratedKeys="false">
+        insert into purchase_project_demand_change d(
+           d.change_id,
+           d.purchase_no,
+           d.purchase_project_type,
+           d.project_name,
+           d.purchase_content,
+           d.purchase_background,
+           d.purchase_mode,
+           d.purchase_plan_status,
+           d.tech_submit_time,
+           d.impl_start_time,
+           d.impl_end_time,
+           d.plan_submit_time,
+           d.contract_sign_time,
+           d.service_provide_time,
+           d.purchase_effective_period,
+
+           d.project_total_amount,
+           d.pay_total_amount,
+           d.capital_impl_situation,
+           d.demand_dept,
+           d.demand_person,
+           d.demand_mobil_phone,
+           d.adjust_content,
+           d.adjust_reason,
+           d.formal_submit_time,
+           d.estimate_contract_sign_time,
+           d.purchase_opposite_person,
+           d.purchase_status,
+           d.create_time,
+           d.create_by
+        )
+        <foreach item="item" index="index" collection="list" separator="union all">
+            (
+              select
+                #{item.changeId,jdbcType=VARCHAR},
+                #{item.purchaseNo,jdbcType=VARCHAR},
+                #{item.purchaseProjectType,jdbcType=VARCHAR},
+                #{item.projectName,jdbcType=VARCHAR},
+                #{item.purchaseContent,jdbcType=VARCHAR},
+                #{item.purchaseBackground,jdbcType=VARCHAR},
+                #{item.purchaseMode,jdbcType=VARCHAR},
+                #{item.purchasePlanStatus,jdbcType=VARCHAR},
+                #{item.techSubmitTime,jdbcType=VARCHAR},
+                #{item.implStartTime,jdbcType=VARCHAR},
+                #{item.implEndTime,jdbcType=VARCHAR},
+                #{item.planSubmitTime,jdbcType=VARCHAR},
+                #{item.contractSignTime,jdbcType=VARCHAR},
+                #{item.serviceProvideTime,jdbcType=VARCHAR},
+                #{item.purchaseEffectivePeriod,jdbcType=VARCHAR},
+
+                #{item.projectTotalAmount,jdbcType=VARCHAR},
+                #{item.payTotalAmount,jdbcType=VARCHAR},
+                #{item.capitalImplSituation,jdbcType=VARCHAR},
+                #{item.demandDept,jdbcType=VARCHAR},
+                #{item.demandPerson,jdbcType=VARCHAR},
+                #{item.demandPersonPhone,jdbcType=VARCHAR},
+                #{item.adjustContent,jdbcType=VARCHAR},
+                #{item.adjustReason,jdbcType=VARCHAR},
+                #{item.formalSubmitTime,jdbcType=VARCHAR},
+                #{item.estimateContractSignTime,jdbcType=VARCHAR},
+                #{item.purchaseOppositePerson,jdbcType=VARCHAR},
+                #{item.purchaseStatus,jdbcType=VARCHAR},
+                #{item.createTime,jdbcType=VARCHAR},
+                #{item.createBy,jdbcType=VARCHAR}
+              FROM DUAL
+            )
+        </foreach>
+    </insert>
+
+    <insert id="insertPurchaseApproveLog" parameterType="PurchaseApproveLog">
+        insert into purchase_approve_log
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="approveLogId != null  and approveLogId != ''">approve_log_id,</if>
+            <if test="changeId != null  and changeId != ''">change_id,</if>
+            <if test="purchaseId != null  and purchaseId != ''">purchase_id,</if>
+            <if test="memo != null  and memo != ''">memo,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="approveLogId != null  and approveLogId != ''">#{approveLogId},</if>
+            <if test="changeId != null  and changeId != ''">#{changeId},</if>
+            <if test="purchaseId != null  and purchaseId != ''">#{purchaseId},</if>
+            <if test="memo != null  and memo != ''">#{memo},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+        </trim>
+    </insert>
+
+    <select id="selectPurchaseApproveLogById" parameterType="PurchaseApproveLog" resultMap="PurchaseApproveLogResult">
+        select log.approve_log_id,log.change_id,log.purchase_id,log.memo,log.create_time,log.create_by,p.pname from purchase_approve_log log
+        left join og_person p on log.create_by=p.pid
+        <where>
+            <if test="changeId != null and changeId != ''">
+                and log.change_id=#{changeId}
+            </if>
+            <if test="purchaseId != null and purchaseId != ''">
+                and log.purchase_id=#{purchaseId}
+            </if>
+        </where>
+        order by log.create_time desc
+    </select>
+</mapper>

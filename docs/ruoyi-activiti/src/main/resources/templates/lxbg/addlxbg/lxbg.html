@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('新增例行变更计划列表')" />
+    <th:block th:include="include :: layout-latest-css" />
+    <th:block th:include="include :: ztree-css" />
+    <th:block th:include="include :: select2-css"/>
+    <th:block th:include="include :: datetimepicker-css" />
+    <style>
+        .table-striped{
+            min-height: 20%;
+        }
+    </style>
+
+</head>
+<body class="gray-bg">
+
+<div class="ui-layout-west">
+
+    <div class="box box-main">
+        <input name="treeId" type="hidden" id="treeId" value="" >
+        <div class="box-header">
+            <div class="box-tools ">
+                <button name="addRecord" class="fa fa-plus" onclick="addTree()" title="新建"  id="addRecord"></button>
+                <button name="editRecord" class="fa fa-edit"  id="edit" onclick="editTree()" title="编辑" active="1"></button>
+                <button name="removeRecord" class="fa fa-trash"  id="removeRecord" title="删除" onclick="removeTree()" ></button>
+            </div>
+        <div class="box-title">
+            <i class="fa icon-grid"></i> 作业计划目录
+        </div>
+
+        <div class="ui-layout-content">
+            <div id="tree" class="ztree"></div>
+        </div>
+    </div>
+    </div>
+</div>
+
+
+<div class="ui-layout-center ">
+    <div class="container-div">
+        <div class="row">
+            <div class="btn-group-sm" id="toolbara" role="group">
+                <a class="btn btn-success" onclick="add()" >
+                    <i class="fa fa-plus"></i> 新增
+                </a>
+                <a  class="btn btn-primary single disabled" onclick="editTab()" >
+                    <i class="fa fa-edit"></i> 修改
+                </a>
+                <a class="btn btn-primary single disabled" onclick="clonelxbg()" >
+                     克隆
+                </a>
+                <a class="btn btn-info single disabled" onclick="$.operate.detail()">
+                    <i class="fa fa-search"></i> 查看详情
+                </a>
+                <a class="btn btn-danger multiple disabled" onclick="removeAll()" >
+                    <i class="fa fa-trash"></i> 删除
+                </a>
+                <a class="btn btn-primary" onclick="label()">
+                     快捷标签
+                </a>
+                <!--导出所有｜当前页按钮组合-->
+                <div class="btn-group">
+                    <button data-toggle="dropdown" class="btn btn-primary btn-sm dropdown-toggle"> <i class="fa fa-cloud-upload"></i>导出<span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a onclick="$.table.exportExcel()">导出所有</a>
+                        </li>
+                        <li><a onclick="$.table.exportExcelCurrentPage()">导出当前页</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <form id="data-form2">
+                <input type="hidden" id="folderId" name="folder" value="">
+            </form>
+            <div class="col-sm-6 select-table table-striped" >
+                <table id="bootstrap-table" style="table-layout:fixed;"></table>
+            </div>
+
+
+            <div class="col-sm-12 search-collapse">
+                <form id="data-form">
+                    <input type="hidden" id="paramsschedulingId" name="params[schedulingId]" value="">
+
+                    <div class="row">
+                        <div class="select-list">
+                            <ul>
+                                <li >
+                                    <p>执行机构：</p>
+                                    <input  style="width:150px" type="text" name="ogoname"/>
+                                </li>
+
+                                <li>
+                                    <p>任务编号：</p>
+                                    <input style="width:150px"  type="text" name="taskFromNo"/>
+                                </li>
+
+                                <li>
+                                    <p>创建时间：</p>
+                                    <input style="width:150px" type="text" name="generateTime" id="generateTime" readonly/>
+                                </li>
+
+                                <li>
+                                    <p>至：</p>
+                                    <input  style="width:150px" type="text" name="endgenerateTime" id="endgenerateTime" readonly/>
+                                </li>
+                                <li>
+                                    <a class="btn btn-primary btn-rounded btn-sm" id="lxbgSearch" onclick="$.table.search('data-form','bootstrap-table-id')"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                    <a class="btn btn-warning btn-rounded btn-sm" id="lxbgrwsx" onclick="$.form.reset('data-form','bootstrap-table-id')"><i class="fa fa-repeat"></i>&nbsp;重置</a>
+                                </li>
+
+                            </ul>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+
+            <div class="btn-group-sm" id="toolbara2" role="group">
+                <a class="btn btn-info single disabled" onclick="$.operate.detail()">
+                    <i class="fa fa-search"></i> 详情
+                </a>
+                <!--导出所有｜当前页按钮组合-->
+                <div class="btn-group">
+                    <button data-toggle="dropdown" class="btn btn-primary btn-sm dropdown-toggle"><i class="fa fa-cloud-upload"></i>导出<span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a onclick="$.table.exportExcel('data-form')">导出所有</a>
+                        </li>
+                        <li><a onclick="$.table.exportExcelCurrentPage('data-form')">导出当前页</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-sm-6 select-table table-striped" style="min-height: calc(100vh - 40%);">
+                <table id="bootstrap-table-id" style="table-layout:fixed;"></table>
+            </div>
+
+        <div class="row">
+
+        </div>
+        </div>
+    </div>
+</div>
+
+
+
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: select2-js"/>
+<th:block th:include="include :: layout-latest-js" />
+<th:block th:include="include :: datetimepicker-js" />
+<th:block th:include="include :: ztree-js" />
+<script th:src="@{/js/activiti.js}"></script>
+<script th:inline="javascript">
+
+    var datas = [[${@dict.getParaType('zd_plan_status')}]];
+    var datass = [[${@dict.getParaType('zd_task_status')}]];
+    var creatorId=[[${userId}]];
+
+    var selecttreeName="";
+    var selecttreeId="-1";
+
+    var scheduling_prefix = ctx + "lxbg/addlxbg";
+    var taskinfo_prefix = ctx + "system/taskinfo";
+
+
+    // 左侧树
+    $(function() {
+        // 回车搜索
+        document.onkeydown = function(e){
+            var ev = document.all ? window.event : e;
+            if(ev.keyCode==13) {
+                $('#lxbgSearch').trigger('click');
+                return false;
+            }
+        };
+
+        var panehHidden = false;
+        if ($(this).width() < 800) {
+            panehHidden = true;
+        }
+        $('body').layout({ initClosed: panehHidden, west__size: 185 });
+        // 回到顶部绑定
+        if ($.fn.toTop !== undefined) {
+            var opt = {
+                win:$('.ui-layout-center'),
+                doc:$('.ui-layout-center')
+            };
+            $('#scroll-up').toTop(opt);
+        }
+        queryDeptTree();
+        querylxbgList();
+        querylxbgList2();
+
+    });
+
+    //options表格按钮跳转
+    function querylxbgList() {
+        var selectId = selecttreeId;
+        var options = {
+            url: scheduling_prefix + "/list",
+            toolbar: "toolbara",
+            id: "bootstrap-table",
+            updateUrl: scheduling_prefix + "/edit/{id}",
+            detailUrl: scheduling_prefix + "/detail/{id}",
+            removeUrl: scheduling_prefix + "/remove",
+            exportUrl: scheduling_prefix + "/export",
+            importUrl: scheduling_prefix + "/importData",
+            pagination:true,
+            clickToSelect: true,
+            pageSize:5,
+            singleSelect:true,
+            queryParams:queryParams,
+            onClickRow: function (row) {
+                $("#paramsschedulingId").val(row.schedulingId);
+                $("#taskId").val(row.schedulingId);
+                $.table.search('data-form','bootstrap-table-id')
+            },
+            modalName: "计划",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'schedulingId',
+                    title: '计划单id',
+                    width: 300,
+                    visible: false
+                },
+                {
+                    field: 'schedulingNo',
+                    width: 150,
+                    title: '计划单编号'
+                },
+                {
+                    field: 'schedulingName',
+                    width: 200,
+                    title: '计划单标题',
+                    formatter:function (value,row,index) {
+                        return $.table.tooltip(value)
+                    }
+                },
+                {
+                    field: 'effectiveTime',
+                    width: 150,
+                    title: '计划发布时间',
+                    formatter: function (value, row, index) {
+                        var startTime = '';
+                        if(value!='' && value !=null){
+                            var pattern = /(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/;
+                            startTime = value.replace(pattern, '$1-$2-$3 $4:$5:$6');
+                        }
+                        return startTime;
+                    }
+                },
+                {
+                    field: 'process',
+                    width: 100,
+                    title: '完成进度'
+                },
+                {
+                    field: 'planStatus',
+                    width: 100,
+                    title: '计划状态',
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                        return selectDictLabel(datas, value);
+                    }
+                },
+                {
+                    field: 'createName',
+                    width: 100,
+                    title: '创建人'
+                },
+
+                {
+                    field: 'checkPersonName',
+                    width: 100,
+                    title: '审核人'
+                },
+
+                {
+                    field: 'createTime',
+                    width: 250,
+                    title: '创建时间',
+                    align: 'center',
+                    formatter: function (value, row, index) {
+                        var startTime = '';
+                        if(value!=''){
+                            var pattern = /(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/;
+                            startTime = value.replace(pattern, '$1-$2-$3 $4:$5:$6');
+                        }
+                        return startTime;
+                    }
+                }]
+
+        };
+        $.table.init(options);
+    }
+
+    function querylxbgList2() {
+        var options = {
+            url: taskinfo_prefix + "/list",
+            queryParams:queryParams2,
+            toolbar: "toolbara2",
+            id: "bootstrap-table-id",
+            sortOrder: "desc",
+            exportUrl: taskinfo_prefix + "/export",
+            detailUrl: taskinfo_prefix + "/detail/{id}",
+            pagination:true,
+            singleSelect:true,
+            clickToSelect: true,
+            pageSize:5,
+            modalName: "任务",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'taskFormId',
+                    title: '任务id',
+                    width: 300,
+                    visible: false
+                },
+                {
+                    field: 'taskFromNo',
+                    width: 150,
+                    title: '任务编号'
+                },
+                {
+                    field: 'ogoname',
+                    title: '执行机构',
+                    width: 150,
+                    visible: false
+                },
+                {
+                    field: 'grpname',
+                    title: '执行工作组',
+                    width: 150,
+                    visible: false
+                },
+                {
+                    field: 'taskFormStatus',
+                    title: '任务状态',
+                    width: 150,
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                        return selectDictLabel(datass, value);
+                    }
+                },
+                {
+                    field: 'generateTime',
+                    title: '创建时间',
+                    width: 150,
+                    align: 'center',
+                    formatter: function (value, row, index) {
+                        var startTime = '';
+                        if(value!='' && value !=null){
+                            var pattern = /(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/;
+                            startTime = value.replace(pattern, '$1-$2-$3 $4:$5:$6');
+                        }
+                        return startTime;
+                    }
+
+                },
+                {
+                    field: 'performDate',
+                    title: '执行日期',
+                    width: 150,
+                    formatter: function (value, row, index) {
+                        var startTime = '';
+                        if(value!='' && value !=null){
+                            var pattern = /(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/;
+                            startTime = value.replace(pattern, '$1-$2-$3 $4:$5:$6');
+                        }
+                        return startTime;
+                    }
+                }]
+
+        };
+        $.table.init(options);
+    }
+
+     function queryParams(params) {
+        var search = $.table.queryParams(params);
+        search.creatorId=creatorId;
+        return search;
+
+    }
+    function queryParams2(params) {
+        params.taskId= $("#paramsschedulingId").val();
+        var search = $.table.queryParams(params);
+        return search;
+
+    }
+
+    /*添加*/
+    function  add() {
+        if($("#treeId").val()==null||$("#treeId").val()==""){
+            return $.modal.alertWarning("请选择目录！");
+        }
+
+        var url = scheduling_prefix + '/add?userId='+creatorId+'&&treeId='+$("#treeId").val();
+        var data = {
+            'userId':creatorId,
+            'treeId':$("#treeId").val()
+        }
+        $.modal.openTab('例行变更计划新增页面',url)
+    }
+
+
+
+    // 克隆
+    function clonelxbg() {
+        var data=$("#bootstrap-table").bootstrapTable('getSelections');
+        $.modal.openTab("克隆页面", scheduling_prefix + "/clonelxbg/"+data[0].schedulingId);
+    }
+
+    //快捷标签
+    function label() {
+        var url = scheduling_prefix + "/label";
+        $.modal.openTab('快捷标签',url)
+
+    }
+
+
+    //点击左侧树
+    function queryDeptTree()
+    {
+        var url = ctx + "lxbg/folder/treeData";
+        var options = {
+            url: url,
+            expandLevel:tree,
+            onClick : zOnClick
+        };
+        $.tree.init(options);
+
+        function zOnClick(event, treeId, treeNode) {
+
+            $("#folderId").val(treeNode.id);
+            $.table.search("data-form2","bootstrap-table");
+            //刷新任务页面
+            //清空paramsschedulingId
+            $("#paramsschedulingId").val('');
+            $.table.search("data-form","bootstrap-table-id");
+            $("#treeId").val(treeNode.id);
+            treeId=treeNode.id;
+            selecttreeId = treeNode.id;
+            selecttreeName = treeNode.name;
+            var parent=$.tree.showParent(treeNode);
+            $("#treeName").val(treeNode.name);
+        }
+    }
+
+
+    $('#btnRefresh').click(function() {
+        queryDeptTree();
+    });
+
+
+
+    //字典
+    function selectDictLabel(datas, value) {
+        var actions = [];
+        $.each(datas, function(index, dict) {
+            if (dict.value == ('' + value)) {
+                var listClass = $.common.equals("default", dict.listClass) || $.common.isEmpty(dict.listClass) ? "" : "badge badge-" + dict.listClass;
+                actions.push($.common.sprintf("<span class='%s'>%s</span>", listClass, dict.valueDetail));
+                return false;
+            }
+        });
+        return actions.join('');
+    }
+
+
+    //  左侧树新建
+    function addTree(){
+            var url = ctx + "lxbg/folder/lxbg/ztreeAdd/"+ selecttreeId;
+            $.modal.openNoColse("新建文件夹", url);
+
+    };
+
+    //左侧树编辑
+    function editTree(){
+        if(selecttreeId=="-1"){
+            $.modal.alertWarning("请先选择节点,再进行编辑操作");
+        }else{
+            var url = ctx + "lxbg/folder/lxbg/ztree/"+selecttreeId;
+            $.modal.openNoColse("修改文件夹",url);
+        }
+    };
+
+    //左侧树节点删除
+    function removeTree() {
+        if(selecttreeId=="-1"){
+            $.modal.alertWarning("请先选择节点进行删除");
+        }else{
+            $.ajax({
+                cache: false,
+                type: "post",
+                url: ctx + "lxbg/folder/treeDelete",
+                data: {
+                    "id_": selecttreeId
+                },
+                async: false,
+                error: function (request) {
+                    $.modal.alertError("系统错误");
+                },
+                success: function (data) {
+                    $.modal.alertWarning(data.msg);
+                }
+            });
+        }
+        queryDeptTree();
+        selecttreeId="-1";
+
+    }
+
+
+    // 删除信息
+    function removeAll() {
+        table.set();
+        var rows = $.common.isEmpty(table.options.uniqueId) ? $.table.selectFirstColumns() : $.table.selectColumns(table.options.uniqueId);
+        if (rows.length == 0) {
+            $.modal.alertWarning("请至少选择一条记录");
+            return;
+        }
+
+        $.ajax({
+            type: 'POST',
+            url: scheduling_prefix+"/selectById",
+            data: {"id":rows[0]},
+            success: function (result) {
+                if(result.data.planStatus=='01'){
+                    $.modal.confirm("确定删除?", function() {
+                        var url = table.options.removeUrl;
+                        var data = { "id": rows.join() };
+                        $.operate.submit2(url, "post", "json", data);
+                    });
+                }else{
+                    $.modal.alertError("只能删除新建的计划，请重新选择");
+                }
+
+            },
+            dataType: 'json'
+
+    });
+
+
+
+    }
+
+    /**修改 */
+    function editTab(id) {
+        table.set();
+        var rows = $.common.isEmpty(table.options.uniqueId) ? $.table.selectFirstColumns() : $.table.selectColumns(table.options.uniqueId);
+        $.ajax({
+            type: 'POST',
+            url: scheduling_prefix+"/selectById",
+            data: {"id":rows[0]},
+            success: function (result) {
+                if(result.data.planStatus=='01' ||result.data.planStatus=='03'){
+                    $.modal.openTab("修改" + table.options.modalName, $.operate.editUrl(id));
+                }else{
+                    $.modal.alertError("任务已提交或已结束!");
+                }
+            },
+            dataType: 'json'
+        });
+
+    }
+
+    $("#generateTime").datetimepicker({
+        autoclose: true,
+        format: "yyyy-mm-dd hh:ii:ss",
+        minView:0,
+        minuteStep:1,
+        Date:new Date()
+    });
+
+    $("#endgenerateTime").datetimepicker({
+        autoclose: true,
+        format: "yyyy-mm-dd hh:ii:ss",
+        minView:0,
+        minuteStep:1,
+        Date:new Date()
+    });
+
+
+
+</script>
+</body>
+</html>

@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+	<th:block th:include="include :: header('选择受派组')" />
+</head>
+
+<body class="gray-bg">
+<div class="container-div">
+	<div class="row">
+		<div class="col-sm-12 search-collapse">
+			<form id="person-form">
+				<div class="select-list">
+					<ul>
+						<li>
+							组名称：<input type="text" name="grpName"/>
+						</li>
+						<li>
+							<a class="btn btn-primary btn-rounded btn-sm" id="assignGroup" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+							<a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+						</li>
+					</ul>
+				</div>
+			</form>
+		</div>
+
+		<div class="col-sm-12 select-table table-striped">
+			<table id="bootstrap-table"></table>
+		</div>
+	</div>
+</div>
+<th:block th:include="include :: footer" />
+<script th:inline="javascript">
+    var prefix = ctx + "event/sheet";
+
+    $(function() {
+        // 回车键搜索
+        document.onkeydown = function(e){
+            var ev = document.all ? window.event : e;
+            if(ev.keyCode==13) {
+                $('#assignGroup').trigger('click');
+                return false;
+            }
+        };
+
+        var options = {
+            url: prefix + "/selectAssignedGroup",
+            queryParams: queryParams,
+            modalName: "事件单受派组",
+            showSearch: false,
+            showRefresh: false,
+            showToggle: false,
+            showColumns: false,
+            clickToSelect: true,
+            singleSelect : true,
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'groupId',
+                    title: '组ID',
+                    visible: false
+                },
+                {
+                    field: 'grpName',
+                    title: '组名称'
+                },
+                {
+                    field: 'ogOrg.orgName',
+                    title: '所属机构'
+                },
+                {
+                    field: 'mome',
+                    title: '备注'
+                }]
+        };
+        $.table.init(options);
+    });
+
+    function queryParams(params) {
+        var search = $.table.queryParams(params);
+        return search;
+    }
+
+    function submitHandler(index, layero) {
+        var rows = $.table.selectFirstColumns();
+        if (rows.length == 0) {
+            $.modal.alertWarning("请至少选择一条记录");
+            return;
+        }
+        var pNameRows = $.table.selectColumns('grpName');
+        $.modal.close();
+        // 父页面的方法
+        // parent.selectUsers();
+        // 父页面的变量
+
+        // 弹框选择赋值
+        parent.$('#assignedGroup').val(rows.join());
+        parent.$('#assignedGroupName').val(pNameRows.join());
+
+    }
+
+</script>
+</body>
+</html>

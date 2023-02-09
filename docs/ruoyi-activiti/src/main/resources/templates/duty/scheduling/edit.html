@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:include="include :: header('修改排班信息')"/>
+    <th:block th:include="include :: datetimepicker-css"/>
+    <th:block th:include="include :: select2-css"/>
+</head>
+<body class="white-bg">
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+    <form class="form-horizontal m" id="form-scheduling-edit" th:object="${scheduling}">
+        <input name="schedulingId" th:field="*{schedulingId}" type="hidden">
+        <input id="treeId" name="typeinfoId" type="hidden" th:field="*{typeinfoId}"/>
+        <div class="form-group">
+            <label class="col-sm-3 control-label is-required">姓名：</label>
+            <div class="col-sm-8">
+                <select multiple="multiple" id="pid" name="pid" class="form-control" onchange="getPhone()" required>
+                    <option th:each="user : ${userlist}" th:text="${user.pname}" th:value="${user.pid}"></option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label is-required">联系电话：</label>
+            <div class="col-sm-8">
+                <div class="input-group">
+                    <input th:field="*{mobilephone}" id="mobilephone" name="mobilephone" class="form-control"
+                           type="text" required readonly>
+                    <span class="input-group-addon"><i class="fa fa-mobile"></i></span>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label is-required">值班日期：</label>
+            <div class="col-sm-8">
+                <input th:field="*{dutyDate}" id="dutyDate" name="dutyDate" type="text"
+                       class="datetimepicker form-control" placeholder="请选择值班日期" required readonly/>
+            </div>
+        </div>
+        <div class="form-group" th:if="${cntxtag}">
+            <label class="col-sm-3 control-label is-required">值班时间：</label>
+            <div class="col-sm-8">
+                <input th:field="*{timeShift}" id="timeShift" name="timeShift" type="text"
+                       class="datetimepicker form-control" placeholder="请选择值班时间" required readonly/>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label is-required">类别名称：</label>
+            <div class="col-sm-8">
+                <div class="input-group">
+                    <input th:value="${scheduling.typeNo}" class="form-control" type="text" onclick="selectTypeTree()"
+                           id="treeName" readonly="true" required/>
+                    <span class="input-group-addon"><i class="fa fa-search"></i></span>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label is-required">主值类别：</label>
+            <div class="col-sm-8">
+                <select name="leader" class="form-control m-b" th:with="type=${@dict.getParaType('sys_leader_flag')}">
+                    <option th:field="*{leader}" th:each="dict : ${type}" th:text="${dict.valueDetail}"
+                            th:value="${dict.value}"></option>
+                </select>
+            </div>
+        </div>
+        <!--            <div class="form-group">-->
+        <!--                <label class="col-sm-3 control-label is-required">使用账号：</label>-->
+        <!--                <div class="col-sm-8">-->
+        <!--                    <input type="hidden" id="accountPid" name="accountPid" th:field="*{accountPid}">-->
+        <!--                    <input id="accountName" name="accountName" class="form-control" th:field="*{accountName}" type="text" readonly onclick="selectUser()">-->
+        <!--                </div>-->
+        <!--            </div>-->
+    </form>
+    <!--        <div class="row">-->
+    <!--            <div class="col-sm-offset-5 col-sm-10">-->
+    <!--                <button type="button" class="btn btn-sm btn-primary" onclick="submitHandler()"><i class="fa fa-check"></i>保 存</button>&nbsp;-->
+    <!--                <button type="button" class="btn btn-sm btn-danger" onclick="closeItem()"><i class="fa fa-reply-all"></i>关 闭 </button>-->
+    <!--            </div>-->
+    <!--        </div>-->
+    <div id="userDiv" style="display: none">
+        <form id="user-form" class="form-horizontal">
+
+            <div class="select-list">
+                <ul>
+                    <li>
+                        姓名：<input type="text" name="pName"/>
+                    </li>
+                    <li>
+                        手机号：<input type="text" name="mobilPhone"/>
+                    </li>
+                    <li>
+                        所属机构：<input th:id="orgname" name="orgname" type="text">
+                    </li>
+                    <li>
+                        <a class="btn btn-primary btn-rounded btn-sm"
+                           onclick="$.table.search('user-form','bootstrap-table')"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                        <a class="btn btn-warning btn-rounded btn-sm"
+                           onclick="$.form.reset('user-form','bootstrap-table')"><i
+                                class="fa fa-refresh"></i>&nbsp;重置</a>
+                    </li>
+                </ul>
+            </div>
+        </form>
+        <div class="col-sm-12 select-table table-striped">
+            <table id="bootstrap-table"></table>
+        </div>
+    </div>
+</div>
+<th:block th:include="include :: footer"/>
+<th:block th:include="include :: datetimepicker-js"/>
+<script th:src="@{/js/bootstrap-datetimepicker.zh-CN.js}"></script>
+<th:block th:include="include :: select2-js"/>
+<script type="text/javascript">
+    var prefix = ctx + "duty/scheduling";
+    var y = new Date().getFullYear();
+    var m = new Date().getMonth();
+    var nextDate = new Date(y, m, 1);
+    $(function () {
+        var picker = $('#dutyDate').datetimepicker({
+            language: 'zh-CN',
+            autoclose: true,
+            format: "yyyy-mm-dd",
+            forceParse: false,
+            minView: 2,
+            startView: 2,
+        });
+        $('#pid').select2({
+            maximumSelectionLength: 10
+        });
+        $('#dutyDate').datetimepicker('setStartDate', nextDate);
+    })
+
+    function getPhone() {
+        var multipleValues = $("#pid").val() || [];
+        $.ajax({
+            cache: true,
+            type: "POST",
+            url: prefix + "/selectPhoneByPid",
+            data: {
+                "pids": multipleValues.join(",")
+            },
+            async: false,
+            error: function (request) {
+                $.modal.alertError("系统错误");
+            },
+            success: function (data) {
+                $("#mobilephone").val(data);
+            }
+        });
+    }
+
+    /**
+     * 人员选择
+     */
+    function selectUser() {
+        var url = prefix + '/selectUser';
+        $.modal.open("选择人员", url);
+    }
+
+    $(function () {
+        var options = {
+            url: prefix + "/list",
+            modalName: "人员",
+            singleSelect: true,
+            onClickRow: function (row, obj) {
+                $('#accountName').val(row.pName);
+                $("#accountPid").val(row.pId);
+                $(obj).siblings().removeClass("selected")
+                $(obj).addClass("selected");
+                $(obj).find("input[type='radio']").prop('checked', 'checked')
+                $("#userDiv").hide();
+            },
+            columns: [{
+                radio: true,
+                visible: false
+            },
+                {
+                    field: 'pId',
+                    visible: false
+                },
+                {
+                    field: 'pName',
+                    title: '姓名'
+                },
+                {
+                    field: 'sex',
+                    title: '性别',
+                    sortable: true,
+                    formatter: function (value, row, index) {
+                        return value == '0' ? '男' : '女'
+                    }
+                },
+                {
+                    field: 'birthPlace',
+                    title: '籍贯'
+                },
+                {
+                    field: 'mobilPhone',
+                    title: '手机号'
+                },
+                {
+                    field: 'orgname',
+                    title: '所属机构'
+                },
+                {
+                    field: 'mome',
+                    title: '备注'
+                }]
+
+        };
+        $.table.init(options);
+    });
+
+    function submitHandler() {
+        if ($.validate.form()) {
+            $.ajax({
+                cache: true,
+                type: "POST",
+                url: prefix + "/addCheckSave",
+                data: $('#form-scheduling-edit').serialize(),
+                async: false,
+                error: function (request) {
+                    $.modal.alertError("系统错误");
+                },
+                success: function (data) {
+                    console.log(data)
+                    if ("success" == data) {
+                        $.operate.save(prefix + "/edit", $('#form-scheduling-edit').serialize());
+                    } else {
+                        $.modal.alertError(data);
+                    }
+                }
+            });
+
+
+        }
+    }
+
+    function selectTypeTree() {
+        var treeId = $("#treeId").val();
+        if (treeId == "") {
+            treeId = "578d8787197d4b35902ac93f9cb7e511";
+        }
+        //alert("treeId-->" + treeId);
+        var options = {
+            title: '类别选择',
+            width: "380",
+            url: prefix + "/selectTypeinfoTree/" + treeId,
+            callBack: doSubmit
+        };
+        $.modal.openOptions(options);
+    }
+
+    function doSubmit(index, layero) {
+        var tree = layero.find("iframe")[0].contentWindow.$._tree;
+        if ($.tree.notAllowParents(tree)) {
+            var body = layer.getChildFrame('body', index);
+            $("#treeId").val(body.find('#treeId').val());
+            $("#treeName").val(body.find('#treeName').val());
+            layer.close(index);
+        }
+    }
+
+</script>
+<script th:inline="javascript">
+    var pids = [[${scheduling.pid}]];
+    var pidArr = pids.split(",");
+    $('#pid').val(pidArr).trigger("change");
+</script>
+</body>
+</html>

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.form.mapper.RiskAccessRecordMapper">
+    
+    <resultMap type="RiskAccessRecord" id="RiskAccessRecordResult">
+        <result property="id"    column="id"    />
+        <result property="changeNo"    column="changeNo"    />
+        <result property="operateTime"    column="operateTime"    />
+        <result property="operator"    column="operator"    />
+        <result property="initLevel"    column="initLevel"    />
+        <result property="currentLevel"    column="currentLevel"    />
+        <result property="reason"    column="reason"    />
+    </resultMap>
+
+    <sql id="selectRiskAccessRecordVo">
+        select id, changeNo, operateTime, operator, initLevel, currentLevel, reason from risk_access_record
+    </sql>
+
+    <select id="selectRiskAccessRecordList" parameterType="RiskAccessRecord" resultMap="RiskAccessRecordResult">
+        <include refid="selectRiskAccessRecordVo"/>
+        <where>  
+            <if test="changeNo != null  and changeNo != ''"> and changeNo = #{changeNo}</if>
+            <if test="operateTime != null  and operateTime != ''"> and operateTime = #{operateTime}</if>
+            <if test="operator != null  and operator != ''"> and operator = #{operator}</if>
+            <if test="initLevel != null  and initLevel != ''"> and initLevel = #{initLevel}</if>
+            <if test="currentLevel != null  and currentLevel != ''"> and currentLevel = #{currentLevel}</if>
+            <if test="reason != null  and reason != ''"> and reason = #{reason}</if>
+        </where>
+    </select>
+    
+    <select id="selectRiskAccessRecordById" parameterType="Long" resultMap="RiskAccessRecordResult">
+        <include refid="selectRiskAccessRecordVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertRiskAccessRecord" parameterType="RiskAccessRecord">
+        insert into risk_access_record
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null ">id,</if>
+            <if test="changeNo != null  and changeNo != ''">changeNo,</if>
+            <if test="operateTime != null  and operateTime != ''">operateTime,</if>
+            <if test="operator != null  and operator != ''">operator,</if>
+            <if test="initLevel != null  and initLevel != ''">initLevel,</if>
+            <if test="currentLevel != null  and currentLevel != ''">currentLevel,</if>
+            <if test="reason != null  and reason != ''">reason,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null ">#{id},</if>
+            <if test="changeNo != null  and changeNo != ''">#{changeNo},</if>
+            <if test="operateTime != null  and operateTime != ''">#{operateTime},</if>
+            <if test="operator != null  and operator != ''">#{operator},</if>
+            <if test="initLevel != null  and initLevel != ''">#{initLevel},</if>
+            <if test="currentLevel != null  and currentLevel != ''">#{currentLevel},</if>
+            <if test="reason != null  and reason != ''">#{reason},</if>
+         </trim>
+    </insert>
+
+    <update id="updateRiskAccessRecord" parameterType="RiskAccessRecord">
+        update risk_access_record
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="changeNo != null  and changeNo != ''">changeNo = #{changeNo},</if>
+            <if test="operateTime != null  and operateTime != ''">operateTime = #{operateTime},</if>
+            <if test="operator != null  and operator != ''">operator = #{operator},</if>
+            <if test="initLevel != null  and initLevel != ''">initLevel = #{initLevel},</if>
+            <if test="currentLevel != null  and currentLevel != ''">currentLevel = #{currentLevel},</if>
+            <if test="reason != null  and reason != ''">reason = #{reason},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteRiskAccessRecordById" parameterType="Long">
+        delete from risk_access_record where id = #{id}
+    </delete>
+
+    <delete id="deleteRiskAccessRecordByIds" parameterType="String">
+        delete from risk_access_record where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

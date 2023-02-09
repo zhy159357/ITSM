@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:include="include :: header('协同受理人')"/>
+    <th:block th:include="include :: select2-css"/>
+</head>
+<body>
+<div class="main-content">
+    <form class="form-horizontal" id="form-qingqiu-add" th:object="${cmBizQingqiu}">
+        <input id="changeId" name="changeId" th:value="${changeId}" type="hidden">
+        <input name="flag" id="flag" type="hidden" th:value="${flag}">
+        <h4 class="form-header h4">协同处理意见</h4>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label is-required">操作意见：</label>
+                    <div class="col-sm-10">
+                            <textarea rows="5" cols="20" id="ccAuthorText" name="params[comment]" maxlength="512"
+                                      class="form-control" required></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <h4 class="form-header h4">协同处理人</h4>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label text-right is-required">受理机构：</label>
+                    <div class="col-sm-8">
+                        <input  onclick="selectDeptTree()" id="checkOrgName" type="text" style="background-color: #fff; opacity: 1;" class="form-control" readonly required>
+                        <input name="checkOrg" type="hidden" id="checkOrg" value=""/>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label text-right is-required">受理人：</label>
+                    <div class="col-sm-8">
+                        <input name="checkerName" id="checkerName" class="form-control" style="background-color: #fff; opacity: 1;" onclick="selectBusinessAudit('checkOrg','2503','0')" readonly required>
+                        <input name="checkerId" id="checkerId" hidden>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<div class="row">
+    <div class="col-sm-offset-5 col-sm-10">
+        <button type="button" class="btn btn-sm btn-primary" onclick="submit()" id="yes" value="winClose"><i
+                class="fa fa-check"></i>确定
+        </button>&nbsp;
+        <button type="button" class="btn btn-sm btn-danger" onclick="closeItem()"><i class="fa fa-window-close"></i>关 闭 </button>
+    </div>
+</div>
+<th:block th:include="include :: footer"/>
+<th:block th:include="include :: select2-js"/>
+<th:block th:include="include :: datetimepicker-js"/>
+<script>
+    var prfix_qingqiu = ctx + "activiti/qingqiu";
+
+    var prefix_version = ctx + "fmbiz";
+
+    /* 选择受理机构树 */
+    function selectDeptTree() {
+        var orgId = $("#orgId").val();
+        var deptId = $.common.isEmpty(orgId) ? "310100001" : $("#orgId").val();
+        var url = ctx + "activiti/qingqiu/selectDeptTree/" + deptId;
+        var options = {
+            title: '选择部门',
+            width: "380",
+            url: url,
+            callBack: doSubmit
+        };
+        $.modal.openOptions(options);
+    }
+
+    /*受理机构赋值*/
+    function doSubmit(index, layero){
+        var tree = layero.find("iframe")[0].contentWindow.$._tree;
+        var body = layer.getChildFrame('body', index);
+        $("#checkOrg").val(body.find('#treeId').val());
+        $("#checkOrgName").val(body.find('#treeName').val());
+        $("#checkerId").val("");
+        $("#checkerName").val("");
+        layer.close(index);
+    }
+
+    //选择受理人
+    function selectBusinessAudit(ogrId ,rId,pflag) {
+        var ogId = $("#"+ogrId+"").val();
+        if(ogId == ''){
+            $.modal.alertWarning("请先选择受理机构");
+            return;
+        }
+        var url = ctx + "activiti/qingqiu/selectBusinessAudit"+"?"+"orgId="+encodeURI(encodeURI(ogId))+"&pflag="+pflag+"&rId="+rId;
+        $.modal.open("选择受理人", url);
+    }
+
+    $("#form-qingqiu-add").validate({
+        onkeyup: false,
+        rules: {},
+        messages: {},
+        focusCleanup: true
+    });
+
+    // 提交
+    function submit() {
+        if ($.validate.form()) {
+            var chrlen = $('#ccAuthorText').val().replace(/[^\x00-\xff]/g, '**').length // 字节长度
+            if (chrlen > 256) {
+                return $.modal.alertError('【操作意见】最大长度不能超过256')
+            }
+            var flag = $("#flag").val();
+            var data = $("#form-qingqiu-add").serializeArray();
+            //$.operate.saveTab(prefix_version + "/collaborativeAccept", data, asd);
+            $.operate.saveTabLxbg(prfix_qingqiu + "/collaborativeAccept", data, asd);
+            function asd(a) {
+                if (a.code == 0) {
+                    var tabPanel = $(window.frameElement).attr('data-panel');
+                    var tabMain = parent.$('.menuTab[data-id="' + tabPanel + '"]').attr('data-panel');
+                    parent.$('.menuTab[data-id="' + tabMain + '"]').trigger('click');
+                    parent.$('.menuTab[data-id="' + tabPanel + '"]').remove();
+                    parent.$('.menuTab[data-panel="' + tabPanel + '"]').remove();
+                    parent.$('.mainContent .RuoYi_iframe[data-id="' + tabPanel + '"]').remove();
+                    if (flag == '1') {//判断是否工作台打开
+                        parent.$('.mainContent .RuoYi_iframe[name="iframe0"]').contents().find(".list01>li:nth-child(8)>a").trigger('click');
+                    }else  {
+                        parent.$('.mainContent .RuoYi_iframe[data-id="' + tabMain + '"]').contents().find("#searchBut").trigger('click');
+                    }
+                } else {
+                    return
+                }
+            }
+        }
+    };
+</script>
+</body>
+</html>

@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('硬件报障列表')" />
+    <th:block th:include="include :: select2-css" />
+</head>
+<body class="gray-bg">
+     <div class="container-div">
+        <div class="row">
+            <div class="col-sm-12 search-collapse">
+                <form id="formId">
+                    <div class="select-list">
+                        <ul>
+                            <li class="select-time">
+                                <p>工程师到场:</p>
+                                <input type="text"  id="beginEngineerArriveTime" placeholder="开始时间" name="params[beginEngineerArriveTime]"/>
+                                <span>-</span>
+                                <input type="text"  id="endEngineerArriveTime" placeholder="结束时间" name="params[endEngineerArriveTime]"/>
+                            </li>
+                            <li class="select-time">
+                                <p>受理时间:</p>
+                                <input type="text"   id="beginEngineerAcceptTime" placeholder="开始时间" name="params[beginEngineerAcceptTime]"/>
+                                <span>-</span>
+                                <input type="text"   id="endEngineerAcceptTime" placeholder="结束时间" name="params[endEngineerAcceptTime]"/>
+                            </li>
+                            <li class="select-time">
+                                <p>完成时间:</p>
+                                <input type="text"   id="beginCompleteTime" placeholder="开始时间" name="params[beginCompleteTime]"/>
+                                <span>-</span>
+                                <input type="text" id="endCompleteTime" placeholder="结束时间" name="params[endCompleteTime]"/>
+                            </li>
+                            <li class="select-time">
+                                <p>厂商开单时间:</p>
+                                <input type="text"  id="beginOrderTime" placeholder="开始时间" name="params[beginOrderTime]"/>
+                                <span>-</span>
+                                <input type="text"   id="endOrderTime" placeholder="结束时间" name="params[endOrderTime]"/>
+                            </li>
+                            <li class="select-time">
+                                <p>厂商受理时间:</p>
+                                <input type="text"   id="beginFacturerAcceptTime" placeholder="开始时间" name="params[beginFacturerAcceptTime]"/>
+                                <span>-</span>
+                                <input type="text"   id="endFacturerAcceptTime" placeholder="结束时间" name="params[endFacturerAcceptTime]"/>
+                            </li>
+                            <li class="select-time">
+                                <p>目标解决日期:</p>
+                                <input type="text"   id="beginExpectTime" placeholder="开始时间" name="params[beginExpectTime]"/>
+                                <span>-</span>
+                                <input type="text"   id="endExpectTime" placeholder="结束时间" name="params[endExpectTime]"/>
+                            </li>
+                            <li class="select-time">
+                                <p>创建时间:</p>
+                                <input type="text"   id="beginCreatedTime" placeholder="开始时间" name="params[beginCreatedTime]"/>
+                                <span>-</span>
+                                <input type="text"   id="endCreatedTime" placeholder="结束时间" name="params[endCreatedTime]"/>
+                            </li>
+                            <li>
+                                <p>机具号:</p>
+                                <input type="text" name="implementNo" maxlength="20"/>
+                            </li>
+                            <li>
+                                <p>单号:</p>
+                                <input type="text" name="extra1" maxlength="20"/>
+                            </li>
+                            <li>
+                                <p>故障类别:</p>
+                                <select name="chmType" class="form-control" id="chmType">
+                                    <option value="">所有</option>
+                                    <option value="1">硬件</option>
+                                    <option value="2">软件</option>
+                                </select>
+                            </li>
+                            <li>
+                                <p>标题:</p>
+                                <input type="text" name="title" maxlength="30"/>
+                            </li>
+                            <li>
+                                <p>厂商:</p>
+                                <input type="text" name="facturer" maxlength="30"/>
+                            </li>
+                            <li>
+                                <p>上报人:</p>
+                                <input type="text" name="contact" maxlength="10"/>
+                            </li>
+                            <li>
+                                <p>电话:</p>
+                                <input type="text" name="contactDetails" maxlength="20"/>
+                            </li>
+                            <li>
+                                <p>备注:</p>
+                                <input type="text" name="remarks" maxlength="30"/>
+                            </li>
+                            <li>
+                                <p>设备标识号:</p>
+                                <input type="text" name="implementId" maxlength="20"/>
+                            </li>
+                            <li>
+                                <p>合胜flowNo:</p>
+                                <input type="text" name="flowNo" maxlength="20"/>
+                            </li>
+                            <li>
+                                <p>电话回访:</p>
+                                <select name="telephoneFollow" class="form-control" >
+                                    <option value="">所有</option>
+                                    <option value="0">否</option>
+                                    <option value="1">是</option>
+                                </select>
+                            </li>
+                            <li>
+                                <p>上报部门:</p>
+                                <select class="form-control" name="reportDepartment" th:with="type=${@IChmBasedataService.selectChmBasedataListSelect()}">
+                                    <option value="">所有</option>
+                                    <option th:each="dict : ${type}" th:text="${dict.Label}" th:value="${dict.Value}"></option>
+                                </select>
+                            </li>
+                            <li>
+                                <p>服务评价:</p>
+                                <select   name="serviceEvaluation" class="form-control">
+                                    <option value="">所有</option>
+                                    <option value="1">优</option>
+                                    <option value="2">良</option>
+                                    <option value="3">中</option>
+                                </select>
+                            </li>
+                            <li>
+                                <p>故障类型:</p>
+                                <select name="faultType" class="form-control" >
+                                    <option value="">所有</option>
+                                    <option value="1">硬件更换</option>
+                                    <option value="2">硬件调试</option>
+                                    <option value="3">移位搬迁</option>
+                                    <option value="4">项目实施</option>
+                                    <option value="5">安装开通</option>
+                                    <option value="6">人为故障</option>
+                                    <option value="7">软件调试</option>
+                                    <option value="8">网络通信</option>
+                                </select>
+                            </li>
+                            <li>
+                                <p>解决方式:</p>
+                                <select name="solution"  class="form-control">
+                                    <option value="">所有</option>
+                                    <option value="0">现场</option>
+                                    <option value="1">远程</option>
+                                </select>
+                            </li>
+                            <li>
+                                <p>设备类型(一级):</p>
+                                <select name="equipmentType" id="equipmentType" class="form-control" th:with="type=${@IChmParavalueService.selectChmParavalueListRy('0')}">
+                                    <option value="">所有</option>
+                                    <option th:each="dict : ${type}" th:text="${dict.name}" th:value="${dict.id}"></option>
+                                </select>
+                            </li>
+                            <li>
+                                <p>设备类型(二级):</p>
+                                <select name="equipmentName" id="equipmentName" class="form-control"  >
+                                    <option value="">所有</option>
+                                </select>
+                            </li>
+                            <li>
+                                <p>设备类型(三级):</p>
+                                <select name="equipmentModel" id="equipmentModel" class="form-control"  >
+                                    <option value="">所有</option>
+                                </select>
+                            </li>
+                            <li>
+                                <p>影响范围:</p>
+                                <select name="scopeInfluence"  class="form-control">
+                                    <option value="">所有</option>
+                                    <option value="1">单台设备</option>
+                                    <option value="2">多台设备</option>
+                                    <option value="3">网点所有设备</option>
+                                </select>
+                            </li>
+                            <li>
+                                <p>事件描述:</p>
+                                <input type="text" name="faultDescription" maxlength="20"/>
+                            </li>
+                            <li>
+                                <p>状态:</p>
+                                <select name="status" class="form-control">
+                                    <option value="">所有</option>
+                                    <option value="0">待提交</option>
+                                    <option value="1">已提交</option>
+                                    <option value="2">进行中</option>
+                                    <option value="3">已转事件单</option>
+                                    <option value="4">退回待分派</option>
+                                    <option value="5">待复核</option>
+                                    <option value="6">已关闭</option>
+                                </select>
+                            </li>
+                            <li>
+                                <p>当前处理人:</p>
+                                <input type="text" name="currentHandlerId" maxlength="10"/>
+                            </li>
+                            <li>
+                                <p>服务台处理人:</p>
+                                <input type="text" name="itDealUser" maxlength="10"/>
+                            </li>
+                            <li class="select-time">
+                                <p>复核时间:</p>
+                                <input type="text"  id="beginFuheTime" placeholder="开始时间" name="params[beginFuheTime]"/>
+                                <span>-</span>
+                                <input type="text"  id="endFuheTime" placeholder="结束时间" name="params[endFuheTime]"/>
+                            </li>
+                            <li>
+                                <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.resetAll('formId')"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                            </li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+
+            <div class="btn-group-sm" id="toolbar" role="group">
+                <button data-toggle="dropdown" class="btn btn-primary btn-sm dropdown-toggle">导出<span
+                        class="caret"></span>
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a onclick="$.table.exportExcel()">导出所有</a>
+                    </li>
+                    <li><a onclick="$.table.exportExcelCurrentPage()">导出当前页</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="col-sm-12 select-table table-striped">
+                <table id="bootstrap-table"></table>
+            </div>
+        </div>
+    </div>
+     <th:block th:include="include :: footer" />
+     <th:block th:include="include :: select2-js" />
+     <script th:inline="javascript">
+        var prefix = ctx + "form/chm";
+        $(function(){
+        layui.use('laydate', function() {
+            var laydate = layui.laydate;
+            laydate.render({
+                elem: '#beginEngineerArriveTime',
+                type: 'datetime',
+                trigger: 'click'
+            });
+            laydate.render({
+                elem: '#endEngineerArriveTime',
+                type: 'datetime',
+                trigger: 'click'
+            });
+            laydate.render({
+                elem: '#beginEngineerAcceptTime',
+                type: 'datetime',
+                trigger: 'click'
+            });
+            laydate.render({
+                elem: '#endEngineerAcceptTime',
+                type: 'datetime',
+                trigger: 'click'
+            });
+
+            laydate.render({
+                elem: '#beginCompleteTime',
+                type: 'datetime',
+                trigger: 'click'
+            });
+            laydate.render({
+                elem: '#endCompleteTime',
+                type: 'datetime',
+                trigger: 'click'
+            });
+
+            laydate.render({
+                elem: '#beginOrderTime',
+                type: 'datetime',
+                trigger: 'click'
+            });
+            laydate.render({
+                elem: '#endOrderTime',
+                type: 'datetime',
+                trigger: 'click'
+            });
+
+            laydate.render({
+                elem: '#beginFacturerAcceptTime',
+                type: 'datetime',
+                trigger: 'click'
+            });
+            laydate.render({
+                elem: '#endFacturerAcceptTime',
+                type: 'datetime',
+                trigger: 'click'
+            });
+
+            laydate.render({
+                elem: '#beginExpectTime',
+                type: 'datetime',
+                trigger: 'click'
+            });
+            laydate.render({
+                elem: '#endExpectTime',
+                type: 'datetime',
+                trigger: 'click'
+            });
+
+            laydate.render({
+                elem: '#beginCreatedTime',
+                type: 'datetime',
+                trigger: 'click'
+            });
+            laydate.render({
+                elem: '#endCreatedTime',
+                type: 'datetime',
+                trigger: 'click'
+            });
+
+            // laydate.render({
+            //     elem: '#beginItDealTime',
+            //     type: 'datetime',
+            //     trigger: 'click'
+            // });
+            // laydate.render({
+            //     elem: '#endItDealTime',
+            //     type: 'datetime',
+            //     trigger: 'click'
+            // });
+            laydate.render({
+                elem: '#beginFuheTime',
+                type: 'datetime',
+                trigger: 'click'
+            });
+            laydate.render({
+                elem: '#endFuheTime',
+                type: 'datetime',
+                trigger: 'click'
+            });
+        })});
+        $("#equipmentType").change(function(){
+            $("#equipmentName").empty();
+            $("#equipmentModel").empty();
+            changeSelect("equipmentName",$("#equipmentType").val())
+        });
+        $("#equipmentName").change(function(){
+            $("#equipmentModel").empty();
+            changeSelect("equipmentModel",$("#equipmentName").val())
+        });
+        function changeSelect(val,id){
+            $.ajax({
+                url: ctx +"system/chm/paravalue/selectList",//请求路径
+                type: 'POST', //请求类型
+                dataType:"json", //数据格式
+                data: JSON.stringify({"parentId":id}),
+                contentType: 'application/json;charset=UTF-8',
+                success:function(data){    //data 后端响应来的数据
+                    $("#"+val).append("<option value='' >所有</option>")
+                    $(data).each(function(a,b){
+                        $("#"+val).append("<option value='"+b.id+"'>"+b.name+"</option>");
+                    });
+                },
+            });
+        }
+        $(function() {
+            var options = {
+                url: prefix + "/list",
+                createUrl: prefix + "/add",
+                updateUrl: prefix + "/edit/{id}",
+                removeUrl: prefix + "/remove",
+                exportUrl: prefix + "/export",
+                modalName: "硬件报障",
+                onClickRow: onClickRow,
+                columns: [{
+                    checkbox: true
+                },
+                // {
+                //     title: '操作',
+                //     align: 'center',
+                //     formatter: function(value, row, index) {
+                //         var actions = [];
+                //         actions.push('<a class="btn btn-success btn-xs " href="javascript:void(0)" onclick="$.operate.edit(\'' + row.id + '\')"><i class="fa fa-edit"></i>编辑</a> ');
+                //         return actions.join('');
+                //     }
+                // },
+                {
+                    field : 'extra1',
+                    title : '单号'
+                },
+                {
+                    field : 'title',
+                    title : '标题',
+                    formatter: function(value, row, index) {
+                        return $.table.tooltip(value);
+                    },
+                    cellStyle: function cellStyle(value, row, index, field) {
+                        return { classes: 'text-nowrap'};
+                    }
+                },
+                {
+                    field : 'reportDepartment',
+                    title : '上报部门:'
+                },
+                {
+                    field : 'contact',
+                    title : '上报人'
+                },
+                {
+                    field : 'contactDetails',
+                    title : '电话'
+                },
+                {
+                    field : 'facturer', 
+                    title : '厂商'
+                },
+                {
+                    field : 'remarks', 
+                    title : '备注',
+                    formatter: function(value, row, index) {
+                        return $.table.tooltip(value);
+                    },
+                    cellStyle: function cellStyle(value, row, index, field) {
+                        return { classes: 'text-nowrap'};
+                    }
+                },
+                {
+                    field : 'dealNotes', 
+                    title : '处理过程记录',
+                    formatter: function(value, row, index) {
+                        return $.table.tooltip(value);
+                    },
+                    cellStyle: function cellStyle(value, row, index, field) {
+                        return { classes: 'text-nowrap'};
+                    }
+                },
+                {
+                    field : 'implementId', 
+                    title : '设备标识号'
+                },
+                {
+                    field : 'flowNo', 
+                    title : '合胜flowNo'
+                },
+                {
+                    field : 'telephoneFollow', 
+                    title : '电话回访',formatter:function (value,row,index) {
+                        if(0==value){return "否"}
+                        if(1==value){return "是"}
+                    }
+                },
+                {
+                    field : 'cancleNote', 
+                    title : '取消原因',
+                    formatter: function(value, row, index) {
+                        return $.table.tooltip(value);
+                    },
+                    cellStyle: function cellStyle(value, row, index, field) {
+                        return { classes: 'text-nowrap'};
+                    }
+                },
+                {
+                    field : 'serviceEvaluation', 
+                    title : '服务评价',formatter:function (value,row,index) {
+                        if(1==value){return "优"}
+                        if(2==value){return "良"}
+                        if(3==value){return "中"}
+                    }
+                },
+                {
+                    field : 'faultType', 
+                    title : '故障类型',formatter:function (value,row,index) {
+                            if(value==1){return "硬件更换"}
+                            if(value==2){return "硬件调试"}
+                            if(value==3){return "移位搬迁"}
+                            if(value==4){return "项目实施"}
+                            if(value==5){return "安装开通"}
+                            if(value==6){return "人为故障"}
+                            if(value==7){return "软件调试"}
+                            if(value==8){return "网络通信"}
+                    }
+                },
+                {
+                    field : 'solution', 
+                    title : '解决方式',formatter:function (value,row,index) {
+                        if(0==value){return "现场"}
+                        if(1==value){return "远程"}
+                    }
+                },
+                {
+                    field : 'scopeInfluence', 
+                    title : '影响范围',formatter:function (value,row,index) {
+                        if(1==value){return "单台设备"}
+                        if(2==value){return "多台设备"}
+                        if(3==value){return "网点所有设备"}
+                    }
+                },
+                {
+                    field : 'urgent', 
+                    title : '是否加急' ,formatter: function (value, row, index) {
+                         if(0==value){return "否"}
+                         if(1==value){return "是"}
+                    }
+                },
+                {
+                    field : 'expectTime', 
+                    title : '目标解决日期'
+                },
+                {
+                    field : 'equipmentType', 
+                    title : '设备类型(一级)'
+                },
+                {
+                    field : 'equipmentName',
+                    title : '设备类型(二级)'
+                },
+                {
+                    field : 'equipmentModel',
+                    title : '设备类型(三级)'
+                },
+                {
+                    field : 'faultDescription', 
+                    title : '事件描述',
+                    formatter: function(value, row, index) {
+                        return $.table.tooltip(value);
+                    },
+                    cellStyle: function cellStyle(value, row, index, field) {
+                        return { classes: 'text-nowrap'};
+                    }
+                },
+                {
+                    field : 'implementNo', 
+                    title : '机具号'
+                },
+                {
+                    field : 'chmType', 
+                    title : '故障类别'
+                },
+                {
+                    field : 'source',
+                    title : '来源',formatter:function (value,row,index) {
+                        if(1==value){return "移动端"}
+                        if(2==value){return "PC端"}
+                    }
+                },
+                {
+                    field : 'updatedTime', 
+                    title : '更新时间'
+                },
+                {
+                    field : 'createdBy', 
+                    title : '创建人'
+                },
+                {
+                    field : 'createdTime', 
+                    title : '创建时间'
+                },
+                {
+                    field : 'engineerArriveTime',
+                    title : '工程师到场时间'
+                },
+                {
+                    field : 'engineerAcceptTime',
+                    title : '工程师受理时间'
+                },
+                {
+                    field : 'facturerAcceptTime',
+                    title : '厂商受理时间'
+                },
+                {
+                    field : 'completeTime',
+                    title : '完成时间'
+                },
+                {
+                    field : 'orderTime',
+                    title : '厂商开单时间'
+                },
+                {
+                    field : 'status', 
+                    title : '状态'
+                },{
+                    field: 'currentHandlerId',
+                    title: '当前处理人'
+                },
+                {
+                    field : 'itDealUser',
+                    title : '服务台处理人'
+                },
+                // {
+                //     field : 'itDealTime',
+                //     title : '服务台处理时间'
+                // },
+                {
+                    field : 'realDealUser',
+                    title : '实际处理人'
+                },
+                {
+                    field : 'fuHeTime',
+                    title : '复核时间'
+                },
+                {
+                    field : 'id', 
+                    title : '主键',
+                    visible: false
+                }]
+            };
+            $.table.init(options);
+        });
+        function onClickRow(row, $element){
+            $.modal.openNoColse("详情", prefix+"/view/"+row.id);
+        }
+    </script>
+</body>
+</html>

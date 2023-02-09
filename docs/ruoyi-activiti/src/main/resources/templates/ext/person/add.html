@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('支持人員分机号新增')" />
+    <th:block th:include="include :: select2-css" />
+    <th:block th:include="include :: summernote-css" />
+    <th:block th:include="include :: datetimepicker-css" />
+</head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form class="form-horizontal m" id="form-query-add">
+            <input id="id" name="id" type="hidden">
+            <div class="form-group">
+                <label class="col-sm-3 control-label">公司名称：</label>
+                <div class="col-sm-8">
+                    <input name="orgid" id="orgid" class="form-control" type="hidden">
+                    <input id="occurrenceOrgName" name="occurrenceOrgName" type="text" class="form-control"
+                           onclick="selectogOrg()" required readonly style="background-color: #fdfdfd"/>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">系统名称：</label>
+                <div class="col-sm-8">
+                    <input id="sysid" name="sysid" type="hidden" class="form-control" />
+                    <input id="sysname" name="sysname" type="text" style="background-color: #ffffff"
+                           class="form-control" onclick="selectOneApplication()" required/>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">姓名：</label>
+                <div class="col-sm-8">
+                    <input name="name" id="name" class="form-control" type="text" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">分机号：</label>
+                <div class="col-sm-8">
+                    <input name="extension" id="extension" class="form-control" type="text" required>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="row">
+        <div class="col-sm-offset-5 col-sm-10">
+            <button type="button" class="btn btn-sm btn-primary" onclick="submitHandler()"><i class="fa fa-check"></i>提 交</button>&nbsp;
+            <button type="button" class="btn btn-sm btn-primary" onclick="location.replace(location.href)"><i class="fa fa-check"></i>重 置</button>&nbsp;
+            <button type="button" class="btn btn-sm btn-danger" onclick="closeItem()"><i class="fa fa-reply-all"></i>关 闭</button>
+        </div>
+    </div>
+    <th:block th:include="include :: footer" />
+    <th:block th:include="include :: select2-js" />
+    <th:block th:include="include :: summernote-js" />
+    <th:block th:include="include :: datetimepicker-js" />
+    <script type="text/javascript">
+        var prefix = ctx + "ext/person";
+
+        var prefix_version = ctx + "fmbiz";
+
+        $("#form-query-add").validate({
+            focusCleanup: true
+        });
+
+        //校验长度
+        $('#name').bind('input propertychange',function(){ //添加监听input值的改变事件
+            var tvalmum;
+            //统计input输入字段的长度
+            tvalnum = $(this).val().length;
+            //如果大于8个字直接进行字符串截取
+            if(tvalnum>36){
+                var tval = $(this).val();
+                tval = tval.substring(0,36);
+                $(this).val(tval);
+                alert('长度超过限制！');
+            }
+        });
+
+        $('#extension').bind('input propertychange',function(){ //添加监听input值的改变事件
+            var tvalmum;
+            //统计input输入字段的长度
+            tvalnum = $(this).val().length;
+            //如果大于8个字直接进行字符串截取
+            if(tvalnum>36){
+                var tval = $(this).val();
+                tval = tval.substring(0,36);
+                $(this).val(tval);
+                alert('长度超过限制！');
+            }
+        });
+
+        // 选择创建机构（只能单选）
+        function selectogOrg() {
+            $.modal.open("选择创建机构", prefix + "/selectogOrg");
+        }
+        // 选择应用系统多选
+        function selectOneApplication() {
+            $.modal.open("选择应用系统", prefix+ "/selectOneApplication");
+        }
+
+        function submitHandler() {
+            if ($.validate.form()) {
+                $.operate.saveTab(prefix + "/add", $('#form-query-add').serialize());
+            }
+        }
+    </script>
+</body>
+</html>

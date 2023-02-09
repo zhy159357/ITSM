@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:include="include :: header('数据问题单受理转发')"/>
+    <th:block th:include="include :: datetimepicker-css"/>
+    <th:block th:include="include :: ztree-css"/>
+    <th:block th:include="include :: summernote-css"/>
+    <th:block th:include="include :: select2-css"/>
+</head>
+<body class="white-bg">
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+    <form class="form-horizontal" id="form-dataq-add" th:object="${imBizDataq}">
+        <input type="hidden" id="imId" name="imId" th:value="${imId}"/>
+        <input type="hidden" id="taskId" name="params[taskId]" th:value="${taskId}"/>
+        <input th:field="*{currentState}" id="currentState" th:type="hidden"/>
+        <input th:field="*{imNo}" id="imNo" th:type="hidden"/>
+
+        <div class="form-group">
+            <label class="col-sm-2 control-label is-required" style="color: red;">技术审核人：</label>
+            <div class="col-sm-10">
+                <input id="technicalId" th:value="*{technicalId}" name="technicalId" class="form-control" type="hidden">
+                <input id="technicalName" th:value="*{technicalName}" name="technicalName" class="form-control"
+                       style="background-color: #ffffff" type="text" onclick="technologyAudit()" readonly
+                       required>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label  text-right " style="color: red;">转发意见：</label>
+            <div class="col-sm-10">
+                        <textarea id="comment" rows="5" cols="20" name="params[comment]" class="form-control"
+                                  maxlength="100" required></textarea>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-12" style="text-align: center">
+                <button type="button" class="btn btn-sm btn-success" onclick="forwardBusinessBtn()">业务转发</button>
+            </div>
+        </div>
+    </form>
+</div>
+<th:block th:include="include :: footer"/>
+<th:block th:include="include :: datetimepicker-js"/>
+<th:block th:include="include :: summernote-js"/>
+<th:block th:include="include :: select2-js"/>
+<script type="text/javascript">
+
+    var prefix = ctx + "system/dataq"
+
+    $("#form-dataq-add").validate({
+        onkeyup: false,
+        rules: {},
+        messages: {},
+        focusCleanup: true
+    });
+
+
+    /**
+     *业务转发
+     */
+    function forwardBusinessBtn() {
+
+        var technicalId = $('#technicalId').val();
+
+        if (technicalId.trim() == '') {
+            $.modal.alertError('请选择技术审核人 ');
+            return;
+        }
+        var comment = $('#comment').val().trim();
+        if (comment == '') {
+            $.modal.alertError('请输入转发意见 ');
+            return;
+        }
+        var data = $("#form-dataq-add").serializeArray();
+        //处理通过
+        $.operate.saveTab(prefix + "/saveFlowZf", data,asd);
+
+        function asd(a) {
+            if (a.code == 0) {
+                var tabPanel = $(window.frameElement).attr('data-panel');
+                var tabMain = parent.$('.menuTab[data-id="' + tabPanel + '"]').attr('data-panel');
+                parent.$('.menuTab[data-id="' + tabMain + '"]').trigger('click');
+                parent.$('.menuTab[data-id="' + tabPanel + '"]').remove();
+                parent.$('.menuTab[data-panel="' + tabPanel + '"]').remove();
+                parent.$('.mainContent .RuoYi_iframe[data-id="' + tabPanel + '"]').remove();
+                var src = ctx + "system/dataq/shouli";
+                var tab = window.top.$("iframe[src='" + src + "']");
+                eg:tab.contents().find("#SjWtSearch").click();
+            } else {
+                return
+            }
+        }
+
+    }
+
+    window.onunload = function (e) {
+        var src = ctx + "system/dataq/shouli";
+        var tab = window.top.$("iframe[src='" + src + "']");
+        eg:tab.contents().find("#SjWtSearch").click();
+    }
+
+    // 选择技术审核人
+    function technologyAudit() {
+        var rId = "2304";
+        var url = prefix + "/selectBusinessAudit" + "?" + "pflag=1" + "&rId=" + rId;
+        $.modal.open("选择技术审核人", url);
+    }
+
+
+</script>
+</body>
+</html>

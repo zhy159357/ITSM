@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.activiti.mapper.CustInfoMapper">
+
+    <resultMap type="CustInfo" id="CustInfoResult">
+        <result property="cId" column="c_id"/>
+        <result property="cName" column="c_name"/>
+        <result property="cPhone" column="c_phone"/>
+        <result property="cDept" column="c_dept"/>
+        <result property="cPost" column="c_post"/>
+        <result property="cAddress" column="c_address"/>
+        <result property="createTime" column="create_time"/>
+        <result property="cColumn" column="c_column"/>
+    </resultMap>
+
+    <select id="checkCustInfo" parameterType="String" resultMap="CustInfoResult">
+        select * from cust_info
+        <where>
+            1=1
+            <if test="cName != null  and cName != ''">
+                and c_name = #{cName}
+            </if>
+            <if test="cPhone != null  and cPhone != ''">
+                and c_phone = #{cPhone}
+            </if>
+            order by create_time desc
+        </where>
+    </select>
+
+    <insert id="insertCustInfo" parameterType="CustInfo">
+        insert into cust_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            c_id,
+            <if test="cName != null  and cName != ''">c_name,</if>
+            <if test="cPhone != null  and cPhone != ''">c_phone,</if>
+            <if test="cDept != null  and cDept != ''">c_dept,</if>
+            <if test="cPost != null  and cPost != ''">c_post,</if>
+            <if test="cAddress != null  and cAddress != ''">c_address,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="cColumn != null  and cColumn != ''">c_column,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            #{cId},
+            <if test="cName != null  and cName != ''">#{cName},</if>
+            <if test="cPhone != null  and cPhone != ''">#{cPhone},</if>
+            <if test="cDept != null  and cDept != ''">#{cDept},</if>
+            <if test="cPost != null  and cPost != ''">#{cPost},</if>
+            <if test="cAddress != null  and cAddress != ''">#{cAddress},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="cColumn != null  and cColumn != ''">#{cColumn},</if>
+        </trim>
+    </insert>
+
+    <update id="updateById" parameterType="CustInfo">
+        update cust_info
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="cName != null  and cName != ''">c_name = #{cName},</if>
+            <if test="cPhone != null  and cPhone != ''">c_phone = #{cPhone},</if>
+            <if test="cDept != null  and cDept != ''">c_dept = #{cDept},</if>
+            <if test="cPost != null  and cPost != ''">c_post = #{cPost},</if>
+            <if test="cAddress != null  and cAddress != ''">c_address = #{cAddress},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="cColumn != null  and cColumn != ''">c_column = #{cColumn},</if>
+        </trim>
+        where c_id = #{cId}
+    </update>
+
+    <select id="getByCId" parameterType="String" resultMap="CustInfoResult">
+        select * from cust_info where c_id = #{cId}
+    </select>
+
+    <select id="getByCustInfo" parameterType="String" resultMap="CustInfoResult">
+        select * from cust_info
+        <where>
+            1=1
+            <if test="cName != null  and cName != ''">
+                and c_name = #{cName}
+            </if>
+            <if test="cPhone != null  and cPhone != ''">
+                and c_phone = #{cPhone}
+            </if>
+        </where>
+    </select>
+
+    <select id="getByCount" parameterType="String" resultType="int">
+         select count(*) from cust_info where c_phone = #{cPhone}
+    </select>
+
+    <delete id="deleteCustByIds" parameterType="String">
+        delete  from cust_info  where c_id in
+        <foreach collection="array" item="c_id" open="(" separator="," close=")">
+            #{c_id}
+        </foreach>
+    </delete>
+</mapper>

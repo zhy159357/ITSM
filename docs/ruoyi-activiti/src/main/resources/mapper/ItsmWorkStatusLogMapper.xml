@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.activiti.mapper.ItsmWorkStatusLogMapper">
+
+
+	<resultMap type="ItsmWorkStatusLog" id="ItsmWorkStatusLogResult">
+		<result property="logId"    column="log_id"    />
+		<result property="workId"    column="work_id"    />
+		<result property="pid"    column="pid"    />
+		<result property="userId"    column="user_id"    />
+		<result property="workStatus"    column="work_status"    />
+		<result property="operateTime"    column="operate_time"    />
+	</resultMap>
+
+	<sql id="selectItsmWorkStatusLogVo">
+		select log_id, work_id, pid, user_id, work_status, operate_time from itsm_work_status_log
+	</sql>
+
+	<select id="selectItsmWorkStatusLogList" parameterType="ItsmWorkStatusLog" resultMap="ItsmWorkStatusLogResult">
+		<include refid="selectItsmWorkStatusLogVo"/>
+		<where>
+			<if test="workId != null  and workId != ''"> and work_id = #{workId}</if>
+			<if test="pid != null  and pid != ''"> and pid = #{pid}</if>
+			<if test="userId != null  and userId != ''"> and user_id = #{userId}</if>
+			<if test="workStatus != null  and workStatus != ''"> and work_status = #{workStatus}</if>
+			<if test="operateTime != null  and operateTime != ''"> and operate_time = #{operateTime}</if>
+		</where>
+	</select>
+
+	<select id="selectItsmWorkStatusLogById" parameterType="String" resultMap="ItsmWorkStatusLogResult">
+		<include refid="selectItsmWorkStatusLogVo"/>
+		where log_id = #{logId}
+	</select>
+
+	<insert id="insertItsmWorkStatusLog" parameterType="ItsmWorkStatusLog">
+		insert into itsm_work_status_log
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="logId != null  and logId != ''">log_id,</if>
+			<if test="workId != null  and workId != ''">work_id,</if>
+			<if test="pid != null  and pid != ''">pid,</if>
+			<if test="userId != null  and userId != ''">user_id,</if>
+			<if test="workStatus != null  and workStatus != ''">work_status,</if>
+			<if test="operateTime != null  and operateTime != ''">operate_time,</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="logId != null  and logId != ''">#{logId},</if>
+			<if test="workId != null  and workId != ''">#{workId},</if>
+			<if test="pid != null  and pid != ''">#{pid},</if>
+			<if test="userId != null  and userId != ''">#{userId},</if>
+			<if test="workStatus != null  and workStatus != ''">#{workStatus},</if>
+			<if test="operateTime != null  and operateTime != ''">#{operateTime},</if>
+		</trim>
+	</insert>
+
+	<update id="updateItsmWorkStatusLog" parameterType="ItsmWorkStatusLog">
+		update itsm_work_status_log
+		<trim prefix="SET" suffixOverrides=",">
+			<if test="workId != null  and workId != ''">work_id = #{workId},</if>
+			<if test="pid != null  and pid != ''">pid = #{pid},</if>
+			<if test="userId != null  and userId != ''">user_id = #{userId},</if>
+			<if test="workStatus != null  and workStatus != ''">work_status = #{workStatus},</if>
+			<if test="operateTime != null  and operateTime != ''">operate_time = #{operateTime},</if>
+		</trim>
+		where log_id = #{logId}
+	</update>
+
+	<delete id="deleteItsmWorkStatusLogById" parameterType="String">
+		delete from itsm_work_status_log where log_id = #{logId}
+	</delete>
+
+	<delete id="deleteItsmWorkStatusLogByIds" parameterType="String">
+		delete from itsm_work_status_log where log_id in
+		<foreach item="logId" collection="array" open="(" separator="," close=")">
+			#{logId}
+		</foreach>
+	</delete>
+
+
+</mapper>

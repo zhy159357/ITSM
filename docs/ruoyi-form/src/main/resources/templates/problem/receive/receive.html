@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('问题单受理')"/>
+    <th:block th:include="include :: datetimepicker-css"/>
+    <th:block th:include="include :: summernote-css"/>
+    <th:block th:include="include :: select2-css"/>
+</head>
+<body class="white-bg">
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+    <form class="form-horizontal m" id="form-sheet-receive" th:object="${problemSheet}">
+        <input name="params[taskId]" type="hidden" id="taskId" th:value="*{params.taskId}"/>
+        <input name="params[problemCauseList]" type="hidden" id="problemCauseList"
+               th:value="*{params.problemCauseList}"/>
+        <input name="problemId" id="problemId" th:field="*{problemId}" type="hidden">
+        <h4 class="form-header h4">基本信息</h4>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">问题单编号：</label>
+                    <div class="col-sm-8">
+                        <input name="problemNo" th:field="*{problemNo}" class="form-control" type="text" readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">问题标题：</label>
+                    <div class="col-sm-8">
+                        <input name="problemTitle" class="form-control" type="text" th:field="*{problemTitle}" readonly>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">状态：</label>
+                    <div class="col-sm-8">
+                        <input name="status" id="status" class="form-control" th:field="*{status}" type="hidden">
+                        <select name="status" class="form-control"
+                                th:with="type=${@pubParaValue.selectPubParaValueByParaName('problem_status')}"
+                                th:field="*{status}" disabled>
+                            <option th:each="PubParaValue : ${type}" th:text="${PubParaValue.valueDetail}"
+                                    th:value="${PubParaValue.value}"
+                                    th:selected="${PubParaValue.value eq status}"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">阶段：</label>
+                    <div class="col-sm-8">
+                        <select name="stage" class="form-control"
+                                th:with="type=${@pubParaValue.selectPubParaValueByParaName('problem_stage')}"
+                                th:field="*{stage}" disabled>
+                            <option th:each="PubParaValue : ${type}" th:text="${PubParaValue.valueDetail}"
+                                    th:value="${PubParaValue.value}"
+                                    th:selected="${PubParaValue.value eq stage}"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">问题发起部室经理：</label>
+                    <div class="col-sm-8">
+                        <input name="problemOriginateDepartManagerName" th:field="*{problemOriginateDepartManagerName}"
+                               class="form-control" type="text" readonly>
+                        <input id="problemOriginateDepartManager" name="problemOriginateDepartManager" type="hidden"
+                               class="form-control">
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">问题发起人：</label>
+                    <div class="col-sm-8">
+                        <input name="problemOriginatorName" th:field="*{problemOriginatorName}" class="form-control"
+                               type="text"
+                               readonly>
+                        <input id="problemOriginator" name="problemOriginator" type="hidden" class="form-control">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">问题当前处理人：</label>
+                    <div class="col-sm-8">
+                        <input name="problemCurrentHandlerName" th:field="*{problemCurrentHandlerName}"
+                               class="form-control"
+                               type="text" readonly>
+                        <input id="problemCurrentHandler" name="problemCurrentHandler" type="hidden"
+                               class="form-control">
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">问题管理员：</label>
+                    <div class="col-sm-8">
+                        <input name="problemManagerName" th:field="*{problemManagerName}" class="form-control"
+                               type="text"
+                               readonly>
+                        <input id="problemManager" name="problemManager" type="hidden" class="form-control">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">来源：</label>
+                    <div class="col-sm-8">
+                        <select name="problemSource" class="form-control"
+                                th:with="type=${@pubParaValue.selectPubParaValueByParaName('problem_source')}"
+                                th:field="*{problemSource}" disabled>
+                            <option th:each="PubParaValue : ${type}" th:text="${PubParaValue.valueDetail}"
+                                    th:value="${PubParaValue.value}"
+                                    th:selected="${PubParaValue.value eq problemSource}">>
+                            </option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">问题类型：</label>
+                    <div class="col-sm-8">
+                        <select name="problemType" class="form-control"
+                                th:with="type=${@pubParaValue.selectPubParaValueByParaName('problem_type')}"
+                                th:field="*{problemType}" disabled>
+                            <option th:each="PubParaValue : ${type}" th:text="${PubParaValue.valueDetail}"
+                                    th:value="${PubParaValue.value}" th:selected="${PubParaValue.value eq problemType}">
+                                >
+                            </option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">类别：</label>
+                    <div class="col-sm-8">
+                        <input name="problemCategoryName" th:field="*{problemCategoryName}" class="form-control"
+                               type="text"
+                               readonly>
+                        <input name="problemCategory" th:field="*{problemCategory}" class="form-control" type="hidden">
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">子类：</label>
+                    <div class="col-sm-8">
+                        <input name="problemSubclassName" th:field="*{problemSubclassName}" class="form-control"
+                               type="text"
+                               readonly>
+                        <input name="problemSubclass" th:field="*{problemSubclass}" class="form-control" type="hidden">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">条目：</label>
+                    <div class="col-sm-8">
+                        <input name="problemEntryName" th:field="*{problemEntryName}" class="form-control" type="text"
+                               readonly>
+                        <input name="problemEntry" th:field="*{problemEntry}" class="form-control" type="hidden">
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">子条目：</label>
+                    <div class="col-sm-8">
+                        <input name="problemSubentryName" th:field="*{problemSubentryName}" class="form-control"
+                               type="text"
+                               readonly>
+                        <input name="problemSubentry" th:field="*{problemSubentry}" class="form-control" type="hidden">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">事件是否有临时解决措施标记：</label>
+                    <div class="col-sm-8">
+                        <select name="tempSolveFlag" class="form-control"
+                                th:with="type=${@pubParaValue.selectPubParaValueByParaName('temp_solve_flag')}"
+                                th:field="*{tempSolveFlag}" disabled>
+                            <option th:each="PubParaValue : ${type}" th:text="${PubParaValue.valueDetail}"
+                                    th:value="${PubParaValue.value}"
+                                    th:selected="${PubParaValue.value eq tempSolveFlag}">>
+                            </option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">风险程度：</label>
+                    <div class="col-sm-8">
+                        <select name="riskLevel" class="form-control"
+                                th:with="type=${@pubParaValue.selectPubParaValueByParaName('risk_level')}"
+                                th:field="*{riskLevel}" disabled>
+                            <option th:each="PubParaValue : ${type}" th:text="${PubParaValue.valueDetail}"
+                                    th:value="${PubParaValue.value}" th:selected="${PubParaValue.value eq riskLevel}">>
+                            </option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">发生频率：</label>
+                    <div class="col-sm-8">
+                        <select name="frequency" class="form-control"
+                                th:with="type=${@pubParaValue.selectPubParaValueByParaName('frequency')}"
+                                th:field="*{frequency}" disabled>
+                            <option th:each="PubParaValue : ${type}" th:text="${PubParaValue.valueDetail}"
+                                    th:value="${PubParaValue.value}" th:selected="${PubParaValue.value eq frequency}">>
+                            </option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">优先级：</label>
+                    <div class="col-sm-8">
+                        <select name="priority" class="form-control"
+                                th:with="type=${@pubParaValue.selectPubParaValueByParaName('priority')}"
+                                th:field="*{priority}" disabled>
+                            <option th:each="PubParaValue : ${type}" th:text="${PubParaValue.valueDetail}"
+                                    th:value="${PubParaValue.value}" th:selected="${PubParaValue.value eq priority}">>
+                            </option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">影响业务中断：</label>
+                    <div class="col-sm-8">
+                        <select name="impactServiceInterruptFlag" class="form-control"
+                                th:with="type=${@pubParaValue.selectPubParaValueByParaName('impact_service_interrupt_flag')}"
+                                th:field="*{impactServiceInterruptFlag}" disabled>
+                            <option th:each="PubParaValue : ${type}" th:text="${PubParaValue.valueDetail}"
+                                    th:value="${PubParaValue.value}"
+                                    th:selected="${PubParaValue.value eq impactServiceInterruptFlag}">>
+                            </option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">问题牵头部室：</label>
+                    <div class="col-sm-8">
+                        <input name="problemSolverDepartmentName" th:field="*{problemSolverDepartmentName}"
+                               class="form-control"
+                               type="text" readonly>
+                        <input id="problemSolverDepartment" name="problemSolverDepartment" type="hidden"
+                               class="form-control">
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">问题审核人：</label>
+                    <div class="col-sm-8">
+                        <input name="problemAuditorName" th:field="*{problemAuditorName}" class="form-control"
+                               type="text"
+                               readonly>
+                        <input id="problemAuditor" name="problemAuditor" type="hidden" class="form-control">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">问题牵头人：</label>
+                    <div class="col-sm-8">
+                        <input name="problemSolverName" th:field="*{problemSolverName}" class="form-control" type="text"
+                               readonly>
+                        <input id="problemSolver" name="problemSolver" type="hidden" class="form-control">
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">问题牵头人上次更新时间：</label>
+                    <div class="col-sm-8">
+                        <input name="problemSolverLastUpdated" th:value="${#dates.format(problemSheet.problemSolverLastUpdated, 'yyyy-MM-dd HH:mm:ss')}"
+                               class="form-control" type="text" readonly>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">计划完成时间</label>
+                    <div class="col-sm-8">
+
+                        <input type="text" class="form-control" id="planSolveTime" name="planSolveTime"
+                               th:value="${#dates.format(problemSheet.planSolveTime, 'yyyy-MM-dd HH:mm:ss')}"
+                               disabled/>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">问题重新打开次数：</label>
+                    <div class="col-sm-8">
+                        <input name="problemReopenNum" th:field="*{problemReopenNum}" class="form-control"
+                               type="text"
+                               readonly>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">解决方案修改次数：</label>
+                    <div class="col-sm-8">
+                        <input name="solutionModifyNum" th:field="*{solutionModifyNum}" class="form-control"
+                               type="text"
+                               readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">计划解决时间修改次数：</label>
+                    <div class="col-sm-8">
+                        <input name="planSolveTimeModifyNum" th:field="*{planSolveTimeModifyNum}" class="form-control"
+                               type="text" readonly>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">解决完成情况：</label>
+                    <div class="col-sm-8">
+                        <input name="resolutionCompletion" th:field="*{resolutionCompletion}" class="form-control"
+                               type="text" readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">解决时间：</label>
+                    <div class="col-sm-8">
+                        <input name="problemSolveTime" th:value="${#dates.format(problemSheet.problemSolveTime, 'yyyy-MM-dd HH:mm:ss')}" class="form-control"
+                               type="text"
+                               readonly>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">观察期限：</label>
+                    <div class="col-sm-8">
+                        <input id="observationPeriod" name="observationPeriod" th:field="*{observationPeriod}" class="form-control"
+                               type="text" readonly>
+                    </div>
+                </div>
+            </div>
+            <!--<div class="col-sm-6" id="observationExplain-show">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">观察说明：</label>
+                    <div class="col-sm-8">
+                        <input id="observationExplain" th:field="*{observationExplain}" class="form-control"
+                               type="text" readonly>
+                    </div>
+                </div>
+            </div>-->
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">问题取消原因：</label>
+                    <div class="col-sm-8">
+                        <input name="problemCancelReason" th:field="*{problemCancelReason}" class="form-control"
+                               type="text" readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">问题取消说明：</label>
+                    <div class="col-sm-8">
+                        <input name="problemCancelReason" th:field="*{problemCancelReason}" class="form-control"
+                               type="text" readonly>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">问题关闭分类：</label>
+                    <div class="col-sm-8">
+                        <input name="problemCloseType" th:field="*{problemCloseType}" class="form-control"
+                               type="text"
+                               readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">问题关闭时间：</label>
+                    <div class="col-sm-8">
+                        <input name="problemCloseTime" th:value="${#dates.format(problemSheet.problemCloseTime, 'yyyy-MM-dd HH:mm:ss')}" class="form-control"
+                               type="text"
+                               readonly>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">问题现象描述：</label>
+                    <div class="col-sm-10">
+                        <textarea cols="3" rows="5" name="problemDescription" class="form-control" readonly>[[*{problemDescription}]]</textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">解决方案汇总：</label>
+                    <div class="col-sm-10">
+                        <textarea cols="3" rows="5" name="problemSolutionSummary" class="form-control" readonly>[[*{problemSolutionSummary}]]</textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <h4 class="form-header h4">原因调查</h4>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">根因分类一：</label>
+                    <div class="col-sm-8">
+                        <select id="problemCauseClass1" name="problemCauseClass1" class="form-control m-b">
+                            <option value="">请选择</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">根因分类二：</label>
+                    <div class="col-sm-8">
+                        <select id="problemCauseClass2" name="problemCauseClass2" class="form-control m-b">
+                            <option value="">请选择:</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label is-required">根因分析汇总：</label>
+                    <div class="col-sm-10">
+                        <textarea rows="3" cols="5" id="problemCauseSummary" maxlength="500"
+                                  name="problemCauseSummary" class="form-control" required></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label is-required">临时解决方案：</label>
+                    <div class="col-sm-10">
+                         <textarea rows="3" cols="5" id="tempSolutions" maxlength="500"
+                                   name="tempSolutions" th:field="*{tempSolutions}" class="form-control" required></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<h4 class="form-header h4">上传附件</h4>
+<div class="col-sm-12">
+    <div class="tabs-container">
+        <ul class="nav nav-tabs">
+            <li class="active"><a data-toggle="tab" href="#tab-1" aria-expanded="true">流程记录</a>
+            </li>
+            <li class=""><a data-toggle="tab" href="#tab-2" aria-expanded="false">附件</a>
+            </li>
+            <li class=""><a data-toggle="tab" href="#tab-3" aria-expanded="false">关联问题变更单</a>
+            </li>
+        </ul>
+        <div class="tab-content">
+            <div id="tab-1" class="tab-pane active">
+                <div class="panel-body">
+                    <div class="col-sm-12 select-table table-striped">
+                        <table id="history-table"></table>
+                    </div>
+                </div>
+            </div>
+
+            <div id="tab-2" class="tab-pane">
+                <div class="panel-body">
+                    <div class="btn-group-sm" id="toolbar1" role="group">
+                        <a class="btn btn-primary multiple disabled" onclick="downloadFile()">
+                            <i class="fa fa-download"></i> 下载附件
+                        </a>
+                    </div>
+                    <div class="col-sm-12 select-table table-striped">
+                        <table id="file-table"></table>
+                    </div>
+                </div>
+            </div>
+            <!--<div id="tab-3" class="tab-pane">-->
+            <!--<div class="panel-body">-->
+            <!--<div class="btn-group-sm" id="toolbar2" role="group">-->
+            <!--<a class="btn btn-primary single disabled" type="button" onclick="detaildd()">-->
+            <!--<i class="fa fa-vi"></i> 查看详情-->
+            <!--</a>-->
+            <!--</div>-->
+            <!--<div class="col-sm-12 select-table table-striped">-->
+            <!--<table id="cmdd-table"></table>-->
+            <!--</div>-->
+            <!--</div>-->
+            <!--</div>-->
+            <div id="tab-3" class="tab-pane">
+                <div class="panel-body">
+                    <div class="btn-group-sm" id="toolbar5" role="group">
+                        <a class="btn btn-info single disabled" onclick="detailqq()">
+                            <i class="fa fa-search"></i> 查看详情
+                        </a>
+                    </div>
+                    <div class="col-sm-12 select-table table-striped">
+                        <table id="cmzy-table"></table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-sm-offset-5 col-sm-10">
+        <button type="button" class="btn btn-sm btn-primary" onclick="assignEvent()"><i class="fa fa-check"></i>发起子任务
+        </button>&nbsp;
+        <button type="button" class="btn btn-sm btn-primary" onclick="assignEvent()"><i class="fa fa-check"></i>发起变更
+        </button>&nbsp;
+        <button type="button" class="btn btn-sm btn-primary" onclick="receiveProblem()"><i class="fa fa-check"></i>提交原因分析
+        </button>&nbsp;
+        <button type="button" class="btn btn-sm btn-primary" onclick="back()"><i class="fa fa-check"></i>退回</button>&nbsp;
+        <button type="button" class="btn btn-sm btn-danger" onclick="closeItem()"><i class="fa fa-window-close"></i>关 闭
+        </button>
+    </div>
+</div>
+
+<th:block th:include="include :: footer"/>
+<th:block th:include="include :: select2-js"/>
+<th:block th:include="include :: datetimepicker-js"/>
+<th:block th:include="include :: bootstrap-select-js"/>
+<script th:src="@{/js/activiti.js}"></script>
+<script th:inline="javascript">
+    var prefix = ctx + "problem/sheet";
+    var prefix_attachment = ctx + "pub/attachment";
+    var prefix_typeInfo = ctx + "system/typeinfo/selectOgTypeInfoByEvent";
+
+    $(function () {
+        var options = {
+            url: prefix_attachment + "/list",
+            id: "file-table",
+            createUrl: prefix_attachment + "/add",
+            updateUrl: prefix_attachment + "/edit/{id}",
+            removeUrl: prefix_attachment + "/remove",
+            detailUrl: prefix_attachment + "/edit/{id}",
+            sortName: "fileTime",
+            sortOrder: "desc",
+            singleSelect: true,
+            clickToSelect: true,
+            queryParams: queryParams,
+            modalName: "附件列表",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'atId',
+                    title: '附件ID',
+                    visible: false
+                },
+                {
+                    field: 'fileName',
+                    title: '文件名称'
+                },
+                {
+                    field: 'person.pName',
+                    title: '上传人'
+                },
+                {
+                    field: 'size',
+                    title: '文件大小'
+                },
+                {
+                    field: 'memo',
+                    title: '文件描述'
+                },
+                {
+                    field: 'fileTime',
+                    title: '上传时间',
+                    formatter: function (value, row, index) {
+                        var startTime = '';
+                        if (value != '' && value != null) {
+                            var pattern = /(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/;
+                            startTime = value.replace(pattern, '$1-$2-$3 $4:$5:$6');
+                        }
+                        return startTime;
+                    }
+                }]
+        };
+        $.table.init(options);
+        var str = $("#problemCauseList").val();
+        var problemCauseArray = JSON.parse(str);
+        setFirstType(problemCauseArray);
+        // 如果根因分类一发生变化，则重新加载根因分类二
+        $("#problemCauseClass1").change(function () {
+            setSecondType();
+        });
+        var problemId = $("#problemId").val();
+        puFolwHistory(problemId);
+    });
+
+    // form表单校验
+    $("#form-sheet-assign").validate({
+        rules: {
+            problemCauseClass1: {
+                required: false
+            },
+            problemCauseSummary: {
+                required: false
+            }
+        },
+        messages: {
+            problemCauseClass1: {
+                required: "根因分类一不能为空"
+            },
+            problemCauseSummary: {
+                required: "根因汇总不能为空"
+            }
+        },
+        onfocusout: function (element) {
+            $(element).valid();
+        },
+        focusCleanup: true
+    });
+
+    function queryParams(params) {
+        var search = $.table.queryParams(params);
+        search.ownerId = $("#problemId").val();
+        return search;
+    }
+
+    // 附件上传页面
+    function upload() {
+        var ownerId = $("#problemId").val();
+        var url = prefix_attachment + "/uploadSH/" + ownerId;
+        $.modal.openNoBtnFileFlush("事件单附件上传", url);
+
+    }
+
+    // 退回
+    function back() {
+        if ($.validate.form()) {
+            var url = prefix + "/returnProblem";
+            var data = $('#form-sheet-confirm').serializeArray();
+            $.operate.saveTab(url, data);
+        }
+    }
+
+    // 附件下载
+    function downloadAttachment() {
+        var atId = $.table.selectFirstColumns()[0];
+        var ownerId = $("#problemId").val();
+        var url = prefix_attachment + "/downloadSH/" + ownerId + "/" + atId;
+        window.location.href = url;
+    }
+
+    // 组装问题单根因分类一select下拉框
+    function setFirstType(firstArr) {
+        var options = "<option value=''>请选择</option>";
+        for (var i = 0; i < firstArr.length; i++) {
+            $("#problemCauseClass1").append("<option value='" + firstArr[i].typeNo + "'>" + firstArr[i].typeName + "</option>");
+        }
+    };
+
+    // 组装事件单二级分类select下拉框
+    function setSecondType() {
+        var typeNo = $("#problemCauseClass1").val();
+        //异步查询数据
+        $.ajax({
+            type: "POST",
+            url: prefix_typeInfo,
+            data: {typeNo: typeNo},
+            dataType: "json",
+            success: function (res) {
+                var data = res.data;
+                //移除根因分类二下拉框数据
+                $("#problemCauseClass2").find("option").remove();
+                //添加下拉框数据
+                $("#problemCauseClass2").prepend("<option value=''>请选择根因分类二</option>");
+                for (var i = 0; i < data.length; i++) {
+                    $("#problemCauseClass2").append("<option value='" + data[i].typeNo + "'>" + data[i].typeName + "</option>");
+                }
+            }
+        });
+    }
+
+    // 接单并提交原因
+    function receiveProblem() {
+        if ($.validate.form()) {
+            var url = prefix + "/receiveProblem";
+            var data = $('#form-sheet-receive').serializeArray();
+            $.operate.saveTab(url, data);
+        }
+    }
+</script>
+</body>
+</html>

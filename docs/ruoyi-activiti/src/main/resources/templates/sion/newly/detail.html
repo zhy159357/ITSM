@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('修改【请填写功能名称】')" />
+    <th:block th:include="include :: summernote-css" />
+</head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <input name="dvId" id="dvId" type="hidden" th:field="*{dvId}">
+        <form class="form-horizontal m" id="form-version-edit" th:object="${sysDeploymentVersion}">
+            <div class="form-group">
+                <label class="col-sm-3 control-label">版本号：</label>
+                <div class="col-sm-8">
+                    <input name="versionNo" id="versionNo" th:field="*{versionNo}" class="form-control" type="text" readonly required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">系统名称：</label>
+                <div class="col-sm-8">
+                    <input name="sysName" id="sysName" th:field="*{sysName}" class="form-control" type="text" readonly required>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">是否显示：</label>
+                <div class="col-sm-8">
+                    <select class="form-control" id="versionShow" name="versionShow" th:field="*{versionShow}" th:with="type=${@dict.getParaType('Line_Isno')}" readonly disabled>
+                        <option value=""></option>
+                        <option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">部署时间：</label>
+                <div class="col-sm-8">
+                    <input name="deploymentTime" id="deploymentTime" th:field="*{deploymentTime}" class="form-control" type="text" readonly required>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label " style="width:11%">版本内容：</label>
+                        <div class="col-sm-10" style="width:89%">
+                            <input id="versionContent" name="versionContent" th:field="*{versionContent}" type="hidden" readonly >
+                            <div class="summernote" id="summernote"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="row">
+        <div class="col-sm-offset-5 col-sm-10">
+            <button type="button" class="btn btn-sm btn-danger" onclick="closeItem()"><i class="fa fa-reply-all"></i>关 闭</button>
+        </div>
+    </div>
+
+    <th:block th:include="include :: footer" />
+    <th:block th:include="include :: summernote-js" />
+    <script type="text/javascript">
+
+        var prefix = ctx + "sion/newly";
+
+        $("#form-version-edit").validate({
+            focusCleanup: true
+        });
+
+
+
+        $(function () {
+            $('.summernote').summernote({
+                placeholder: '',
+                height : 192,
+                lang : 'zh-CN',
+                followingToolbar: false,
+                callbacks: {
+                    onImageUpload: function (files) {
+                        sendFile(files[0], this);
+                    }
+                },
+                focus:true
+            });
+            var content = $("#versionContent").val();
+            $('#summernote').summernote('code', content);
+            $('.summernote').summernote('disable');
+
+        });
+
+        //字符串yyyyMMddHHmmss转yyyy-MM-dd HH:mm:ss
+        $(function () {
+            var backupDate = $("#deploymentTime").val();
+            var pattern = /(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/;
+            backupDate = backupDate.replace(pattern, '$1-$2-$3 $4:$5:$6');
+            $("#deploymentTime").val(backupDate);
+        });
+
+        function submitHandler() {
+            if ($.validate.form()) {
+                $.operate.save(prefix + "/edit", $('#form-version-edit').serialize());
+            }
+        }
+    </script>
+</body>
+</html>

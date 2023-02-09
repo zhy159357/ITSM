@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+	<th:block th:include="include :: header('修改应用系统')" />
+	<th:block th:include="include :: select2-css" />
+</head>
+<body>
+<div class="main-content">
+	<form id="form-application-edit" class="form-horizontal m" th:object="${application}">
+		<input name="orgId" type="hidden" id="treeId"/>
+		<input name="businessId" type="hidden" id="businessId"/>
+		<input name="sysId" type="hidden" id="sysId" th:field="*{sysId}"/>
+		<h4 class="form-header h4">基本信息</h4>
+		<div class="row">
+			<div class="col-sm-6">
+				<div class="form-group">
+					<label class="col-sm-4 control-label is-required">系统编码：</label>
+					<div class="col-sm-8">
+						<input id="code" name="code" class="form-control" type="text" maxlength="20" th:field="*{code}" required>
+					</div>
+				</div>
+			</div>
+			<div class="col-sm-6">
+				<div class="form-group">
+					<label class="col-sm-4 control-label is-required">系统名称：</label>
+					<div class="col-sm-8">
+						<input name="caption" id="caption" type="text" class="form-control" maxlength="20" th:field="*{caption}" required>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-sm-6">
+				<div class="form-group">
+					<label class="col-sm-4 control-label">所属机构：</label>
+					<div class="col-sm-8">
+						<input name="orgName" readonly style="background-color: #ffffff" onclick="selectDeptTree()" id="treeName" type="text" class="form-control" th:field="*{ogOrg.orgName}" >
+					</div>
+				</div>
+			</div>
+			<div class="col-sm-6">
+				<div class="form-group">
+					<label class="col-sm-4 control-label">所属处室：</label>
+					<div id="element1" class="col-sm-8">
+						<select id="dept" name="dept" class="form-control" th:with="type=${@pubParaValue.selectPubParaValueByParaName('Fm_dept')}" th:field="*{dept}" >
+							<option value=""></option>
+							<option th:each="paraValue : ${type}" th:id="${paraValue.paraValueId}" th:text="${paraValue.valueDetail}" th:value="${paraValue.value}"></option>
+						</select>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-sm-6">
+				<div class="form-group">
+					<label class="col-sm-4 control-label">所属业务部门：</label>
+					<div class="col-sm-8">
+						<input id="businessName" name="businessName" onclick="selectDeptTree_1()" type="text" class="form-control" th:field="*{ogOrg.orgCode}">
+					</div>
+				</div>
+			</div>
+			<div class="col-sm-6">
+				<div class="form-group">
+					<label class="col-sm-4 control-label">系统负责人：</label>
+					<div class="col-sm-8">
+						<input id="person" name="person" type="hidden"  th:field="*{ogPerson.pId}"/>
+						<select id="pid" name="pid" class="form-control m-b" data-first-title="系统负责人" >
+						</select>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-sm-6">
+				<div class="form-group">
+					<label class="col-sm-4 control-label is-required">系统类别：</label>
+					<div class="col-sm-8">
+						<select id="sysType" name="sysType" class="form-control" th:with="type=${@pubParaValue.selectPubParaValueByParaName('SYS_TYPE')}" th:field="*{sysType}" required>
+							<option th:each="paraValue : ${type}" th:text="${paraValue.valueDetail}" th:value="${paraValue.value}"
+									th:selected="${paraValue.value eq sysType}"></option>
+						</select>
+					</div>
+				</div>
+			</div>
+			<div class="col-sm-6">
+				<div class="form-group">
+					<label class="col-sm-4 control-label">备注：</label>
+					<div class="col-sm-8">
+						<input id="memo" name="memo" type="text" class="form-control" maxlength="100" th:field="*{memo}">
+					</div>
+				</div>
+			</div>
+		</div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">参与考核：</label>
+                    <div class="col-sm-8">
+						<select id="isExamination" name="isExamination" class="form-control" th:field="*{isExamination}">
+							<option th:selected="*{isExamination == '1'}" value="1">是</option>
+							<option th:selected="*{isExamination == '0'}" value="0">否</option>
+						</select>
+					</div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">是否重要系统：</label>
+                    <div class="col-sm-8">
+						<select id="isKeySys" name="isKeySys" class="form-control" th:field="*{isKeySys}" required>
+							<option th:selected="*{isKeySys == '1'}" value="1">是</option>
+							<option th:selected="*{isKeySys == '0'}" value="0">否</option>
+						</select>
+					</div>
+                </div>
+            </div>
+        </div>
+		<div class="row">
+			<div class="col-sm-6">
+				<div class="form-group">
+					<label class="col-sm-4 control-label">是否外联渠道：</label>
+					<div class="col-sm-8">
+						<select id="isOutChannel" name="isOutChannel" class="form-control" th:field="*{isOutChannel}">
+							<option th:selected="*{isOutChannel == '1'}" value="1">是</option>
+							<option th:selected="*{isOutChannel == '0'}" value="0">否</option>
+						</select>
+					</div>
+				</div>
+			</div>
+			<div class="col-sm-6">
+				<div class="form-group">
+					<label class="col-sm-4 control-label">状态：</label>
+					<div class="col-sm-8">
+						<select id="invalidationMark" name="invalidationMark" class="form-control" th:field="*{invalidationMark}">
+							<option th:selected="*{invalidationMark == '1'}" value="1">启用</option>
+							<option th:selected="*{invalidationMark == '0'}" value="0">停止</option>
+						</select>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-sm-6">
+				<div class="form-group">
+					<label class="col-sm-4 control-label">红线时间：</label>
+					<div class="col-sm-8">
+						<input id="redlineTime" name="redlineTime" type="time" step="1" class="form-control" th:field="*{redlineTime}">
+					</div>
+				</div>
+			</div>
+		</div>
+	</form>
+</div>
+
+<div class="row">
+	<div class="col-sm-offset-5 col-sm-10">
+		<button type="button" class="btn btn-sm btn-primary" onclick="submitHandler()"><i class="fa fa-check"></i>保 存</button>&nbsp;
+		<button type="button" class="btn btn-sm btn-danger" onclick="closeItem()"><i class="fa fa-reply-all"></i>关 闭 </button>
+	</div>
+</div>
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: select2-js" />
+<script>
+    var prefix = ctx + "system/application";
+	$("#form-application-edit").validate({
+		focusCleanup: true
+	});
+
+	$(function() {
+		var deptvalue = $("#dept").val();
+		var pidvalue = $("#person").val();
+		if(deptvalue && deptvalue!=''){
+			var firstValue = $("#dept").get(0).selectedIndex;
+			//根据一级select的值，异步获取数据更新二级的选项
+			$.ajax({
+				type:'post',
+				url:prefix+'/selectOgPersonForOrgIdList/'+firstValue,
+				cache:false,
+				dataType:'json',
+				success:function(secondDatas){
+					//遍历回传的数据添加到二级select
+					$("#pid").append("<option value=\"\"></option>");
+					$.each(secondDatas.rows, function(key, secondData) {
+						var option = '<option value="'+secondData.pId+'">'+secondData.pName+'</option>';
+						$("#pid").append(option)
+					});
+					$("#pid").val(pidvalue);
+				},
+				error:function(){
+					alert("请求失败")
+				}
+			});
+		}
+		$("#dept").change(function(){
+			//清空二级和
+			$("#pid").empty();
+			//获得一级select的值
+			var othValue = $("#dept").get(0).selectedIndex;
+			//如果一级select的值为null，隐藏二、三级select,并返回
+			//根据一级select的值，异步获取数据更新二级的选项
+			$.ajax({
+				type:'post',
+				url:prefix+'/selectOgPersonForOrgIdList/'+othValue,
+				// data:{
+				// 	parentId:firstValue
+				// },
+				cache:false,
+				dataType:'json',
+				success:function(secondDatas){
+					//遍历回传的数据添加到二级select
+					$("#pid").append("<option value=\"\"></option>");
+					$.each(secondDatas.rows, function(key, secondData) {
+						var option = '<option value="'+secondData.pId+'">'+secondData.pName+'</option>';
+						$("#pid").append(option)
+					})
+				},
+				error:function(){
+					alert("请求失败")
+				}
+			});
+		});
+	});
+
+    function submitHandler() {
+        if ($.validate.form()) {
+            $.operate.saveTab(prefix + "/edit", $('#form-application-edit').serialize());
+        }
+    }
+
+    /* 选择所属机构树 */
+    function selectDeptTree() {
+        var treeId = $("#treeId").val();
+        var deptId = $.common.isEmpty(treeId) ? "310100001" : $("#treeId").val();
+        var url = ctx + "system/dept/selectDeptTree/" + deptId;
+        var options = {
+            title: '选择所属机构',
+            width: "380",
+            url: url,
+            callBack: doSubmit
+        };
+        $.modal.openOptions(options);
+    }
+
+    function doSubmit(index, layero){
+        var tree = layero.find("iframe")[0].contentWindow.$._tree;
+        var body = layer.getChildFrame('body', index);
+        $("#treeId").val(body.find('#treeId').val());
+        $("#treeName").val(body.find('#treeName').val());
+        layer.close(index);
+    }
+
+    /* 选择所属机构树 */
+    function selectDeptTree_1() {
+        var treeId = $("#treeId").val();
+        var deptId = $.common.isEmpty(treeId) ? "310100001" : $("#treeId").val();
+        var url = ctx + "system/dept/selectDeptTree/" + deptId;
+        var options = {
+            title: '选择业务部门',
+            width: "380",
+            url: url,
+            callBack: doSubmit_1
+        };
+        $.modal.openOptions(options);
+    }
+
+    function doSubmit_1(index, layero){
+        var tree = layero.find("iframe")[0].contentWindow.$._tree;
+        var body = layer.getChildFrame('body', index);
+        $("#businessId").val(body.find('#treeId').val());
+        $("#businessName").val(body.find('#treeName').val());
+        layer.close(index);
+    }
+
+</script>
+</body>
+</html>

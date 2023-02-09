@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('应急事件')" />
+    <th:block th:include="include :: select2-css" />
+    <th:block th:include="include :: datetimepicker-css" />
+</head>
+<body class="gray-bg">
+     <div class="container-div">
+        <div class="row">
+            <div class="col-sm-12 search-collapse">
+                <form id="formId">
+                    <div class="select-list">
+                        <ul>
+                            <li>
+                                <p>单号：</p>
+                                <input type="text" name="gzNo"/>
+                            </li>
+                            <li>
+                                <p>所属系统：</p>
+                                <select id="sysName" name="sysName" class="form-control noselect2 selectpicker"
+                                        multiple data-actions-box="true" data-width="200px" data-live-search="true"
+                                        data-none-selected-text="请选择系统"
+                                        th:with="type=${@application.selectOgSysList(null)}">
+                                    <option th:each="app : ${type}" th:text="${app.caption}" th:value="${app.caption}"></option>
+                                </select>
+                            </li>
+                            <li>
+                                <p>发生时间起：</p>
+                                <input type="text" class="time-input" name="params[happenTimeStart]"/>
+                            </li>
+                            <li>
+                                <p>发生时间止：</p>
+                                <input type="text" class="time-input" name="params[happenTimeEnd]"/>
+                            </li>
+                            <li>
+                                <a class="btn btn-primary btn-rounded btn-sm" id="reportSearch" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.resetAll()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                            </li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+
+            <div class="btn-group-sm" id="toolbar" role="group">
+                <a class="btn btn-success" onclick="$.operate.addTab()" >
+                    <i class="fa fa-plus"></i> 添加
+                </a>
+                <a class="btn btn-primary single disabled" onclick="$.operate.editTab()" >
+                    <i class="fa fa-edit"></i> 修改
+                </a>
+                <a class="btn btn-danger single disabled" onclick="$.operate.removeAll()" >
+                    <i class="fa fa-remove"></i> 删除
+                </a>
+                <a class="btn btn-primary single disabled" onclick="selectProcess()" >
+                    <i class="fa fa-edit"></i> 查看流程
+                </a>
+                <a class="btn btn-warning single disabled" onclick="detail()" >
+                    <i class="fa fa-search"></i> 详情
+                 </a>
+            </div>
+            <div class="col-sm-12 select-table table-striped">
+                <table id="bootstrap-table" style="table-layout: fixed"></table>
+            </div>
+        </div>
+    </div>
+    <th:block th:include="include :: footer" />
+     <th:block th:include="include :: datetimepicker-js" />
+     <th:block th:include="include :: select2-js" />
+     <th:block th:include="include :: bootstrap-select-js"/>
+     <th:block th:include="include :: bootstrap-select-css"/>
+    <script th:inline="javascript">
+        var prefix = ctx + "gzFault/report";
+
+        var gzTypeData = [[${@pubParaValue.selectPubParaValueByParaName('GZ_TYPE')}]];
+        var ifImpData = [[${@pubParaValue.selectPubParaValueByParaName('if_imp')}]];
+        var gzFaultStatusData = [[${@pubParaValue.selectPubParaValueByParaName('GZ_FAULT_STATUS')}]];
+
+        $(function() {
+            // 回车键搜索
+            document.onkeydown = function(e){
+                var ev = document.all ? window.event : e;
+                if(ev.keyCode==13) {
+                    $('#reportSearch').trigger('click');
+                    return false;
+                }
+            };
+
+            var options = {
+                url: prefix + "/list",
+                createUrl: prefix + "/add",
+                updateUrl: prefix + "/edit/{id}",
+                removeUrl: prefix + "/remove",
+                exportUrl: prefix + "/export",
+                clickToSelect: true,
+                singleSelect: true,
+                queryParams: queryParams,
+                modalName: "应急事件",
+                columns: [{
+                    checkbox: true
+                },
+                {
+                    field : 'gzId', 
+                    title : '主键ID',
+                    visible: false,
+                    width : 150
+                },
+                {
+                    field : 'gzNo', 
+                    title : '单号',
+                    width : 150
+                },
+                {
+                    field : 'sysName', 
+                    title : '系统名称',
+                    width : 250
+                },
+                {
+                    field : 'sysLevel', 
+                    title : '系统级别',
+                    width : 100,
+                    formatter: function(value, row, index) {
+                        var sysLevel = row.sysLevel;
+                        if(sysLevel == 1){
+                            sysLevel = "A";
+                        } else if(sysLevel == 2){
+                            sysLevel = "B";
+                        } else if(sysLevel == 3){
+                            sysLevel = "C";
+                        } else if(sysLevel == 4){
+                            sysLevel = "D";
+                        }
+                        return sysLevel;
+                    }
+                },
+                {
+                    field : 'happenTime', 
+                    title : '发生时间',
+                    width : 150
+                },
+                {
+                    field : 'happenTimeInterval', 
+                    title : '发生时段',
+                    width : 120
+                },
+                {
+                    field : 'gzInfluenceBusDuration', 
+                    title : '影响业务时长（分钟）',
+                    width : 150
+                },
+                {
+                    field : 'ifCapitalRisk',
+                    title : '是否有资金风险',
+                    width : 120,
+                    formatter: function(value, row, index) {
+                        return $.table.selectPubParaValueData(ifImpData, value);
+                    }
+                },
+                {
+                    field : 'ifCustomComplaint',
+                    title : '是否有客户投诉',
+                    width : 120,
+                    formatter: function(value, row, index) {
+                        return $.table.selectPubParaValueData(ifImpData, value);
+                    }
+                },
+                {
+                    field : 'ifCompleteSolve',
+                    title : '是否已彻底解决',
+                    width : 120,
+                    formatter: function(value, row, index) {
+                        return $.table.selectPubParaValueData(ifImpData, value);
+                    }
+                },
+                {
+                    field : 'ifSuspectedVersion',
+                    title : '疑似版本',
+                    width : 100,
+                    formatter: function(value, row, index) {
+                        return $.table.selectPubParaValueData(ifImpData, value);
+                    }
+                },
+                {
+                    field : 'gzFaultStatus',
+                    title : '状态',
+                    width : 100,
+                    formatter: function(value, row, index) {
+                        return $.table.selectPubParaValueData(gzFaultStatusData, value);
+                    }
+                },
+                {
+                    field : 'gzType',
+                    title : '事件类型',
+                    width : 150,
+                    formatter: function(value, row, index) {
+                        return $.table.selectPubParaValueData(gzTypeData, value);
+                    }
+                },
+                {
+                    field : 'gzAppearance', 
+                    title : '现象或影响',
+                    width : 250
+                },
+                {
+                    field : 'gzInfluenceDegree', 
+                    title : '对客户服务交易影响程度',
+                    width : 250
+                },
+                {
+                    field : 'gzResolvent', 
+                    title : '解决方法',
+                    width : 250
+                },
+                {
+                    field : 'gzReason', 
+                    title : '原因（简述）',
+                    width : 250
+                },
+                {
+                    field : 'createTime',
+                    title : '创建时间',
+                    width : 150
+                },
+                {
+                    field : 'createName',
+                    title : '创建人',
+                    width : 150
+                }]
+            };
+            $.table.init(options);
+        });
+
+        /*查看详情*/
+        function detail(){
+            var id = $.table.selectFirstColumns();
+            var url = prefix + "/detail/" + id;
+            $.modal.openTab("查看详情",url);
+        }
+
+        // 查看流程
+        function selectProcess() {
+            var gzFaultStatus = $.table.selectColumns("gzFaultStatus");
+            if(gzFaultStatus == '1'){
+                $.modal.alertWarning("待提交状态的应急单流程未开启，不可查看！");
+                return;
+            }
+            var businessKey = $.table.selectFirstColumns();
+            var url = ctx + 'process/processImg/' + businessKey;
+            $.modal.openFull("查看流程图", url, null, null, null, true);
+        }
+
+        function queryParams(params) {
+            var search = $.table.queryParams(params);
+            search.remark = "report";
+            return search;
+        }
+    </script>
+</body>
+</html>

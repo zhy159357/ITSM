@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <!--发布审核批量审批页面-->
+    <th:block th:include="include :: header('版本信息')" />
+    <th:block th:include="include :: select2-css" />
+</head>
+<body>
+<div class="main-content">
+    <form id="form-release-approvalList" class="form-horizontal">
+        <!--发布审批标识-->
+        <input name="params[releaseFlag]" type="hidden" id="releaseFlag" value="1"/>
+        <!--发布审批批量标识-->
+        <input name="params[releaseBatchFlag]" type="hidden" id="releaseBatchFlag" value="1"/>
+        <input name="versionInfoId" type="hidden" id="versionInfoId" th:value="*{versionInfoId}"/>
+
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">是否需要紧急审批：</label>
+                    <div class="col-sm-8">
+                        <select id="acceptRole" name="acceptRole" class="form-control" onchange="checkJjspApproval()" required>
+                            <option value=""></option>
+                            <option value="1">是</option>
+                            <option value="2">否</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6" id="jjspApproval">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">紧急审批人：</label>
+                    <div class="col-sm-8">
+                        <input id="jjspApprovalId" name="jjspApprovalId" class="form-control" type="hidden" />
+                        <input id="jjspApprovalName" name="jjspApprovalName" class="form-control" onclick="jjspApproval()"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label is-required">发布审核意见：</label>
+                    <div class="col-sm-10">
+                        <textarea rows="6" cols="10" id="authorText" name="params[comment]" class="form-control" maxlength="100" required></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<div class="row">
+    <div class="col-sm-offset-5 col-sm-10">
+        <button type="button" class="btn btn-sm btn-primary" onclick="pass('1')"><i class="fa fa-check"></i>通 过</button>&nbsp;
+        <button type="button" class="btn btn-sm btn-danger" onclick="pass('0')"><i class="fa fa-reply-all"></i>不 通 过</button>&nbsp;
+        <button type="button" class="btn btn-sm btn-danger" onclick="closeHtml()"><i class="fa fa-window-close"></i>关 闭 </button>
+    </div>
+</div>
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: select2-js" />
+<th:block th:include="include :: datetimepicker-js" />
+<script>
+    var prefix = ctx + "version/public";
+
+    $("#form-release-approvalList").validate({
+        onkeyup: false,
+        rules:{
+            "acceptRole" : true,
+            "jjspApprovalName" : true,
+            "params[comment]" : true
+        },
+        messages: {
+            "acceptRole" : "是否紧急审批必须选择",
+            "jjspApprovalName" : "紧急审批人不可为空",
+            "params[comment]" : "发布审核意见不可为空"
+        },
+        focusCleanup: true
+    });
+
+    // 判断是否需要紧急审批
+    function checkJjspApproval() {
+        var acceptRole = $("#acceptRole").val();
+        if(acceptRole == '1'){
+            $("#jjspApproval").show();
+        }else{
+            $("#jjspApproval").hide();
+        }
+    }
+
+    // 选择紧急审批人
+    function jjspApproval() {
+        var acceptRole = $("#acceptRole").val();
+        if(acceptRole == ''){
+            $.modal.alertWarning("在选择紧急审批人之前请先选择是否需要紧急审批！");
+            return;
+        }
+        var rId = "9114";
+        var url = prefix + "/selectBusinessAudit"+"?"+"pflag=1"+"&rId="+rId;
+        $.modal.open("选择紧急审批人", url);
+    }
+
+    /*通过*/
+    function pass(flag) {
+        if(flag == "1"){
+            var acceptRole = $("#acceptRole").val();
+            if(acceptRole == null || acceptRole == ""){
+                $.modal.alert("发布审核通过必须选择是否紧急标识！");
+                return;
+            } else if(acceptRole == "1"){
+                var jjspApprovalName = $("#jjspApprovalName").val();
+                if(jjspApprovalName == null || jjspApprovalName == ""){
+                    $.modal.alert("发布审核通过且选择了紧急标识为是则必须选择紧急审批人！");
+                    return;
+                }
+            }
+        }
+        if ($.validate.form()) {
+            var data = $("#form-release-approvalList").serializeArray();
+            data.push({"name": "passFlag", "value": flag});
+            $.operate.save(prefix + "/useApprovalPass", data);
+        }
+    }
+
+    function closeHtml() {
+        $.modal.close();
+    }
+
+</script>
+</body>
+</html>

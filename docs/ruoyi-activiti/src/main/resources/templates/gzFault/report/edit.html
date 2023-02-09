@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('应急事件')" />
+    <th:block th:include="include :: select2-css" />
+    <th:block th:include="include :: datetimepicker-css" />
+</head>
+<body>
+    <div class="main-content">
+        <form class="form-horizontal m" id="form-report-edit" th:object="${gzFaultReport}">
+            <input name="gzId" th:field="*{gzId}" type="hidden">
+            <input name="gzId" th:field="*{gzFaultStatus}" type="hidden">
+            <h4>
+                基本信息
+            </h4>
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">单号：</label>
+                        <div class="col-sm-8">
+                            <input name="gzNo" id="gzNo" class="form-control" th:value="*{gzNo}" type="text" readonly>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label is-required">应急类型：</label>
+                        <div class="col-sm-8">
+                            <select id="gzType" name="gzType" class="form-control" th:field="*{gzType}" th:with="type=${@pubParaValue.selectPubParaValueByParaName('GZ_TYPE')}" required>
+                                <option value=""></option>
+                                <option th:each="paraValue : ${type}" th:text="${paraValue.valueDetail}" th:value="${paraValue.value}" th:selected="${paraValue.value eq gzType}">
+
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label is-required">系统名称：</label>
+                        <div class="col-sm-10">
+                            <input id="sysId" name="sysId" type="hidden" class="form-control" th:value="*{sysId}"/>
+                            <input name="sysName" id="sysName" class="form-control" type="text" style="background-color: #ffffff" onclick="selectApplication()" th:value="*{sysName}" readonly required>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">系统级别：</label>
+                        <div class="col-sm-8">
+                            <input name="sysLevel" id="sysLevel" class="form-control" type="text" th:value="*{sysLevel}" readonly>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label is-required">发生日期：</label>
+                        <div class="col-sm-8">
+                            <input id="happenTime" name="happenTime" style="background-color: #ffffff" class="form-control" type="text" placeholder="yyyy-MM-dd HH:mm:ss" th:value="*{happenTime}" readonly required>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label is-required">发生时段：</label>
+                        <div class="col-sm-8">
+                            <input id="happenTimeInterval" name="happenTimeInterval" class="form-control" type="text" th:value="*{happenTimeInterval}" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label is-required">影响业务时长：</label>
+                        <div class="col-sm-8">
+                            <input id="gzInfluenceBusDuration" name="gzInfluenceBusDuration" class="form-control" type="text" th:value="*{gzInfluenceBusDuration}" required>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label is-required">现象或影响：</label>
+                        <div class="col-sm-10">
+                            <textarea id="gzAppearance" name="gzAppearance" rows="5" cols="10" class="form-control" maxlength="300" th:field="*{gzAppearance}" required></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label is-required">原因（简述）：</label>
+                        <div class="col-sm-10">
+                            <textarea id="gzReason" name="gzReason" rows="5" cols="10" class="form-control" maxlength="300" th:field="*{gzReason}" required></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label is-required">解决方法：</label>
+                        <div class="col-sm-10">
+                            <textarea id="gzResolvent" name="gzResolvent" rows="5" cols="10" class="form-control" maxlength="300" th:field="*{gzResolvent}" required></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label is-required">对客户服务交易影响程度：</label>
+                        <div class="col-sm-10">
+                            <textarea id="gzInfluenceDegree" name="gzInfluenceDegree" rows="5" cols="10" class="form-control" maxlength="300" th:field="*{gzInfluenceDegree}" required></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label is-required">是否已彻底解决：</label>
+                        <div class="col-sm-8">
+                            <select id="ifCompleteSolve" name="ifCompleteSolve" class="form-control" th:field="*{ifCompleteSolve}" th:with="type=${@pubParaValue.selectPubParaValueByParaName('if_imp')}" required>
+                                <option value=""></option>
+                                <option th:each="paraValue : ${type}" th:text="${paraValue.valueDetail}" th:value="${paraValue.value}" th:selected="${paraValue.value eq ifCompleteSolve}"></option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label is-required">疑似版本：</label>
+                        <div class="col-sm-8">
+                            <select id="ifSuspectedVersion" name="ifSuspectedVersion" class="form-control" th:field="*{ifSuspectedVersion}" th:with="type=${@pubParaValue.selectPubParaValueByParaName('if_imp')}" required>
+                                <option value=""></option>
+                                <option th:each="paraValue : ${type}" th:text="${paraValue.valueDetail}" th:value="${paraValue.value}" th:selected="${paraValue.value eq ifSuspectedVersion}"></option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label is-required">是否有客户投诉：</label>
+                        <div class="col-sm-8">
+                            <select id="ifCustomComplaint" name="ifCustomComplaint" class="form-control" th:field="*{ifCustomComplaint}" th:with="type=${@pubParaValue.selectPubParaValueByParaName('if_imp')}" required>
+                                <option value=""></option>
+                                <option th:each="paraValue : ${type}" th:text="${paraValue.valueDetail}" th:value="${paraValue.value}" th:selected="${paraValue.value eq ifCustomComplaint}"></option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label is-required">是否有资金风险：</label>
+                        <div class="col-sm-8">
+                            <select id="ifCapitalRisk" name="ifCapitalRisk" class="form-control" th:field="*{ifCapitalRisk}" th:with="type=${@pubParaValue.selectPubParaValueByParaName('if_imp')}" required>
+                                <option value=""></option>
+                                <option th:each="paraValue : ${type}" th:text="${paraValue.valueDetail}" th:value="${paraValue.value}" th:selected="${paraValue.value eq ifCapitalRisk}"></option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <h4>
+                事件影响分析
+            </h4>
+            <br/>
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label is-required">事件影响分析人：</label>
+                        <div class="col-sm-10">
+                            <input id="appAssessId" name="appAssessId" type="hidden" class="form-control" th:value="*{appAssessId}">
+                            <input id="appAssessName" name="appAssessName" type="text" style="background-color: #ffffff" class="form-control" onclick="selectAppAssess()" th:value="*{appAssessName}" required readonly>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+        <h4 class="form-header h4">附件列表</h4>
+        <div class="btn-group-sm" id="toolbar" role="group">
+            <a class="btn btn-success" type="button" onclick="upload()">
+                <i class="fa fa-upload"></i> 添加附件
+            </a>
+            <a class="btn btn-primary multiple disabled" onclick="downloadAttachment()">
+                <i class="fa fa-download"></i> 下载附件
+            </a>
+            <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()">
+                <i class="fa fa-trash"></i> 删除附件
+            </a>
+        </div>
+        <div class="col-sm-12 select-table table-striped">
+            <table id="file-table"></table>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-offset-5 col-sm-10">
+            <button type="button" class="btn btn-sm btn-primary" onclick="submit()" id="submit"><i class="fa fa-check"></i>提 交</button>&nbsp;
+            <button type="button" class="btn btn-sm btn-primary" onclick="save()"><i class="fa fa-check"></i>保 存</button>&nbsp;
+            <button type="button" class="btn btn-sm btn-danger" onclick="closeItem()"><i class="fa fa-window-close"></i>关 闭 </button>
+        </div>
+    </div>
+
+    <th:block th:include="include :: footer" />
+    <th:block th:include="include :: datetimepicker-js" />
+    <th:block th:include="include :: select2-js" />
+    <script th:inline="javascript">
+        var prefix = ctx + "gzFault/report";
+        var prefix_attachment = ctx + "pub/attachment";
+        var datas = [[${@pubParaValue.selectPubParaValueByParaName('file_type')}]];
+
+        $(function() {
+            var options = {
+                url: prefix_attachment + "/list",
+                id: "file-table",
+                createUrl: prefix_attachment + "/add",
+                updateUrl: prefix_attachment + "/edit/{id}",
+                removeUrl: prefix_attachment + "/remove",
+                detailUrl: prefix_attachment + "/edit/{id}",
+                sortName: "fileTime",
+                sortOrder: "desc",
+                singleSelect: true,
+                clickToSelect: true,
+                queryParams:queryParams,
+                modalName: "附件列表",
+                columns: [{
+                    checkbox: true
+                },
+                    {
+                        field : 'atId',
+                        title : '附件ID',
+                        visible : false
+                    },
+                    {
+                        field : 'fileName',
+                        title : '文件名称'
+                    },
+                    {
+                        field : 'person.pName',
+                        title : '上传人'
+                    },
+                    {
+                        field : 'size',
+                        title : '文件大小'
+                    },
+                    {
+                        field : 'memo',
+                        title : '文件描述'
+                    },
+                    {
+                        field : 'fileTime',
+                        title : '上传时间',
+                        formatter: function (value, row, index) {
+                            var startTime = '';
+                            if (value != '' && value != null) {
+                                var pattern = /(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/;
+                                startTime = value.replace(pattern, '$1-$2-$3 $4:$5:$6');
+                            }
+                            return startTime;
+                        }
+                    },
+                    {
+                        field : 'fileType',
+                        title : '附件类型',
+                        formatter: function(value, row, index) {
+                            return $.table.selectPubParaValueData(datas, value);
+                        }
+                    }]
+            };
+            $.table.init(options);
+
+            var gzFaultReport = [[${gzFaultReport}]];
+            judgeGzFaultStatus(gzFaultReport.gzFaultStatus);
+        });
+
+        function queryParams(params) {
+            var search = $.table.queryParams(params);
+            search.ownerId = $("#gzId").val() == '' ? 'gz_report_edit_no_owner_id' : $("#gzId").val();
+            return search;
+        }
+
+        // 提交
+        function submit() {
+            if ($.validate.form()) {
+                $.operate.saveTab(prefix + "/submit", getData());
+            }
+        };
+
+        // 暂存
+        function save() {
+            $.operate.saveTab(prefix + "/add", getData());
+        };
+
+        // 附件上传页面
+        function upload() {
+            var gzNo = $("#gzNo").val();
+            var url = prefix + "/add";
+            var data = getData();
+            var config = {
+                url: url,
+                type: "post",
+                dataType: "json",
+                data: data,
+                success: function (result) {
+                    if (result.code == 0) {
+                        var gzId = result.data;
+                        // 将gzId保存到页面隐藏框
+                        $("#gzId").val(gzId);
+                        var uploadUrl = prefix_attachment + "/upload/" + gzId;
+                        $.modal.openNoBtnFileFlush("应急事件附件上传", uploadUrl);
+                    } else {
+                        $.operate.successCallback(result);
+                    }
+                }
+            };
+            // 第一次上传附件需要保存版本业务单数据并打开附件上传页面
+            if($("#gzId").val() == ''){
+                $.ajax(config);
+            }else{
+                // 不是第一次保存只需要打开附件上传页面
+                var url = prefix_attachment + "/upload/" + $("#gzId").val();
+                $.modal.openNoBtnFileFlush("应急事件附件上传", url);
+            }
+        };
+
+        // 附件下载
+        function downloadAttachment() {
+            var rows = $.table.selectFirstColumns();
+            var atId = rows[0];
+            var ownerId = $("#gzId").val();
+            var url = prefix_attachment + "/download/"+ownerId+"/"+atId;
+            window.location.href = url;
+        }
+
+        function getData() {
+            var data = $("#form-report-edit").serializeArray();
+            return data;
+        }
+
+        // 选择应用系统（只能单选）
+        function selectApplication() {
+            $.modal.open("选择应用系统", prefix + "/selectApplication");
+        }
+
+        $("#happenTime").datetimepicker({
+            format: "yyyy-mm-dd",
+            minView: "month",
+            autoclose: true
+        });
+
+        // 选择事件分析人
+        function selectAppAssess() {
+            $.modal.open("选择事件分析人", prefix + "/selectAppAssess");
+        }
+
+        // 判断应急单状态，如果已经提交不允许再提交
+        function judgeGzFaultStatus(gzFaultStatus) {
+            if(gzFaultStatus == "1"){
+                $("#submit").show();
+            } else {
+                $("#submit").hide();
+                $("#appAssessName").attr("disabled","disabled");
+            }
+        }
+
+        // 公用校验数字
+        function isNum(id) {
+            var num = $("#" + id).val();
+            var regex = /^(\d{1,11})$/;
+            if(!regex.test(num)){
+                $("#" + id).val("");
+                $.modal.alertWarning("该输入项必须输入数字！");
+                return;
+            }
+        }
+    </script>
+</body>
+</html>

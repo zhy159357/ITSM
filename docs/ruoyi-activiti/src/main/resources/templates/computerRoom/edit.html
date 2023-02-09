@@ -1,0 +1,1087 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:include="include :: header('修改机房出入申请')"/>
+    <th:block th:include="include :: select2-css"/>
+    <th:block th:include="include :: datetimepicker-css"/>
+</head>
+<body>
+<div class="main-content">
+    <form id="form-computerRoom-add" class="form-horizontal" th:object="${computerRoom}">
+        <input name="ownerId" type="hidden" id="ownerId" th:value="*{id}"/>
+        <input name="id" type="hidden" id="ids" th:value="*{id}">
+
+
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-heading" style="background-color: #3c8dbc" data-toggle="collapse" data-target="#collapse1">
+                    <h4 class="panel-title" >
+                        基本信息
+                    </h4>
+                </div>
+                <br/>
+                <div id="collapse1" class="panel-collapse in">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label is-required">机房出入编号：</label>
+                                <div class="col-sm-8">
+                                    <input id="computerApplyNo" autocomplete="off" name="computerApplyNo" type="text"  th:value="*{computerApplyNo}" class="form-control"  required readonly>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label is-required">申请处室：</label>
+                                <div class="col-sm-8">
+                                    <input name="applyOrgId" id="applyOrgId" class="form-control" type="hidden"
+                                           th:value="*{applyOrgId}">
+                                    <input id="applyOrgName" name="applyOrgName" type="text" class="form-control" readonly
+                                           th:value="*{applyOrgName}" required/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label is-required">申请人：</label>
+                                <div class="col-sm-8">
+                                    <input name="applyUserId" id="applyUserId" class="form-control" type="hidden"
+                                           th:value="*{applyUserId}">
+                                    <input name="applyUserName" id="applyUserName" class="form-control" type="text" readonly
+                                           th:value="*{applyUserName}"  maxlength="18" required/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label is-required">进入机房所属中心：</label>
+                                <div class="col-sm-8">
+                                    <select id="computerCenter" name="computerCenter" th:field="*{computerCenter}" class="form-control" onchange="computerCenters()" >
+                                        <option value="">请选择</option>
+                                        <option th:each="itype : ${moduleList}" th:text="${itype.name}" th:value="${itype.id}" th:selected="${itype.id eq computerCenter}"></option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label is-required">进入机房模块：</label>
+                                <div class="col-sm-8">
+                                    <input id="computerRoomModule" name="computerRoomModule" type="hidden" class="form-control" />
+                                    <input id="computerRoomModuleName" name="computerRoomModuleName" placeholder="请填写机房模块" th:value="*{computerRoomModuleName}" class="form-control" onclick="selectComputerRoomModule()" required>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label is-required">陪同人员1：</label>
+                                <div class="col-sm-8">
+                                    <select  id="accompanyUserId" name="accompanyUserId" class="form-control" th:field="*{accompanyUserId}" >
+                                        <option value="">请选择</option>
+                                        <option th:each="user : ${userlist}" th:text="${user.pname}" th:value="${user.pId}" th:selected="${user.pId eq accompanyUserId}"></option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">陪同人员2：</label>
+                                <div class="col-sm-8">
+                                    <select  id="accompanyUserIdTwo" name="accompanyUserIdTwo" class="form-control" th:field="*{accompanyUserIdTwo}" >
+                                        <option value="">请选择</option>
+                                        <option th:each="user : ${userlist}" th:text="${user.pname}" th:value="${user.pId}" th:selected="${user.pId eq accompanyUserIdTwo}"></option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label is-required">是否紧急状态：</label>
+                                <div class="col-sm-8">
+                                    <select  id="isUrgency" name="isUrgency" class="form-control" onchange="isUrgencyChange()" >
+                                        <option value="">请选择</option>
+                                        <option th:selected="*{isUrgency == '0'}" value="0">否</option>
+                                        <option th:selected="*{isUrgency == '1'}" value="1">是</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label is-required">预计进入时间：</label>
+                                <div class="col-sm-8">
+                                    <input type="text" autocomplete="off" class="form-control" placeholder="yyyy-MM-dd hh:mm:ss" id="predictInTime"
+                                           name="predictInTime"  onchange="checkStartTime()" th:value="*{predictInTime}" required/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label is-required">预计离开时间：</label>
+                                <div class="col-sm-8">
+                                    <input type="text" autocomplete="off" class="form-control" placeholder="yyyy-MM-dd hh:mm:ss" id="predictOutTime"
+                                           name="predictOutTime" onchange="checkEndTime()" th:value="*{predictOutTime}"   required />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label is-required">工作内容：</label>
+                                <div class="col-sm-10">
+                                    <input id="workContentIds" name="workContentIds" type="hidden" class="form-control" />
+                                    <input id="workContent" autocomplete="off" name="workContent" type="text" placeholder="请选择相应工作内容" class="form-control" onclick="selectWorkContent()" th:value="*{workContent}" required>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label is-required">具体工作描述：</label>
+                                <div class="col-sm-10">
+                                    <textarea rows="5" cols="10" autocomplete="off" id="workDescription" name="workDescription"
+                                              class="form-control" maxlength="1300" th:text="*{workDescription}"  required></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row" style="margin-top: 10px">
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label is-required">是否为临时人员：</label>
+                        <div class="col-sm-8">
+                            <select  id="isTemporary" name="isTemporary" class="form-control" onchange="isTemporaryChange()" >
+                                <option value="">请选择</option>
+                                <option th:selected="*{isTemporary == '0'}"  value="0">否</option>
+                                <option th:selected="*{isTemporary == '1'}" value="1">是</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel panel-default" id="selectBusinessLine">
+                <div class="panel-heading" style="background-color: #3c8dbc" data-toggle="collapse" data-target="#collapse2">
+                    <h4 class="panel-title">
+                        进入机房人员
+                    </h4>
+                </div>
+                <br/>
+                <div id="collapse2" class="panel-collapse in">
+                    <div class="row" id="enuParam0">
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label is-required">姓名：</label>
+                                <div class="col-sm-8">
+                                    <input id="intoName0" name="intoName" class="form-control" type="text" th:value="*{intoName}" maxlength="10" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label is-required">身份证号：</label>
+                                <div class="col-sm-8">
+                                    <input id="intoIdNumber0" name="intoIdNumber" class="form-control"  th:value="*{intoIdNumber}" required onchange=checkIdcards(this)>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label is-required">电话：</label>
+                                <div class="col-sm-8">
+                                    <input id="intoPhone0" name="intoPhone" class="form-control" maxlength="11" th:value="*{intoPhone}" required onchange=checkTelPhone(this)>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label is-required">单位名称：</label>
+                                <div class="col-sm-8">
+                                    <input id="intoUnit0" name="intoUnit" class="form-control" th:value="*{intoUnit}" maxlength="30" required>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row" id="businessChange">
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label"></label>
+                            <div class="col-sm-8">
+                                <a onclick="addRow()" class="btn btn-success"><i class="fa fa-plus"></i> 增加人员</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label"></label>
+                            <div class="col-sm-8">
+                                <a onclick="remove()" class="btn btn-danger"><i class="fa fa-remove"></i> 删除最后一行</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row" style="margin-top: 10px">
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">是否携带物品：</label>
+                        <div class="col-sm-8">
+                            <select  id="isBelongings" name="isBelongings" class="form-control" onchange="isBelongingsChange()" >
+                                <option value="">请选择</option>
+                                <option th:selected="*{isBelongings == '0'}"  value="0">否</option>
+                                <option th:selected="*{isBelongings == '1'}" value="1">是</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel panel-default" id="isBelongingLine">
+                <div class="panel-heading" style="background-color: #3c8dbc" data-toggle="collapse" data-target="#collapse3">
+                    <h4 class="panel-title" >
+                        出入机房物品
+                    </h4>
+                </div>
+                <br/>
+                <div id="collapse3" class="panel-collapse in">
+                    <div class="row" id="enuParams0">
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label is-required">物品名称：</label>
+                                <div class="col-sm-8">
+                                    <input id="belongings0" name="belongings" class="form-control" type="text" th:value="*{belongings}" maxlength="20" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label is-required">数量：</label>
+                                <div class="col-sm-8">
+                                    <input id="belongingsNum0" type="number" name="belongingsNum"  class="form-control" maxlength="2" th:value="*{belongingsNum}" required/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label is-required">进出情况：</label>
+                                <div class="col-sm-8">
+                                    <select id="inOutType0" name="inOutType" class="form-control" th:with="type=${@pubParaValue.selectPubParaValueByParaName('in_out_type')}" th:field="*{inOutType}"  required>
+                                        <option value="">请选择</option>
+                                        <option th:each="paraValue : ${type}" th:text="${paraValue.valueDetail}" th:value="${paraValue.valueDetail}" th:selected="${paraValue.valueDetail eq inOutType}"></option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label is-required">设备安装位置：</label>
+                                <div class="col-sm-8">
+                                    <input id="installSite0" name="installSite" class="form-control" th:value="*{installSite}" maxlength="30" required>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row" id="businessChange1">
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label"></label>
+                            <div class="col-sm-8">
+                                <a onclick="addRow1()" class="btn btn-success"><i class="fa fa-plus"></i> 增加物品</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label"></label>
+                            <div class="col-sm-8">
+                                <a onclick="remove1()" class="btn btn-danger"><i class="fa fa-remove"></i> 删除最后一行</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div  class="row" th:if="${state=='0' || state=='3' }">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">审核人：</label>
+                    <div class="col-sm-8">
+                        <select  id="auditorId" name="auditorId" class="form-control" th:field="*{auditorId}"  required>
+                            <option value="">请选择</option>
+                            <option th:each="ps:${auditorsList}" th:text="${ps.pName}" th:value="${ps.pId}" th:selected="${ps.pId eq auditorId}"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row" th:if="${status=='2'}">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label is-required">审批意见：</label>
+                    <div class="col-sm-10">
+                        <input id="reason" name="reason" class="form-control" th:value="*{reason}" maxlength="50"  readonly />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+<!--    <div class="tab-content">-->
+<!--        <div id="tab-1" class="tab-pane active">-->
+<!--            <div class="panel-body">-->
+<!--                <div class="btn-group-sm" id="toolbar1" role="group">-->
+<!--                    <a class="btn btn-success" type="button" onclick="upload()">-->
+<!--                        <i class="fa fa-upload"></i> 添加附件-->
+<!--                    </a>-->
+<!--                    <a class="btn btn-warning multiple disabled" onclick="downloadAttachment()">-->
+<!--                        <i class="fa fa-download"></i> 下载附件-->
+<!--                    </a>-->
+<!--                    <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()">-->
+<!--                        <i class="fa fa-remove"></i> 删除附件-->
+<!--                    </a>-->
+<!--                </div>-->
+<!--                <div class="col-sm-12 select-table table-striped">-->
+<!--                    <table id="file-table"></table>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
+</div>
+<div class="row">
+    <div class="col-sm-offset-5 col-sm-10">
+        <button type="button" class="btn btn-sm btn-primary" onclick="submit()"><i class="fa fa-check"></i>提 交
+        </button>&nbsp;
+        <button type="button" class="btn btn-sm btn-danger" onclick="closeItem()"><i class="fa fa-remove"></i>关 闭
+        </button>
+    </div>
+</div>
+<th:block th:include="include :: footer"/>
+<th:block th:include="include :: select2-js"/>
+<th:block th:include="include :: datetimepicker-js"/>
+<script th:src="@{/js/activiti.js}"></script>
+<script th:inline="javascript">
+    var prefix_attachment = ctx + "pub/attachment";
+    var prefix_version = ctx + "computerRoom/apply";
+    $(function () {
+        $("#predictInTime").datetimepicker({
+            format: "yyyy-mm-dd hh:ii:ss",
+            autoclose: true,
+            minView:0,
+            minuteStep:1,
+            Date:new Date()
+        });
+        $("#predictOutTime").datetimepicker({
+            format: "yyyy-mm-dd hh:ii:ss",
+            autoclose: true,
+            minView:0,
+            minuteStep:1,
+            Date:new Date()
+        });
+        var optionsfj = {
+            url: prefix_attachment + "/list",
+            id: 'file-table',
+            createUrl: prefix_attachment + "/add",
+            updateUrl: prefix_attachment + "/edit/{id}",
+            removeUrl: prefix_attachment + "/remove",
+            detailUrl: prefix_attachment + "/edit/{id}",
+            sortName: "fileTime",
+            singleSelect: true,
+            clickToSelect: true,
+            sortOrder: "desc",
+            toolbar: "toolbar1",
+            queryParams: queryParams,
+            modalName: "附件列表",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'atId',
+                    title: '附件ID',
+                    visible: false
+                },
+                {
+                    field: 'fileName',
+                    title: '文件名称'
+                },
+                {
+                    field: 'person.pName',
+                    title: '上传人'
+                },
+                {
+                    field: 'size',
+                    title: '文件大小'
+                },
+                {
+                    field: 'memo',
+                    title: '文件描述'
+                },
+                {
+                    field: 'fileTime',
+                    title: '上传时间',
+                    formatter: function (value, row, index) {
+                        var startTime = '';
+                        if (value != '' && value != null) {
+                            var pattern = /(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/;
+                            startTime = value.replace(pattern, '$1-$2-$3 $4:$5:$6');
+                        }
+                        return startTime;
+                    }
+                }]
+        };
+        $.table.init(optionsfj);
+
+        var intoList = [[${intoList}]];
+
+        var belongingsList = [[${belongingsList}]];
+        // 显示动态框
+        showBusiness(intoList);
+
+        showBelongings(belongingsList);
+
+        isTemporaryChange();
+
+        isBelongingsChange();
+    });
+
+    var enuParam_index = 1;
+
+    var enuParam_index1 = 1;
+
+    // 校验身份证号码
+    function checkIdcards(elementObj) {
+
+        var intoIdNumber =  $(elementObj).attr("id");
+
+        var value = $("#"+intoIdNumber).val();
+        if (value && !idcard(value)) {
+            $("#"+intoIdNumber).val("");
+            $.modal.alertWarning("身份证格式不正确。");
+        } else {
+            return true;
+        }
+    }
+
+    function idcard(id) {
+        // 1 "验证通过!", 0 //校验不通过 // id为身份证号码
+        var format = /^(([1][1-5])|([2][1-3])|([3][1-7])|([4][1-6])|([5][0-4])|([6][1-5])|([7][1])|([8][1-2]))\d{4}(([1][9]\d{2})|([2]\d{3}))(([0][1-9])|([1][0-2]))(([0][1-9])|([1-2][0-9])|([3][0-1]))\d{3}[0-9xX]$/;
+        //号码规则校验
+        if(!format.test(id)){
+            return false;
+        }
+        //区位码校验
+        //出生年月日校验  前正则限制起始年份为1900;
+        var year = id.substr(6,4),//身份证年
+            month = id.substr(10,2),//身份证月
+            date = id.substr(12,2),//身份证日
+            time = Date.parse(month+'-'+date+'-'+year),//身份证日期时间戳date
+            now_time = Date.parse(new Date()),//当前时间戳
+            dates = (new Date(year,month,0)).getDate();//身份证当月天数
+        if(time>now_time||date>dates){
+            return false;
+        }
+        //校验码判断
+        var c = new Array(7,9,10,5,8,4,2,1,6,3,7,9,10,5,8,4,2);  //系数
+        var b = new Array('1','0','X','9','8','7','6','5','4','3','2'); //校验码对照表
+        var id_array = id.split("");
+        var sum = 0;
+        for(var k=0;k<17;k++){
+            sum+=parseInt(id_array[k])*parseInt(c[k]);
+        }
+        if(id_array[17].toUpperCase() != b[sum%11].toUpperCase()){
+            return false;
+        }
+        return true;
+    }
+
+    function idcards(customerIdcard) {
+        var nd = /^[1-9]\d{7}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])\d{3}$|^[1-9]\d{5}[1-9]\d{3}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])\d{3}([0-9]|X)$/;//中国内陆地区身份证验证
+        var hk = /^((\s?[A-Za-z])|([A-Za-z]{2}))\d{6}(\([0−9aA]\)|[0-9aA])$/;//中国香港地区身份证验证
+        var mo = /^[1|5|7][0-9]{6}\([0-9Aa]\)/;//中国澳门地区身份证验证
+        var tw = /^[a-zA-Z][0-9]{9}$/; //中国台湾地区身份证验证
+        if (!nd.test(customerIdcard) && !hk.test(customerIdcard) && !mo.test(customerIdcard) && !tw.test(customerIdcard)) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    // 校验手机号
+    function checkTelPhone(elementObj) {
+
+        var intoPhone =  $(elementObj).attr("id");
+
+        var value = $("#"+intoPhone).val();
+        if (!isPoneAvailable(value)) {
+            $.modal.alertWarning("电话校验不合法！");
+            $("#"+intoPhone).val("");
+        }
+
+    }
+    // 手机号校验
+    function isPoneAvailable(phone) {
+        var reg = /^[1][3,4,5,7,8][0-9]{9}$/;
+        if (!reg.test(phone)) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    // 显示人员动态框
+    function showBusiness(intoList) {
+
+        // 不做任何操作
+        if(intoList == null || intoList.length == 0){
+            return;
+        }
+
+        // 默认给第一个框赋值
+        $("#intoName0").val(intoList[0].intoName);
+        $("#intoIdNumber0").val(intoList[0].intoIdNumber);
+        $("#intoPhone0").val(intoList[0].intoPhone);
+        $("#intoUnit0").val(intoList[0].intoUnit);
+
+        // 大于1个，需要动态增加并赋值
+        if(intoList.length>1){
+            for(var i=1;i<intoList.length;i++){
+                var business = intoList[i];
+                var intoName = business.intoName;
+                var intoIdNumber = business.intoIdNumber;
+                var intoPhone = business.intoPhone;
+                var intoUnit = business.intoUnit;
+                console.log(business);
+                var enuParam =
+                    "<div class=\"row\" id='enuParam"+i+"'>\n" +
+
+
+                    "\t\t\t\t\t<div class=\"col-sm-3\">\n" +
+                    "\t\t\t\t\t\t<div class=\"form-group\">\n" +
+                    "\t\t\t\t\t\t\t<label class=\"col-sm-4 control-label is-required\">姓名"+i+"：</label>\n" +
+                    "\t\t\t\t\t\t\t<div class=\"col-sm-8\">\n" +
+                    "\t\t\t\t\t\t\t\t<input id=\"intoName"+i+"\" name=\"intoName\" class=\"form-control\" type='text' maxlength=\"10\" required>\n" +
+                    "\t\t\t\t\t\t\t</div>\n" +
+                    "\t\t\t\t\t\t</div>\n" +
+                    "\t\t\t\t\t</div>\n" +
+
+                    "\t\t\t\t\t<div class=\"col-sm-3\">\n" +
+                    "\t\t\t\t\t\t<div class=\"form-group\">\n" +
+                    "\t\t\t\t\t\t\t<label class=\"col-sm-4 control-label is-required\">身份证号"+i+"：</label>\n" +
+                    "\t\t\t\t\t\t\t<div class=\"col-sm-8\">\n" +
+                    "\t\t\t\t\t\t\t\t<input id=\"intoIdNumber"+i+"\" name=\"intoIdNumber\" class=\"form-control\" maxlength='18' type='text' required onchange=checkIdcards(this)>\n" +
+                    "\t\t\t\t\t\t\t</div>\n" +
+                    "\t\t\t\t\t\t</div>\n" +
+                    "\t\t\t\t\t</div>\n" +
+
+                    "\t\t\t\t\t<div class=\"col-sm-3\">\n" +
+                    "\t\t\t\t\t\t<div class=\"form-group\">\n" +
+                    "\t\t\t\t\t\t\t<label class=\"col-sm-4 control-label is-required\">电话"+i+"：</label>\n" +
+                    "\t\t\t\t\t\t\t<div class=\"col-sm-8\">\n" +
+                    "\t\t\t\t\t\t\t\t<input id=\"intoPhone"+i+"\" name=\"intoPhone\" class=\"form-control\" maxlength=\"11\" type='text' required onchange=checkTelPhone(this)>\n" +
+                    "\t\t\t\t\t\t\t</div>\n" +
+                    "\t\t\t\t\t\t</div>\n" +
+                    "\t\t\t\t\t</div>\n" +
+
+                    "\t\t\t\t\t<div class=\"col-sm-3\">\n" +
+                    "\t\t\t\t\t\t<div class=\"form-group\">\n" +
+                    "\t\t\t\t\t\t\t<label class=\"col-sm-4 control-label is-required\">单位名称"+i+"：</label>\n" +
+                    "\t\t\t\t\t\t\t<div class=\"col-sm-8\">\n" +
+                    "\t\t\t\t\t\t\t\t<input id=\"intoUnit"+i+"\" name=\"intoUnit\" class=\"form-control\" type='text' maxlength=\"30\" required>\n" +
+                    "\t\t\t\t\t\t\t</div>\n" +
+                    "\t\t\t\t\t\t</div>\n" +
+                    "\t\t\t\t\t</div>\n" +
+
+                    "\t\t\t\t</div>";
+                $("#enuParam" + (i - 1)).after(enuParam);
+
+                $("#intoName"+i).val(intoName);
+                $("#intoIdNumber"+i).val(intoIdNumber);
+                $("#intoPhone"+i).val(intoPhone);
+                $("#intoUnit"+i).val(intoUnit);
+                enuParam_index = i+1;
+            }
+        }
+    }
+
+
+    // 显示物品动态框
+    function showBelongings(belongingsList) {
+        console.log("belongingsList:"+belongingsList);
+
+        // 不做任何操作
+        if(belongingsList == null || belongingsList.length == 0){
+            return;
+        }
+
+        // 默认给第一个框赋值
+        $("#belongings0").val(belongingsList[0].belongings);
+        $("#belongingsNum0").val(belongingsList[0].belongingsNum);
+        //$("#inOutType0").val(belongingsList[0].inOutType);
+        $("#installSite0").val(belongingsList[0].installSite);
+
+        var options1 = "<option value=''>请选择</option>";
+        var businessOrgs = [[${@pubParaValue.selectPubParaValueByParaName('in_out_type')}]];
+        for(var ak=0;ak<businessOrgs.length;ak++){
+            options1 += "<option value='"+businessOrgs[ak].valueDetail+"'>"+businessOrgs[ak].valueDetail+"</option>";
+        }
+        // 大于1个，需要动态增加并赋值
+        if(belongingsList.length>1){
+            for(var i=1;i<belongingsList.length;i++){
+                var business = belongingsList[i];
+                var belongings = business.belongings;
+                var belongingsNum = business.belongingsNum;
+                var inOutType = business.inOutType;
+                var installSite = business.installSite;
+                console.log("物品："+business);
+                var enuParams =
+                    "<div class=\"row\" id='enuParams"+i+"'>\n" +
+
+
+                    "\t\t\t\t\t<div class=\"col-sm-3\">\n" +
+                    "\t\t\t\t\t\t<div class=\"form-group\">\n" +
+                    "\t\t\t\t\t\t\t<label class=\"col-sm-4 control-label is-required\">物品名称"+i+"：</label>\n" +
+                    "\t\t\t\t\t\t\t<div class=\"col-sm-8\">\n" +
+                    "\t\t\t\t\t\t\t\t<input id=\"belongings"+i+"\" name=\"belongings\" class=\"form-control\" type='text' maxlength=\"20\" required>\n" +
+                    "\t\t\t\t\t\t\t</div>\n" +
+                    "\t\t\t\t\t\t</div>\n" +
+                    "\t\t\t\t\t</div>\n" +
+
+                    "\t\t\t\t\t<div class=\"col-sm-3\">\n" +
+                    "\t\t\t\t\t\t<div class=\"form-group\">\n" +
+                    "\t\t\t\t\t\t\t<label class=\"col-sm-4 control-label is-required\">数量"+i+"：</label>\n" +
+                    "\t\t\t\t\t\t\t<div class=\"col-sm-8\">\n" +
+                    "\t\t\t\t\t\t\t\t<input id=\"belongingsNum"+i+"\" name=\"belongingsNum\" class=\"form-control\" maxlength='2' type='number' required>\n" +
+                    "\t\t\t\t\t\t\t</div>\n" +
+                    "\t\t\t\t\t\t</div>\n" +
+                    "\t\t\t\t\t</div>\n" +
+
+                    "\t\t\t\t\t<div class=\"col-sm-3\">\n" +
+                    "\t\t\t\t\t\t<div class=\"form-group\">\n" +
+                    "\t\t\t\t\t\t\t<label class=\"col-sm-4 control-label is-required\">进出情况"+i+"：</label>\n" +
+                    "\t\t\t\t\t\t\t<div class=\"col-sm-8\">\n" +
+                    "\t\t\t\t\t\t\t\t<select id=\"inOutType"+i+"\" name=\"inOutType\" class=\"form-control\" required>\n" +
+                    options1 +
+                    "\t\t\t\t\t\t\t\t</select>\n" +
+                    "\t\t\t\t\t\t\t</div>\n" +
+                    "\t\t\t\t\t\t</div>\n" +
+                    "\t\t\t\t\t</div>\n" +
+
+                    "\t\t\t\t\t<div class=\"col-sm-3\">\n" +
+                    "\t\t\t\t\t\t<div class=\"form-group\">\n" +
+                    "\t\t\t\t\t\t\t<label class=\"col-sm-4 control-label is-required\">设备安装位置"+i+"：</label>\n" +
+                    "\t\t\t\t\t\t\t<div class=\"col-sm-8\">\n" +
+                    "\t\t\t\t\t\t\t\t<input id=\"installSite"+i+"\" name=\"installSite\" class=\"form-control\" type='text' maxlength=\"30\" required>\n" +
+                    "\t\t\t\t\t\t\t</div>\n" +
+                    "\t\t\t\t\t\t</div>\n" +
+                    "\t\t\t\t\t</div>\n" +
+
+                    "\t\t\t\t</div>";
+                $("#enuParams" + (i - 1)).after(enuParams);
+
+                $("#belongings"+i).val(belongings);
+                $("#belongingsNum"+i).val(belongingsNum);
+                $("#inOutType"+i).val(inOutType);
+                $("#installSite"+i).val(installSite);
+                enuParam_index1 = i+1;
+            }
+        }
+    }
+
+
+
+    //查询当前登陆人的处室人员
+    function selectPersonList(){
+        $.modal.open("选择陪同人员", prefix_version + "/selectAccompanyUser");
+    }
+
+    // 选择工作内容(可以多选)
+    function selectWorkContent() {
+        $.modal.open("选择工作内容", prefix_version + "/selectWorkContent");
+    }
+
+    // 选择外围系统(可以多选)
+    function selectApplication() {
+        $.modal.open("选择外围系统", prefix_version + "/selectApplication");
+    }
+
+    // 校验开始升级时间
+    function checkStartTime(){
+        var startUpgradeTime = $("#predictInTime").val();
+        var startUpgradeDate = new Date(startUpgradeTime);
+        var nowDate = new Date();// 当前系统时间
+        if(startUpgradeDate <= nowDate.getTime()){
+            $.modal.alertWarning("预计进入时间必须大于当前系统时间！");
+            $("#predictInTime").val("");
+            return;
+        }
+    }
+
+    // 校验结束升级时间
+    function checkEndTime(){
+        var startUpgradeTime = $("#predictInTime").val();
+        var endUpgradeTime = $("#predictOutTime").val();
+        var startUpgradeDate = new Date(startUpgradeTime);// 开始升级时间
+        var endUpgradeDate = new Date(endUpgradeTime);// 结束升级时间
+        if(startUpgradeDate.getTime() >= endUpgradeDate.getTime()){
+            $.modal.alertWarning("预计离开时间必须大于预计进入时间！");
+            $("#predictOutTime").val("");
+            return;
+        }
+    }
+
+    // 校验结束升级时间
+    function checkEndTimes(){
+        var startUpgradeTime = $("#predictInTime").val();
+        if(startUpgradeTime == null || startUpgradeTime == undefined || startUpgradeTime == "" ){
+            $.modal.alertWarning("预计进入时间未填写，请先填写预计进入时间！");
+            $("#predictOutTime").val("");
+            return;
+        }
+        var endUpgradeTime = $("#predictOutTime").val();
+        var startUpgradeDate = new Date(startUpgradeTime);// 开始升级时间
+        var endUpgradeDate = new Date(endUpgradeTime);// 结束升级时间
+
+        if(startUpgradeDate.getTime() >= endUpgradeDate.getTime()){
+            $.modal.alertWarning("预计离开时间必须大于预计进入时间！");
+            $("#predictOutTime").val("");
+            return;
+        }
+    }
+
+
+
+    // 提交
+    function submit() {
+        if ($.validate.form()) {
+            var data = $("#form-computerRoom-add").serializeArray();
+            $.operate.saveTab(prefix_version + "/saveEdit", data);
+        } else {
+            $.modal.alertWarning("有必填参数未填写。");
+        }
+    };
+
+    // 暂存
+    function save() {
+        var idCard = checkIdcard();
+        if (!idCard) {
+            return;
+        }
+        var data = $("#form-fmbiz-add").serializeArray();
+        $.operate.saveTab(prefix_version + "/save", data);
+    };
+
+
+    // 附件上传页面
+    function upload() {
+        var ownerId = $("#ids").val();
+        var url = prefix_attachment + "/upload/" + ownerId;
+        $.modal.open("附件上传", url,'1100','620');
+    }
+
+
+
+    // 附件下载
+    function downloadAttachment() {
+        var rows = $.table.selectFirstColumns();
+        var atId = rows[0];
+        var ownerId = $("#ids").val();
+        var url = prefix_attachment + "/download/" + ownerId + "/" + atId;
+        window.location.href = url;
+    }
+
+    // 选择应用系统（只能单选）
+    function selectOgSysListByCondition() {
+        $.modal.open("选择应用系统", prefix_version + "/sysGrouplist");
+    }
+
+    //选择机房模块(可以多选)
+    function selectComputerRoomModule(){
+        var computerCenter = $("#computerCenter").val();
+        if(computerCenter){
+            $.modal.open("选择机房模块", prefix_version + "/selectComputerRoomModule/"+computerCenter);
+        }else {
+            $.modal.alertWarning("请先选择机房所属中心!");
+        }
+    }
+
+
+    // 选择创建机构（只能单选）
+    function selectogOrg() {
+        $.modal.open("选择创建机构", prefix_version + "/selectogOrg");
+    }
+
+    function queryParams(params) {
+        var search = $.table.queryParams(params);
+        search.ownerId = $("#ownerId").val() == '' ? 'version_public_add_no_owner_id' : $("#ownerId").val();
+        return search;
+    }
+
+
+
+    // 增加一行审
+    function addRow() {
+
+        var v1 = $("#intoName"+(enuParam_index-1)).val();
+        var v2 = $("#intoIdNumber"+(enuParam_index-1)).val();
+        var v3 = $("#intoPhone"+(enuParam_index-1)).val();
+        var v4 = $("#intoUnit"+(enuParam_index-1)).val();
+        if(v1==''||v2==''||v3==''||v4==''){
+            $.modal.alertWarning("请将当前行填写完整或者删除之后才允许新增一行！");
+            return;
+        }
+        var enuParam =
+
+            "<div class=\"row\" id='enuParam"+enuParam_index+"'>\n" +
+
+            "\t\t\t\t\t<div class=\"col-sm-3\">\n" +
+            "\t\t\t\t\t\t<div class=\"form-group\">\n" +
+            "\t\t\t\t\t\t\t<label class=\"col-sm-4 control-label is-required\">姓名"+enuParam_index+"：</label>\n" +
+            "\t\t\t\t\t\t\t<div class=\"col-sm-8\">\n" +
+            "\t\t\t\t\t\t\t\t<input id=\"intoName"+enuParam_index+"\" name=\"intoName\" class=\"form-control\" type='text' maxlength=\"10\" required>\n" +
+            "\t\t\t\t\t\t\t</div>\n" +
+            "\t\t\t\t\t\t</div>\n" +
+            "\t\t\t\t\t</div>\n" +
+
+            "\t\t\t\t\t<div class=\"col-sm-3\">\n" +
+            "\t\t\t\t\t\t<div class=\"form-group\">\n" +
+            "\t\t\t\t\t\t\t<label class=\"col-sm-4 control-label is-required\">身份证号"+enuParam_index+"：</label>\n" +
+            "\t\t\t\t\t\t\t<div class=\"col-sm-8\">\n" +
+            "\t\t\t\t\t\t\t\t<input id=\"intoIdNumber"+enuParam_index+"\" name=\"intoIdNumber\" class=\"form-control\" maxlength='18' type='text' required onchange=checkIdcards(this)>\n" +
+            "\t\t\t\t\t\t\t</div>\n" +
+            "\t\t\t\t\t\t</div>\n" +
+            "\t\t\t\t\t</div>\n" +
+
+            "\t\t\t\t\t<div class=\"col-sm-3\">\n" +
+            "\t\t\t\t\t\t<div class=\"form-group\">\n" +
+            "\t\t\t\t\t\t\t<label class=\"col-sm-4 control-label is-required\">电话"+enuParam_index+"：</label>\n" +
+            "\t\t\t\t\t\t\t<div class=\"col-sm-8\">\n" +
+            "\t\t\t\t\t\t\t\t<input id=\"intoPhone"+enuParam_index+"\" name=\"intoPhone\" class=\"form-control\" maxlength=\"11\" type='text' required onchange=checkTelPhone(this)>\n" +
+            "\t\t\t\t\t\t\t</div>\n" +
+            "\t\t\t\t\t\t</div>\n" +
+            "\t\t\t\t\t</div>\n" +
+
+            "\t\t\t\t\t<div class=\"col-sm-3\">\n" +
+            "\t\t\t\t\t\t<div class=\"form-group\">\n" +
+            "\t\t\t\t\t\t\t<label class=\"col-sm-4 control-label is-required\">单位名称"+enuParam_index+"：</label>\n" +
+            "\t\t\t\t\t\t\t<div class=\"col-sm-8\">\n" +
+            "\t\t\t\t\t\t\t\t<input id=\"intoUnit"+enuParam_index+"\" name=\"intoUnit\" class=\"form-control\" type='text' maxlength=\"30\" required>\n" +
+            "\t\t\t\t\t\t\t</div>\n" +
+            "\t\t\t\t\t\t</div>\n" +
+            "\t\t\t\t\t</div>\n" +
+
+            "\t\t\t\t</div>";
+        console.log(enuParam);
+        $("#enuParam" + (enuParam_index - 1)).after(enuParam);
+        enuParam_index++;
+    };
+
+
+
+    // 删除一行审核部门
+    function remove() {
+        var enuParam = document.getElementById("enuParam" + (enuParam_index - 1));
+        if(enuParam_index <= 1){
+            $.modal.alertWarning("至少保留一行业务审批选择框！");
+        }else{
+            enuParam.parentNode.removeChild(enuParam);
+            enuParam_index--;
+        }
+    }
+
+
+    /* 动态增加机房携带物品 Start */
+
+
+    // 增加一行审
+    function addRow1() {
+        var v1 = $("#belongings"+(enuParam_index1-1)).val();
+        var v2 = $("#belongingsNum"+(enuParam_index1-1)).val();
+        var v3 = $("#inOutType"+(enuParam_index1-1)).val();
+        var v4 = $("#installSite"+(enuParam_index1-1)).val();
+        if(v1==''||v2==''||v3==''||v4==''){
+            $.modal.alertWarning("请将当前行填写完整或者删除之后才允许新增一行！");
+            return;
+        }
+        var options1 = "<option value=''>请选择</option>";
+        var businessOrgs = [[${@pubParaValue.selectPubParaValueByParaName('in_out_type')}]];
+        for(var ak=0;ak<businessOrgs.length;ak++){
+            options1 += "<option value='"+businessOrgs[ak].valueDetail+"'>"+businessOrgs[ak].valueDetail+"</option>";
+        }
+
+        var enuParams =
+
+            "<div class=\"row\" id='enuParams"+enuParam_index1+"'>\n" +
+
+            "\t\t\t\t\t<div class=\"col-sm-3\">\n" +
+            "\t\t\t\t\t\t<div class=\"form-group\">\n" +
+            "\t\t\t\t\t\t\t<label class=\"col-sm-4 control-label is-required\">物品名称"+enuParam_index1+"：</label>\n" +
+            "\t\t\t\t\t\t\t<div class=\"col-sm-8\">\n" +
+            "\t\t\t\t\t\t\t\t<input id=\"belongings"+enuParam_index1+"\" name=\"belongings\" class=\"form-control\" type='text' maxlength=\"20\" required>\n" +
+            "\t\t\t\t\t\t\t</div>\n" +
+            "\t\t\t\t\t\t</div>\n" +
+            "\t\t\t\t\t</div>\n" +
+
+            "\t\t\t\t\t<div class=\"col-sm-3\">\n" +
+            "\t\t\t\t\t\t<div class=\"form-group\">\n" +
+            "\t\t\t\t\t\t\t<label class=\"col-sm-4 control-label is-required\">数量"+enuParam_index1+"：</label>\n" +
+            "\t\t\t\t\t\t\t<div class=\"col-sm-8\">\n" +
+            "\t\t\t\t\t\t\t\t<input id=\"belongingsNum"+enuParam_index1+"\" name=\"belongingsNum\" class=\"form-control\"  maxlength='2' type='number' required >\n" +
+            "\t\t\t\t\t\t\t</div>\n" +
+            "\t\t\t\t\t\t</div>\n" +
+            "\t\t\t\t\t</div>\n" +
+
+            "\t\t\t\t\t<div class=\"col-sm-3\">\n" +
+            "\t\t\t\t\t\t<div class=\"form-group\">\n" +
+            "\t\t\t\t\t\t\t<label class=\"col-sm-4 control-label is-required\">进出情况"+enuParam_index1+"：</label>\n" +
+            "\t\t\t\t\t\t\t<div class=\"col-sm-8\">\n" +
+            "\t\t\t\t\t\t\t\t<select id=\"inOutType"+enuParam_index1+"\" name=\"inOutType\" class=\"form-control\" required>\n" +
+            options1 +
+            "\t\t\t\t\t\t\t\t</select>\n" +
+            "\t\t\t\t\t\t\t</div>\n" +
+            "\t\t\t\t\t\t</div>\n" +
+            "\t\t\t\t\t</div>\n" +
+
+            "\t\t\t\t\t<div class=\"col-sm-3\">\n" +
+            "\t\t\t\t\t\t<div class=\"form-group\">\n" +
+            "\t\t\t\t\t\t\t<label class=\"col-sm-4 control-label is-required\">设备安装位置"+enuParam_index1+"：</label>\n" +
+            "\t\t\t\t\t\t\t<div class=\"col-sm-8\">\n" +
+            "\t\t\t\t\t\t\t\t<input id=\"installSite"+enuParam_index1+"\" name=\"installSite\" class=\"form-control\" type='text' maxlength=\"30\" required>\n" +
+            "\t\t\t\t\t\t\t</div>\n" +
+            "\t\t\t\t\t\t</div>\n" +
+            "\t\t\t\t\t</div>\n" +
+
+            "\t\t\t\t</div>";
+        console.log(enuParams);
+        $("#enuParams" + (enuParam_index1 - 1)).after(enuParams);
+        enuParam_index1++;
+    };
+
+
+    // 删除一行
+    function remove1() {
+        var enuParams = document.getElementById("enuParams" + (enuParam_index1 - 1));
+        if(enuParam_index1 <= 1){
+            $.modal.alertWarning("至少保留一行机房物品选择框！");
+        }else{
+            enuParams.parentNode.removeChild(enuParams);
+            enuParam_index1--;
+        }
+    }
+
+
+
+
+    /* 动态增加机房携带物品 End */
+
+
+
+    function isTemporaryChange(){
+        var isTemporary = $("#isTemporary").val();
+        if(isTemporary == '1' ){
+            //展示进入机房人员表格
+            $("#selectBusinessLine").show();
+            var len = $("#collapse2 .row").length
+            for(var i=0;i<len;i++){
+                $("#intoName"+i)[0].setAttribute("required","true");
+                $("#intoIdNumber"+i)[0].setAttribute("required","true");
+                $("#intoPhone"+i)[0].setAttribute("required","true");
+                $("#intoUnit"+i)[0].setAttribute("required","true");
+            }
+        }else {
+            var len = $("#collapse2 .row").length
+            for(var i=0;i<len;i++){
+                if(len>1){
+                    var is = i+1;
+                    $("#enuParam"+is).remove();
+                }
+                $("#intoName"+i).removeAttr("required");
+                $("#intoIdNumber"+i).removeAttr("required");
+                $("#intoPhone"+i).removeAttr("required");
+                $("#intoUnit"+i).removeAttr("required");
+            }
+            this.enuParam_index = 1;
+            $("#selectBusinessLine").hide();
+            $("[name='intoName']").val("");
+            $("[name='intoIdNumber']").val("");
+            $("[name='intoPhone']").val("");
+            $("[name='intoUnit']").val("");
+
+        }
+    }
+
+    function isBelongingsChange(){
+        var isBelongings = $("#isBelongings").val();
+        if(isBelongings == '1'){
+            //展示携带物品信息
+            $("#isBelongingLine").show();
+            var len = $("#collapse3 .row").length
+            for(var i=0;i<len;i++) {
+                $("#belongings" + i)[0].setAttribute("required", "true");
+                $("#belongingsNum" + i)[0].setAttribute("required", "true");
+                $("#inOutType" + i)[0].setAttribute("required", "true");
+                $("#installSite" + i)[0].setAttribute("required", "true");
+            }
+        }else {
+            var len = $("#collapse3 .row").length
+            for(var i=0;i<len;i++){
+                if(len>1){
+                    var is = i+1;
+                    $("#enuParams"+is).remove();
+                }
+                $("#belongings"+i).removeAttr("required");
+                $("#belongingsNum"+i).removeAttr("required");
+                $("#inOutType"+i).removeAttr("required");
+                $("#installSite"+i).removeAttr("required");
+            }
+            this.enuParam_index1 = 1;
+            $("#isBelongingLine").hide();
+            $("[name='belongings']").val("");
+            $("[name='belongingsNum']").val("");
+            $("[name='inOutType']").attr("selected", false);
+            $("[name='installSite']").val("");
+        }
+    }
+
+    function isUrgencyChange(){
+        var isUrgency = $("#isUrgency").val();
+        //非紧急
+        if(isUrgency == '0'){
+            $("#predictInTime").attr("onchange","checkStartTime()");
+            $("#predictOutTime").attr("onchange","checkEndTime()");
+            $("#predictInTime").val("");
+            $("#predictOutTime").val("")
+        }else {
+            //紧急
+            $("#predictInTime").attr("onchange","");
+            $("#predictOutTime").attr("onchange","");
+            $("#predictOutTime").attr("onchange","checkEndTimes()");
+            $("#predictInTime").val("");
+            $("#predictOutTime").val("")
+        }
+    }
+
+    function computerCenters(){
+        $("#computerRoomModule").val("");
+        $("#computerRoomModuleName").val("");
+    }
+
+</script>
+</body>
+</html>

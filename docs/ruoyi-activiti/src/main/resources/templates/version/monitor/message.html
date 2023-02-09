@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('发送短信')" />
+</head>
+<body>
+<div class="row">
+    <form class="form-horizontal m" id="form-monitor-message">
+        <!--版本单编号-->
+        <input id="ownerId" name="ownerId" th:value="*{ownerId}" type="hidden">
+        <input id="msgFlag" name="msgFlag" th:value="*{msgFlag}" type="hidden">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">短信内容：</label>
+                    <div class="col-sm-10">
+                        <textarea rows="6" cols="10" id="msg" name="msg" class="form-control" th:text="*{msg}"></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<div class="row">
+    <div class="col-sm-12 select-table table-striped">
+        <table id="bootstrap-table"></table>
+    </div>
+</div>
+
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: select2-js" />
+<th:block th:include="include :: datetimepicker-js" />
+<script type="text/javascript">
+    var prefix_taskInfo = ctx + "version/taskInfo";
+    $(function() {
+        var options = {
+            url: prefix_taskInfo + "/selectPersons",
+            showSearch: false,
+            showRefresh: false,
+            showToggle: false,
+            showColumns: false,
+            clickToSelect: true,
+            queryParams : queryParams,
+            modalName: "人员信息",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field : 'pId',
+                    title : '人员信息ID',
+                    visible: false
+                },
+                {
+                    field : 'orgname',
+                    title : '机构名称'
+                },
+                {
+                    field : 'pName',
+                    title : '姓名'
+                },
+                {
+                    field : 'mobilPhone',
+                    title : '手机号'
+                }]
+        };
+        $.table.init(options);
+    });
+
+    // 查询参数
+    function queryParams(params) {
+        var search = $.table.queryParams(params);
+        search.ownerId = $("#ownerId").val();
+        search.msgFlag = $("#msgFlag").val();
+        return search;
+    }
+
+    // 确定按钮（发送短信）
+    function submitHandler() {
+        var pId = $.table.selectFirstColumns();
+        if (pId.length > 0) {
+            var url = prefix_taskInfo + "/sendMsg";
+            var data = $("#form-monitor-message").serializeArray();
+            data.push({"name": "pId", "value": pId});
+            $.operate.post(url,data);
+            $.modal.close();
+        }else{
+            $.modal.alertWarning("请至少选择一位人员发送短信！");
+        }
+    }
+
+</script>
+</body>
+</html>

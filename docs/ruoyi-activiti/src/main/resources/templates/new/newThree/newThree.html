@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:include="include :: header('短信发送')"/>
+    <th:block th:include="include :: select2-css"/>
+    <th:block th:include="include :: summernote-css"/>
+    <th:block th:include="include :: datetimepicker-css"/>
+</head>
+<body>
+<div class="main-content">
+    <form id="form-dx-add" class="form-horizontal">
+        <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+            <div class="panel-group">
+                <div class="panel panel-default">
+                    <div class="panel-heading" style="green-color: #3c8dbc" data-toggle="collapse"
+                         data-target="#collapse1">
+                        <h4 class="panel-title">
+                            短信发送
+                        </h4>
+                    </div>
+                    <div id="collapse1" class="panel-collapse in">
+                        <div class="panel-body">
+
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label class="col-sm-4 control-label is-required">手机号：</label>
+                                        <div class="col-sm-8">
+                                            <input id="telephone" name="telephone" class="form-control" type="text">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label class="col-sm-4 control-label is-required">消息：</label>
+                                        <div class="col-sm-8">
+                                            <input id="smsText" name="smsText" class="form-control" type="text">
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<div class="row">
+    <div class="col-sm-offset-5 col-sm-10">
+        <button type="button" class="btn btn-sm btn-primary" onclick="submitHandler()"><i class="fa fa-check"></i>发 送
+        </button>&nbsp;
+    </div>
+</div>
+<th:block th:include="include :: footer"/>
+<th:block th:include="include :: select2-js"/>
+<th:block th:include="include :: summernote-js"/>
+<th:block th:include="include :: datetimepicker-js"/>
+<script>
+    var prefix = ctx + "new/newThree";
+
+    //提交校验
+    $("#form-dx-add").validate({
+        onkeyup: false,
+        rules: {
+            "telephone": true,
+            "smsText": true,
+        },
+        messages: {
+            "telephone": true,
+            "smsText": true,
+
+            "telephone": "手机号不能为空",
+            "smsText": "输入的短信不能为空",
+        },
+        focusCleanup: true
+    });
+
+    //发送短信
+    function submitHandler() {
+        if ($.validate.form()) {
+            var data = $("#form-dx-add").serializeArray();
+            location.reload();
+            $.operate.saveTab(prefix + "/newThree", data);
+        }
+    }
+</script>
+</body>
+</html>

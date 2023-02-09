@@ -1,0 +1,288 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.activiti.mapper.DifficultEventsMapper">
+
+    <resultMap type="DifficultEvents" id="DifficultEventsResult">
+        <result property="id" column="id_"/>
+        <result property="no" column="no_"/>
+        <result property="dept" column="dept_"/>
+        <result property="fmId" column="fm_id"/>
+        <result property="sysId" column="sys_id"/>
+        <result property="groupId" column="group_id"/>
+        <result property="dealId" column="deal_id"/>
+        <result property="createrTime" column="creater_time"/>
+        <result property="dealTime" column="deal_time"/>
+        <result property="dealDesc" column="deal_desc"/>
+        <result property="status" column="status_"/>
+        <result property="source" column="source_"/>
+        <result property="deptName" column="deptName"/>
+        <result property="sysName" column="sysName"/>
+        <result property="groupName" column="groupName"/>
+        <result property="dealName" column="dealName"/>
+        <result property="n1" column="n1"/>
+        <result property="n2" column="n2"/>
+        <result property="n3" column="n3"/>
+        <result property="n4" column="n4"/>
+        <association property="fmBiz" column="fmId" javaType="FmBiz" resultMap="FmBizResult"/>
+    </resultMap>
+
+    <resultMap type="FmBiz" id="FmBizResult">
+        <result property="auditorId" column="auditor_id"/>
+        <result property="occurrenceOrgId" column="occurrence_org_id"/>
+        <result property="evaluaterId" column="evaluater_id"/>
+        <result property="faultNo" column="fault_no"/>
+        <result property="faultSource" column="fault_source"/>
+        <result property="seriousLev" column="serious_lev"/>
+        <result property="occurrenceAddress" column="occurrence_address"/>
+        <result property="occurTime" column="occur_time"/>
+        <result property="faultReportName" column="fault_report_name"/>
+        <result property="reportTime" column="report_time"/>
+        <result property="reportPhone" column="report_phone"/>
+        <result property="faultContactName" column="fault_contact_name"/>
+        <result property="contactPhone" column="contact_phone"/>
+        <result property="contactAddress" column="contact_address"/>
+        <result property="serialNumber" column="serial_number"/>
+        <result property="tradingName" column="trading_name"/>
+        <result property="errorInformation" column="error_information"/>
+        <result property="faultDecriptSummary" column="fault_decript_summary"/>
+        <result property="faultDecriptDetail" column="fault_decript_detail"/>
+        <result property="creatTime" column="creat_time"/>
+        <result property="dealTime" column="deal_time"/>
+        <result property="dealDescription" column="deal_description"/>
+        <result property="evaluate" column="evaluate"/>
+        <result property="evaluateTime" column="evaluate_time"/>
+        <result property="endTime" column="end_time"/>
+        <result property="currentState" column="current_state"/>
+        <result property="auditStatus" column="audit_status"/>
+        <result property="auditTime" column="audit_time"/>
+        <result property="n3" column="n3"/>
+        <result property="n2" column="n2"/>
+        <result property="n4" column="n4"/>
+        <result property="n1" column="n1"/>
+        <result property="ifYn" column="if_yn"/>
+        <result property="dealUseTime" column="deal_use_time"/>
+        <result property="involveAmount" column="involve_amount"/>
+        <result property="involveScount" column="involve_scount"/>
+        <result property="customerName" column="customer_name"/>
+        <result property="customerIdcard" column="customer_idcard"/>
+        <result property="transactionAccount" column="transaction_account"/>
+        <result property="transactionAmount" column="transaction_amount"/>
+        <result property="orderNumber" column="order_number"/>
+        <result property="evaluateResult" column="evaluate_result"/>
+        <result property="fmCause" column="fm_cause"/>
+        <result property="fmJkmark" column="fm_jkmark"/>
+        <result property="participatorIds" column="participator_ids"/>
+        <result property="dealMode" column="deal_mode"/>
+        <result property="participateGroupids" column="participate_groupids"/>
+        <result property="toQgzxTime" column="to_qgzx_time"/>
+        <result property="backSzxTime" column="back_szx_time"/>
+        <result property="repeatMark" column="repeat_mark"/>
+        <result property="receiverIds" column="receiver_ids"/>
+        <result property="invalidationMark" column="invalidation_mark"/>
+        <result property="ifJj" column="if_jj"/>
+        <result property="ifBulletion" column="if_bulletion"/>
+        <result property="bullCause" column="bull_cause"/>
+        <result property="bullTime" column="bull_time"/>
+        <result property="isAntiFraud" column="is_anti_fraud"/>
+        <result property="isSend" column="is_send"/>
+        <result property="fmId" column="fm_id"/>
+        <result property="createId" column="create_id"/>
+        <result property="createOrgId" column="create_org_id"/>
+        <result property="groupId" column="group_id"/>
+        <result property="dealerId" column="dealer_id"/>
+        <result property="dealGroupId" column="deal_group_id"/>
+        <result property="typeinfoId" column="typeinfo_id"/>
+        <result property="sysid" column="sysid"/>
+        <result property="fmTypeId" column="fm_type_id"/>
+        <result property="iniSys" column="ini_sys"/>
+        <result property="oneType" column="oneType"/>
+        <result property="twoType" column="twoType"/>
+        <result property="threeType" column="threeType"/>
+        <result property="keywords" column="keywords"/>
+        <result property="iniOneType" column="ini_OneType"/>
+        <result property="iniTwoType" column="ini_TwoType"/>
+        <result property="iniThreeType" column="ini_ThreeType"/>
+        <result property="iniKeywords" column="ini_Keywords"/>
+        <result property="knowledgeId" column="knowledge_Id"/>
+        <!--以下只为展示使用-->
+        <result property="createName" column="createName"/>
+        <result property="createGroupName" column="createGroupName"/>
+        <result property="oneTypeName" column="oneTypeName"/>
+        <result property="twoTypeName" column="twoTypeName"/>
+        <result property="threeTypeName" column="threeTypeName"/>
+        <result property="iniSysName" column="iniSysName"/>
+        <result property="iniOneTypeName" column="iniOneTypeName"/>
+        <result property="iniTwoTypeName" column="iniTwoTypeName"/>
+        <result property="iniThreeTypeName" column="iniThreeTypeName"/>
+        <result property="dealName" column="dealName"/>
+        <result property="dealGroupName" column="dealGroupName"/>
+        <result property="couNum" column="couNum"/>
+        <result property="jjCouNum" column="jjCouNum"/>
+        <result property="countEfficiency" column="countEfficiency"/>
+        <result property="relationTime" column="relation_time"/>
+    </resultMap>
+
+    <sql id="selectDifficultEventsVo">
+        select d.id_, d.no_, d.dept_, d.fm_id, d.sys_id, d.group_id, d.deal_id, d.creater_time,
+         d.deal_time, d.deal_desc, d.status_, d.source_, s.caption sysName,g.grpName groupName,
+         o.orgname deptName,f.fault_no,f.fault_decript_summary,
+               f.fault_decript_detail,pp.pname dealName,d.n1, d.n2, d.n3, d.n4
+         from difficult_events d
+         left join og_sys s
+          on d.sys_id = s.sysid
+         left join og_group g
+          on d.group_id = g.groupid
+         left join og_org o
+          on d.dept_ = o.orgid
+          left join fm_biz f
+          on d.fm_id=f.fm_id
+          left join og_person pp
+          on d.deal_id=pp.pid
+    </sql>
+
+    <select id="selectDifficultEventsList" parameterType="DifficultEvents" resultMap="DifficultEventsResult">
+        <include refid="selectDifficultEventsVo"/>
+        <where>
+            <if test="no != null  and no != ''">and d.no_ like concat(concat('%',
+                #{no}), '%')
+            </if>
+            <if test="dept != null  and dept != ''">and d.dept_ = #{dept}</if>
+            <if test="fmId != null  and fmId != ''">and d.fm_id = #{fmId}</if>
+            <if test="sysId != null  and sysId != ''">and d.sys_id = #{sysId}</if>
+            <if test="groupId != null  and groupId != ''">and d.group_id = #{groupId}</if>
+            <if test="dealId != null  and dealId != ''">
+                and d.deal_id in (select p.pid from og_person p where p.pname like concat(concat('%',#{dealId}),'%')
+                )
+            </if>
+            <!--<if test="createrTime != null  and createrTime != ''">and d.creater_time = #{createrTime}</if>
+            <if test="dealTime != null  and dealTime != ''">and d.deal_time = #{dealTime}</if>-->
+            <if test="params.startCreatTime != null and params.startCreatTime != ''"><!-- 创建时间起始检索 -->
+                and d.creater_time &gt;= #{params.startCreatTime}
+            </if>
+            <if test="params.endCreatTime != null and params.endCreatTime != ''"><!-- 创建时间起始检索 -->
+                and d.creater_time &lt;= #{params.endCreatTime}
+            </if>
+            <if test="params.startDealTime != null and params.startDealTime != ''"><!-- 创建时间起始检索 -->
+                and d.deal_time &gt;= #{params.startDealTime}
+            </if>
+            <if test="params.endDealTime != null and params.endDealTime != ''"><!-- 创建时间起始检索 -->
+                and d.deal_time &lt;= #{params.endDealTime}
+            </if>
+            <if test="dealDesc != null  and dealDesc != ''">and d.deal_desc like concat(concat('%',
+                #{dealDesc}), '%')
+            </if>
+            <if test="status != null  and status != ''">and d.status_ = #{status}</if>
+            <if test="source != null  and source != ''">and d.source_ = #{source}</if>
+            <if test="params.fmNo != null  and params.fmNo != ''">and f.fault_no
+                like concat(concat('%',#{params.fmNo}), '%')
+            </if>
+            <if test="n1 != null  and n1 != ''">and d.n1 = #{n1}</if>
+            <if test="n2 != null  and n2 != ''">and d.n2 = #{n2}</if>
+            <if test="n3 != null  and n3 != ''">and d.n3 = #{n3}</if>
+            <if test="n4 != null  and n4 != ''">and d.n4 = #{n4}</if>
+        </where>
+    </select>
+
+    <select id="selectDifficultEventsById" parameterType="String" resultMap="DifficultEventsResult">
+        <include refid="selectDifficultEventsVo"/>
+        where id_ = #{id}
+    </select>
+
+    <insert id="insertDifficultEvents" parameterType="DifficultEvents">
+        insert into difficult_events
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null  and id != ''">id_,</if>
+            <if test="no != null  and no != ''">no_,</if>
+            <if test="dept != null  and dept != ''">dept_,</if>
+            <if test="fmId != null  and fmId != ''">fm_id,</if>
+            <if test="sysId != null  and sysId != ''">sys_id,</if>
+            <if test="groupId != null  and groupId != ''">group_id,</if>
+            <if test="dealId != null  and dealId != ''">deal_id,</if>
+            <if test="createrTime != null  and createrTime != ''">creater_time,</if>
+            <if test="dealTime != null  and dealTime != ''">deal_time,</if>
+            <if test="dealDesc != null  and dealDesc != ''">deal_desc,</if>
+            <if test="status != null  and status != ''">status_,</if>
+            <if test="source != null  and source != ''">source_,</if>
+            <if test="n1 != null  and n1 != ''">n1,</if>
+            <if test="n2 != null  and n2 != ''">n2,</if>
+            <if test="n3 != null  and n3 != ''">n3,</if>
+            <if test="n4 != null  and n4 != ''">n4,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null  and id != ''">#{id},</if>
+            <if test="no != null  and no != ''">#{no},</if>
+            <if test="dept != null  and dept != ''">#{dept},</if>
+            <if test="fmId != null  and fmId != ''">#{fmId},</if>
+            <if test="sysId != null  and sysId != ''">#{sysId},</if>
+            <if test="groupId != null  and groupId != ''">#{groupId},</if>
+            <if test="dealId != null  and dealId != ''">#{dealId},</if>
+            <if test="createrTime != null  and createrTime != ''">#{createrTime},</if>
+            <if test="dealTime != null  and dealTime != ''">#{dealTime},</if>
+            <if test="dealDesc != null  and dealDesc != ''">#{dealDesc},</if>
+            <if test="status != null  and status != ''">#{status},</if>
+            <if test="source != null  and source != ''">#{source},</if>
+            <if test="n1 != null  and n1 != ''">#{n1},</if>
+            <if test="n2 != null  and n2 != ''">#{n2},</if>
+            <if test="n3 != null  and n3 != ''">#{n3},</if>
+            <if test="n4 != null  and n4 != ''">#{n4},</if>
+        </trim>
+    </insert>
+
+    <update id="updateDifficultEvents" parameterType="DifficultEvents">
+        update difficult_events
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="no != null  and no != ''">no_ = #{no},</if>
+            <if test="dept != null  and dept != ''">dept_ = #{dept},</if>
+            <if test="fmId != null  and fmId != ''">fm_id = #{fmId},</if>
+            <if test="sysId != null  and sysId != ''">sys_id = #{sysId},</if>
+            <if test="groupId != null  and groupId != ''">group_id = #{groupId},</if>
+            <if test="dealId != null  and dealId != ''">deal_id = #{dealId},</if>
+            <if test="createrTime != null  and createrTime != ''">creater_time = #{createrTime},</if>
+            <if test="dealTime != null  and dealTime != ''">deal_time = #{dealTime},</if>
+            <if test="dealDesc != null  and dealDesc != ''">deal_desc = #{dealDesc},</if>
+            <if test="status != null  and status != ''">status_ = #{status},</if>
+            <if test="source != null  and source != ''">source_ = #{source},</if>
+            <if test="n1 != null  and n1 != ''">n1 = #{n1},</if>
+            <if test="n2 != null  and n2 != ''">n2 = #{n2},</if>
+            <if test="n3 != null  and n3 != ''">n3 = #{n3},</if>
+            <if test="n4 != null  and n4 != ''">n4 = #{n4},</if>
+        </trim>
+        where id_ = #{id}
+    </update>
+
+    <delete id="deleteDifficultEventsById" parameterType="String">
+        delete from difficult_events where id_ = #{id}
+    </delete>
+
+    <delete id="deleteDifficultEventsByIds" parameterType="String">
+        delete from difficult_events where id_ in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="getDealList" parameterType="DifficultEvents" resultMap="DifficultEventsResult">
+        <include refid="selectDifficultEventsVo"/>
+        <where>
+            and d.group_id in
+            <foreach collection="params.sGroupId" item="groupId" open="(" separator="," close=")">
+                #{groupId}
+            </foreach>
+            <if test="no != null  and no != ''">and d.no_ like concat(concat('%',
+                #{no}), '%')
+            </if>
+            <if test="sysId != null  and sysId != ''">and d.sys_id = #{sysId}</if>
+            <if test="status != null  and status != ''">and d.status_ = #{status}</if>
+            <if test="params.startCreatTime != null and params.startCreatTime != ''"><!-- 创建时间起始检索 -->
+                and d.creater_time &gt;= #{params.startCreatTime}
+            </if>
+            <if test="params.endCreatTime != null and params.endCreatTime != ''"><!-- 创建时间起始检索 -->
+                and d.creater_time &lt;= #{params.endCreatTime}
+            </if>
+            <if test="source != null  and source != ''">and d.source_ = #{source}</if>
+        </where>
+    </select>
+
+</mapper>

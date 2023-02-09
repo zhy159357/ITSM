@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.form.mapper.EventConsumeDetailsMapper">
+  <resultMap id="EventConsumeDetailsResult" type="com.ruoyi.form.domain.EventConsumeDetails">
+    <id column="id" property="id" />
+    <result column="biz_no" property="bizNo" />
+    <result column="deal_org" property="dealOrg" />
+    <result column="deal_org_name" property="dealOrgName" />
+    <result column="deal_person" property="dealPerson" />
+    <result column="deal_person_name" property="dealPersonName" />
+    <result column="current_node_name" property="currentNodeName" />
+    <result column="next_node_name" property="nextNodeName" />
+    <result column="start_time" property="startTime" />
+    <result column="end_time" property="endTime" />
+  </resultMap>
+  <sql id="selectEventConsumeDetailsVo">
+      select id,biz_no,deal_org,deal_org_name,deal_person,deal_person_name,current_node_name,next_node_name,start_time,end_time from event_consume_details
+  </sql>
+
+  <select id="selectEventConsumeDetailsOneByBizNo" parameterType="string" resultMap="EventConsumeDetailsResult">
+    <include refid="selectEventConsumeDetailsVo"/>
+    <where>
+      biz_no=#{bizNo}
+    </where>
+    order by id desc limit 1
+  </select>
+</mapper>

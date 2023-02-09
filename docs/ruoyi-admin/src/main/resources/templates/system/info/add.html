@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:include="include :: header('信息制度添加管理')"/>
+    <th:block th:include="include :: select2-css" />
+    <th:block th:include="include :: datetimepicker-css" />
+    <th:block th:include="include :: summernote-css" />
+</head>
+<body class="white-bg">
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+    <form class="form-horizontal m" id="form-info-add">
+        <input name="regime_info_id" type="hidden" id="regime_info_id" />
+        <input type="hidden"  name="folder_" id="folder"  th:value="*{folder}" >
+        <input name="label" type="hidden" id="flag"/>
+
+
+        <input name="ownerId" type="hidden" id="ownerId"/>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">制度标题:</label>
+                    <div class="col-sm-8">
+                        <input class="form-control" id="regime_title" name="regime_title" maxlength="20" required>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label ">关键字:</label>
+                    <div class="col-sm-8">
+                        <input class="form-control" type="text" name="key_word" id="key_word" maxlength="20">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row form-group">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">印发日期:</label>
+                    <div class="col-sm-8">
+                        <div class="input-group date" >
+                            <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                            <input type="text" class="form-control" id="print_time" name="print_time" required readonly style="background-color: #fdfdfd">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">审核人:</label>
+                    <div class="col-sm-8">
+
+                        <select name="checker" id="checker" class="form-control" required >
+                            <option value=""></option>
+                            <option th:each="checker :${checkerList}" th:value="${checker.pId}" th:text="${checker.pName}"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label class="col-xs-2 control-label is-required" >制度摘要:</label>
+                    <div class="col-xs-10">
+                        <textarea name="regime_digest" id="regime_digest"  maxlength="200" class="form-control"
+                                  rows="5" required></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">类型一:</label>
+                    <div class="col-sm-8">
+                        <select th:name="type_one" id="type_one" class="form-control m-b" th:with="type=${@pubParaValue.selectPubParaValueByParaName('typeOne')}" required>
+                            <option value=""></option>
+                            <option th:each="paraValue : ${type}" th:text="${paraValue.valueDetail}" th:value="${paraValue.value}"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">类型二:</label>
+                    <div class="col-sm-8">
+                        <select th:name="type_two" id="type_two" class="form-control m-b" th:with="type=${@pubParaValue.selectPubParaValueByParaName('typeTwo')}" required>
+                            <option value=""></option>
+                            <option th:each="paraValue : ${type}" th:text="${paraValue.valueDetail}" th:value="${paraValue.value}"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">状态:</label>
+                    <div class="col-sm-8">
+                        <select th:name="regime_info_type" id="regime_info_type" class="form-control m-b" th:with="type=${@pubParaValue.selectPubParaValueByParaName('regimeinfotype')}" required>
+                            <option value=""></option>
+                            <option th:each="paraValue : ${type}" th:text="${paraValue.valueDetail}" th:value="${paraValue.value}"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label ">印发文号:</label>
+                    <div class="col-sm-8">
+                        <input class="form-control" id="num" name="num" maxlength="20" >
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label ">四级制度:</label>
+                    <div class="col-sm-8">
+                        <select th:name="sytem_four" id="sytem_four" class="form-control m-b" th:with="type=${@pubParaValue.selectPubParaValueByParaName('systemFour')}" required>
+                            <option value=""></option>
+                            <option th:each="paraValue : ${type}" th:text="${paraValue.valueDetail}" th:value="${paraValue.value}"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label ">分类域:</label>
+                    <div class="col-sm-8">
+                        <select th:name="classify" id="classify" class="form-control m-b" th:with="type=${@pubParaValue.selectPubParaValueByParaName('classify')}" required>
+                            <option value=""></option>
+                            <option th:each="paraValue : ${type}" th:text="${paraValue.valueDetail}" th:value="${paraValue.value}"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label ">提交人:</label>
+                    <div class="col-sm-8">
+                        <input name="createName" id="createName" class="form-control" type="text" readonly
+                               th:value="*{createName}" >
+                        <input name="commit_id" id="commit_id" class="form-control" type="hidden" readonly
+                               th:value="*{commit_id}" >
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label ">提交时间:</label>
+                    <div class="col-sm-8">
+                        <input class="form-control" type="text" name="commit_time" id="commit_time" required readonly>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="tabs-container">
+                <ul class="nav nav-tabs">
+                    <li class="active"><a data-toggle="tab" href="#tab-1" aria-expanded="true"> 附件上传</a>
+                    </li>
+                </ul>
+                <div class="tab-content">
+                    <div id="tab-1" class="tab-pane active">
+                        <div class="panel-body">
+                            <div class="btn-group-sm" id="toolbar1" role="group">
+                                <a class="btn btn-success" type="button" onclick="upload()">
+                                    <i class="fa fa-upload"></i> 添加附件
+                                </a>
+                                <a class="btn btn-primary multiple disabled" onclick="downloadAttachment()">
+                                    <i class="fa fa-download"></i> 下载附件
+                                </a>
+                                <a class="btn btn-danger multiple disabled" onclick="remove()">
+                                    <i class="fa fa-trash"></i> 删除附件
+                                </a>
+                            </div>
+                            <div class="col-sm-12 select-table table-striped">
+                                <table id="file-table"></table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<div class="row">
+    <div class="col-sm-offset-5 col-sm-10">
+        <button type="button" class="btn btn-sm btn-primary" onclick="submitHandler(this)" id="commit"><i class="fa fa-check"></i>提交</button>&nbsp;
+        <button type="button" class="btn btn-sm btn-primary" onclick="submitHandler(this)" id="temporary"><i class="fa fa-check"></i>暂存</button>
+        <button type="button" class="btn btn-sm btn-danger" onclick="closeItem()"><i class="fa fa-window-close"></i>关闭 </button>
+    </div>
+</div>
+</div>
+
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: summernote-js" />
+<th:block th:include="include :: datetimepicker-js" />
+<th:block th:include="include :: select2-js" />
+
+<script th:inline="javascript">
+    var prefix = ctx + "system/info";
+    var prefix_attachment = ctx + "pub/attachment";
+    $(function() {
+        var options = {
+            url: prefix_attachment + "/list",
+            createUrl: prefix_attachment + "/add",
+            updateUrl: prefix_attachment + "/edit/{id}",
+            removeUrl: prefix_attachment + "/remove",
+            detailUrl: prefix_attachment + "/edit/{id}",
+            sortName: "fileTime",
+            id:'file-table',
+            toolbar:"toolbar1",
+            sortOrder: "desc",
+            singleSelect : true,
+            clickToSelect:true,
+            queryParams:queryParams,
+            modalName: "附件列表",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field : 'atId',
+                    title : '附件ID',
+                    visible : false
+                },
+                {
+                    field : 'fileName',
+                    title : '文件名称'
+                },
+                {
+                    field : 'person.pName',
+                    title : '上传人'
+                },
+                {
+                    field : 'size',
+                    title : '文件大小'
+                },
+                {
+                    field : 'memo',
+                    title : '文件描述'
+                },
+                {
+                    field : 'fileTime',
+                    title : '上传时间'
+                }]
+        };
+        $.table.init(options);
+    });
+
+
+
+    // 附件上传页面
+    function upload() {
+        var url1 = prefix + "/fileSave";
+        var data = $("#form-info-add").serializeArray();
+        $.ajax({
+            url: url1,
+            type: "post",
+            dataType: "json",
+            data: data,
+            success: function (result) {
+                if (result.code == 0) {
+                    var ownerId = result.data;
+                    // 将ownerId保存到页面隐藏框
+                    $("#ownerId").val(ownerId);
+                    $("#regime_info_id").val(ownerId);
+                    var url = prefix_attachment + "/upload/" + ownerId;
+                    $.modal.open("信息制度附件上传", url);
+                } else {
+                    $.operate.successCallback(result);
+                }
+            }
+        });
+    }
+
+    // 附件下载
+    function downloadFile() {
+        var rows = $.table.selectFirstColumns();
+        var atId = rows[0];
+        var ownerId = $("#ownerId").val();
+        var url = prefix_attachment + "/download/"+ownerId+"/"+atId;
+        window.location.href = url;
+    }
+
+
+    //** 关闭选项卡 */
+    function closeItem() {
+        var index = parent.layer.getFrameIndex(window.name);
+        parent.layer.close(index);//关闭当前页
+    }
+
+    //获取当前时间添加到input中
+    var _input = document.getElementById('commit_time');
+    var currentDate = new Date();
+    currentDate = currentDate.getFullYear() + "-" + (currentDate.getMonth() + 1) + "-" + currentDate.getDate() + " " + currentDate.getHours() + ":" + currentDate.getMinutes() + ":" + currentDate.getSeconds();
+    _input.value = currentDate; //赋值给input.value
+
+    var prefix_attachment = ctx + "pub/attachment";
+    $(function () {
+        $("#print_time").datetimepicker({
+            format: "yyyy-mm-dd",
+            minView: "month",
+            autoclose: true
+        });
+        var options = {
+            url: prefix_attachment + "/list",
+            createUrl: prefix_attachment + "/add",
+            updateUrl: prefix_attachment + "/edit/{id}",
+            removeUrl: prefix_attachment + "/remove",
+            detailUrl: prefix_attachment + "/edit/{id}",
+            sortName: "fileTime",
+            sortOrder: "desc",
+            queryParams:queryParams,
+            modalName: "附件列表",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'atId',
+                    title: '附件ID',
+                    visible: false
+                },
+                {
+                    field: 'fileName',
+                    title: '文件名称'
+                },
+                {
+                    field: 'ownerId',
+                    title: '上传人'
+                },
+                {
+                    field: 'size',
+                    title: '文件大小'
+                },
+                {
+                    field: 'memo',
+                    title: '文件描述'
+                },
+                {
+                    field: 'fileTime',
+                    title: '上传时间'
+                }]
+        };
+        $.table.init(options);
+    });
+
+    function queryParams(params) {
+        var search = $.table.queryParams(params);
+        search.ownerId = $("#ownerId").val() == '' ? 'regime_info_id' : $("#ownerId").val();
+        return search;
+    }
+
+
+    function submitHandler(elementObj) {
+        var ownerId = $("#ownerId").val();
+        if(ownerId == ''){
+            $.modal.alertWarning("未上传附件不能提交!");
+            return;
+        }
+        var data = $("#form-info-add").serialize();
+        //判断当前点击的是暂存还是提交 暂存为新增 提交为待审核
+        if($(elementObj).attr("id")=='temporary'){
+
+            $('#flag').val('temporary')
+            $.operate.save(prefix + "/add", $('#form-info-add').serialize());
+
+        }else {
+            if ($.validate.form()) {
+                $('#flag').val('commit')
+                $.operate.save(prefix + "/add", $('#form-info-add').serialize());
+            }
+
+        }
+
+    }
+
+
+    /* 用户管理-新增- */
+    function selectInfoTree() {
+        var folder = $("#folder_").val();
+        var folder = $.common.isEmpty(folder) ? "8b8080f4583e530701583e96e3150065" : $("#treeId").val();
+        var url = ctx + "system/info/selectFolder/" + folder;
+        var options = {
+            title: '选择印发文号',
+            width: "380",
+            url: url,
+            callBack: doSubmit
+        };
+        $.modal.openOptions(options);
+    }
+
+    function doSubmit(index, layero){
+        var tree = layero.find("iframe")[0].contentWindow.$._tree;
+        if(jQuery.isEmptyObject(tree)) {
+            layer.close(index);
+        }else{
+            var selectNode = tree.getSelectedNodes();
+            if(selectNode.length!=0){
+                $("#folder").val(selectNode[0].id);
+                $("#folder_").val(selectNode[0].name);
+            }
+        }
+        layer.close(index);
+    }
+
+
+    function remove() {
+        var row = $('#file-table').bootstrapTable('getSelections')[0]
+        //获取当前登陆人员的id
+        $.get(prefix+'/selectOgUserByUserId',function (result) {
+            if(result.data.pId==row.person.pId){
+                $.operate.removeAll();
+            }else{
+                $.modal.alertError('不能删除非本人上传附件!');
+            }
+        });
+    }
+
+</script>
+</body>
+</html>

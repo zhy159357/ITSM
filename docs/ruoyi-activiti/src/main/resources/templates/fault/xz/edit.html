@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+	<th:block th:include="include :: header('系统条线故障修改')" />
+	<th:block th:include="include :: datetimepicker-css" />
+</head>
+<body class="white-bg">
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+	<form class="form-horizontal m" id="form-line-edit" th:object="${sysLine}" >
+		<input name="hardwareId" id="hardwareId" type="hidden" th:value="*{hardwareId}" />
+		<input type="hidden" name="createOrgId" id="treeId"/>
+		<input type="hidden" name="dealOrgId" id="dealOrgId"/>
+		<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+			<div class="panel-group">
+				<div class="panel panel-default">
+					<div class="panel-heading" style="green-color: #3c8dbc" data-toggle="collapse" data-target="#collapse1">
+						<h4 class="panel-title" >
+							网络条线故障
+						</h4>
+					</div>
+
+					<div id="collapse1" class="panel-collapse in">
+						<div class="panel-body">
+							<div class="row">
+								<div class="col-sm-6">
+									<div class="form-group">
+										<label class="col-sm-4 control-label is-required">中心：</label>
+										<div class="col-sm-8 ">
+											<select class="form-control" id="hardwareCentre" th:field="*{hardwareCentre}" name="hardwareCentre" th:with="type=${@dict.getParaType('Line_Center')}" required>
+												<option value=""></option>
+												<option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+											</select>
+										</div>
+									</div>
+								</div>
+								<div class="col-sm-6">
+									<div class="form-group">
+										<label class="col-sm-4 control-label is-required">环境：</label>
+										<div class="col-sm-8">
+											<select class="form-control" id="hardwareEnvironment" th:field="*{hardwareEnvironment}" name="hardwareEnvironment" th:with="type=${@dict.getParaType('fault_hardware')}" required>
+												<option value=""></option>
+												<option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+											</select>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-sm-6">
+									<div class="form-group">
+										<label class="col-sm-4 control-label is-required">处室：</label>
+										<div class="col-sm-8">
+											<select class="form-control" id="hardwareMistress" th:field="*{hardwareMistress}" name="hardwareMistress" th:with="type=${@dict.getParaType('fault_Mistress')}" required>
+												<option value=""></option>
+												<option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+											</select>
+										</div>
+									</div>
+								</div>
+								<div class="col-sm-6">
+									<div class="form-group">
+										<label class="col-sm-4 control-label is-required">设备名称：</label>
+										<div class="col-sm-8">
+											<input id="hardwareDevicename" name="hardwareDevicename" type="text" th:field="*{hardwareDevicename}" maxlength="50"
+												   class="form-control"/>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-sm-6">
+									<div class="form-group" >
+										<label class="col-sm-4 control-label is-required">品牌：</label>
+										<div class="col-sm-8">
+											<select class="form-control" id="hardwareBrand" th:field="*{hardwareBrand}" name="hardwareMistress" th:with="type=${@dict.getParaType('fault_Brand')}" required>
+												<option value=""></option>
+												<option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+											</select>
+										</div>
+									</div>
+								</div>
+								<div class="col-sm-6">
+									<div class="form-group">
+										<label class="col-sm-4 control-label">变更单号：</label>
+										<div class="col-sm-8">
+											<input id="alterationNumbers" name="alterationNumbers" th:field="*{alterationNumbers}" type="text" class="form-control" maxlength="20">
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-sm-6">
+									<div class="form-group">
+										<label class="col-sm-4 control-label is-required">设备类型：</label>
+										<div class="col-sm-8">
+											<input type="text" id="hardwareTypeThere" name="hardwareTypeThere" th:field="*{hardwareTypeThere}" class="form-control" maxlength="30" required>
+										</div>
+									</div>
+								</div>
+								<div class="col-sm-6">
+									<div class="form-group">
+										<label class="col-sm-4 control-label is-required">设备型号：</label>
+										<div class="col-sm-8">
+											<input type="text" id="hardwareTypeOne" name="hardwareTypeOne" th:field="*{hardwareTypeOne}" class="form-control" maxlength="20" required>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-sm-6">
+									<div class="form-group">
+										<label class="col-sm-4 control-label is-required">故障设备序列号：</label>
+										<div class="col-sm-8">
+											<input id="hardwareSerialNumber" name="hardwareSerialNumber" th:field="*{hardwareSerialNumber}" class="form-control" maxlength="20" type="text" required>
+										</div>
+									</div>
+								</div>
+								<div class="col-sm-6">
+									<div class="form-group">
+										<label class="col-sm-4 control-label is-required">更换后设备序列号：</label>
+										<div class="col-sm-8">
+											<input id="hardwareSerialNumberChange" name="hardwareSerialNumberChange" th:field="*{hardwareSerialNumberChange}" class="form-control" maxlength="20" type="text" required>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-sm-6">
+									<div class="form-group">
+										<label class="col-sm-4 control-label is-required">监控是否正常报警：</label>
+										<div class="col-sm-8">
+											<select class="form-control" id="hardwareIsnoPolice" name="hardwareIsnoPolice" th:field="*{hardwareIsnoPolice}" th:with="type=${@dict.getParaType('Line_Isno')}">
+												<option value=""></option>
+												<option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}" ></option>
+											</select>
+										</div>
+									</div>
+								</div>
+								<div class="col-sm-6">
+									<div class="form-group">
+										<label class="col-sm-4 control-label is-required">是否影响业务连续性：</label>
+										<div class="col-sm-8">
+											<select class="form-control" id="continuityIsno" name="continuityIsno" th:field="*{continuityIsno}" th:with="type=${@dict.getParaType('Line_Isno')}" required>
+												<option value=""></option>
+												<option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+											</select>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-sm-6">
+									<div class="form-group">
+										<label class="col-sm-4 control-label is-required">故障点：</label>
+										<div class="col-sm-8">
+											<select class="form-control" id="hardwareDot" name="hardwareDot" th:field="*{hardwareDot}" th:with="type=${@dict.getParaType('fault_Dot')}">
+												<option value=""></option>
+												<option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}" ></option>
+											</select>
+										</div>
+									</div>
+								</div>
+								<div class="col-sm-6">
+									<div class="form-group">
+										<label class="col-sm-4 control-label is-required">处置措施：</label>
+										<div class="col-sm-8">
+											<input type="text" id="registerSystem" name="registerSystem" th:field="*{registerSystem}" class="form-control" maxlength="20" required>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-sm-6">
+									<div class="form-group">
+										<label class="col-sm-4 control-label is-required">是否在数据中心：</label>
+										<div class="col-sm-8">
+											<select class="form-control" id="cw" onchange="cwrr()" name="isNo" th:field="*{isNo}" th:with="type=${@dict.getParaType('Line_Isno')}" required>
+                                                <option value=""></option>
+                                                <option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+                                            </select>
+											<!--<select id="cw" onchange="cwrr()" name="isNo" th:field="*{isNo}" class="form-control" required>
+												<option th:value="0"></option>
+												<option value="1">是</option>
+												<option value="2">否</option>
+											</select>-->
+										</div>
+									</div>
+								</div>
+								<div class="col-sm-6">
+									<div class="form-group">
+										<label class="col-sm-4 control-label is-required">是否现场有驻场工程师：</label>
+										<div class="col-sm-8">
+											<select class="form-control" id="cww" onchange="cwrrr()" name="noIs" th:field="*{noIs}" th:with="type=${@dict.getParaType('Line_Isno')}" required>
+                                                <option value=""></option>
+                                                <option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+                                            </select>
+											<!--<select id="cww" onchange="cwrrr()" name="noIs" th:field="*{noIs}" class="form-control" required>
+												<option th:value="0"></option>
+												<option value="1">是</option>
+												<option value="2">否</option>
+											</select>-->
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-sm-6">
+									<div class="form-group">
+										<label class="col-sm-4 control-label is-required">故障发生时间：</label>
+										<div class="col-sm-8">
+											<input id="createTimeTwo" name="createTimeTwo" th:value="*{createTimeTwo}" class="form-control" onchange="jisuan()" type="text" placeholder="yyyy-MM-dd HH:mm:ss" style="background-color: #fff; opacity: 1;" readonly required>
+										</div>
+									</div>
+								</div>
+								<div class="col-sm-6">
+									<div class="form-group">
+										<label class="col-sm-4 control-label is-required">确认故障时间：</label>
+										<div class="col-sm-8">
+											<input id="hardwareTime" name="hardwareTime" th:field="*{hardwareTime}" class="form-control" style="background-color: #fff; opacity: 1;" type="text" placeholder="yyyy-MM-dd HH:mm:ss" readonly required>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="rwo">
+								<div class="col-sm-6">
+									<div class="form-group">
+										<label class="col-sm-4 control-label is-required">备件到场时间：</label>
+										<div class="col-sm-8">
+											<input id="partPresentTime" name="partPresentTime" th:field="*{partPresentTime}" class="form-control" style="background-color: #fff; opacity: 1;" type="text" placeholder="yyyy-MM-dd HH:mm:ss" readonly required>
+										</div>
+									</div>
+								</div>
+								<div class="col-sm-6">
+									<div class="form-group">
+										<label class="col-sm-4 control-label is-required">人员到场时间：</label>
+										<div class="col-sm-8"><!--onchange="personDP()"-->
+											<input id="personPresentTime" name="personPresentTime" th:field="*{personPresentTime}" type="text" style="background-color: #fff; opacity: 1;"  placeholder="yyyy-MM-dd HH:mm:ss" class="form-control" readonly required>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-sm-6">
+									<div class="form-group">
+										<label class="col-sm-4 control-label is-required">处置完成时间：</label>
+										<div class="col-sm-8">
+											<input id="disposeFinishTime" name="disposeFinishTime" th:field="*{disposeFinishTime}" type="text" style="background-color: #fff; opacity: 1;" placeholder="yyyy-MM-dd HH:mm:ss" class="form-control" readonly required>
+										</div>
+									</div>
+								</div>
+								<div class="col-sm-6">
+									<div class="form-group">
+										<label class="col-sm-4 control-label is-required">备件耗时（分钟）：</label>
+										<div class="col-sm-8">
+											<input id="partElapsedTime" name="partElapsedTime" th:field="*{partElapsedTime}" class="form-control" type="text" readonly required>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-sm-6">
+									<div class="form-group">
+										<label class="col-sm-4 control-label is-required">故障处理耗时（分钟）：</label>
+										<div class="col-sm-8">
+											<input id="hardwareDisposeTime" name="hardwareDisposeTime" th:field="*{hardwareDisposeTime}" type="text" class="form-control" readonly required>
+										</div>
+									</div>
+								</div>
+								<div class="col-sm-6">
+									<div class="form-group">
+										<label class="col-sm-4 control-label is-required">人员响应耗时（分钟）：</label>
+										<div class="col-sm-8">
+											<input id="personAnswerTime" name="personAnswerTime" th:field="*{personAnswerTime}" type="text" class="form-control" readonly required>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-sm-6">
+									<div class="form-group">
+										<label class="col-sm-4 control-label is-required">通报情况：</label>
+										<div class="col-sm-8">
+											<select class="form-control" id="informationCase" th:field="*{informationCase}" name="informationCase" th:with="type=${@dict.getParaType('Line_Isno')}" required>
+												<option value=""></option>
+												<option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+											</select>
+										</div>
+									</div>
+								</div>
+
+								<div class="col-sm-6">
+									<div class="form-group">
+										<label class="col-sm-4 control-label is-required">值班人员：</label>
+										<div class="col-sm-8">
+											<input type="text" id="watchkeeperPerson" name="watchkeeperPerson" th:field="*{watchkeeperPerson}" maxlength="20" class="form-control" required>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-sm-6">
+									<div class="form-group">
+										<label class="col-sm-4 control-label is-required">故障处理人：</label>
+										<div class="col-sm-8">
+											<input type="text" id="hardwarePerson" name="hardwarePerson" th:field="*{hardwarePerson}" maxlength="20" class="form-control" required>
+										</div>
+									</div>
+								</div>
+								<div class="col-sm-6">
+									<div class="form-group">
+										<label class="col-sm-4 control-label">维修超时原因：</label>
+										<div class="col-sm-8">
+											<input id="overtimeCause" name="overtimeCause" th:field="*{overtimeCause}" type="text" maxlength="30" class="form-control">
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-sm-6">
+									<div class="form-group">
+										<label class="col-sm-4 control-label">处理结果：</label>
+										<div class="col-sm-8">
+											<input type="text" id="dealWith" name="dealWith" th:field="*{dealWith}" class="form-control" maxlength="30">
+										</div>
+									</div>
+								</div>
+							</div>
+							<h4 class="form-header h4">备注</h4>
+							<div class="col-sm-12">
+								<div class="form-group">
+									<label class="col-sm-2 control-label">备注：</label>
+									<div class="col-sm-10">
+                                                <textarea rows="6" cols="20" id="hardwareRemark"
+														  name="hardwareRemark" maxlength="150" th:field="*{hardwareRemark}" class="form-control" onchange="dochange(this.value)"></textarea>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</form>
+</div>
+<div class="row">
+	<div class="col-sm-offset-5 col-sm-10">
+		<button type="button" class="btn btn-sm btn-primary" onclick="submit()"><i class="fa fa-check"></i>提 交</button>&nbsp;
+		<button type="button" class="btn btn-sm btn-primary" onclick="save()"><i class="fa fa-check"></i>暂 存</button>&nbsp;
+		<button type="button" class="btn btn-sm btn-danger" onclick="closeItem()"><i class="fa fa-reply-all"></i>取 消</button>
+	</div>
+</div>
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: datetimepicker-js" />
+<script type="text/javascript">
+
+	var prefix = ctx + "fault/xz";
+
+	//字符串yyyyMMddHHmmss转yyyy-MM-dd HH:mm:ss
+	$(function () {
+		var createTimeTwo = $("#createTimeTwo").val();
+		var pattern = /(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/;
+		createTimeTwo = createTimeTwo.replace(pattern, '$1-$2-$3 $4:$5:$6');
+		$("#createTimeTwo").val(createTimeTwo);
+
+		var hardwareTime = $("#hardwareTime").val();
+		var pattern = /(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/;
+		hardwareTime = hardwareTime.replace(pattern, '$1-$2-$3 $4:$5:$6');
+		$("#hardwareTime").val(hardwareTime);
+
+		var partPresentTime = $("#partPresentTime").val();
+		var pattern = /(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/;
+		partPresentTime = partPresentTime.replace(pattern, '$1-$2-$3 $4:$5:$6');
+		$("#partPresentTime").val(partPresentTime);
+
+		var personPresentTime = $("#personPresentTime").val();
+		var pattern = /(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/;
+		personPresentTime = personPresentTime.replace(pattern, '$1-$2-$3 $4:$5:$6');
+		$("#personPresentTime").val(personPresentTime);
+
+		var disposeFinishTime = $("#disposeFinishTime").val();
+		var pattern = /(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/;
+		disposeFinishTime = disposeFinishTime.replace(pattern, '$1-$2-$3 $4:$5:$6');
+		$("#disposeFinishTime").val(disposeFinishTime);
+
+	});
+
+	function cwrr(){
+		debugger;
+		var cw = $("#cw").val();
+		if (cw == '2'){//必填
+		}else {//非必填
+			$("#partElapsedTime").val("0");
+
+			var date = new Date();//当前系统时间
+			var month = date.getMonth() + 1;//月比实际月份要少1
+			var strDate = date.getDate();
+			var hours = date.getHours();
+			var minutes = date.getMinutes();
+			var seconds = date.getSeconds();
+			if (month >= 1 && month <= 9) {
+				month = "0" + month;
+			}
+			if (strDate >= 0 && strDate <= 9) {
+				strDate = "0" + strDate;
+			}
+			if (hours >= 0 && hours <= 9) {
+				hours = "0" + hours;
+			}
+			if (minutes >= 0 && minutes <= 9) {
+				minutes = "0" + minutes;
+			}
+			if (seconds >= 0 && seconds <= 9) {
+				seconds = "0" + seconds;
+			}
+			var closeTime = date.getFullYear() + "-" + month + "-" + strDate + " " + hours + ":" + minutes + ":" + seconds;
+
+			$("#partPresentTime").val(closeTime);
+			$("#hardwareTime").val(closeTime);
+
+			alert("确认故障时间和备件到场时间是当前时间");
+		}
+	}
+
+	function cwrrr(){
+		debugger;
+		var cw = $("#cww").val();
+		if (cw == '2'){//必填
+		}else {//非必填
+			$("#personAnswerTime").val("0");
+
+			var date = new Date();//当前系统时间
+			var month = date.getMonth() + 1;//月比实际月份要少1
+			var strDate = date.getDate();
+			var hours = date.getHours();
+			var minutes = date.getMinutes();
+			var seconds = date.getSeconds();
+			if (month >= 1 && month <= 9) {
+				month = "0" + month;
+			}
+			if (strDate >= 0 && strDate <= 9) {
+				strDate = "0" + strDate;
+			}
+			if (hours >= 0 && hours <= 9) {
+				hours = "0" + hours;
+			}
+			if (minutes >= 0 && minutes <= 9) {
+				minutes = "0" + minutes;
+			}
+			if (seconds >= 0 && seconds <= 9) {
+				seconds = "0" + seconds;
+			}
+			var closeTime = date.getFullYear() + "-" + month + "-" + strDate + " " + hours + ":" + minutes + ":" + seconds;
+
+			$("#personPresentTime").val(closeTime);
+
+			alert("人员到场时间是当前时间");
+		}
+	}
+
+	//发生时间
+	$("#createTimeTwo").datetimepicker({
+		format: "yyyy-mm-dd hh:ii:ss",
+		autoclose: true,
+		minView:0,
+		minuteStep:1,
+	});
+
+	//故障确认时间
+	$("#hardwareTime").datetimepicker({
+		format: "yyyy-mm-dd hh:ii:ss",
+		autoclose: true,
+		minView:0,
+		minuteStep:1,
+	});
+
+	//备件到场时间
+	$("#partPresentTime").datetimepicker({
+		format: "yyyy-mm-dd hh:ii:ss",
+		autoclose: true,
+		minView:0,
+		minuteStep:1,
+	}).on('changeDate',function (changeDate) { //changeDate ev
+
+		//故障确认时间
+		var hardwareTime = $('#hardwareTime').val();
+		//备件到场时间
+		var partPresentTime = $('#partPresentTime').val();
+
+		//故障确认时间
+		let d1 = hardwareTime.replace(/\-/g, "/");
+		let date1 = new Date(d1);
+
+		//备件到场时间
+		let d3 = partPresentTime.replace(/\-/g, "/");
+		let date3 = new Date(d3);
+
+		//计算 备件耗时的时间差
+		var dateDiff = date3.getTime() - date1.getTime(); //时间差的毫秒数
+		var dayDiff = Math.floor(dateDiff / (24 * 3600 * 1000)); //计算出相差天数
+		var leave1 = dateDiff % (24 * 3600 * 1000) //计算天数后剩余的毫秒数
+		var hours = Math.floor(leave1 / (3600 * 1000)) //计算出小时数
+
+		//计算相差分钟数
+		var leave2 = leave1 % (3600 * 1000) //计算小时数后剩余的毫秒数
+		var minutes = Math.floor(leave2 / (60 * 1000)) //计算相差分钟数
+
+		//按分钟计算
+		var numberTwo = Math.floor(dateDiff / (60 * 1000));
+
+		var time = "0";
+
+		if(hardwareTime<=partPresentTime){
+			$('#partElapsedTime').val(numberTwo);
+			if (numberTwo=="NaN"){
+				alert("请先输入确认故障时间哟");
+				$('#partPresentTime').val(null);
+				$('#partElapsedTime').val(null);
+				return false;
+			} else {
+				return true;
+			}
+		}else if (numberTwo<=time){
+			alert("备件到场时间不能小于确认故障时间哟");
+			$('#hardwareTime').val(null);
+			$('#partPresentTime').val(null);
+			$('#partElapsedTime').val(null);
+			return false;
+		}
+	});
+
+	//人员到场时间
+	$("#personPresentTime").datetimepicker({
+		format: "yyyy-mm-dd hh:ii:ss",
+		autoclose: true,
+		minView:0,
+		minuteStep:1,
+	}).on('changeDate',function (changeDate) { //changeDate ev
+
+		//故障确认时间
+		var hardwareTime = $('#hardwareTime').val();
+		//人员到场时间
+		var personPresentTime = $('#personPresentTime').val();
+
+		//故障确认时间
+		let d1 = hardwareTime.replace(/\-/g, "/");
+		let date1 = new Date(d1);
+
+		//人员到场时间
+		let d3 = personPresentTime.replace(/\-/g, "/");
+		let date3 = new Date(d3);
+
+		//计算 人员响应耗时的时间差
+		var dateDiff = date3.getTime() - date1.getTime(); //时间差的毫秒数
+		var dayDiff = Math.floor(dateDiff / (24 * 3600 * 1000)); //计算出相差天数
+		var leave1 = dateDiff % (24 * 3600 * 1000) //计算天数后剩余的毫秒数
+		var hours = Math.floor(leave1 / (3600 * 1000)) //计算出小时数
+
+		//计算相差分钟数
+		var leave2 = leave1 % (3600 * 1000) //计算小时数后剩余的毫秒数
+		var minutes = Math.floor(leave2 / (60 * 1000)) //计算相差分钟数
+
+		//按分钟计算
+		var numberTwo = Math.floor(dateDiff / (60 * 1000));
+
+		var time = "0";
+
+		if(hardwareTime<=personPresentTime){
+			$('#personAnswerTime').val(numberTwo);
+			if (numberTwo=="NaN"){
+				alert("请先输入确认故障时间哟");
+				$('#personPresentTime').val(null);
+				$('#personAnswerTime').val(null);
+				return false;
+			} else {
+				return true;
+			}
+		}else if (numberTwo<=time){
+			alert("人员到场时间不能小于确认故障时间哟");
+			$('#hardwareTime').val(null);
+			$('#personPresentTime').val(null);
+			$('#personAnswerTime').val(null);
+			$('#partPresentTime').val(null);
+			return false;
+		}
+	});
+
+	//处置完成时间
+	$("#disposeFinishTime").datetimepicker({
+		format: "yyyy-mm-dd hh:ii:ss",
+		autoclose: true,
+		minView:0,
+		minuteStep:1,
+	}).on('changeDate',function (changeDate) { //changeDate ev
+
+		//发生时间
+		var createTimeTwo = $('#createTimeTwo').val();
+		//处置完成时间
+		var disposeFinishTime = $('#disposeFinishTime').val();
+		// 报修时间
+		let d1 = createTimeTwo.replace(/\-/g, "/");
+		let date1 = new Date(d1);
+
+		//结束时间
+		let d3 = disposeFinishTime.replace(/\-/g, "/");
+		let date3 = new Date(d3);
+
+		//计算 故障处理耗时的时间
+		var dateDiff = date3.getTime() - date1.getTime(); //时间差的毫秒数
+		var dayDiff = Math.floor(dateDiff / (24 * 3600 * 1000)); //计算出相差天数
+		var leave1 = dateDiff % (24 * 3600 * 1000) //计算天数后剩余的毫秒数
+		var hours = Math.floor(leave1 / (3600 * 1000)) //计算出小时数
+
+		//计算相差分钟数
+		var leave2 = leave1 % (3600 * 1000) //计算小时数后剩余的毫秒数
+		var minutes = Math.floor(leave2 / (60 * 1000)) //计算相差分钟数
+
+		//按分钟计算
+		var numberTwo = Math.floor(dateDiff / (60 * 1000));
+
+		var time = "0";
+
+		if(createTimeTwo<=disposeFinishTime){
+			$('#hardwareDisposeTime').val(numberTwo);
+			if (numberTwo=="NaN"){
+				alert("请先输入发生时间时间哟");
+				$('#hardwareDisposeTime').val(null);
+				return false;
+			} else {
+				return true;
+			}
+		}else if (numberTwo<=time){
+			alert("处置完成时间不能小于发生时间哟");
+			$('#hardwareDisposeTime').val(null);
+			$('#disposeFinishTime').val(null);
+			return false;
+		}
+	});
+
+	function jisuan() {
+		$('#hardwareTime').val(null);
+		$('#partPresentTime').val(null);
+		$('#personPresentTime').val(null);
+		$('#disposeFinishTime').val(null);
+		$('#partElapsedTime').val(null);
+		$('#hardwareDisposeTime').val(null);
+		$('#personAnswerTime').val(null);
+	}
+
+	//备注得功能
+	function ChangeValue(obj)
+	{
+		document.getElementById("hardwareRemark").value=obj.value;
+	}
+
+
+	//备注  长度
+	$('#hardwareRemark').bind('input propertychange',function(){ //添加监听input值的改变事件
+		var tvalmum;
+		//统计input输入字段的长度
+		tvalnum = $(this).val().length;
+		//如果大于8个字直接进行字符串截取
+		if(tvalnum>255){
+			var tval = $(this).val();
+			tval = tval.substring(0,255);
+			$(this).val(tval);
+			alert('长度超过限制！');
+		}
+	});
+
+	//提交   2：已提交
+	function submit() {
+		if ($.validate.form()) {
+			debugger;
+			var data = $("#form-line-edit").serializeArray();
+			//改变状态
+			data.push({"name":"lineStart","value": 2 });
+			$.operate.saveTab(prefix + "/edit", data);
+		}
+	}
+
+	//暂存   1：未提交
+	function save() {
+		var data = $("#form-line-edit").serializeArray();
+		//改变状态
+		data.push({"name":"lineStart","value": 1 });
+		$.operate.saveTab(prefix + "/edit", data);
+	};
+
+</script>
+</body>
+</html>

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.activiti.mapper.AmBizParaMapper">
+    
+    <resultMap type="AmBizPara" id="AmBizParaResult">
+        <result property="amParaId"    column="am_para_id"    />
+        <result property="receiveRange"    column="receive_range"    />
+    </resultMap>
+
+    <sql id="selectAmBizParaVo">
+        select am_para_id, receive_range from am_biz_para
+    </sql>
+
+    <select id="selectAmBizParaList" parameterType="AmBizPara" resultMap="AmBizParaResult">
+        <include refid="selectAmBizParaVo"/>
+        <where>  
+            <if test="receiveRange != null  and receiveRange != ''">
+                and receive_range like concat(concat('%', #{receiveRange}),'%')
+            </if>
+        </where>
+    </select>
+    
+    <select id="selectAmBizParaById" parameterType="String" resultMap="AmBizParaResult">
+        <include refid="selectAmBizParaVo"/>
+        where am_para_id = #{amParaId}
+    </select>
+        
+    <insert id="insertAmBizPara" parameterType="AmBizPara">
+        insert into am_biz_para
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="amParaId != null  and amParaId != ''">am_para_id,</if>
+            <if test="receiveRange != null  and receiveRange != ''">receive_range,</if>
+
+
+        </trim>
+        <trim prefix="values(" suffix=")" suffixOverrides=",">
+
+            <if test="amParaId != null  and amParaId != ''">#{amParaId},</if>
+            <if test="receiveRange != null  and receiveRange != ''">#{receiveRange},</if>
+
+
+
+
+        </trim>
+
+
+
+    </insert>
+
+    <update id="updateAmBizPara" parameterType="AmBizPara">
+        update am_biz_para
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="receiveRange != null  and receiveRange != ''">receive_range = #{receiveRange},</if>
+        </trim>
+        where am_para_id = #{amParaId}
+    </update>
+
+    <delete id="deleteAmBizParaById" parameterType="String">
+        delete from am_biz_para where am_para_id = #{amParaId}
+    </delete>
+
+    <delete id="deleteAmBizParaByIds" parameterType="String">
+        delete from am_biz_para where am_para_id in 
+        <foreach item="amParaId" collection="array" open="(" separator="," close=")">
+            #{amParaId}
+        </foreach>
+    </delete>
+    
+</mapper>

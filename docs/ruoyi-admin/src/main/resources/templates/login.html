@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html  lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<!--    <title>登录中国邮政储蓄银行</title>-->
+<!--    <title>登录长安通信科技有限责任公司</title>-->
+    <title>登录上海银行运维管理平台</title>
+    <meta name="description" content="若依后台管理框架">
+    <link href="../static/css/bootstrap.min.css" th:href="@{/css/bootstrap.min.css}" rel="stylesheet"/>
+    <link href="../static/css/font-awesome.min.css" th:href="@{/css/font-awesome.min.css}" rel="stylesheet"/>
+    <link href="../static/css/style.css" th:href="@{/css/style.css}" rel="stylesheet"/>
+    <link href="../static/css/login.min.css" th:href="@{/css/login.min.css}" rel="stylesheet"/>
+    <link href="../static/ruoyi/css/ry-ui.css" th:href="@{/ruoyi/css/ry-ui.css?v=4.5.1}" rel="stylesheet"/>
+    <!-- 360浏览器急速模式 -->
+    <meta name="renderer" content="webkit">
+    <!-- 避免IE使用兼容模式 -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="shortcut icon" href="../static/ca_favicon.ico" th:href="@{ca_favicon.ico}"/>
+    <style type="text/css">label.error { position:inherit;  }</style>
+    <script>
+        if(window.top!==window.self){alert('未登录或登录超时。请重新登录');window.top.location=window.location};
+    </script>
+</head>
+<body class="signin">
+<table border="0" height="100%" width="100%">
+	<tr>
+		<td height="100%">
+    <div class="signinpanel">
+    	<div class="sign_title">
+    		<div class="ca_yc_logo"></div>
+    		<div class="yc_text">
+    			<h1 id="titleId">运维管理平台</h1>
+				<h1 id="titleIdCp" style="color: #ff0000" ></h1>
+    			<h2>Operation and maintenance management center</h2>
+    		</div>
+    	</div>
+        <div class="sign_box">
+        	<div class="">
+				<input name="requestURL" id="requestURL" type="hidden" th:value="*{requestURL}"/>
+                <form id="signupForm" autocomplete="off">
+                   <div class="sign_box_cn">
+					   <div class="radio check-box">
+						   <label style="color: maroon"><input type="radio" checked value="0" name="loginFlag">用户名登录</label>
+					   </div>
+<!--				隐藏1	   <div class="radio check-box">-->
+<!--						   <label style="color: maroon"><input type="radio" value="1" name="loginFlag">手机号登录</label>-->
+<!--					   </div>-->
+
+                   		<input type="text"  name="username" class="form-control uname" placeholder="用户名或手机号"     />
+                   		<input type="password"  name="password" class="form-control pword" placeholder="密码" onkeydown="if(event.keyCode==13)login();" />
+<!--                隐藏2 		<div class="sign_vcode" th:if="${captchaEnabled==true}">-->
+<!--                   			<span><input type="text" name="validateCode" class="form-control code" placeholder="验证码" maxlength="5" onkeydown="if(event.keyCode==13)login();"/></span>-->
+<!--							<span>-->
+<!--								<a href="javascript:void(0);" title="点击更换验证码">-->
+<!--									<img th:src="@{captcha/captchaImage(type=${captchaType})}" class="imgcode" width="85%"/>-->
+<!--								</a>-->
+<!--							</span>-->
+<!--						</div>-->
+<!--                隐藏3  		<div class="sign_sms" th:if="${telEnabled==true}">-->
+<!--                   			<span>-->
+<!--                   				<input type="text" id="telvalidateCode" name="telvalidateCode" class="form-control vdcode" placeholder="短信验证码" maxlength="6" autocomplete="off" onfocus="clean()" onkeydown="if(event.keyCode==13)login();"/>-->
+<!--                   			</span>-->
+<!--	                        <span>-->
+<!--	                        	 <a href="javascript:void(0);" title="获取短信验证码">-->
+<!--		                            <input name="sendcode" type="button" id="sendcode" class="btn-vdcode btn-cl" value="获取验证码" onclick="sendnumber()" />-->
+<!--		                        </a>-->
+<!--	                        </span>-->
+<!--	                    </div>-->
+	                    <!--<div class="checkbox-custom" th:classappend="${captchaEnabled==false} ? 'm-t'">
+					        <input type="checkbox" id="rememberme" name="rememberme"> <label for="rememberme">记住我</label>
+					    </div>-->
+					   <br/><br/><br/>
+					   <a class="btn btn-primary btn-xs" href="javascript:void(0)" onclick="forgetHtml()">忘记密码</a>
+					   <div th:if="${vapobj}==1">
+						   <label style="background-color: #ef392b" th:align="center">用户名错误，请重新输入</label>
+					   </div>
+				   </div>
+                   <div class="sign_btn">
+                   		<button class="btn-login btn-block btn-login-icon" id="btnSubmit" data-loading="正在验证登录，请稍后...">
+                   			<span class="btn_icon"></span>
+                   			登录
+                   		</button>
+                   </div>
+                </form>
+            </div>
+            <div class="warn_cn_ca">
+            	<h1><span></span>说明事项：</h1>
+         	请先输入正确的账号、密码      <!--   和验证码，再点击获取短信验证码按钮-->
+            	<!--收到短信码后，输入短信验证码 -->，点击登录。
+            	<span>如密码输入错误3次该账号将会被锁定10分钟
+<!--            	 每次的短信验证码24小时内有效
+            	 如短信验证码输入错误3次将会被重置需要重新获取  -->  </span>
+                <!--  <strong th:if="${@config.getKey('sys.account.registerUser')}">还没有账号？ <a th:href="@{/register}">立即注册&raquo;</a></strong> -->
+        </div>
+    </div>
+    <div class="advice_text">
+    	建议使用谷歌浏览器、火狐浏览器、IE9及以上版本IE浏览器
+    </div>
+    <!--<div class="advice_link">
+    	<a href="#">生产网网址导航</a> |
+    	<a href="#">数据中心综合管理系统</a>
+    </div>-->
+    <!-- <div class="signup-footer">
+            <div class="pull-left">
+                &copy; 2021 All Rights Reserved. <br>
+            </div>
+    </div> -->
+ </div>
+ </td>
+	</tr>
+</table>
+<script th:inline="javascript"> var ctx = [[@{/}]]; var captchaType = [[${captchaType}]]; </script>
+<!-- 全局js -->
+<script src="../static/js/jquery.min.js" th:src="@{/js/jquery.min.js}"></script>
+<script src="../static/js/bootstrap.min.js" th:src="@{/js/bootstrap.min.js}"></script>
+<!-- 验证插件 -->
+<script src="../static/ajax/libs/validate/jquery.validate.min.js" th:src="@{/ajax/libs/validate/jquery.validate.min.js}"></script>
+<script src="../static/ajax/libs/validate/messages_zh.min.js" th:src="@{/ajax/libs/validate/messages_zh.min.js}"></script>
+<script src="../static/ajax/libs/layer/layer.min.js" th:src="@{/ajax/libs/layer/layer.min.js}"></script>
+<script src="../static/ajax/libs/blockUI/jquery.blockUI.js" th:src="@{/ajax/libs/blockUI/jquery.blockUI.js}"></script>
+<script src="../static/ruoyi/js/ry-ui.js" th:src="@{/ruoyi/js/ry-ui.js?v=4.5.1}"></script>
+<script src="../static/ruoyi/login.js" th:src="@{/ruoyi/login.js}"></script>
+<script type="text/javascript">
+
+	$(function() {
+		var reqUrl = window.location.href;
+		if(reqUrl.indexOf("84.91")>0){
+			$("#titleId").html("");
+			$("#titleIdCp").html("运维管理平台-测试环境");
+		}
+		if(reqUrl.indexOf("21.1.1.197")>0){
+			$("#titleId").html("");
+			$("#titleIdCp").html("运维管理平台-准生产环境");
+		}
+		if(reqUrl.indexOf("127.0.0.1")>0){
+			$("#titleId").html("");
+			$("#titleIdCp").html("运维管理平台-开发环境");
+		}
+	});
+
+</script>
+</body>
+</html>

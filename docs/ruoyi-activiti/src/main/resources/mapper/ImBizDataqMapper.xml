@@ -1,0 +1,467 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.activiti.mapper.ImBizDataqMapper">
+
+    <resultMap type="ImBizDataq" id="ImBizDataqResult">
+        <result property="imId" column="im_id"/>
+        <result property="imNo" column="im_no"/>
+        <result property="currentState" column="current_state"/>
+        <result property="createrId" column="creater_id"/>
+        <result property="creatTime" column="creat_time"/>
+        <result property="problemDiscoveryTime" column="problem_discovery_time"/>
+        <result property="sysId" column="sys_id"/>
+        <result property="sysName" column="sys_name"/>
+        <result property="probleTitle" column="proble_title"/>
+        <result property="probleDesc" column="proble_desc"/>
+        <result property="probleCause" column="proble_cause"/>
+        <result property="probleImpact" column="proble_impact"/>
+        <result property="emergencyPlan" column="emergency_plan"/>
+        <result property="businessDept" column="business_dept"/>
+        <result property="businessId" column="business_id"/>
+        <result property="businessRectificationPlan" column="business_rectification_plan"/>
+        <result property="businessPlanTime" column="business_plan_time"/>
+        <result property="businessSolutions" column="business_solutions"/>
+        <result property="ifJs" column="if_js"/>
+        <result property="technicalId" column="technical_id"/>
+        <result property="technicalRectificationPlan" column="technical_rectification_plan"/>
+        <result property="technicalPlanTime" column="technical_plan_time"/>
+        <result property="technicalSolutions" column="technical_solutions"/>
+        <result property="versionNo" column="version_no"/>
+        <result property="ifPuo" column="if_puo"/>
+        <result property="observationTime" column="observation_time"/>
+        <result property="vrStatus" column="vr_status"/>
+        <result property="isState" column="IS_STATE"/>
+        <result property="invalidationMark" column="INVALIDATION_MARK"/>
+        <result property="assessorId" column="assessor_Id"/>
+        <result property="chargeLeadership" column="CHARGE_LEADERSHIP"/>
+        <result property="sysLv" column="sys_lv"/>
+        <result property="n6" column="n6"/>
+        <result property="n7" column="n7"/>
+        <result property="n8" column="n8"/>
+        <result property="n9" column="n9"/>
+        <result property="n10" column="n10"/>
+        <result property="businessAppid" column="business_appid"/>
+        <result property="businessRectificationDept" column="business_rectification_dept"/>
+        <result property="businessRectificationId" column="business_rectification_id"/>
+        <!--创建人名称-->
+        <result property="createName" column="createName"/>
+        <!--创建结束时间-->
+        <result property="endCreateTime" column="endCreateTime"/>
+        <!--问题结束时间-->
+        <result property="endproblemDiscoveryTime" column="endproblemDiscoveryTime"/>
+        <!--评估人-->
+        <result property="assessorName" column="assessorName"/>
+        <!--技术审核人-->
+        <result property="technicalName" column="technicalName"/>
+    </resultMap>
+
+    <sql id="selectImBizDataqVo">
+		SELECT
+			dq.im_id,
+			dq.im_no,
+			dq.current_state,
+			dq.creater_id,
+			dq.creat_time,
+			dq.problem_discovery_time,
+			dq.sys_id,
+			dq.sys_name,
+			dq.proble_title,
+			dq.proble_desc,
+			dq.proble_cause,
+			dq.proble_impact,
+			dq.emergency_plan,
+			dq.business_dept,
+			dq.business_id,
+			dq.business_rectification_plan,
+			dq.business_plan_time,
+			dq.business_solutions,
+			dq.if_js,
+			dq.technical_id,
+			dq.technical_rectification_plan,
+			dq.technical_plan_time,
+			dq.technical_solutions,
+			dq.version_no,
+			dq.if_puo,
+			dq.observation_time,
+			dq.vr_status,
+			dq.IS_STATE,
+			dq.INVALIDATION_MARK,
+			dq.assessor_Id,
+			dq.CHARGE_LEADERSHIP,
+			dq.sys_lv,
+			dq.n6,
+			dq.n7,
+			dq.n8,
+			dq.n9,
+			dq.n10,
+			dq.business_appid,
+			dq.business_rectification_dept,
+			dq.business_rectification_id,
+			p.pname createName,
+			p2.pname assessorName,
+			p3.pname technicalName
+        	FROM
+			im_biz_dataq dq LEFT JOIN  og_person p on dq.creater_id = p.pid
+            LEFT JOIN  og_person p2 on dq.assessor_Id = p2.pid
+            LEFT JOIN  og_person p3 on dq.technical_id = p3.pid
+		</sql>
+
+    <select id="selectImBizDataqList" parameterType="ImBizDataq" resultMap="ImBizDataqResult">
+        <include refid="selectImBizDataqVo"/>
+        <where>
+            <if test="imId != null  and imId != ''">and dq.im_id = #{imId}</if>
+            <if test="currentState != null  and currentState != ''">and dq.current_state = #{currentState}</if>
+            <if test="createrId != null  and createrId != ''">and dq.creater_id = #{createrId}</if>
+            <if test="sysId != null  and sysId != ''">and dq.sys_id = #{sysId}</if>
+            <if test="sysName != null  and sysName != ''">and dq.sys_name like concat(concat('%', #{sysName}), '%')</if>
+            <if test="probleDesc != null  and probleDesc != ''">and dq.proble_desc = #{probleDesc}</if>
+            <if test="probleCause != null  and probleCause != ''">and dq.proble_cause = #{probleCause}</if>
+            <if test="probleImpact != null  and probleImpact != ''">and dq.proble_impact = #{probleImpact}</if>
+            <if test="emergencyPlan != null  and emergencyPlan != ''">and dq.emergency_plan = #{emergencyPlan}</if>
+            <if test="businessDept != null  and businessDept != ''">and dq.business_dept = #{businessDept}</if>
+            <if test="businessId != null  and businessId != ''">and dq.business_id = #{businessId}</if>
+            <if test="businessRectificationPlan != null  and businessRectificationPlan != ''">and
+                dq.business_rectification_plan = #{businessRectificationPlan}
+            </if>
+            <if test="businessPlanTime != null  and businessPlanTime != ''">and dq.business_plan_time =
+                #{businessPlanTime}
+            </if>
+            <if test="businessSolutions != null  and businessSolutions != ''">and dq.business_solutions =
+                #{businessSolutions}
+            </if>
+            <if test="ifJs != null  and ifJs != ''">and dq.if_js = #{ifJs}</if>
+            <if test="technicalId != null  and technicalId != ''">and dq.technical_id = #{technicalId}</if>
+            <if test="technicalRectificationPlan != null  and technicalRectificationPlan != ''">and
+                dq.technical_rectification_plan = #{technicalRectificationPlan}
+            </if>
+            <if test="technicalPlanTime != null  and technicalPlanTime != ''">and dq.technical_plan_time =
+                #{technicalPlanTime}
+            </if>
+            <if test="technicalSolutions != null  and technicalSolutions != ''">and dq.technical_solutions =
+                #{technicalSolutions}
+            </if>
+            <if test="versionNo != null  and versionNo != ''">and dq.version_no = #{versionNo}</if>
+            <if test="ifPuo != null  and ifPuo != ''">and dq.if_puo = #{ifPuo}</if>
+            <if test="observationTime != null  and observationTime != ''">and dq.observation_time = #{observationTime}</if>
+            <if test="vrStatus != null  and vrStatus != ''">and dq.vr_status = #{vrStatus}</if>
+            <if test="isState != null  and isState != ''">and dq.IS_STATE = #{isState}</if>
+            <if test="invalidationMark != null  and invalidationMark != ''">and dq.INVALIDATION_MARK = #{invalidationMark}</if>
+            <if test="assessorId != null  and assessorId != ''">and dq.assessor_Id = #{assessorId}</if>
+            <if test="chargeLeadership != null  and chargeLeadership != ''">and dq.CHARGE_LEADERSHIP = #{chargeLeadership}</if>
+            <if test="sysLv != null  and sysLv != ''">and dq.sys_lv = #{sysLv}</if>
+            <if test="n6 != null  and n6 != ''">and dq.n6 = #{n6}</if>
+            <if test="n7 != null  and n7 != ''">and dq.n7 = #{n7}</if>
+            <if test="n8 != null  and n8 != ''">and dq.n8 = #{n8}</if>
+            <if test="n9 != null  and n9 != ''">and dq.n9 = #{n9}</if>
+            <if test="n10 != null  and n10 != ''">and n10 = #{n10}</if>
+            <if test="businessAppid != null  and businessAppid != ''">and dq.business_appid = #{businessAppid}</if>
+            <if test="businessRectificationDept != null  and businessRectificationDept != ''">and
+                dq.business_rectification_dept = #{businessRectificationDept}
+            </if>
+            <if test="businessRectificationId != null  and businessRectificationId != ''">and dq.business_rectification_id
+                = #{businessRectificationId}
+            </if>
+            <if test="createName != null  and createName != ''">
+                and p.pname like concat(concat('%',#{createName}),'%')
+            </if>
+            <if test="imNo != null  and imNo != ''">
+                and dq.im_no  like concat(concat('%',#{imNo}),'%')
+            </if>
+            <if test="probleTitle != null  and probleTitle != ''">
+                and dq.proble_title = like concat(concat('%',#{probleTitle}),'%')
+            </if>
+
+            <if test="creatTime!=null and creatTime!=''">
+                and dq.creat_time &gt;=#{creatTime}
+            </if>
+            <if test="endCreateTime!=null and endCreateTime!=''">
+                and dq.creat_time &lt;=#{endCreateTime}
+            </if>
+            <if test="problemDiscoveryTime!=null and problemDiscoveryTime!=''">
+                and dq.problem_discovery_time &gt;=#{problemDiscoveryTime}
+            </if>
+            <if test="endproblemDiscoveryTime!=null and endproblemDiscoveryTime!=''">
+                and dq.problem_discovery_time &lt;=#{endproblemDiscoveryTime}
+            </if>
+
+        </where>
+        order by dq.creat_time desc
+
+    </select>
+
+    <select id="selectImBizDataqById" parameterType="String" resultMap="ImBizDataqResult">
+        <include refid="selectImBizDataqVo"/>
+        where im_id = #{imId}
+        order by dq.creat_time desc
+    </select>
+    <select id="selectImBizDataqByNo" parameterType="String" resultMap="ImBizDataqResult">
+        <include refid="selectImBizDataqVo"/>
+        where im_no = #{imNo}
+
+    </select>
+
+    <select id="selectImBizDataqListById" parameterType="String" resultMap="ImBizDataqResult">
+        <include refid="selectImBizDataqVo"/>
+        where im_id = #{imId}
+    </select>
+
+    <insert id="insertImBizDataq" parameterType="ImBizDataq">
+        insert into im_biz_dataq
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="imId != null  and imId != ''">im_id,</if>
+            <if test="imNo != null  and imNo != ''">im_no,</if>
+            <if test="currentState != null  and currentState != ''">current_state,</if>
+            <if test="createrId != null  and createrId != ''">creater_id,</if>
+            <if test="creatTime != null  and creatTime != ''">creat_time,</if>
+            <if test="problemDiscoveryTime != null  and problemDiscoveryTime != ''">problem_discovery_time,</if>
+            <if test="sysId != null  and sysId != ''">sys_id,</if>
+            <if test="sysName != null  and sysName != ''">sys_name,</if>
+            <if test="probleTitle != null  and probleTitle != ''">proble_title,</if>
+            <if test="probleDesc != null  and probleDesc != ''">proble_desc,</if>
+            <if test="probleCause != null  and probleCause != ''">proble_cause,</if>
+            <if test="probleImpact != null  and probleImpact != ''">proble_impact,</if>
+            <if test="emergencyPlan != null  and emergencyPlan != ''">emergency_plan,</if>
+            <if test="businessDept != null  and businessDept != ''">business_dept,</if>
+            <if test="businessId != null  and businessId != ''">business_id,</if>
+            <if test="businessRectificationPlan != null  and businessRectificationPlan != ''">
+                business_rectification_plan,
+            </if>
+            <if test="businessPlanTime != null  and businessPlanTime != ''">business_plan_time,</if>
+            <if test="businessSolutions != null  and businessSolutions != ''">business_solutions,</if>
+            <if test="ifJs != null  and ifJs != ''">if_js,</if>
+            <if test="technicalId != null  and technicalId != ''">technical_id,</if>
+            <if test="technicalRectificationPlan != null  and technicalRectificationPlan != ''">
+                technical_rectification_plan,
+            </if>
+            <if test="technicalPlanTime != null  and technicalPlanTime != ''">technical_plan_time,</if>
+            <if test="technicalSolutions != null  and technicalSolutions != ''">technical_solutions,</if>
+            <if test="versionNo != null  and versionNo != ''">version_no,</if>
+            <if test="ifPuo != null  and ifPuo != ''">if_puo,</if>
+            <if test="observationTime != null  and observationTime != ''">observation_time,</if>
+            <if test="vrStatus != null  and vrStatus != ''">vr_status,</if>
+            <if test="isState != null  and isState != ''">IS_STATE,</if>
+            <if test="invalidationMark != null  and invalidationMark != ''">INVALIDATION_MARK,</if>
+            <if test="assessorId != null  and assessorId != ''">assessor_Id,</if>
+            <if test="chargeLeadership != null  ">CHARGE_LEADERSHIP,</if>
+            <if test="sysLv != null  and sysLv != ''">sys_lv,</if>
+            <if test="n6 != null  and n6 != ''">n6,</if>
+            <if test="n7 != null  and n7 != ''">n7,</if>
+            <if test="n8 != null  and n8 != ''">n8,</if>
+            <if test="n9 != null  and n9 != ''">n9,</if>
+            <if test="n10 != null  and n10 != ''">n10,</if>
+            <if test="businessAppid != null ">business_appid,</if>
+            <if test="businessRectificationDept != null  and businessRectificationDept != ''">
+                business_rectification_dept,
+            </if>
+            <if test="businessRectificationId != null  and businessRectificationId != ''">business_rectification_id,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="imId != null  and imId != ''">#{imId},</if>
+            <if test="imNo != null  and imNo != ''">#{imNo},</if>
+            <if test="currentState != null  and currentState != ''">#{currentState},</if>
+            <if test="createrId != null  and createrId != ''">#{createrId},</if>
+            <if test="creatTime != null  and creatTime != ''">#{creatTime},</if>
+            <if test="problemDiscoveryTime != null  and problemDiscoveryTime != ''">#{problemDiscoveryTime},</if>
+            <if test="sysId != null  and sysId != ''">#{sysId},</if>
+            <if test="sysName != null  and sysName != ''">#{sysName},</if>
+            <if test="probleTitle != null  and probleTitle != ''">#{probleTitle},</if>
+            <if test="probleDesc != null  and probleDesc != ''">#{probleDesc},</if>
+            <if test="probleCause != null  and probleCause != ''">#{probleCause},</if>
+            <if test="probleImpact != null  and probleImpact != ''">#{probleImpact},</if>
+            <if test="emergencyPlan != null  and emergencyPlan != ''">#{emergencyPlan},</if>
+            <if test="businessDept != null  and businessDept != ''">#{businessDept},</if>
+            <if test="businessId != null  and businessId != ''">#{businessId},</if>
+            <if test="businessRectificationPlan != null  and businessRectificationPlan != ''">
+                #{businessRectificationPlan},
+            </if>
+            <if test="businessPlanTime != null  and businessPlanTime != ''">#{businessPlanTime},</if>
+            <if test="businessSolutions != null  and businessSolutions != ''">#{businessSolutions},</if>
+            <if test="ifJs != null  and ifJs != ''">#{ifJs},</if>
+            <if test="technicalId != null  and technicalId != ''">#{technicalId},</if>
+            <if test="technicalRectificationPlan != null  and technicalRectificationPlan != ''">
+                #{technicalRectificationPlan},
+            </if>
+            <if test="technicalPlanTime != null  and technicalPlanTime != ''">#{technicalPlanTime},</if>
+            <if test="technicalSolutions != null  and technicalSolutions != ''">#{technicalSolutions},</if>
+            <if test="versionNo != null  and versionNo != ''">#{versionNo},</if>
+            <if test="ifPuo != null  and ifPuo != ''">#{ifPuo},</if>
+            <if test="observationTime != null  and observationTime != ''">#{observationTime},</if>
+            <if test="vrStatus != null  and vrStatus != ''">#{vrStatus},</if>
+            <if test="isState != null  and isState != ''">#{isState},</if>
+            <if test="invalidationMark != null  and invalidationMark != ''">#{invalidationMark},</if>
+            <if test="assessorId != null  and assessorId != ''">#{assessorId},</if>
+            <if test="chargeLeadership != null ">#{chargeLeadership},</if>
+            <if test="sysLv != null  and sysLv != ''">#{sysLv},</if>
+            <if test="n6 != null  and n6 != ''">#{n6},</if>
+            <if test="n7 != null  and n7 != ''">#{n7},</if>
+            <if test="n8 != null  and n8 != ''">#{n8},</if>
+            <if test="n9 != null  and n9 != ''">#{n9},</if>
+            <if test="n10 != null  and n10 != ''">#{n10},</if>
+            <if test="businessAppid != null ">#{businessAppid},</if>
+            <if test="businessRectificationDept != null  and businessRectificationDept != ''">
+                #{businessRectificationDept},
+            </if>
+            <if test="businessRectificationId != null  and businessRectificationId != ''">#{businessRectificationId},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateImBizDataq" parameterType="ImBizDataq">
+        update im_biz_dataq
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="imNo != null  and imNo != ''">im_no = #{imNo},</if>
+            <if test="currentState != null  and currentState != ''">current_state = #{currentState},</if>
+            <if test="createrId != null  and createrId != ''">creater_id = #{createrId},</if>
+            <if test="creatTime != null  and creatTime != ''">creat_time = #{creatTime},</if>
+            <if test="problemDiscoveryTime != null  and problemDiscoveryTime != ''">problem_discovery_time =
+                #{problemDiscoveryTime},
+            </if>
+            <if test="sysId != null  and sysId != ''">sys_id = #{sysId},</if>
+            <if test="sysName != null  and sysName != ''">sys_name = #{sysName},</if>
+            <if test="probleTitle != null  and probleTitle != ''">proble_title = #{probleTitle},</if>
+            <if test="probleDesc != null  and probleDesc != ''">proble_desc = #{probleDesc},</if>
+            <if test="probleCause != null  and probleCause != ''">proble_cause = #{probleCause},</if>
+            <if test="probleImpact != null  and probleImpact != ''">proble_impact = #{probleImpact},</if>
+            <if test="emergencyPlan != null  and emergencyPlan != ''">emergency_plan = #{emergencyPlan},</if>
+            <if test="businessDept != null  and businessDept != ''">business_dept = #{businessDept},</if>
+            <if test="businessId != null  and businessId != ''">business_id = #{businessId},</if>
+            <if test="businessRectificationPlan != null  and businessRectificationPlan != ''">
+                business_rectification_plan = #{businessRectificationPlan},
+            </if>
+            <if test="businessPlanTime != null  and businessPlanTime != ''">business_plan_time = #{businessPlanTime},
+            </if>
+            <if test="businessSolutions != null  and businessSolutions != ''">business_solutions =
+                #{businessSolutions},
+            </if>
+            <if test="ifJs != null  and ifJs != ''">if_js = #{ifJs},</if>
+            <if test="technicalId != null  and technicalId != ''">technical_id = #{technicalId},</if>
+            <if test="technicalRectificationPlan != null  and technicalRectificationPlan != ''">
+                technical_rectification_plan = #{technicalRectificationPlan},
+            </if>
+            <if test="technicalPlanTime != null  and technicalPlanTime != ''">technical_plan_time =
+                #{technicalPlanTime},
+            </if>
+            <if test="technicalSolutions != null  and technicalSolutions != ''">technical_solutions =
+                #{technicalSolutions},
+            </if>
+            <if test="versionNo != null  and versionNo != ''">version_no = #{versionNo},</if>
+            <if test="ifPuo != null  and ifPuo != ''">if_puo = #{ifPuo},</if>
+            <if test="observationTime != null  and observationTime != ''">observation_time = #{observationTime},</if>
+            <if test="vrStatus != null  and vrStatus != ''">vr_status = #{vrStatus},</if>
+            <if test="isState != null  and isState != ''">IS_STATE = #{isState},</if>
+            <if test="invalidationMark != null  and invalidationMark != ''">INVALIDATION_MARK = #{invalidationMark},</if>
+            <if test="assessorId != null  and assessorId != ''">assessor_Id = #{assessorId},</if>
+            <if test="chargeLeadership != null ">CHARGE_LEADERSHIP = #{chargeLeadership},</if>
+            <if test="sysLv != null  and sysLv != ''">sys_lv = #{sysLv},</if>
+            <if test="n6 != null  and n6 != ''">n6 = #{n6},</if>
+            <if test="n7 != null  and n7 != ''">n7 = #{n7},</if>
+            <if test="n8 != null  and n8 != ''">n8 = #{n8},</if>
+            <if test="n9 != null  and n9 != ''">n9 = #{n9},</if>
+            <if test="n10 != null  and n10 != ''">n10 = #{n10},</if>
+            <if test="businessAppid != null">business_appid = #{businessAppid},</if>
+            <if test="businessRectificationDept != null  and businessRectificationDept != ''">
+                business_rectification_dept = #{businessRectificationDept},
+            </if>
+            <if test="businessRectificationId != null  and businessRectificationId != ''">business_rectification_id =
+                #{businessRectificationId},
+            </if>
+        </trim>
+        where im_id = #{imId}
+    </update>
+
+    <delete id="deleteImBizDataqById" parameterType="String">
+		delete from im_biz_dataq where im_id = #{imId}
+	</delete>
+
+    <delete id="deleteImBizDataqByIds" parameterType="String">
+        delete from im_biz_dataq where im_id in
+        <foreach item="imId" collection="array" open="(" separator="," close=")">
+            #{imId}
+        </foreach>
+    </delete>
+
+    <select id="pageList" parameterType="ImBizDataq" resultMap="ImBizDataqResult">
+        <include refid="selectImBizDataqVo"/>
+        <where>
+            1=1
+            <if test="imNo != null  and imNo != ''">
+                and im_no like concat(concat('%', #{imNo}), '%')
+            </if>
+            <if test="currentState != null  and currentState != ''">
+                and current_state = #{currentState}
+            </if>
+            <if test="createrId != null  and createrId != ''">
+                and creater_id in (select p.pid from og_person p where p.pname like
+                concat(concat('%',#{createrId}),'%')
+                )
+            </if>
+            <if test="sysName != null  and sysName != ''">
+                and sys_name like concat(concat('%', #{sysName}), '%')
+            </if>
+            <if test="probleTitle != null  and probleTitle != ''">
+                and proble_title like concat(concat('%',#{probleTitle}), '%')
+            </if>
+            <if test="probleCause != null  and probleCause != ''">
+                and proble_cause = #{probleCause}
+            </if>
+            <if test="creatTime!=null and creatTime!=''">
+                and creat_time &gt;=#{creatTime}
+            </if>
+            <if test="endCreateTime!=null and endCreateTime!=''">
+                and creat_time &lt;=#{endCreateTime}
+            </if>
+            <if test="problemDiscoveryTime!=null and problemDiscoveryTime!=''">
+                and problem_discovery_time &gt;=#{problemDiscoveryTime}
+            </if>
+            <if test="endproblemDiscoveryTime!=null and endproblemDiscoveryTime!=''">
+                and problem_discovery_time &lt;=#{endproblemDiscoveryTime}
+            </if>
+        </where>
+        order by creat_time desc
+
+    </select>
+
+    <select id="pageListBg" parameterType="ImBizDataq" resultMap="ImBizDataqResult">
+        <include refid="selectImBizDataqVo"/>
+        <where>
+            1=1
+            and DQ.CURRENT_STATE != '01'
+            <if test="imNo != null  and imNo != ''">
+                and im_no like concat(concat('%', #{imNo}), '%')
+            </if>
+            <if test="currentState != null  and currentState != ''">
+                and current_state = #{currentState}
+            </if>
+            <if test="createrId != null  and createrId != ''">
+                and creater_id in (select p.pid from og_person p where p.pname like
+                concat(concat('%',#{createrId}),'%')
+                )
+            </if>
+            <if test="sysName != null  and sysName != ''">
+                and sys_name like concat(concat('%', #{sysName}), '%')
+            </if>
+            <if test="probleTitle != null  and probleTitle != ''">
+                and proble_title like concat(concat('%',#{probleTitle}), '%')
+            </if>
+            <if test="probleCause != null  and probleCause != ''">
+                and proble_cause = #{probleCause}
+            </if>
+            <if test="creatTime!=null and creatTime!=''">
+                and creat_time &gt;=#{creatTime}
+            </if>
+            <if test="endCreateTime!=null and endCreateTime!=''">
+                and creat_time &lt;=#{endCreateTime}
+            </if>
+            <if test="problemDiscoveryTime!=null and problemDiscoveryTime!=''">
+                and problem_discovery_time &gt;=#{problemDiscoveryTime}
+            </if>
+            <if test="endproblemDiscoveryTime!=null and endproblemDiscoveryTime!=''">
+                and problem_discovery_time &lt;=#{endproblemDiscoveryTime}
+            </if>
+        </where>
+        order by creat_time desc
+    </select>
+</mapper>

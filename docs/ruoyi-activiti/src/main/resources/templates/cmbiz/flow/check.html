@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:include="include :: header('审核变更单')"/>
+    <th:block th:include="include :: select2-css"/>
+    <th:block th:include="include :: summernote-css"/>
+</head>
+<body>
+<div class="main-content">
+    <form id="form-cmbiz-add" class="form-horizontal" th:object="${cmBizSingle}">
+        <input name="changeId" id="changeId" class="form-control" type="hidden" required th:value="*{changeId}">
+        <h4 class="form-header h4">基本信息</h4>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">变更单号：</label>
+                    <div class="col-sm-8">
+                        <input name="changeCode" id="changeCode" class="form-control" type="text" required
+                               th:value="*{changeCode}" readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">申请时间：</label>
+                    <div class="col-sm-8">
+                        <input id="applicationSubmitTime" name="applicationSubmitTime" class="form-control" type="text"
+                               th:value="*{applicationSubmitTime}" readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">申请人：</label>
+                    <div class="col-sm-8">
+                        <input name="applicantId" id="applicantId" class="form-control" type="text"
+                               th:value="${createName}" readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">创建机构：</label>
+                    <div class="col-sm-8">
+                        <input name="createrOrgId" id="createrOrgId" class="form-control" type="text" readonly
+                               th:value="${createOrgName}">
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label ">变更类型：</label>
+                    <div class="col-sm-8">
+                        <select name="changeType" class="form-control"
+                                th:with="type=${@pubParaValue.selectPubParaValueByParaName('change_type')}"
+                                th:field="*{changeType}" disabled>
+                            <option th:each="PubParaValue : ${type}" th:text="${PubParaValue.valueDetail}"
+                                    th:value="${PubParaValue.value}" th:selected="${PubParaValue.value eq changeType}">>
+                            </option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label ">变更风险等级：</label>
+                    <div class="col-sm-8">
+                        <select name="importantLev" class="form-control"
+                                th:with="type=${@pubParaValue.selectPubParaValueByParaName('important_lev')}"
+                                th:field="*{importantLev}" disabled>
+                            <option th:each="PubParaValue : ${type}" th:text="${PubParaValue.valueDetail}"
+                                    th:value="${PubParaValue.value}"
+                                    th:selected="${PubParaValue.value eq importantLev}">>
+                            </option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">是否自动化变更：</label>
+                    <div class="col-sm-8">
+                        <select name="ifAuto" class="form-control m-b"
+                                th:with="type=${@pubParaValue.selectPubParaValueByParaName('isNotice')}"
+                                th:field="*{ifAuto}" disabled>
+                            <option value=""></option>
+                            <option th:each="paraValue : ${type}" th:text="${paraValue.valueDetail}"
+                                    th:value="${paraValue.value}"
+                                    th:selected="${paraValue.value eq ifAuto}"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">是否手工启动：</label>
+                    <div class="col-sm-8">
+                        <select name="ifMastart" class="form-control m-b"
+                                th:with="type=${@pubParaValue.selectPubParaValueByParaName('isNotice')}"
+                                th:field="*{ifMastart}" disabled>
+                            <option value=""></option>
+                            <option th:each="paraValue : ${type}" th:text="${paraValue.valueDetail}"
+                                    th:value="${paraValue.value}"
+                                    th:selected="${paraValue.value eq ifMastart}"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">变更分类：</label>
+                    <div class="col-sm-8">
+                        <input name="changeCategoryId" id="changeCategoryId" class="form-control" type="text" readonly
+                               th:value="${typeName}">
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label ">是否紧急变更：</label>
+                    <div class="col-sm-8">
+                        <select name="isJjbg" class="form-control"
+                                th:with="type=${@pubParaValue.selectPubParaValueByParaName('isNotice')}"
+                                th:field="*{isJjbg}" disabled>
+                            <option value=""></option>
+                            <option th:each="PubParaValue : ${type}" th:text="${PubParaValue.valueDetail}"
+                                    th:value="${PubParaValue.value}" th:selected="${PubParaValue.value eq isJjbg}">>
+                            </option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label ">所涉应用系统：</label>
+                    <div class="col-sm-10">
+                        <input id="sysname" name="sysname" class="form-control" th:value="*{sysname}" readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">计划变更开始时间：</label>
+                    <div class="col-sm-8">
+                        <input type="text" class="form-control" placeholder="yyyy-MM-dd HH:mm" id="expectStartTime"
+                               name="expectStartTime" th:value="*{expectStartTime}" disabled/>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">计划变更结束时间：</label>
+                    <div class="col-sm-8">
+                        <input type="text" class="form-control" placeholder="yyyy-MM-dd HH:mm" id="expectEndTime"
+                               name="expectEndTime" th:value="*{expectEndTime}" disabled/>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label ">变更所处阶段：</label>
+                    <div class="col-sm-8">
+                        <select name="changeStage" class="form-control"
+                                th:with="type=${@pubParaValue.selectPubParaValueByParaName('change_stage')}"
+                                th:field="*{changeStage}" disabled>
+                            <option th:each="PubParaValue : ${type}" th:text="${PubParaValue.valueDetail}"
+                                    th:value="${PubParaValue.value}" th:selected="${PubParaValue.value eq changeStage}">
+                                >
+                            </option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label ">变更来源：</label>
+                    <div class="col-sm-8">
+                        <select name="changeResource" class="form-control"
+                                th:with="type=${@pubParaValue.selectPubParaValueByParaName('change_resource')}"
+                                th:field="*{changeResource}" disabled>
+                            <option th:each="PubParaValue : ${type}" th:text="${PubParaValue.valueDetail}"
+                                    th:value="${PubParaValue.value}"
+                                    th:selected="${PubParaValue.value eq changeResource}">>
+                            </option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">停止时长(分钟)：</label>
+                    <div class="col-sm-8">
+                        <input id="closuerOften" name="closuerOften" th:value="*{closuerOften}" class="form-control"
+                               readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">是否通过技术委员会：</label>
+                    <div class="col-sm-8">
+                        <select name="ifOasis" class="form-control m-b"
+                                th:with="type=${@pubParaValue.selectPubParaValueByParaName('isNotice')}"
+                                th:field="*{ifOasis}" disabled>
+                            <option value=""></option>
+                            <option th:each="paraValue : ${type}" th:text="${paraValue.valueDetail}"
+                                    th:value="${paraValue.value}"
+                                    th:selected="${paraValue.value eq ifOasis}"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">变更主题：</label>
+                    <div class="col-sm-10">
+                        <input class="form-control" id="changeSingleName" maxlength="128" name="changeSingleName"
+                               required th:value="*{changeSingleName}" readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label text-right">变更原因：</label>
+                    <div class="col-sm-10">
+                        <input id="changeCauseText" name="changeCauseText" type="hidden"
+                               th:value="*{changeCauseText}">
+                        <div class="summernote3" id="summernote3"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <label class="col-sm-2 control-label  text-right">变更内容：</label>
+                    <div class="col-sm-10">
+                        <input id="changeDetails" name="changeDetails" maxlength="1024" type="hidden"
+                               th:value="*{changeDetails}">
+                        <div class="summernote" id="summernote"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <label class="col-sm-2 control-label  text-right">变更实施方案：</label>
+                    <div class="col-sm-10">
+                        <input id="changeProgram" name="changeProgram" type="hidden" th:value="*{changeProgram}">
+                        <div class="summernote2" id="summernote2"></div>
+                    </div>
+                </div>
+            </div>
+            <h4 class="form-header h4">下一步操作信息</h4>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">实施机构：</label>
+                    <div class="col-sm-8">
+                        <input name="implementorOrgid" id="implementorOrgid" class="form-control" type="hidden"
+                               th:value="*{implementorOrgid}">
+                        <input id="implementorOrgName" name="implementorOrgName" type="text" class="form-control"
+                               onclick="selectDept()" th:value="${implementorOrgName}" required readonly
+                               style="background-color: #fdfdfd"/>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">实施人：</label>
+                    <div class="col-sm-8">
+                        <select id="implementorId" name="implementorId" class="form-control" required>
+                            <option value="" th:if="${not #strings.isEmpty(cmBizSingle.implementorId)}"></option>
+                            <option th:each="OgPerson : ${personList}" th:text="${OgPerson.pName}"
+                                    th:value="${OgPerson.pId}" th:field="*{implementorId}"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6" id="flowzx">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">流程选项：</label>
+                    <div class="col-sm-8">
+                        <select id="flowSelect" name="params[flowSelect]" class="form-control"
+                                th:with="type=${@pubParaValue.selectPubParaValueByParaName('flowSelect')}"
+                                th:value="${flowSelect}" disabled>
+                            <option value=""></option>
+                            <option th:each="PubParaValue : ${type}" th:text="${PubParaValue.valueDetail}"
+                                    th:value="${PubParaValue.value}" th:selected="${PubParaValue.value eq flowSelect}">>
+                            </option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6" id="flowld">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">分管领导：</label>
+                    <div class="col-sm-8">
+                        <select id="fucheckerId" name="fucheckerId" class="form-control"
+                                th:with="person=${@CmBizSing.getFucheck()}" required>
+                            <option value=""></option>
+                            <option th:each="OgPerson : ${person}" th:text="${OgPerson.pName}"
+                                    th:value="${OgPerson.pId}">
+                            </option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label is-required">审批意见：</label>
+                    <div class="col-sm-10">
+                        <textarea id="comment" rows="5" cols="20" name="params[comment]" class="form-control"
+                                  maxlength="100" required></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="tabs-container">
+                    <ul class="nav nav-tabs">
+                        <li class="active"><a data-toggle="tab" href="#tab-1" aria-expanded="true">流程记录</a>
+                        </li>
+                        <li class=""><a data-toggle="tab" href="#tab-2" aria-expanded="true"> 附件</a>
+                        </li>
+                        <li class=""><a data-toggle="tab" href="#tab-3" aria-expanded="false">关联调度事件单</a>
+                        </li>
+                        <li class=""><a data-toggle="tab" href="#tab-4" aria-expanded="false">关联事务事件单</a>
+                        </li>
+                        <li class=""><a data-toggle="tab" href="#tab-5" aria-expanded="false">关联问题单</a>
+                        </li>
+                        <li class=""><a data-toggle="tab" href="#tab-6" aria-expanded="false">关联变更请求单</a>
+                        </li>
+                    </ul>
+                    <div class="tab-content">
+                        <div id="tab-1" class="tab-pane active">
+                            <div class="panel-body">
+                                <div class="col-sm-12 select-table table-striped">
+                                    <table id="history-table"></table>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div id="tab-2" class="tab-pane">
+                            <div class="panel-body">
+                                <div class="btn-group-sm" id="toolbar1" role="group">
+                                    <a class="btn btn-warning multiple disabled" onclick="downloadAttachment()">
+                                        <i class="fa fa-download"></i> 下载附件
+                                    </a>
+                                </div>
+                                <div class="col-sm-12 select-table table-striped">
+                                    <table id="file-table"></table>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="tab-3" class="tab-pane">
+                            <div class="panel-body">
+                                <div class="btn-group-sm" id="toolbar2" role="group">
+                                    <a class="btn btn-primary single disabled" type="button" onclick="detaildd()">
+                                        <i class="fa fa-vi"></i> 查看详情
+                                    </a>
+                                </div>
+                                <div class="col-sm-12 select-table table-striped">
+                                    <table id="fmdd-table"></table>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="tab-4" class="tab-pane">
+                            <div class="panel-body">
+                                <div class="btn-group-sm" id="toolbar3" role="group">
+                                    <a class="btn btn-primary single disabled" onclick="detailsw()">
+                                        <i class="fa fa-vi"></i> 查看详情
+                                    </a>
+                                </div>
+                                <div class="col-sm-12 select-table table-striped">
+                                    <table id="fmsw-table"></table>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="tab-5" class="tab-pane">
+                            <div class="panel-body">
+                                <div class="btn-group-sm" id="toolbar4" role="group">
+                                    <a class="btn btn-primary single disabled" onclick="detailwt()">
+                                        <i class="fa fa-vi"></i> 查看详情
+                                    </a>
+                                </div>
+                                <div class="col-sm-12 select-table table-striped">
+                                    <table id="im-table"></table>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="tab-6" class="tab-pane">
+                            <div class="panel-body">
+                                <div class="btn-group-sm" id="toolbar5" role="group">
+                                    <a class="btn btn-primary single disabled" onclick="detailqq()">
+                                        <i class="fa fa-vi"></i> 查看详情
+                                    </a>
+                                </div>
+                                <div class="col-sm-12 select-table table-striped">
+                                    <table id="cmqq-table"></table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<div class="row">
+    <div class="col-sm-offset-5 col-sm-10">
+        <button type="button" class="btn btn-sm btn-primary" onclick="saveflow()"><i class="fa fa-check"></i>通过</button>
+        <button type="button" class="btn btn-sm btn-primary" onclick="pbackEdit()"><i class="fa fa-retweet"></i>退回
+        </button>
+        <button type="button" class="btn btn-sm btn-primary" onclick="pbackpass()"><i class="fa fa-remove"></i>否决
+        </button>&nbsp;
+        <button type="button" class="btn btn-sm btn-danger" onclick="closeItem()"><i class="fa fa-remove"></i>关闭
+        </button>
+    </div>
+</div>
+<th:block th:include="include :: footer"/>
+<th:block th:include="include :: select2-js"/>
+<th:block th:include="include :: summernote-js"/>
+<script th:src="@{/js/imbiz.js}"></script>
+<script th:src="@{/js/cmbiz.js}"></script>
+<script th:src="@{/js/activiti.js}"></script>
+<script th:inline="javascript">
+    var allstatus = [[${@pubParaValue.selectPubParaValueByParaName('issue_status')}]];
+    var prefix = ctx + "system/single";
+    var prefix_version = ctx + "public";
+    var prefix_attachment = ctx + "pub/attachment";
+
+    $(function () {
+        var optionsfj = {
+            url: prefix_attachment + "/list",
+            id: 'file-table',
+            createUrl: prefix_attachment + "/add",
+            updateUrl: prefix_attachment + "/edit/{id}",
+            detailUrl: prefix_attachment + "/edit/{id}",
+            sortName: "fileTime",
+            sortOrder: "desc",
+            singleSelect: true,
+            clickToSelect: true,
+            toolbar: "toolbar1",
+            queryParams: queryParams,
+            modalName: "附件列表",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'atId',
+                    title: '附件ID',
+                    visible: false
+                },
+                {
+                    field: 'fileName',
+                    title: '文件名称'
+                },
+                {
+                    field: 'person.pName',
+                    title: '上传人'
+                },
+                {
+                    field: 'size',
+                    title: '文件大小'
+                },
+                {
+                    field: 'memo',
+                    title: '文件描述'
+                },
+                {
+                    field: 'fileTime',
+                    title: '上传时间',
+                    formatter: function (value, row, index) {
+                        var startTime = '';
+                        if (value != '' && value != null) {
+                            var pattern = /(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/;
+                            startTime = value.replace(pattern, '$1-$2-$3 $4:$5:$6');
+                        }
+                        return startTime;
+                    }
+                }]
+        };
+        $.table.init(optionsfj);
+        puFolwHistory($("#changeId").val());
+        var content = $("#changeDetails").val();
+        $('#summernote').summernote('code', content);
+        $('.summernote').summernote('disable');
+        var content2 = $("#changeProgram").val();
+        $('#summernote2').summernote('code', content2);
+        $('.summernote2').summernote('disable');
+        var content3 = $("#changeCauseText").val();
+        $('#summernote3').summernote('code', content3);
+        $('.summernote3').summernote('disable');
+        //初始化判斷是否為省中心創建，如果是隱藏分管領導選項
+        var flowSelect = $("#flowSelect").val();
+        if (!flowSelect && flowSelect == '') {
+            $("#flowzx").hide();
+            $("#flowSelect").attr('required', false);
+            $("#flowld").hide();
+            $("#fucheckerId").attr('required', false);
+        }
+    });
+
+    function queryParams(params) {
+        var search = $.table.queryParams(params);
+        search.ownerId = $("#changeId").val() == '' ? 'version_public_add_no_owner_id' : $("#changeId").val();
+        return search;
+    }
+
+    $("#form-cmbiz-add").validate({
+        onkeyup: false,
+        rules: {},
+        messages: {},
+        focusCleanup: true
+    });
+
+    //获取实施人
+    function getimplementorOrg(changeOrg) {
+        $.ajax({
+            cache: true,
+            type: "POST",
+            url: prefix_version + "/selectPersonByOrgIdOrOrgLvAndRole",
+            data: {
+                "orgId": changeOrg,
+                "rId": "2103",
+                "pflag": "1",
+                "params[isselect]": "1"
+            },
+            async: false,
+            error: function (request) {
+                $.modal.alertError("系统错误");
+            },
+            success: function (data) {
+                var options = "<option value='" + "" + "'>" + "" + "</option> \n";
+                $("#implementorId").html("");
+                for (var ak = 0; ak < data.rows.length; ak++) {
+                    options += "<option value='" + data.rows[ak].pId + "'>" + data.rows[ak].pName + "</option> \n";
+                }
+                $("#implementorId").append(options);
+            }
+        });
+    }
+
+    // 通过
+    function saveflow() {
+        if ($.validate.form()) {
+            var data = $("#form-cmbiz-add").serializeArray();
+            var flowdirection = {
+                name: 'params[flowSelect]',
+                value: $("#flowSelect").val()
+            }
+            data.push(flowdirection);
+            $.operate.saveTab(prefix + "/saveflowcheck", data);
+        } else {
+            return;
+        }
+    }
+
+    // 退回
+    function pbackEdit() {
+        var comment = $("#comment").val();
+        if (!comment) {
+            return $.modal.alertError("审核意见不能为空！");
+        }
+        var data = $("#form-cmbiz-add").serializeArray();
+        $.operate.saveTab(prefix + "/saveflowedit", data);
+    }
+
+    // 否决
+    function pbackpass() {
+        var comment = $("#comment").val();
+        if (!comment) {
+            return $.modal.alertError("审核意见不能为空！");
+        }
+        var data = $("#form-cmbiz-add").serializeArray();
+        $.operate.saveTab(prefix + "/saveflowpass", data);
+    }
+
+    // 附件下载
+    function downloadAttachment() {
+        var rows = $.table.selectFirstColumns();
+        var atId = rows[0];
+        var ownerId = $("#changeId").val();
+        var url = prefix_attachment + "/download/" + ownerId + "/" + atId;
+        window.location.href = url;
+    }
+
+    /* 选择评估机构树 */
+    function selectDept() {
+        var orgId = $("#orgId").val();
+        var deptId = $.common.isEmpty(orgId) ? "310100001" : $("#orgId").val();
+        var url = ctx + "system/dept/selectDeptTree/" + deptId;
+        var options = {
+            title: '选择部门',
+            width: "380",
+            url: url,
+            callBack: doSubmit1
+        };
+        $.modal.openOptions(options);
+    }
+
+    function doSubmit1(index, layero) {
+        var tree = layero.find("iframe")[0].contentWindow.$._tree;
+        var body = layer.getChildFrame('body', index);
+        $("#implementorOrgid").val(body.find('#treeId').val());
+        $("#implementorOrgName").val(body.find('#treeName').val());
+        getimplementorOrg(body.find('#treeId').val());
+        layer.close(index);
+    }
+</script>
+</body>
+</html>

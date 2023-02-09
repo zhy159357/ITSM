@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+
+
+<head>
+    <th:block th:include="include :: header('人员处理数量')"/>
+    <th:block th:include="include :: select2-css"/>
+</head>
+<body class="gray-bg">
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-12 search-collapse">
+            <form id="formId">
+                <div class="select-list">
+                    <ul>
+                        <li>
+                            <p>统计类型：</p>
+                            <select id="type" name="params[type]" class="form-control" onchange="isOperation()"
+                                    th:with="type=${@pubParaValue.selectPubParaValueByParaName('fmBizCDealerD_type')}">
+                                <option th:each="PubParaValue : ${type}" th:text="${PubParaValue.valueDetail}"
+                                        th:value="${PubParaValue.value}"></option>
+                            </select>
+                        </li>
+                        <li id="isFlag">
+                            <p>统计机构：</p>
+                            <input id="changeOrg" name="params[changeOrg]" type="hidden">
+                            <input type="text" class="form-control" id="changeOrgName"
+                                   name="params[changeOrgName]" onclick="selectogOrg2()"/>
+                        </li>
+                        <li id="isNotFlag">
+                            <p>统计工作组：</p>
+                            <input class="form-control" id="groupId" name="params[groupId]" type="hidden">
+                            <input class="form-control" id="grpName" name="params[grpName]" type="text"
+                                   onclick="selectSysByGroup()">
+                        </li>
+                        <li>
+                            <p>处理日期起：</p>
+                            <input type="text" class="time-input" id="startDealTime" placeholder="处理日期起"
+                                   name="params[startDealTime]" readonly/>
+                        </li>
+                        <li>
+                            <p>处理日期止：</p>
+                            <input type="text" class="time-input" id="endDealTime" placeholder="处理日期止"
+                                   name="params[endDealTime]" readonly/>
+                        </li>
+                        <li>
+                            <a class="btn btn-primary btn-rounded btn-sm" id="searchBiz" onclick="searchCount()"><i
+                                    class="fa fa-search"></i>&nbsp;搜索</a>
+                            <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.resetAll('formId')"><i
+                                    class="fa fa-refresh"></i>&nbsp;重置</a>
+                        </li>
+                    </ul>
+                </div>
+            </form>
+        </div>
+        <div class="btn-group-sm" id="toolbar" role="group">
+            <div class="btn-group">
+                <button data-toggle="dropdown" class="btn btn-primary btn-sm dropdown-toggle">导出<span
+                        class="caret"></span>
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a onclick="$.table.exportExcel()">导出所有</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="col-sm-12 select-table table-striped">
+            <table id="bootstrap-table"></table>
+        </div>
+    </div>
+</div>
+<th:block th:include="include :: footer"/>
+<th:block th:include="include :: select2-js"/>
+<th:block th:include="include :: datetimepicker-js"/>
+<script th:inline="javascript">
+    var prefix = ctx + "fmbiz";
+    var prefixD = ctx + "system/single";
+    $(function () {
+        // 回车键搜索
+        document.onkeydown = function(e){
+            var ev = document.all ? window.event : e;
+            if(ev.keyCode==13) {
+                $('#searchBiz').trigger('click');
+                return false;
+            }
+        };
+        var options = {
+            url: prefix + "/getDealerDCount",
+            exportUrl: prefix + "/exportDcount",
+            firstLoad: false,
+            pagination: false,
+            clickToSelect: true,
+            singleSelect: true,
+            modalName: "事件单人员处理数量",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'orgName',
+                    title: '统计机构'
+                },
+                {
+                    field: 'groupName',
+                    title: '统计工作组'
+                },
+                {
+                    field: 'pName',
+                    title: '统计人员'
+                },
+                {
+                    field: 'dealCount',
+                    title: '处理数量'
+                },
+                {
+                    field: 'receiveCount',
+                    title: '解决数量'
+                }]
+        };
+        $.table.init(options);
+        $("#isNotFlag").hide();
+    });
+    /**
+     *选择统计机构
+     */
+    function selectogOrg2() {
+        $.modal.open("选择创建机构", prefixD + "/selectogOrg2");
+    }
+
+    /**
+     * 统计类型选择
+     */
+    function isOperation() {
+        var type = $('#type').val();
+        if (type == '' || type == '1') {
+            $("#isNotFlag").hide();
+            $('#groupId').val('');
+            $('#grpName').val('');
+            $('#groupId').attr('required', false)
+            $('#changeOrg').attr('required', true)
+            $('#isFlag').show();
+        } else {
+            $("#isFlag").hide();
+            $('#changeOrgName').val('');
+            $('#changeOrg').val('');
+            $('#changeOrg').attr('required', false);
+            $('#groupId').attr('required', true);
+            $("#isNotFlag").show();
+        }
+    }
+
+    //查询工作组
+    function selectSysByGroup() {
+        $.modal.open("选择工作组", prefix + "/Grouplist2");
+    }
+
+    //查询
+    function searchCount() {
+        var type = $('#type').val();
+        var changeOrg = $('#changeOrg').val();
+        var groupId = $('#groupId').val();
+        var startDealTime = $('#startDealTime').val();
+        var endDealTime = $('#endDealTime').val();
+        if (!type == '' && !startDealTime == '' && !endDealTime == '') {
+            if (type == "1" && changeOrg == '') {
+                $.modal.alertError("查询条件不能为空！！！");
+            }
+            if (type == "2" && groupId == '') {
+                $.modal.alertError("查询条件不能为空！！！");
+            }
+        } else {
+            $.modal.alertError("查询条件不能为空！！！");
+        }
+        $.table.search();
+    }
+
+    function getchangeManager(changeOrg) {
+        return changeOrg;
+    }
+</script>
+</body>
+</html>

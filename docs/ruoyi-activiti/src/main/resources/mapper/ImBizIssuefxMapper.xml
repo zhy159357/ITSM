@@ -1,0 +1,1565 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.activiti.mapper.ImBizIssuefxMapper">
+
+	<resultMap type="OgPerson" id="OgPersonResult">
+		<result property="pId" 					column="pId"/>
+		<result property="pName" 				column="PNAME"/>
+		<result property="sex"              	column="SEX"       />
+		<result property="edu"              	column="EDU"       />
+		<result property="birthday"         	column="BIRTHDAY"           />
+		<result property="birthPlace"       	column="BIRTHPLACE"     />
+		<result property="phone"            	column="PHONE"             />
+		<result property="mobilPhone"       	column="MOBIL_PHONE"          />
+		<result property="email"            	column="EMAIL"        />
+		<result property="address"          	column="ADDRESS"            />
+		<result property="createBy"          	column="create_by"          />
+		<result property="position"         	column="POSITION"       />
+		<result property="leader"           	column="LEADER"     />
+		<result property="pOrder"           	column="P_ORDER"       />
+		<result property="pflag"            	column="P_FLAG"     />
+		<result property="orgname"            	column="ORGNAME"     />
+		<result property="num"            		column="num"     />
+	</resultMap>
+
+	<resultMap type="ImBizIssuefx" id="IssueListReslut">
+		<result property="jjTime"    column="jj_time"    />
+		<result property="isInside"    column="is_inside"    />
+		<result property="iStatus"    column="i_status"    />
+		<result property="issuefxId"    column="issuefx_id"    />
+		<result property="issuefxNo"    column="issuefx_no"    />
+		<result property="currentState"    column="current_state"    />
+		<result property="createrId"    column="creater_id"    />
+		<result property="creatTime"    column="creat_time"    />
+		<result property="issueType"    column="issue_type"    />
+		<result property="issueFenlei"    column="issue_fenlei"    />
+		<result property="seriousLev"    column="serious_lev"    />
+		<result property="issueOrg"    column="issue_org"    />
+		<result property="reviewerId"    column="reviewer_id"    />
+		<result property="issuesource"    column="issuesource"    />
+		<result property="reportname"    column="reportname"    />
+		<result property="reportphone"    column="reportphone"    />
+		<result property="reporttime"    column="reporttime"    />
+		<result property="sysName"    column="sysName"    />
+		<result property="sysId"    column="sysId"    />
+		<result property="issuefxName"    column="issuefx_name"    />
+		<result property="issuefxText"    column="issuefx_text"    />
+		<result property="issuefxScheme"    column="issuefx_scheme"    />
+		<result property="dealStatus"    column="deal_status"    />
+		<result property="createOrg"    column="create_org"    />
+		<result property="fmNo"    column="fm_no"    />
+		<result property="fuNo"    column="fu_no"    />
+		<result property="cmNo"    column="cm_no"    />
+		<result property="dealId"    column="deal_id"    />
+		<result property="businessOrg"    column="business_org"    />
+		<result property="auditId"    column="audit_id"    />
+		<result property="flag"    column="flag"    />
+		<result property="issuefxImpact"    column="issuefx_impact"    />
+		<result property="dealDescription"    column="deal_description"    />
+		<result property="multicount"    column="multicount"    />
+		<result property="businessId"    column="businessId"    />
+		<result property="expectTime"    column="expect_time"    />
+		<result property="realityTime"    column="reality_time"    />
+		<result property="buDealDesc"    column="bu_deal_desc"    />
+		<result property="fmjkNo"    column="fmjk_no"    />
+		<result property="solvStatus"    column="solv_status"    />
+		<result property="bussId"    column="buss_id"    />
+		<result property="papDesc"    column="pap_desc"    />
+		<result property="planDesc"    column="plan_desc"    />
+		<result property="issueYyfenlei"    column="issue_yyfenlei"    />
+		<result property="multiusers"    column="multiusers"    />
+		<result property="distributeTime"    column="distribute_time"    />
+		<result property="acceptTime"    column="accept_time"    />
+		<result property="preSolutionTime"    column="pre_solution_time"    />
+		<result property="solutionTime"    column="solution_time"    />
+		<result property="csno"    column="csno"    />
+		<result property="hanguptask"    column="hanguptask"    />
+		<result property="bufuheDesc"    column="bu_fuhe_desc"    />
+		<result property="issueOrgName"    column="issueOrgName"    />
+		<result property="dealDetail"    column="deal_detail"    />
+		<result property="importLevel"    column="import_level"    />
+		<result property="lastTime"    column="last_time"    />
+		<result property="putUnit"    column="put_unit"    />
+		<result property="unitSchedule"    column="unit_schedule"    />
+		<result property="invalidationMark"    column="invalidation_mark"    />
+		<result property="oneType"    column="one_type"    />
+		<result property="twoType"    column="two_type"    />
+		<result property="threeType"    column="three_type"    />
+		<result property="oneTypeName"    column="one_type_name"    />
+		<result property="twoTypeName"    column="two_type_name"    />
+		<result property="threeTypeName"    column="three_type_name"    />
+		<result property="tardingName"    column="tarding_name"    />
+		<result property="relationFmbizCount"    column="relation_fmbiz_count"    />
+		<result property="num"    column="num"    />
+		<result property="pid"    column="pid"    />
+		<result property="reviewerName"    column="reviewerName"    />
+	</resultMap>
+
+	<resultMap type="OgSys" id="OgSysResult">
+		<id     property="sysId"                column="sysId"         />
+		<result property="orgId"                column="orgId"         />
+		<result property="code"                 column="code"      />
+		<result property="caption"              column="caption"       />
+		<result property="memo"                 column="memo"       />
+		<result property="invalidationMark"     column="invalidation_Mark"           />
+		<result property="isExamination"        column="isExamination"     />
+		<result property="dept"                 column="dept"        />
+		<result property="pid"                  column="pid"            />
+		<result property="businessId"           column="businessId"          />
+		<result property="isKeySys"             column="is_Key_Sys"        />
+		<result property="sysType"              column="sys_Type"        />
+	</resultMap>
+
+	<resultMap type="PubParaValue" id="issuesourceResult">
+		<id property="paraValueId" column="para_value_id"></id>
+		<result property="valueDetail" column="value_detail"></result>
+	</resultMap>
+
+	<resultMap type="OgOrg" id="ogOrgResult">
+		<id property="orgId" column="orgId"></id>
+		<result property="orgName" column="orgName"></result>
+	</resultMap>
+
+	<sql id="selectIssueVo">
+        select  issuefx_id,issuefx_no,reviewer_id,
+				(select value_detail from pub_paravalue where para_value_id = issuesource) as issuesource,
+				(select value_detail from pub_paravalue where para_value_id = ISSUE_FENLEI) as issue_fenlei,
+				(select value_detail from pub_paravalue where para_value_id = issue_type) as issue_type,
+				(select value_detail from pub_paravalue where para_value_id = serious_lev) as serious_lev,
+				(select orgname from og_org where orgid = issue_org) as issue_org,
+				(select pname from og_person where pid = creater_id) as creater_name,
+        		reportname,reportphone,issuefx_name,issuefx_text,sysId,sysName,issuefx_scheme,
+        		creater_id,to_date(create_time,'YYYY-MM-DD hh24:mi:ss') as create_time,status,invalidation_mark
+		from im_biz_issuefx
+    </sql>
+
+	<select id="selectIssueList" parameterType="ImBizIssuefx" resultMap="IssueListReslut">
+	    <include refid="selectIssueVo"/>
+	    <where>
+			<if test="issuefxNo != null and issuefxNo != ''">
+				and issuefx_no like concat(concat('%',#{issuefxNo}),'%')
+			</if>
+			<if test="issuefxName != null and issuefxName != ''">
+				and issuefx_name like concat(concat('%',#{issuefxName}),'%')
+			</if>
+			<if test="issueType != null and issueType != ''">
+				and issue_type = #{issueType}
+			</if>
+			<if test="issueFenlei != null and issueFenlei != ''">
+				and issue_Fenlei = #{issueFenlei}
+			</if>
+			<if test="issueType != null and issueType != ''">
+				and issue_type = #{issueType}
+			</if>
+			<if test="issueOrg != null and issueOrg != ''">
+				and issue_org = #{issueOrg}
+			</if>
+			<if test="sysName != null and sysName != ''">
+				and sysName like concat(concat('%',#{sysName}),'%')
+			</if>
+			<if test="sysId != null and sysId != ''">
+				and sysId like concat(concat('%',#{sysId}),'%')
+			</if>
+			<if test="status != null and status != ''">
+				and status = #{status}
+			</if>
+			<if test="pflag != 1">
+				and creater_id = #{createrId}
+			</if>
+			<if test="pflag == 1">
+				and deal_id = #{createrId}
+			</if>
+			<if test="startTime != null and startTime != ''"><!-- 开始时间检索 -->
+				and to_date(create_time,'yyyy-MM-dd hh24:mi:ss') &gt;= to_date(#{startTime},'yyyy-MM-dd hh24:mi:ss')
+			</if>
+			<if test="endTime != null and endTime != ''"><!-- 结束时间检索 -->
+				and to_date(create_time,'yyyy-MM-dd hh24:mi:ss') &lt;= to_date(#{endTime},'yyyy-MM-dd hh24:mi:ss')
+			</if>
+		</where>
+		order by create_time desc
+	</select>
+
+	<select id="selectIssueByReviewer" parameterType="OgPerson" resultMap="OgPersonResult">
+    	select count(1) num,p.pid,p.pname,p.mobil_phone,p.phone,og.orgname from im_biz_issuefx i left join og_person p on p.pid = i.reviewer_id
+    	left join og_org og on p.orgid = og.orgid
+        where p.pname is not null and i.current_state=2
+        group by p.pid,p.pname,p.mobil_phone,p.phone,og.orgname
+	</select>
+
+	<select id="selectTofmbiz" parameterType="ImBizIssuefx" resultMap="IssueListReslut">
+		select * from im_biz_issuefx
+		<where>
+            <if test="sysId != null and sysId != ''">
+                and sysId like concat(concat('%',#{sysId}),'%')
+            </if>
+			<if test="currentState != null and currentState != ''">
+				and CURRENT_STATE != #{currentState}
+			</if>
+			<if test="issuesource != null and issuesource != ''">
+				and ISSUESOURCE = #{issuesource}
+			</if>
+			<if test="creatTime != null and creatTime != ''"><!-- 创建时间 -->
+				and creat_time like concat(concat('%', #{creatTime}), '%')
+			</if>
+		</where>
+		order by creat_time desc
+	</select>
+
+	<!--selectIssueHistroyList-->
+	<select id="selectIssueListById" parameterType="String" resultMap="IssueListReslut">
+		select  issuefx_id,
+		        issuefx_no,
+		        reviewer_id,
+				issuesource,
+				issue_fenlei,
+				issue_type,
+				serious_lev,
+				issuefx_impact,
+				deal_description,
+				issue_org,
+				(select pname from og_person where pid = creater_id) as creater_name,
+        		reportname,
+		       	reportphone,
+		        to_date(reporttime,'YYYY-MM-DD hh24:mi:ss') as reporttime,
+        		issuefx_name,
+		       	issuefx_text,
+		       	sysId,
+		       	sysName,
+		       	issuefx_scheme,
+        	    creater_id,
+		       	to_date(create_time,'YYYY-MM-DD hh24:mi:ss') as create_time,
+		       	status,invalidation_mark,
+		       	one_type,
+		       	two_type,
+		       	three_type,
+		       	(select name from knowledge_titil where id = one_type) as one_type_name,
+		       	(select name from knowledge_titil where id = one_type) as two_type_name,
+		       	(select name from knowledge_titil where id = one_type) as three_type_name,
+		       	tarding_name
+		from im_biz_issuefx
+		where issuefx_id = #{issuefxId}
+	</select>
+	<select id="selectImBizIssuefxByFmNo" parameterType="String" resultMap="IssueListReslut">
+		select  *
+		from im_biz_issuefx
+		where fm_no = #{fmNo}
+	</select>
+ 	<delete id="deleteIssueByIds" parameterType="Long">
+ 		delete from im_biz_issuefx where issueinfo_id in
+ 		<foreach collection="array" item="issueId" open="(" separator="," close=")">
+ 			#{issueId}
+        </foreach>
+ 	</delete>
+
+ 	<update id="updateIssue" parameterType="ImBizIssuefx">
+		update im_biz_issuefx
+		<set>
+			issuefx_id = #{issuefxId},
+			<if test="issueType != null and issueType != ''">issue_type = #{issueType} ,</if>
+			<if test="seriousLev != null and seriousLev != ''">serious_lev = #{seriousLev},</if>
+			<if test="reviewerId != null and reviewerId != ''" >reviewer_id = #{reviewerId},</if>
+			<if test="reportname != null and reportname != ''" >reportname = #{reportname},</if>
+			<if test="reportphone != null and reportphone != ''" >reportphone = #{reportphone},</if>
+			<if test="reporttime != null and reporttime != ''" >reporttime = to_date(#{reporttime},'yyyy-mm-dd hh24:mi:ss' ),</if>
+			<if test="sysName != null and sysName != ''" >sysName = #{sysName},</if>
+			<if test="sysId != null and sysId != ''" >sysId = #{sysId},</if>
+			<if test="issuefxName != null and issuefxName != ''" >issuefx_name = #{issuefxName},</if>
+			<if test="issuefxText != null and issuefxText != ''" >issuefx_text = #{issuefxText},</if>
+			<if test="issuefxScheme != null and issuefxScheme != ''" >issuefx_scheme = #{issuefxScheme},</if>
+			<if test="status != null and status != ''" >status = #{status},</if>
+			<if test="oneType != null and oneType != ''" >one_type = #{oneType},</if>
+			<if test="twoType != null and twoType != ''" >two_type = #{twoType},</if>
+			<if test="threeType != null and threeType != ''" >three_type = #{threeType},</if>
+			UPDATE_TIME = sysdate
+		</set>
+		where issuefx_id = #{issuefxId}
+	</update>
+
+	<!--批量更新-->
+	<update id="updateInBatchById" parameterType="String">
+		update im_biz_issuefx set invalidation_mark = -1,update_time =  sysdate
+		where issueinfo_id in
+		<foreach collection="array" item="issueId" open="(" separator="," close=")">
+			#{issueId}
+		</foreach>
+	</update>
+
+ 	<insert id="insertIssue" parameterType="ImBizIssuefx">
+		insert into im_biz_issuefx(issuefx_id,issuefx_no,
+		<if test="reportphone != null and reportphone != ''" >reportphone,</if>
+		<if test="reporttime != null and reporttime != ''" >reporttime,</if>
+		<if test="sysId != null and sysId != ''" >sysId,</if>
+		<if test="sysName != null and sysName != ''" >sysName,</if>
+		<if test="issuefxName != null and issuefxName != ''" >issuefx_name,</if>
+		<if test="issuefxText != null and issuefxText != ''" >issuefx_text,</if>
+		<if test="issuefxScheme != null and issuefxScheme != ''" >issuefx_scheme,</if>
+		<if test="issueOrg != null and issueOrg != ''">issue_Org,</if>
+		<if test="issuefxImpact != null and issuefxImpact != ''">issuefx_impact,</if>
+		<if test="dealDescription != null and dealDescription != ''">deal_Description,</if>
+		<if test="businessOrg != null and businessOrg != ''">business_org,</if>
+		<if test="businessId != null and businessId != ''">businessId,</if>
+		<if test="auditId != null and auditId != ''">audit_id,</if>
+		<if test="status != null and status != ''" >status,</if>
+		<if test="oneType != null and oneType != ''">one_type,</if>
+		<if test="twoType != null and twoType != ''">two_type,</if>
+		<if test="threeType != null and threeType != ''">three_type,</if>
+		issuesource,issue_fenlei,issue_type,serious_lev,reviewer_id,invalidation_mark,
+		creater_id,create_time)
+		values(seq_im_biz_issuefx.nextval,#{issuefxNo},
+		<if test="reportphone != null and reportphone != ''">#{reportphone},</if>
+		<if test="reporttime != null and reporttime != ''">#{reporttime},</if>
+		<if test="sysId != null and sysId != ''" >#{sysId},</if>
+		<if test="sysName != null and sysName != ''">#{sysName},</if>
+		<if test="issuefxName != null and issuefxName != ''">#{issuefxName},</if>
+		<if test="issuefxText != null and issuefxText != ''">#{issuefxText},</if>
+		<if test="issuefxScheme != null and issuefxScheme != ''">#{issuefxScheme},</if>
+		<if test="issueOrg != null and issueOrg != ''">#{issueOrg},</if>
+		<if test="issuefxImpact != null and issuefxImpact != ''">#{issuefxImpact},</if>
+		<if test="dealDescription != null and dealDescription != ''">#{dealDescription},</if>
+		<if test="businessOrg != null and businessOrg != ''">#{businessOrg},</if>
+		<if test="businessId != null and businessId != ''">#{businessId},</if>
+		<if test="auditId != null and auditId != ''">#{auditId},</if>
+		<if test="status != null and status != ''">#{status},</if>
+		<if test="oneType != null and oneType != ''">#{oneType},</if>
+		<if test="twoType != null and twoType != ''">#{twoType},</if>
+		<if test="threeType != null and threeType != ''">#{threeType},</if>
+		#{issuesource},#{issueFenlei},#{issueType},#{seriousLev},#{reviewerId},'0',
+		#{createrId},TO_CHAR(SYSDATE,'YYYYMMDDHHMISS'))
+	</insert>
+
+	<update id="changeStatus" parameterType="ImBizIssuefx">
+		update im_biz_issuefx
+		<trim prefix="SET" suffixOverrides=",">
+		<if test="currentState != null  and currentState != ''">current_state = #{currentState},</if>
+		<if test="hanguptask != null  and hanguptask != ''">hanguptask = #{hanguptask},</if>
+		<if test="subDept != null  and subDept != ''">sub_dept = #{subDept},</if>
+		</trim>
+		where issuefx_id = #{issuefxId}
+	</update>
+
+	<select id="selectOgPersonList" parameterType="OgPerson" resultMap="OgPersonResult">
+		select p.pId,p.pname from og_person p
+		left join og_org og
+		on p.orgid = og.orgid
+		where p.pname is not null
+		and og.orgname like '%综合管理%'
+	</select>
+
+	<select id="selectOgPersonById" parameterType="java.lang.String"  resultType="java.lang.String">
+		 select pname from og_person
+		 where pid = #{pId}
+    </select>
+
+	<select id="selectOgSysList" parameterType="OgSys" resultMap="OgSysResult">
+		select o.sysId,o.orgid,o.code,o.caption,o.memo,o.invalidation_mark,o.isexamination,
+            o.dept,o.pid,o.businessId,o.is_key_sys,o.sys_type,
+            d.t_o_orgid,d.orgname
+        from og_sys o left join og_org d on o.orgid=d.orgid
+             left join og_org g on o.businessId=g.orgid
+    	<where>
+			<if test="caption != null and caption != ''">
+				AND o.caption like  concat(concat('%', #{caption}), '%')
+			</if>
+			<if test="orgName != null and orgName != ''">
+				AND d.orgname like   concat(concat('%', #{orgName}), '%')
+			</if>
+		</where>
+	</select>
+
+	<select id="selectIssuesourceList" parameterType="String" resultMap="issuesourceResult">
+		select pv.value as para_value_id,pv.value_detail from pub_paravalue pv
+		left join pub_para p on pv.para_id = p.para_id
+		where p.para_name = #{source}
+		order by pv.serail
+	</select>
+
+	<select id="selectOgOrg" parameterType="OgOrg" resultMap="ogOrgResult">
+		select orgId,orgname from OG_ORG o where  o.level_code like '/000000000/010000888/010100888/010%'
+       	or o.level_code like '/000000000/010000888/010300888/010%'
+       	or o.level_code like '/000000000/010000888/010400888/010%'
+	</select>
+
+	<select id="selectMultiusers" parameterType="OgPerson" resultMap="OgPersonResult">
+		select distinct
+		p.pid,
+		p.pname,
+		p.orgId,
+		p.edu,
+		p.sex,
+		p.mobil_phone,
+		a.orgname,
+		LISTAGG(distinct pt.post_name, ',') WITHIN GROUP (ORDER BY pt.post_name)  OVER (PARTITION BY p.pid) AS position,
+		p.p_flag
+		from OG_USER   u,
+		OG_PERSON      p,
+		OG_ORG         a,
+		OG_R_USER_POST up,
+		OG_R_POST_ROLE pr,
+		OG_POST pt
+		where u.PID = p.PID
+		AND p.ORGID = a.ORGID
+		AND u.USERID = up.USERID
+		AND up.POSTID = pr.POSTID
+		AND pr.POSTID=pt.POSTID
+		AND p.INVALIDATION_MARK = '1'
+		AND u.INVALIDATION_MARK = '1'
+		<if test="rId != null and rId!=''">
+			AND pr.RID = #{rId}
+		</if>
+		<if test="position != null and position!=''">
+			AND pt.postid = #{position}
+		</if>
+		<if test="pId != null and pId!=''">
+			START WITH a.orgid=(select orgid from OG_PERSON where pid = #{pId} and INVALIDATION_MARK = '1')
+			CONNECT BY PRIOR a.orgid=a.t_o_orgid
+		</if>
+		<if test="orgname!=null and orgname!=''">
+			AND a.orgname like concat(concat('%', #{orgname}), '%')
+		</if>
+		<if test="orgId!=null and orgId!=''">
+			AND a.orgid = #{orgId}
+		</if>
+		<if test="pName!=null and pName!=''">
+			AND p.pname like  concat(concat('%', #{pName}), '%')
+		</if>
+		<if test="org != null and  org.levelCode != null and org.levelCode != ''">
+			AND a.level_Code like  concat(concat('%', #{org.levelCode}), '%')
+		</if>
+		<if test="userid != null and userid!=''">
+			AND u.userid = #{userid}
+		</if>
+	</select>
+	<sql id="selectImBizIssuefxVo">
+		select im.issuefx_id,
+			   im.issuefx_no,
+			   im.current_state,
+			   im.creater_id,
+			   to_char(TO_DATE(im.creat_time, 'YYYYMMDDHH24MISS'), 'YYYY-MM-DD HH24:MI:SS') as creat_time,
+			   im.issue_type,
+			   im.issue_fenlei,
+			   im.serious_lev,
+			   im.issue_org,
+			   im.reviewer_id,
+			   im.issuesource,
+			   im.reportname,
+			   im.reportphone,
+			   to_date(im.reporttime,'YYYY-MM-DD hh24:mi:ss') as reporttime,
+			   im.sysName,
+			   im.sysId,
+			   im.issuefx_name,
+			   im.issuefx_text,
+			   im.issuefx_scheme,
+			   im.deal_status,
+			   im.create_org,
+			   im.fm_no,
+			   im.fu_no,
+			   im.cm_no,
+			   im.deal_id,
+			   im.business_org,
+			   im.audit_id,
+			   im.flag,
+			   im.issuefx_impact,
+			   im.deal_description,
+			   im.multicount,
+			   im.businessId,
+		       to_char(TO_DATE(im.expect_time, 'YYYYMMDDHH24MISS'), 'YYYY-MM-DD HH24:MI:SS') as  expect_time,
+		       to_char(TO_DATE(im.reality_time, 'YYYYMMDDHH24MISS'), 'YYYY-MM-DD HH24:MI:SS') as  reality_time,
+			   im.bu_deal_desc,
+			   im.fmjk_no,
+			   im.solv_status,
+			   im.buss_id,
+			   im.pap_desc,
+			   im.plan_desc,
+			   im.issue_yyfenlei,
+			   im.multiusers,
+		       to_char(TO_DATE(im.distribute_time, 'YYYYMMDDHH24MISS'), 'YYYY-MM-DD HH24:MI:SS') as  distribute_time,
+		       to_char(TO_DATE(im.accept_time, 'YYYYMMDDHH24MISS'), 'YYYY-MM-DD HH24:MI:SS') as  accept_time,
+		       to_char(TO_DATE(im.pre_solution_time, 'YYYYMMDDHH24MISS'), 'YYYY-MM-DD HH24:MI:SS') as  pre_solution_time,
+		       to_char(TO_DATE(im.solution_time, 'YYYYMMDDHH24MISS'), 'YYYY-MM-DD HH24:MI:SS') as  solution_time,
+			   im.csno,
+			   im.hanguptask,
+			   im.bu_fuhe_desc,
+		       og.orgname as issueOrgName,
+		       im.deal_detail,
+		       im.jj_time,
+		       im.is_inside,
+		       im.i_status,
+		       im.import_level,
+		       im.last_time,
+		       im.put_unit,
+		       im.unit_schedule,
+		       im.invalidation_mark,
+		       im.one_type,
+			   im.two_type,
+			   im.three_type,
+			   (select name from knowledge_titil where id = one_type) as one_type_name,
+			   (select name from knowledge_titil where id = two_type) as two_type_name,
+			   (select name from knowledge_titil where id = three_type) as three_type_name,
+			   (select pname from og_person o where o.pid=im.reviewer_id) as reviewerName,
+			   im.tarding_Name,
+			   im.relation_Fmbiz_count
+		from im_biz_issuefx im
+		left join  og_org og
+		on im.issue_org=og.orgid
+	</sql>
+    <sql id="selectImBizIssuefxVoForMysql">
+		select im.issuefx_id,
+			   im.issuefx_no,
+			   im.current_state,
+			   im.creater_id,
+			   date_format(str_to_date(im.creat_time, 'YYYYMMDDHH24MISS'), 'YYYY-MM-DD HH24:MI:SS') as creat_time,
+			   im.issue_type,
+			   im.issue_fenlei,
+			   im.serious_lev,
+			   im.issue_org,
+			   im.reviewer_id,
+			   im.issuesource,
+			   im.reportname,
+			   im.reportphone,
+			   str_to_date(im.reporttime,'YYYY-MM-DD hh24:mi:ss') as reporttime,
+			   im.sysName,
+			   im.sysId,
+			   im.issuefx_name,
+			   im.issuefx_text,
+			   im.issuefx_scheme,
+			   im.deal_status,
+			   im.create_org,
+			   im.fm_no,
+			   im.fu_no,
+			   im.cm_no,
+			   im.deal_id,
+			   im.business_org,
+			   im.audit_id,
+			   im.flag,
+			   im.issuefx_impact,
+			   im.deal_description,
+			   im.multicount,
+			   im.businessId,
+		       date_format(str_to_date(im.expect_time, 'YYYYMMDDHH24MISS'), 'YYYY-MM-DD HH24:MI:SS') as  expect_time,
+		       date_format(str_to_date(im.reality_time, 'YYYYMMDDHH24MISS'), 'YYYY-MM-DD HH24:MI:SS') as  reality_time,
+			   im.bu_deal_desc,
+			   im.fmjk_no,
+			   im.solv_status,
+			   im.buss_id,
+			   im.pap_desc,
+			   im.plan_desc,
+			   im.issue_yyfenlei,
+			   im.multiusers,
+		       date_format(str_to_date(im.distribute_time, 'YYYYMMDDHH24MISS'), 'YYYY-MM-DD HH24:MI:SS') as  distribute_time,
+		       date_format(str_to_date(im.accept_time, 'YYYYMMDDHH24MISS'), 'YYYY-MM-DD HH24:MI:SS') as  accept_time,
+		       date_format(str_to_date(im.pre_solution_time, 'YYYYMMDDHH24MISS'), 'YYYY-MM-DD HH24:MI:SS') as  pre_solution_time,
+		       date_format(str_to_date(im.solution_time, 'YYYYMMDDHH24MISS'), 'YYYY-MM-DD HH24:MI:SS') as  solution_time,
+			   im.csno,
+			   im.hanguptask,
+			   im.bu_fuhe_desc,
+		       og.orgname as issueOrgName,
+		       im.deal_detail,
+		       im.jj_time,
+		       im.is_inside,
+		       im.i_status,
+		       im.import_level,
+		       im.last_time,
+		       im.put_unit,
+		       im.unit_schedule,
+		       im.invalidation_mark,
+		       im.one_type,
+			   im.two_type,
+			   im.three_type,
+			   (select name from knowledge_titil where id = one_type) as one_type_name,
+			   (select name from knowledge_titil where id = two_type) as two_type_name,
+			   (select name from knowledge_titil where id = three_type) as three_type_name,
+			   (select pname from og_person o where o.pid=im.reviewer_id) as reviewerName,
+			   im.tarding_Name,
+			   im.relation_Fmbiz_count
+		from im_biz_issuefx im
+		left join  og_org og
+		on im.issue_org=og.orgid
+	</sql>
+
+	<select id="selectImBizIssuefxList" parameterType="ImBizIssuefx" resultMap="IssueListReslut">
+		<include refid="selectImBizIssuefxVo"/>
+		<where>
+			<if test="issuefxId != null  and issuefxId != ''"> and issuefx_Id = #{issuefxId}</if>
+			<if test="issuefxNo != null  and issuefxNo != ''"> and issuefx_no  like concat(concat('%', #{issuefxNo}), '%')</if>
+			<if test="hanguptask != null  and hanguptask != ''">
+				and (current_state
+				<trim prefix="in (" suffix=")" suffixOverrides=",">
+					<foreach collection="params.states " item="state">
+						#{state},
+					</foreach>
+				</trim>
+
+				or  hanguptask = #{hanguptask})
+			</if>
+			<if test="currentState != null  and currentState != '' and (hanguptask == null  or hanguptask == '')">
+			    and current_state
+				<trim prefix="in (" suffix=")" suffixOverrides=",">
+					<foreach collection="params.states " item="state">
+						#{state},
+					</foreach>
+				</trim>
+			</if>
+			<if test="createrId != null  and createrId != ''"> and creater_id = #{createrId}</if>
+			<if test="creatTime != null  and creatTime != ''"> and creat_time = #{creatTime}</if>
+			<if test="issueType != null  and issueType != ''"> and issue_type = #{issueType}</if>
+			<if test="issueFenlei != null  and issueFenlei != ''"> and issue_fenlei = #{issueFenlei}</if>
+			<if test="seriousLev != null  and seriousLev != ''"> and serious_lev = #{seriousLev}</if>
+			<if test="issueOrg != null  and issueOrg != ''"> and issue_org = #{issueOrg}</if>
+			<if test="reviewerId != null  and reviewerId != ''"> and reviewer_id = #{reviewerId}</if>
+			<if test="issuesource != null  and issuesource != ''"> and issuesource = #{issuesource}</if>
+			<if test="reportname != null  and reportname != ''"> and reportname like concat(concat('%', #{reportname}), '%')</if>
+			<if test="reportphone != null  and reportphone != ''"> and reportphone = #{reportphone}</if>
+			<if test="reporttime != null  and reporttime != ''"> and reporttime = #{reporttime}</if>
+			<if test="sysName != null  and sysName!=''"> and sysName like concat(concat('%', #{sysName}), '%')</if>
+			<if test="sysId != null "> and sysId like concat(concat('%', #{sysId}), '%')</if>
+			<if test="issuefxName != null  and issuefxName != ''"> and issuefx_name like concat(concat('%', #{issuefxName}), '%')</if>
+			<if test="issuefxText != null "> and issuefx_text = #{issuefxText}</if>
+			<if test="issuefxScheme != null  and issuefxScheme != ''"> and issuefx_scheme = #{issuefxScheme}</if>
+			<if test="dealStatus != null  and dealStatus != ''"> and deal_status = #{dealStatus}</if>
+			<if test="createOrg != null  and createOrg != ''"> and create_org = #{createOrg}</if>
+			<if test="fmNo != null  and fmNo != ''"> and fm_no = #{fmNo}</if>
+			<if test="fuNo != null  and fuNo != ''"> and fu_no = #{fuNO}</if>
+			<if test="cmNo != null  and cmNo != ''"> and cm_no = #{cmNo}</if>
+			<if test="dealId != null  and dealId != ''"> and deal_id = #{dealId}</if>
+			<if test="businessOrg != null  and businessOrg != ''"> and business_org = #{businessOrg}</if>
+			<if test="auditId != null  and auditId != ''"> and audit_id = #{auditId}</if>
+			<if test="flag != null  and flag != ''"> and flag = #{flag}</if>
+			<if test="issuefxImpact != null  and issuefxImpact != ''"> and issuefx_impact = #{issuefxImpact}</if>
+			<if test="dealDescription != null "> and deal_description = #{dealDescription}</if>
+			<if test="multicount != null and multicount !=0"> and multicount = #{multicount}</if>
+			<if test="businessId != null  and businessId != ''"> and businessId = #{businessId}</if>
+			<if test="expectTime != null  and expectTime != ''"> and expect_time = #{expectTime}</if>
+			<if test="realityTime != null  and realityTime != ''"> and reality_time = #{realityTime}</if>
+			<if test="buDealDesc != null  and buDealDesc != ''"> and bu_deal_desc = #{buDealDesc}</if>
+			<if test="fmjkNo != null  and fmjkNo != ''"> and fmjk_no = #{fmjkNo}</if>
+			<if test="solvStatus != null  and solvStatus != ''"> and solv_status = #{solvStatus}</if>
+			<if test="bussId != null  and bussId != ''"> and buss_id = #{bussId}</if>
+			<if test="papDesc != null  and papDesc != ''"> and pap_desc = #{papDesc}</if>
+			<if test="planDesc != null  and planDesc != ''"> and plan_desc = #{planDesc}</if>
+			<if test="issueYyfenlei != null  and issueYyfenlei != ''"> and issue_yyfenlei = #{issueYyfenlei}</if>
+			<if test="multiusers != null  and multiusers != ''"> and multiusers = #{multiusers}</if>
+			<if test="distributeTime != null  and distributeTime != ''"> and distribute_time = #{distributeTime}</if>
+			<if test="acceptTime != null  and acceptTime != ''"> and accept_time = #{acceptTime}</if>
+			<if test="preSolutionTime != null  and preSolutionTime != ''"> and pre_solution_time = #{preSolutionTime}</if>
+			<if test="solutionTime != null  and solutionTime != ''"> and solution_time = #{solutionTime}</if>
+			<if test="csno != null  and csno != ''"> and csno like concat(concat('%', #{csno}), '%') </if>
+			<if test="params.startTime != null and params.startTime != ''"><!-- 创建时间起始检索 -->
+				and creat_time &gt;=TO_CHAR(TO_DATE( #{params.startTime},'YYYY-MM-DD HH24:MI:SS'), 'YYYYMMDDHH24MISS')
+			</if>
+			<if test="params.endTime != null and params.endTime != ''"><!-- 创建时间起始检索 -->
+				and creat_time &lt;=TO_CHAR(TO_DATE( #{params.endTime},'YYYY-MM-DD HH24:MI:SS')+1, 'YYYYMMDDHH24MISS')
+			</if>
+			<if test="jjTime != null  and jjTime != ''"> and jj_time = #{jjTime}</if>
+			<if test="isInside != null  and isInside != ''"> and is_inside = #{isInside}</if>
+			<if test="iStatus != null  and iStatus != ''"> and i_status = #{iStatus}</if>
+			<if test="importLevel != null  and importLevel != ''"> and import_level = #{importLevel}</if>
+			<if test="lastTime != null  and lastTime != ''"> and last_time = #{lastTime}</if>
+			<if test="putUnit != null  and putUnit != ''"> and put_unit = #{putUnit}</if>
+			<if test="unitSchedule != null  and unitSchedule != ''"> and unit_schedule = #{unitSchedule}</if>
+			<if test="invalidationMark != null  and invalidationMark != ''"> and im.invalidation_mark = #{invalidationMark}</if>
+			 order by creat_time desc
+		</where>
+	</select>
+	<select id="selectImBizIssuefxListMysql" parameterType="ImBizIssuefx" resultMap="IssueListReslut">
+		<include refid="selectImBizIssuefxVoForMysql"/>
+		<where>
+			<if test="issuefxId != null  and issuefxId != ''"> and issuefx_Id = #{issuefxId}</if>
+			<if test="issuefxNo != null  and issuefxNo != ''"> and issuefx_no  like concat(concat('%', #{issuefxNo}), '%')</if>
+			<if test="hanguptask != null  and hanguptask != ''">
+				and (current_state
+				<trim prefix="in (" suffix=")" suffixOverrides=",">
+					<foreach collection="params.states " item="state">
+						#{state},
+					</foreach>
+				</trim>
+
+				or  hanguptask = #{hanguptask})
+			</if>
+			<if test="currentState != null  and currentState != '' and (hanguptask == null  or hanguptask == '')">
+			    and current_state
+				<trim prefix="in (" suffix=")" suffixOverrides=",">
+					<foreach collection="params.states " item="state">
+						#{state},
+					</foreach>
+				</trim>
+			</if>
+			<if test="createrId != null  and createrId != ''"> and creater_id = #{createrId}</if>
+			<if test="creatTime != null  and creatTime != ''"> and creat_time = #{creatTime}</if>
+			<if test="issueType != null  and issueType != ''"> and issue_type = #{issueType}</if>
+			<if test="issueFenlei != null  and issueFenlei != ''"> and issue_fenlei = #{issueFenlei}</if>
+			<if test="seriousLev != null  and seriousLev != ''"> and serious_lev = #{seriousLev}</if>
+			<if test="issueOrg != null  and issueOrg != ''"> and issue_org = #{issueOrg}</if>
+			<if test="reviewerId != null  and reviewerId != ''"> and reviewer_id = #{reviewerId}</if>
+			<if test="issuesource != null  and issuesource != ''"> and issuesource = #{issuesource}</if>
+			<if test="reportname != null  and reportname != ''"> and reportname like concat(concat('%', #{reportname}), '%')</if>
+			<if test="reportphone != null  and reportphone != ''"> and reportphone = #{reportphone}</if>
+			<if test="reporttime != null  and reporttime != ''"> and reporttime = #{reporttime}</if>
+			<if test="sysName != null  and sysName!=''"> and sysName like concat(concat('%', #{sysName}), '%')</if>
+			<if test="sysId != null "> and sysId like concat(concat('%', #{sysId}), '%')</if>
+			<if test="issuefxName != null  and issuefxName != ''"> and issuefx_name like concat(concat('%', #{issuefxName}), '%')</if>
+			<if test="issuefxText != null "> and issuefx_text = #{issuefxText}</if>
+			<if test="issuefxScheme != null  and issuefxScheme != ''"> and issuefx_scheme = #{issuefxScheme}</if>
+			<if test="dealStatus != null  and dealStatus != ''"> and deal_status = #{dealStatus}</if>
+			<if test="createOrg != null  and createOrg != ''"> and create_org = #{createOrg}</if>
+			<if test="fmNo != null  and fmNo != ''"> and fm_no = #{fmNo}</if>
+			<if test="fuNo != null  and fuNo != ''"> and fu_no = #{fuNO}</if>
+			<if test="cmNo != null  and cmNo != ''"> and cm_no = #{cmNo}</if>
+			<if test="dealId != null  and dealId != ''"> and deal_id = #{dealId}</if>
+			<if test="businessOrg != null  and businessOrg != ''"> and business_org = #{businessOrg}</if>
+			<if test="auditId != null  and auditId != ''"> and audit_id = #{auditId}</if>
+			<if test="flag != null  and flag != ''"> and flag = #{flag}</if>
+			<if test="issuefxImpact != null  and issuefxImpact != ''"> and issuefx_impact = #{issuefxImpact}</if>
+			<if test="dealDescription != null "> and deal_description = #{dealDescription}</if>
+			<if test="multicount != null and multicount !=0"> and multicount = #{multicount}</if>
+			<if test="businessId != null  and businessId != ''"> and businessId = #{businessId}</if>
+			<if test="expectTime != null  and expectTime != ''"> and expect_time = #{expectTime}</if>
+			<if test="realityTime != null  and realityTime != ''"> and reality_time = #{realityTime}</if>
+			<if test="buDealDesc != null  and buDealDesc != ''"> and bu_deal_desc = #{buDealDesc}</if>
+			<if test="fmjkNo != null  and fmjkNo != ''"> and fmjk_no = #{fmjkNo}</if>
+			<if test="solvStatus != null  and solvStatus != ''"> and solv_status = #{solvStatus}</if>
+			<if test="bussId != null  and bussId != ''"> and buss_id = #{bussId}</if>
+			<if test="papDesc != null  and papDesc != ''"> and pap_desc = #{papDesc}</if>
+			<if test="planDesc != null  and planDesc != ''"> and plan_desc = #{planDesc}</if>
+			<if test="issueYyfenlei != null  and issueYyfenlei != ''"> and issue_yyfenlei = #{issueYyfenlei}</if>
+			<if test="multiusers != null  and multiusers != ''"> and multiusers = #{multiusers}</if>
+			<if test="distributeTime != null  and distributeTime != ''"> and distribute_time = #{distributeTime}</if>
+			<if test="acceptTime != null  and acceptTime != ''"> and accept_time = #{acceptTime}</if>
+			<if test="preSolutionTime != null  and preSolutionTime != ''"> and pre_solution_time = #{preSolutionTime}</if>
+			<if test="solutionTime != null  and solutionTime != ''"> and solution_time = #{solutionTime}</if>
+			<if test="csno != null  and csno != ''"> and csno like concat(concat('%', #{csno}), '%') </if>
+			<if test="params.startTime != null and params.startTime != ''"><!-- 创建时间起始检索 -->
+				and creat_time &gt;=date_format(str_to_date( #{params.startTime},'YYYY-MM-DD HH24:MI:SS'), 'YYYYMMDDHH24MISS')
+			</if>
+			<if test="params.endTime != null and params.endTime != ''"><!-- 创建时间起始检索 -->
+				and creat_time &lt;=date_format(str_to_date( #{params.endTime},'YYYY-MM-DD HH24:MI:SS')+1, 'YYYYMMDDHH24MISS')
+			</if>
+			<if test="jjTime != null  and jjTime != ''"> and jj_time = #{jjTime}</if>
+			<if test="isInside != null  and isInside != ''"> and is_inside = #{isInside}</if>
+			<if test="iStatus != null  and iStatus != ''"> and i_status = #{iStatus}</if>
+			<if test="importLevel != null  and importLevel != ''"> and import_level = #{importLevel}</if>
+			<if test="lastTime != null  and lastTime != ''"> and last_time = #{lastTime}</if>
+			<if test="putUnit != null  and putUnit != ''"> and put_unit = #{putUnit}</if>
+			<if test="unitSchedule != null  and unitSchedule != ''"> and unit_schedule = #{unitSchedule}</if>
+			<if test="invalidationMark != null  and invalidationMark != ''"> and im.invalidation_mark = #{invalidationMark}</if>
+			 order by creat_time desc
+		</where>
+	</select>
+
+	<select id="listAllForEventSheet" parameterType="ImBizIssuefx" resultMap="IssueListReslut">
+		<include refid="selectImBizIssuefxVo"/>
+		<where>
+			((im.issue_Fenlei = '3'
+			AND IM.CURRENT_STATE IN ('3','401','5','6','7','8','9',	'12','13','14'))
+			OR (im.issue_Fenlei = '6'
+			AND IM.CURRENT_STATE IN ('3','401','5','6','7','8','9','12','13','14','11')))
+			<if test="issuefxId != null  and issuefxId != ''"> and issuefx_Id = #{issuefxId}</if>
+			<if test="issuefxNo != null  and issuefxNo != ''"> and issuefx_no  like concat(concat('%', #{issuefxNo}), '%')</if>
+			<if test="hanguptask != null  and hanguptask != ''">
+				and (current_state
+				<trim prefix="in (" suffix=")" suffixOverrides=",">
+					<foreach collection="params.states " item="state">
+						#{state},
+					</foreach>
+				</trim>
+
+				or  hanguptask = #{hanguptask})
+			</if>
+			<if test="currentState != null  and currentState != '' and (hanguptask == null  or hanguptask == '')">
+				and current_state
+				<trim prefix="in (" suffix=")" suffixOverrides=",">
+					<foreach collection="params.states " item="state">
+						#{state},
+					</foreach>
+				</trim>
+			</if>
+			<if test="createrId != null  and createrId != ''"> and creater_id = #{createrId}</if>
+			<if test="creatTime != null  and creatTime != ''"> and creat_time = #{creatTime}</if>
+			<if test="issueType != null  and issueType != ''"> and issue_type = #{issueType}</if>
+			<if test="issueFenlei != null  and issueFenlei != ''"> and issue_fenlei = #{issueFenlei}</if>
+			<if test="seriousLev != null  and seriousLev != ''"> and serious_lev = #{seriousLev}</if>
+			<if test="issueOrg != null  and issueOrg != ''"> and issue_org = #{issueOrg}</if>
+			<if test="reviewerId != null  and reviewerId != ''"> and reviewer_id = #{reviewerId}</if>
+			<if test="issuesource != null  and issuesource != ''"> and issuesource = #{issuesource}</if>
+			<if test="reportname != null  and reportname != ''"> and reportname like concat(concat('%', #{reportname}), '%')</if>
+			<if test="reportphone != null  and reportphone != ''"> and reportphone = #{reportphone}</if>
+			<if test="reporttime != null  and reporttime != ''"> and reporttime = #{reporttime}</if>
+			<if test="sysName != null  and sysName!=''"> and sysName like concat(concat('%', #{sysName}), '%')</if>
+			<if test="sysId != null "> and sysId like concat(concat('%', #{sysId}), '%')</if>
+			<if test="issuefxName != null  and issuefxName != ''"> and issuefx_name like concat(concat('%', #{issuefxName}), '%')</if>
+			<if test="issuefxText != null "> and issuefx_text = #{issuefxText}</if>
+			<if test="issuefxScheme != null  and issuefxScheme != ''"> and issuefx_scheme = #{issuefxScheme}</if>
+			<if test="dealStatus != null  and dealStatus != ''"> and deal_status = #{dealStatus}</if>
+			<if test="createOrg != null  and createOrg != ''"> and create_org = #{createOrg}</if>
+			<if test="fmNo != null  and fmNo != ''"> and fm_no = #{fmNo}</if>
+			<if test="fuNo != null  and fuNo != ''"> and fu_no = #{fuNO}</if>
+			<if test="cmNo != null  and cmNo != ''"> and cm_no = #{cmNo}</if>
+			<if test="dealId != null  and dealId != ''"> and deal_id = #{dealId}</if>
+			<if test="businessOrg != null  and businessOrg != ''"> and business_org = #{businessOrg}</if>
+			<if test="auditId != null  and auditId != ''"> and audit_id = #{auditId}</if>
+			<if test="flag != null  and flag != ''"> and flag = #{flag}</if>
+			<if test="issuefxImpact != null  and issuefxImpact != ''"> and issuefx_impact = #{issuefxImpact}</if>
+			<if test="dealDescription != null "> and deal_description = #{dealDescription}</if>
+			<if test="multicount != null and multicount !=0"> and multicount = #{multicount}</if>
+			<if test="businessId != null  and businessId != ''"> and businessId = #{businessId}</if>
+			<if test="expectTime != null  and expectTime != ''"> and expect_time = #{expectTime}</if>
+			<if test="realityTime != null  and realityTime != ''"> and reality_time = #{realityTime}</if>
+			<if test="buDealDesc != null  and buDealDesc != ''"> and bu_deal_desc = #{buDealDesc}</if>
+			<if test="fmjkNo != null  and fmjkNo != ''"> and fmjk_no = #{fmjkNo}</if>
+			<if test="solvStatus != null  and solvStatus != ''"> and solv_status = #{solvStatus}</if>
+			<if test="bussId != null  and bussId != ''"> and buss_id = #{bussId}</if>
+			<if test="papDesc != null  and papDesc != ''"> and pap_desc = #{papDesc}</if>
+			<if test="planDesc != null  and planDesc != ''"> and plan_desc = #{planDesc}</if>
+			<if test="issueYyfenlei != null  and issueYyfenlei != ''"> and issue_yyfenlei = #{issueYyfenlei}</if>
+			<if test="multiusers != null  and multiusers != ''"> and multiusers = #{multiusers}</if>
+			<if test="distributeTime != null  and distributeTime != ''"> and distribute_time = #{distributeTime}</if>
+			<if test="acceptTime != null  and acceptTime != ''"> and accept_time = #{acceptTime}</if>
+			<if test="preSolutionTime != null  and preSolutionTime != ''"> and pre_solution_time = #{preSolutionTime}</if>
+			<if test="solutionTime != null  and solutionTime != ''"> and solution_time = #{solutionTime}</if>
+			<if test="csno != null  and csno != ''"> and csno like concat(concat('%', #{csno}), '%') </if>
+			<if test="params.startTime != null and params.startTime != ''"><!-- 创建时间起始检索 -->
+				and creat_time &gt;=TO_CHAR(TO_DATE( #{params.startTime},'YYYY-MM-DD HH24:MI:SS'), 'YYYYMMDDHH24MISS')
+			</if>
+			<if test="params.endTime != null and params.endTime != ''"><!-- 创建时间起始检索 -->
+				and creat_time &lt;=TO_CHAR(TO_DATE( #{params.endTime},'YYYY-MM-DD HH24:MI:SS')+1, 'YYYYMMDDHH24MISS')
+			</if>
+			<if test="jjTime != null  and jjTime != ''"> and jj_time = #{jjTime}</if>
+			<if test="isInside != null  and isInside != ''"> and is_inside = #{isInside}</if>
+			<if test="iStatus != null  and iStatus != ''"> and i_status = #{iStatus}</if>
+			<if test="importLevel != null  and importLevel != ''"> and import_level = #{importLevel}</if>
+			<if test="lastTime != null  and lastTime != ''"> and last_time = #{lastTime}</if>
+			<if test="putUnit != null  and putUnit != ''"> and put_unit = #{putUnit}</if>
+			<if test="unitSchedule != null  and unitSchedule != ''"> and unit_schedule = #{unitSchedule}</if>
+			<if test="invalidationMark != null  and invalidationMark != ''"> and im.invalidation_mark = #{invalidationMark}</if>
+			order by relation_fmbiz_count desc
+		</where>
+	</select>
+    <select id="listAllForEventSheetMysql" parameterType="ImBizIssuefx" resultMap="IssueListReslut">
+        <include refid="selectImBizIssuefxVoForMysql"/>
+        <where>
+            ((im.issue_Fenlei = '3'
+            AND IM.CURRENT_STATE IN ('3','401','5','6','7','8','9',	'12','13','14'))
+            OR (im.issue_Fenlei = '6'
+            AND IM.CURRENT_STATE IN ('3','401','5','6','7','8','9','12','13','14','11')))
+            <if test="issuefxId != null  and issuefxId != ''"> and issuefx_Id = #{issuefxId}</if>
+            <if test="issuefxNo != null  and issuefxNo != ''"> and issuefx_no  like concat(concat('%', #{issuefxNo}), '%')</if>
+            <if test="hanguptask != null  and hanguptask != ''">
+                and (current_state
+                <trim prefix="in (" suffix=")" suffixOverrides=",">
+                    <foreach collection="params.states " item="state">
+                        #{state},
+                    </foreach>
+                </trim>
+
+                or  hanguptask = #{hanguptask})
+            </if>
+            <if test="currentState != null  and currentState != '' and (hanguptask == null  or hanguptask == '')">
+                and current_state
+                <trim prefix="in (" suffix=")" suffixOverrides=",">
+                    <foreach collection="params.states " item="state">
+                        #{state},
+                    </foreach>
+                </trim>
+            </if>
+            <if test="createrId != null  and createrId != ''"> and creater_id = #{createrId}</if>
+            <if test="creatTime != null  and creatTime != ''"> and creat_time = #{creatTime}</if>
+            <if test="issueType != null  and issueType != ''"> and issue_type = #{issueType}</if>
+            <if test="issueFenlei != null  and issueFenlei != ''"> and issue_fenlei = #{issueFenlei}</if>
+            <if test="seriousLev != null  and seriousLev != ''"> and serious_lev = #{seriousLev}</if>
+            <if test="issueOrg != null  and issueOrg != ''"> and issue_org = #{issueOrg}</if>
+            <if test="reviewerId != null  and reviewerId != ''"> and reviewer_id = #{reviewerId}</if>
+            <if test="issuesource != null  and issuesource != ''"> and issuesource = #{issuesource}</if>
+            <if test="reportname != null  and reportname != ''"> and reportname like concat(concat('%', #{reportname}), '%')</if>
+            <if test="reportphone != null  and reportphone != ''"> and reportphone = #{reportphone}</if>
+            <if test="reporttime != null  and reporttime != ''"> and reporttime = #{reporttime}</if>
+            <if test="sysName != null  and sysName!=''"> and sysName like concat(concat('%', #{sysName}), '%')</if>
+            <if test="sysId != null "> and sysId like concat(concat('%', #{sysId}), '%')</if>
+            <if test="issuefxName != null  and issuefxName != ''"> and issuefx_name like concat(concat('%', #{issuefxName}), '%')</if>
+            <if test="issuefxText != null "> and issuefx_text = #{issuefxText}</if>
+            <if test="issuefxScheme != null  and issuefxScheme != ''"> and issuefx_scheme = #{issuefxScheme}</if>
+            <if test="dealStatus != null  and dealStatus != ''"> and deal_status = #{dealStatus}</if>
+            <if test="createOrg != null  and createOrg != ''"> and create_org = #{createOrg}</if>
+            <if test="fmNo != null  and fmNo != ''"> and fm_no = #{fmNo}</if>
+            <if test="fuNo != null  and fuNo != ''"> and fu_no = #{fuNO}</if>
+            <if test="cmNo != null  and cmNo != ''"> and cm_no = #{cmNo}</if>
+            <if test="dealId != null  and dealId != ''"> and deal_id = #{dealId}</if>
+            <if test="businessOrg != null  and businessOrg != ''"> and business_org = #{businessOrg}</if>
+            <if test="auditId != null  and auditId != ''"> and audit_id = #{auditId}</if>
+            <if test="flag != null  and flag != ''"> and flag = #{flag}</if>
+            <if test="issuefxImpact != null  and issuefxImpact != ''"> and issuefx_impact = #{issuefxImpact}</if>
+            <if test="dealDescription != null "> and deal_description = #{dealDescription}</if>
+            <if test="multicount != null and multicount !=0"> and multicount = #{multicount}</if>
+            <if test="businessId != null  and businessId != ''"> and businessId = #{businessId}</if>
+            <if test="expectTime != null  and expectTime != ''"> and expect_time = #{expectTime}</if>
+            <if test="realityTime != null  and realityTime != ''"> and reality_time = #{realityTime}</if>
+            <if test="buDealDesc != null  and buDealDesc != ''"> and bu_deal_desc = #{buDealDesc}</if>
+            <if test="fmjkNo != null  and fmjkNo != ''"> and fmjk_no = #{fmjkNo}</if>
+            <if test="solvStatus != null  and solvStatus != ''"> and solv_status = #{solvStatus}</if>
+            <if test="bussId != null  and bussId != ''"> and buss_id = #{bussId}</if>
+            <if test="papDesc != null  and papDesc != ''"> and pap_desc = #{papDesc}</if>
+            <if test="planDesc != null  and planDesc != ''"> and plan_desc = #{planDesc}</if>
+            <if test="issueYyfenlei != null  and issueYyfenlei != ''"> and issue_yyfenlei = #{issueYyfenlei}</if>
+            <if test="multiusers != null  and multiusers != ''"> and multiusers = #{multiusers}</if>
+            <if test="distributeTime != null  and distributeTime != ''"> and distribute_time = #{distributeTime}</if>
+            <if test="acceptTime != null  and acceptTime != ''"> and accept_time = #{acceptTime}</if>
+            <if test="preSolutionTime != null  and preSolutionTime != ''"> and pre_solution_time = #{preSolutionTime}</if>
+            <if test="solutionTime != null  and solutionTime != ''"> and solution_time = #{solutionTime}</if>
+            <if test="csno != null  and csno != ''"> and csno like concat(concat('%', #{csno}), '%') </if>
+            <if test="params.startTime != null and params.startTime != ''"><!-- 创建时间起始检索 -->
+                and creat_time &gt;=date_format(str_to_date( #{params.startTime},'YYYY-MM-DD HH24:MI:SS'), 'YYYYMMDDHH24MISS')
+            </if>
+            <if test="params.endTime != null and params.endTime != ''"><!-- 创建时间起始检索 -->
+                and creat_time &lt;=date_format(str_to_date( #{params.endTime},'YYYY-MM-DD HH24:MI:SS')+1, 'YYYYMMDDHH24MISS')
+            </if>
+            <if test="jjTime != null  and jjTime != ''"> and jj_time = #{jjTime}</if>
+            <if test="isInside != null  and isInside != ''"> and is_inside = #{isInside}</if>
+            <if test="iStatus != null  and iStatus != ''"> and i_status = #{iStatus}</if>
+            <if test="importLevel != null  and importLevel != ''"> and import_level = #{importLevel}</if>
+            <if test="lastTime != null  and lastTime != ''"> and last_time = #{lastTime}</if>
+            <if test="putUnit != null  and putUnit != ''"> and put_unit = #{putUnit}</if>
+            <if test="unitSchedule != null  and unitSchedule != ''"> and unit_schedule = #{unitSchedule}</if>
+            <if test="invalidationMark != null  and invalidationMark != ''"> and im.invalidation_mark = #{invalidationMark}</if>
+            order by relation_fmbiz_count desc
+        </where>
+    </select>
+
+    <select id="selectRelationFmbizList" parameterType="ImBizIssuefx" resultMap="IssueListReslut">
+        <include refid="selectImBizIssuefxVo"/>
+        <where>
+            ((im.issue_Fenlei = '3'
+            AND IM.CURRENT_STATE IN ('3','401','5','6','7','8','9',	'12','13','14'))
+            OR (im.issue_Fenlei = '6'
+            AND IM.CURRENT_STATE IN ('3','401','5','6','7','8','9','12','13','14','11')))
+            <if test="issuefxId != null  and issuefxId != ''"> and issuefx_Id = #{issuefxId}</if>
+            <if test="issuefxNo != null  and issuefxNo != ''"> and issuefx_no  like concat(concat('%', #{issuefxNo}), '%')</if>
+            <if test="hanguptask != null  and hanguptask != ''">
+                and (current_state
+                <trim prefix="in (" suffix=")" suffixOverrides=",">
+                    <foreach collection="params.states " item="state">
+                        #{state},
+                    </foreach>
+                </trim>
+
+                or  hanguptask = #{hanguptask})
+            </if>
+            <if test="currentState != null  and currentState != '' and (hanguptask == null  or hanguptask == '')">
+                and current_state
+                <trim prefix="in (" suffix=")" suffixOverrides=",">
+                    <foreach collection="params.states " item="state">
+                        #{state},
+                    </foreach>
+                </trim>
+            </if>
+            <if test="createrId != null  and createrId != ''"> and creater_id = #{createrId}</if>
+            <if test="creatTime != null  and creatTime != ''"> and creat_time = #{creatTime}</if>
+            <if test="issueType != null  and issueType != ''"> and issue_type = #{issueType}</if>
+            <if test="issueFenlei != null  and issueFenlei != ''"> and issue_fenlei = #{issueFenlei}</if>
+            <if test="seriousLev != null  and seriousLev != ''"> and serious_lev = #{seriousLev}</if>
+            <if test="issueOrg != null  and issueOrg != ''"> and issue_org = #{issueOrg}</if>
+            <if test="reviewerId != null  and reviewerId != ''"> and reviewer_id = #{reviewerId}</if>
+            <if test="issuesource != null  and issuesource != ''"> and issuesource = #{issuesource}</if>
+            <if test="reportname != null  and reportname != ''"> and reportname like concat(concat('%', #{reportname}), '%')</if>
+            <if test="reportphone != null  and reportphone != ''"> and reportphone = #{reportphone}</if>
+            <if test="reporttime != null  and reporttime != ''"> and reporttime = #{reporttime}</if>
+            <if test="sysName != null  and sysName!=''"> and sysName like concat(concat('%', #{sysName}), '%')</if>
+            <if test="sysId != null "> and sysId like concat(concat('%', #{sysId}), '%')</if>
+            <if test="issuefxName != null  and issuefxName != ''"> and issuefx_name like concat(concat('%', #{issuefxName}), '%')</if>
+            <if test="issuefxText != null "> and issuefx_text = #{issuefxText}</if>
+            <if test="issuefxScheme != null  and issuefxScheme != ''"> and issuefx_scheme = #{issuefxScheme}</if>
+            <if test="dealStatus != null  and dealStatus != ''"> and deal_status = #{dealStatus}</if>
+            <if test="createOrg != null  and createOrg != ''"> and create_org = #{createOrg}</if>
+            <if test="fmNo != null  and fmNo != ''"> and fm_no = #{fmNo}</if>
+            <if test="fuNo != null  and fuNo != ''"> and fu_no = #{fuNO}</if>
+            <if test="cmNo != null  and cmNo != ''"> and cm_no = #{cmNo}</if>
+            <if test="dealId != null  and dealId != ''"> and deal_id = #{dealId}</if>
+            <if test="businessOrg != null  and businessOrg != ''"> and business_org = #{businessOrg}</if>
+            <if test="auditId != null  and auditId != ''"> and audit_id = #{auditId}</if>
+            <if test="flag != null  and flag != ''"> and flag = #{flag}</if>
+            <if test="issuefxImpact != null  and issuefxImpact != ''"> and issuefx_impact = #{issuefxImpact}</if>
+            <if test="dealDescription != null "> and deal_description = #{dealDescription}</if>
+            <if test="multicount != null and multicount !=0"> and multicount = #{multicount}</if>
+            <if test="businessId != null  and businessId != ''"> and businessId = #{businessId}</if>
+            <if test="expectTime != null  and expectTime != ''"> and expect_time = #{expectTime}</if>
+            <if test="realityTime != null  and realityTime != ''"> and reality_time = #{realityTime}</if>
+            <if test="buDealDesc != null  and buDealDesc != ''"> and bu_deal_desc = #{buDealDesc}</if>
+            <if test="fmjkNo != null  and fmjkNo != ''"> and fmjk_no = #{fmjkNo}</if>
+            <if test="solvStatus != null  and solvStatus != ''"> and solv_status = #{solvStatus}</if>
+            <if test="bussId != null  and bussId != ''"> and buss_id = #{bussId}</if>
+            <if test="papDesc != null  and papDesc != ''"> and pap_desc = #{papDesc}</if>
+            <if test="planDesc != null  and planDesc != ''"> and plan_desc = #{planDesc}</if>
+            <if test="issueYyfenlei != null  and issueYyfenlei != ''"> and issue_yyfenlei = #{issueYyfenlei}</if>
+            <if test="multiusers != null  and multiusers != ''"> and multiusers = #{multiusers}</if>
+            <if test="distributeTime != null  and distributeTime != ''"> and distribute_time = #{distributeTime}</if>
+            <if test="acceptTime != null  and acceptTime != ''"> and accept_time = #{acceptTime}</if>
+            <if test="preSolutionTime != null  and preSolutionTime != ''"> and pre_solution_time = #{preSolutionTime}</if>
+            <if test="solutionTime != null  and solutionTime != ''"> and solution_time = #{solutionTime}</if>
+            <if test="csno != null  and csno != ''"> and csno like concat(concat('%', #{csno}), '%') </if>
+            <if test="params.startTime != null and params.startTime != ''"><!-- 创建时间起始检索 -->
+                and creat_time &gt;=TO_CHAR(TO_DATE( #{params.startTime},'YYYY-MM-DD HH24:MI:SS'), 'YYYYMMDDHH24MISS')
+            </if>
+            <if test="params.endTime != null and params.endTime != ''"><!-- 创建时间起始检索 -->
+                and creat_time &lt;=TO_CHAR(TO_DATE( #{params.endTime},'YYYY-MM-DD HH24:MI:SS')+1, 'YYYYMMDDHH24MISS')
+            </if>
+            <if test="jjTime != null  and jjTime != ''"> and jj_time = #{jjTime}</if>
+            <if test="isInside != null  and isInside != ''"> and is_inside = #{isInside}</if>
+            <if test="iStatus != null  and iStatus != ''"> and i_status = #{iStatus}</if>
+            <if test="importLevel != null  and importLevel != ''"> and import_level = #{importLevel}</if>
+            <if test="lastTime != null  and lastTime != ''"> and last_time = #{lastTime}</if>
+            <if test="putUnit != null  and putUnit != ''"> and put_unit = #{putUnit}</if>
+            <if test="unitSchedule != null  and unitSchedule != ''"> and unit_schedule = #{unitSchedule}</if>
+            <if test="invalidationMark != null  and invalidationMark != ''"> and im.invalidation_mark = #{invalidationMark}</if>
+        </where>
+        order by to_number(IM.relation_fmbiz_count) desc
+    </select>
+    <select id="selectRelationFmbizListMysql" parameterType="ImBizIssuefx" resultMap="IssueListReslut">
+        <include refid="selectImBizIssuefxVoForMysql"/>
+        <where>
+            ((im.issue_Fenlei = '3'
+            AND IM.CURRENT_STATE IN ('3','401','5','6','7','8','9',	'12','13','14'))
+            OR (im.issue_Fenlei = '6'
+            AND IM.CURRENT_STATE IN ('3','401','5','6','7','8','9','12','13','14','11')))
+            <if test="issuefxId != null  and issuefxId != ''"> and issuefx_Id = #{issuefxId}</if>
+            <if test="issuefxNo != null  and issuefxNo != ''"> and issuefx_no  like concat(concat('%', #{issuefxNo}), '%')</if>
+            <if test="hanguptask != null  and hanguptask != ''">
+                and (current_state
+                <trim prefix="in (" suffix=")" suffixOverrides=",">
+                    <foreach collection="params.states " item="state">
+                        #{state},
+                    </foreach>
+                </trim>
+
+                or  hanguptask = #{hanguptask})
+            </if>
+            <if test="currentState != null  and currentState != '' and (hanguptask == null  or hanguptask == '')">
+                and current_state
+                <trim prefix="in (" suffix=")" suffixOverrides=",">
+                    <foreach collection="params.states " item="state">
+                        #{state},
+                    </foreach>
+                </trim>
+            </if>
+            <if test="createrId != null  and createrId != ''"> and creater_id = #{createrId}</if>
+            <if test="creatTime != null  and creatTime != ''"> and creat_time = #{creatTime}</if>
+            <if test="issueType != null  and issueType != ''"> and issue_type = #{issueType}</if>
+            <if test="issueFenlei != null  and issueFenlei != ''"> and issue_fenlei = #{issueFenlei}</if>
+            <if test="seriousLev != null  and seriousLev != ''"> and serious_lev = #{seriousLev}</if>
+            <if test="issueOrg != null  and issueOrg != ''"> and issue_org = #{issueOrg}</if>
+            <if test="reviewerId != null  and reviewerId != ''"> and reviewer_id = #{reviewerId}</if>
+            <if test="issuesource != null  and issuesource != ''"> and issuesource = #{issuesource}</if>
+            <if test="reportname != null  and reportname != ''"> and reportname like concat(concat('%', #{reportname}), '%')</if>
+            <if test="reportphone != null  and reportphone != ''"> and reportphone = #{reportphone}</if>
+            <if test="reporttime != null  and reporttime != ''"> and reporttime = #{reporttime}</if>
+            <if test="sysName != null  and sysName!=''"> and sysName like concat(concat('%', #{sysName}), '%')</if>
+            <if test="sysId != null "> and sysId like concat(concat('%', #{sysId}), '%')</if>
+            <if test="issuefxName != null  and issuefxName != ''"> and issuefx_name like concat(concat('%', #{issuefxName}), '%')</if>
+            <if test="issuefxText != null "> and issuefx_text = #{issuefxText}</if>
+            <if test="issuefxScheme != null  and issuefxScheme != ''"> and issuefx_scheme = #{issuefxScheme}</if>
+            <if test="dealStatus != null  and dealStatus != ''"> and deal_status = #{dealStatus}</if>
+            <if test="createOrg != null  and createOrg != ''"> and create_org = #{createOrg}</if>
+            <if test="fmNo != null  and fmNo != ''"> and fm_no = #{fmNo}</if>
+            <if test="fuNo != null  and fuNo != ''"> and fu_no = #{fuNO}</if>
+            <if test="cmNo != null  and cmNo != ''"> and cm_no = #{cmNo}</if>
+            <if test="dealId != null  and dealId != ''"> and deal_id = #{dealId}</if>
+            <if test="businessOrg != null  and businessOrg != ''"> and business_org = #{businessOrg}</if>
+            <if test="auditId != null  and auditId != ''"> and audit_id = #{auditId}</if>
+            <if test="flag != null  and flag != ''"> and flag = #{flag}</if>
+            <if test="issuefxImpact != null  and issuefxImpact != ''"> and issuefx_impact = #{issuefxImpact}</if>
+            <if test="dealDescription != null "> and deal_description = #{dealDescription}</if>
+            <if test="multicount != null and multicount !=0"> and multicount = #{multicount}</if>
+            <if test="businessId != null  and businessId != ''"> and businessId = #{businessId}</if>
+            <if test="expectTime != null  and expectTime != ''"> and expect_time = #{expectTime}</if>
+            <if test="realityTime != null  and realityTime != ''"> and reality_time = #{realityTime}</if>
+            <if test="buDealDesc != null  and buDealDesc != ''"> and bu_deal_desc = #{buDealDesc}</if>
+            <if test="fmjkNo != null  and fmjkNo != ''"> and fmjk_no = #{fmjkNo}</if>
+            <if test="solvStatus != null  and solvStatus != ''"> and solv_status = #{solvStatus}</if>
+            <if test="bussId != null  and bussId != ''"> and buss_id = #{bussId}</if>
+            <if test="papDesc != null  and papDesc != ''"> and pap_desc = #{papDesc}</if>
+            <if test="planDesc != null  and planDesc != ''"> and plan_desc = #{planDesc}</if>
+            <if test="issueYyfenlei != null  and issueYyfenlei != ''"> and issue_yyfenlei = #{issueYyfenlei}</if>
+            <if test="multiusers != null  and multiusers != ''"> and multiusers = #{multiusers}</if>
+            <if test="distributeTime != null  and distributeTime != ''"> and distribute_time = #{distributeTime}</if>
+            <if test="acceptTime != null  and acceptTime != ''"> and accept_time = #{acceptTime}</if>
+            <if test="preSolutionTime != null  and preSolutionTime != ''"> and pre_solution_time = #{preSolutionTime}</if>
+            <if test="solutionTime != null  and solutionTime != ''"> and solution_time = #{solutionTime}</if>
+            <if test="csno != null  and csno != ''"> and csno like concat(concat('%', #{csno}), '%') </if>
+            <if test="params.startTime != null and params.startTime != ''"><!-- 创建时间起始检索 -->
+                and creat_time &gt;=date_format(str_to_date( #{params.startTime},'YYYY-MM-DD HH24:MI:SS'), 'YYYYMMDDHH24MISS')
+            </if>
+            <if test="params.endTime != null and params.endTime != ''"><!-- 创建时间起始检索 -->
+                and creat_time &lt;=date_format(str_to_date( #{params.endTime},'YYYY-MM-DD HH24:MI:SS')+1, 'YYYYMMDDHH24MISS')
+            </if>
+            <if test="jjTime != null  and jjTime != ''"> and jj_time = #{jjTime}</if>
+            <if test="isInside != null  and isInside != ''"> and is_inside = #{isInside}</if>
+            <if test="iStatus != null  and iStatus != ''"> and i_status = #{iStatus}</if>
+            <if test="importLevel != null  and importLevel != ''"> and import_level = #{importLevel}</if>
+            <if test="lastTime != null  and lastTime != ''"> and last_time = #{lastTime}</if>
+            <if test="putUnit != null  and putUnit != ''"> and put_unit = #{putUnit}</if>
+            <if test="unitSchedule != null  and unitSchedule != ''"> and unit_schedule = #{unitSchedule}</if>
+            <if test="invalidationMark != null  and invalidationMark != ''"> and im.invalidation_mark = #{invalidationMark}</if>
+        </where>
+        order by cast(IM.relation_fmbiz_count as unsigned int) desc
+    </select>
+
+	<select id="selectRelationFmbizCount" resultType="java.lang.Integer">
+		  select count(1) from fmbiz_and_issue fa where fa.issuefx_id = #{issuefxId} and fa.state_ = '0'
+	</select>
+
+	<select id="selectIssueHistroyList" parameterType="ImBizIssuefx" resultMap="IssueListReslut">
+		select distinct * from (
+		select im.issuefx_id,
+		im.issuefx_no,
+		im.current_state,
+		im.creater_id,
+		to_char(TO_DATE(im.creat_time, 'YYYYMMDDHH24MISS'), 'YYYY-MM-DD HH24:MI:SS') as creat_time,
+		im.issue_type,
+		im.issue_fenlei,
+		im.serious_lev,
+		im.issue_org,
+		im.reviewer_id,
+		im.issuesource,
+		im.reportname,
+		im.reportphone,
+		to_date(im.reporttime,'YYYY-MM-DD hh24:mi:ss') as reporttime,
+		to_char(im.sysName) as sysName,
+		to_char(im.sysId) as sysId,
+		im.issuefx_name,
+		to_char(im.issuefx_text) as issuefx_text,
+		im.issuefx_scheme,
+		im.deal_status,
+		im.create_org,
+		im.fm_no,
+		im.fu_no,
+		im.cm_no,
+		im.deal_id,
+		im.business_org,
+		im.audit_id,
+		im.flag,
+		im.issuefx_impact,
+		to_char(im.deal_description) as deal_description,
+		im.multicount,
+		im.businessId,
+		to_char(TO_DATE(im.expect_time, 'YYYYMMDDHH24MISS'), 'YYYY-MM-DD HH24:MI:SS') as  expect_time,
+		to_char(TO_DATE(im.reality_time, 'YYYYMMDDHH24MISS'), 'YYYY-MM-DD HH24:MI:SS') as  reality_time,
+		im.bu_deal_desc,
+		im.fmjk_no,
+		im.solv_status,
+		im.buss_id,
+		im.pap_desc,
+		im.plan_desc,
+		im.issue_yyfenlei,
+		im.multiusers,
+		to_char(TO_DATE(im.distribute_time, 'YYYYMMDDHH24MISS'), 'YYYY-MM-DD HH24:MI:SS') as  distribute_time,
+		to_char(TO_DATE(im.accept_time, 'YYYYMMDDHH24MISS'), 'YYYY-MM-DD HH24:MI:SS') as  accept_time,
+		to_char(TO_DATE(im.pre_solution_time, 'YYYYMMDDHH24MISS'), 'YYYY-MM-DD HH24:MI:SS') as  pre_solution_time,
+		to_char(TO_DATE(im.solution_time, 'YYYYMMDDHH24MISS'), 'YYYY-MM-DD HH24:MI:SS') as  solution_time,
+		im.csno,
+		im.hanguptask,
+		im.bu_fuhe_desc,
+		og.orgname as issueOrgName,
+		to_char(im.deal_detail) as deal_detail,
+		im.jj_time,
+		im.is_inside,
+		im.i_status,
+		im.import_level,
+		im.last_time,
+		im.put_unit,
+		to_char(im.unit_schedule) as unit_schedule,
+		im.invalidation_mark
+		from im_biz_issuefx im
+		left join  og_org og
+		on im.issue_org=og.orgid
+		left join pub_flow_log pl
+		on im.issuefx_id =pl.biz_id
+		<where>
+			<if test="params.dealId !=null and params.dealId !='' ">
+				and pl.performer_id =#{params.dealId }
+			</if>
+			<if test="issuefxId != null  and issuefxId != ''"> and issuefx_Id = #{issuefxId}</if>
+			<if test="issuefxNo != null  and issuefxNo != ''"> and issuefx_no  like concat(concat('%', #{issuefxNo}), '%')</if>
+			<if test="hanguptask != null  and hanguptask != ''">
+				and (current_state
+				<trim prefix="in (" suffix=")" suffixOverrides=",">
+					<foreach collection="params.states " item="state">
+						#{state},
+					</foreach>
+				</trim>
+
+				or  hanguptask = #{hanguptask})
+			</if>
+			<if test="currentState != null  and currentState != '' and (hanguptask == null  or hanguptask == '')">
+				and current_state
+				<trim prefix="in (" suffix=")" suffixOverrides=",">
+					<foreach collection="params.states " item="state">
+						#{state},
+					</foreach>
+				</trim>
+			</if>
+			<if test="createrId != null  and createrId != ''"> and creater_id = #{createrId}</if>
+			<if test="creatTime != null  and creatTime != ''"> and creat_time = #{creatTime}</if>
+			<if test="issueType != null  and issueType != ''"> and issue_type = #{issueType}</if>
+			<if test="issueFenlei != null  and issueFenlei != ''"> and issue_fenlei = #{issueFenlei}</if>
+			<if test="seriousLev != null  and seriousLev != ''"> and serious_lev = #{seriousLev}</if>
+			<if test="issueOrg != null  and issueOrg != ''"> and issue_org = #{issueOrg}</if>
+			<if test="reviewerId != null  and reviewerId != ''"> and reviewer_id = #{reviewerId}</if>
+			<if test="issuesource != null  and issuesource != ''"> and issuesource = #{issuesource}</if>
+			<if test="reportname != null  and reportname != ''"> and reportname like concat(concat('%', #{reportname}), '%')</if>
+			<if test="reportphone != null  and reportphone != ''"> and reportphone = #{reportphone}</if>
+			<if test="reporttime != null  and reporttime != ''"> and reporttime = #{reporttime}</if>
+			<if test="sysName != null  and sysName!=''"> and sysName like concat(concat('%', #{sysName}), '%')</if>
+			<if test="sysId != null "> and sysId like concat(concat('%', #{sysId}), '%')</if>
+			<if test="issuefxName != null  and issuefxName != ''"> and issuefx_name like concat(concat('%', #{issuefxName}), '%')</if>
+			<if test="issuefxText != null "> and issuefx_text = #{issuefxText}</if>
+			<if test="issuefxScheme != null  and issuefxScheme != ''"> and issuefx_scheme = #{issuefxScheme}</if>
+			<if test="dealStatus != null  and dealStatus != ''"> and deal_status = #{dealStatus}</if>
+			<if test="createOrg != null  and createOrg != ''"> and create_org = #{createOrg}</if>
+			<if test="fmNo != null  and fmNo != ''"> and fm_no = #{fmNo}</if>
+			<if test="fuNo != null  and fuNo != ''"> and fu_no = #{fuNO}</if>
+			<if test="cmNo != null  and cmNo != ''"> and cm_no = #{cmNo}</if>
+			<if test="dealId != null  and dealId != ''"> and deal_id = #{dealId}</if>
+			<if test="businessOrg != null  and businessOrg != ''"> and business_org = #{businessOrg}</if>
+			<if test="auditId != null  and auditId != ''"> and audit_id = #{auditId}</if>
+			<if test="flag != null  and flag != ''"> and flag = #{flag}</if>
+			<if test="issuefxImpact != null  and issuefxImpact != ''"> and issuefx_impact = #{issuefxImpact}</if>
+			<if test="dealDescription != null "> and deal_description = #{dealDescription}</if>
+			<if test="multicount != null and multicount !=0"> and multicount = #{multicount}</if>
+			<if test="businessId != null  and businessId != ''"> and businessId = #{businessId}</if>
+			<if test="expectTime != null  and expectTime != ''"> and expect_time = #{expectTime}</if>
+			<if test="realityTime != null  and realityTime != ''"> and reality_time = #{realityTime}</if>
+			<if test="buDealDesc != null  and buDealDesc != ''"> and bu_deal_desc = #{buDealDesc}</if>
+			<if test="fmjkNo != null  and fmjkNo != ''"> and fmjk_no = #{fmjkNo}</if>
+			<if test="solvStatus != null  and solvStatus != ''"> and solv_status = #{solvStatus}</if>
+			<if test="bussId != null  and bussId != ''"> and buss_id = #{bussId}</if>
+			<if test="papDesc != null  and papDesc != ''"> and pap_desc = #{papDesc}</if>
+			<if test="planDesc != null  and planDesc != ''"> and plan_desc = #{planDesc}</if>
+			<if test="issueYyfenlei != null  and issueYyfenlei != ''"> and issue_yyfenlei = #{issueYyfenlei}</if>
+			<if test="multiusers != null  and multiusers != ''"> and multiusers = #{multiusers}</if>
+			<if test="distributeTime != null  and distributeTime != ''"> and distribute_time = #{distributeTime}</if>
+			<if test="acceptTime != null  and acceptTime != ''"> and accept_time = #{acceptTime}</if>
+			<if test="preSolutionTime != null  and preSolutionTime != ''"> and pre_solution_time = #{preSolutionTime}</if>
+			<if test="solutionTime != null  and solutionTime != ''"> and solution_time = #{solutionTime}</if>
+			<if test="csno != null  and csno != ''"> and csno like concat(concat('%', #{csno}), '%') </if>
+			<if test="params.startTime != null and params.startTime != ''"><!-- 创建时间起始检索 -->
+				and creat_time &gt;=TO_CHAR(TO_DATE( #{params.startTime},'YYYY-MM-DD HH24:MI:SS'), 'YYYYMMDDHH24MISS')
+			</if>
+			<if test="params.endTime != null and params.endTime != ''"><!-- 创建时间起始检索 -->
+				and creat_time &lt;=TO_CHAR(TO_DATE( #{params.endTime},'YYYY-MM-DD HH24:MI:SS')+1, 'YYYYMMDDHH24MISS')
+			</if>
+			<if test="jjTime != null  and jjTime != ''"> and jj_time = #{jjTime}</if>
+			<if test="isInside != null  and isInside != ''"> and is_inside = #{isInside}</if>
+			<if test="iStatus != null  and iStatus != ''"> and i_status = #{iStatus}</if>
+			<if test="importLevel != null  and importLevel != ''"> and import_level = #{importLevel}</if>
+			<if test="lastTime != null  and lastTime != ''"> and last_time = #{lastTime}</if>
+			<if test="putUnit != null  and putUnit != ''"> and put_unit = #{putUnit}</if>
+			<if test="unitSchedule != null  and unitSchedule != ''"> and unit_schedule = #{unitSchedule}</if>
+			<if test="invalidationMark != null  and invalidationMark != ''"> and im.invalidation_mark = #{invalidationMark}</if>
+			)order by creat_time desc
+		</where>
+	</select>
+	<select id="selectImBizIssuefxById" parameterType="String" resultMap="IssueListReslut">
+		<include refid="selectImBizIssuefxVo"/>
+		where issuefx_id = #{issuefxId}
+	</select>
+	<select id="selectImBizIssuefxByIdMysql" parameterType="String" resultMap="IssueListReslut">
+		<include refid="selectImBizIssuefxVoForMysql"/>
+		where issuefx_id = #{issuefxId}
+	</select>
+	<!--查询建设单位报表-->
+	<select id="selectBulidList" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT #{statusDetail} as status,nvl(t.xxkjb,0)as xxkjb,nvl(t.sjzx,0) as sjzx,nvl(t.jrcxb,0) as jrcxb,nvl(t.xykzx,0) as xykzx,nvl(t.glxxb,0) as glxxb,nvl(t.rjyfzx,0) as rjyfzx
+		FROM (select sub_dept,count(*) as sum from IM_BIZ_ISSUEFX t where current_state =#{status} and is_inside='0' group by sub_dept)
+		PIVOT (
+		SUM(sum) FOR sub_dept IN (
+			'${xxkjb}' as xxkjb,'${sjzx}' as sjzx ,'${jrcxb}' as jrcxb,
+			'${xykzx}' as xykzx ,'${glxxb}' as glxxb,'${rjyfzx}' as rjyfzx)
+		)t
+	</select>
+	<!--数据中心报表查询-->
+	<select id="selectDataList" parameterType="java.util.Map" resultType="java.util.Map">
+			SELECT #{statusDetail} as status,<trim prefix="" suffix="" suffixOverrides=",">
+										<foreach collection="tittle " item="tl">
+											${tl},
+										</foreach>
+									</trim>
+			FROM (
+				 select sub_dept,count(*) as sum from IM_BIZ_ISSUEFX t where current_state =#{status} and is_inside='1' group by sub_dept)
+				 PIVOT (
+						SUM(sum) FOR sub_dept <trim prefix="IN (" suffix=")" suffixOverrides=",">
+													<foreach collection="orgIds " item="id">
+														${id},
+													</foreach>
+	                                          </trim>
+				)t
+
+	</select>
+    <insert id="insertImBizIssuefx" parameterType="ImBizIssuefx">
+		insert into im_biz_issuefx
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="issuefxId != null  and issuefxId != ''">issuefx_id,</if>
+			<if test="issuefxNo != null  and issuefxNo != ''">issuefx_no,</if>
+			<if test="currentState != null  and currentState != ''">current_state,</if>
+			<if test="createrId != null  and createrId != ''">creater_id,</if>
+			<if test="creatTime != null  and creatTime != ''">creat_time,</if>
+			<if test="issueType != null  and issueType != ''">issue_type,</if>
+			<if test="issueFenlei != null  and issueFenlei != ''">issue_fenlei,</if>
+			<if test="seriousLev != null  and seriousLev != ''">serious_lev,</if>
+			<if test="issueOrg != null  and issueOrg != ''">issue_org,</if>
+			<if test="reviewerId != null  and reviewerId != ''">reviewer_id,</if>
+			<if test="issuesource != null  and issuesource != ''">issuesource,</if>
+			<if test="reportname != null  and reportname != ''">reportname,</if>
+			<if test="reportphone != null  and reportphone != ''">reportphone,</if>
+			<if test="reporttime != null  and reporttime != ''">reporttime,</if>
+			<if test="sysName != null ">sysName,</if>
+			<if test="sysId != null ">sysId,</if>
+			<if test="issuefxName != null  and issuefxName != ''">issuefx_name,</if>
+			<if test="issuefxText != null ">issuefx_text,</if>
+			<if test="issuefxScheme != null  and issuefxScheme != ''">issuefx_scheme,</if>
+			<if test="dealStatus != null  and dealStatus != ''">deal_status,</if>
+			<if test="createOrg != null  and createOrg != ''">create_org,</if>
+			<if test="fmNo != null  and fmNo != ''">fm_no,</if>
+			<if test="fuNo != null  and fuNo != ''">fu_no,</if>
+			<if test="cmNo != null  and cmNo != ''">cm_no,</if>
+			<if test="dealId != null  and dealId != ''">deal_id,</if>
+			<if test="businessOrg != null  and businessOrg != ''">business_org,</if>
+			<if test="auditId != null  and auditId != ''">audit_id,</if>
+			<if test="flag != null  and flag != ''">flag,</if>
+			<if test="issuefxImpact != null  and issuefxImpact != ''">issuefx_impact,</if>
+			<if test="dealDescription != null ">deal_description,</if>
+			<if test="multicount != null ">multicount,</if>
+			<if test="businessId != null  and businessId != ''">businessId,</if>
+			<if test="expectTime != null  and expectTime != ''">expect_time,</if>
+			<if test="realityTime != null  and realityTime != ''">reality_time,</if>
+			<if test="buDealDesc != null  and buDealDesc != ''">bu_deal_desc,</if>
+			<if test="fmjkNo != null  and fmjkNo != ''">fmjk_no,</if>
+			<if test="solvStatus != null  and solvStatus != ''">solv_status,</if>
+			<if test="bussId != null  and bussId != ''">buss_id,</if>
+			<if test="papDesc != null  and papDesc != ''">pap_desc,</if>
+			<if test="planDesc != null  and planDesc != ''">plan_desc,</if>
+			<if test="issueYyfenlei != null  and issueYyfenlei != ''">issue_yyfenlei,</if>
+			<if test="multiusers != null  and multiusers != ''">multiusers,</if>
+			<if test="distributeTime != null  and distributeTime != ''">distribute_time,</if>
+			<if test="acceptTime != null  and acceptTime != ''">accept_time,</if>
+			<if test="preSolutionTime != null  and preSolutionTime != ''">pre_solution_time,</if>
+			<if test="solutionTime != null  and solutionTime != ''">solution_time,</if>
+			<if test="csno != null  and csno != ''">csno,</if>
+			<if test="hanguptask != null  and hanguptask != ''">hanguptask,</if>
+			<if test="bufuheDesc != null  and bufuheDesc != ''">bu_fuhe_desc,</if>
+			<if test="dealDetail != null  and dealDetail != ''">deal_detail,</if>
+			<if test="jjTime != null  and jjTime != ''">jj_time,</if>
+			<if test="isInside != null  and isInside != ''">is_inside,</if>
+			<if test="iStatus != null  and iStatus != ''">i_status,</if>
+			<if test="importLevel != null  and importLevel != ''">import_level,</if>
+			<if test="lastTime != null  and lastTime != ''">last_time,</if>
+			<if test="putUnit != null  and putUnit != ''">put_unit,</if>
+			<if test="unitSchedule != null ">unit_schedule,</if>
+			<if test="invalidationMark != null  and invalidationMark != ''">invalidation_mark,</if>
+			<if test="oneType != null and oneType != ''">one_type,</if>
+			<if test="twoType != null and twoType != ''">two_type,</if>
+			<if test="threeType != null and threeType != ''">three_type,</if>
+			<if test="tardingName != null and tardingName != ''">tarding_name,</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="issuefxId != null  and issuefxId != ''">#{issuefxId},</if>
+			<if test="issuefxNo != null  and issuefxNo != ''">#{issuefxNo},</if>
+			<if test="currentState != null  and currentState != ''">#{currentState},</if>
+			<if test="createrId != null  and createrId != ''">#{createrId},</if>
+			<if test="creatTime != null  and creatTime != ''">#{creatTime},</if>
+			<if test="issueType != null  and issueType != ''">#{issueType},</if>
+			<if test="issueFenlei != null  and issueFenlei != ''">#{issueFenlei},</if>
+			<if test="seriousLev != null  and seriousLev != ''">#{seriousLev},</if>
+			<if test="issueOrg != null  and issueOrg != ''">#{issueOrg},</if>
+			<if test="reviewerId != null  and reviewerId != ''">#{reviewerId},</if>
+			<if test="issuesource != null  and issuesource != ''">#{issuesource},</if>
+			<if test="reportname != null  and reportname != ''">#{reportname},</if>
+			<if test="reportphone != null  and reportphone != ''">#{reportphone},</if>
+			<if test="reporttime != null  and reporttime != ''">#{reporttime},</if>
+			<if test="sysName != null ">#{sysName},</if>
+			<if test="sysId != null ">#{sysId},</if>
+			<if test="issuefxName != null  and issuefxName != ''">#{issuefxName},</if>
+			<if test="issuefxText != null ">#{issuefxText},</if>
+			<if test="issuefxScheme != null  and issuefxScheme != ''">#{issuefxScheme},</if>
+			<if test="dealStatus != null  and dealStatus != ''">#{dealStatus},</if>
+			<if test="createOrg != null  and createOrg != ''">#{createOrg},</if>
+			<if test="fmNo != null  and fmNo != ''">#{fmNo},</if>
+			<if test="fuNo != null  and fuNo != ''">#{fuNo},</if>
+			<if test="cmNo != null  and cmNo != ''">#{cmNo},</if>
+			<if test="dealId != null  and dealId != ''">#{dealId},</if>
+			<if test="businessOrg != null  and businessOrg != ''">#{businessOrg},</if>
+			<if test="auditId != null  and auditId != ''">#{auditId},</if>
+			<if test="flag != null  and flag != ''">#{flag},</if>
+			<if test="issuefxImpact != null  and issuefxImpact != ''">#{issuefxImpact},</if>
+			<if test="dealDescription != null ">#{dealDescription},</if>
+			<if test="multicount != null ">#{multicount},</if>
+			<if test="businessId != null  and businessId != ''">#{businessId},</if>
+			<if test="expectTime != null  and expectTime != ''">#{expectTime},</if>
+			<if test="realityTime != null  and realityTime != ''">#{realityTime},</if>
+			<if test="buDealDesc != null  and buDealDesc != ''">#{buDealDesc},</if>
+			<if test="fmjkNo != null  and fmjkNo != ''">#{fmjkNo},</if>
+			<if test="solvStatus != null  and solvStatus != ''">#{solvStatus},</if>
+			<if test="bussId != null  and bussId != ''">#{bussId},</if>
+			<if test="papDesc != null  and papDesc != ''">#{papDesc},</if>
+			<if test="planDesc != null  and planDesc != ''">#{planDesc},</if>
+			<if test="issueYyfenlei != null  and issueYyfenlei != ''">#{issueYyfenlei},</if>
+			<if test="multiusers != null  and multiusers != ''">#{multiusers},</if>
+			<if test="distributeTime != null  and distributeTime != ''">#{distributeTime},</if>
+			<if test="acceptTime != null  and acceptTime != ''">#{acceptTime},</if>
+			<if test="preSolutionTime != null  and preSolutionTime != ''">#{preSolutionTime},</if>
+			<if test="solutionTime != null  and solutionTime != ''">#{solutionTime},</if>
+			<if test="csno != null  and csno != ''">#{csno},</if>
+			<if test="hanguptask != null  and hanguptask != ''">#{hanguptask},</if>
+			<if test="bufuheDesc != null  and bufuheDesc != ''">#{bufuheDesc},</if>
+			<if test="dealDetail != null  and dealDetail != ''">#{dealDetail},</if>
+			<if test="jjTime != null  and jjTime != ''">#{jjTime},</if>
+			<if test="isInside != null  and isInside != ''">#{isInside},</if>
+			<if test="iStatus != null  and iStatus != ''">#{iStatus},</if>
+			<if test="importLevel != null  and importLevel != ''">#{importLevel},</if>
+			<if test="lastTime != null  and lastTime != ''">#{lastTime},</if>
+			<if test="putUnit != null  and putUnit != ''">#{putUnit},</if>
+			<if test="unitSchedule != null ">#{unitSchedule},</if>
+			<if test="invalidationMark != null  and invalidationMark != ''">#{invalidationMark},</if>
+			<if test="oneType != null and oneType != ''">#{oneType},</if>
+			<if test="twoType != null and twoType != ''">#{twoType},</if>
+			<if test="threeType != null and threeType != ''">#{threeType},</if>
+			<if test="tardingName != null and tardingName != ''">#{tardingName},</if>
+		</trim>
+	</insert>
+
+	<update id="updateImBizIssuefx" parameterType="ImBizIssuefx">
+		update im_biz_issuefx
+		<trim prefix="SET" suffixOverrides=",">
+			<if test="issuefxNo != null  and issuefxNo != ''">issuefx_no = #{issuefxNo},</if>
+			<if test="currentState != null  and currentState != ''">current_state = #{currentState},</if>
+			<if test="createrId != null  and createrId != ''">creater_id = #{createrId},</if>
+			<if test="issueType != null  and issueType != ''">issue_type = #{issueType},</if>
+			<if test="issueFenlei != null  and issueFenlei != ''">issue_fenlei = #{issueFenlei},</if>
+			<if test="seriousLev != null  and seriousLev != ''">serious_lev = #{seriousLev},</if>
+			<if test="issueOrg != null  and issueOrg != ''">issue_org = #{issueOrg},</if>
+			<if test="reviewerId != null  and reviewerId != ''">reviewer_id = #{reviewerId},</if>
+			<if test="issuesource != null  and issuesource != ''">issuesource = #{issuesource},</if>
+			<if test="reportname != null  and reportname != ''">reportname = #{reportname},</if>
+			<if test="reportphone != null  and reportphone != ''">reportphone = #{reportphone},</if>
+			<if test="reporttime != null  and reporttime != ''">reporttime = #{reporttime},</if>
+			<if test="sysName != null ">sysName = #{sysName},</if>
+			<if test="sysId != null ">sysId = #{sysId},</if>
+			<if test="issuefxName != null  and issuefxName != ''">issuefx_name = #{issuefxName},</if>
+			<if test="issuefxText != null ">issuefx_text = #{issuefxText},</if>
+			<if test="issuefxScheme != null  and issuefxScheme != ''">issuefx_scheme = #{issuefxScheme},</if>
+			<if test="dealStatus != null  and dealStatus != ''">deal_status = #{dealStatus},</if>
+			<if test="createOrg != null  and createOrg != ''">create_org = #{createOrg},</if>
+			<if test="fmNo != null  ">fm_no = #{fmNo},</if>
+			<if test="fuNo != null  ">fu_no = #{fuNo},</if>
+			<if test="cmNo != null  ">cm_no = #{cmNo},</if>
+			<if test="dealId != null  and dealId != ''">deal_id = #{dealId},</if>
+			<if test="businessOrg != null  and businessOrg != ''">business_org = #{businessOrg},</if>
+			<if test="auditId != null  and auditId != ''">audit_id = #{auditId},</if>
+			<if test="flag != null  and flag != ''">flag = #{flag},</if>
+			<if test="issuefxImpact != null  and issuefxImpact != ''">issuefx_impact = #{issuefxImpact},</if>
+			<if test="dealDescription != null ">deal_description = #{dealDescription},</if>
+			<if test="multicount != null ">multicount = #{multicount},</if>
+			<if test="businessId != null  and businessId != ''">businessId = #{businessId},</if>
+			<if test="expectTime != null  and expectTime != ''">expect_time = #{expectTime},</if>
+			<if test="realityTime != null  and realityTime != ''">reality_time = #{realityTime},</if>
+			<if test="buDealDesc != null  and buDealDesc != ''">bu_deal_desc = #{buDealDesc},</if>
+			<if test="fmjkNo != null  ">fmjk_no = #{fmjkNo},</if>
+			<if test="solvStatus != null  and solvStatus != ''">solv_status = #{solvStatus},</if>
+			<if test="bussId != null  and bussId != ''">buss_id = #{bussId},</if>
+			<if test="papDesc != null  and papDesc != ''">pap_desc = #{papDesc},</if>
+			<if test="planDesc != null  and planDesc != ''">plan_desc = #{planDesc},</if>
+			<if test="issueYyfenlei != null  and issueYyfenlei != ''">issue_yyfenlei = #{issueYyfenlei},</if>
+			<if test="multiusers !=null">multiusers = #{multiusers},</if>
+
+			<if test="distributeTime != null  and distributeTime != ''">distribute_time = #{distributeTime},</if>
+			<if test="acceptTime != null  and acceptTime != ''">accept_time = #{acceptTime},</if>
+			<if test="preSolutionTime != null  and preSolutionTime != ''">pre_solution_time = #{preSolutionTime},</if>
+			<if test="solutionTime != null  and solutionTime != ''">solution_time = #{solutionTime},</if>
+			<if test="csno != null  and csno != ''">csno = #{csno},</if>
+			<if test="hanguptask != null  and hanguptask != ''">hanguptask = #{hanguptask},</if>
+			<if test="bufuheDesc != null  and bufuheDesc != ''">bu_fuhe_desc = #{bufuheDesc},</if>
+			<if test="dealDetail != null  and dealDetail != ''">deal_detail = #{dealDetail},</if>
+			<if test="jjTime != null  and jjTime != ''">jj_time = #{jjTime},</if>
+			<if test="isInside != null  and isInside != ''">is_inside = #{isInside},</if>
+			<if test="iStatus != null  and iStatus != ''">i_status = #{iStatus},</if>
+			<if test="importLevel != null  and importLevel != ''">import_level = #{importLevel},</if>
+			<if test="lastTime != null  and lastTime != ''">last_time = #{lastTime},</if>
+			<if test="putUnit != null  and putUnit != ''">put_unit = #{putUnit},</if>
+			<if test="unitSchedule != null ">unit_schedule = #{unitSchedule},</if>
+			<if test="invalidationMark != null  and invalidationMark != ''">invalidation_mark = #{invalidationMark},</if>
+			<if test="oneType != null and oneType != ''" >one_type = #{oneType},</if>
+			<if test="twoType != null and twoType != ''" >two_type = #{twoType},</if>
+			<if test="threeType != null and threeType != ''" >three_type = #{threeType},</if>
+			<if test="tardingName != null and tardingName != ''" >tarding_name = #{tardingName},</if>
+			<if test="relationFmbizCount != null and relationFmbizCount != ''" >relation_fmbiz_count = #{relationFmbizCount},</if>
+		    <if test="subDept !=null and subDept !=''">sub_dept =#{subDept}</if>
+		</trim>
+		where issuefx_id = #{issuefxId}
+	</update>
+
+	<delete id="deleteImBizIssuefxById" parameterType="String">
+		update  im_biz_issuefx set  invalidation_mark = 1 where issuefx_id = #{issuefxId}
+	</delete>
+
+	<delete id="deleteImBizIssuefxByIds" parameterType="String">
+		update im_biz_issuefx set  invalidation_mark = 1 where issuefx_id in
+		<foreach item="issuefxId" collection="array" open="(" separator="," close=")">
+			#{issuefxId}
+		</foreach>
+	</delete>
+
+	<!--mysql-->
+	<select id="selectMultiusersMysql" parameterType="OgPerson" resultMap="OgPersonResult">
+		select
+		p.pname,
+		p.orgId,
+		p.edu,
+		p.sex,
+		p.mobil_phone,
+		a.orgname,
+		p.p_flag,
+		GROUP_CONCAT(DISTINCT "","",pt.post_name) AS position
+		from OG_USER   u,
+		OG_PERSON      p,
+		OG_ORG         a,
+		OG_R_USER_POST up,
+		OG_R_POST_ROLE pr,
+		OG_POST pt
+		where u.PID = p.PID
+		AND p.ORGID = a.ORGID
+		AND u.USERID = up.USERID
+		AND up.POSTID = pr.POSTID
+		AND pr.POSTID=pt.POSTID
+		AND p.INVALIDATION_MARK = '1'
+		AND u.INVALIDATION_MARK = '1'
+		<if test="rId != null and rId!=''">
+			AND pr.RID = #{rId}
+		</if>
+		<if test="position != null and position!=''">
+			AND pt.postid = #{position}
+		</if>
+		<if test="orgname!=null and orgname!=''">
+			AND a.orgname like concat(concat('%', #{orgname}), '%')
+		</if>
+		<if test="orgId!=null and orgId!=''">
+			AND a.orgid = #{orgId}
+		</if>
+		<if test="pName!=null and pName!=''">
+			AND p.pname like  concat(concat('%', #{pName}), '%')
+		</if>
+		<if test="org != null and  org.levelCode != null and org.levelCode != ''">
+			AND a.level_Code like  concat(concat('%', #{org.levelCode}), '%')
+		</if>
+		<if test="userid != null and userid!=''">
+			AND u.userid = #{userid}
+		</if>
+		<if test="pId != null and pId!=''">
+			AND a.orgid = #{pId}
+		</if>
+		group by
+		p.pname,
+		p.orgId,
+		p.edu,
+		p.sex,
+		p.mobil_phone,
+		a.orgname,
+		p.p_flag
+	</select>
+</mapper>

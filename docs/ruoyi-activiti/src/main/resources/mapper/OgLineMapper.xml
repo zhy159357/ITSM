@@ -1,0 +1,481 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.activiti.mapper.OgLineMapper">
+
+    <!--系统线条故障表-->
+    <resultMap type="OgLine" id="OgLineResult">
+        <result property="lineId"    column="LINE_ID"    />
+        <result property="lineCore"    column="LINE_CORE"    />
+        <result property="lineAmbient"    column="LINE_AMBIENT"    />
+        <result property="lineOffice"    column="LINE_OFFICE"    />
+        <result property="sysId"    column="SYS_ID"    />
+        <result property="purpose"    column="PURPOSE"    />
+        <result property="equipment"    column="EQUIPMENT"    />
+        <result property="startTime"    column="START_TIME"    />
+        <result property="presentTime"    column="PRESENT_TIME"    />
+        <result property="spareTime"    column="SPARE_TIME"    />
+        <result property="endTime"    column="END_TIME"    />
+        <result property="elapsedTime"    column="ELAPSED_TIME"    />
+        <result property="classIfication"    column="CLASS_IFICATION"    />
+        <result property="classDot"    column="CLASS_DOT"    />
+        <result property="treatment"    column="TREATMENT"    />
+        <result property="briefing"    column="BRIEFING"    />
+        <result property="continuity"    column="CONTINUITY"    />
+        <result property="pId"    column="P_ID"    />
+        <result property="unitType"    column="UNIT_TYPE"    />
+        <result property="seriesNumber"    column="SERIES_NUMBER"    />
+        <result property="companies"    column="COMPANIES"    />
+        <result property="monitoring"    column="MONITORING"    />
+        <result property="caseId"    column="CASE_ID"    />
+        <result property="handler" column="HANDLER"/>
+        <result property="handlerStructure" column="HANDLER_STRUCTURE"/>
+        <result property="threeParties" column="THREE_PARTIES"/>
+        <result  property="manufacturer" column="MANUFACTURER"/>
+        <result  property="bgId" column="BG_ID"/>
+        <result  property="degaussing" column="DEGAUSSING"/>
+        <result  property="maintenance" column="MAINTENANCE"/>
+        <result  property="remark" column="REMARK"/>
+        <!--故障状态-->
+        <result  property="lineStart" column="LINE_START"/>
+        <!--设备类型-->
+        <result  property="lineTypeOne" column="LINE_TYPE_ONE"/>
+        <!--故障是否明确-->
+        <result  property="lineIsnoOne" column="LINE_ISNO_ONE"/>
+        <!--报修时间-->
+        <result  property="repairsTime" column="REPAIRS_TIME"/>
+        <!--确认报修时间-->
+        <result  property="affirmRepairsTime" column="AFFIRM_REPAIRS_TIME"/>
+        <!--人员到场时间-->
+        <result  property="personPresentTime" column="PERSON_PRESENT_TIME"/>
+        <!--人员响应耗时-->
+        <result  property="personAnswerTime" column="PERSON_ANSWER_TIME"/>
+        <!--系统名称-->
+        <result property="caption" column="caption"/>
+        <!--机构名称-->
+        <result property="orgNameOne" column="ORG_NAME_ONE"/>
+        <result property="orgNameTwo" column="ORG_NAME_TWO"/>
+        <!--审核人id-->
+        <result property="pIdTwo" column="PIDTWO"/>
+        <result property="orgIdNameThree" column="ORGIDNAMETHREE"/>
+        <!--审核机构-->
+        <result property="orgId" column="ORGID"/>
+        <result property="pIdNameOne" column="PIDNAMEONE"/>
+        <association property="ogSys"  column="SYSID" javaType="OgSys" resultMap="OgSysResult" />
+    </resultMap>
+
+    <!--系统表-->
+    <resultMap type="OgSys" id="OgSysResult">
+        <id property="sysId" column="sysId"/>
+        <result property="orgId" column="orgId"/>
+        <result property="code" column="code"/>
+        <result property="caption" column="caption"/>
+        <result property="memo" column="memo"/>
+        <result property="invalidationMark" column="invalidation_Mark"/>
+        <result property="isExamination" column="isExamination"/>
+        <result property="dept" column="dept"/>
+        <result property="pid" column="pid"/>
+        <result property="businessId" column="businessId"/>
+        <result property="isKeySys" column="is_Key_Sys"/>
+        <result property="sysType" column="sys_Type"/>
+    </resultMap>
+
+    <!--故障表的查询vo-->
+    <sql id="selectLineVo">
+        select
+        l.LINE_ID,
+        l.LINE_CORE,
+        l.LINE_AMBIENT,
+        l.LINE_OFFICE,
+        l.SYS_ID,
+        l.PURPOSE,
+        l.EQUIPMENT,
+        TO_CHAR (
+                TO_DATE (
+                    START_TIME,
+                    'YYYYMMDDHH24MISS'
+                ),
+                'YYYY-MM-DD HH24:MI:SS'
+            ) AS START_TIME,
+        TO_CHAR (
+                TO_DATE (
+                    PRESENT_TIME,
+                    'YYYYMMDDHH24MISS'
+                ),
+                'YYYY-MM-DD HH24:MI:SS'
+            ) AS PRESENT_TIME,
+        l.SPARE_TIME,
+        TO_CHAR (
+                TO_DATE (
+                    END_TIME,
+                    'YYYYMMDDHH24MISS'
+                ),
+                'YYYY-MM-DD HH24:MI:SS'
+            ) AS END_TIME,
+        l.ELAPSED_TIME,
+        l.CLASS_IFICATION,
+        l.CLASS_DOT,
+        l.TREATMENT,
+        l.BRIEFING,
+        l.CONTINUITY,
+        l.P_ID,
+        l.UNIT_TYPE,
+        l.SERIES_NUMBER,
+        l.COMPANIES,
+        l.MONITORING,
+        l.CASE_ID,
+        l.HANDLER,
+        l.HANDLER_STRUCTURE,
+        l.THREE_PARTIES,
+        l.MANUFACTURER,
+        l.BG_ID,
+        l.DEGAUSSING,
+        l.MAINTENANCE,
+        l.REMARK,
+        s.CAPTION,
+        l.ORG_NAME_ONE,
+        l.ORG_NAME_TWO,
+        l.LINE_START,
+        l.LINE_TYPE_ONE,
+        l.LINE_ISNO_ONE,
+        l.REPAIRS_TIME,
+        l.AFFIRM_REPAIRS_TIME,
+        l.PERSON_PRESENT_TIME,
+        l.PERSON_ANSWER_TIME,
+        l.PIDTWO,
+        l.ORGID,
+        l.ORGIDNAMETHREE,
+        l.PIDNAMEONE
+        from OG_LINE l
+        LEFT JOIN OG_SYS s ON s.SYSID = l.SYS_ID
+        left join og_person p on p.pid = l.PIDTWO
+    </sql>
+    <sql id="selectLineVoMysql">
+        select
+        l.LINE_ID,
+        l.LINE_CORE,
+        l.LINE_AMBIENT,
+        l.LINE_OFFICE,
+        l.SYS_ID,
+        l.PURPOSE,
+        l.EQUIPMENT,
+        date_format(START_TIME, '%Y-%m-%d %T') AS START_TIME,
+        date_format(PRESENT_TIME, '%Y-%m-%d %T') PRESENT_TIME,
+        l.SPARE_TIME,
+        date_format(END_TIME, '%Y-%m-%d %T') AS END_TIME,
+        l.ELAPSED_TIME,
+        l.CLASS_IFICATION,
+        l.CLASS_DOT,
+        l.TREATMENT,
+        l.BRIEFING,
+        l.CONTINUITY,
+        l.P_ID,
+        l.UNIT_TYPE,
+        l.SERIES_NUMBER,
+        l.COMPANIES,
+        l.MONITORING,
+        l.CASE_ID,
+        l.HANDLER,
+        l.HANDLER_STRUCTURE,
+        l.THREE_PARTIES,
+        l.MANUFACTURER,
+        l.BG_ID,
+        l.DEGAUSSING,
+        l.MAINTENANCE,
+        l.REMARK,
+        s.CAPTION,
+        l.ORG_NAME_ONE,
+        l.ORG_NAME_TWO,
+        l.LINE_START,
+        l.LINE_TYPE_ONE,
+        l.LINE_ISNO_ONE,
+        l.REPAIRS_TIME,
+        l.AFFIRM_REPAIRS_TIME,
+        l.PERSON_PRESENT_TIME,
+        l.PERSON_ANSWER_TIME,
+        l.PIDTWO,
+        l.ORGID,
+        l.ORGIDNAMETHREE,
+        l.PIDNAMEONE
+        from OG_LINE l
+        LEFT JOIN OG_SYS s ON s.SYSID = l.SYS_ID
+        left join og_person p on p.pid = l.PIDTWO
+    </sql>
+    <!--查询条件-->
+    <select id="selectLineList" parameterType="OgLine" resultMap="OgLineResult">
+        <include refid="selectLineVo"/>
+        <where>
+
+            <if test="lineCore!=null and lineCore!=''">
+                AND l.LINE_CORE = #{lineCore}
+            </if>
+            <if test="lineAmbient!=null and lineAmbient!=''">
+                AND l.LINE_AMBIENT = #{lineAmbient}
+            </if>
+
+            <if test="classIfication!=null and classIfication!=''">
+                AND l.CLASS_IFICATION = #{classIfication}
+            </if>
+            <if test="classDot!=null and classDot!=''">
+                AND l.CLASS_DOT = #{classDot}
+            </if>
+            <!--<if test="companies!=null and companies!=''">
+                AND l.COMPANIES = #{companies}
+            </if>-->
+            <if test="threeParties!=null and threeParties!=''">
+                AND l.THREE_PARTIES = #{threeParties}
+            </if>
+            <if test="orgNameOne!=null and orgNameOne!=''">
+                AND l.ORG_NAME_ONE =#{orgNameOne}
+            </if>
+            <if test="lineStart!=null and lineStart!=''">
+                AND l.LINE_START =#{lineStart}
+            </if>
+            <if test="caption!=null and caption!=''">
+                AND s.CAPTION like concat(concat('%', #{caption}), '%')
+            </if>
+            <if test="startTime!=null and startTime!=''">
+                AND l.START_TIME &gt;= TO_CHAR(TO_DATE( #{startTime},'YYYY-MM-DD HH24:MI:SS'), 'YYYYMMDDHH24MISS')
+            </if>
+            <if test="pIdTwo != null and pIdTwo !=''">
+                and l.PIDTWO = #{pIdTwo}
+            </if>
+
+            <if test="spareTime != null and spareTime !=''">
+                and l.SPARE_TIME &gt;= #{spareTime}
+            </if>
+
+            <if test="elapsedTime != null and elapsedTime != ''">
+                AND l.ELAPSED_TIME &gt;=#{elapsedTime}
+            </if>
+
+            <if test="personAnswerTime != null and personAnswerTime !=''">
+                and l.PERSON_ANSWER_TIME &gt;= #{personAnswerTime}
+            </if>
+
+        </where>
+    </select>
+    <!--查询条件-->
+    <select id="selectLineListMysql" parameterType="OgLine" resultMap="OgLineResult">
+        <include refid="selectLineVoMysql"/>
+        <where>
+
+            <if test="lineCore!=null and lineCore!=''">
+                AND l.LINE_CORE = #{lineCore}
+            </if>
+            <if test="lineAmbient!=null and lineAmbient!=''">
+                AND l.LINE_AMBIENT = #{lineAmbient}
+            </if>
+
+            <if test="classIfication!=null and classIfication!=''">
+                AND l.CLASS_IFICATION = #{classIfication}
+            </if>
+            <if test="classDot!=null and classDot!=''">
+                AND l.CLASS_DOT = #{classDot}
+            </if>
+            <!--<if test="companies!=null and companies!=''">
+                AND l.COMPANIES = #{companies}
+            </if>-->
+            <if test="threeParties!=null and threeParties!=''">
+                AND l.THREE_PARTIES = #{threeParties}
+            </if>
+            <if test="orgNameOne!=null and orgNameOne!=''">
+                AND l.ORG_NAME_ONE =#{orgNameOne}
+            </if>
+            <if test="lineStart!=null and lineStart!=''">
+                AND l.LINE_START =#{lineStart}
+            </if>
+            <if test="caption!=null and caption!=''">
+                AND s.CAPTION like concat(concat('%', #{caption}), '%')
+            </if>
+            <if test="startTime!=null and startTime!=''">
+                AND l.START_TIME &gt;= DATE_FORMAT(#{startTime},'%Y%m%d%H%i%s')
+            </if>
+            <if test="pIdTwo != null and pIdTwo !=''">
+                and l.PIDTWO = #{pIdTwo}
+            </if>
+
+            <if test="spareTime != null and spareTime !=''">
+                and l.SPARE_TIME &gt;= #{spareTime}
+            </if>
+
+            <if test="elapsedTime != null and elapsedTime != ''">
+                AND l.ELAPSED_TIME &gt;=#{elapsedTime}
+            </if>
+
+            <if test="personAnswerTime != null and personAnswerTime !=''">
+                and l.PERSON_ANSWER_TIME &gt;= #{personAnswerTime}
+            </if>
+
+        </where>
+    </select>
+    <!--故障添加-->
+    <insert id="insertOgLine" parameterType="OgLine">
+        insert into OG_LINE
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="lineId != null and lineId != ''">LINE_ID,</if>
+            <if test="lineCore != null and lineCore != ''">LINE_CORE,</if>
+            <if test="lineAmbient != null and lineAmbient != ''">LINE_AMBIENT,</if>
+            <if test="lineOffice != null and lineOffice != ''">LINE_OFFICE,</if>
+            <if test="sysId != null and sysId != ''">SYS_ID,</if>
+            <if test="purpose != null and purpose != ''">PURPOSE,</if>
+            <if test="equipment != null and equipment != ''">EQUIPMENT,</if>
+            <if test="startTime != null and startTime != ''">START_TIME,</if>
+            <if test="presentTime != null and presentTime != ''">PRESENT_TIME,</if>
+            <if test="spareTime != null and spareTime != ''">SPARE_TIME,</if>
+            <if test="endTime != null and endTime != ''">END_TIME,</if>
+            <if test="elapsedTime != null and elapsedTime != ''">ELAPSED_TIME,</if>
+            <if test="classIfication != null and classIfication != ''">CLASS_IFICATION,</if>
+            <if test="classDot != null and classDot != ''">CLASS_DOT,</if>
+            <if test="treatment != null and treatment != ''">TREATMENT,</if>
+            <if test="briefing != null and briefing != ''">BRIEFING,</if>
+            <if test="continuity != null and continuity != ''">CONTINUITY,</if>
+            <if test="pId != null and pId != ''">P_ID,</if>
+            <if test="unitType != null and unitType != ''">UNIT_TYPE,</if>
+            <if test="seriesNumber != null and seriesNumber != ''">SERIES_NUMBER,</if>
+            <if test="companies != null and companies != ''">COMPANIES,</if>
+            <if test="monitoring != null and monitoring != ''">MONITORING,</if>
+            <if test="caseId != null and caseId != ''">CASE_ID,</if>
+            <if test="handler != null and handler != ''">HANDLER,</if>
+            <if test="handlerStructure != null and handlerStructure != ''">HANDLER_STRUCTURE,</if>
+            <if test="threeParties != null and threeParties != ''">THREE_PARTIES,</if>
+            <if test="manufacturer != null and manufacturer != ''">MANUFACTURER,</if>
+            <if test="bgId != null and bgId != ''">BG_ID,</if>
+            <if test="degaussing != null and degaussing != ''">DEGAUSSING,</if>
+            <if test="maintenance != null and maintenance != ''">MAINTENANCE,</if>
+            <if test="remark != null and remark != ''">REMARK,</if>
+            <if test="orgNameOne != null and orgNameOne != ''">ORG_NAME_ONE,</if>
+            <if test="orgNameTwo != null and orgNameTwo != ''">ORG_NAME_TWO,</if>
+            <if test="lineStart != null and lineStart != ''">LINE_START,</if>
+            <if test="lineTypeOne != null and lineTypeOne != ''">LINE_TYPE_ONE,</if>
+            <if test="lineIsnoOne != null and lineIsnoOne != ''">LINE_ISNO_ONE,</if>
+            <if test="repairsTime != null and repairsTime != ''">REPAIRS_TIME,</if>
+            <if test="affirmRepairsTime != null and affirmRepairsTime != ''">AFFIRM_REPAIRS_TIME,</if>
+            <if test="personPresentTime != null and personPresentTime != ''">PERSON_PRESENT_TIME,</if>
+            <if test="personAnswerTime != null and personAnswerTime != ''">PERSON_ANSWER_TIME,</if>
+            <if test="pIdTwo != null and pIdTwo != ''">PIDTWO,</if>
+            <if test="orgId != null and orgId != ''">ORGID,</if>
+            <if test="pIdNameOne != null and pIdNameOne != ''">PIDNAMEONE,</if>
+            <if test="orgIdNameThree != null and orgIdNameThree != ''">ORGIDNAMETHREE,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="lineId != null and lineId != ''">#{lineId},</if>
+            <if test="lineCore != null and lineCore != ''">#{lineCore},</if>
+            <if test="lineAmbient != null and lineAmbient != ''">#{lineAmbient},</if>
+            <if test="lineOffice != null and lineOffice != ''">#{lineOffice},</if>
+            <if test="sysId != null and sysId != ''">#{sysId},</if>
+            <if test="purpose != null and purpose != ''">#{purpose},</if>
+            <if test="equipment != null and equipment != ''">#{equipment},</if>
+            <if test="startTime != null and startTime != ''">#{startTime},</if>
+            <if test="presentTime != null and presentTime != ''">#{presentTime},</if>
+            <if test="spareTime != null and spareTime != ''">#{spareTime},</if>
+            <if test="endTime != null and endTime != ''">#{endTime},</if>
+            <if test="elapsedTime != null and elapsedTime != ''">#{elapsedTime},</if>
+            <if test="classIfication != null and classIfication != ''">#{classIfication},</if>
+            <if test="classDot != null and classDot != ''">#{classDot},</if>
+            <if test="treatment != null and treatment != ''">#{treatment},</if>
+            <if test="briefing != null and briefing != ''">#{briefing},</if>
+            <if test="continuity != null and continuity != ''">#{continuity},</if>
+            <if test="pId != null and pId != ''">#{pId},</if>
+            <if test="unitType != null and unitType != ''">#{unitType},</if>
+            <if test="seriesNumber != null and seriesNumber != ''">#{seriesNumber},</if>
+            <if test="companies != null and companies != ''">#{companies},</if>
+            <if test="monitoring != null and monitoring != ''">#{monitoring},</if>
+            <if test="caseId != null and caseId != ''">#{caseId},</if>
+            <if test="handler != null and handler != ''">#{handler},</if>
+            <if test="handlerStructure != null and handlerStructure != ''">#{handlerStructure},</if>
+            <if test="threeParties != null and threeParties != ''">#{threeParties},</if>
+            <if test="manufacturer != null and manufacturer != ''">#{manufacturer},</if>
+            <if test="bgId != null and bgId != ''">#{bgId},</if>
+            <if test="degaussing != null and degaussing != ''">#{degaussing},</if>
+            <if test="maintenance != null and maintenance != ''">#{maintenance},</if>
+            <if test="remark != null and remark != ''">#{remark},</if>
+            <if test="orgNameOne != null and orgNameOne != ''">#{orgNameOne},</if>
+            <if test="orgNameTwo != null and orgNameTwo != ''">#{orgNameTwo},</if>
+            <if test="lineStart != null and lineStart != ''">#{lineStart},</if>
+            <if test="lineTypeOne != null and lineTypeOne != ''">#{lineTypeOne},</if>
+            <if test="lineIsnoOne != null and lineIsnoOne != ''">#{lineIsnoOne},</if>
+            <if test="repairsTime != null and repairsTime != ''">#{repairsTime},</if>
+            <if test="affirmRepairsTime != null and affirmRepairsTime != ''">#{affirmRepairsTime},</if>
+            <if test="personPresentTime != null and personPresentTime != ''">#{personPresentTime},</if>
+            <if test="personAnswerTime != null and personAnswerTime != ''">#{personAnswerTime},</if>
+            <if test="pIdTwo != null and pIdTwo != ''">#{pIdTwo},</if>
+            <if test="orgId != null and orgId != ''">#{orgId},</if>
+            <if test="pIdNameOne != null and pIdNameOne != ''">#{pIdNameOne},</if>
+            <if test="orgIdNameThree != null and orgIdNameThree != ''">#{orgIdNameThree},</if>
+        </trim>
+    </insert>
+
+    <!--根据id查询-->
+    <select id="selectByLindId"  parameterType="String" resultMap="OgLineResult">
+        <include refid="selectLineVo"/>
+        where LINE_ID = #{lineId}
+    </select>
+
+    <select id="selectByLindIdMysql"  parameterType="String" resultMap="OgLineResult">
+        <include refid="selectLineVoMysql"/>
+        where LINE_ID = #{lineId}
+    </select>
+
+    <!--修改故障-->
+    <update id="updateOgLine" parameterType="OgLine">
+        update OG_LINE
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="lineId != null  and lineId != ''">LINE_ID = #{lineId},</if>
+            <if test="lineCore != null  and lineCore != ''">LINE_CORE = #{lineCore},</if>
+            <if test="lineAmbient != null  and lineAmbient != ''"> LINE_AMBIENT = #{lineAmbient},</if>
+            <if test="lineOffice != null  and lineOffice != ''">LINE_OFFICE = #{lineOffice},</if>
+            <if test="sysId != null  and sysId != ''">SYS_ID = #{sysId},</if>
+            <if test="purpose != null  and purpose != ''">PURPOSE = #{purpose},</if>
+            <if test="equipment != null  and equipment != ''">EQUIPMENT = #{equipment},</if>
+            <if test="startTime != null  and startTime != ''">START_TIME = #{startTime,jdbcType=VARCHAR},</if>
+            <if test="presentTime != null  and presentTime != ''">PRESENT_TIME = #{presentTime},</if>
+            <if test="spareTime != null  and spareTime != ''">SPARE_TIME = #{spareTime},</if>
+            <if test="endTime != null  and endTime != ''">END_TIME = #{endTime},</if>
+            <if test="elapsedTime != null  and elapsedTime != ''">ELAPSED_TIME = #{elapsedTime},</if>
+            <if test="classIfication != null  and classIfication != ''">CLASS_IFICATION = #{classIfication},</if>
+            <if test="classDot != null  and classDot != ''">CLASS_DOT = #{classDot},</if>
+            <if test="treatment != null  and treatment != ''">TREATMENT = #{treatment},</if>
+            <if test="briefing != null  and briefing != ''">BRIEFING = #{briefing},</if>
+            <if test="continuity != null  and continuity != ''">CONTINUITY = #{continuity},</if>
+            <if test="pId != null  and pId != ''">P_ID = #{pId},</if>
+            <if test="unitType != null  and unitType != ''">UNIT_TYPE = #{unitType},</if>
+            <if test="seriesNumber != null  and seriesNumber != ''">SERIES_NUMBER = #{seriesNumber},</if>
+            <if test="companies != null  and companies != ''">COMPANIES = #{companies},</if>
+            <if test="monitoring != null  and monitoring != ''">MONITORING = #{monitoring},</if>
+            <if test="caseId != null  and caseId != ''">CASE_ID = #{caseId},</if>
+            <if test="handler != null  and handler != ''">HANDLER = #{handler},</if>
+            <if test="handlerStructure != null  and handlerStructure != ''"> HANDLER_STRUCTURE = #{handlerStructure},</if>
+            <if test="threeParties != null  and threeParties != ''"> THREE_PARTIES = #{threeParties},</if>
+            <if test="manufacturer != null  and manufacturer != ''">MANUFACTURER = #{manufacturer},</if>
+            <if test="bgId != null  and bgId != ''">BG_ID = #{bgId},</if>
+            <if test="degaussing != null  and degaussing != ''">DEGAUSSING = #{degaussing},</if>
+            <if test="maintenance != null  and maintenance != ''"> MAINTENANCE = #{maintenance},</if>
+            <if test="remark != null  and remark != ''"> REMARK = #{remark},</if>
+            <if test="orgNameOne != null  and orgNameOne != ''"> ORG_NAME_ONE = #{orgNameOne},</if>
+            <if test="orgNameTwo != null  and orgNameTwo != ''"> ORG_NAME_TWO = #{orgNameTwo},</if>
+            <if test="lineStart != null  and lineStart != ''"> LINE_START = #{lineStart},</if>
+            <if test="lineTypeOne != null  and lineTypeOne != ''"> LINE_TYPE_ONE = #{lineTypeOne},</if>
+            <if test="lineIsnoOne != null  and lineIsnoOne != ''"> LINE_ISNO_ONE = #{lineIsnoOne},</if>
+            <if test="repairsTime != null  and repairsTime != ''"> REPAIRS_TIME = #{repairsTime,jdbcType=VARCHAR},</if>
+            <if test="affirmRepairsTime != null  and affirmRepairsTime != ''"> AFFIRM_REPAIRS_TIME = #{affirmRepairsTime,jdbcType=VARCHAR},</if>
+            <if test="personPresentTime != null  and personPresentTime != ''"> PERSON_PRESENT_TIME = #{personPresentTime,jdbcType=VARCHAR},</if>
+            <if test="personAnswerTime != null  and personAnswerTime != ''"> PERSON_ANSWER_TIME = #{personAnswerTime,jdbcType=VARCHAR},</if>
+            <if test="pIdTwo != null  and pIdTwo != ''"> PIDTWO =#{pIdTwo},</if>
+            <if test="orgId != null  and orgId != ''"> ORGID =#{orgId},</if>
+            <if test="pIdNameOne != null and pIdNameOne != ''">PIDNAMEONE =#{pIdNameOne},</if>
+            <if test="orgIdNameThree != null and orgIdNameThree != ''">ORGIDNAMETHREE=#{orgIdNameThree},</if>
+        </trim>
+        where LINE_ID = #{lineId}
+    </update>
+
+    <!--删除故障-->
+    <delete id="deleteByLindId" parameterType="String">
+        delete from OG_LINE where LINE_ID in
+        <foreach item="lineId" collection="array" open="(" separator="," close=")">
+            #{lineId}
+        </foreach>
+    </delete>
+
+</mapper>

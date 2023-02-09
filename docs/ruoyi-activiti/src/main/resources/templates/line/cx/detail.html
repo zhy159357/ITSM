@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+	<th:block th:include="include :: header('系统条线故障详情')" />
+</head>
+<body class="white-bg">
+	<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+		<form class="form-horizontal m" id="form-line-edit" th:object="${line}" >
+			<input name="lineId" id="lineId" type="hidden" th:value="*{lineId}" />
+			<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+				<div class="panel-group">
+					<div class="panel panel-default">
+						<div class="panel-heading" style="green-color: #3c8dbc" data-toggle="collapse" data-target="#collapse1">
+							<h4 class="panel-title" >
+								系统线条故障
+							</h4>
+						</div>
+						<div id="collapse1" class="panel-collapse in">
+							<div class="panel-body">
+								<div class="row">
+									<div class="col-sm-6">
+										<div class="form-group">
+											<label class="col-sm-4 control-label">中心：</label>
+											<div class="col-sm-8">
+												<select class="form-control" th:field="*{lineCore}" name="lineCore" th:with="type=${@dict.getParaType('Line_Center')}" id="lineCore" readonly disabled>
+													<option value=""></option>
+													<option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+												</select>
+											</div>
+										</div>
+									</div>
+									<div class="col-sm-6">
+										<div class="form-group">
+											<label class="col-sm-4 control-label">环境：</label>
+											<div class="col-sm-8">
+												<select class="form-control" th:field="*{lineAmbient}" name="lineAmbient" th:with="type=${@dict.getParaType('UPGRADE_ENVIRONMENT')}" id="lineAmbient" readonly disabled>
+													<option value=""></option>
+													<option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+												</select>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-sm-6">
+										<div class="form-group">
+											<label class="col-sm-4 control-label">处室：</label>
+											<div class="col-sm-8">
+												<select class="form-control" th:field="*{lineOffice}" name="lineOffice" th:with="type=${@dict.getParaType('Line_org')}" id="lineOffice" readonly disabled>
+													<option value=""></option>
+													<option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+												</select>
+											</div>
+										</div>
+									</div>
+									<div class="col-sm-6">
+										<div class="form-group">
+											<label class="col-sm-4 control-label">系统名称：</label>
+											<div class="col-sm-8">
+												<input id="sysId" name="sysId" type="hidden" th:field="*{sysId}" class="form-control" />
+												<input id="applicationName" name="caption" th:value="*{caption}" type="text" class="form-control" onclick="selectOneApplication()" readonly disabled/>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-sm-6">
+										<div class="form-group" >
+											<label class="col-sm-4 control-label">用途：</label>
+											<div class="col-sm-8">
+												<input id="purpose" name="purpose" th:field="*{purpose}" class="form-control" type="text" readonly disabled>
+											</div>
+										</div>
+									</div>
+									<div class="col-sm-6">
+										<div class="form-group">
+											<label class="col-sm-4 control-label">设备位置：</label>
+											<div class="col-sm-8">
+												<input id="equipment" name="equipment" th:field="*{equipment}" class="form-control" type="text" readonly disabled>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-sm-6">
+										<div class="form-group">
+											<label class="col-sm-4 control-label ">设备类型：</label>
+											<div class="col-sm-8">
+												<select class="form-control" id="lineTypeOne" name="lineTypeOne" th:field="*{lineTypeOne}" th:with="type=${@dict.getParaType('Line_type_one')}" readonly disabled>
+													<option value=""></option>
+													<option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}" ></option>
+												</select>
+											</div>
+										</div>
+									</div>
+									<div class="col-sm-6">
+										<div class="form-group">
+											<label class="col-sm-4 control-label ">故障是否明确：</label>
+											<div class="col-sm-8">
+												<select class="form-control" id="lineIsnoOne" name="lineIsnoOne" th:field="*{lineIsnoOne}" th:with="type=${@dict.getParaType('Line_Isno')}" readonly disabled>
+													<option value=""></option>
+													<option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}" ></option>
+												</select>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-sm-6">
+										<div class="form-group">
+											<label class="col-sm-4 control-label is-required">报修时间：</label>
+											<div class="col-sm-8">
+												<input id="startTime" name="startTime" th:field="*{startTime}" class="form-control" type="text" placeholder="yyyy-MM-dd HH:mm:ss" readonly disabled>
+											</div>
+										</div>
+									</div>
+									<div class="col-sm-6">
+										<div class="form-group">
+											<label class="col-sm-4 control-label is-required">确认故障时间：</label>
+											<div class="col-sm-8">
+												<input id="affirmRepairsTime" name="affirmRepairsTime" class="form-control" th:field="*{affirmRepairsTime}" type="text" placeholder="yyyy-MM-dd HH:mm:ss" readonly disabled>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-sm-6">
+										<div class="form-group">
+											<label class="col-sm-4 control-label is-required">备件到场时间：</label>
+											<div class="col-sm-8">
+												<input id="presentTime" name="presentTime" th:field="*{presentTime}" class="form-control" type="text" placeholder="yyyy-MM-dd HH:mm:ss" readonly disabled>
+											</div>
+										</div>
+									</div>
+									<div class="col-sm-6">
+										<div class="form-group">
+											<label class="col-sm-4 control-label is-required">人员到场时间：</label>
+											<div class="col-sm-8">
+												<input id="personPresentTime" name="personPresentTime" th:field="*{personPresentTime}" type="text" placeholder="yyyy-MM-dd HH:mm:ss" class="form-control" readonly disabled>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-sm-6">
+										<div class="form-group">
+											<label class="col-sm-4 control-label is-required">结束时间：</label>
+											<div class="col-sm-8"><!--id="sysId"-->
+												<input id="endTime" name="endTime" type="text" th:field="*{endTime}" placeholder="yyyy-MM-dd HH:mm:ss" class="form-control" readonly disabled>
+											</div>
+										</div>
+									</div>
+									<div class="col-sm-6">
+										<div class="form-group">
+											<label class="col-sm-4 control-label is-required">备件耗时（分钟）：</label>
+											<div class="col-sm-8">
+												<input id="spareTime" name="spareTime" th:field="*{spareTime}" type="text" class="form-control" required disabled>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-sm-6">
+										<div class="form-group">
+											<label class="col-sm-4 control-label is-required">故障处理耗时（分钟）：</label>
+											<div class="col-sm-8">
+												<input id="elapsedTime" name="elapsedTime" th:field="*{elapsedTime}" type="text" class="form-control" required disabled>
+											</div>
+										</div>
+									</div>
+									<div class="col-sm-6">
+										<div class="form-group">
+											<label class="col-sm-4 control-label is-required">人员响应耗时（分钟）：</label>
+											<div class="col-sm-8">
+												<input id="personAnswerTime" name="personAnswerTime" th:field="*{personAnswerTime}" type="text" class="form-control" readonly disabled>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-sm-6">
+										<div class="form-group">
+											<label class="col-sm-4 control-label">故障分类：</label>
+											<div class="col-sm-8">
+												<select class="form-control" th:field="*{classIfication}" name="classIfication" th:with="type=${@dict.getParaType('Line_Type')}" id="classIfication" readonly disabled>
+													<option value=""></option>
+													<option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+												</select>
+											</div>
+										</div>
+									</div>
+									<div class="col-sm-6">
+										<div class="form-group">
+											<label class="col-sm-4 control-label">故障点：</label>
+											<div class="col-sm-8">
+												<select class="form-control" th:field="*{classDot}" name="classDot" th:with="type=${@dict.getParaType('Line_Dot')}" id="classDot" readonly disabled>
+													<option value=""></option>
+													<option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+												</select>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-sm-6">
+										<div class="form-group">
+											<label class="col-sm-4 control-label">处置措施：</label>
+											<div class="col-sm-8">
+												<select class="form-control" th:field="*{treatment}" name="treatment" th:with="type=${@dict.getParaType('Line_Treatment')}" id="treatment" readonly disabled>
+													<option value=""></option>
+													<option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+												</select>
+											</div>
+										</div>
+									</div>
+									<div class="col-sm-6">
+										<div class="form-group">
+											<label class="col-sm-4 control-label">通报情况：</label>
+											<div class="col-sm-8">
+												<select class="form-control" th:field="*{briefing}" name="briefing" th:with="type=${@dict.getParaType('Line_Isno')}" id="briefing" readonly disabled>
+													<option value=""></option>
+													<option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+												</select>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-sm-6">
+										<div class="form-group">
+											<label class="col-sm-4 control-label">是否影响业务连接性：</label>
+											<div class="col-sm-8">
+												<select class="form-control" th:field="*{continuity}" name="continuity" th:with="type=${@dict.getParaType('Line_Isno')}" id="continuity" readonly disabled>
+													<option value=""></option>
+													<option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+												</select>
+											</div>
+										</div>
+									</div>
+									<div class="col-sm-6">
+										<div class="form-group">
+											<label class="col-sm-4 control-label">值班人员：</label>
+											<div class="col-sm-8">
+												<input id="pId" name="pId" th:field="*{pId}" type="text" class="form-control" readonly disabled>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-sm-6">
+										<div class="form-group">
+											<label class="col-sm-4 control-label">设备型号：</label>
+											<div class="col-sm-8">
+												<input id="unitType" name="unitType" th:field="*{unitType}" type="text"  class="form-control" readonly disabled>
+											</div>
+										</div>
+									</div>
+									<div class="col-sm-6">
+										<div class="form-group">
+											<label class="col-sm-4 control-label">序列号：</label>
+											<div class="col-sm-8">
+												<input id="seriesNumber" name="seriesNumber" th:field="*{seriesNumber}" type="text"  class="form-control" readonly disabled>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-sm-6">
+										<div class="form-group">
+											<label class="col-sm-4 control-label">所属公司：</label>
+											<div class="col-sm-8">
+												<input id="companies" name="companies" th:field="*{companies}" type="hidden"/>
+												<input id="orgNameOne" name="orgNameOne" th:field="*{orgNameOne}" type="text" class="form-control" onclick="selectDeptTree(this)" readonly disabled>
+											</div>
+										</div>
+									</div>
+									<div class="col-sm-6">
+										<div class="form-group">
+											<label class="col-sm-4 control-label">监控是否正常报警：</label>
+											<div class="col-sm-8">
+												<select class="form-control" th:field="*{monitoring}" name="monitoring" th:with="type=${@dict.getParaType('Line_Isno')}" id="monitoring" readonly disabled>
+													<option value=""></option>
+													<option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+												</select>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-sm-6">
+										<div class="form-group">
+											<label class="col-sm-4 control-label">CaseID：</label>
+											<div class="col-sm-8">
+												<input id="CaseId" name="CaseId" th:field="*{CaseId}" type="text"  class="form-control" readonly disabled>
+											</div>
+										</div>
+									</div>
+									<div class="col-sm-6">
+										<div class="form-group">
+											<label class="col-sm-4 control-label">故障处理人：</label>
+											<div class="col-sm-8">
+												<input id="handler" name="handler" th:field="*{handler}" type="text" class="form-control" readonly disabled>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-sm-6">
+										<div class="form-group">
+											<label class="col-sm-4 control-label">处理结果：</label>
+											<div class="col-sm-8">
+												<select class="form-control" th:field="*{handlerStructure}" name="handlerStructure" th:with="type=${@dict.getParaType('Line_Handler')}" id="handlerStructure" readonly disabled>
+													<option value=""></option>
+													<option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+												</select>
+											</div>
+										</div>
+									</div>
+									<div class="col-sm-6">
+										<div class="form-group">
+											<label class="col-sm-4 control-label">是否三方维保：</label>
+											<div class="col-sm-8">
+												<select class="form-control" th:field="*{threeParties}" name="threeParties" th:with="type=${@dict.getParaType('Line_Isno')}" id="threeParties" onchange="infor()" readonly disabled>
+													<option value=""></option>
+													<option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+												</select>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-sm-6">
+										<div class="form-group" id="forin">
+											<label class="col-sm-4 control-label">三方维保厂商：</label>
+											<div class="col-sm-8">
+												<input name="manufacturer" id="manufacturer" th:field="*{manufacturer}" type="hidden">
+												<input id="orgNameTwo" name="orgNameTwo" th:field="*{orgNameTwo}" type="text" class="form-control" onclick="selectDeptTreeTwo(this)" readonly disabled>
+
+											</div>
+										</div>
+									</div>
+									<div class="col-sm-6">
+										<div class="form-group">
+											<label class="col-sm-4 control-label">变更单号：</label>
+											<div class="col-sm-8">
+												<input id="bgId" name="bgId" th:field="*{bgId}" type="text"  class="form-control" readonly disabled>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-sm-6">
+										<div class="form-group">
+											<label class="col-sm-4 control-label">是否消磁：</label>
+											<div class="col-sm-8">
+												<select class="form-control" th:field="*{degaussing}" name="degaussing" th:with="type=${@dict.getParaType('Line_Isno')}" id="degaussing" readonly disabled>
+													<option value=""></option>
+													<option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+												</select>
+											</div>
+										</div>
+									</div>
+									<div class="col-sm-6">
+										<div class="form-group">
+											<label class="col-sm-4 control-label">维修超时原因：</label>
+											<div class="col-sm-8">
+												<input id="maintenance" name="maintenance" th:field="*{maintenance}" type="text"  class="form-control" readonly disabled>
+											</div>
+										</div>
+									</div>
+								</div>
+								<h4 class="form-header h4">备注</h4>
+								<div class="row">
+									<div class="col-sm-12">
+										<div class="form-group">
+											<label class="col-sm-2 control-label">备注：</label>
+											<div class="col-sm-10">
+												<textarea rows="6" cols="20" id="remark" name="remark" th:field="*{remark}" class="form-control" readonly disabled></textarea>
+											</div>
+										</div>
+									</div>
+								</div>
+								<h4 class="form-header h4">下一步操作信息</h4>
+								<div class="row">
+									<div class="col-sm-6">
+										<div class="form-group">
+											<label class="col-sm-4 control-label text-right is-required">审批机构：</label>
+											<div class="col-sm-8">
+												<input name="orgIdNameThree"  id="orgIdNameThree" th:field="*{orgIdNameThree}" class="form-control" onclick="selectDeptTree2()" readonly type="text" disabled>
+												<input name="orgId" id="orgId" th:value="${orgId}" hidden >
+											</div>
+										</div>
+									</div>
+									<div class="col-sm-6">
+										<div class="form-group">
+											<label class="col-sm-4 control-label text-right is-required">审批人：</label>
+											<div class="col-sm-8">
+												<!--<input name="pIdNameOne" id="pIdNameOne" th:field="*{pIdNameOne}" class="form-control" onclick="selectBusinessAudit('orgId','2502','2')" required disabled>
+												<input id="pIdTwo" name="pIdTwo" th:field="*{pIdTwo}" vaule="" hidden>-->
+												<select class="form-control" id="pIdTwo" name="pIdTwo" required disabled>
+													<option value="" th:if="${not #strings.isEmpty(line.pIdTwo)}"></option>
+													<option th:each="OgPerson : ${pidTwoList}" th:text="${OgPerson.pName}"
+															th:value="${OgPerson.pId}" th:field="*{pIdTwo}"></option>
+												</select>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</form>
+	</div>
+	<div class="row">
+		<div class="col-sm-offset-5 col-sm-10">
+			<!--<button class="btn btn-default" type="button" onclick="window.print()"><i class="glyphicon glyphicon-print icon-share"></i>打印</button>-->
+			<button type="button" class="btn btn-sm btn-danger" onclick="closeItem()"><i class="fa fa-remove"></i>关 闭</button>
+		</div>
+	</div>
+	<th:block th:include="include :: footer" />
+	<th:block th:include="include :: datetimepicker-js" />
+	<script type="text/javascript">
+		var prefix = ctx + "line/cx";
+
+		//选择否的时候进行隐藏 三方维保
+		function infor() {
+			let id = document.getElementById('threeParties');
+			//var type = $('#eventType').value;
+			if(id.value=='1'){
+				$('#forin').show();
+			}else if (id.value=='2'){
+				$('#forin').hide();
+			}
+			//console.log(id.value);
+		}
+
+	</script>
+</body>
+</html>

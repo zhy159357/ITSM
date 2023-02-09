@@ -1,0 +1,373 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.activiti.mapper.PubFlowLogMapper">
+
+    <resultMap type="PubFlowLog" id="PubFlowLogResult">
+        <result property="logId" column="log_id"/>
+        <result property="bizId" column="biz_id"/>
+        <result property="logType" column="log_type"/>
+        <result property="taskName" column="task_name"/>
+        <result property="performerId" column="performer_id"/>
+        <result property="performerGroupId" column="performer_group_id"/>
+        <result property="performerOrgId" column="performer_org_id"/>
+        <result property="performerName" column="performer_name"/>
+        <result property="performerTel" column="performer_tel"/>
+        <result property="performerGroupName" column="performer_group_name"/>
+        <result property="performerOrgName" column="performer_org_name"/>
+        <result property="performerTime" column="performer_time"/>
+        <result property="performName" column="perform_name"/>
+        <result property="performDesc" column="perform_desc"/>
+        <result property="nextTaskId" column="next_task_id"/>
+        <result property="nextTaskName" column="next_task_name"/>
+        <result property="nextPerformerDesc" column="next_performer_desc"/>
+        <result property="nextPerformerTel" column="next_performer_tel"/>
+        <result property="sysResidenceTime" column="sys_residence_time"/>
+        <result property="currentState" column="current_state"/>
+        <result property="serialNum" column="serial_num"/>
+        <result property="dutyAccount" column="duty_account"/>
+        <result property="dutyId" column="duty_id"/>
+    </resultMap>
+
+    <sql id="selectPubFlowLogVo">
+        select log_id,
+               biz_id,
+               log_type,
+               task_name,
+               performer_id,
+               performer_group_id,
+               performer_org_id,
+               performer_name,
+               performer_tel,
+               performer_group_name,
+               performer_org_name,
+               performer_time,
+               perform_name,
+               perform_desc,
+               next_task_id,
+               next_task_name,
+               next_performer_desc,
+               next_performer_tel,
+               sys_residence_time,
+               current_state,
+               serial_num,
+               duty_account,
+               duty_id
+        from pub_flow_log
+    </sql>
+    <select id="selectPubFlowLogList" parameterType="PubFlowLog" resultMap="PubFlowLogResult">
+        <include refid="selectPubFlowLogVo"/>
+        <where>
+            <if test="bizId != null  and bizId != ''">and biz_id = #{bizId}</if>
+            <if test="logType != null  and logType != ''">and log_type = #{logType}</if>
+            <if test="taskName != null  and taskName != ''">and task_name = #{taskName}
+            </if>
+            <if test="performerId != null  and performerId != ''">and performer_id = #{performerId}</if>
+            <if test="performerGroupId != null  and performerGroupId != ''">and performer_group_id =
+                #{performerGroupId}
+            </if>
+            <if test="performerOrgId != null  and performerOrgId != ''">and performer_org_id = #{performerOrgId}</if>
+            <if test="performerName != null  and performerName != ''">and performer_name like concat(concat('%',
+                #{performerName}), '%')
+            </if>
+            <if test="performerTel != null  and performerTel != ''">and performer_tel = #{performerTel}</if>
+            <if test="performerGroupName != null  and performerGroupName != ''">and performer_group_name like
+                concat(concat('%', #{performerGroupName}), '%')
+            </if>
+            <if test="performerOrgName != null  and performerOrgName != ''">and performer_org_name like
+                concat(concat('%', #{performerOrgName}), '%')
+            </if>
+            <if test="performerTime != null  and performerTime != ''">
+                and performer_time >= #{performerTime}
+            </if>
+            <if test="performName != null  and performName != ''">and perform_name like concat(concat('%',
+                #{performName}), '%')
+            </if>
+            <if test="performDesc != null  and performDesc != ''">and perform_desc = #{performDesc}</if>
+            <if test="nextTaskId != null  and nextTaskId != ''">and next_task_id = #{nextTaskId}</if>
+            <if test="nextTaskName != null  and nextTaskName != ''">and next_task_name like concat(concat('%',
+                #{nextTaskName}), '%')
+            </if>
+            <if test="nextPerformerDesc != null  and nextPerformerDesc != ''">and next_performer_desc =
+                #{nextPerformerDesc}
+            </if>
+            <if test="nextPerformerTel != null  and nextPerformerTel != ''">and next_performer_tel =
+                #{nextPerformerTel}
+            </if>
+            <if test="sysResidenceTime != null  and sysResidenceTime != ''">and sys_residence_time =
+                #{sysResidenceTime}
+            </if>
+            <if test="currentState != null  and currentState != ''">and current_state = #{currentState}</if>
+            <if test="serialNum != null  and serialNum != ''">and serial_num = #{serialNum}</if>
+        </where>
+        order by performer_time desc
+
+    </select>
+    <sql id="selectPubFlowLogBizListVo">
+        select biz_id
+        from pub_flow_log
+    </sql>
+
+    <select id="selectPubFlowLogBizList" parameterType="PubFlowLog" resultType="String">
+        <include refid="selectPubFlowLogBizListVo"/>
+        <where>
+            <if test="bizId != null  and bizId != ''">and biz_id = #{bizId}</if>
+            <if test="logType != null  and logType != ''">and log_type like concat(concat('%',#{logType}),'%')</if>
+            <if test="taskName != null  and taskName != ''">and task_name like concat(concat('%', #{taskName}), '%')
+            </if>
+            <if test="performerId != null  and performerId != ''">and performer_id = #{performerId}</if>
+            <if test="performerGroupId != null  and performerGroupId != ''">and performer_group_id =
+                #{performerGroupId}
+            </if>
+            <if test="performerOrgId != null  and performerOrgId != ''">and performer_org_id = #{performerOrgId}</if>
+            <if test="performerName != null  and performerName != ''">and performer_name like concat(concat('%',
+                #{performerName}), '%')
+            </if>
+            <if test="performerTel != null  and performerTel != ''">and performer_tel = #{performerTel}</if>
+            <if test="performerGroupName != null  and performerGroupName != ''">and performer_group_name like
+                concat(concat('%', #{performerGroupName}), '%')
+            </if>
+            <if test="performerOrgName != null  and performerOrgName != ''">and performer_org_name like
+                concat(concat('%', #{performerOrgName}), '%')
+            </if>
+            <if test="performerTime != null  and performerTime != ''">and performer_time = #{performerTime}</if>
+            <if test="performName != null  and performName != ''">and perform_name like concat(concat('%',
+                #{performName}), '%')
+            </if>
+            <if test="performDesc != null  and performDesc != ''">and perform_desc = #{performDesc}</if>
+            <if test="nextTaskId != null  and nextTaskId != ''">and next_task_id = #{nextTaskId}</if>
+            <if test="nextTaskName != null  and nextTaskName != ''">and next_task_name like concat(concat('%',
+                #{nextTaskName}), '%')
+            </if>
+            <if test="nextPerformerDesc != null  and nextPerformerDesc != ''">and next_performer_desc =
+                #{nextPerformerDesc}
+            </if>
+            <if test="nextPerformerTel != null  and nextPerformerTel != ''">and next_performer_tel =
+                #{nextPerformerTel}
+            </if>
+            <if test="sysResidenceTime != null  and sysResidenceTime != ''">and sys_residence_time =
+                #{sysResidenceTime}
+            </if>
+            <if test="currentState != null  and currentState != ''">and current_state = #{currentState}</if>
+            <if test="serialNum != null  and serialNum != ''">and serial_num = #{serialNum}</if>
+        </where>
+        GROUP BY biz_id
+    </select>
+    <select id="selectPubFlowLogById" parameterType="String" resultMap="PubFlowLogResult">
+        <include refid="selectPubFlowLogVo"/>
+        where log_id = #{logId}
+    </select>
+
+    <insert id="insertPubFlowLog" parameterType="PubFlowLog">
+        insert into pub_flow_log
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="logId != null  and logId != ''">log_id,</if>
+            <if test="bizId != null  and bizId != ''">biz_id,</if>
+            <if test="logType != null  and logType != ''">log_type,</if>
+            <if test="taskName != null  and taskName != ''">task_name,</if>
+            <if test="performerId != null  and performerId != ''">performer_id,</if>
+            <if test="performerGroupId != null  and performerGroupId != ''">performer_group_id,</if>
+            <if test="performerOrgId != null  and performerOrgId != ''">performer_org_id,</if>
+            <if test="performerName != null  and performerName != ''">performer_name,</if>
+            <if test="performerTel != null  and performerTel != ''">performer_tel,</if>
+            <if test="performerGroupName != null  and performerGroupName != ''">performer_group_name,</if>
+            <if test="performerOrgName != null  and performerOrgName != ''">performer_org_name,</if>
+            <if test="performerTime != null  and performerTime != ''">performer_time,</if>
+            <if test="performName != null  and performName != ''">perform_name,</if>
+            <if test="performDesc != null  and performDesc != ''">perform_desc,</if>
+            <if test="nextTaskId != null  and nextTaskId != ''">next_task_id,</if>
+            <if test="nextTaskName != null  and nextTaskName != ''">next_task_name,</if>
+            <if test="nextPerformerDesc != null  and nextPerformerDesc != ''">next_performer_desc,</if>
+            <if test="nextPerformerTel != null  and nextPerformerTel != ''">next_performer_tel,</if>
+            <if test="sysResidenceTime != null  and sysResidenceTime != ''">sys_residence_time,</if>
+            <if test="currentState != null  and currentState != ''">current_state,</if>
+            <if test="serialNum != null  and serialNum != ''">serial_num,</if>
+            <if test="dutyAccount != null  and dutyAccount != ''">duty_account,</if>
+            <if test="dutyId != null  and dutyId != ''">duty_id,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="logId != null  and logId != ''">#{logId},</if>
+            <if test="bizId != null  and bizId != ''">#{bizId},</if>
+            <if test="logType != null  and logType != ''">#{logType},</if>
+            <if test="taskName != null  and taskName != ''">#{taskName},</if>
+            <if test="performerId != null  and performerId != ''">#{performerId},</if>
+            <if test="performerGroupId != null  and performerGroupId != ''">#{performerGroupId},</if>
+            <if test="performerOrgId != null  and performerOrgId != ''">#{performerOrgId},</if>
+            <if test="performerName != null  and performerName != ''">#{performerName},</if>
+            <if test="performerTel != null  and performerTel != ''">#{performerTel},</if>
+            <if test="performerGroupName != null  and performerGroupName != ''">#{performerGroupName},</if>
+            <if test="performerOrgName != null  and performerOrgName != ''">#{performerOrgName},</if>
+            <if test="performerTime != null  and performerTime != ''">#{performerTime},</if>
+            <if test="performName != null  and performName != ''">#{performName},</if>
+            <if test="performDesc != null  and performDesc != ''">#{performDesc},</if>
+            <if test="nextTaskId != null  and nextTaskId != ''">#{nextTaskId},</if>
+            <if test="nextTaskName != null  and nextTaskName != ''">#{nextTaskName},</if>
+            <if test="nextPerformerDesc != null  and nextPerformerDesc != ''">#{nextPerformerDesc},</if>
+            <if test="nextPerformerTel != null  and nextPerformerTel != ''">#{nextPerformerTel},</if>
+            <if test="sysResidenceTime != null  and sysResidenceTime != ''">#{sysResidenceTime},</if>
+            <if test="currentState != null  and currentState != ''">#{currentState},</if>
+            <if test="serialNum != null  and serialNum != ''">#{serialNum},</if>
+            <if test="dutyAccount != null  and dutyAccount != ''">#{dutyAccount},</if>
+            <if test="dutyId != null  and dutyId != ''">#{dutyId},</if>
+        </trim>
+    </insert>
+
+    <update id="updatePubFlowLog" parameterType="PubFlowLog">
+        update pub_flow_log
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="bizId != null  and bizId != ''">biz_id = #{bizId},</if>
+            <if test="logType != null  and logType != ''">log_type = #{logType},</if>
+            <if test="taskName != null  and taskName != ''">task_name = #{taskName},</if>
+            <if test="performerId != null  and performerId != ''">performer_id = #{performerId},</if>
+            <if test="performerGroupId != null  and performerGroupId != ''">performer_group_id = #{performerGroupId},
+            </if>
+            <if test="performerOrgId != null  and performerOrgId != ''">performer_org_id = #{performerOrgId},</if>
+            <if test="performerName != null  and performerName != ''">performer_name = #{performerName},</if>
+            <if test="performerTel != null  and performerTel != ''">performer_tel = #{performerTel},</if>
+            <if test="performerGroupName != null  and performerGroupName != ''">performer_group_name =
+                #{performerGroupName},
+            </if>
+            <if test="performerOrgName != null  and performerOrgName != ''">performer_org_name = #{performerOrgName},
+            </if>
+            <if test="performerTime != null  and performerTime != ''">performer_time = #{performerTime},</if>
+            <if test="performName != null  and performName != ''">perform_name = #{performName},</if>
+            <if test="performDesc != null  and performDesc != ''">perform_desc = #{performDesc},</if>
+            <if test="nextTaskId != null  and nextTaskId != ''">next_task_id = #{nextTaskId},</if>
+            <if test="nextTaskName != null  and nextTaskName != ''">next_task_name = #{nextTaskName},</if>
+            <if test="nextPerformerDesc != null  and nextPerformerDesc != ''">next_performer_desc =
+                #{nextPerformerDesc},
+            </if>
+            <if test="nextPerformerTel != null  and nextPerformerTel != ''">next_performer_tel = #{nextPerformerTel},
+            </if>
+            <if test="sysResidenceTime != null  and sysResidenceTime != ''">sys_residence_time = #{sysResidenceTime},
+            </if>
+            <if test="currentState != null  and currentState != ''">current_state = #{currentState},</if>
+            <if test="serialNum != null  and serialNum != ''">serial_num = #{serialNum},</if>
+        </trim>
+        where log_id = #{logId}
+    </update>
+
+    <delete id="deletePubFlowLogById" parameterType="String">
+        delete
+        from pub_flow_log
+        where log_id = #{logId}
+    </delete>
+
+    <delete id="deletePubFlowLogByIds" parameterType="String">
+        delete from pub_flow_log where log_id in
+        <foreach item="logId" collection="array" open="(" separator="," close=")">
+            #{logId}
+        </foreach>
+    </delete>
+    <select id="selectPubFlowLogAll" parameterType="String" resultMap="PubFlowLogResult">
+        select *
+        from pub_flow_log
+        where biz_id = #{bizId}
+          and performer_time is not null
+          and next_task_name = '事件单领取'
+        order by performer_time desc
+    </select>
+    <select id="selectPubFlowLogAsc" parameterType="String" resultMap="PubFlowLogResult">
+        select *
+        from pub_flow_log
+        where biz_id = #{bizId}
+          and performer_time is not null
+        order by performer_time asc
+    </select>
+    <select id="selectPubFlowLogDesc" parameterType="String" resultMap="PubFlowLogResult">
+        select *
+        from pub_flow_log
+        where biz_id = #{bizId}
+          and performer_time is not null
+        order by performer_time desc
+    </select>
+
+    <select id="findFmIds" parameterType="String" resultMap="PubFlowLogResult">
+        select *
+        from pub_flow_log
+        where PERFORM_NAME = '未解决退回' and NEXT_TASK_NAME = '事件单处理'
+        AND PERFORMER_TIME LIKE '${performerTime}%'
+    </select>
+
+    <select id="selectPubFlowLogByBusinessKey" parameterType="String" resultType="int">
+        select count(1) from pub_flow_log p where p.biz_id=#{businessKey}
+    </select>
+    <!--业务事件单历史查询 -->
+    <select id="selectPubFlowLogEmpList" parameterType="PubFlowLog" resultMap="PubFlowLogResult">
+        select log_id,
+        biz_id,
+        log_type,
+        task_name,
+        performer_id,
+        performer_group_id,
+        performer_org_id,
+        performer_name,
+        performer_tel,
+        performer_group_name,
+        performer_org_name,
+        performer_time,
+        perform_name,
+        perform_desc,
+        next_task_id,
+        next_task_name,
+        next_performer_desc,
+        next_performer_tel,
+        sys_residence_time,
+        current_state,
+        serial_num,
+        duty_account,
+        duty_id
+        from pub_flow_log_emp
+        <where>
+            <if test="bizId != null  and bizId != ''">and biz_id = #{bizId}</if>
+            <if test="logType != null  and logType != ''">and log_type = #{logType}</if>
+            <if test="taskName != null  and taskName != ''">and task_name like concat(concat('%', #{taskName}), '%')
+            </if>
+            <if test="performerId != null  and performerId != ''">and performer_id = #{performerId}</if>
+            <if test="performerGroupId != null  and performerGroupId != ''">and performer_group_id =
+                #{performerGroupId}
+            </if>
+            <if test="performerOrgId != null  and performerOrgId != ''">and performer_org_id = #{performerOrgId}</if>
+            <if test="performerName != null  and performerName != ''">and performer_name like concat(concat('%',
+                #{performerName}), '%')
+            </if>
+            <if test="performerTel != null  and performerTel != ''">and performer_tel = #{performerTel}</if>
+            <if test="performerGroupName != null  and performerGroupName != ''">and performer_group_name like
+                concat(concat('%', #{performerGroupName}), '%')
+            </if>
+            <if test="performerOrgName != null  and performerOrgName != ''">and performer_org_name like
+                concat(concat('%', #{performerOrgName}), '%')
+            </if>
+            <if test="performerTime != null  and performerTime != ''">
+                and performer_time >= #{performerTime}
+            </if>
+            <if test="performName != null  and performName != ''">and perform_name like concat(concat('%',
+                #{performName}), '%')
+            </if>
+            <if test="performDesc != null  and performDesc != ''">and perform_desc = #{performDesc}</if>
+            <if test="nextTaskId != null  and nextTaskId != ''">and next_task_id = #{nextTaskId}</if>
+            <if test="nextTaskName != null  and nextTaskName != ''">and next_task_name like concat(concat('%',
+                #{nextTaskName}), '%')
+            </if>
+            <if test="nextPerformerDesc != null  and nextPerformerDesc != ''">and next_performer_desc =
+                #{nextPerformerDesc}
+            </if>
+            <if test="nextPerformerTel != null  and nextPerformerTel != ''">and next_performer_tel =
+                #{nextPerformerTel}
+            </if>
+            <if test="sysResidenceTime != null  and sysResidenceTime != ''">and sys_residence_time =
+                #{sysResidenceTime}
+            </if>
+            <if test="currentState != null  and currentState != ''">and current_state = #{currentState}</if>
+            <if test="serialNum != null  and serialNum != ''">and serial_num = #{serialNum}</if>
+        </where>
+        order by performer_time desc
+
+    </select>
+
+    <select id="selectPubFlowLogByCondition" resultType="com.ruoyi.activiti.domain.PubFlowLog">
+        SELECT * FROM pub_flow_log WHERE log_type=#{logType} and biz_id=#{bizId} and task_name=#{taskName}
+        ORDER BY  CAST(serial_num as SIGNED) desc limit 1;
+    </select>
+</mapper>

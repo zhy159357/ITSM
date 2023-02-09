@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+
+
+<head>
+    <th:block th:include="include :: header('事件单效率')"/>
+
+</head>
+<body class="gray-bg">
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-12 search-collapse">
+            <form id="formId">
+                <div class="text-center">
+                    <ul>
+                        <h4 style="color: #ff0033">每日8-18点之间半小时刷新一次，当前展示为最近半小时数据</h4>
+                    </ul>
+                </div>
+            </form>
+        </div>
+        <div class="btn-group-sm" id="toolbar" role="group">
+            <div class="btn-group">
+                <button data-toggle="dropdown" class="btn btn-primary btn-sm dropdown-toggle">导出<span
+                        class="caret"></span>
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a onclick="$.table.exportExcel()">导出所有</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="col-sm-12 select-table table-striped">
+            <table id="bootstrap-table"></table>
+        </div>
+    </div>
+</div>
+<th:block th:include="include :: footer"/>
+<script th:inline="javascript">
+    var prefix = ctx + "system/life";
+    $(function () {
+        var options = {
+            url: prefix + "/getLifeList",
+            exportUrl: prefix + "/export",
+            pagination: false,
+            modalName: "事件单效率",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'fmLifeId',
+                    title: '主键ID',
+                    visible: false
+                },
+                {
+                    field: 'sysName',
+                    title: '所属系统'
+                },
+                {
+                    field: 'surCount',
+                    title: '剩余数量'
+                },
+                {
+                    field: 'eightDealCount',
+                    title: '8小时已处理'
+                },
+                {
+                    field: 'eightNdealCount',
+                    title: '超8未处理'
+                },
+                {
+                    field: 'eightDealLife',
+                    title: '8小时效率'
+                },
+                {
+                    field: 'sixteenDealCount',
+                    title: '16小时已处理'
+                },
+                {
+                    field: 'sixteenNdealCount',
+                    title: '超16未处理'
+                },
+                {
+                    field: 'sixteenDealLife',
+                    title: '16小时效率'
+                },
+                {
+                    field: 'ttfourDealCount',
+                    title: '24小时已处理'
+                },
+                {
+                    field: 'ttfourNdealCount',
+                    title: '超24未处理'
+                },
+                {
+                    field: 'ttfourDealLife',
+                    title: '24小时效率'
+                }]
+        };
+        $.table.init(options);
+    });
+</script>
+</body>
+</html>

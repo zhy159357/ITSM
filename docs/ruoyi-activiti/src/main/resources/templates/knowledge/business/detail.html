@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:include="include :: header('知识管理')"/>
+    <th:block th:include="include :: select2-css" />
+    <th:block th:include="include :: ztree-css"/>
+</head>
+<body class="white-bg">
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+    <form class="form-horizontal m" id="form-content-edit" th:object="${cont}">
+        <input name="id" type="hidden" id="id" th:value="${id}"/>
+        <input name="ownerId" type="hidden" id="ownerId" th:value="*{id}"/>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label class="col-xs-2 control-label ">知识标题:</label>
+                    <div class="col-sm-10">
+                        <input class="form-control" id="title" name="title" th:field="*{title}" readonly>
+                    </div>
+                </div>
+            </div>      
+        </div>
+        <div class="row">
+        	<div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label ">类别名称:</label>
+                    <div class="col-sm-8">
+                        <input class="form-control" type="text" name="categoryId" id="categoryId" th:field="*{categoryName}" readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">事件类型:</label>
+                    <div class="col-sm-8">
+                        <select id="eventType" name="eventType" class="form-control m-b" th:field="*{eventType}" disabled="disabled">
+                            <option th:each="type : ${eventList}" th:text="${type.info}"
+                                    th:value="${type.code}"></option>
+                        </select>
+                    </div>
+                </div>
+            </div> 
+        </div>
+        <div class="row">
+        	<div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">系统名称:</label>
+                    <div class="col-sm-8">
+                        <select id="sysId" name="sysId" class="form-control m-b" th:field="*{sysId}" disabled="disabled">
+                            <option value=""></option>
+                            <option th:each="type : ${sysnameList}" th:text="${type.sysName}"
+                                    th:value="${type.sysId}"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label ">一级标题:</label>
+                    <div class="col-sm-8">
+                        <select id="content" name="content" class="form-control m-b" th:field="*{content}" disabled="disabled">
+                            <option value=""></option>
+                            <option th:each="deletype : ${titleList1}" th:text="${deletype.name}"
+                                    th:value="${deletype.id}"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>          
+        </div>
+        <div class="row">
+        	<div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label ">二级标题:</label>
+                    <div class="col-sm-8">
+                        <select id="sectitle" name="sectitle" class="form-control m-b" th:field="*{sectitle}" disabled="disabled">
+                            <option value=""></option>
+                            <option th:each="deletype : ${titleList}" th:text="${deletype.name}"
+                                    th:value="${deletype.id}"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6" id="threeDiv">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">三级标题:</label>
+                    <div class="col-sm-8">
+                        <select id="threetitle" name="threetitle" class="form-control m-b" th:field="*{threetitle}" disabled="disabled">
+                            <option value=""></option>
+                            <option th:each="deletype : ${threeList}" th:text="${deletype.name}"
+                                    th:value="${deletype.id}"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>      
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">标签：</label>
+                    <div class="col-sm-8">
+                        <input placeholder="请输入标签" name="name" id="name" class="form-control" th:field="*{name}" type="text" disabled="disabled">
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label ">权限：</label>
+                    <div class="col-sm-8">
+                        <select name="powerId" id="powerId" class="form-control m-b" th:field="*{powerId}" disabled="disabled">
+                            <option th:text="全国" th:value="0"></option>
+                            <option th:text="总行" th:value="1"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label ">创建人:</label>
+                    <div class="col-sm-8">
+                        <input class="form-control" id="createId" name="createId" th:field="*{createName}"
+                               readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label ">创建时间:</label>
+                    <div class="col-sm-8">
+                        <input class="form-control" type="text" name="createTime" id="createTime" th:field="*{createTime}" readonly>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div th:if="${status=='3'}">
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">初审审核人:</label>
+                        <div class="col-sm-8">
+                            <select name="twoAuditorId" class="form-control m-b" th:field="*{twoAuditorId}" disabled="disabled">
+                                <option value="">请选择</option>
+                                <option th:each="type : ${users}" th:text="${type.pname}"
+                                        th:value="${type.pId}"></option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">终审审核人:</label>
+                        <div class="col-sm-8">
+                            <select name="oneAuditorId" class="form-control m-b" th:field="*{oneAuditorId}" disabled="disabled">
+                                <option value="">请选择</option>
+                                <option th:each="type : ${users}" th:text="${type.pname}"
+                                        th:value="${type.pId}"></option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div th:if="${status=='4'}">
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">终审审核人:</label>
+                        <div class="col-sm-8">
+                            <select name="oneAuditorId" class="form-control m-b" th:field="*{oneAuditorId}" disabled="disabled">
+                                <option value="">请选择</option>
+                                <option th:each="type : ${users}" th:text="${type.pname}"
+                                        th:value="${type.pId}"></option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">关联问题单：</label>
+                    <div class="col-sm-8">
+                        <input placeholder="请输入需关联问题单单号" maxlength="40" name="issuefxNo" id="issuefxNo" required class="form-control" type="text" th:field="*{issuefxNo}" readonly />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label class="col-xs-2 control-label" >知识描述:</label>
+                    <div class="col-xs-10">
+                        <input id ="describes" th:value="*{describes}" type="hidden">
+                    	<div id="editor"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+    <h4 class="form-header h4">知识附件</h4>
+    <div class="btn-group-sm" id="toolbar" role="group">
+        <a class="btn btn-primary single disabled" type="button" onclick="downloadAttachment()">
+            <i class="fa fa-edit"></i> 下载附件
+        </a>
+    </div>
+    <div class="col-sm-12 select-table table-striped">
+        <table id="file-table"></table>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-offset-5 col-sm-9">
+    	<button type="button" class="btn btn-sm btn-primary" onclick="history()">查看流程 </button>
+        <button type="button" class="btn btn-sm btn-default" onclick="window.print()"><i class="glyphicon glyphicon-print icon-share"></i>打印</button>
+        <button type="button" class="btn btn-sm btn-danger" onclick="closeItem()"><i class="fa fa-window-close"></i>关闭 </button>
+    </div>
+</div>
+<th:block th:include="include :: footer"/>
+<th:block th:include="include :: select2-js" />
+<script th:src="@{/ckeditor/ckeditor.js}"></script>
+<script th:src="@{/ckeditor/pasteImage.js}"></script>
+<script th:inline="javascript">
+	var editor=CKEDITOR.replace('editor');//CKEDITOR4 插件初始化
+	CKAddLinks("editor");
+	CKFitHeight("editor");
+    var prefix = ctx + "knowledge/business";
+    var prefix_attachment = ctx + "pub/attachment";
+    $(function() {
+    	editor.setData($('#describes').val());
+    	CKEDITOR.config.readOnly=true;//设置不可编辑
+        var options = {
+            url: prefix_attachment + "/list",
+            createUrl: prefix_attachment + "/add",
+            updateUrl: prefix_attachment + "/edit/{id}",
+            removeUrl: prefix_attachment + "/remove",
+            detailUrl: prefix_attachment + "/edit/{id}",
+            sortName: "fileTime",
+            clickToSelect:true,
+            id:'file-table',
+            sortOrder: "desc",
+            singleSelect : true,
+            queryParams:queryParams,
+            modalName: "附件列表",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field : 'atId',
+                    title : '附件ID',
+                    visible : false
+                },
+                {
+                    field : 'fileName',
+                    title : '文件名称'
+                },
+                {
+                    field : 'person.pName',
+                    title : '上传人'
+                },
+                {
+                    field : 'size',
+                    title : '文件大小'
+                },
+                {
+                    field : 'memo',
+                    title : '文件描述'
+                },
+                {
+                    field : 'fileTime',
+                    title : '上传时间'
+                }]
+        };
+        $.table.init(options);
+
+    });
+
+    //** 关闭选项卡 */
+    function closeItem() {
+        var index = parent.layer.getFrameIndex(window.name);
+        parent.layer.close(index);//关闭当前页
+    }
+
+    // 附件下载
+    function downloadAttachment() {
+        var rows = $.table.selectFirstColumns();
+        var atId = rows[0];
+        var ownerId = $("#ownerId").val();
+        var url = prefix_attachment + "/download/"+ownerId+"/"+atId;
+        window.location.href = url;
+    }
+
+    function queryParams(params) {
+        var search = $.table.queryParams(params);
+        search.ownerId = $("#ownerId").val() == '' ? 'id' : $("#ownerId").val();
+        return search;
+    }
+
+    function submitHandler() {
+        var data = $("#form-content-detail").serializeArray();
+        if ($.validate.form()) {
+            $.operate.save(prefix + "/edit", data);
+        }
+    }
+
+    function history(){    	
+    	$.modal.open("知识流程",  ctx + "knowledge/operationhistory/single/" + $('#id').val());
+    }
+</script>
+</body>
+</html>

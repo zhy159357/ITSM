@@ -1,0 +1,321 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.activiti.mapper.AccountReqMapper">
+
+<resultMap type="AccountReq" id="AccountReqResult">
+        <result property="id"    column="id_"    />
+        <result property="name"    column="name_"    />
+        <result property="mobPhone"    column="mob_phone"    />
+        <result property="gender"    column="gender"    />
+        <result property="deptid"    column="deptid"    />
+        <result property="dept"    column="dept"    />
+        <result property="mark"    column="mark"    />
+        <result property="education"    column="education"    />
+        <result property="birthPlace"    column="birth_place"    />
+        <result property="job"    column="job_"    />
+        <result property="director"    column="director"    />
+        <result property="order"    column="order_"    />
+        <result property="birthday"    column="birthday"    />
+        <result property="officePhone"    column="office_phone"    />
+        <result property="otherPhone"    column="other_phone"    />
+        <result property="email"    column="email"    />
+        <result property="address"    column="address"    />
+        <result property="note"    column="note"    />
+        <result property="remark"    column="remark"    />
+        <result property="auditSug"    column="audit_sug"    />
+        <result property="dealSug"    column="deal_sug"    />
+        <result property="auditor"    column="auditor"    />
+        <result property="dealer"    column="dealer"    />
+        <result property="auditDept"    column="audit_dept"    />
+        <result property="dealDept"    column="deal_dept"    />
+        <result property="auditorid"    column="auditorid"    />
+        <result property="dealerid"    column="dealerid"    />
+        <result property="auditDeptid"    column="audit_deptid"    />
+        <result property="dealDeptid"    column="deal_deptid"    />
+        <result property="status"    column="status"    />
+        
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="reqUser"    column="req_user"    />
+        <result property="reqTime"    column="create_time"    />
+        <result property="reqType"    column="req_type"    />
+        <result property="pid"    column="pid"    />
+    </resultMap>
+    
+     <sql id="selectAccountReq">
+        select ar.id_, ar.name_, ar.mob_phone, ar.gender, ar.dept as deptid, oo1.orgname as dept, ar.audit_dept as audit_deptid, oo2.orgname as audit_dept, ar.deal_dept as deal_deptid, oo3.orgname as deal_dept, 
+        ar.mark, ar.education, ar.birth_place, ar.job_, ar.director, ar.order_, ar.birthday, ar.office_phone, ar.other_phone, ar.email, ar.address, ar.note, ar.remark, ar.audit_sug, ar.deal_sug, ar.create_by, op3.pname as req_user, ar.create_time, ar.update_by, ar.update_time, ar.status, 
+        ar.auditor as auditorid, op1.pname as auditor, ar.dealer as dealerid, op2.pname as dealer, ar.req_type, ar.pid from account_req ar
+   		left join og_org oo1 on ar.dept = oo1.orgid
+   		left join og_org oo2 on ar.audit_dept = oo2.orgid
+   		left join og_org oo3 on ar.deal_dept = oo3.orgid
+   		left join og_person op1 on ar.auditor = op1.pid
+   		left join og_person op2 on ar.dealer = op2.pid
+   		left join og_person op3 on ar.create_by = op3.pid
+    </sql>
+    
+    <select id="selectAccountReqList" parameterType="AccountReq" resultMap="AccountReqResult">
+        <include refid="selectAccountReq"/>
+        <where>
+            <if test="name != null  and name != ''"> and ar.name_ like concat(concat('%',#{name}),'%')</if>
+            <if test="params.createTime != null and params.createTime != ''"> and ar.create_time &gt;= to_date(#{params.createTime},'yyyy-MM-dd')</if>
+            <if test="mobPhone != null  and mobPhone != ''"> and ar.mob_phone like concat(concat('%',#{mobPhone}),'%')</if>
+            <if test="mark != null and mark != '' and mark != -1"> and ar.mark = #{mark}</if>
+            <if test="reqType != null and reqType != ''"> and ar.req_type = #{reqType}</if>
+            <if test="status != null and status != '' and status != -1"> and ar.status = #{status}</if>
+            <if test="createBy != null and createBy != ''"> and ar.create_by = #{createBy}</if>
+            <if test="auditor != null and auditor != ''"> and ar.auditor = #{auditor}</if>
+            <if test="dealer != null and dealer != ''"> and ar.dealer = #{dealer}</if>
+        </where>
+        order by ar.create_time desc
+    </select>
+
+	<select id="selectAccountReqListMysql" parameterType="AccountReq" resultMap="AccountReqResult">
+		<include refid="selectAccountReq"/>
+		<where>
+			<if test="name != null  and name != ''"> and ar.name_ like concat(concat('%',#{name}),'%')</if>
+			<if test="params.createTime != null and params.createTime != ''"> and ar.create_time &gt;= #{params.createTime}</if>
+			<if test="mobPhone != null  and mobPhone != ''"> and ar.mob_phone like concat(concat('%',#{mobPhone}),'%')</if>
+			<if test="mark != null and mark != '' and mark != -1"> and ar.mark = #{mark}</if>
+			<if test="reqType != null and reqType != ''"> and ar.req_type = #{reqType}</if>
+			<if test="status != null and status != '' and status != -1"> and ar.status = #{status}</if>
+			<if test="createBy != null and createBy != ''"> and ar.create_by = #{createBy}</if>
+			<if test="auditor != null and auditor != ''"> and ar.auditor = #{auditor}</if>
+			<if test="dealer != null and dealer != ''"> and ar.dealer = #{dealer}</if>
+		</where>
+		order by ar.create_time desc
+	</select>
+    
+    <select id="selectAccountReqById" parameterType="String" resultMap="AccountReqResult">
+        <include refid="selectAccountReq"/>
+        where ar.id_ = #{id}
+    </select>
+    
+    <insert id="insertAccountReq" parameterType="AccountReq" useGeneratedKeys="false" keyProperty="id">
+		insert into account_req(
+		id_,pid,
+		<if test="name != null and name != ''">name_,</if>
+		<if test="mobPhone != null and mobPhone != ''">mob_phone,</if>
+		<if test="gender != null and gender != ''">gender,</if>
+		<if test="dept != null and dept != ''">dept,</if>
+		<if test="auditDept != null and auditDept != ''">audit_dept,</if>
+		<if test="auditor != null and auditor != ''">auditor,</if>
+		<if test="mark != null">mark,</if>
+		<if test="education !=null and education != ''">education,</if>
+		<if test="birthPlace != null and birthPlace != ''">birth_place,</if>
+		<if test="job != null and job != ''">job_,</if>
+		<if test="director != null and director != ''">director,</if>
+		<if test="order != null and order != ''">order_,</if>
+		<if test="birthday != null and birthday != ''">birthday,</if>
+		<if test="officePhone != null and officePhone != ''">office_phone,</if>
+		<if test="otherPhone != null and otherPhone != ''">other_phone,</if>
+		<if test="email != null and email != ''">email,</if>
+		<if test="address != null and address != ''">address,</if>
+		<if test="note != null and note != ''">note,</if>
+		<if test="remark != null and remark != ''">remark,</if>
+		<if test="createBy != null and createBy != ''">create_by,</if>
+		<if test="reqType != null and reqType != ''">req_type,</if>
+		create_time,
+		status
+		)values(
+		#{id},#{pid},
+		<if test="name != null and name != ''">#{name},</if>
+		<if test="mobPhone != null and mobPhone != ''">#{mobPhone},</if>
+		<if test="gender != null and gender != ''">#{gender},</if>
+		<if test="dept != null and dept != ''">#{dept},</if>
+		<if test="auditDept != null and auditDept != ''">#{auditDept},</if>
+		<if test="auditor != null and auditor != ''">#{auditor},</if>
+		<if test="mark != null">#{mark},</if>
+		<if test="education !=null and education != ''">#{education},</if>
+		<if test="birthPlace != null and birthPlace != ''">#{birthPlace},</if>
+		<if test="job != null and job != ''">#{job},</if>
+		<if test="director != null and director != ''">#{director},</if>
+		<if test="order != null and order != ''">#{order},</if>
+		<if test="birthday != null and birthday != ''">#{birthday},</if>
+		<if test="officePhone != null and officePhone != ''">#{officePhone},</if>
+		<if test="otherPhone != null and otherPhone != ''">#{otherPhone},</if>
+		<if test="email != null and email != ''">#{email},</if>
+		<if test="address != null and address != ''">#{address},</if>
+		<if test="note != null and note != ''">#{note},</if>
+		<if test="remark != null and remark != ''">#{remark},</if>
+		<if test="createBy != null and createBy != ''">#{createBy},</if>
+		<if test="reqType != null and reqType != ''">#{reqType},</if>
+		sysdate,
+		<if test="status != null and status != ''">#{status}</if>
+		)
+	</insert>
+
+	<insert id="insertAccountReqMysql" parameterType="AccountReq" useGeneratedKeys="false" keyProperty="id">
+		insert into account_req(
+		id_,pid,
+		<if test="name != null and name != ''">name_,</if>
+		<if test="mobPhone != null and mobPhone != ''">mob_phone,</if>
+		<if test="gender != null and gender != ''">gender,</if>
+		<if test="dept != null and dept != ''">dept,</if>
+		<if test="auditDept != null and auditDept != ''">audit_dept,</if>
+		<if test="auditor != null and auditor != ''">auditor,</if>
+		<if test="mark != null">mark,</if>
+		<if test="education !=null and education != ''">education,</if>
+		<if test="birthPlace != null and birthPlace != ''">birth_place,</if>
+		<if test="job != null and job != ''">job_,</if>
+		<if test="director != null and director != ''">director,</if>
+		<if test="order != null and order != ''">order_,</if>
+		<if test="birthday != null and birthday != ''">birthday,</if>
+		<if test="officePhone != null and officePhone != ''">office_phone,</if>
+		<if test="otherPhone != null and otherPhone != ''">other_phone,</if>
+		<if test="email != null and email != ''">email,</if>
+		<if test="address != null and address != ''">address,</if>
+		<if test="note != null and note != ''">note,</if>
+		<if test="remark != null and remark != ''">remark,</if>
+		<if test="createBy != null and createBy != ''">create_by,</if>
+		<if test="reqType != null and reqType != ''">req_type,</if>
+		create_time,
+		status
+		)values(
+		#{id},#{pid},
+		<if test="name != null and name != ''">#{name},</if>
+		<if test="mobPhone != null and mobPhone != ''">#{mobPhone},</if>
+		<if test="gender != null and gender != ''">#{gender},</if>
+		<if test="dept != null and dept != ''">#{dept},</if>
+		<if test="auditDept != null and auditDept != ''">#{auditDept},</if>
+		<if test="auditor != null and auditor != ''">#{auditor},</if>
+		<if test="mark != null">#{mark},</if>
+		<if test="education !=null and education != ''">#{education},</if>
+		<if test="birthPlace != null and birthPlace != ''">#{birthPlace},</if>
+		<if test="job != null and job != ''">#{job},</if>
+		<if test="director != null and director != ''">#{director},</if>
+		<if test="order != null and order != ''">#{order},</if>
+		<if test="birthday != null and birthday != ''">#{birthday},</if>
+		<if test="officePhone != null and officePhone != ''">#{officePhone},</if>
+		<if test="otherPhone != null and otherPhone != ''">#{otherPhone},</if>
+		<if test="email != null and email != ''">#{email},</if>
+		<if test="address != null and address != ''">#{address},</if>
+		<if test="note != null and note != ''">#{note},</if>
+		<if test="remark != null and remark != ''">#{remark},</if>
+		<if test="createBy != null and createBy != ''">#{createBy},</if>
+		<if test="reqType != null and reqType != ''">#{reqType},</if>
+		now(),
+		<if test="status != null and status != ''">#{status}</if>
+		)
+	</insert>
+	
+	<update id="updateAccountReq" parameterType="AccountReq">
+        update account_req
+        <set>        
+        <if test="name != null and name != ''">name_ = #{name},</if>
+		<if test="mobPhone != null and mobPhone != ''">mob_phone = #{mobPhone},</if>
+		<if test="gender != null and gender != ''">gender = #{gender},</if>
+		<if test="dept != null and dept != ''">dept = #{dept},</if>
+		<if test="auditDept != null and auditDept != ''">audit_dept = #{auditDept},</if>
+		<if test="dealDept != null and dealDept != ''">deal_dept = #{dealDept},</if>
+		<if test="mark != null">mark = #{mark},</if>
+		<if test="education !=null and education != ''">education = #{education},</if>
+		<if test="birthPlace != null and birthPlace != ''">birth_place = #{birthPlace},</if>
+		<if test="job != null and job != ''">job_ = #{job},</if>
+		<if test="director != null and director != ''">director = #{director},</if>
+		<if test="order != null and order != ''">order_ = #{order},</if>
+		<if test="birthday != null and birthday != ''">birthday = #{birthday},</if>
+		<if test="officePhone != null and officePhone != ''">office_phone = #{officePhone},</if>
+		<if test="otherPhone != null and otherPhone != ''">other_phone = #{otherPhone},</if>
+		<if test="email != null and email != ''">email = #{email},</if>
+		<if test="address != null and address != ''">address = #{address},</if>
+		<if test="note != null and note != ''">note = #{note},</if>
+		<if test="auditSug != null and auditSug != ''">audit_sug = #{auditSug},</if> 
+		<if test="dealSug != null and dealSug != ''">deal_sug = #{dealSug},</if> 
+		<if test="remark != null and remark != ''">remark = #{remark},</if>   
+		<if test="status != null and status != ''">status = #{status},</if>  
+		<if test="auditor != null and auditor != ''">auditor = #{auditor},</if>  
+		<if test="dealer != null and dealer != ''">dealer = #{dealer},</if>  
+		<if test="updateBy != null and updateBy != ''">update_by = #{updateBy},</if> 
+        update_time = sysdate
+	   </set>
+        where id_ = #{id}
+    </update>
+
+	<update id="updateAccountReqMysql" parameterType="AccountReq">
+		update account_req
+		<set>
+			<if test="name != null and name != ''">name_ = #{name},</if>
+			<if test="mobPhone != null and mobPhone != ''">mob_phone = #{mobPhone},</if>
+			<if test="gender != null and gender != ''">gender = #{gender},</if>
+			<if test="dept != null and dept != ''">dept = #{dept},</if>
+			<if test="auditDept != null and auditDept != ''">audit_dept = #{auditDept},</if>
+			<if test="dealDept != null and dealDept != ''">deal_dept = #{dealDept},</if>
+			<if test="mark != null">mark = #{mark},</if>
+			<if test="education !=null and education != ''">education = #{education},</if>
+			<if test="birthPlace != null and birthPlace != ''">birth_place = #{birthPlace},</if>
+			<if test="job != null and job != ''">job_ = #{job},</if>
+			<if test="director != null and director != ''">director = #{director},</if>
+			<if test="order != null and order != ''">order_ = #{order},</if>
+			<if test="birthday != null and birthday != ''">birthday = #{birthday},</if>
+			<if test="officePhone != null and officePhone != ''">office_phone = #{officePhone},</if>
+			<if test="otherPhone != null and otherPhone != ''">other_phone = #{otherPhone},</if>
+			<if test="email != null and email != ''">email = #{email},</if>
+			<if test="address != null and address != ''">address = #{address},</if>
+			<if test="note != null and note != ''">note = #{note},</if>
+			<if test="auditSug != null and auditSug != ''">audit_sug = #{auditSug},</if>
+			<if test="dealSug != null and dealSug != ''">deal_sug = #{dealSug},</if>
+			<if test="remark != null and remark != ''">remark = #{remark},</if>
+			<if test="status != null and status != ''">status = #{status},</if>
+			<if test="auditor != null and auditor != ''">auditor = #{auditor},</if>
+			<if test="dealer != null and dealer != ''">dealer = #{dealer},</if>
+			<if test="updateBy != null and updateBy != ''">update_by = #{updateBy},</if>
+			update_time = now()
+		</set>
+		where id_ = #{id}
+	</update>
+
+     <delete id="deleteAccountReqById" parameterType="String">
+        delete from account_req where id_ = #{id}
+    </delete>
+
+    <delete id="deleteAccountReqByIds" parameterType="String">
+        delete from account_req where id_ in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+ 	<select id="checkAccountReqPhone" parameterType="AccountReq" resultType="int">
+        select count(*) from (
+		 (select id_ from account_req where (mob_phone=#{mobPhone} or other_phone like concat(concat('%',#{mobPhone}),'%'))
+		 	<if test="id != null and id != ''">and id_ &lt;&gt; #{id}</if>
+		 	<if test="pid != null and pid != ''">and pid &lt;&gt; #{pid}</if>
+		 )union all
+		 (select pid as id_ from og_person where mobil_phone = #{mobPhone}
+		 	<if test="pid != null and pid != ''">and pid &lt;&gt; #{pid}</if>
+		 )
+		)t
+    </select>
+    
+    <select id="checkOut" parameterType="String" resultType="int">
+ 		select count(*) from (select orgid from og_org o where o.level_code like '/000000000/010000888/010900888/%')t
+		where orgid=#{deptid}
+   </select>
+    
+    <select id="selectAuditDept" parameterType="String" resultType="OgOrg">
+		select orgid,orgname from og_org where orgid in (
+			select person.orgid from og_person person 
+			left join og_r_user_post up on person.pid=up.userid 
+			left join og_post post on post.postid=up.postid
+			where post.postid = #{postid} 
+		)
+	</select> 
+	
+	 <select id="selectAuditor" resultType="OgPerson">
+		select pid,pname from og_person person
+		left join og_r_user_post up on person.pid=up.userid 
+		left join og_post post on post.postid=up.postid
+		where post.postid = #{postid} and person.orgid= #{orgid} 
+	</select> 
+
+	<select id="checkAccountReqUnique" parameterType="AccountReq" resultType="int">
+		select count(id_) from account_req where pid = #{pid}
+		and(req_type=2 or req_type=3)
+		and(status=1 or status=2 or status=3)
+   </select>
+</mapper>

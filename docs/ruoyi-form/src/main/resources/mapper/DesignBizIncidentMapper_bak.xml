@@ -1,0 +1,855 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.form.mapper.DesignBizIncidentMapper">
+    <resultMap id="BaseResultMap" type="com.ruoyi.form.domain.DesignBizIncident">
+        <!--@mbg.generated-->
+        <!--@Table design_biz_incident-->
+        <id column="id" jdbcType="BIGINT" property="id"/>
+        <result column="instance_id" jdbcType="VARCHAR" property="instanceId"/>
+        <result column="extra1" jdbcType="VARCHAR" property="extra1"/>
+        <result column="extra2" jdbcType="VARCHAR" property="extra2"/>
+        <result column="extra3" jdbcType="VARCHAR" property="extra3"/>
+        <result column="extra4" jdbcType="VARCHAR" property="extra4"/>
+        <result column="extra5" jdbcType="VARCHAR" property="extra5"/>
+        <result column="status" jdbcType="VARCHAR" property="status"/>
+        <result column="created_time" jdbcType="TIMESTAMP" property="createdTime"/>
+        <result column="created_by" jdbcType="VARCHAR" property="createdBy"/>
+        <result column="updated_time" jdbcType="TIMESTAMP" property="updatedTime"/>
+        <result column="updated_by" jdbcType="VARCHAR" property="updatedBy"/>
+        <result column="report_org" jdbcType="VARCHAR" property="reportOrg"/>
+        <result column="report_person" jdbcType="VARCHAR" property="reportPerson"/>
+        <result column="report_phone" jdbcType="VARCHAR" property="reportPhone"/>
+        <result column="side_flag" jdbcType="VARCHAR" property="sideFlag"/>
+        <result column="finance_flag" jdbcType="INTEGER" property="financeFlag"/>
+        <result column="urgent_flag" jdbcType="INTEGER" property="urgentFlag"/>
+        <result column="org_flag" jdbcType="VARCHAR" property="orgFlag"/>
+        <result column="event_title" jdbcType="VARCHAR" property="eventTitle"/>
+        <result column="event_info" jdbcType="VARCHAR" property="eventInfo"/>
+        <result column="system_name" jdbcType="VARCHAR" property="systemName"/>
+        <result column="complain_flag" jdbcType="INTEGER" property="complainFlag"/>
+        <result column="event_source" jdbcType="VARCHAR" property="eventSource"/>
+        <result column="event_status" jdbcType="VARCHAR" property="eventStatus"/>
+        <result column="event_status_reason" jdbcType="VARCHAR" property="eventStatusReason"/>
+        <result column="init_first_level" jdbcType="VARCHAR" property="initFirstLevel"/>
+        <result column="init_second_level" jdbcType="VARCHAR" property="initSecondLevel"/>
+        <result column="init_three_level" jdbcType="VARCHAR" property="initThreeLevel"/>
+        <result column="inf_level" jdbcType="VARCHAR" property="infLevel"/>
+        <result column="event_priority" jdbcType="VARCHAR" property="eventPriority"/>
+        <result column="target_resolve_date" jdbcType="VARCHAR" property="targetResolveDate"/>
+        <result column="assigned_group" jdbcType="VARCHAR" property="assignedGroup"/>
+        <result column="assigned_person" jdbcType="VARCHAR" property="assignedPerson"/>
+        <result column="second_solve_plan" jdbcType="VARCHAR" property="secondSolvePlan"/>
+        <result column="solve_plan" jdbcType="VARCHAR" property="solvePlan"/>
+        <result column="event_reason_category" jdbcType="VARCHAR" property="eventReasonCategory"/>
+        <result column="event_source_system" jdbcType="VARCHAR" property="eventSourceSystem"/>
+        <result column="relational_system" jdbcType="VARCHAR" property="relationalSystem"/>
+        <result column="event_category" jdbcType="VARCHAR" property="eventCategory"/>
+        <result column="event_subclass" jdbcType="VARCHAR" property="eventSubclass"/>
+        <result column="event_entry" jdbcType="VARCHAR" property="eventEntry"/>
+        <result column="event_subentry1" jdbcType="VARCHAR" property="eventSubentry1"/>
+        <result column="event_subentry2" jdbcType="VARCHAR" property="eventSubentry2"/>
+        <result column="final_first_level" jdbcType="VARCHAR" property="finalFirstLevel"/>
+        <result column="final_second_level" jdbcType="VARCHAR" property="finalSecondLevel"/>
+        <result column="final_three_level" jdbcType="VARCHAR" property="finalThreeLevel"/>
+        <result column="change_flag" jdbcType="INTEGER" property="changeFlag"/>
+        <result column="change_no" jdbcType="VARCHAR" property="changeNo"/>
+        <result column="inf_face" jdbcType="VARCHAR" property="infFace"/>
+        <result column="inf_use" jdbcType="INTEGER" property="infUse"/>
+        <result column="inf_system" jdbcType="VARCHAR" property="infSystem"/>
+        <result column="inf_time_range" jdbcType="VARCHAR" property="infTimeRange"/>
+        <result column="second_deal_org" jdbcType="VARCHAR" property="secondDealOrg"/>
+        <result column="second_deal_person" jdbcType="VARCHAR" property="secondDealPerson"/>
+        <result column="solution_valid_flag" jdbcType="INTEGER" property="solutionValidFlag"/>
+        <result column="close_code" jdbcType="VARCHAR" property="closeCode"/>
+        <result column="event_level" jdbcType="VARCHAR" property="eventLevel"/>
+        <result column="files" jdbcType="VARCHAR" property="files"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        <!--@mbg.generated-->
+        id,
+        instance_id,
+        extra1,
+        extra2,
+        extra3,
+        extra4,
+        extra5,
+        `status`,
+        created_time,
+        created_by,
+        updated_time,
+        updated_by,
+        report_org,
+        report_person,
+        report_phone,
+        side_flag,
+        finance_flag,
+        urgent_flag,
+        org_flag,
+        event_title,
+        event_info,
+        system_name,
+        complain_flag,
+        event_source,
+        event_status,
+        event_status_reason,
+        init_first_level,
+        init_second_level,
+        init_three_level,
+        inf_level,
+        event_priority,
+        target_resolve_date,
+        assigned_group,
+        assigned_person,
+        second_solve_plan,
+        solve_plan,
+        event_reason_category,
+        event_source_system,
+        relational_system,
+        event_category,
+        event_subclass,
+        event_entry,
+        event_subentry1,
+        event_subentry2,
+        final_first_level,
+        final_second_level,
+        final_three_level,
+        change_flag,
+        change_no,
+        inf_face,
+        inf_use,
+        inf_system,
+        inf_time_range,
+        second_deal_org,
+        second_deal_person,
+        solution_valid_flag,
+        close_code,
+        event_level,
+        files
+    </sql>
+
+
+    <select id="incidentRetrieval" resultType="map">
+        SELECT
+        a.id
+        ,a.instance_id
+        ,a.extra1
+        ,a.extra2
+        ,a.extra3
+        ,a.extra4
+        ,dd.pname as extra5
+        ,a.status
+        ,a.created_time
+        ,dd1.pname as created_by
+        ,a.updated_time
+        ,dd2.pname as updated_by
+        ,gg3.name as report_org
+        ,dd3.pname as report_person
+        ,a.report_phone
+        ,a.side_flag
+        ,a.event_title
+        ,a.event_info
+        ,a.event_source
+        ,a.org_flag
+        ,a.system_name
+        ,a.complain_flag
+        ,a.urgent_flag
+        ,a.finance_flag
+        ,a.event_status
+        ,a.event_status_reason
+        ,a.init_first_level
+        ,a.init_second_level
+        ,a.init_three_level
+        ,a.inf_level
+        ,a.event_priority
+        ,a.target_resolve_date
+        ,gg4.name as assigned_group
+        ,dd4.pname as assigned_person
+        ,a.second_solve_plan
+        ,a.solve_plan
+        ,a.business_solve_plan
+        ,a.event_source_system
+        ,a.relational_system
+        ,a.event_reason_category
+        ,a.mointor_invalid
+        ,a.monitor_invalid_reason
+        ,a.event_category
+        ,a.event_subclass
+        ,a.event_entry
+        ,a.event_subentry1
+        ,a.event_subentry2
+        ,a.final_first_level
+        ,a.final_second_level
+        ,a.final_three_level
+        ,a.change_flag
+        ,a.change_no
+        ,a.inf_face
+        ,a.inf_use
+        ,a.inf_system
+        ,a.inf_time_range
+        ,gg5.name as second_deal_org
+        ,a.second_deal_person
+        ,a.close_code
+        ,a.event_level
+        ,a.solution_valid_flag
+        , b.submit_time,
+        b.solve_time,
+        b.solve_person,
+        b.solve_org,
+        b.solve_group,
+        b.close_time,
+        b.suspend_flag,
+        b.suspend_time,
+        b.urge_flag,
+        b.urge_time,
+        b.service_back_falg,
+        b.add_msg_back_falg,
+        b.cancel_falg,
+        b.cancel_time,
+        b.back_completion_flag
+        FROM
+        design_biz_incident a
+        LEFT JOIN incident_sub_event b ON a.extra1 = b.event_no
+        left join og_person dd on dd.pid_crc=CRC32(a.extra5)
+        left join og_person dd1 on dd1.pid_crc=CRC32(a.created_by)
+        left join og_person dd2 on dd2.pid_crc=CRC32(a.updated_by)
+        left join og_person dd3 on dd3.pid_crc=CRC32(a.report_person)
+        left join og_person dd4 on dd4.pid_crc=CRC32(a.assigned_person)
+       <!-- left join og_person dd5 on dd4.pid_crc=CRC32(a.second_deal_person) -->
+        left join common_tree gg3 on gg3.og_id=a.report_org
+        left join common_tree gg4 on gg4.og_id=a.assigned_group
+        left join common_tree gg5 on gg4.og_id=a.second_deal_org
+        <where>
+            <!--事件单号-->
+            <if test="designBizIncident.extra1 != null and designBizIncident.extra1 != ''">
+                AND a.extra1 like CONCAT('%', #{designBizIncident.extra1}, '%')
+            </if>
+            <!--状态-->
+            <if test="designBizIncident.status != null and designBizIncident.status != ''">
+                AND a.status = #{designBizIncident.status}
+            </if>
+            <!--状态理由-->
+            <if test="designBizIncident.eventStatusReason != null and designBizIncident.eventStatusReason != ''">
+                AND a.event_status_reason = #{designBizIncident.eventStatusReason}
+            </if>
+            <!--事件标题-->
+            <if test="designBizIncident.eventTitle != null and designBizIncident.eventTitle != ''">
+                AND a.event_title like CONCAT('%', #{designBizIncident.eventTitle}, '%')
+            </if>
+            <!--事件详述-->
+            <if test="designBizIncident.eventInfo != null and designBizIncident.eventInfo != ''">
+                AND a.event_info like CONCAT('%', #{designBizIncident.eventInfo}, '%')
+            </if>
+            <!--     上报部门
+                <if test="designBizIncident.reportOrg != null and designBizIncident.reportOrg != ''">
+                    AND a.report_org = #{designBizIncident.reportOrg}
+                </if>
+                上报人
+                <if test="designBizIncident.reportPerson != null and designBizIncident.reportPerson != ''">
+                    AND a.report_person = #{designBizIncident.reportPerson}
+                </if> -->
+            <!--上报人-->
+            <if test="designBizIncident.reportPerson != null and designBizIncident.reportPerson != ''">
+                AND dd3.pname like CONCAT('%', #{designBizIncident.reportPerson}, '%')
+            </if>
+            <!--上报部门-->
+            <if test="designBizIncident.reportOrg != null and designBizIncident.reportOrg != ''">
+                AND gg3.name like CONCAT('%', #{designBizIncident.reportOrg}, '%')
+            </if>
+
+            <!--上报电话-->
+            <if test="designBizIncident.reportPhone != null and designBizIncident.reportPhone != ''">
+                AND a.report_phone = #{designBizIncident.reportPhone}
+            </if>
+            <!--事件级别-->
+            <if test="designBizIncident.eventLevel != null and designBizIncident.eventLevel != ''">
+                AND a.event_level = #{designBizIncident.eventLevel}
+            </if>
+            <!--关闭代码-->
+            <if test="designBizIncident.closeCode != null and designBizIncident.closeCode != ''">
+                AND a.close_code = #{designBizIncident.closeCode}
+            </if>
+
+            <!--总分行事件标记-->
+            <if test="designBizIncident.orgFlag != null and designBizIncident.orgFlag != ''">
+                AND a.org_flag = #{designBizIncident.orgFlag}
+            </if>
+
+            <!--中心/网点事件-->
+            <if test="designBizIncident.sideFlag != null and designBizIncident.sideFlag != ''">
+                AND a.side_flag = #{designBizIncident.sideFlag}
+            </if>
+
+            <!--上游应用系统名称  及关联系统-->
+            <if test="designBizIncident.relationalSystem != null and designBizIncident.relationalSystem != ''">
+                AND a.relational_system = #{designBizIncident.relationalSystem}
+            </if>
+
+            <!--类别-->
+            <if test="designBizIncident.eventCategory != null and designBizIncident.eventCategory != ''">
+                AND a.event_category = #{designBizIncident.eventCategory}
+            </if>
+
+            <!--子类-->
+            <if test="designBizIncident.eventSubclass != null and designBizIncident.eventSubclass != ''">
+                AND a.event_subclass = #{designBizIncident.eventSubclass}
+            </if>
+
+            <!--条目-->
+            <if test="designBizIncident.eventEntry != null and designBizIncident.eventEntry != ''">
+                AND a.event_entry = #{designBizIncident.eventEntry}
+            </if>
+
+            <!--子条目一-->
+            <if test="designBizIncident.eventSubentry1 != null and designBizIncident.eventSubentry1 != ''">
+                AND a.event_subentry1 = #{designBizIncident.eventSubentry1}
+            </if>
+
+            <!--子条目二-->
+            <if test="designBizIncident.eventSubentry2 != null and designBizIncident.eventSubentry2 != ''">
+                AND a.event_subentry2 = #{designBizIncident.eventSubentry2}
+            </if>
+
+            <!--优先级-->
+            <if test="designBizIncident.eventPriority != null and designBizIncident.eventPriority != ''">
+                AND a.event_priority = #{designBizIncident.eventPriority}
+            </if>
+
+            <!--影响程度 即影响面-->
+            <if test="designBizIncident.infFace != null and designBizIncident.infFace != ''">
+                AND a.inf_face = #{designBizIncident.infFace}
+            </if>
+
+            <!--一级-->
+            <if test="designBizIncident.initFirstLevel != null and designBizIncident.initFirstLevel != ''">
+                AND a.init_first_level = #{designBizIncident.initFirstLevel}
+            </if>
+
+            <!--二级-->
+            <if test="designBizIncident.initSecondLevel != null and designBizIncident.initSecondLevel != ''">
+                AND a.init_second_level = #{designBizIncident.initSecondLevel}
+            </if>
+
+            <!--三级-->
+            <if test="designBizIncident.initThreeLevel != null and designBizIncident.initThreeLevel != ''">
+                AND a.init_three_level = #{designBizIncident.initThreeLevel}
+            </if>
+
+            <!--分派人-->
+            <if test="designBizIncident.assignedPerson != null and designBizIncident.assignedPerson != ''">
+                AND dd4.pname like CONCAT('%', #{designBizIncident.assignedPerson}, '%')
+            </if>
+            <!--分派组-->
+            <if test="designBizIncident.assignedGroup != null and designBizIncident.assignedGroup != ''">
+                <!--  AND a.assigned_Group = #{param2.assignedGroup} -->
+                AND gg4.name like CONCAT('%', #{designBizIncident.assignedGroup}, '%')
+            </if>
+
+            <!--分派人-->
+            <if test="todoPersonal != null and todoPersonal != ''">
+                AND a.extra5 = #{todoPersonal}
+            </if>
+            <!--分派组-->
+            <if test="todoGroup != null and todoGroup != ''">
+                AND a.extra5 = #{todoGroup}
+            </if>
+            <!--来源-->
+            <if test="designBizIncident.eventSource != null and designBizIncident.eventSource != ''">
+                AND a.event_source = #{designBizIncident.eventSource}
+            </if>
+            <!--解决部门-->
+            <if test="incidentSubEvent.solveOrg != null and incidentSubEvent.solveOrg != ''">
+                AND b.solve_org = #{incidentSubEvent.solveOrg}
+            </if>
+            <!--解决组-->
+            <if test="incidentSubEvent.solveGroup != null and incidentSubEvent.solveGroup != ''">
+                AND b.solve_group = #{incidentSubEvent.solveGroup}
+            </if>
+            <!--解决人-->
+            <if test="incidentSubEvent.solvePerson != null and incidentSubEvent.solvePerson != ''">
+                AND b.solve_person = #{incidentSubEvent.solvePerson}
+            </if>
+
+            <!--是否挂起-->
+            <if test="incidentSubEvent.suspendFlag != null and incidentSubEvent.suspendFlag != ''">
+                AND b.suspend_flag = #{incidentSubEvent.suspendFlag}
+            </if>
+
+            <!--提交时间筛选 提交时间为必填-->
+            AND b.submit_time BETWEEN #{submitStartTime} AND #{submitEndTime}
+
+            <!--解决时间筛选-->
+            <if test="solveStartTime != null and solveStartTime != ''">
+                AND b.solve_time &gt; #{solveStartTime}
+            </if>
+            <if test="solveEndTime != null and solveEndTime != ''">
+                AND b.solve_time &lt; #{solveEndTime}
+            </if>
+
+            <!--解决时间筛选-->
+            <if test="closeEndTime != null and closeEndTime != ''">
+                AND b.close_time &gt; #{closeEndTime}
+            </if>
+            <if test="closeEndTime != null and closeEndTime != ''">
+                AND b.close_time &lt; #{closeEndTime}
+            </if>
+
+            <!--经手人-->
+            <!--             <if test="brokerage != null and brokerage != ''">
+                            AND c.created_by = #{brokerage}
+                        </if> -->
+            <!--开单人-->
+            <if test="createdBy != null and createdBy != ''">
+                AND dd1.pname = #{createdBy}
+            </if>
+
+            <!--开单组-->
+            <if test="createdGroupBy != null  and createdGroupBy != ''">
+                AND #{createdGroupBy} in (
+                select g.groupid
+                from og_group g
+                left join og_group_person o on g.groupid = o.groupid
+                left join og_person p on o.pid = p.pid
+                where 1 = 1
+                AND p.pid = a.created_by
+                union
+                select distinct r.rid
+                from og_role r
+                left join OG_R_POST_ROLE pr on r.rid = pr.rid
+                left join og_post p on p.postid = pr.postid
+                left join og_r_user_post u on p.postid = u.postid
+                WHERE u.userid = a.created_by
+                union
+                select o.orgid
+                from og_person p
+                left join OG_ORG o
+                on p.orgid = o.orgid
+                where p.pid = a.created_by)
+            </if>
+        </where>
+    </select>
+
+
+    <select id="incidentPageRetrieval" resultType="java.util.Map">
+        SELECT
+        a.id
+        ,a.instance_id
+        ,a.extra1
+        ,a.extra2
+        ,a.extra3
+        ,a.extra4
+        ,dd.pname as extra5
+        ,a.status
+        ,a.created_time
+        ,dd1.pname as created_by
+        ,a.updated_time
+        ,dd2.pname as updated_by
+        ,gg3.name as report_org
+        ,dd3.pname as report_person
+        ,a.report_phone
+        ,a.side_flag
+        ,a.event_title
+        ,a.event_info
+        ,a.event_source
+        ,a.org_flag
+        ,a.system_name
+        ,a.complain_flag
+        ,a.urgent_flag
+        ,a.finance_flag
+        ,a.event_status
+        ,a.event_status_reason
+        ,a.init_first_level
+        ,a.init_second_level
+        ,a.init_three_level
+        ,a.inf_level
+        ,a.event_priority
+        ,a.target_resolve_date
+        ,gg4.name as assigned_group
+        ,dd4.pname as assigned_person
+        ,a.second_solve_plan
+        ,a.solve_plan
+        ,a.business_solve_plan
+        ,a.event_source_system
+        ,a.relational_system
+        ,a.event_reason_category
+        ,a.mointor_invalid
+        ,a.monitor_invalid_reason
+        ,a.event_category
+        ,a.event_subclass
+        ,a.event_entry
+        ,a.event_subentry1
+        ,a.event_subentry2
+        ,a.final_first_level
+        ,a.final_second_level
+        ,a.final_three_level
+        ,a.change_flag
+        ,a.change_no
+        ,a.inf_face
+        ,a.inf_use
+        ,a.inf_system
+        ,a.inf_time_range
+        ,gg5.name as second_deal_org
+        ,a.second_deal_person
+        ,a.close_code
+        ,a.event_level
+        ,a.solution_valid_flag
+        , b.submit_time,
+        b.solve_time,
+        b.solve_person,
+        b.solve_org,
+        b.solve_group,
+        b.close_time,
+        b.suspend_flag,
+        b.suspend_time,
+        b.urge_flag,
+        b.urge_time,
+        b.service_back_falg,
+        b.add_msg_back_falg,
+        b.cancel_falg,
+        b.cancel_time,
+        b.back_completion_flag
+        FROM
+        design_biz_incident a
+        LEFT JOIN incident_sub_event b ON a.extra1 = b.event_no
+        left join og_person dd on dd.pid_crc=CRC32(a.extra5)
+        left join og_person dd1 on dd1.pid_crc=CRC32(a.created_by)
+        left join og_person dd2 on dd2.pid_crc=CRC32(a.updated_by)
+        left join og_person dd3 on dd3.pid_crc=CRC32(a.report_person)
+        left join og_person dd4 on dd4.pid_crc=CRC32(a.assigned_person)
+        <!-- left join og_person dd5 on dd4.pid_crc=CRC32(a.second_deal_person) -->
+        left join common_tree gg3 on gg3.og_id=a.report_org
+        left join common_tree gg4 on gg4.og_id=a.assigned_group
+        left join common_tree gg5 on gg4.og_id=a.second_deal_org
+        <where>
+            <!--事件单号-->
+            <if test="param2.designBizIncident.extra1 != null and param2.designBizIncident.extra1 != ''">
+                AND a.extra1 like CONCAT('%', #{param2.designBizIncident.extra1}, '%')
+            </if>
+            <!--状态-->
+            <if test="param2.designBizIncident.status != null and param2.designBizIncident.status != ''">
+                AND a.status = #{param2.designBizIncident.status}
+            </if>
+            <!--状态理由-->
+            <if test="param2.designBizIncident.eventStatusReason != null and param2.designBizIncident.eventStatusReason != ''">
+                AND a.event_status_reason = #{param2.designBizIncident.eventStatusReason}
+            </if>
+            <!--事件标题-->
+            <if test="param2.designBizIncident.eventTitle != null and param2.designBizIncident.eventTitle != ''">
+                AND a.event_title like CONCAT('%', #{param2.designBizIncident.eventTitle}, '%')
+            </if>
+            <!--事件详述-->
+            <if test="param2.designBizIncident.eventInfo != null and param2.designBizIncident.eventInfo != ''">
+                AND a.event_info like CONCAT('%', #{param2.designBizIncident.eventInfo}, '%')
+            </if>
+            <!--上报人-->
+            <if test="param2.designBizIncident.reportPerson != null and param2.designBizIncident.reportPerson != ''">
+                AND dd3.pname like CONCAT('%', #{param2.designBizIncident.reportPerson}, '%')
+            </if>
+            <!--上报部门-->
+            <if test="param2.designBizIncident.reportOrg != null and param2.designBizIncident.reportOrg != ''">
+                AND gg3.name like CONCAT('%', #{param2.designBizIncident.reportOrg}, '%')
+            </if>
+
+            <!--上报电话-->
+            <if test="param2.designBizIncident.reportPhone != null and param2.designBizIncident.reportPhone != ''">
+                AND a.report_phone = #{param2.designBizIncident.reportPhone}
+            </if>
+            <!--事件级别-->
+            <if test="param2.designBizIncident.eventLevel != null and param2.designBizIncident.eventLevel != ''">
+                AND a.event_level = #{param2.designBizIncident.eventLevel}
+            </if>
+            <!--关闭代码-->
+            <if test="param2.designBizIncident.closeCode != null and param2.designBizIncident.closeCode != ''">
+                AND a.close_code = #{param2.designBizIncident.closeCode}
+            </if>
+
+            <!--总分行事件标记-->
+            <if test="param2.designBizIncident.orgFlag != null and param2.designBizIncident.orgFlag != ''">
+                AND a.org_flag = #{param2.designBizIncident.orgFlag}
+            </if>
+
+            <!--中心/网点事件-->
+            <if test="param2.designBizIncident.sideFlag != null and param2.designBizIncident.sideFlag != ''">
+                AND a.side_flag = #{param2.designBizIncident.sideFlag}
+            </if>
+
+            <!--上游应用系统名称  及关联系统-->
+            <if test="param2.designBizIncident.relationalSystem != null and param2.designBizIncident.relationalSystem != ''">
+                AND a.relational_system = #{param2.designBizIncident.relationalSystem}
+            </if>
+
+            <!--类别-->
+            <if test="param2.designBizIncident.eventCategory != null and param2.designBizIncident.eventCategory != ''">
+                AND a.event_category = #{param2.designBizIncident.eventCategory}
+            </if>
+
+            <!--子类-->
+            <if test="param2.designBizIncident.eventSubclass != null and param2.designBizIncident.eventSubclass != ''">
+                AND a.event_subclass = #{param2.designBizIncident.eventSubclass}
+            </if>
+
+            <!--条目-->
+            <if test="param2.designBizIncident.eventEntry != null and param2.designBizIncident.eventEntry != ''">
+                AND a.event_entry = #{param2.designBizIncident.eventEntry}
+            </if>
+
+            <!--子条目一-->
+            <if test="param2.designBizIncident.eventSubentry1 != null and param2.designBizIncident.eventSubentry1 != ''">
+                AND a.event_subentry1 = #{param2.designBizIncident.eventSubentry1}
+            </if>
+
+            <!--子条目二-->
+            <if test="param2.designBizIncident.eventSubentry2 != null and param2.designBizIncident.eventSubentry2 != ''">
+                AND a.event_subentry2 = #{param2.designBizIncident.eventSubentry2}
+            </if>
+
+            <!--优先级-->
+            <if test="param2.designBizIncident.eventPriority != null and param2.designBizIncident.eventPriority != ''">
+                AND a.event_priority = #{param2.designBizIncident.eventPriority}
+            </if>
+
+            <!--影响程度 即影响面-->
+            <if test="param2.designBizIncident.infFace != null and param2.designBizIncident.infFace != ''">
+                AND a.inf_face = #{param2.designBizIncident.infFace}
+            </if>
+
+            <!--一级-->
+            <if test="param2.designBizIncident.initFirstLevel != null and param2.designBizIncident.initFirstLevel != ''">
+                AND a.init_first_level = #{param2.designBizIncident.initFirstLevel}
+            </if>
+
+            <!--二级-->
+            <if test="param2.designBizIncident.initSecondLevel != null and param2.designBizIncident.initSecondLevel != ''">
+                AND a.init_second_level = #{param2.designBizIncident.initSecondLevel}
+            </if>
+
+            <!--三级-->
+            <if test="param2.designBizIncident.initThreeLevel != null and param2.designBizIncident.initThreeLevel != ''">
+                AND a.init_three_level = #{param2.designBizIncident.initThreeLevel}
+            </if>
+
+            <!--分派人-->
+            <if test="param2.designBizIncident.assignedPerson != null and param2.designBizIncident.assignedPerson != ''">
+                <!-- AND a.assigned_person = #{param2.assignedPerson} -->
+                AND dd4.pname like CONCAT('%', #{param2.designBizIncident.assignedPerson}, '%')
+            </if>
+            <!--分派组-->
+            <if test="param2.designBizIncident.assignedGroup != null and param2.designBizIncident.assignedGroup != ''">
+                <!--  AND a.assigned_Group = #{param2.assignedGroup} -->
+                AND gg4.name like CONCAT('%', #{param2.designBizIncident.assignedGroup}, '%')
+            </if>
+            <!--来源-->
+            <if test="param2.designBizIncident.eventSource != null and param2.designBizIncident.eventSource != ''">
+                AND a.event_source = #{param2.designBizIncident.eventSource}
+            </if>
+            <!--解决部门-->
+            <if test="param2.incidentSubEvent.solveOrg != null and param2.incidentSubEvent.solveOrg != ''">
+                AND b.solve_org = #{param2.incidentSubEvent.solveOrg}
+            </if>
+            <!--解决组-->
+            <if test="param2.incidentSubEvent.solveGroup != null and param2.incidentSubEvent.solveGroup != ''">
+                AND b.solve_group = #{param2.incidentSubEvent.solveGroup}
+            </if>
+            <!--解决人-->
+            <if test="param2.incidentSubEvent.solvePerson != null and param2.incidentSubEvent.solvePerson != ''">
+                AND b.solve_person = #{param2.incidentSubEvent.solvePerson}
+            </if>
+
+            <!--是否挂起-->
+            <if test="param2.incidentSubEvent.suspendFlag != null and param2.incidentSubEvent.suspendFlag != ''">
+                AND b.suspend_flag = #{param2.incidentSubEvent.suspendFlag}
+            </if>
+
+            <!--提交时间筛选 提交时间为必填-->
+            AND b.submit_time BETWEEN #{param2.submitStartTime} AND #{param2.submitEndTime}
+
+            <!--解决时间筛选-->
+            <if test="param2.solveStartTime != null and param2.solveStartTime != ''">
+                AND b.solve_time &gt; #{param2.solveStartTime}
+            </if>
+            <if test="param2.solveEndTime != null and param2.solveEndTime != ''">
+                AND b.solve_time &lt; #{param2.solveEndTime}
+            </if>
+
+            <!--解决时间筛选-->
+            <if test="param2.closeEndTime != null and param2.closeEndTime != ''">
+                AND b.close_time &gt; #{param2.closeEndTime}
+            </if>
+            <if test="param2.closeEndTime != null and param2.closeEndTime != ''">
+                AND b.close_time &lt; #{param2.closeEndTime}
+            </if>
+
+            <!--经手人-->
+            <!--             <if test="param2.brokerage != null and param2.brokerage != ''">
+                            AND c.created_by = #{param2.brokerage}
+                        </if> -->
+            <!--开单人-->
+            <if test="param2.createdBy != null and param2.createdBy != ''">
+                AND dd1.pname = #{param2.createdBy}
+            </if>
+
+            <!--开单组-->
+            <if test="param2.createdGroupBy != null  and param2.createdGroupBy != ''">
+                AND #{param2.createdGroupBy} in (
+                select g.groupid
+                from og_group g
+                left join og_group_person o on g.groupid = o.groupid
+                left join og_person p on o.pid = p.pid
+                where 1 = 1
+                AND p.pid = a.created_by
+                union
+                select distinct r.rid
+                from og_role r
+                left join OG_R_POST_ROLE pr on r.rid = pr.rid
+                left join og_post p on p.postid = pr.postid
+                left join og_r_user_post u on p.postid = u.postid
+                WHERE u.userid = a.created_by
+                union
+                select o.orgid
+                from og_person p
+                left join OG_ORG o
+                on p.orgid = o.orgid
+                where p.pid = a.created_by)
+            </if>
+        </where>
+    </select>
+
+    <select id="getAllBaseDataByPid" resultType="list">
+        select g.groupid
+        from og_group g
+                 left join og_group_person o on g.groupid = o.groupid
+                 left join og_person p on o.pid = p.pid
+        where 1 = 1
+          AND p.pid = #{userId}
+        union
+        select distinct r.rid
+        from og_role r
+                 left join OG_R_POST_ROLE pr on r.rid = pr.rid
+                 left join og_post p on p.postid = pr.postid
+                 left join og_r_user_post u on p.postid = u.postid
+        WHERE u.userid = #{userId}
+        union
+        select o.orgid
+        from og_person p
+                 left join OG_ORG o
+                           on p.orgid = o.orgid
+        where p.pid = #{userId}
+    </select>
+
+    <select id="summaryConsoleDesk" resultType="map">
+        SELECT a.*,
+        b.submit_time,
+        b.solve_time,
+        b.solve_person,
+        b.solve_org,
+        b.solve_group,
+        b.close_time,
+        b.suspend_flag,
+        b.suspend_time,
+        b.urge_flag,
+        b.urge_time,
+        b.service_back_falg,
+        b.add_msg_back_falg,
+        b.cancel_falg,
+        b.cancel_time,
+        b.back_completion_flag
+        FROM design_biz_incident a
+        LEFT JOIN incident_sub_event b ON a.extra1 = b.event_no
+        <where>
+            <if test="createBy != null and createBy != ''">
+                a.created_by = #{createBy}
+            </if>
+        </where>
+    </select>
+
+    <select id="summaryTodoConsoleDesk" resultType="map">
+        SELECT a.*,
+        b.submit_time,
+        b.solve_time,
+        b.solve_person,
+        b.solve_org,
+        b.solve_group,
+        b.close_time,
+        b.suspend_flag,
+        b.suspend_time,
+        b.urge_flag,
+        b.urge_time,
+        b.service_back_falg,
+        b.add_msg_back_falg,
+        b.cancel_falg,
+        b.cancel_time,
+        b.back_completion_flag,
+        (CASE WHEN A.event_priority is NULL THEN 'P9' ELSE A.event_priority END) AS PLEVEL
+        FROM design_biz_incident a
+        LEFT JOIN incident_sub_event b ON a.extra1 = b.event_no
+        <where>
+            <if test="todoPersonal != null and todoPersonal != ''">
+                a.extra5 = #{todoPersonal}
+            </if>
+            <if test="todoPersonal == null or todoPersonal.equals('')">
+                a.extra5  IS NOT NULL AND a.extra5 != ''
+            </if>
+        </where>
+        order by PLEVEL,a.created_time desc
+    </select>
+
+    <select id="todoGroupConsole" resultType="map">
+        SELECT
+            a.*,
+            b.submit_time,
+            b.solve_time,
+            b.solve_person,
+            b.solve_org,
+            b.solve_group,
+            b.close_time,
+            b.suspend_flag,
+            b.suspend_time,
+            b.urge_flag,
+            b.urge_time,
+            b.service_back_falg,
+            b.add_msg_back_falg,
+            b.cancel_falg,
+            b.cancel_time,
+            b.back_completion_flag
+        FROM
+            design_biz_incident a
+                LEFT JOIN incident_sub_event b ON a.extra1 = b.event_no
+        WHERE
+                a.extra5 IN (
+                SELECT
+                    pp.pid
+                FROM
+                    og_group_person pp
+                WHERE
+                        pp.groupid IN ( SELECT o.groupid FROM og_group_person o LEFT JOIN og_person p ON o.pid = p.pid WHERE p.pid = #{userId} )
+                  AND pp.pid != #{userId}
+            )
+          AND a.instance_id IS NOT NULL
+        order by a.created_time desc
+    </select>
+    <select id="selectIncidentListByBatchClose" resultType="java.util.Map">
+        SELECT
+        d.extra1,
+        d.extra5,
+        d.event_title,
+        d.event_info,
+        d.created_time
+        FROM
+        design_biz_incident d
+        LEFT JOIN it_biz_extend i ON d.id = i.biz_id
+        where i.source_type='Monitor'
+        AND d.extra5 IS NOT NULL
+        AND d.instance_id IS NOT NULL
+        <if test="eventNo != null and eventNo != ''">
+            AND d.extra1 like CONCAT('%', #{eventNo}, '%')
+        </if>
+        <if test="eventTitle != null and eventTitle != ''">
+            AND d.event_title like CONCAT('%', #{eventTitle}, '%')
+        </if>
+        <if test="startCreateTime != null and startCreateTime != ''">
+            AND d.created_time &gt;= #{startCreateTime}
+        </if>
+        <if test="endCreateTime != null and endCreateTime != ''">
+            AND d.created_time &lt;= #{startCreateTime}
+        </if>
+    </select>
+</mapper>

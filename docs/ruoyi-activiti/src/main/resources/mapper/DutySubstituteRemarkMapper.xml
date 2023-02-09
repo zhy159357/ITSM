@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.activiti.mapper.DutySubstituteRemarkMapper">
+
+    <resultMap type="DutySubstituteRemark" id="DutySubstituteRemarkResult">
+        <result property="substituteRemarkId" column="substitute_remark_id"    />
+        <result property="typeNo"       column="type_no"    />
+        <result property="typeName"     column="type_name"    />
+        <result property="pid"          column="pid"    />
+        <result property="pname"        column="pname"    />
+        <result property="tid"          column="tid"    />
+        <result property="tname"        column="tname"    />
+        <result property="dutyDate"     column="duty_date"    />
+        <result property="remark"       column="remark"    />
+    </resultMap>
+
+    <resultMap type="DutySubstitute" id="DutySubstituteResult">
+        <result property="substituteId" column="substitute_id"    />
+        <result property="schedulingId" column="scheduling_id"    />
+        <result property="typeNo"       column="type_no"    />
+        <result property="typeName"     column="type_name"    />
+        <result property="pid"          column="pid"    />
+        <result property="pname"        column="pname"    />
+        <result property="tid"          column="tid"    />
+        <result property="tname"        column="tname"    />
+        <result property="dutyDate"     column="duty_date"    />
+        <result property="status"       column="status"    />
+        <result property="remark"       column="remark"    />
+    </resultMap>
+
+
+    <select id="selectSubstituteRemarkList" parameterType="DutySubstituteRemark" resultMap="DutySubstituteRemarkResult">
+        select s.substitute_remark_id,s.type_no,s.pid,
+        (select p.pname from og_person p where p.pid=s.pid) as pname,s.tid,
+        (select p.pname from og_person p where p.pid=s.tid) as tname,
+        (select type_name from duty_typeinfo t where t.type_no=s.type_no) as type_name,
+        s.duty_date,s.remark
+        from duty_substitute_remark s
+        <where>
+            s.substitute_remark_id != 'TEMPLATE0001'
+            <if test="pid != null and pid != ''"> and s.pid = #{pid}</if>
+            <if test="tid != null and tid != ''"> and s.tid = #{tid}</if>
+            <if test="remark!=null and remark!=''">
+                AND s.remark like concat(concat('%', #{remark}), '%')
+            </if>
+            <if test="startTime != null and startTime != ''"> and s.duty_date &gt;= #{startTime}</if>
+            <if test="endTime != null and endTime != ''"> and s.duty_date &lt;= #{endTime}</if>
+        </where>
+        order by s.duty_date desc
+    </select>
+    <select id="selectRemarkByDutyDate" parameterType="DutySubstitute" resultMap="DutySubstituteResult">
+        select s.type_no,s.pid,
+        (select p.pname from og_person p where p.pid=s.pid) as pname,
+        (select type_name from duty_typeinfo t where t.type_no=s.type_no) as type_name,
+        s.duty_date
+        from DUTY_SCHEDULING s
+        <where>
+            <if test="dutyDate != null and dutyDate != ''"> and s.duty_date = #{dutyDate}</if>
+            <if test="typeNo != null and typeNo != ''"> and s.type_no = #{typeNo}</if>
+        </where>
+    </select>
+    <select id="selectSubstituteList" parameterType="DutySubstitute" resultMap="DutySubstituteResult">
+        select s.type_no,s.pid,
+        (select p.pname from og_person p where p.pid=s.pid) as pname,
+        (select type_name from duty_typeinfo t where t.type_no=s.type_no) as type_name,
+        s.duty_date
+        from DUTY_SCHEDULING s
+        <where>
+            <if test="pid != null and pid != ''"> and s.pid = #{pid}</if>
+        </where>
+        order by s.duty_date desc
+    </select>
+    <select id="selectTemplateById" parameterType="String" resultMap="DutySubstituteRemarkResult">
+        select remark from duty_substitute_remark where substitute_remark_id = #{template}
+    </select>
+
+    <select id="addCheckSave" parameterType="DutySubstituteRemark" resultMap="DutySubstituteRemarkResult">
+        select  substitute_remark_id,pid,tid,duty_date,type_no
+        from duty_substitute_remark
+        <where>
+            <if test="dutyDate != null and dutyDate != ''"> and duty_date = #{dutyDate}</if>
+            <if test="typeNo != null and typeNo != ''"> and type_no = #{typeNo}</if>
+        </where>
+    </select>
+    <select id="selectDutySubstituteRemarkById" parameterType="String"  resultMap="DutySubstituteRemarkResult">
+        select s.substitute_remark_id,s.type_no,s.pid,
+        (select p.pname from og_person p where p.pid=s.pid) as pname,s.tid,
+        (select p.pname from og_person p where p.pid=s.tid) as tname,
+        (select type_name from duty_typeinfo t where t.type_no=s.type_no) as type_name,
+        s.duty_date,s.remark
+        from duty_substitute_remark s
+        where
+         s.substitute_remark_id = #{substituteRemarkId}
+    </select>
+
+    <insert id="insertDutySubstituteRemark" parameterType="dutySubstituteRemark">
+        insert into DUTY_SUBSTITUTE_REMARK
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="substituteRemarkId != null  and substituteRemarkId != ''">SUBSTITUTE_REMARK_ID,</if>
+            <if test="pid != null and pid != ''">PID,</if>
+            <if test="tid != null and tid != ''">TID,</if>
+            <if test="dutyDate != null and dutyDate != ''">DUTY_DATE,</if>
+            <if test="remark != null and remark != ''">REMARK,</if>
+            <if test="typeNo != null and typeNo != ''">TYPE_NO,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="substituteRemarkId != null  and substituteRemarkId != ''">#{substituteRemarkId},</if>
+            <if test="pid != null  and pid != ''">#{pid},</if>
+            <if test="tid != null and tid != ''">#{tid},</if>
+            <if test="dutyDate != null  and dutyDate != ''">#{dutyDate},</if>
+            <if test="remark != null  and remark != ''">#{remark},</if>
+            <if test="typeNo != null  and typeNo != ''">#{typeNo},</if>
+        </trim>
+    </insert>
+
+    <update id="updateDutySubstituteRemark" parameterType="dutySubstituteRemark">
+        update DUTY_SUBSTITUTE_REMARK
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="remark != null  and remark != ''">remark = #{remark},</if>
+        </trim>
+        where SUBSTITUTE_REMARK_ID = #{substituteRemarkId}
+    </update>
+
+    <delete id="deleteDutySubstituteRemarkByIds" parameterType="String">
+        delete from DUTY_SUBSTITUTE_REMARK where SUBSTITUTE_REMARK_ID in
+        <foreach item="substituteRemarkId" collection="array" open="(" separator="," close=")">
+            #{substituteRemarkId}
+        </foreach>
+    </delete>
+
+    <select id="selectContById" parameterType="String"  resultMap="DutySubstituteRemarkResult">
+        select
+            s.substitute_remark_id,s.type_no,s.pid,s.tid,s.duty_date,s.remark
+        from
+            duty_substitute_remark s
+        where
+            s.substitute_remark_id = #{id}
+    </select>
+</mapper>

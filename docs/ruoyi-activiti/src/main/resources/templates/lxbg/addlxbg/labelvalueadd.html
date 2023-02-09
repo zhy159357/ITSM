@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+	<th:block th:include="include :: header('接收机构/工作组')" />
+</head>
+<body class="white-bg">
+	<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+		<form class="form-horizontal m" id="form-value-add" >
+			<input type="hidden" name="amParaId" th:value="${amParaId}"/>
+			<div class="row form-group">
+				<div class="col-sm-6">
+					<div class="form-group">
+						<label class="col-sm-4 control-label"></label>
+						<div class="col-sm-8">
+							<a onclick="getMultiusers()"><i class="fa fa-edit"></i>执行机构</a>
+						</div>
+					</div>
+				</div>
+				<div class="col-sm-12">
+					<div class="form-group">
+						<label class="col-xs-2 control-label">执行机构名称：</label>
+						<div class="col-xs-10">
+							<input id="multiusers" name="receivedeptid" type="hidden" value=""/>
+							<input class="form-control" type="text" name="multiusersName" id="multiusersName" readonly style="background-color: #ffffff">
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row form-group">
+				<div class="col-sm-12">
+					<div class="form-group">
+						<label class="col-sm-2 control-label">接收工作组：</label>
+						<div class="col-sm-10">
+							<input id="working" name="receivegroupid" type="hidden" class="form-control" />
+							<input id="workingname" name="workingname" type="text" class="form-control" onclick="workings()" readonly style="background-color: #ffffff">
+						</div>
+					</div>
+				</div>
+			</div>
+
+		</form>
+	</div>
+	<th:block th:include="include :: footer" />
+	<script type="text/javascript">
+
+        var prefix = ctx+ "system/value"
+
+        var mu_prefix = ctx + "lxbg/addlxbg"
+
+
+
+        $("#form-value-add").validate({
+			rules:{
+				dictSort:{
+					digits:true
+				},
+			},
+			focusCleanup: true
+		});
+
+
+		
+		function submitHandler() {
+	        if ($.validate.form()) {
+	        	$.operate.save(prefix + "/add", $('#form-value-add').serialize());
+	        }
+	    }
+
+        function getMultiusers() {
+            $.modal.open("选择机构页面", mu_prefix + "/multiusers");
+        }
+
+        function workings() {
+            var groupIds = $("#working").val();
+            if($.common.isEmpty(groupIds)){
+                groupIds = "0";
+            }
+            var url = mu_prefix + "/working/" +groupIds;
+            var options = {
+                title: '选择接收工作组',
+                url: url,
+                callBack: function (index, layero) {
+                    var nodeName = window["layui-layer-iframe"+index].submitForm();
+                    var pids = '';
+                    var workingname = '';
+                    for(var v=0;v<nodeName.length;v++){
+                        pids += nodeName[v].groupId+","
+                        workingname += nodeName[v].grpName+","
+                    }
+                    pids = pids.substr(0,pids.length-1);
+                    workingname = workingname.substr(0,workingname.length-1);
+                    $("#working").val(pids);
+                    $("#workingname").val(workingname);
+                    layer.close(index);
+                }
+            };
+            $.modal.openOptions(options);
+
+        }
+
+
+
+
+
+	</script>
+</body>
+</html>

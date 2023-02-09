@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('应用系统列表3')"/>
+</head>
+<body class="gray-bg">
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-12 search-collapse">
+            <form id="role-form">
+                <input type="hidden" id="deptId" name="orgId">
+                <div class="select-list">
+                    <ul>
+                        <li>
+                            系统名称：<input type="text" name="caption"/>
+                        </li>
+                        <li>
+                            所属机构：<input id="deptName" type="text" onclick="selectDeptTree()" name="orgName" readonly/>
+                        </li>
+                        <li>
+                            <a class="btn btn-primary btn-rounded btn-sm" id="ss" onclick="$.table.search()"><i
+                                    class="fa fa-search"></i>&nbsp;搜索</a>
+                            <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i
+                                    class="fa fa-repeat"></i>&nbsp;重置</a>
+                        </li>
+                    </ul>
+                </div>
+            </form>
+        </div>
+
+        <div class="col-sm-12 select-table table-striped">
+            <table id="bootstrap-table"></table>
+        </div>
+    </div>
+</div>
+<th:block th:include="include :: footer"/>
+<script th:inline="javascript">
+
+    var prefix = ctx + "system/work";
+
+
+    $(function () {
+
+        //回车搜索
+        document.onkeydown = function(e){
+            var ev = document.all ? window.event : e;
+            console.log(ev);
+            if(ev.keyCode==13) {
+                $('#ss').trigger('click');
+                return false;
+            } //搜索逻辑
+        }
+
+        var options = {
+            url: prefix + "/syslist",
+            clickToSelect: true,
+            modalName: "应用系统",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'sysId',
+                    title: '应用系统Id',
+                    visible: false
+                },
+                {
+                    field: 'caption',
+                    title: '系统名称'
+                },
+                {
+                    field: 'ogOrg.orgName',
+                    title: '所属机构'
+                },
+                {
+                    field: 'isKeySys',
+                    title: '重要系统',
+                    formatter: function (value, row, index) {
+                        if (row.isKeySys == 1) {
+                            return "是";
+                        } else {
+                            return "否";
+                        }
+                    }
+                },
+                {
+                    field: 'invalidationMark ',
+                    title: '状态',
+                    formatter: function (value, row, index) {
+                        if (row.invalidationMark == 1) {
+                            return "启用";
+                        } else {
+                            return "停止";
+                        }
+                    }
+                }]
+        };
+        $.table.init(options);
+    });
+
+    /* 选择部门树 */
+    function selectDeptTree() {
+        var deptId = $.common.isEmpty($("#treeId").val()) ? "310100001" : $("#treeId").val();
+        var url = ctx + "system/dept/selectDeptTree/" + deptId;
+        var options = {
+            title: '选择部门',
+            width: "380",
+            url: url,
+            callBack: doSubmit
+        };
+        $.modal.openOptions(options);
+    }
+
+    function doSubmit(index, layero) {
+        var tree = layero.find("iframe")[0].contentWindow.$._tree;
+        var body = layer.getChildFrame('body', index);
+        $("#deptId").val(body.find('#treeId').val());
+        $("#deptName").val(body.find('#treeName').val());
+        layer.close(index);
+    }
+
+    /* 选择外围系统 */
+    function submitHandler(index, layero) {
+        var arrays = $("#bootstrap-table").bootstrapTable('getSelections');
+
+        var isHas = false;
+        $(arrays).each(function (index, item) {
+            if (item.invalidationMark == 0) {
+                isHas = true;
+            }
+        });
+        if (isHas) {
+            $.modal.alertError('当前选择所属系统为停用状态，请选择其他可用状态的系统!!!')
+            return;
+        }
+
+        if (arrays.length > 0) {
+            window.parent.insertRow(arrays);
+        }
+        $.modal.close();
+
+    }
+
+</script>
+</body>
+</html>

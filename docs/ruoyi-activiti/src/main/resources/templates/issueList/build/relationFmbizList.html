@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+
+
+<head>
+    <th:block th:include="include :: header('查看问题单关联的事件单')"/>
+    <th:block th:include="include :: select2-css"/>
+</head>
+<body class="gray-bg">
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-12 search-collapse">
+            <form id="formId">
+                <input type="hidden" name="params[issuefxNo]" th:value="*{issuefxNo}"/>
+                <div class="select-list">
+                    <ul>
+                        <div class="row">
+                            <li>
+                                <p>事件单号：</p>
+                                <input type="text" name="faultNo"/>
+                            </li>
+                            <li>
+                                <p>事件标题：</p>
+                                <input type="text" name="faultDecriptSummary"/>
+                            </li>
+                            <li>
+                                <p>事件描述：</p>
+                                <input type="text" name="faultDecriptDetail"/>
+                            </li>
+                            <li>
+                                <p>状态：</p>
+                                <select id="currentState" name="currentState"
+                                        class="form-control noselect2 selectpicker"
+                                        multiple data-actions-box="true" data-width="200px" data-live-search="true"
+                                        data-none-selected-text="请选择状态"
+                                        th:with="type=${@pubParaValue.selectPubParaValueByParaName('fmStatus')}">
+                                    <option th:each="paraValue : ${type}" th:text="${paraValue.valueDetail}"
+                                            th:value="${paraValue.value}"></option>
+                                </select>
+                            </li>
+                        </div>
+                        <div class="row">
+                            <li>
+                                <p>所属系统：</p>
+                                <input id="sysid" name="sysid" type="hidden" class="form-control"/>
+                                <input id="applicationName" name="applicationName" type="text" class="form-control"
+                                       onclick="selectOgSysListByCondition()"/>
+                            </li>
+                            <li>
+                                <p>工作组：</p>
+                                <select id="groupId" name="groupId" class="form-control">
+                                    <option th:each="OgGroup : ${groupList}" th:text="${OgGroup.grpName}"
+                                            th:value="${OgGroup.groupId}"></option>
+                                </select>
+                            </li>
+                            <li>
+                                <p>事件起因：</p>
+                                <select id="fmCause" name="fmCause" class="form-controlnoselect2 selectpicker"
+                                        multiple data-actions-box="true" data-width="200px" data-live-search="true"
+                                        data-none-selected-text="请选择事件起因"
+                                        th:with="type=${@pubParaValue.selectPubParaValueByParaName('fm_cause')}">
+                                    <option th:each="PubParaValue : ${type}" th:text="${PubParaValue.valueDetail}"
+                                            th:value="${PubParaValue.value}"></option>
+                                </select>
+                            </li>
+                            <li>
+                                <p>发生机构：</p>
+                                <input name="occurrenceOrgId" id="occurrenceOrgId" class="form-control" type="hidden">
+                                <input id="occurrenceOrgName" name="occurrenceOrgName" type="text" class="form-control"
+                                       onclick="selectogOrg()"/>
+                            </li>
+                        </div>
+                        <div class="row">
+                            <li>
+                                <p>创建人：</p>
+                                <input type="text" name="createId"/>
+                            </li>
+                            <li>
+                                <p>处理人：</p>
+                                <input type="text" name="dealerId"/>
+                            </li>
+                            <li>
+                                <p>创建时间：</p>
+                                <input type="text" class="time-input" id="startCreatTime" placeholder="创建时间起"
+                                       name="params[startCreatTime]" readonly/>
+                            </li>
+                            <li>
+                                <p>创建时间：</p>
+                                <input type="text" class="time-input" id="endCreatTime" placeholder="创建时间止"
+                                       name="params[endCreatTime]" readonly/>
+                            </li>
+                        </div>
+                        <div class="row">
+                            <li>
+                                <p>处理时间：</p>
+                                <input type="text" class="time-input" id="startDealTime" placeholder="处理时间起"
+                                       name="params[startDealTime]" readonly/>
+                            </li>
+                            <li>
+                                <p>处理时间：</p>
+                                <input type="text" class="time-input" id="endDealTime" placeholder="处理时间止"
+                                       name="params[endDealTime]" readonly/>
+                            </li>
+                            <li>
+                                <p>事件来源：</p>
+                                <select id="faultSource" name="faultSource" class="form-control"
+                                        th:with="type=${@pubParaValue.selectPubParaValueByParaName('fmSource')}">
+                                    <option></option>
+                                    <option th:each="PubParaValue : ${type}" th:text="${PubParaValue.valueDetail}"
+                                            th:value="${PubParaValue.value}"></option>
+                                </select>
+                            </li>
+                            <li>
+                                <p>事件等级：</p>
+                                <select id="seriousLev" name="seriousLev" class="form-control"
+                                        th:with="type=${@pubParaValue.selectPubParaValueByParaName('fmLevel')}">
+                                    <option></option>
+                                    <option th:each="PubParaValue : ${type}" th:text="${PubParaValue.valueDetail}"
+                                            th:value="${PubParaValue.value}"></option>
+                                </select>
+                            </li>
+                        </div>
+                        <div class="row">
+                            <li>
+                                <p>排序规则：</p>
+                                <select id="isSc" name="params[isSc]" class="form-control"
+                                        th:with="type=${@pubParaValue.selectPubParaValueByParaName('Fm_Sc')}">
+                                    <option></option>
+                                    <option th:each="PubParaValue : ${type}" th:text="${PubParaValue.valueDetail}"
+                                            th:value="${PubParaValue.value}"></option>
+                                </select>
+                            </li>
+                            <li>
+                                <p>参与人：</p>
+                                <input type="text" name="participatorIds"/>
+                            </li>
+                            <li>
+                                <p>是否紧急：</p>
+                                <select id="ifJj" name="ifJj" class="form-control"
+                                        th:with="type=${@pubParaValue.selectPubParaValueByParaName('SAFETY_AUDIT')}">
+                                    <option></option>
+                                    <option th:each="PubParaValue : ${type}" th:text="${PubParaValue.valueDetail}"
+                                            th:value="${PubParaValue.value}"></option>
+                                </select>
+                            </li>
+                            <li>
+                                <p>处理方式：</p>
+                                <select id="dealMode" name="dealMode" class="form-controlnoselect2 selectpicker"
+                                        multiple data-actions-box="true" data-width="200px" data-live-search="true"
+                                        data-none-selected-text="请选择处理方式"
+                                        th:with="type=${@pubParaValue.selectPubParaValueByParaName('fm_dealMode')}">
+                                    <option th:each="PubParaValue : ${type}" th:text="${PubParaValue.valueDetail}"
+                                            th:value="${PubParaValue.value}"></option>
+                                </select>
+                            </li>
+                        </div>
+                        <div class="row">
+                            <li class="select-time">
+                                <p>转全国中心时间：</p>
+                                <input type="text" class="time-input" id="startToQgzxTime" placeholder="开始时间"
+                                       name="params[startToQgzxTime]" readonly/>
+                                <span>-</span>
+                                <input type="text" class="time-input" id="endToQgzxTime" placeholder="结束时间"
+                                       name="params[endToQgzxTime]" readonly/>
+                            </li>
+                            <li>
+                                <p>创建所选系统：</p>
+                                <input id="iniSys" name="iniSys" type="hidden" class="form-control"/>
+                                <input id="sysName" name="sysName" type="text" class="form-control"
+                                       onclick="selectOgSysListByIni()"/>
+                            </li>
+                            <li>
+                                <p>参与组：</p>
+                                <input id="participateGroupids" name="participateGroupids" type="hidden" class="form-control"/>
+                                <input id="participateGroupName" name="participateGroupName" type="text" class="form-control"
+                                       onclick="selectSysByGroup()"/>
+                            </li>
+                            <li class="select-time">
+                                <p>关联问题单时间：</p>
+                                <input type="text" class="time-input" id="relationTimeStart" placeholder="开始时间"
+                                       name="params[relationTimeStart]" readonly/>
+                                <span>-</span>
+                                <input type="text" class="time-input" id="relationTimeEnd" placeholder="结束时间"
+                                       name="params[relationTimeEnd]" readonly/>
+                            </li>
+                            <li>
+                                <a class="btn btn-primary btn-rounded btn-sm" id="searchBut" onclick="$.table.search()"><i
+                                        class="fa fa-search"></i>&nbsp;搜索</a>
+                                <!--<a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.resetAll('formId')"><i-->
+                                        <!--class="fa fa-refresh"></i>&nbsp;重置</a>-->
+                            </li>
+                        </div>
+                    </ul>
+                </div>
+            </form>
+        </div>
+
+        <div class="btn-group-sm" id="toolbar" role="group">
+            <a class="btn btn-primary single disabled" onclick="detail()">
+                <i class="fa fa-search"></i>查看详情
+            </a>
+            <button data-toggle="dropdown" class="btn btn-primary btn-sm dropdown-toggle">导出<span
+                    class="caret"></span>
+            </button>
+            <ul class="dropdown-menu">
+                <li><a onclick="$.table.exportExcel()">导出所有</a>
+                </li>
+                <li><a onclick="$.table.exportExcelCurrentPage()">导出当前页</a>
+                </li>
+            </ul>
+        </div>
+        <div class="col-sm-12 select-table table-striped">
+            <table id="bootstrap-table" style="table-layout:fixed;"></table>
+        </div>
+    </div>
+</div>
+<th:block th:include="include :: footer"/>
+<th:block th:include="include :: select2-js"/>
+<th:block th:include="include :: datetimepicker-js"/>
+<th:block th:include="include :: bootstrap-select-js"/>
+<th:block th:include="include :: bootstrap-select-css"/>
+<script th:src="@{/js/activiti.js}"></script>
+<script th:inline="javascript">
+    var prefix = ctx + "fmbiz";
+    var datas = [[${@pubParaValue.selectPubParaValueByParaName('fmStatus')}]];
+    var safetyV = [[${@pubParaValue.selectPubParaValueByParaName('SAFETY_AUDIT')}]];//是否紧急
+    var fmcauseV = [[${@pubParaValue.selectPubParaValueByParaName('fm_cause')}]];//起因
+    var fmLevelV = [[${@pubParaValue.selectPubParaValueByParaName('fmLevel')}]];//等级
+    var fmdealModeV = [[${@pubParaValue.selectPubParaValueByParaName('fm_dealMode')}]];//处理方式
+    $(function () {
+        // 回车键搜索
+        document.onkeydown = function (e) {
+            var ev = document.all ? window.event : e;
+            if (ev.keyCode == 13) {
+                $('#searchBut').trigger('click');
+                return false;
+            }
+        };
+        var options = {
+            url: prefix + "/view",
+            exportUrl: prefix + "/export",
+            clickToSelect: true,
+            singleSelect: true,
+            modalName: "运维事件单",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'fmId',
+                    title: '主键ID',
+                    visible: false
+                },
+                {
+                    field: 'faultNo',
+                    width: 150,
+                    title: '事件编号'
+                },
+                {
+                    field: 'faultDecriptSummary',
+                    width: 300,
+                    title: '事件标题',
+                    formatter: function (value, row, index) {
+                        return $.table.tooltip(value);
+                    },
+                    cellStyle: function cellStyle(value, row, index, field) {
+                        return {classes: 'text-nowrap'};
+                    }
+                },
+                {
+                    field: 'ogSys.caption',
+                    width: 220,
+                    title: '所属系统'
+                },
+                {
+                    field: 'createGroupName',
+                    width: 220,
+                    title: '所属工作组'
+                },
+                {
+                    field: 'ifJj',
+                    title: '是否紧急',
+                    width: 100,
+                    formatter: function (value, row, index) {
+                        return $.table.selectPubParaValueData(safetyV, value);
+                    }
+                },
+                {
+                    field: 'fmCause',
+                    title: '事件起因',
+                    width: 200,
+                    formatter: function (value, row, index) {
+                        return $.table.selectPubParaValueData(fmcauseV, value);
+                    }
+                },
+                {
+                    field: 'seriousLev',
+                    title: '事件等级',
+                    width: 100,
+                    formatter: function (value, row, index) {
+                        return $.table.selectPubParaValueData(fmLevelV, value);
+                    }
+                },
+                {
+                    field: 'currentState',
+                    title: '当前状态',
+                    width: 100,
+                    formatter: function (value, row, index) {
+                        return $.table.selectPubParaValueData(datas, value);
+                    }
+                },
+                {
+                    field: 'createName',
+                    width: 150,
+                    title: '创建人'
+                },
+                {
+                    field: 'creatTime',
+                    title: '创建时间',
+                    width: 150,
+                    formatter: function (value, row, index) {
+                        var startTime = '';
+                        if (value != '' && value != null) {
+                            var pattern = /(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/;
+                            startTime = value.replace(pattern, '$1-$2-$3 $4:$5:$6');
+                        }
+                        return startTime;
+                    }
+                },
+                {
+                    field: 'relationTime',
+                    title: '关联时间',
+                    width: 150,
+                    formatter: function (value, row, index) {
+                        var startTime = '';
+                        if (value != '' && value != null) {
+                            var pattern = /(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/;
+                            startTime = value.replace(pattern, '$1-$2-$3 $4:$5:$6');
+                        }
+                        return startTime;
+                    }
+                },
+                {
+                    field: 'toQgzxTime',
+                    title: '转全国中心时间',
+                    width: 150,
+                    formatter: function (value, row, index) {
+                        var startTime = '';
+                        if (value != '' && value != null) {
+                            var pattern = /(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/;
+                            startTime = value.replace(pattern, '$1-$2-$3 $4:$5:$6');
+                        }
+                        return startTime;
+                    }
+                },
+                {
+                    field: 'dealGroupName',
+                    width: 200,
+                    title: '处理组'
+                },
+                {
+                    field: 'dealName',
+                    width: 150,
+                    title: '处理人'
+                },
+                {
+                    field: 'dealMode',
+                    width: 100,
+                    title: '处理方式',
+                    formatter: function (value, row, index) {
+                        return $.table.selectPubParaValueData(fmdealModeV, value);
+                    }
+                },
+                {
+                    field: 'dealTime',
+                    title: '处理时间',
+                    width: 150,
+                    formatter: function (value, row, index) {
+                        var startTime = '';
+                        if (value != '' && value != null) {
+                            var pattern = /(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/;
+                            startTime = value.replace(pattern, '$1-$2-$3 $4:$5:$6');
+                        }
+                        return startTime;
+                    }
+                },
+                {
+                    field: 'ogOrg.orgName',
+                    width: 200,
+                    title: '发生机构'
+                }]
+        };
+        $.table.init(options);
+    });
+
+    // 回显数据字典
+    function selectPubParaValueData(datas, value) {
+        var actions = [];
+        $.each(datas, function (index, pubParaValue) {
+            if (pubParaValue.value == ('' + value)) {
+                actions.push($.common.sprintf("<span class='%s'>%s</span>", "", pubParaValue.valueDetail));
+                return false;
+            }
+        });
+        return actions.join('');
+    }
+
+    /*查看详情*/
+    function detail() {
+        var fmId = $.table.selectFirstColumns();
+        var url = prefix + "/detail/" + fmId;
+        $.modal.openTab("业务事件单详情", url);
+    }
+
+    /*转问题单*/
+    function toimBiz() {
+        var currentState = $.table.selectColumns("currentState");
+        if (currentState == '09') {
+            var fmId = $.table.selectFirstColumns();
+            var url = ctx + "issueList/build/add/2/" + fmId;
+            $.modal.openTab("业务事件单转问题单", url);
+        } else {
+            return $.modal.alertError("只有已经关闭的事件单才可以转问题单");
+        }
+
+    }
+
+    // 选择应用系统（只能单选）
+    function selectOgSysListByCondition() {
+        $.modal.open("选择应用系统", prefix + "/sysGrouplist");
+    }
+
+    // 选择创建所选系统（只能单选）
+    function selectOgSysListByIni() {
+        $.modal.open("选择应用系统", prefix + "/OgSysList");
+    }
+
+    // 选择创建机构（只能单选）
+    function selectogOrg() {
+        $.modal.open("选择创建机构", prefix + "/selectogOrg");
+    }
+
+    //查看流程图
+    function showProcessImg() {
+        var fmId = $.table.selectFirstColumns();
+        var url = ctx + 'process/processImg/' + fmId;
+        $.modal.open("查看流程图", url, null, null, null, true);
+    }
+
+    //查询工作组
+    function selectSysByGroup() {
+        $.modal.open("选择工作组", prefix + "/searchGroup");
+    }
+
+    //根据系统查询工作组
+    function getGroupList(sysid) {
+        $.ajax({
+            cache: true,
+            type: "POST",
+            url: prefix + "/selectOgGroupBySys",
+            data: {
+                "sysid": sysid
+            },
+            async: false,
+            error: function (request) {
+                $.modal.alertError("系统错误");
+            },
+            success: function (data) {
+                var options = "<option value='" + "" + "'>" + "" + "</option> \n";
+                $("#groupId").html("");
+                for (var ak = 0; ak < data.rows.length; ak++) {
+                    options += "<option value='" + data.rows[ak].groupId + "'>" + data.rows[ak].grpName + "</option> \n";
+                }
+                $("#groupId").append(options);
+            }
+        });
+    }
+
+    //根据系统查询分类
+    function getFmKindOneList(sysid) {
+
+    }
+
+    //筛选条件伸缩
+    window.onload = function () {
+        var lbh = $('.search-collapse').innerHeight();
+        var height = 45;//45 是动态值，单行所属高度，如果想两行，那就45*2
+        $("[name$='showSearch']").off('click').on('click', function () {
+            if ($('.search-collapse').innerHeight() == height) {
+                $(".search-collapse").css('overflow', 'hidden').animate({height: lbh + "px"})
+            } else {
+                $(".search-collapse").css('overflow', 'hidden').animate({height: height + "px"})
+            }
+        });
+    };
+</script>
+</body>
+</html>

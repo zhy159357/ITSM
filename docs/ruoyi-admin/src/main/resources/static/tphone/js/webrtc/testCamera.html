@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+  <head>
+      <title>检测摄像头</title>
+      <meta charset="utf-8" />
+
+      <meta name="keywords" content="chatsdk" />
+      <meta name="description" content="chatsdk" />
+      <meta name="content-type" content="text/html; charset=UTF-8" />
+
+  </head>
+
+  <body>
+      <div id="app">
+          <div id="father"  class="father-class" style="display: none;">
+          </div>
+          <div style="padding-top: 10px;margin-left: 10px;">
+            <div  id="videoRinging">
+              <button id="sendVideo" onclick = "testCamera()">检测摄像头</button>
+         </div>
+
+
+      </div>
+
+
+          <script type="text/javascript" src="../../../interact/config.js"></script>
+          <script type="text/javascript" src="js/jquery-1.10.2.min.js"></script>
+          <script type="text/javascript" src="js/jquery-ui.min.js"></script>
+          <script type="text/javascript" src="js/utils.js"></script>
+          <script type="text/javascript" src="js/reconnecting-websocket.js"></script>
+          <script type="text/javascript" src="js/webrtc.min.js"></script>
+          <script type="text/javascript" src="js/recorder.min.js"></script>
+          <script type="text/javascript" src="js/webrtc.uikit-2.0.0.js?version=8"></script>
+          <script type="text/javascript" src="js/webrtc.message.handler.js?version=8"></script>
+          <script type="text/javascript" src="js/flv.js?version=4"></script>
+          <script type="text/javascript" src="js/xchat.min.js.bak?version=4"></script>
+          <script type="text/javascript" src="wphone.api.js"></script>
+
+
+      <script>
+        $(document).ready(function(){
+ 			webRtcUiKit = new WebRTCUiKit()
+            setTimeout(function () {
+               // $("#sendVideo").trigger("click")
+            },200)
+        });
+        function testCamera () {
+            var webrtcUrl = window.CONFIG.RTC.command+'://' + window.CONFIG.RTC.webrtcHtml + '?role=' + role;
+            webrtcUrl += '&fromUser=' + new Date().getTime()+"";
+            webrtcUrl += '&roomId=' + new Date().getTime()+"_chatroom";
+            webrtcUrl += '&makeType=video';
+            webrtcUrl += '&parentId=' + CONFIG.RTC.parentid;
+            webrtcUrl += '&rtcType=WebRtc';
+            webrtcUrl += '&channelType=xiaochengxu';
+            webrtcUrl += '&opttype=testCamera';
+            setVideoIframeSrc(encodeURI(webrtcUrl));
+            // 重新绑定刷新事件
+            try {
+                localWebSocket(makeType)
+            }catch (e) {
+
+            }
+        }
+        function changeCamera () {
+            webRtcUiKit.xchatkit.changeCamera()
+        }
+      </script>
+
+
+
+
+  </body>
+</html>

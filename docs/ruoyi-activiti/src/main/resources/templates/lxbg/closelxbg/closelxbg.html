@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('关闭例行变更作业')" />
+    <th:block th:include="include :: datetimepicker-css" />
+    <th:block th:include="include :: select2-css"/>
+</head>
+<body class="gray-bg">
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-12 search-collapse">
+            <form id="post-form">
+                <div class="row">
+                    <div class="select-list">
+                        <ul>
+                            <li>
+                                <p>计划单编号：</p>
+                                <input type="text" name="schedulingNo"/>
+                            </li>
+
+                            <li>
+                                <p>计划单标题：</p>
+                                <input type="text" name="schedulingName"/>
+                            </li>
+
+                            <li>
+                                <p>创建人：</p>
+                                <input type="text" name="createName"/>
+                            </li>
+
+                            <li >
+                                <p>创建机构：</p>
+                                <input type="text" name="orgName" />
+                            </li>
+
+                            <li>
+                                <p>创建时间：</p>
+                                <input type="text" name="createTime" id="createTime" readonly/>
+                            </li>
+
+                            <li>
+                                <p>至：</p>
+                                <input type="text" name="endTime" id="endTime" readonly/>
+                            </li>
+
+                            <li>
+                                <p>发布时间：</p>
+                                <input type="text" name="effectiveTime" id="effectiveTime" readonly/>
+                            </li>
+
+                            <li>
+                                <p>至：</p>
+                                <input type="text" name="endEffTime" id="endEffTime" readonly/>
+                            </li>
+
+                            <li>
+                                <a class="btn btn-primary btn-rounded btn-sm" id="lxbgSearch" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-repeat"></i>&nbsp;重置</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div class="btn-group-sm" id="toolbar" role="group">
+            <a class="btn btn-primary single disabled" onclick="closelxbg()">
+                 关闭
+            </a>
+        </div>
+
+        <div class="col-sm-12 select-table table-striped">
+            <table id="bootstrap-table" style="table-layout:fixed;"></table>
+        </div>
+    </div>
+
+</div>
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: datetimepicker-js" />
+<th:block th:include="include :: select2-js"/>
+<script th:inline="javascript">
+
+    var datas = [[${@dict.getParaType('zd_plan_status')}]];
+    var datass = [[${@dict.getParaType('zd_task_status')}]];
+    var pId = [[${pId}]];
+    var creatorId=[[${userId}]];
+
+    var prefix = ctx + "lxbg/closelxbg";
+
+    var scheduling_prefix = ctx + "lxbg/addlxbg";
+
+    $(function() {
+        // 回车搜索
+        document.onkeydown = function(e){
+            var ev = document.all ? window.event : e;
+            if(ev.keyCode==13) {
+                $('#lxbgSearch').trigger('click');
+                return false;
+            }
+        };
+
+        var options = {
+            url: prefix + "/list",
+            createUrl: prefix + "/add",
+            detailUrl: prefix + "/detail/{id}",
+            updateUrl: prefix + "/edit/{id}",
+            removeUrl: prefix + "/remove",
+            exportUrl: prefix + "/export",
+            singleSelect:true,
+            clickToSelect: true,
+            modalName: "查询待关闭的例行计划",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'schedulingId',
+                    title: '计划单id',
+                    width: 300,
+                    visible: false
+                },
+                {
+                    field: 'schedulingNo',
+                    width: 150,
+                    title: '计划单编号'
+                },
+                {
+                    field: 'schedulingName',
+                    width: 250,
+                    title: '计划单标题',
+                    formatter:function (value,row,index) {
+                        return $.table.tooltip(value)
+                    }
+                },
+                {
+                    field: 'createName',
+                    width: 150,
+                    title: '创建人'
+                },
+
+                {
+                    field: 'createTime',
+                    width: 150,
+                    title: '创建时间',
+                    align: 'center',
+                    formatter: function (value, row, index) {
+                        var startTime = '';
+                        if(value!='' && value !=null){
+                            var pattern = /(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/;
+                            startTime = value.replace(pattern, '$1-$2-$3 $4:$5:$6');
+                        }
+                        return startTime;
+                    }
+                },
+                {
+                    field: 'effectiveTime',
+                    width: 150,
+                    title: '发布时间',
+                    align: 'center',
+                    formatter: function (value, row, index) {
+                        var startTime = '';
+                        if(value!='' && value !=null){
+                            var pattern = /(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/;
+                            startTime = value.replace(pattern, '$1-$2-$3 $4:$5:$6');
+                        }
+                        return startTime;
+                    }
+
+                },
+                {
+                    field: 'orgName',
+                    width: 150,
+                    title: '创建机构'
+                },
+                {
+                    field: 'planStatus',
+                    width: 150,
+                    title: '计划状态',
+                    align: 'center',
+                    formatter: function (value, row, index) {
+                        return selectDictLabel(datas, value);
+                    }
+                }]
+
+        };
+        $.table.init(options);
+    });
+
+
+    function selectDictLabel(datas, value) {
+        var actions = [];
+        $.each(datas, function(index, dict) {
+            if (dict.value == ('' + value)) {
+                var listClass = $.common.equals("default", dict.listClass) || $.common.isEmpty(dict.listClass) ? "" : "badge badge-" + dict.listClass;
+                actions.push($.common.sprintf("<span class='%s'>%s</span>", listClass, dict.valueDetail));
+                return false;
+            }
+        });
+        return actions.join('');
+    }
+
+    $("#createTime").datetimepicker({
+        autoclose: true,
+        format: "yyyy-mm-dd hh:ii:ss",
+        minView:0,
+        minuteStep:1,
+        Date:new Date()
+    });
+
+    $("#endTime").datetimepicker({
+        autoclose: true,
+        format: "yyyy-mm-dd hh:ii:ss",
+        minView:0,
+        minuteStep:1,
+        Date:new Date()
+    });
+
+    $("#effectiveTime").datetimepicker({
+        autoclose: true,
+        format: "yyyy-mm-dd hh:ii:ss",
+        minView:0,
+        minuteStep:1,
+        Date:new Date()
+    });
+
+    $("#endEffTime").datetimepicker({
+        autoclose: true,
+        format: "yyyy-mm-dd hh:ii:ss",
+        minView:0,
+        minuteStep:1,
+        Date:new Date()
+    });
+
+    /* 关闭*/
+    function closelxbg() {
+        var rows = $('#' + 'bootstrap-table').bootstrapTable('getSelections');
+            var schedulingId = rows[0].schedulingId;
+            $.modal.confirm("确定关闭计划单？", function() {
+                $.operate.post(prefix + "/closelxbg", { "schedulingId": schedulingId, "planStatus": "07"  });
+            })
+
+
+    }
+
+
+
+
+</script>
+</body>
+</html>

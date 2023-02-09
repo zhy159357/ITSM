@@ -1,0 +1,484 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.activiti.mapper.AddlxbgMapper">
+
+	<resultMap type="SmBizScheduling" id="Scheduling">
+		<id property="schedulingId" column="scheduling_id"></id>
+		<result property="schedulingNo"    column="scheduling_no"    />
+		<result property="schedulingName"    column="scheduling_name"    />
+		<result property="schedulingDescription"    column="scheduling_description"    />
+		<result property="createTime"    column="create_time"    />
+		<result property="effectiveTime"    column="effective_time"    />
+		<result property="creatorId"    column="creator_id"    />
+		<result property="creatorDeptId"    column="creator_dept_id"    />
+		<result property="recheckMark"    column="recheck_mark"    />
+		<result property="recheckerId"    column="rechecker_id"    />
+		<result property="updateTime"    column="update_time"    />
+		<result property="invalidationMark"    column="invalidation_mark"    />
+		<result property="planStatus"    column="plan_status"    />
+		<result property="process"    column="process"    />
+		<result property="planType"    column="plan_type"    />
+		<result property="checkPersonId"    column="check_person_id"    />
+		<result property="checkPersonName"    column="check_person_name"    />
+		<result property="checkDescription"    column="check_description"    />
+		<result property="msgDoor"    column="msg_door"    />
+		<result property="masterOrgId"    column="master_org_id"    />
+		<result property="checkTime"    column="check_time"    />
+		<result property="planCheckpass"    column="plan_checkpass"    />
+		<result property="cancelFlag"    column="cancel_flag"    />
+		<result property="folder"    column="folder"    />
+		<!--创建人名称-->
+		<result property="createName" column="createname"></result>
+		<!--审核人名称-->
+		<result property="checkedName" column="checkedname"></result>
+		<!--创建机构名称-->
+		<result property="orgName" column="orgname"></result>
+
+		<result property="startTime" column="startTime"></result>
+
+		<result property="performDate" column="performDate"></result>
+
+		<result property="delayCreateName" column="delayCreateName"></result>
+
+		<result property="delayCreateTime" column="delayCreateTime"></result>
+
+		<result property="delayEndTime" column="delayEndTime"></result>
+
+
+
+
+	</resultMap>
+
+
+	<sql id="selectSchedulingVo">
+	select t.* from (
+		SELECT
+			sc.scheduling_id,
+			sc.scheduling_no,
+			sc.scheduling_name,
+			sc.scheduling_description,
+			<choose>
+				<when test="dbType=='mysql'">
+					str_to_date(sc.create_time,'%Y%m%d%H%i%s') as  create_time,
+					str_to_date(sc.effective_time,'%Y%m%d%H%i%s') as  effective_time,
+				</when>
+				<otherwise>
+					"TO_CHAR"("TO_DATE"(sc.create_time, 'yyyymmddhh24miss'),'yyyy-mm-dd hh24:mi:ss') create_time,
+					"TO_CHAR"("TO_DATE"(sc.effective_time, 'yyyymmddhh24miss'),'yyyy-mm-dd hh24:mi:ss') effective_time,
+				</otherwise>
+			</choose>
+			sc.creator_id,
+			sc.creator_dept_id,
+			sc.recheck_mark,
+			sc.rechecker_id,
+			sc.task_num,
+			sc.update_time,
+			sc.invalidation_mark,
+			sc.plan_status,
+			sc.PROCESS,
+			sc.plan_type,
+			sc.check_person_id,
+			sc.check_person_name,
+			sc.check_description,
+			sc.master_org_id,
+			sc.check_time,
+			sc.plan_checkpass,
+			sc.cancel_flag,
+			sc.FOLDER,
+			og.pname createname,
+			o.orgname orgname,
+			st.task_type_id taskTypeId,
+			st.start_time startTime,
+			(select o.pname from og_person o where o.pid = sa.create_id)AS delayCreateName,
+			sa.create_time delayCreateTime
+			FROM
+			SM_BIZ_SCHEDULING sc
+			LEFT JOIN og_person og ON sc.CREATOR_ID = og.pid
+			LEFT JOIN sm_biz_folder sf on sc.FOLDER = sf.id_
+			LEFT JOIN sm_biz_task st on sc.scheduling_id = st.scheduling_id
+			LEFT JOIN OG_ORG o on sc.creator_dept_id = o.orgid
+			LEFT JOIN SM_BIZ_LXBGAPPLY sa on sc.scheduling_id = sa.scheduling_id
+			) t
+	</sql>
+
+	<sql id="selectSchedulingVo2">
+
+		SELECT
+		sc.scheduling_id,
+		sc.scheduling_no,
+		sc.scheduling_name,
+		sc.scheduling_description,
+		sc.create_time,
+		sc.effective_time,
+		sc.creator_id,
+		sc.creator_dept_id,
+		sc.recheck_mark,
+		sc.rechecker_id,
+		sc.task_num,
+		sc.update_time,
+		sc.invalidation_mark,
+		sc.plan_status,
+		sc.PROCESS,
+		sc.plan_type,
+		sc.check_person_id,
+		sc.check_person_name,
+		sc.check_description,
+		sc.master_org_id,
+		sc.check_time,
+		sc.plan_checkpass,
+		sc.cancel_flag,
+		sc.FOLDER,
+		og.pname createname,
+		o.orgname orgname,
+		st.task_type_id taskTypeId,
+		st.start_time startTime
+		FROM
+		SM_BIZ_SCHEDULING sc
+		LEFT JOIN og_person og ON sc.CREATOR_ID = og.pid
+		LEFT JOIN sm_biz_folder sf on sc.FOLDER = sf.id_
+		LEFT JOIN sm_biz_task st on sc.scheduling_id = st.scheduling_id
+		LEFT JOIN OG_ORG o on sc.creator_dept_id = o.orgid
+
+	</sql>
+
+
+
+	<select id="selectScheduling" parameterType="SmBizScheduling" resultMap="Scheduling">
+		<choose>
+			<when test="dbType=='mysql'">
+				<include refid="selectSchedulingVo">
+					<property name="dbType" value="mysql"/>
+				</include>
+			</when>
+			<otherwise>
+				<include refid="selectSchedulingVo">
+					<property name="dbType" value="oracle"/>
+				</include>
+			</otherwise>
+		</choose>
+		<where>
+			<if test="schedulingName != null  and schedulingName != ''"> and scheduling_name like concat(concat('%', #{schedulingName}), '%')</if>
+			<if test="effectiveTime != null  and effectiveTime != ''"> and effective_time = #{effectiveTime}</if>
+			<if test="creatorId != null  and creatorId != ''"> and creator_id = #{creatorId}</if>
+			<if test="creatorDeptId != null  and creatorDeptId != ''"> and creator_dept_id = #{creatorDeptId}</if>
+			<if test="recheckMark != null  and recheckMark != ''"> and recheck_mark = #{recheckMark}</if>
+			<if test="recheckerId != null  and recheckerId != ''"> and rechecker_id = #{recheckerId}</if>
+			<if test="schedulingId != null  and schedulingId != ''"> and scheduling_id = #{schedulingId}</if>
+			<if test="taskNum != null  and taskNum != ''"> and task_num = #{taskNum}</if>
+			<if test="invalidationMark != null  and invalidationMark != ''"> and invalidation_mark = #{invalidationMark}</if>
+			<if test="planStatus != null  and planStatus != ''"> and plan_status = #{planStatus}</if>
+			<if test="process != null  and process != ''"> and process = #{process}</if>
+			<if test="planType != null  and planType != ''"> and plan_type = #{planType}</if>
+			<if test="checkPersonId != null  and checkPersonId != ''"> and check_person_id = #{checkPersonId}</if>
+			<if test="checkPersonName != null  and checkPersonName != ''"> and check_person_name like concat(concat('%', #{checkPersonName}), '%')</if>
+			<if test="checkDescription != null  and checkDescription != ''"> and check_description = #{checkDescription}</if>
+			<if test="masterOrgId != null  and masterOrgId != ''"> and master_org_id = #{masterOrgId}</if>
+			<if test="checkTime != null  and checkTime != ''"> and check_time = #{checkTime}</if>
+			<if test="planCheckpass != null  and planCheckpass != ''"> and plan_checkpass = #{planCheckpass}</if>
+			<if test="cancelFlag != null  and cancelFlag != ''"> and cancel_flag = #{cancelFlag}</if>
+			<if test="folder != null  and folder != ''"> and folder = #{folder}</if>
+			<if test="createName !=null and createName !='' ">
+				and createname like concat(concat('%', #{createName}),'%')
+			</if>
+			<if test="orgName !=null and orgName !='' ">
+				and orgname like concat(concat('%', #{orgName}),'%')
+			</if>
+			<if test="schedulingNo != null  and schedulingNo != ''">
+			  and scheduling_no like concat(concat('%', #{schedulingNo}),'%')
+			</if>
+			<if test="delayCreateName !=null and delayCreateName !='' ">
+				and delayCreateName like concat(concat('%', #{delayCreateName}),'%')
+			</if>
+			<if test="delayCreateTime !=null and delayCreateTime!=''">
+				and delayCreateTime &gt;=#{delayCreateTime}
+			</if>
+			<if test="delayEndTime !=null and delayEndTime!=''">
+				and delayCreateTime &lt;=#{delayEndTime}
+			</if>
+		</where>
+		order by create_time desc
+	</select>
+
+    <select id="selectSchedulingById" parameterType="java.lang.String" resultMap="Scheduling">
+		<include refid="selectSchedulingVo2">
+
+		</include>
+		WHERE sc.scheduling_id = #{schedulingId}
+		order by sc.create_time desc
+
+
+	</select>
+
+	<delete id="deleteById" parameterType="java.lang.String">
+		delete from SM_BIZ_SCHEDULING where scheduling_id = #{schedulingId}
+	</delete>
+
+
+	<insert id="insertLxbg" parameterType="SmBizScheduling">
+		insert into sm_biz_scheduling
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="schedulingName != null  and schedulingName != ''">scheduling_name,</if>
+			<if test="schedulingDescription != null and schedulingDescription != ''">scheduling_description,</if>
+			<if test="createTime != null  and createTime != ''">create_time,</if>
+			<if test="effectiveTime != null  and effectiveTime != ''">effective_time,</if>
+			<if test="creatorId != null  and creatorId != ''">creator_id,</if>
+			<if test="creatorDeptId != null  and creatorDeptId != ''">creator_dept_id,</if>
+			<if test="recheckMark != null  and recheckMark != ''">recheck_mark,</if>
+			<if test="recheckerId != null  and recheckerId != ''">rechecker_id,</if>
+			<if test="schedulingId != null  and schedulingId != ''">scheduling_id,</if>
+			<if test="schedulingNo != null  and schedulingNo != ''">scheduling_no,</if>
+			<if test="taskNum != null  and taskNum != ''">task_num,</if>
+			<if test="updateTime != null  and updateTime != ''">update_time,</if>
+			<if test="invalidationMark != null  and invalidationMark != ''">invalidation_mark,</if>
+			<if test="planStatus != null  and planStatus != ''">plan_status,</if>
+			<if test="process != null  and process != ''">process,</if>
+			<if test="planType != null  and planType != ''">plan_type,</if>
+			<if test="checkPersonId != null  and checkPersonId != ''">check_person_id,</if>
+			<if test="checkPersonName != null ">check_person_name,</if>
+			<if test="checkDescription != null ">check_description,</if>
+			<if test="masterOrgId != null  and masterOrgId != ''">master_org_id,</if>
+			<if test="checkTime != null  and checkTime != ''">check_time,</if>
+			<if test="planCheckpass != null  and planCheckpass != ''">plan_checkpass,</if>
+			<if test="cancelFlag != null  and cancelFlag != ''">cancel_flag,</if>
+			<if test="folder != null  and folder != ''">folder,</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="schedulingName != null  and schedulingName != ''">#{schedulingName},</if>
+			<if test="schedulingDescription != null and schedulingDescription != ''">#{schedulingDescription},</if>
+			<if test="createTime != null  and createTime != ''">#{createTime},</if>
+			<if test="effectiveTime != null  and effectiveTime != ''">#{effectiveTime},</if>
+			<if test="creatorId != null  and creatorId != ''">#{creatorId},</if>
+			<if test="creatorDeptId != null  and creatorDeptId != ''">#{creatorDeptId},</if>
+			<if test="recheckMark != null  and recheckMark != ''">#{recheckMark},</if>
+			<if test="recheckerId != null  and recheckerId != ''">#{recheckerId},</if>
+			<if test="schedulingId != null  and schedulingId != ''">#{schedulingId},</if>
+			<if test="schedulingNo != null  and schedulingNo != ''">#{schedulingNo},</if>
+			<if test="taskNum != null  and taskNum != ''">#{taskNum},</if>
+			<if test="updateTime != null  and updateTime != ''">#{updateTime},</if>
+			<if test="invalidationMark != null  and invalidationMark != ''">#{invalidationMark},</if>
+			<if test="planStatus != null  and planStatus != ''">#{planStatus},</if>
+			<if test="process != null  and process != ''">#{process},</if>
+			<if test="planType != null  and planType != ''">#{planType},</if>
+			<if test="checkPersonId != null  and checkPersonId != ''">#{checkPersonId},</if>
+			<if test="checkPersonName != null ">#{checkPersonName},</if>
+			<if test="checkDescription != null ">#{checkDescription},</if>
+			<if test="masterOrgId != null  and masterOrgId != ''">#{masterOrgId},</if>
+			<if test="checkTime != null  and checkTime != ''">#{checkTime},</if>
+			<if test="planCheckpass != null  and planCheckpass != ''">#{planCheckpass},</if>
+			<if test="cancelFlag != null  and cancelFlag != ''">#{cancelFlag},</if>
+			<if test="folder != null  and folder != ''">#{folder},</if>
+		</trim>
+	</insert>
+
+
+	<update id="updatelxbg" parameterType="SmBizScheduling">
+		update sm_biz_scheduling
+		<trim prefix="SET" suffixOverrides=",">
+			<if test="schedulingName != null  and schedulingName != ''">scheduling_name = #{schedulingName},</if>
+			<if test="schedulingDescription != null ">scheduling_description = #{schedulingDescription},</if>
+			<if test="createTime != null  and createTime != ''">create_time = #{createTime},</if>
+			<if test="effectiveTime != null  and effectiveTime != ''">effective_time = #{effectiveTime},</if>
+			<if test="creatorId != null  and creatorId != ''">creator_id = #{creatorId},</if>
+			<if test="creatorDeptId != null  and creatorDeptId != ''">creator_dept_id = #{creatorDeptId},</if>
+			<if test="recheckMark != null  and recheckMark != ''">recheck_mark = #{recheckMark},</if>
+			<if test="recheckerId != null  and recheckerId != ''">rechecker_id = #{recheckerId},</if>
+			<if test="schedulingNo != null  and schedulingNo != ''">scheduling_no = #{schedulingNo},</if>
+			<if test="taskNum != null  and taskNum != ''">task_num = #{taskNum},</if>
+			<if test="updateTime != null  and updateTime != ''">update_time = #{updateTime},</if>
+			<if test="invalidationMark != null  and invalidationMark != ''">invalidation_mark = #{invalidationMark},</if>
+			<if test="planStatus != null  and planStatus != ''">plan_status = #{planStatus},</if>
+			<if test="process != null  and process != ''">process = #{process},</if>
+			<if test="planType != null  and planType != ''">plan_type = #{planType},</if>
+			<if test="checkPersonId != null  and checkPersonId != ''">check_person_id = #{checkPersonId},</if>
+			<if test="checkPersonName != null ">check_person_name = #{checkPersonName},</if>
+			<if test="checkDescription != null ">check_description = #{checkDescription},</if>
+			<if test="masterOrgId != null  and masterOrgId != ''">master_org_id = #{masterOrgId},</if>
+			<if test="checkTime != null  and checkTime != ''">check_time = #{checkTime},</if>
+			<if test="planCheckpass != null  and planCheckpass != ''">plan_checkpass = #{planCheckpass},</if>
+			<if test="cancelFlag != null  and cancelFlag != ''">cancel_flag = #{cancelFlag},</if>
+			<if test="folder != null  and folder != ''">folder = #{folder},</if>
+		</trim>
+		where scheduling_id = #{schedulingId}
+	</update>
+
+
+	<select id="selectCloseLxbgId" parameterType="SmBizScheduling" resultMap="Scheduling">
+		select t.* from (
+			SELECT
+			sc.scheduling_id,
+			sc.scheduling_no,
+			sc.scheduling_name,
+			sc.scheduling_description,
+			sc.create_time,
+			sc.effective_time,
+			sc.creator_id,
+			sc.creator_dept_id,
+			sc.recheck_mark,
+			sc.rechecker_id,
+			sc.task_num,
+			sc.update_time,
+			sc.invalidation_mark,
+			sc.plan_status,
+			sc.PROCESS,
+			sc.plan_type,
+			sc.check_person_id,
+			sc.check_person_name,
+			sc.check_description,
+			sc.master_org_id,
+			sc.check_time,
+			sc.plan_checkpass,
+			sc.cancel_flag,
+			sc.FOLDER,
+			og.pname createname,
+			o.orgname orgname,
+			st.task_type_id taskTypeId
+			FROM
+			SM_BIZ_SCHEDULING sc
+			LEFT JOIN og_person og ON sc.CREATOR_ID = og.pid
+			LEFT JOIN sm_biz_folder sf on sc.FOLDER = sf.id_
+			LEFT JOIN sm_biz_task st on sc.scheduling_id = st.scheduling_id
+			LEFT JOIN OG_ORG o on sc.creator_dept_id = o.orgid
+		) t
+		<where>
+			<if test="schedulingNo !=null and schedulingNo !=''">
+				and scheduling_no like concat(concat('%', #{schedulingNo}),'%')
+			</if>
+			<if test="schedulingName !=null and schedulingName !=''">
+				and scheduling_name like concat(concat('%', #{schedulingName}),'%')
+			</if>
+			<if test="createName !=null and createName !='' ">
+				and createname like concat(concat('%', #{createName}),'%')
+			</if>
+			<if test="orgName !=null and orgName !='' ">
+				and orgname like concat(concat('%', #{orgName}),'%')
+			</if>
+			<if test="createTime !=null and createTime!=''">
+				and create_time &gt;=#{createTime}
+			</if>
+			<if test="endTime !=null and endTime!=''">
+				and create_time &lt;=#{endTime}
+			</if>
+			<if test="effectiveTime !=null and effectiveTime!=''">
+				and effective_time &gt;=#{effectiveTime}
+			</if>
+			<if test="endEffTime !=null and endEffTime!=''">
+				and effective_time &lt;=#{endEffTime}
+			</if>
+				and plan_status in ('04','05')
+				and plan_type = '1'
+		</where>
+		order by create_time desc
+
+
+	</select>
+
+
+	<select id="selectEvoScheduling" parameterType="SmBizScheduling" resultMap="Scheduling">
+		<choose>
+			<when test="dbType=='mysql'">
+				<include refid="selectSchedulingVo">
+					<property name="dbType" value="mysql"/>
+				</include>
+			</when>
+			<otherwise>
+				<include refid="selectSchedulingVo">
+					<property name="dbType" value="oracle"/>
+				</include>
+			</otherwise>
+		</choose>
+		<where>
+			plan_status in ('04','05','06','07')
+			<if test="schedulingName != null  and schedulingName != ''"> and scheduling_name like concat(concat('%', #{schedulingName}), '%')</if>
+			<if test="effectiveTime != null  and effectiveTime != ''"> and effective_time = #{effectiveTime}</if>
+			<if test="creatorId != null  and creatorId != ''"> and creator_id = #{creatorId}</if>
+			<if test="creatorDeptId != null  and creatorDeptId != ''"> and creator_dept_id = #{creatorDeptId}</if>
+			<if test="recheckMark != null  and recheckMark != ''"> and recheck_mark = #{recheckMark}</if>
+			<if test="recheckerId != null  and recheckerId != ''"> and rechecker_id = #{recheckerId}</if>
+			<if test="schedulingId != null  and schedulingId != ''"> and scheduling_id = #{schedulingId}</if>
+			<if test="taskNum != null  and taskNum != ''"> and task_num = #{taskNum}</if>
+			<if test="invalidationMark != null  and invalidationMark != ''"> and invalidation_mark = #{invalidationMark}</if>
+			<if test="planStatus != null  and planStatus != ''"> and plan_status = #{planStatus}</if>
+			<if test="process != null  and process != ''"> and process = #{process}</if>
+			<if test="planType != null  and planType != ''"> and plan_type = #{planType}</if>
+			<if test="checkPersonId != null  and checkPersonId != ''"> and check_person_id = #{checkPersonId}</if>
+			<if test="checkPersonName != null  and checkPersonName != ''"> and check_person_name like concat(concat('%', #{checkPersonName}), '%')</if>
+			<if test="checkDescription != null  and checkDescription != ''"> and check_description = #{checkDescription}</if>
+			<if test="masterOrgId != null  and masterOrgId != ''"> and master_org_id = #{masterOrgId}</if>
+			<if test="checkTime != null  and checkTime != ''"> and check_time = #{checkTime}</if>
+			<if test="planCheckpass != null  and planCheckpass != ''"> and plan_checkpass = #{planCheckpass}</if>
+			<if test="cancelFlag != null  and cancelFlag != ''"> and cancel_flag = #{cancelFlag}</if>
+			<if test="folder != null  and folder != ''"> and folder = #{folder}</if>
+			<if test="createName !=null and createName !='' ">
+				and createname like  concat(concat('%', #{createName}),'%')
+			</if>
+			<if test="orgName !=null and orgName !='' ">
+				and orgname like  concat(concat('%', #{orgName}),'%')
+			</if>
+			<if test="schedulingNo != null  and schedulingNo != ''">
+				and scheduling_no like concat(concat('%', #{schedulingNo}),'%')
+			</if>
+
+		</where>
+		order by create_time desc
+
+	</select>
+
+
+	<select id="selectSchedulingList" parameterType="SmBizScheduling" resultMap="Scheduling">
+<!--		<include refid="selectSchedulingVo"></include>-->
+		<choose>
+			<when test="dbType=='mysql'">
+				<include refid="selectSchedulingVo">
+					<property name="dbType" value="mysql"/>
+				</include>
+			</when>
+			<otherwise>
+				<include refid="selectSchedulingVo">
+					<property name="dbType" value="oracle"/>
+				</include>
+			</otherwise>
+		</choose>
+		<where>
+			<if test="ids !=null and ids!=''">
+				and scheduling_id
+				<trim prefix="in (" suffix=")" suffixOverrides=",">
+					<foreach collection="ids" item="id">
+						#{id},
+					</foreach>
+				</trim>
+			</if>
+			<if test="schedulingName != null  and schedulingName != ''"> and scheduling_name like concat(concat('%', #{schedulingName}), '%')</if>
+			<if test="effectiveTime != null  and effectiveTime != ''"> and effective_time = #{effectiveTime}</if>
+			<if test="creatorId != null  and creatorId != ''"> and creator_id = #{creatorId}</if>
+			<if test="creatorDeptId != null  and creatorDeptId != ''"> and creator_dept_id = #{creatorDeptId}</if>
+			<if test="recheckMark != null  and recheckMark != ''"> and recheck_mark = #{recheckMark}</if>
+			<if test="recheckerId != null  and recheckerId != ''"> and rechecker_id = #{recheckerId}</if>
+			<if test="taskNum != null  and taskNum != ''"> and task_num = #{taskNum}</if>
+			<if test="invalidationMark != null  and invalidationMark != ''"> and invalidation_mark = #{invalidationMark}</if>
+			<if test="planStatus != null  and planStatus != ''"> and plan_status = #{planStatus}</if>
+			<if test="process != null  and process != ''"> and process = #{process}</if>
+			<if test="planType != null  and planType != ''"> and plan_type = #{planType}</if>
+			<if test="checkPersonId != null  and checkPersonId != ''"> and check_person_id = #{checkPersonId}</if>
+			<if test="checkPersonName != null  and checkPersonName != ''"> and check_person_name like concat(concat('%', #{checkPersonName}), '%')</if>
+			<if test="checkDescription != null  and checkDescription != ''"> and check_description = #{checkDescription}</if>
+			<if test="masterOrgId != null  and masterOrgId != ''"> and master_org_id = #{masterOrgId}</if>
+			<if test="checkTime != null  and checkTime != ''"> and check_time = #{checkTime}</if>
+			<if test="planCheckpass != null  and planCheckpass != ''"> and plan_checkpass = #{planCheckpass}</if>
+			<if test="cancelFlag != null  and cancelFlag != ''"> and cancel_flag = #{cancelFlag}</if>
+			<if test="folder != null  and folder != ''"> and folder = #{folder}</if>
+			<if test="createName !=null and createName !='' ">
+				and createname like concat(concat('%', #{createName}),'%')
+			</if>
+			<if test="orgName !=null and orgName !='' ">
+				and orgname like concat(concat('%', #{orgName}),'%')
+			</if>
+			<if test="schedulingNo != null  and schedulingNo != ''">
+				and scheduling_no like concat(concat('%', #{schedulingNo}),'%')
+			</if>
+		</where>
+	</select>
+
+
+</mapper>

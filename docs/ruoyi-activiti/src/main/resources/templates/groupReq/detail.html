@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('查看详情')" />
+    <th:block th:include="include :: datetimepicker-css" />
+    <th:block th:include="include :: select2-css" />
+</head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form class="form-horizontal m" id="form-groupReq-detail" th:object="${groupReq}">
+        <h4 class="form-header h4">基本信息</h4>
+            <input name="id" th:field="*{id}" type="hidden">
+            <div class="row">
+            	<div class="col-sm-6">
+		            <div class="form-group">
+		                <label class="col-sm-4 control-label is-required">工作组名称</label>
+		                <div class="col-sm-8">
+		                    <input name="name" th:field="*{name}" class="form-control" type="text" readonly>
+		                </div>
+		            </div>
+		         </div>
+		         <div class="col-sm-6">
+					<div class="form-group">
+						<label class="col-sm-4 control-label is-required">工作组电话</label>
+						<div class="col-sm-8">
+							<input name="phone" th:field="*{phone}" class="form-control" type="text" readonly>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+            	<div class="col-sm-6">
+					<div class="form-group">
+						<label class="col-sm-4 control-label is-required">隶属机构</label>
+						<div class="col-sm-8">
+							<input name="dept" th:field="*{dept}" class="form-control" type="text" readonly>
+						</div>
+					</div>
+				</div>
+                <div class="col-sm-6">
+					<div class="form-group">
+						<label class="col-sm-4 control-label">所属应用系统</label>
+						<div class="col-sm-8">
+							<input name="sys" th:field="*{sys}" class="form-control" type="text" readonly>
+						</div>
+					</div>
+				</div>
+            </div>
+            <div class="row">
+             	<div class="col-sm-6">
+					<div class="form-group">
+						<label class="col-sm-4 control-label">工作组说明</label>
+						<div class="col-sm-8">
+							<input name="note" th:field="*{note}" class="form-control" type="text" readonly>
+						</div>
+					</div>
+				</div>
+            	<div class="col-sm-6">
+					<input  id="director" th:field="*{director}" type="hidden">
+		            <div class="form-group">
+		                <label class="col-sm-4 control-label is-required">数据变更是否业务处长审批</label>
+		                <div class="col-sm-8">
+		                    <input name="director" id="directorStr" class="form-control" type="text" readonly>
+		                </div>
+		            </div>
+		        </div> 
+            </div>
+            <div class="row">
+            	<div class="col-sm-6">
+					<input  id="mark" th:field="*{mark}" type="hidden">
+		            <div class="form-group">
+		                <label class="col-sm-4 control-label is-required">状态</label>
+		                <div class="col-sm-8">
+		                    <input name="mark" id="markStr" class="form-control" type="text" readonly>
+		                </div>
+		            </div>
+		        </div>	
+            </div>
+            <h4 class="form-header h4">申请信息</h4>
+            <div class="row">
+            	<div class="col-sm-6">
+					<div class="form-group">
+						<label class="col-sm-4 control-label is-required">受理处室</label>
+						<div class="col-sm-8">
+							<input name="auditDept" th:field="*{auditDept}" class="form-control" type="text" readonly>
+						</div>
+					</div>
+				</div>
+                <div class="col-sm-6">
+					<div class="form-group">
+						<label class="col-sm-4 control-label is-required">审核人</label>
+						<div class="col-sm-8">
+							<input class="form-control" name="auditor" th:field="*{auditor}" type="text" readonly>
+						</div>
+					</div>
+				</div>
+            </div>
+            <div class="row">
+            <div class="col-sm-6">
+					<div class="form-group">
+						<label class="col-sm-4 control-label is-required">受理处室</label>
+						<div class="col-sm-8">
+							<input name="dealDept" th:field="*{dealDept}" class="form-control" type="text" readonly>
+						</div>
+					</div>
+				</div>
+            	<div class="col-sm-6">
+					<div class="form-group">
+						<label class="col-sm-4 control-label is-required">处理人</label>
+						<div class="col-sm-8">
+							<input class="form-control" name="dealer" th:field="*{dealer}" type="text" readonly>
+						</div>
+					</div>
+				</div>
+            </div>
+            <div class="row">
+            	<div class="col-sm-12">
+					<div class="form-group">
+						<label class="col-sm-2 control-label">备注</label>
+						<div class="col-sm-10">
+								<textarea th:field="*{remark}" name="remark" class="form-control" readonly></textarea>			
+						</div>
+					</div>
+				</div>
+			</div>
+            <div class="row">
+            	<div class="col-sm-12">
+					<div class="form-group">
+						<label class="col-sm-2 control-label is-required">审核意见</label>
+						<div class="col-sm-10">
+							<textarea name="auditSug" th:field="*{auditSug}" class="form-control" readonly></textarea>
+						</div>
+					</div>
+				</div>
+            </div>
+            <div class="row">
+            	<div class="col-sm-12">
+					<div class="form-group">
+						<label class="col-sm-2 control-label is-required">处理意见</label>
+						<div class="col-sm-10">
+							<textarea name="dealSug" th:field="*{dealSug}" class="form-control" readonly></textarea>
+						</div>
+					</div>
+				</div>
+            </div>
+        </form>
+    </div>
+    <th:block th:include="include :: footer" />
+    <th:block th:include="include :: datetimepicker-js" />
+    <th:block th:include="include :: select2-js" />
+    <script th:src="@{/js/activiti.js}"></script>
+    <script th:inline="javascript">
+	    
+	    if($("#director").val()=="1"){
+	    	$("#directorStr").val("是");
+	    }else{
+	    	$("#directorStr").val("否");
+	    }
+	    
+	    if($("#mark").val()=="1"){
+	    	$("#markStr").val("启用");
+	    }else{
+	    	$("#markStr").val("禁用");
+	    }
+	    
+    </script>
+</body>
+</html>

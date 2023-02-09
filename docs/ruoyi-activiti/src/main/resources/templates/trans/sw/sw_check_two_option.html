@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('审核人2事务事件单')" />
+    <th:block th:include="include :: summernote-css" />
+    <th:block th:include="include :: select2-css"/>
+    <style>
+
+        .form-control[disabled], fieldset[disabled] .form-control {
+            cursor: pointer;
+        }
+
+    </style>
+</head>
+<body>
+<div class="main-content">
+    <form class="form-horizontal" id="form-sw-check" th:object="${fmSw}">
+        <input name="fmSwId" type="hidden" th:field="*{fmSwId}" id="fmSwId"/>
+        <input name="currentState" type="hidden" id="currentState">
+        <input type="hidden" id="faultDescription" th:field="*{faultDescription}">
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-heading" style="background-color: #3c8dbc" data-toggle="collapse" data-target="#collapse1">
+                    <h4 class="panel-title" >
+                        基本信息
+                    </h4>
+                </div>
+                <div id="collapse1" class="panel-collapse in">
+                    <div class="panel-body">
+                        <div class="row form-group">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label  text-right">事件单编号：</label>
+                                    <div class="col-sm-8">
+                                        <input class="form-control" type="text" readonly th:field="*{faultNo}" >
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label  text-right">请求事项：</label>
+                                    <div class="col-sm-8">
+                                        <select  class="form-control" disabled>
+                                            <option value=""th:if="${not #strings.isEmpty(fmSw.dealOrgId)}"></option>
+                                            <option th:each="fmSwMb : ${fmSwMbList}" th:value="${fmSwMb.swmdId}" th:text="${fmSwMb.faultKind}" th:field="*{faultKind}"></option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="row form-group">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label  text-right ">事件标题：</label>
+                                    <div class="col-sm-10">
+                                        <input class="form-control" type="text"  th:field="*{faultTitle}" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row form-group">
+                            <label class="col-sm-2 control-label  text-right ">事件内容：</label>
+                            <div class="col-sm-10">
+                                <div class="summernote" required id="summernote"></div>
+                            </div>
+                        </div>
+
+                        <div class="row form-group">
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label  text-right ">申请处室：</label>
+                                    <div class="col-sm-8">
+                                        <input  class="form-control" type="text"  th:field="*{createOrgName}" readonly >
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label  text-right ">申请人：</label>
+                                    <div class="col-sm-8">
+                                        <input    class="form-control" type="text" th:field="*{createName}" readonly >
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row form-group">
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label  text-right ">申请时间：</label>
+                                    <div class="col-sm-8">
+                                        <input class="form-control" type="text" th:field="*{createTime}" readonly >
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label  text-right ">当前状态：</label>
+                                    <div class="col-sm-8">
+                                        <input class="form-control" type="text" th:field="*{currentStateName}" readonly >
+                                        <!--<select class="form-control"  th:with="type=${@dict.getParaType('fmSw_status')}" disabled>
+                                            <option value=""></option>
+                                            <option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}" th:field="*{currentState}"></option>
+                                        </select>-->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading" style="background-color: #3c8dbc" data-toggle="collapse" data-target="#collapse2">
+
+                    <h4 class="panel-title" >
+                        审核信息
+                    </h4>
+                </div>
+                <div id="collapse2" class="panel-collapse in">
+
+                    <div class="panel-body">
+                        <div class="row form-group">
+                            <div class="col-md-6">
+                               <div class="form-group">
+                                   <label class="col-sm-4 control-label  text-right ">受理处室：</label>
+                                   <div class="col-sm-8">
+                                       <input    class="form-control" type="text"  th:field="*{dealOrgname}" readonly >
+                                   </div>
+                               </div>
+                           </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label  text-right " style="color:#ff0000">审核人3：</label>
+                                    <div class="col-sm-8">
+                                        <select name="checkerThreeId" id="checkerThreeId" class="form-control">
+                                            <option value=""th:if="${not #strings.isEmpty(fmSw.checkerThreeId)}"></option>
+                                            <option th:each="deal : ${dealList}" th:value="${deal.pId}" th:text="${deal.pName}" th:field="*{checkerThreeId}"></option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="row form-group">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label  text-right " style="color:#ff0000">审核人4：</label>
+                                    <div class="col-sm-8">
+                                        <select name="checkerFourId" id="checkerFourId" class="form-control">
+                                            <option value=""th:if="${not #strings.isEmpty(fmSw.checkerFourId)}"></option>
+                                            <option th:each="deal : ${dealList}" th:value="${deal.pId}" th:text="${deal.pName}" th:field="*{checkerFourId}"></option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label  text-right" style="color:#ff0000">处理人5：</label>
+                                    <div class="col-sm-8">
+                                        <select name="dealerFiveId" id="dealerFiveId" class="form-control">
+                                            <option value=""th:if="${not #strings.isEmpty(fmSw.dealOrgId)}"></option>
+                                            <option th:each="deal : ${dealList}" th:value="${deal.pId}" th:text="${deal.pName}" th:field="*{dealerFiveId}" ></option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label  text-right" style="color:#ff0000">审核意见：</label>
+                                    <div class="col-sm-10">
+                                        <textarea class="form-control" maxlength="256" rows="10" id="logPerformDesc"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label  text-right ">审核人2：</label>
+                                    <div class="col-sm-8">
+                                        <input class="form-control" type="text"  th:field="*{checkerTwoName}" readonly >
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <!-- Nav tabs -->
+                    <ul class="nav nav-tabs" role="tablist">
+                        <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">操作日志</a></li>
+                        <li role="presentation"><a href="#profile" aria-controls="profile" role="tab" data-toggle="tab">附件</a></li>
+                    </ul>
+
+                    <!-- Tab panes -->
+                    <div class="tab-content">
+                        <div role="tabpanel" class="tab-pane active" id="home">
+                            <div class="col-sm-12 select-table table-striped">
+                                <table id="history-table"></table>
+                            </div>
+                        </div>
+                        <div role="tabpanel" class="tab-pane" id="profile">
+                            <div class="btn-group-sm" id="toolbar" role="tab" style="margin: 15px 0px;">
+                                <a class="btn btn-warning multiple disabled" onclick="downloadFile()">
+                                    <i class="fa fa-download"></i> 下载附件
+                                </a>
+                            </div>
+                            <div class="col-sm-12 select-table table-striped">
+                                <table id="file-table"></table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-offset-5 col-sm-10">
+                <button type="button" class="btn btn-sm btn-primary" onclick="checkPassOrReturn(this)" id="checkPass"><i class="fa fa-check"></i>通过</button>&nbsp;
+                <button type="button" class="btn btn-sm btn-danger" onclick="checkPassOrReturn(this)" id="checkReturn"><i class="fa fa-reply-all"></i>退回</button>
+                <button type="button" class="btn btn-sm btn-danger" onclick="closeItem()"><i class="fa fa-window-close"></i>关 闭 </button>
+            </div>
+        </div>
+    </form>
+
+</div>
+<script th:src="@{/js/activiti.js}"></script>
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: summernote-js" />
+<th:block th:include="include :: select2-js"/>
+<script th:inline="javascript">
+
+    var prefix = ctx + 'trans/sw';
+    var prefix_attachment = ctx + "pub/attachment";
+    var pId = [[${pId}]];
+    $(function () {
+        //回显事件内容
+        $('.summernote').summernote('code',$('#faultDescription').val());
+        $('.summernote').summernote('disable');
+        puFolwHistory($("#fmSwId").val());
+        var options = {
+            url: prefix_attachment + "/list",
+            id: "file-table",
+            createUrl: prefix_attachment + "/add",
+            updateUrl: prefix_attachment + "/edit/{id}",
+            removeUrl: prefix_attachment + "/remove",
+            detailUrl: prefix_attachment + "/edit/{id}",
+            sortName: "fileTime",
+            sortOrder: "desc",
+            singleSelect: true,
+            clickToSelect: true,
+            queryParams:queryParams,
+            modalName: "附件列表",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field : 'atId',
+                    title : '附件ID',
+                    visible : false
+                },
+                {
+                    field : 'person.pId',
+                    title : '上传人员Id',
+                    visible: false
+                },
+                {
+                    field : 'fileName',
+                    title : '文件名称'
+                },
+                {
+                    field : 'person.pName',
+                    title : '上传人'
+                },
+                {
+                    field : 'size',
+                    title : '文件大小'
+                },
+                {
+                    field : 'memo',
+                    title : '文件描述'
+                },
+                {
+                    field : 'fileTime',
+                    title : '上传时间'
+                }]
+        };
+        $.table.init(options);
+
+    });
+
+    function queryParams(params) {
+        var search = $.table.queryParams(params);
+        search.ownerId =  $("#fmSwId").val();
+        return search;
+    }
+    
+    
+    function checkPassOrReturn(elementObj) {
+        var errorInfo = '';
+        var id = $(elementObj).attr('id');
+        if('checkPass'==id){
+            //判断授权人和处理人是否有一个选中
+            var checkerThreeId = $('#checkerThreeId').val();
+            var checkerFourId = $('#checkerFourId').val();
+            var dealerFiveId = $('#dealerFiveId').val();
+            if(isEmpty(checkerThreeId)){
+                errorInfo += '【审核人3】不能为空 ';
+            }else{
+                if(pId==checkerThreeId){
+                    errorInfo += '【审核人3】不能是当前登陆人 ';
+                }
+            }
+            if(isEmpty(checkerFourId)){
+                errorInfo += '【审核人4】不能为空 ';
+            }else{
+                if(pId==checkerFourId){
+                    errorInfo += '【审核人4】不能是当前登陆人 ';
+                }
+            }
+            if(isEmpty(dealerFiveId)){
+                errorInfo += '【处理人5】不能为空 ';
+            }else{
+                if(pId==dealerFiveId){
+                    errorInfo += '【处理人5】不能是当前登陆人 ';
+                }
+            }
+            //判断处理说明是否填写
+            var logPerformDesc = $('#logPerformDesc').val().trim();
+            if(isEmpty(logPerformDesc)){
+                errorInfo += '【审核意见】不能为空 ';
+            } else {
+                if (getValueLen(logPerformDesc) > 256) {
+                    errorInfo += '【审核意见】长度不能大于256 ';
+                }
+            }
+
+            if(isEmpty(errorInfo)){
+                var data = {};
+                //获取事件单编号
+                var fmSwId = $('#fmSwId').val();
+                //获取当前状态
+                var currentState = '';
+
+                if(checkerThreeId!=''){
+                    currentState =  '12';
+                    data.checkerThreeId = checkerThreeId;
+                }
+
+                data.label = 'checkPass';
+                data.fmSwId = fmSwId;
+                data.currentState = currentState;
+                data.logPerformDesc =logPerformDesc;
+                data.checkerFourId =checkerFourId;
+                data.dealerFiveId =dealerFiveId;
+                //审核通过
+                $.operate.saveTab(prefix + "/checkPass",data);
+            }else{
+                $.modal.alertError(errorInfo);
+            }
+        }else{
+            var data = {};
+            //获取事件单编号
+            var fmSwId = $('#fmSwId').val();
+            //判断处理说明是否填写
+            var logPerformDesc = $('#logPerformDesc').val().trim();
+            if(isEmpty(logPerformDesc)){
+                $.modal.alertError('请输入审核意见');
+            }else{
+                if (getValueLen(logPerformDesc) > 256) {
+                    $.modal.alertError('审核意见长度不能大于256');
+                    return;
+                }
+                data.label = 'checkReturn';
+                data.fmSwId = fmSwId;
+                data.currentState = '08';
+                data.logPerformDesc =logPerformDesc;
+                data.checkerThreeId =$('#checkerThreeId').val();
+                data.checkerFourId =$('#checkerFourId').val();
+                data.dealerFiveId =$('#dealerFiveId').val();
+                $.operate.saveTab(prefix + "/checkPass",data);
+            }
+
+        }
+
+    }
+
+    // 附件下载
+    function downloadFile() {
+        var rows = $.table.selectFirstColumns();
+        var atId = rows[0];
+        var ownerId = $("#fmSwId").val();
+        var url = prefix_attachment+"/download/"+ownerId+"/"+atId;
+        window.location.href = url;
+    }
+
+
+    /**
+     * 输入空值校验
+     * @param valueStr
+     * @returns {boolean}
+     */
+    function  isEmpty(valueStr) {
+        if(valueStr=='' || valueStr==null){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+
+    /**
+     * 获取输入数值的长度
+     * @param valueStr
+     * @returns {number}
+     */
+    function getValueLen(valueStr){
+        return isEmpty(valueStr)?0:valueStr.length;
+    }
+</script>
+</body>
+</html>

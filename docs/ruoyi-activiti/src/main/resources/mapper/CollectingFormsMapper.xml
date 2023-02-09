@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.activiti.mapper.CollectingFormsMapper">
+
+    <resultMap type="com.ruoyi.common.core.domain.entity.CollectingFormsInspection" id="CollectingFormsResult">
+        <id property="id" column="id"/>
+        <result property="sysName" column="sys_name"/>
+        <result property="sysCompany" column="sys_company"/>
+        <result property="inspectors" column="inspectors"/>
+        <result property="contact" column="contact"/>
+        <result property="sysManager" column="sys_manager"/>
+        <result property="lastDate" column="last_date"/>
+        <result property="startTime" column="start_time"/>
+        <result property="endTime" column="end_time"/>
+        <result property="crawlerStates" column="crawler_states"/>
+        <result property="crawlerAnnotation" column="crawler_annotation"/>
+        <result property="dispatchingStates" column="dispatching_states"/>
+        <result property="dispatchingAnnotation" column="dispatching_annotation"/>
+        <result property="processStates" column="process_states"/>
+        <result property="processAnnotation" column="process_annotation"/>
+        <result property="warningStates" column="warning_states"/>
+        <result property="warningAnnotation" column="warning_annotation"/>
+        <result property="updateStates" column="update_states"/>
+        <result property="updateAnnotation" column="update_annotation"/>
+        <result property="qualityStates" column="quality_states"/>
+        <result property="qualityAnnotation" column="quality_annotation"/>
+        <result property="remark" column="remark"/>
+    </resultMap>
+
+    <select id="selectCollectingList" parameterType="com.ruoyi.common.core.domain.entity.CollectingFormsInspection" resultMap="CollectingFormsResult">
+        select * from ITSM_HC_COLLECTING
+        <where>
+            <if test="sysName != null  and sysName != ''">and sys_name = #{sysName}</if>
+            <if test="sysCompany != null  and sysCompany != ''">and sys_company = #{sysCompany}</if>
+            <if test="inspectors != null  and inspectors != ''">and inspectors = #{inspectors}</if>
+            <if test="sysManager != null  and sysManager != ''">and sys_manager = #{sysManager}</if>
+        </where>
+    </select>
+
+    <select id="selectCollectingById" parameterType="com.ruoyi.common.core.domain.entity.CollectingFormsInspection" resultMap="CollectingFormsResult">
+        select * from ITSM_HC_COLLECTING where id = #{id}
+    </select>
+
+    <delete id="deleteCollectingById" parameterType="String">
+            delete from ITSM_HC_COLLECTING
+            where id = #{id}
+    </delete>
+
+    <insert id="insertCollecting" parameterType="String">
+            insert into ITSM_HC_COLLECTING
+            (id,sys_name,sys_company,inspectors,contact,sys_manager,last_date,start_time,end_time,crawler_states,
+            crawler_annotation,dispatching_states,dispatching_annotation,process_states, process_annotation, warning_states, warning_annotation,
+            update_states,update_annotation,quality_states,quality_annotation,remark)
+            values(
+                #{id},#{sysName},#{sysCompany},#{inspectors},#{contact},#{sysManager},#{lastDate},#{startTime},
+                #{endTime},#{crawlerStates},#{crawlerAnnotation},#{dispatchingStates},#{dispatchingAnnotation},#{processStates},
+                #{processAnnotation},#{warningStates},#{warningAnnotation},#{updateStates},#{updateAnnotation},#{qualityStates},
+                #{qualityAnnotation},#{remark}
+            )
+    </insert>
+
+    <update id="updateCollecting" parameterType="String">
+            update ITSM_HC_COLLECTING
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="sysName != null  and sysName != ''">sys_name = #{sysName},</if>
+            <if test="sysCompany != null  and sysCompany != ''">sys_company = #{sysCompany},</if>
+            <if test="inspectors != null  and inspectors != ''">inspectors = #{inspectors},</if>
+            <if test="contact != null  and contact != ''">contact = #{contact},</if>
+            <if test="sysManager != null  and sysManager != ''">sys_manager = #{sysManager},</if>
+            <if test="lastDate != null  and lastDate != ''">last_date = #{lastDate},</if>
+            <if test="startTime != null  and startTime != ''">start_time = #{startTime},</if>
+            <if test="endTime != null  and endTime != ''">end_time = #{endTime},</if>
+            <if test="crawlerStates != null  and crawlerStates != ''">crawler_states = #{crawlerStates},</if>
+            <if test="crawlerAnnotation != null  and crawlerAnnotation != ''">crawler_annotation = #{crawlerAnnotation},</if>
+            <if test="dispatchingStates != null  and dispatchingStates != ''">dispatching_states = #{dispatchingStates},</if>
+            <if test="dispatchingAnnotation != null  and dispatchingAnnotation != ''">dispatching_annotation = #{dispatchingAnnotation},</if>
+            <if test="processStates != null  and processStates != ''">process_states = #{processStates},</if>
+            <if test="processAnnotation != null  and processAnnotation != ''">process_annotation = #{processAnnotation},</if>
+            <if test="warningStates != null  and warningStates != ''">warning_states = #{warningStates},</if>
+            <if test="warningAnnotation != null  and warningAnnotation != ''">warning_annotation = #{warningAnnotation},</if>
+            <if test="updateStates != null  and updateStates != ''">update_states = #{updateStates},</if>
+            <if test="updateAnnotation != null  and updateAnnotation != ''">update_annotation = #{updateAnnotation},</if>
+            <if test="qualityStates != null  and qualityStates != ''">quality_states = #{qualityStates},</if>
+            <if test="qualityAnnotation != null  and qualityAnnotation != ''">quality_annotation = #{qualityAnnotation},</if>
+            <if test="remark != null  and remark != ''">remark = #{remark},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+
+</mapper>

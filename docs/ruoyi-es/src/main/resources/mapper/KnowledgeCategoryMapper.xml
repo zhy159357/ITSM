@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.es.mapper.KnowledgeCategoryMapper">
+    
+    <resultMap type="KnowledgeCategory" id="KnowledgeCategoryResult">
+        <result property="categoryId"   column="category_id"    />
+        <result property="createBy"     column="create_by"    />
+        <result property="createDate"   column="create_date"    />
+        <result property="updateBy"     column="update_by"    />
+        <result property="updateDate"   column="update_date"    />
+        <result property="categoryName" column="category_name"    />
+        <result property="parentId"     column="parent_id"    />
+        <result property="parentName"   column="parent_name"    />
+        <result property="remark"       column="remark"    />
+        <result property="status"       column="status"    />
+    </resultMap>
+
+    <resultMap type="KnowledgeTitle" id="KnowledgeTitleResult">
+        <result property="id"   column="id"    />
+        <result property="name"     column="name"    />
+        <result property="category"   column="category"    />
+    </resultMap>
+
+    <sql id="selectKnowledgeCategoryVo">
+        select category_id, (select pname from og_person p where p.pid=create_by) as create_by,
+        create_date, (select pname from og_person p where p.pid=update_by) as update_by, update_date,
+        category_name, parent_id, remark, status
+    </sql>
+
+    <select id="selectKnowledgeCategoryList" parameterType="KnowledgeCategory" resultMap="KnowledgeCategoryResult">
+        <include refid="selectKnowledgeCategoryVo"/>
+        ,(select o.category_name from knowledge_category o WHERE o.category_id = m.parent_id) as parent_name
+        from knowledge_category m
+        <where>
+            <if test="categoryName != null and categoryName != ''"> and category_name like concat('%',concat(#{categoryName},'%'))</if>
+        </where>
+    </select>
+    
+    <select id="selectKnowledgeCategoryById" parameterType="String" resultMap="KnowledgeCategoryResult">
+        <include refid="selectKnowledgeCategoryVo"/>
+        ,(select o.category_name from knowledge_category o WHERE o.category_id = m.parent_id) as parent_name
+        from knowledge_category m
+        where category_id = #{categoryId}
+    </select>
+
+    <insert id="insertKnowledgeCategory" parameterType="KnowledgeCategory">
+        insert into knowledge_category
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="categoryId != null  and categoryId != ''">category_id,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="createDate != null  and createDate != ''">create_date,</if>
+            <if test="categoryName != null  and categoryName != ''">category_name,</if>
+            <if test="parentId != null  and parentId != ''">parent_id,</if>
+            <if test="status != null  and status != ''">status,</if>
+            remark,
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="categoryId != null  and categoryId != ''">#{categoryId},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="createDate != null  and createDate != ''">#{createDate},</if>
+            <if test="categoryName != null  and categoryName != ''">#{categoryName},</if>
+            <if test="parentId != null  and parentId != ''">#{parentId},</if>
+            <if test="status != null  and status != ''">#{status},</if>
+            #{remark},
+         </trim>
+    </insert>
+
+    <update id="updateKnowledgeCategory" parameterType="KnowledgeCategory">
+        update knowledge_category
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="updateDate != null and updateDate != ''">update_date = #{updateDate},</if>
+            <if test="categoryName != null and categoryName != ''">category_name = #{categoryName},</if>
+            <if test="parentId != null and parentId != ''">parent_id = #{parentId},</if>
+            <if test="remark != null and remark != ''">remark = #{remark},</if>
+            <if test="status != null and status != ''">status = #{status},</if>
+        </trim>
+        where category_id = #{categoryId}
+    </update>
+
+    <delete id="deleteKnowledgeCategoryById" parameterType="String">
+        delete from knowledge_category where category_id = #{categoryId}
+    </delete>
+
+    <delete id="deleteKnowledgeCategoryByIds" parameterType="String">
+        delete from knowledge_category where category_id in 
+        <foreach item="categoryId" collection="array" open="(" separator="," close=")">
+            #{categoryId}
+        </foreach>
+    </delete>
+
+    <select id="checkDataUnique" parameterType="String" resultMap="KnowledgeCategoryResult">
+        <include refid="selectKnowledgeCategoryVo"/>
+        from knowledge_category
+        where category_name = #{categoryName}
+    </select>
+
+    <select id="getCateList"  resultMap="KnowledgeCategoryResult">
+        select category_id,category_name from knowledge_category
+    </select>
+
+    <select id="getTitleById" parameterType="String" resultMap="KnowledgeTitleResult">
+        select id,name  from KNOWLEDGE_TITIL 
+        <where> 
+        	<if test="category != null  and category != ''">and CATEGORY=#{category}</if>
+        	<if test="id != null  and id != ''">and id= #{id}</if>
+        </where>
+    </select>
+
+</mapper>

@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:include="include :: header('修改数据需求单')"/>
+    <th:block th:include="include :: summernote-css"/>
+    <th:block th:include="include :: datetimepicker-css"/>
+    <th:block th:include="include :: select2-css" />
+</head>
+<body>
+<div class="main-content">
+    <form class="form-horizontal" id="form-fetch-edit" th:object="${sjFetchDemand}">
+        <input type="hidden" th:value="${fetchId}" name="fetchId" id="fetchId">
+        <input type="hidden" th:value="${cntxtag}" name="cntxtag" id="cntxtag">
+        <input type="hidden"  name="sysName" id="sysName">
+        <!--当前提交标识-->
+        <input type="hidden" name="params[flag]" id="flag"/>
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-heading" style="background-color: #3c8dbc" data-toggle="collapse"
+                     data-target="#collapse1">
+                    <h4 class="panel-title">
+                        基本信息
+                    </h4>
+                </div>
+                <div id="collapse1" class="panel-collapse in">
+                    <div class="panel-body">
+                        <div class="row form-group">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label  text-right">提取单单号：</label>
+                                    <div class="col-sm-8">
+                                        <input name="fetchNo" class="form-control" type="text" readonly
+                                               th:field="*{fetchNo}" id="fetchNo">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label  text-right is-required">需求标题：</label>
+                                    <div class="col-sm-8">
+                                        <input name="titleName" class="form-control" type="text" id="titleName"  th:field="*{titleName}">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label  text-right is-required">流程号：</label>
+                                    <div class="col-sm-8">
+                                        <input name="processid" class="form-control" type="text" id="processid" th:field="*{processid}">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label  text-right is-required">联系部门：</label>
+                                    <div class="col-sm-8">
+                                        <input type="hidden" name="orgId" id="orgId" th:field="*{orgId}"/>
+                                        <input class="form-control" type="text" name="orgName" id="orgName" readonly style="background-color: #ffffff" onclick="selectDeptTree(this)" th:field="*{orgName}">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label  text-right is-required">联系人：</label>
+                                    <div class="col-sm-8">
+                                        <input name="personId" class="form-control" type="hidden" id="personId">
+                                        <input name="personName" class="form-control" type="text" id="personName" readonly onclick="selectUser(this)" style="background-color: #ffffff" th:field="*{personName}">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label  text-right is-required">需求单号：</label>
+                                    <div class="col-sm-8">
+                                        <input name="businessNumber" class="form-control" type="text" id="businessNumber" th:field="*{businessNumber}">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label  text-right is-required">需求类别：</label>
+                                    <div class="col-sm-8">
+                                        <select class="form-control" name="businessType" id="businessType"
+                                                th:with="type=${@dict.getParaType('business_type')}" >
+                                            <option value=""></option>
+                                            <option th:each="dict : ${type}" th:text="${dict.valueDetail}"
+                                                    th:value="${dict.value}" th:field="*{businessType}"></option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label  text-right">业务部门：</label>
+                                    <div class="col-sm-8">
+                                        <input type="hidden" name="businessOrgId" id="businessOrgId" th:field="*{businessOrgId}"/>
+                                        <input class="form-control" type="text" name="businessOrgName" id="businessOrgName"  readonly style="background-color: #ffffff" onclick="selectDeptTree(this)" th:field="*{businessOrgName}">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label  text-right">业务联系人：</label>
+                                    <div class="col-sm-8">
+                                        <input name="bbusinessPersonId" class="form-control" type="hidden" id="bbusinessPersonId">
+                                        <input name="bbusinessPersonName" class="form-control" type="text" id="bbusinessPersonName" readonly onclick="selectUser(this)" style="background-color: #ffffff" th:field="*{bbusinessPersonName}">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label  text-right is-required">涉及系统：</label>
+                                    <div class="col-sm-8">
+                                        <div id="sysId" class="xm-select-normal"
+                                             style=" display:inline;height: 31px;"></div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row form-group">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label  text-right is-required">系统机构：</label>
+                                    <div class="col-sm-8">
+                                        <input type="hidden" name="sysOrgId" id="sysOrgId" th:field="*{sysOrgId}"/>
+                                        <input class="form-control" type="text" name="sysOrgName" id="sysOrgName" readonly style="background-color: #ffffff" onclick="selectDeptTree(this)" th:field="*{sysOrgName}">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label  text-right is-required">系统负责人：</label>
+                                    <div class="col-sm-8">
+                                        <input name="sysManagerId" class="form-control" type="hidden" id="sysManagerId" th:field="*{sysManagerId}">
+                                        <input name="sysManagerName" class="form-control" type="text" id="sysManagerName" readonly onclick="selectUser(this)" style="background-color: #ffffff" th:field="*{sysManagerName}">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <ul class="nav nav-tabs" role="tablist">
+                        <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab"
+                                                                  data-toggle="tab">附件</a></li>
+                    </ul>
+                    <div class="tab-content">
+                        <div role="tabpanel" class="tab-pane active" id="home">
+                            <div class="btn-group-sm" id="toolbar" role="tab" style="margin: 15px 0px;">
+                                <a class="btn btn-success" type="button" onclick="upload()">
+                                    <i class="fa fa-upload"></i> 添加附件
+                                </a>
+                                <a class="btn btn-warning multiple disabled" onclick="downloadFile()">
+                                    <i class="fa fa-download"></i> 下载附件
+                                </a>
+                                <a class="btn btn-danger multiple disabled" onclick="remove()">
+                                    <i class="fa fa-remove"></i> 删除附件
+                                </a>
+                            </div>
+                            <div class="col-sm-12 select-table table-striped">
+                                <table id="file-table"></table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-offset-5 col-sm-10">
+                <button type="button" class="btn btn-sm btn-primary" onclick="submitHandler(this)" id="commit"><i
+                        class="fa fa-check"></i>提交
+                </button>&nbsp;&nbsp;
+                <button type="button" class="btn btn-sm btn-primary" onclick="submitHandler(this)" id="temporary"><i
+                        class="fa fa-check"></i>暂存
+                </button>&nbsp;&nbsp;
+                <button type="button" class="btn btn-sm btn-danger" onclick="closeItem()"><i
+                        class="fa fa-window-close"></i>关 闭
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+<th:block th:include="include :: footer"/>
+<th:block th:include="include :: summernote-js"/>
+<th:block th:include="include :: datetimepicker-js"/>
+<script type="text/javascript">
+    var prefix = ctx + "fetch/demand";
+    var prefix_single = ctx + "fetch/single";
+    var elementId;
+    var sysNameCompent = '';
+    var cntxtag =  $("#cntxtag").val();
+    var prefix_attachment = ctx + "pub/attachment";
+    var prefix_delete = ctx + "bg/sjbg";
+    $(function () {
+        var options = {
+            url: prefix_attachment + "/list",
+            id: "file-table",
+            createUrl: prefix_attachment + "/add",
+            removeUrl: prefix_attachment + "/remove",
+            sortName: "fileTime",
+            sortOrder: "desc",
+            singleSelect: true,
+            clickToSelect: true,
+            queryParams: queryParams,
+            modalName: "附件列表",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'atId',
+                    title: '附件ID',
+                    visible: false
+                },
+                {
+                    field: 'person.pId',
+                    title: '上传人员Id',
+                    visible: false
+                },
+                {
+                    field: 'fileName',
+                    title: '文件名称'
+                },
+                {
+                    field: 'person.pName',
+                    title: '上传人'
+                },
+                {
+                    field: 'size',
+                    title: '文件大小'
+                },
+                {
+                    field: 'memo',
+                    title: '文件描述'
+                },
+                {
+                    field: 'fileTime',
+                    title: '上传时间',
+                    formatter: function (value, row, index) {
+                        var uploadTime = '';
+                        if (value != '' && value != null) {
+                            var pattern = /(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/;
+                            uploadTime = value.replace(pattern, '$1-$2-$3 $4:$5:$6');
+                        }
+                        return uploadTime;
+                    }
+                }]
+        };
+        $.table.init(options);
+
+        $.get(prefix+"/selectSjFetchDemandById/"+$('#fetchId').val(),function (resp) {
+            //加载涉及系统
+            var url = prefix_single+"/getAllSys";
+            $.get(url,function (result) {
+                var arr = [];
+                $.each(result.data,function (index,item) {
+                    console.log(item)
+                    var obj = {};
+                    obj.name = item.caption;
+                    obj.value = item.sysId;
+                    obj.selected =  true;
+                    arr.push(obj);
+
+                })
+
+                layui.config({
+                    base: ctx + 'ajax/libs/layui/',
+                }).extend({
+                    xmSelect: 'xm-select'
+                }).use(['xmSelect'], function(){
+                    var xmSelect = layui.xmSelect;
+                    if(resp.data==0){
+                      if(cntxtag =='true'){
+                        //渲染多选
+                        sysNameCompent = xmSelect.render({
+                            el: '#sysId',
+                            radio:true,
+                            model: {
+                                label: {
+                                    type: 'block',
+                                    block: {
+                                        //最大显示数量, 0:不限制
+                                        showCount: 5,
+                                        //是否显示删除图标
+                                        showIcon: true,
+                                    }
+                                }
+                            },
+                            data: arr,
+                            initValue:[],
+                            toolbar: {
+                                show: true,
+                            },
+                            theme: {
+                                color: '#3c8dbc',
+                            },
+                            name: 'sysId',
+                            autoRow: true,
+                            filterable: true,
+                            direction: 'down',
+                            paging: true,
+                            pageSize: 5,
+                            layVerify: 'required',
+                            layVerType: 'msg'
+                        })
+                      }else{
+                       //渲染多选
+                        sysNameCompent = xmSelect.render({
+                            el: '#sysId',
+                            radio:true,
+                            model: {
+                                label: {
+                                    type: 'block',
+                                    block: {
+                                        //最大显示数量, 0:不限制
+                                        showCount: 5,
+                                        //是否显示删除图标
+                                        showIcon: true,
+                                    }
+                                }
+                            },
+                            data: arr,
+                            initValue:[],
+                            toolbar: {
+                                show: true,
+                            },
+                            theme: {
+                                color: '#3c8dbc',
+                            },
+                            name: 'sysId',
+                            autoRow: true,
+                            filterable: true,
+                            direction: 'down',
+                            paging: true,
+                            pageSize: 5,
+                            layVerify: 'required',
+                            layVerType: 'msg'
+                        })
+                      }
+                    }else{
+                      if(cntxtag =='true'){
+                       //渲染多选
+                        sysNameCompent = xmSelect.render({
+                            el: '#sysId',
+                            radio:true,
+                            model: {
+                                label: {
+                                    type: 'block',
+                                    block: {
+                                        //最大显示数量, 0:不限制
+                                        showCount: 5,
+                                        //是否显示删除图标
+                                        showIcon: true,
+                                    }
+                                }
+                            },
+                            data: arr,
+                            initValue:resp.data,
+                            toolbar: {
+                                show: true,
+                            },
+                            theme: {
+                                color: '#3c8dbc',
+                            },
+                            name: 'sysId',
+                            autoRow: true,
+                            filterable: true,
+                            direction: 'down',
+                            paging: true,
+                            pageSize: 5,
+                            layVerify: 'required',
+                            layVerType: 'msg'
+                        })
+                      }else{
+                        //渲染多选
+                        sysNameCompent = xmSelect.render({
+                            el: '#sysId',
+                            model: {
+                                label: {
+                                    type: 'block',
+                                    block: {
+                                        //最大显示数量, 0:不限制
+                                        showCount: 5,
+                                        //是否显示删除图标
+                                        showIcon: true,
+                                    }
+                                }
+                            },
+                            data: arr,
+                            initValue:resp.data,
+                            toolbar: {
+                                show: true,
+                            },
+                            theme: {
+                                color: '#3c8dbc',
+                            },
+                            name: 'sysId',
+                            autoRow: true,
+                            filterable: true,
+                            direction: 'down',
+                            paging: true,
+                            pageSize: 5,
+                            layVerify: 'required',
+                            layVerType: 'msg'
+                        })
+                      }
+                    }
+
+
+                })
+            });
+        });
+    });
+
+    function queryParams(params) {
+        var search = $.table.queryParams(params);
+        search.ownerId = $("#fetchId").val();
+        return search;
+    }
+
+    /* 用户管理-新增-选择部门树 */
+    function selectDeptTree(obj) {
+        elementId = obj.id;
+        var orgId = $("#orgId").val();
+        var  id = $.common.isEmpty(orgId) ? "310100001" : $("#orgId").val();
+        var url = ctx + "system/dept/selectDeptTree/" + id;
+        var options = {
+            title: '选择部门',
+            width: "380",
+            url: url,
+            callBack: doSubmit
+        };
+        $.modal.openOptions(options);
+    }
+
+    function doSubmit(index, layero){
+        var tree = layero.find("iframe")[0].contentWindow.$._tree;
+        if(jQuery.isEmptyObject(tree)) {
+            layer.close(index);
+        }else{
+            var selectNode = tree.getSelectedNodes();
+            if(selectNode.length!=0){
+                if(elementId=='orgName'){
+                    $("#orgId").val(selectNode[0].id);
+                    $("#orgName").val(selectNode[0].name);
+                }else if(elementId=='businessOrgName'){
+                    $("#businessOrgId").val(selectNode[0].id);
+                    $("#businessOrgName").val(selectNode[0].name);
+                }else if(elementId =='sysOrgName'){
+                    $("#sysOrgId").val(selectNode[0].id);
+                    $("#sysOrgName").val(selectNode[0].name);
+                }
+
+            }
+        }
+        layer.close(index);
+    }
+/**
+     * 选择人员信息（联系部门和业务部门）
+     */
+    function selectUser(obj) {
+        var elementId = obj.id;
+        //1.判断是否进行了联系部门的选择
+        var orgName = $('#orgName').val();
+        var orgId = $('#orgId').val();
+        //2.判断是否进行了业务部门的选择
+        var businessOrgId = $('#businessOrgId').val();
+        var businessOrgName = $('#businessOrgName').val();
+        //3.判断是否进行了系统部门的选择
+        var sysOrgId = $('#sysOrgId').val();
+        var sysOrgName = $('#sysOrgName').val();
+        if(elementId == 'personName'){
+            //判断是否进行了联系部门的选择
+            if(orgId=='' || orgName==''){
+                $.modal.alertError('请先选择联系部门');
+            }else{
+                //打开联系人选择页面
+                var title = '选择联系人';
+                var url = prefix_single + '/selectUser/0/'+orgId;
+                $.modal.open(title,url);
+            }
+        }else if(elementId == 'bbusinessPersonName'){
+            if(businessOrgId=='' || businessOrgName==''){
+                $.modal.alertError('请先选择业务部门');
+            }else{
+                //打开业务人选择页面
+                var title = '选择业务联系人';
+                var url = prefix_single + '/selectUser/1/'+businessOrgId;
+                $.modal.open(title,url);
+            }
+        }else{
+            if(sysOrgId=='' || sysOrgName==''){
+                $.modal.alertError('请先选择系统机构');
+            }else{
+                //打开系统负责人选择页面
+                var title = '选择系统负责人';
+                //获取当前选择的系统负责人
+                //获取当前选择的机构信息
+                var sysOrgId = $('#sysOrgId').val();
+
+
+                //获取当前多选选中的值
+                var selectArr = sysNameCompent.getValue('nameStr');
+                $('#sysName').val(selectArr)
+                var selSysName = $('#sysName').val();
+                var split = selSysName.split(',');
+
+                //单系统
+                if(split.length==1){
+                    sysOrgId += ',1';
+                }else{
+                    sysOrgId += ',2';
+                }
+
+                var url = prefix_single + '/selectUser/2/'+sysOrgId;
+                $.modal.open(title,url);
+            }
+
+        }
+
+    }
+<!--    /**-->
+<!--     * 选择人员信息（联系部门和业务部门）-->
+<!--     */-->
+<!--    function selectUser(obj) {-->
+<!--        var elementId = obj.id;-->
+<!--        //1.判断是否进行了联系部门的选择-->
+<!--        var orgName = $('#orgName').val();-->
+<!--        var orgId = $('#orgId').val();-->
+<!--        //2.判断是否进行了业务部门的选择-->
+<!--        var businessOrgId = $('#businessOrgId').val();-->
+<!--        var businessOrgName = $('#businessOrgName').val();-->
+<!--        //3.判断是否进行了系统部门的选择-->
+<!--        var sysOrgId = $('#sysOrgId').val();-->
+<!--        var sysOrgName = $('#sysOrgName').val();-->
+<!--        if(elementId == 'personName'){-->
+<!--            //判断是否进行了联系部门的选择-->
+<!--            if(orgId=='' || orgName==''){-->
+<!--                $.modal.alertError('请先选择联系部门');-->
+<!--            }else{-->
+<!--                //打开联系人选择页面-->
+<!--                var title = '选择联系人';-->
+<!--                var url = prefix_single + '/selectUser/0/'+orgId;-->
+<!--                $.modal.open(title,url);-->
+<!--            }-->
+<!--        }else if(elementId == 'bbusinessPersonName'){-->
+<!--            if(businessOrgId=='' || businessOrgName==''){-->
+<!--                $.modal.alertError('请先选择业务部门');-->
+<!--            }else{-->
+<!--                //打开业务人选择页面-->
+<!--                var title = '选择业务联系人';-->
+<!--                var url = prefix_single + '/selectUser/1/'+businessOrgId;-->
+<!--                $.modal.open(title,url);-->
+<!--            }-->
+<!--        }else{-->
+<!--            if(sysOrgId=='' || sysOrgName==''){-->
+<!--                $.modal.alertError('请先选择系统机构');-->
+<!--            }else{-->
+<!--                //打开系统负责人选择页面-->
+<!--                var title = '选择系统负责人';-->
+<!--                //获取当前选择的系统负责人-->
+<!--                var sysId = sysNameCompent.getValue();-->
+<!--                //获取当前选择的机构信息-->
+<!--                var sysOrgId = $('#sysOrgId').val();-->
+<!--                var url = prefix_single + '/selectUser/2/'+sysOrgId;-->
+<!--                $.modal.open(title,url);-->
+<!--            }-->
+
+<!--        }-->
+
+<!--    }-->
+
+
+    /**
+     * 输入数据中文提取
+     * @param strValue
+     * @returns {string}
+     * @constructor
+     */
+    function GetChinese(strValue) {
+        if(strValue!= null && strValue!= ""){
+            var reg = /[\u4e00-\u9fa5]/g;
+            var isMatch = strValue.match(reg);
+            if(isMatch==null){
+                return "";
+            }else{
+                return strValue.match(reg).join("");
+            }
+        }
+
+        else
+            return "";
+    }
+
+
+    function  submitHandler(element) {
+        /**
+         * 【填报人电话】不能为空 【发生部门】不能为空
+         * @type {string}
+         */
+            //错误提示
+        var errorInfo = '';
+        var elementId = element.id;
+        //判断是进行暂存还是提交
+        if('commit'==elementId){
+            //2.判断是否进行了需求标题的输入
+            var titleName = $('#titleName').val();
+            if(isEmpty(titleName)){
+                errorInfo += '【需求标题】不能为空 ';
+            }else{
+                //进行长度校验（依据数据库中的字节长度）
+                var titleNameLen = getValueLen(titleName);
+                if(titleNameLen>128){
+                    errorInfo += '【需求标题】最大长度不能超过128 ';
+                }
+            }
+
+            //3.判断是否进行了流程号的输入
+            var processid = $('#processid').val();
+            if(isEmpty(processid)){
+                errorInfo += '【流程号】不能为空 ';
+            }else{
+                //进行长度校验（依据数据库中的字节长度）
+                var processidLen = getValueLen(processid);
+                if(processidLen>32){
+                    errorInfo += '【流程号】最大长度不能超过32 ';
+                }
+            }
+
+            //4.判断是否进行了联系部门的选择
+            var orgName = $('#orgName').val();
+            if(isEmpty(orgName)){
+                errorInfo += '【联系部门】不能为空 ';
+            }
+
+            //5.判断联系人是否进行了选择
+            var personName = $('#personName').val();
+            if(isEmpty(personName)){
+                errorInfo += '【联系人】不能为空 ';
+            }
+
+            //6.判断是否进行需求单号的输入
+            var businessNumber = $('#businessNumber').val();
+            if(isEmpty(businessNumber)){
+                errorInfo += '【需求单号】不能为空 ';
+
+            }else{
+                //进行长度校验（依据数据库中的字节长度）
+                var businessNumberLen = getValueLen(businessNumber);
+                if(businessNumberLen>32){
+                    errorInfo += '【需求单号】最大长度不能超过32 ';
+                }
+            }
+
+            //7.判断是否进行了需求类别的选择
+            var businessType = $('#businessType').val();
+            if(isEmpty(businessType)){
+                errorInfo += '【需求类别】不能为空 ';
+            }
+
+            //8.判断是否进行了涉及系统的选择
+            var sysName = sysNameCompent.getValue();
+            if(isEmpty(sysName)){
+                errorInfo += '【涉及系统】不能为空 ';
+            }
+
+            //9.判断系统负责人是否进行了选择
+            var sysOrgId = $('#sysOrgId').val();
+            var sysOrgName = $('#sysOrgName').val();
+            if(isEmpty(sysOrgId) || isEmpty(sysOrgName)){
+                errorInfo += '【系统机构】不能为空 ';
+            }
+
+
+            //10.判断系统负责人是否进行了选择
+            var sysManagerId = $('#sysManagerId').val();
+            var sysManagerName = $('#sysManagerName').val();
+            if(isEmpty(sysManagerId) || isEmpty(sysManagerName)){
+                errorInfo += '【系统负责人】不能为空 ';
+            }
+
+            //获取当前多选选中的值
+            var selectArr = sysNameCompent.getValue('nameStr');
+            $('#sysName').val(selectArr)
+            //进行判断提示
+            if(isEmpty(errorInfo)){
+                $('#flag').val('1');
+                //当前提交校验通过（进行数据的后台的提交）
+                $.operate.saveTab(prefix + "/edit", $('#form-fetch-edit').serialize());
+            }else{
+                //当前提交校验未通过
+                $.modal.alertError(errorInfo);
+            }
+        }else if('temporary'==elementId) {
+            //暂存提交 只需要进行字段长度的校验即可
+            //1.进行需求标题的长度校验
+            var titleName = $('#titleName').val();
+            var titleNameLen = getValueLen(titleName);
+            if(titleNameLen>128){
+                errorInfo += '【需求标题】最大长度不能超过128 ';
+            }
+
+            //2.进行流程号的长度校验
+            var processid = $('#processid').val();
+            var processidLen = getValueLen(processid);
+            if(processidLen>32){
+                errorInfo += '【流程号】最大长度不能超过32 ';
+            }
+
+            //3.进行需求单号的长度校验
+            var businessNumber = $('#businessNumber').val();
+            var businessNumberLen = getValueLen(businessNumber);
+            if(businessNumberLen>32){
+                errorInfo += '【需求单号】最大长度不能超过32 ';
+            }
+
+            //获取当前多选选中的值
+            var selectArr = sysNameCompent.getValue('nameStr');
+            $('#sysName').val(selectArr)
+            if(isEmpty(errorInfo)){
+                $('#flag').val('0');
+                //暂存提交
+                $.operate.saveTab(prefix + "/edit", $('#form-fetch-edit').serialize());
+            }else{
+                $.modal.alertError(errorInfo);
+            }
+        }
+    }
+
+    /**
+     * 输入空值校验
+     * @param valueStr
+     * @returns {boolean}
+     */
+    function  isEmpty(valueStr) {
+        if(valueStr=='' || valueStr==null){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+
+    /**
+     * 获取输入数值的长度
+     * @param valueStr
+     * @returns {number}
+     */
+    function getValueLen(valueStr){
+        return isEmpty(valueStr)?0:valueStr.length;
+    }
+
+    /**
+     * 附件上传
+     */
+    function upload() {
+        var url = ctx + "pub/attachment/upload/" + $("#fetchId").val();
+        $.modal.open("数据提取单附件上传", url);
+    }
+
+    /**
+     * 附件下载
+     */
+    function downloadFile() {
+        var rows = $.table.selectFirstColumns();
+        var atId = rows[0];
+        var ownerId = $("#fetchId").val();
+        var url = ctx + "pub/attachment/download/" + ownerId + "/" + atId;
+        window.location.href = url;
+    }
+
+    /**
+     * 附件删除
+     */
+    function remove() {
+        var row = $('#file-table').bootstrapTable('getSelections')[0]
+        //获取当前登陆人员的id
+        $.get(prefix_delete + '/selectOgUserByUserId', function (result) {
+            if (result.data.pId == row.person.pId) {
+                $.operate.removeAll();
+            } else {
+                $.modal.alertError('不能删除非本人上传附件 ');
+            }
+        });
+    }
+
+
+
+</script>
+</body>
+</html>

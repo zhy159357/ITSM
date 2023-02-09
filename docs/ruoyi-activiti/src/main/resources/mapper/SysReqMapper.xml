@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.activiti.mapper.SysReqMapper">
+
+<resultMap type="SysReq" id="SysReqResult">
+        <result property="id"    column="id_"    />
+        <result property="name"    column="name_"    />
+        <result property="code"    column="code"    />
+        <result property="organ"    column="organ"    />
+        <result property="organid"    column="organid"    />
+        <result property="office"    column="office"    />
+        <result property="officeid"    column="officeid"    />
+        <result property="dept"    column="dept"    />
+        <result property="deptid"    column="deptid"    />
+        <result property="charge"    column="charge"    />
+        <result property="chargeid"    column="chargeid"    />
+        <result property="sysclass"    column="sysclass"    />
+        <result property="sysclassid"    column="sysclassid"    />
+        <result property="check"    column="check_"    />
+        <result property="important"    column="important"    />
+        <result property="mark"    column="mark"    />
+        <result property="remark"    column="remark"    />
+
+        <result property="auditSug"    column="audit_sug"    />
+        <result property="dealSug"    column="deal_sug"    />
+        <result property="auditor"    column="auditor"    />
+        <result property="dealer"    column="dealer"    />
+        <result property="auditDept"    column="audit_dept"    />
+        <result property="dealDept"    column="deal_dept"    />
+        <result property="auditorid"    column="auditorid"    />
+        <result property="dealerid"    column="dealerid"    />
+        <result property="auditDeptid"    column="audit_deptid"    />
+        <result property="dealDeptid"    column="deal_deptid"    />
+        
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="reqUser"    column="req_user"    />
+        <result property="reqTime"    column="create_time"    />
+    </resultMap>
+    
+     <sql id="selectSysReq">
+        select sr.id_, sr.name_, sr.code, sr.organ as organid, oo1.orgname as organ, sr.audit_dept as audit_deptid, oo2.orgname as audit_dept, sr.deal_dept as deal_deptid, oo3.orgname as deal_dept,
+        sr.office as officeid, oo5.value_detail as office, sr.dept as deptid, oo4.orgname as dept, sr.charge as chargeid, op3.pname as charge, 
+        sr.sysclass as sysclassid, oo6.value_detail as sysclass, sr.check_, sr.important, sr.mark, sr.auditor as auditorid, op1.pname as auditor, sr.dealer as dealerid, op2.pname as dealer, sr.audit_sug, sr.deal_sug, sr.create_by, op4.pname as req_user, sr.create_time, sr.update_by, sr.update_time, sr.status, sr.remark from sys_req sr
+        left join og_org oo1 on sr.organ = oo1.orgid
+   		left join og_org oo2 on sr.audit_dept = oo2.orgid
+   		left join og_org oo3 on sr.deal_dept = oo3.orgid
+   		left join og_org oo4 on sr.dept = oo4.orgid
+   		left join og_person op1 on sr.auditor = op1.pid
+   		left join og_person op2 on sr.dealer = op2.pid 
+   		left join og_person op3 on sr.charge = op3.pid 
+   		left join og_person op4 on sr.create_by = op4.pid
+      	left join (select p.value,p.value_detail from pub_paravalue p where p.para_id in (select p2.para_id  from pub_para p2 where p2.para_name = 'Fm_dept') order by p.serail asc) oo5 on oo5.value = sr.office
+      	left join (select p.value,p.value_detail from pub_paravalue p where p.para_id in (select p2.para_id  from pub_para p2 where p2.para_name = 'SYS_TYPE') order by p.serail asc) oo6 on oo6.value = sr.sysclass
+    </sql>
+    
+    <select id="selectSysReqList" parameterType="SysReq" resultMap="SysReqResult">
+        <include refid="selectSysReq"/>
+        <where>
+            <if test="name != null  and name != ''"> and sr.name_ like concat(concat('%',#{name}),'%')</if>
+            <if test="params.createTime != null and params.createTime != ''"> and sr.create_time &gt;= to_date(#{params.createTime},'yyyy-MM-dd')</if>
+            <if test="organ != null  and organ != ''"> and sr.organ like concat(concat('%',#{organ}),'%')</if>
+            <if test="mark != null and mark != '' and mark != -1"> and sr.mark = #{mark}</if>
+            <if test="status != null and status != '' and status != -1"> and sr.status = #{status}</if>
+            <if test="createBy != null and createBy != ''"> and sr.create_by = #{createBy}</if>
+            <if test="auditor != null and auditor != ''"> and sr.auditor = #{auditor}</if>
+            <if test="dealer != null and dealer != ''"> and sr.dealer = #{dealer}</if>
+        </where>
+        order by sr.create_time desc
+    </select>
+    
+    <select id="selectSysReqById" parameterType="String" resultMap="SysReqResult">
+        <include refid="selectSysReq"/>
+        where sr.id_ = #{id}
+    </select>
+    
+    <insert id="insertSysReq" parameterType="SysReq" useGeneratedKeys="false" keyProperty="id">
+		insert into sys_req(
+		id_,
+		<if test="name != null and name != ''">name_,</if>
+		<if test="code != null and code != ''">code,</if>
+		<if test="organ != null and organ != ''">organ,</if>
+		<if test="office != null and office!= ''">office,</if>
+		<if test="dept != null and dept != ''">dept,</if>
+		<if test="charge !=null and charge != ''">charge,</if>
+		<if test="sysclass != null and sysclass != ''">sysclass,</if>
+		<if test="check != null and check != ''">check_,</if>
+		<if test="important != null and important != ''">important,</if>
+		<if test="mark != null and mark != ''">mark,</if>
+		<if test="remark != null and remark != ''">remark,</if>
+		<if test="auditDept != null and auditDept != ''">audit_dept,</if>
+		<if test="auditor != null and auditor != ''">auditor,</if>
+		<if test="createBy != null and createBy != ''">create_by,</if>
+		create_time,
+		status
+		)values(
+        #{id},
+		<if test="name != null and name != ''">#{name},</if>
+		<if test="code != null and code != ''">#{code},</if>
+		<if test="organ != null and organ != ''">#{organ},</if>
+		<if test="office != null and office != ''">#{office},</if>
+		<if test="dept != null and dept != ''">#{dept},</if>
+		<if test="charge !=null and charge != ''">#{charge},</if>
+		<if test="sysclass != null and sysclass != ''">#{sysclass},</if>
+		<if test="check != null and check != ''">#{check},</if>
+		<if test="important != null and important != ''">#{important},</if>
+		<if test="mark != null and mark != ''">#{mark},</if>
+		<if test="remark != null and remark != ''">#{remark},</if>
+		<if test="auditDept != null and auditDept != ''">#{auditDept},</if>
+		<if test="auditor != null and auditor != ''">#{auditor},</if>
+		<if test="createBy != null and createBy != ''">#{createBy},</if>
+		sysdate,
+		<if test="status != null and status != ''">#{status}</if>
+		)
+	</insert>
+	
+	<update id="updateSysReq" parameterType="SysReq">
+        update sys_req
+        <set>        
+        <if test="name != null and name != ''">name_ = #{name},</if>
+		<if test="code != null and code != ''">code = #{code},</if>
+		<if test="organ != null and organ != ''">organ = #{organ},</if>
+		<if test="office != null and office != ''">office = #{office},</if>
+		<if test="dept != null and dept != ''">dept = #{dept},</if>
+		<if test="charge != null and charge != ''">charge = #{charge},</if>
+		<if test="sysclass != null and sysclass != ''">sysclass = #{sysclass},</if>
+		<if test="check != null and check != ''">check_ = #{check},</if>
+		<if test="important != null and important != ''">important = #{important},</if>
+		<if test="mark != null and mark != ''">mark = #{mark},</if>
+		<if test="remark != null and remark != ''">remark = #{remark},</if>
+		<if test="auditDept !=null and auditDept != ''">audit_dept = #{auditDept},</if>
+		<if test="dealDept != null and dealDept != ''">deal_dept = #{dealDept},</if>
+		<if test="auditor != null and auditor != ''">auditor = #{auditor},</if>  
+		<if test="dealer != null and dealer != ''">dealer = #{dealer},</if>  
+		<if test="auditSug != null and auditSug != ''">audit_sug = #{auditSug},</if> 
+		<if test="dealSug != null and dealSug != ''">deal_sug = #{dealSug},</if> 
+		<if test="status != null and status != ''">status = #{status},</if>  
+		<if test="updateBy != null and updateBy != ''">update_by = #{updateBy},</if> 
+        update_time = sysdate
+	   </set>
+        where id_ = #{id}
+    </update>
+    
+     <delete id="deleteSysReqById" parameterType="String">
+        delete from sys_req where id_ = #{id}
+    </delete>
+
+    <delete id="deleteSysReqByIds" parameterType="String">
+        delete from sys_req where id_ in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+	<select id="selectCharge" resultType="OgPerson">
+		select pid,pname from og_person person where person.orgid= #{orgid} 
+	</select> 
+</mapper>

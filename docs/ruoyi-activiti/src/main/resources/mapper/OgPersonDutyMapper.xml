@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.activiti.mapper.OgPersonDutyMapper">
+    
+    <resultMap type="OgPersonDuty" id="OgPersonDutyResult">
+        <result property="dutyId"    column="duty_id"    />
+        <result property="pid"    column="pid"    />
+        <result property="userId"    column="user_id"    />
+        <result property="groupId"    column="group_id"    />
+        <result property="monitorTypeAccountId"    column="monitor_type_account_id"    />
+        <result property="dutyName"    column="duty_name"    />
+        <result property="dutyType"    column="duty_type"    />
+        <result property="operateTime"    column="operate_time"    />
+        <result property="tel"    column="tel"    />
+        <result property="status"    column="status"    />
+        <result property="statusTime"    column="statusTime"    />
+    </resultMap>
+
+    <sql id="selectOgPersonDutyVo">
+        select duty_id, pid, user_id, group_id, monitor_type_account_id, duty_type, duty_name, operate_time,tel from og_person_duty
+    </sql>
+
+    <select id="selectOgPersonDutyList" parameterType="OgPersonDuty" resultMap="OgPersonDutyResult">
+        <include refid="selectOgPersonDutyVo"/>
+        <where>  
+            <if test="pid != null  and pid != ''"> and pid = #{pid}</if>
+            <if test="userId != null  and userId != ''"> and user_id = #{userId}</if>
+            <if test="groupId != null  and groupId != ''"> and group_id = #{groupId}</if>
+            <if test="monitorTypeAccountId != null  and monitorTypeAccountId != ''"> and monitor_type_account_id = #{monitorTypeAccountId}</if>
+            <if test="dutyName != null  and dutyName != ''"> and duty_name like concat(concat('%', #{dutyName}), '%')</if>
+            <if test="dutyType != null  and dutyType != ''"> and duty_type = #{dutyType}</if>
+        </where>
+        order by operate_time desc
+    </select>
+    
+    <select id="selectOgPersonDutyById" parameterType="OgPersonDuty" resultMap="OgPersonDutyResult">
+        <include refid="selectOgPersonDutyVo"/>
+        where duty_id = #{dutyId}
+    </select>
+    
+    <select id="selectDutyCountByGroupOrMonitor" parameterType="OgPersonDuty" resultType="int">
+        select count(1) from og_person_duty
+        <where>
+            <if test="groupId != null and groupId != ''">
+                and group_id = #{groupId}
+            </if>
+            <if test="monitorTypeAccountId != null and monitorTypeAccountId != ''">
+                and monitor_type_account_id = #{monitorTypeAccountId}
+            </if>
+            <if test="userId != null and userId != ''">
+                and user_id = #{userId}
+            </if>
+        </where>
+    </select>
+
+    <insert id="insertOgPersonDuty" parameterType="OgPersonDuty">
+        insert into og_person_duty
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="dutyId != null  and dutyId != ''">duty_id,</if>
+            <if test="pid != null  and pid != ''">pid,</if>
+            <if test="userId != null  and userId != ''">user_id,</if>
+            <if test="groupId != null  and groupId != ''">group_id,</if>
+            <if test="monitorTypeAccountId != null  and monitorTypeAccountId != ''">monitor_type_account_id,</if>
+            <if test="dutyName != null  and dutyName != ''">duty_name,</if>
+            <if test="dutyType != null  and dutyType != ''">duty_type,</if>
+            <if test="operateTime != null">operate_time,</if>
+            <if test="tel != null and tel!=''" >tel,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="dutyId != null  and dutyId != ''">#{dutyId},</if>
+            <if test="pid != null  and pid != ''">#{pid},</if>
+            <if test="userId != null  and userId != ''">#{userId},</if>
+            <if test="groupId != null  and groupId != ''">#{groupId},</if>
+            <if test="monitorTypeAccountId != null  and monitorTypeAccountId != ''">#{monitorTypeAccountId},</if>
+            <if test="dutyName != null  and dutyName != ''">#{dutyName},</if>
+            <if test="dutyType != null  and dutyType != ''">#{dutyType},</if>
+            <if test="operateTime != null">#{operateTime},</if>
+            <if test="tel != null and tel!=''">#{tel},</if>
+         </trim>
+    </insert>
+
+    <update id="updateOgPersonDuty" parameterType="OgPersonDuty">
+        update og_person_duty
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="pid != null  and pid != ''">pid = #{pid},</if>
+            <if test="userId != null  and userId != ''">user_id = #{userId},</if>
+            <if test="groupId != null  and groupId != ''">group_id = #{groupId},</if>
+            <if test="dutyName != null  and dutyName != ''">duty_name = #{dutyName},</if>
+            <if test="dutyType != null  and dutyType != ''">duty_type = #{dutyType},</if>
+            <if test="monitorTypeAccountId != null  and monitorTypeAccountId != ''">monitor_type_account_id = #{monitorTypeAccountId},</if>
+            <if test="tel != null  and tel != ''">tel = #{tel},</if>
+        </trim>
+        where duty_id = #{dutyId}
+    </update>
+
+    <delete id="deleteOgPersonDutyById" parameterType="String">
+        delete from og_person_duty where duty_id = #{dutyId}
+    </delete>
+
+    <delete id="deleteOgPersonDutyByIds" parameterType="String">
+        delete from og_person_duty where duty_id in 
+        <foreach item="dutyId" collection="array" open="(" separator="," close=")">
+            #{dutyId}
+        </foreach>
+    </delete>
+    <select id="selectOgPersonDutyGroupList" parameterType="OgPersonDuty" resultMap="OgPersonDutyResult">
+        select
+            dt.duty_id,
+            op.pname as pid,
+            dt.user_id,
+            dt.group_id,
+            dt.monitor_type_account_id,
+            dt.duty_type,
+            dt.duty_name,
+            dt.operate_time,
+            dt.tel,
+            ws.work_status as status,
+            ws.operate_time as statusTime
+            from og_person_duty dt
+            left join og_person op on op.pid=dt.pid
+            left join itsm_work_status ws on op.pid =ws.pid
+        <where>
+            <if test="pid != null  and pid != ''"> and op.pname like concat(concat('%',#{pid}),'%')</if>
+            <if test="dutyName != null  and dutyName != ''"> and dt.duty_name like concat(concat('%', #{dutyName}), '%')</if>
+            <if test="dutyType != null  and dutyType != ''"> and dt.duty_type = #{dutyType}</if>
+            <if test="params.groupIds !=null and params.groupIds !=''">
+                and dt.group_id
+                <trim prefix="in (" suffix=")" suffixOverrides=",">
+                    <foreach collection="params.groupIds" item="groupId">
+                        #{groupId},
+                    </foreach>
+                </trim>
+            </if>
+            <if test="params.monitorIds !=null and params.monitorIds !=''">
+                and dt.MONITOR_TYPE_ACCOUNT_ID
+                <trim prefix="in (" suffix=")" suffixOverrides=",">
+                    <foreach collection="params.monitorIds" item="monitorId">
+                        #{monitorId},
+                    </foreach>
+                </trim>
+            </if>
+        </where>
+        order by dt.operate_time desc
+    </select>
+</mapper>

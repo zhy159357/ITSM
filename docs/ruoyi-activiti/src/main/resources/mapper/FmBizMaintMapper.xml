@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.activiti.mapper.FmBizMaintMapper">
+
+    <resultMap type="FmBizMaint" id="FmBizMaintResult">
+        <result property="mId" column="m_id"/>
+        <result property="mTitle" column="m_title"/>
+        <result property="mDetail" column="m_detail"/>
+    </resultMap>
+
+    <select id="checkFmBizMaint" parameterType="String" resultMap="FmBizMaintResult">
+        select * from fm_biz_maint
+        <where>
+            1=1
+            <if test="mTitle != null  and mTitle != ''">
+                and m_title like concat(concat('%', #{mTitle}), '%')
+            </if>
+            <if test="mDetail != null  and mDetail != ''">
+                and m_detail like concat(concat('%', #{mDetail}), '%')
+            </if>
+        </where>
+    </select>
+
+
+    <insert id="insertFmBizMaint" parameterType="FmBizMaint">
+        insert into fm_biz_maint
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+             m_id,
+            <if test="mTitle != null  and mTitle != ''">m_title,</if>
+            <if test="mDetail != null  and mDetail != ''">m_detail,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            #{mId},
+            <if test="mTitle != null  and mTitle != ''">#{mTitle},</if>
+            <if test="mDetail != null  and mDetail != ''">#{mDetail},</if>
+        </trim>
+    </insert>
+
+    <select id="getByMId" parameterType="String" resultMap="FmBizMaintResult">
+        select * from fm_biz_maint where m_id = #{mId}
+    </select>
+
+    <update id="updateById" parameterType="FmBizMaint">
+        update fm_biz_maint
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="mTitle != null  and mTitle != ''">m_title = #{mTitle},</if>
+            <if test="mDetail != null  and mDetail != ''">m_detail = #{mDetail},</if>
+        </trim>
+        where m_id = #{mId}
+    </update>
+
+    <delete id="deleteByIds" parameterType="String">
+        delete  from fm_biz_maint  where m_id in
+        <foreach collection="array" item="m_id" open="(" separator="," close=")">
+            #{m_id}
+        </foreach>
+    </delete>
+
+    <select id="selectList" parameterType="String" resultMap="FmBizMaintResult">
+        select
+        <if test="type==1">
+             m_title,m_detail
+        </if>
+        <if test="type==2">
+             m_detail
+        </if>
+        from fm_biz_maint
+    </select>
+
+    <select id="getByCount" parameterType="String" resultType="int">
+         select count(*) from fm_biz_maint where m_title = #{mTitle}
+    </select>
+</mapper>

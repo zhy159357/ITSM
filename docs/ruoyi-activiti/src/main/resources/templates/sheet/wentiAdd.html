@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+	<th:block th:include="include :: header('新增问题单')" />
+	<th:block th:include="include :: ztree-css" />
+	<th:block th:include="include :: footer" />
+	<th:block th:include="include :: ztree-js" />
+	<th:block th:include="include :: jquery-cxselect-js" />
+	<th:block th:include="include :: datetimepicker-js" />
+	<th:block th:include="include :: bootstrap-fileinput-js" />
+</head>
+<body class="white-bg">
+<div id="accountDiv">
+	<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+		<form class="form-horizontal m" id="form-issue-add">
+			<input id="issuefxId" name="issuefxId" type="hidden" th:value="${issuefxId}"/>
+			<h4 class="form-header h4">基本信息</h4>
+			<div class="row">
+				<div class="col-sm-6">
+					<div class="form-group">
+						<label class="col-sm-4 control-label is-required">问题单号：</label>
+						<div class="col-sm-8">
+							<input class="form-control" type="text" name="issuefxNo" id="issuefxNo" th:value="*{issuefxNo}" readonly>
+						</div>
+					</div>
+				</div>
+				<div class="col-sm-6">
+					<div class="form-group">
+						<label class="col-sm-4 control-label is-required">来源：</label>
+						<div class="col-sm-8">
+							<select id="issuesource" name="issuesource" class="form-control" th:with="type=${@pubParaValue.selectPubParaValueByParaName('WT_SOUCE')}" style="pointer-events:none" required readonly>
+								<option value="">请选择</option>
+								<option th:each="itype:${type}" th:text="${itype.valueDetail}" th:value="${itype.value}" th:selected="${itype.value eq '4'}"></option>
+							</select>
+						</div>
+					</div>
+				</div>
+
+			</div>
+			<div class="row">
+				<div class="col-sm-6">
+					<div class="form-group">
+						<label class="col-sm-4 control-label is-required">问题分类：</label>
+						<div class="col-sm-8">
+							<select id="issueFenlei" name="issueFenlei" class="form-control" th:with="issueFenleis=${@pubParaValue.selectPubParaValueByParaName('WT_FENLEI')}" required>
+								<option value="">请选择</option>
+								<option th:each="itype : ${issueFenleis}" th:text="${itype.valueDetail}" th:value="${itype.value}" th:selected="${itype.value==issueFenlei}"></option>
+							</select>
+						</div>
+					</div>
+				</div>
+				<div class="col-sm-6">
+					<div class="form-group">
+						<label class="col-sm-4 control-label is-required">问题类型：</label>
+						<div class="col-sm-8">
+							<select id="issueType" name="issueType" class="form-control" th:with="issue_type=${@pubParaValue.selectPubParaValueByParaName('WT_TYPE')}" required>
+								<option value="">请选择</option>
+								<option th:each="itype : ${issue_type}" th:text="${itype.valueDetail}" th:value="${itype.value}"></option>
+							</select>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-sm-6">
+					<div class="form-group">
+						<label class="col-sm-4 control-label is-required">问题等级：</label><!--issue_serious_lev-->
+						<div class="col-sm-8">
+							<select id="seriousLev" name="seriousLev" class="form-control" th:with="issue_serious_lev=${@pubParaValue.selectPubParaValueByParaName('issue_serious_lev')}" required>
+								<option value="">请选择</option>
+								<option th:each="itype : ${issue_serious_lev}" th:text="${itype.valueDetail}" th:value="${itype.value}"></option>
+							</select>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-sm-12">
+					<div class="form-group">
+						<label class="col-xs-2 control-label is-required">涉及系统：</label>
+						<div class="col-sm-10">
+							<input name="sysName" id="sysName" th:value="*{sysName}" class="form-control" onclick="selectOneApplication()" value="" required >
+							<input name="sysId" id="sysId"  th:value="*{sysId}" value="" hidden>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-sm-6">
+					<div class="form-group">
+						<label class="col-sm-4 control-label is-required">问题发生时间：</label>
+						<div class="col-sm-8 date" >
+							<input type="text" class="form-control calcTotalSecondInput" id="reporttime" name="reporttime" placeholder="yyyy-MM-dd HH:mm:ss" required >
+						</div>
+					</div>
+				</div>
+				<div class="col-sm-6">
+					<div class="form-group">
+						<label class="col-sm-4 control-label is-required">问题单发现人：</label>
+						<div class="col-sm-8">
+							<input  id="userId" th:value="*{userId}"  name="createrId" hidden>
+							<input name="reportname" class="form-control " type="text" th:value="${createrName}" required readonly>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-sm-6">
+					<div class="form-group">
+						<label class="col-sm-4 control-label is-required">联系方式：</label>
+						<div class="col-sm-8">
+							<input name="reportphone" id="reportphone" class="form-control" th:value="${createrPhone}" type="text" maxlength="11" required>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-sm-12">
+					<div class="form-group">
+						<label class="col-xs-2 control-label is-required">问题标题：</label>
+						<div class="col-xs-10">
+							<input name="issuefxName" id="issuefxName" th:value="*{issuefxName}" class="form-control" type="text" placeholder="文本框内容不得超过64个字" maxlength="64" required>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-sm-12">
+					<div class="form-group">
+						<label class="col-xs-2 control-label is-required">问题描述：</label>
+						<div class="col-xs-10">
+							<textarea name="issuefxText" maxlength="500" th:text="*{issuefxText}" class="form-control" rows="5" required></textarea>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-sm-12">
+					<div class="form-group">
+						<label class="col-xs-2 control-label is-required">影响描述：</label>
+						<div class="col-xs-10">
+							<textarea name="issuefxImpact" maxlength="500" class="form-control" rows="5" required></textarea>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-sm-12">
+					<div class="form-group">
+						<label class="col-xs-2 control-label is-required">处理建议：</label>
+						<div class="col-xs-10">
+							<textarea name="dealDescription" maxlength="500" th:text="*{dealDescription}" class="form-control" rows="5" required></textarea>
+						</div>
+					</div>
+				</div>
+			</div>
+			<h4 class="form-header h4">涉及多个业务部门点击增加业务审核选择多个</h4>
+			<div class="row" id="element">
+				<div class="col-sm-6">
+					<div class="form-group">
+						<label class="col-sm-4 control-label is-required">提出机构：</label>
+						<div class="col-sm-8">
+							<select id="issueOrg" name="issueOrg" class="form-control" onchange="orgPer(this,-1)" required>
+								<option th:each="org : ${issueOrgs}" th:text="${org.orgName}" th:value="${org.orgId}"></option>
+							</select>
+						</div>
+					</div>
+				</div>
+				<div class="col-sm-6">
+					<div class="form-group">
+						<label class="col-sm-4 control-label is-required">审核人：</label>
+						<div class="col-sm-8">
+							<select id="reviewerId" name="reviewerId" class="form-control"  onchange="" required>
+								<option value="">请选择</option>
+								<option th:each="user : ${userlist}" th:text="${user.pName}" th:value="${user.pId}"></option>
+							</select>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row" id="enuParam0">
+				<div class="col-sm-6">
+					<div class="form-group">
+						<label class="col-sm-4 control-label is-required">业务部门：</label>
+						<div class="col-sm-8">
+							<select id="businessOrg" name="businessOrg" class="form-control" onchange="orgPer(this,0)" required>
+								<option th:each="org : ${businessOrgs}" th:text="${org.valueDetail}" th:value="${org.paraValueId}"></option>
+							</select>
+						</div>
+					</div>
+				</div>
+				<div class="col-sm-6">
+					<div class="form-group">
+						<label class="col-sm-4 control-label is-required">业务经理：</label>
+						<div class="col-sm-8">
+							<select id="businessId" name="businessId" class="form-control" required>
+								<option value="">请选择</option>
+								<option th:each="user : ${buslist}" th:text="${user.pName}" th:value="${user.pId}"></option>
+							</select>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-sm-6">
+					<div class="form-group">
+						<label class="col-sm-4 control-label"></label>
+						<div class="col-sm-8">
+							<a onclick="addRow()"><i class="fa fa-edit"></i> 点击增加业务审核</a>
+						</div>
+					</div>
+				</div>
+				<div class="col-sm-6">
+					<div class="form-group">
+						<label class="col-sm-4 control-label"></label>
+						<div class="col-sm-8">
+							<a onclick="remove()"><i class="fa fa-edit"></i> 点击删除最后一行</a>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-sm-6">
+					<div class="form-group">
+						<label class="col-sm-4 control-label is-required">技术经理：</label>
+						<div class="col-sm-8">
+							<input class="form-control" type="hidden" name="auditId" id="auditId">
+							<input class="form-control" onclick="getAuditId()" type="text" id="auditName" required >
+						</div>
+					</div>
+				</div>
+			</div>
+			<h4 class="form-header h4">如需其他系统负责人评估请选择协同评估人</h4>
+			<div class="row">
+				<div class="col-sm-6">
+					<div class="form-group">
+						<label class="col-sm-4 control-label"></label>
+						<div class="col-sm-8">
+							<a onclick="getMultiusers()"><i class="fa fa-edit"></i>选择协同评估人</a>
+						</div>
+					</div>
+				</div>
+				<div class="col-sm-6">
+					<div class="form-group">
+						<label class="col-sm-4 control-label"></label>
+						<div class="col-sm-8">
+							<a onclick="clearMultiusers()"><i class="fa fa-edit"></i>清空协同评估人</a>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-sm-12">
+					<div class="form-group">
+						<label class="col-xs-2 control-label">选择协同评估人：</label>
+						<div class="col-xs-10">
+							<input id="multiusers" name="multiusers" type="hidden" value=""/>
+							<input class="form-control" type="text" name="multiusersName" id="multiusersName" onclick="getMultiusers()">
+						</div>
+					</div>
+				</div>
+				<!--				转问题单赋值id
+                                    业务事件单id-->
+				<input id="fmNo" name="fmNo" th:value="${fmNo}" value="" hidden>
+
+				<!--运行事件单id-->
+				<input id="fmjkNo" name="fmjkNo" value="" hidden>
+				<!--数据变更单id-->
+				<input id="cmNo" name="cmNo"  hidden>
+				<!--隐患排查单ids-->
+				<input id="csNo" name="csno" th:value="${csNo}" hidden>
+
+			</div>
+		</form>
+		<h4 class="form-header h4">上传版本程序及操作手册等附件</h4>
+
+		<div class="row">
+			<div class="col-sm-12">
+				<div class="tabs-container">
+					<ul class="nav nav-tabs">
+						<li class="active"><a data-toggle="tab" href="#tab-1" aria-expanded="true"> 附件上传</a>
+						</li>
+						<li class=""><a data-toggle="tab" href="#tab-2" aria-expanded="false">关联运维事件单</a>
+						</li>
+						<li class=""><a data-toggle="tab" href="#tab-3" aria-expanded="false">关联运行事件单</a>
+						</li>
+						<li class=""><a data-toggle="tab" href="#tab-4" aria-expanded="false">关联数据变更单</a>
+						</li>
+					</ul>
+					<div class="tab-content">
+						<div id="tab-1" class="tab-pane active">
+							<div class="panel-body">
+								<div class="btn-group-sm" id="toolbar1" role="group">
+									<a class="btn btn-success" type="button" onclick="upload()">
+										<i class="fa fa-upload"></i> 添加附件
+									</a>
+									<a class="btn btn-primary multiple disabled" onclick="downloadFile()">
+										<i class="fa fa-download"></i> 下载附件
+									</a>
+									<a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()">
+										<i class="fa fa-trash"></i> 删除附件
+									</a>
+								</div>
+								<div class="col-sm-12 select-table table-striped">
+									<table id="file-table"></table>
+								</div>
+							</div>
+						</div>
+
+						<div id="tab-2" class="tab-pane">
+							<div class="panel-body">
+								<div class="btn-group-sm" id="toolbar2" role="group">
+									<a class="btn btn-success" type="button" onclick="goSwList()">
+										<i class="fa fa-upload"></i> 添加关联运维事件单
+									</a>
+									<a class="btn btn-info " type="button" onclick="detailyw()">
+										<i class="fa fa-search"></i> 查看详情
+									</a>
+									<a class="btn btn-danger" type="button" onclick="$.operate.removeAll()">
+										<i class="fa fa-trash"></i> 删除
+									</a>
+								</div>
+								<div class="col-sm-12 select-table table-striped">
+									<table id="yw-table"></table>
+								</div>
+							</div>
+						</div>
+
+
+						<div id="tab-3" class="tab-pane">
+							<div class="panel-body">
+								<div class="btn-group-sm" id="toolbar3" role="group">
+									<a class="btn btn-success" type="button" onclick="goRunList()">
+										<i class="fa fa-plus"></i> 添加运行事件单
+									</a>
+									<a class="btn btn-info" onclick="detailRun()">
+										<i class="fa fa-search"></i> 查看详情
+									</a>
+									<a class="btn btn-danger " onclick="$.operate.removeAll()">
+										<i class="fa fa-trash"></i> 删除
+									</a>
+								</div>
+								<div class="col-sm-12 select-table table-striped">
+									<table id="run-table"></table>
+								</div>
+							</div>
+						</div>
+
+						<div id="tab-4" class="tab-pane">
+							<div class="panel-body">
+								<div class="btn-group-sm" id="toolbar4" role="group">
+									<a class="btn btn-success" type="button" onclick="goCmList()">
+										<i class="fa fa-plus"></i> 添加数据变更单
+									</a>
+									<a class="btn btn-info  " onclick="detailCm()">
+										<i class="fa fa-search"></i> 查看详情
+									</a>
+									<a class="btn btn-danger " onclick="$.operate.removeAll()">
+										<i class="fa fa-trash"></i> 删除
+									</a>
+								</div>
+								<div class="col-sm-12 select-table table-striped">
+									<table id="cm-table"></table>
+								</div>
+							</div>
+						</div>
+
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-sm-offset-5 col-sm-10">
+				<button type="button" class="btn btn-sm btn-primary" onclick="submitHandler(1)"><i class="fa fa-check"></i>提 交</button>&nbsp;
+				<button type="button" class="btn btn-sm btn-primary" onclick="submitHandler(0)"><i class="fa fa-check"></i>暂 存</button>&nbsp;
+				<button type="button" class="btn btn-sm btn-danger" onclick="closeItem()"><i class="fa fa-window-close"></i>关 闭 </button>
+			</div>
+		</div>
+	</div>
+</div>
+<script th:src="@{/js/activiti.js}"></script>
+<script th:src="@{/js/issue.js}"></script>
+<script th:inline="javascript">
+	//	var userId = [[${userId}]];
+	var datas = [[${@pubParaValue.selectPubParaValueByParaName('fmStatus')}]];
+	var eventLevel=[[${@pubParaValue.selectPubParaValueByParaName('dhsj_sjdj')}]];
+	var eventType=[[${@pubParaValue.selectPubParaValueByParaName('YXSJ_TYPE')}]];
+	var eventStatus=[[${@pubParaValue.selectPubParaValueByParaName('Event_status')}]];
+	var eventSource=[[${@pubParaValue.selectPubParaValueByParaName('fmSource')}]];
+	var changeCategoryId_datas =  [[${@pubParaValue.selectPubParaValueByParaName('cm_CateGory')}]];
+	var changeSingleStatus =  [[${@pubParaValue.selectPubParaValueByParaName('cmsj_status')}]];
+	var eventSourceDatas =[[${@dict.getParaType('fmSource')}]];
+	var editFlag = "";
+	var prefix = ctx + "issueList/build";
+		$(function() {
+			layui.use('laydate', function() {
+				var laydate = layui.laydate;
+				laydate.render({
+					elem: '#reporttime',
+					type: 'datetime',
+					trigger: 'click'
+				});
+			});
+		});
+		// 选择应用系统多选
+		function selectOneApplication() {
+			$.modal.open("选择应用系统", prefix+ "/selectOneApplication");
+
+		}
+	function submitHandler(type) {
+		$("form-issue-add").validate({
+			rules: {
+				businessId: {
+					required: true
+				}
+			},
+			messages: {
+				businessId: {
+					required:  "不能为空！"
+				}
+			}
+		})
+			if(!$.validate.form()){
+				$.modal.alertWarning("参数填写不全，请继续填写！");
+				return;
+			}
+
+			saveAllSheet();
+			$('#status').val(type);
+			var data = $("#form-issue-add").serializeArray();
+			var phone = $("#reportphone").val();
+			var zz = /^1(3|4|5|6|7|8|9)\d{9}$/;
+			if(!(zz.test(phone))){
+				$.modal.alertWarning("联系电话有误，请重新输入！");
+				return;
+			}
+			if (0 == type) {
+				$.operate.saveTab(prefix + "/add", data);
+			} else {
+				if ($.validate.form()) {
+					$.operate.saveTab("/issueList/activiti/startProcess", data);
+				}
+			}
+	    }
+
+		 /!*所属应用系统-新增-选择父部门树*!/
+		function selectDeptTree() {
+			var sId = $("#sysId").val();
+			if($.common.isEmpty(sId)){
+				sId = "0";
+			}
+			var url = prefix + "/ogSys/" + sId;
+			var options = {
+				title: '应用系统选择',
+				width: "680",
+				height: "480",
+				url: url,
+				callBack: function (index, layero) {
+					var nodeName = window["layui-layer-iframe"+index].submitForm();
+					var appId = '';
+					var createrOrgName = '';
+					for(var v=0;v<nodeName.length;v++){
+						appId += nodeName[v].sysId+","
+						createrOrgName += nodeName[v].caption+","
+					}
+					appId = appId.substr(0,appId.length-1);
+					createrOrgName = createrOrgName.substr(0,createrOrgName.length-1);
+					$("#sysId").val(appId);
+					$("#applicationName").val(createrOrgName);
+					layer.close(index);
+				}
+			};
+			$.modal.openOptions(options);
+
+		}
+
+		function getMultiusers() {
+			var userIds = $("#multiusers").val();
+				if($.common.isEmpty(userIds)){
+					userIds = "0";
+				}
+				var url = prefix + "/multiusers/" + userIds;
+				$.modal.open("选择协同评估人", url);
+		}
+	/*选择技术经理*/
+	function getAuditId() {
+		var userIds = $("#auditId").val();
+		console.log(userIds);
+		if($.common.isEmpty(userIds)){
+			userIds = "0";
+		}
+		var url = prefix + "/audit/" + userIds;
+		$.modal.open("选择技术经理", url);
+	}
+		/*所属应用系统-新增-选择父部门树*/
+		function clearMultiusers() {
+			$("#multiusers").val("");
+			$("#multiusersName").val("");
+		}
+		var enuParam_index = 1;
+		function addRow() {
+			var options = "";
+			var busoptions = "<option value=''>请选择</option>";
+			var businessOrgs = [[${businessOrgs}]];
+			var buslist = [[${buslist}]];
+			for(var ak=0;ak<businessOrgs.length;ak++){
+				options += "<option value='"+businessOrgs[ak].paraValueId+"'>"+businessOrgs[ak].valueDetail+"</option>";
+			}
+			for(var ak=0;ak<buslist.length;ak++){
+				busoptions += "<option value='"+buslist[ak].pId+"'>"+buslist[ak].pName+"</option>";
+			}
+			var t_index = enuParam_index;
+			var enuParam =  "<div class=\"row\" id='enuParam"+t_index+"'>\n" +
+					"\t\t\t\t\t<div class=\"col-sm-6\">\n" +
+					"\t\t\t\t\t\t<div class=\"form-group\">\n" +
+					"\t\t\t\t\t\t\t<label class=\"col-sm-4 control-label is-required\">业务部门：</label>\n" +
+					"\t\t\t\t\t\t\t<div class=\"col-sm-8\">\n" +
+					"\t\t\t\t\t\t\t\t<select id='businessOrg"+t_index+"' onchange=\"orgPer(this,"+t_index+")\" name=\"businessOrg\" class=\"form-control\" required>\n" +
+					options +
+					"\t\t\t\t\t\t\t\t</select>\n" +
+					"\t\t\t\t\t\t\t</div>\n" +
+					"\t\t\t\t\t\t</div>\n" +
+					"\t\t\t\t\t</div>\n" +
+					"\t\t\t\t\t<div class=\"col-sm-6\">\n" +
+					"\t\t\t\t\t\t<div class=\"form-group\">\n" +
+					"\t\t\t\t\t\t\t<label class=\"col-sm-4 control-label is-required\">业务经理：</label>\n" +
+					"\t\t\t\t\t\t\t<div class=\"col-sm-8\">\n" +
+					"\t\t\t\t\t\t\t\t<select id='businessId"+t_index+"' name=\"businessId\" class=\"form-control\" required>\n" +
+					busoptions +
+					"<!--\t\t\t\t\t\t\t\t\t<option th:each=\"user : ${userlist}\" th:text=\"${user.pName}\" th:value=\"${user.pId}\"></option>-->\n" +
+					"\t\t\t\t\t\t\t\t</select>\n" +
+					"\t\t\t\t\t\t\t</div>\n" +
+					"\t\t\t\t\t\t</div>\n" +
+					"\t\t\t\t\t</div>\n" +
+					"\t\t\t\t</div>";
+			$("#enuParam" + (enuParam_index - 1)).after(enuParam);
+			enuParam_index++;
+		};
+
+		function remove() {
+			var enuParam = document.getElementById("enuParam" + (enuParam_index - 1));
+			if(enuParam_index == 1){
+				$.modal.alertWarning("至少保留一个！");
+			}else{
+				enuParam.parentNode.removeChild(enuParam);
+				enuParam_index--;
+			}
+
+		}
+		//选择事务事件单
+		function goSwList(){
+			var url=prefix+"/gofmbiz?issuefxId="+$("#issuefxId").val()+"&&fmNo="+$("#fmNo").val();
+			$.modal.open("选择运维事件单",url,'','','');
+		}
+		//选择运行事件单
+		function goRunList(){
+			var url=prefix+"/goEventRun?issuefxId="+$("#issuefxId").val()+"&&fmjkNo="+$("#fmjkNo").val();
+			$.modal.open("选择运行事件单",url);
+		}
+		//选择数据变更单
+		function goCmList(){
+			var url=prefix+"/goCm?issuefxId="+$("#issuefxId").val()+"&&cmNo="+$("#cmNo").val();
+			$.modal.open("选择数据变更单",url);
+		}
+		//转问题单直接保存
+		function saveAllSheet(){
+			var obj1='';
+			var obj1Type='';
+			<!--业务事件单-->
+			if($("#fmNo").val()!=""&&$("#fmNo").val()!=null){
+				obj1=$("#fmNo").val();
+				obj1Type='14';
+			}
+			<!--运行事件单-->
+			if($("#fmjkNo").val()!=""&&$("#fmjkNo").val()!=null){
+				obj1=$("#fmjkNo").val();
+				obj1Type='13';
+			}
+			<!--数据变更单-->
+			if($("#cmNo").val()!=""&&$("#cmNo").val()!=null){
+				obj1=$("#cmNo").val();
+				obj1Type='16';
+			}
+			<!--隐患排查单-->
+			if($("#csNo").val()!=""&&$("#csNo").val()!=null){
+				obj1=$("#csNo").val();
+				obj1Type='15';
+			}
+			if(obj1!=''&&obj1Type!=''){
+            var data=new Array();
+            data.push({name:'obj1Id',value:obj1});
+            data.push({name:'obj2Id',value:$("#issuefxId").val()});
+            data.push({name:'type',value:obj1Type});
+            $.operate.save(ctx+"system/relation/add",data);
+            }
+		}
+		function orgPer(obj,type){
+		$.ajax({
+			cache : true,
+			type : "POST",
+			url : prefix + "/orgPer",
+			data : {
+				"orgId": obj.value,
+				"type": type
+			},
+			async : false,
+			error : function(request) {
+				$.modal.alertError("系统错误");
+			},
+			success : function(data) {
+				var options = "";
+				if(-1 == type){
+					$("#reviewerId").html("");
+					for(var ak=0;ak<data.length;ak++){
+						options += "<option value='"+data[ak].pId+"'>"+data[ak].pName+"</option> \n";
+					}
+					$("#reviewerId").append(options);
+				}else if(0==type){
+					var id=obj.id;
+					var num=id.match(/businessOrg(\S*)/)[1];
+					$("#businessId"+num).html("");
+					for(var ak=0;ak<data.length;ak++){
+						options += "<option value='"+data[ak].pId+"'>"+data[ak].pName+"</option> \n";
+					}
+					$("#businessId"+num).append(options);
+				}else {
+					$("#businessId"+type).html("");
+					for(var ak=0;ak<data.length;ak++){
+						options += "<option value='"+data[ak].pId+"'>"+data[ak].pName+"</option> \n";
+					}
+					$("#businessId"+type).append(options);
+				}
+			}
+		});
+	}
+	</script>
+</body>
+</html>

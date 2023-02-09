@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!--	<th:block th:include="include :: header('工作台')" />-->
+    <!--360浏览器优先以webkit内核解析-->
+    <title>上海银行运维管控中台</title>
+    <link rel="shortcut icon" href="favicon.ico">
+    <link href="../static/css/bootstrap.min.css" th:href="@{/css/bootstrap.min.css}" rel="stylesheet"/>
+    <link href="../static/css/font-awesome.min.css" th:href="@{/css/font-awesome.min.css}" rel="stylesheet"/>
+    <link href="../static/css/main/animate.min.css" th:href="@{/css/main/animate.min.css}" rel="stylesheet"/>
+    <link href="../static/css/main/style.min862f.css" th:href="@{/css/main/style.main.css}" rel="stylesheet"/>
+    <link href="../static/css/custom.css" th:href="@{/css/custom.css}" rel="stylesheet"/>
+
+    <style>
+        .grid-container {
+            display: grid;
+            grid-template-columns: auto auto;
+            grid-gap: 10px;
+            background-color: #f3f3f4;
+            padding: 10px;
+        }
+
+        .grid-container > div {
+            background-color: #0d8ddb;
+            text-align: left;
+            padding: 20px 0;
+            font-size: 30px;
+            border-radius: 8px;
+        }
+
+    </style>
+</head>
+
+<body class="gray-bg" style="position: relative;overflow-y:auto;">
+
+
+<a class="btn btn-success" onclick="add()">
+    <i class="fa fa-plus"></i>新增
+</a>
+<br>
+<div class="grid-container" id="grid-container">
+</div>
+<!--<th:block th:include="include :: footer"/>-->
+
+<th:block th:include="include :: footer"/>
+<th:block th:include="include :: select2-css"/>
+<th:block th:include="include :: select2-js"/>
+<th:block th:include="include :: bootstrap-select-js"/>
+<th:block th:include="include :: bootstrap-select-css"/>
+<th:block th:include="include :: datetimepicker-js"/>
+<th:block th:include="include :: datetimepicker-css"/>
+<script th:src="@{/js/activiti.js}"></script>
+<script th:inline="javascript">
+    //工单id
+    var workOrderId = [[${id}]];
+    var prefix = ctx + "twWorkNode";
+
+    window.onload = function () {
+        initCard();
+    };
+
+    function initCard() {
+        var obj=document.getElementById("grid-container");
+        obj.innerHTML="";
+        //动态创建卡片
+        $.ajax({
+            type: 'GET',
+            url: prefix + "/getWorkNodeByWorkOrderId/" + workOrderId,
+            success: function (result) {
+                let arr = result.data
+                let all = "";
+                arr.forEach((item, index, arr) => {
+                    console.log(item);  // a b c d e
+                    all += " <div class=\"item1\">" +
+                        "        <h3>节点类型：" + item.nodeType + "</h3>\n" +
+                        "        <h3>主机：" + item.hostName + "</h3>\n" +
+                        "<div class=\"item1\" >" +
+                        "<button onclick=update(\"" + item.id + "\") type='button' class=\" btn btn-sm btn-primary\">详情<span\n" + "></span>\n" + "</button>  " +
+
+                        "<button onclick=copy(\"" + item.id + "\") type='button' class=\" btn btn-sm btn-primary\">复制<span\n" + "></span>\n" + "</button>  " +
+
+                        "<button onclick=deleteCard(\"" + item.id + "\") type='button' class=\" btn btn-sm btn-primary\">删除<span\n" + "></span>\n" + "</button>  " +
+                        "</div>" +
+
+                        "    </div>";
+                })
+                $(".grid-container").append(all);
+
+            },
+            dataType: 'json'
+        });
+    }
+
+    function update(id) {
+        // if (eventStatus != '1') {
+        //     $.modal.alertWarning("只有待提交状态的事件单才允许编辑.");
+        //     return;
+        // }
+        //
+        var url = prefix + "/addType/" + id + "/" + workOrderId;
+        $.modal.openTab("修改申请单", url);
+
+    }
+
+    function add() {
+        // if (eventStatus != '1') {
+        //     $.modal.alertWarning("只有待提交状态的事件单才允许编辑.");
+        //     return;
+        // }
+        var url = prefix + "/addType/" + 0 + "/" + workOrderId;
+        $.modal.openNoBtn("新增申请单", url,'','',function (result){
+
+        });
+        initCard();
+    }
+
+    function copy(id) {
+        $.ajax({
+            type: 'GET',
+            url: prefix + "/copy/" + id,
+            success: function (result) {
+                console.log(result)
+                $.modal.alertSuccess(result.msg);
+                $(".grid-container").empty();
+                initCard();
+            },
+            dataType: 'json'
+        });
+
+    }
+
+    function deleteCard(id) {
+        $.ajax({
+            type: 'GET',
+            url: prefix + "/delete/" + id,
+            success: function (result) {
+                console.log(result)
+                $.modal.alertSuccess(result.msg);
+                $(".grid-container").empty();
+                initCard();
+            },
+            dataType: 'json'
+        });
+
+    }
+</script>
+
+<script type="text/javascript">
+    function CloseDiv() {
+        document.getElementById("show_div").style.display = "none";
+    }
+
+
+</script>
+</body>
+</html>

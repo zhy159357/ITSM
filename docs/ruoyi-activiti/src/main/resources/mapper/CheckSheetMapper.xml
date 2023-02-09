@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.activiti.mapper.CheckSheetMapper">
+    
+    <resultMap type="CheckSheet" id="CheckSheetResult">
+        <result property="csId"    column="cs_id"    />
+        <result property="csNo"    column="cs_no"    />
+        <result property="sysid"    column="sysid"    />
+        <result property="sysName"    column="sysname"    />
+        <result property="importLevel"    column="import_level"    />
+        <result property="createOrg"    column="create_org"    />
+        <result property="createId"    column="create_id"    />
+        <result property="hiddenText"    column="hidden_text"    />
+        <result property="affectBusiness"    column="affect_business"    />
+        <result property="hiddenSort"    column="hidden_sort"    />
+        <result property="lastTime"    column="last_time"    />
+        <result property="issuefxNo"    column="issuefx_no"    />
+        <result property="maintLetter"    column="maint_letter"    />
+        <result property="rectProp"    column="rect_prop"    />
+        <result property="putUnit"    column="put_unit"    />
+        <result property="unitSchedule"    column="unit_schedule"    />
+        <result property="checkName"    column="check_name"    />
+        <result property="status"    column="status"    />
+        <result property="leadName"    column="lead_name"    />
+        <result property="leadId"    column="lead_id"    />
+        <result property="invalidationMark"    column="invalidation_mark"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="iStatus"    column="i_status"    />
+        <result property="jjTime"    column="jj_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="checkId"    column="check_id"    />
+        <result property="technologyauditName"    column="technologyaudit_name"    />
+        <result property="technologyauditId"    column="technologyaudit_id"    />
+    </resultMap>
+
+    <sql id="selectCheckSheetVo">
+        select cs_id,
+               cs_no,
+               sysid,
+               sysname,
+               import_level,
+               create_org,
+               create_id,
+               hidden_text,
+               affect_business,
+               hidden_sort,
+               last_time,
+               issuefx_no,
+               maint_letter,
+               rect_prop,
+               put_unit,
+               unit_schedule,
+               check_name,
+               status,
+               lead_name,
+               lead_id,
+               invalidation_mark,
+               to_char(TO_DATE(create_time, 'YYYYMMDDHH24MISS'), 'YYYY-MM-DD HH24:MI:SS') as create_time,
+               i_status,
+               jj_time,
+               to_char(TO_DATE(update_time, 'YYYYMMDDHH24MISS'), 'YYYY-MM-DD HH24:MI:SS') as update_time,
+               check_id,
+               technologyaudit_name,
+               technologyaudit_id
+        from check_sheet
+    </sql>
+
+    <select id="selectCheckSheetList" parameterType="CheckSheet" resultMap="CheckSheetResult">
+        <include refid="selectCheckSheetVo"/>
+        <where>
+            and  invalidation_mark ='1'
+            <if test="csId != null  and csId != ''"> and cs_id = #{csId}</if>
+            <if test="csNo != null  and csNo != ''"> and cs_no like concat(concat('%', #{csNo}), '%')</if>
+            <if test="importLevel != null  and importLevel != ''"> and import_level = #{importLevel}</if>
+            <if test="createOrg != null  and createOrg != ''"> and create_org in (select o.orgid from OG_ORG o where o.orgname like concat(concat('%',#{createOrg}),'%'))</if>
+            <if test="createId != null  and createId != ''"> and create_id =#{createId}</if>
+            <if test="sysid != null  and sysid != ''"> and sysid =#{sysid}</if>
+            <if test="createName != null  and createName != ''"> and create_id in (select p.pid from og_person p where p.pname like concat(concat('%', #{createName}), '%'))</if>
+            <if test="hiddenSort != null  and hiddenSort != ''"> and hidden_sort = #{hiddenSort}</if>
+            <if test="maintLetter != null  and maintLetter != ''"> and maint_letter = #{maintLetter}</if>
+            <if test="putUnit != null  and putUnit != ''"> and put_unit = #{putUnit}</if>
+            <if test="issuefxNo !=null and '0'.toString() == issuefxNo.toString() "> and issuefx_no is not null</if>
+            <if test=" issuefxNo !=null and  '1'.toString() == issuefxNo.toString() "> and issuefx_no is null</if>
+            <if test="status != null  and status != ''"> and status
+                <trim prefix="in (" suffix=")" suffixOverrides=",">
+                    <foreach collection="params.status " item="state">
+                        #{state},
+                    </foreach>
+                </trim>
+            </if>
+            <if test="params.beginCreateTime != null and params.beginCreateTime != ''" >
+                and create_time >=TO_CHAR(TO_DATE(#{params.beginCreateTime},'YYYY-MM-DD HH24:MI:SS'), 'YYYYMMDDHH24MISS')
+            </if>
+
+            <if test="params.endCreateTime != null and params.endCreateTime != ''">
+                and create_time  &lt;=TO_CHAR(TO_DATE(#{params.endCreateTime},'YYYY-MM-DD HH24:MI:SS')+1, 'YYYYMMDDHH24MISS')
+              </if>
+            <if test="iStatus != null  and iStatus != ''"> and i_status = #{iStatus}</if>
+            <if test="params.beginJjTime != null and params.beginJjTime != '' ">
+                and jj_time >=TO_CHAR(TO_DATE(#{params.beginJjTime},'YYYY-MM-DD HH24:MI:SS'), 'YYYYMMDDHH24MISS')
+            </if>
+             <if test="params.endJjTime != null and params.endJjTime != ''">
+                 and jj_time &lt;=TO_CHAR(TO_DATE(#{params.endJjTime},'YYYY-MM-DD HH24:MI:SS')+1, 'YYYYMMDDHH24MISS')
+            </if>
+            <if test="params.beginUpdateTime != null and params.beginUpdateTime != ''">
+                and update_time  >=TO_CHAR(TO_DATE(#{params.beginUpdateTime},'YYYY-MM-DD HH24:MI:SS'), 'YYYYMMDDHH24MISS')
+            </if>
+            <if test="params.endUpdateTime != null and params.endUpdateTime != ''">
+                and update_time &lt;=TO_CHAR(TO_DATE(#{params.endUpdateTime},'YYYY-MM-DD HH24:MI:SS')+1, 'YYYYMMDDHH24MISS')
+            </if>
+            <if test="technologyauditName != null  and technologyauditName != ''">
+                and technologyaudit_name like concat(concat('%', #{technologyauditName}), '%')</if>
+
+        </where>
+        order  by create_time desc
+    </select>
+    <select id="selectCheckSheet" parameterType="CheckSheet" resultMap="CheckSheetResult">
+        <include refid="selectCheckSheetVo"/>
+        <where>
+            <if test="csId != null  and csId != ''"> and cs_id = #{csId}</if>
+            <if test="csNo != null  and csNo != ''"> and cs_no like concat(concat('%', #{csNo}), '%')</if>
+            <if test="sysid != null  and sysid != ''"> and sysid = #{sysid}</if>
+            <if test="sysName != null  and sysName != ''"> and sysname = #{sysName}</if>
+            <if test="importLevel != null  and importLevel != ''"> and import_level = #{importLevel}</if>
+            <if test="createOrg != null  and createOrg != ''"> and create_org = #{createOrg}</if>
+            <if test="createId != null  and createId != ''"> and create_id = #{createId}</if>
+            <if test="hiddenSort != null  and hiddenSort != ''"> and hidden_sort = #{hiddenSort}</if>
+            <if test="maintLetter != null  and maintLetter != ''"> and maint_letter = #{maintLetter}</if>
+            <if test="putUnit != null  and putUnit != ''"> and put_unit = #{putUnit}</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+            <if test="params.beginCreateTime != null and params.beginCreateTime != '' and params.endCreateTime != null and params.endCreateTime != ''"> and create_time between #{params.beginCreateTime} and #{params.endCreateTime}</if>
+            <if test="iStatus != null  and iStatus != ''"> and i_status = #{iStatus}</if>
+            <if test="params.beginJjTime != null and params.beginJjTime != '' and params.endJjTime != null and params.endJjTime != ''"> and jj_time between #{params.beginJjTime} and #{params.endJjTime}</if>
+            <if test="params.beginUpdateTime != null and params.beginUpdateTime != '' and params.endUpdateTime != null and params.endUpdateTime != ''"> and update_time between #{params.beginUpdateTime} and #{params.endUpdateTime}</if>
+            <if test="technologyauditName != null  and technologyauditName != ''"> and technologyaudit_name like concat(concat('%', #{technologyauditName}), '%')</if>
+        </where>
+    </select>
+    <select id="selectCheckSheetById" parameterType="String" resultMap="CheckSheetResult">
+        <include refid="selectCheckSheetVo"/>
+        where cs_id = #{csId}
+    </select>
+    <select id="selectCheckSheetByNo" parameterType="String" resultMap="CheckSheetResult">
+        <include refid="selectCheckSheetVo"/>
+        where cs_no= #{csNo}
+    </select>
+
+    <insert id="insertCheckSheet" parameterType="CheckSheet">
+        insert into check_sheet
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="csId != null  and csId != ''">cs_id,</if>
+            <if test="csNo != null  and csNo != ''">cs_no,</if>
+            <if test="sysid != null  and sysid != ''">sysid,</if>
+            <if test="sysName != null  and sysName != ''">sysname,</if>
+            <if test="importLevel != null  and importLevel != ''">import_level,</if>
+            <if test="createOrg != null  and createOrg != ''">create_org,</if>
+            <if test="createId != null  and createId != ''">create_id,</if>
+            <if test="hiddenText != null  and hiddenText != ''">hidden_text,</if>
+            <if test="affectBusiness != null  and affectBusiness != ''">affect_business,</if>
+            <if test="hiddenSort != null  and hiddenSort != ''">hidden_sort,</if>
+            <if test="lastTime != null  and lastTime != ''">last_time,</if>
+            <if test="issuefxNo != null  and issuefxNo != ''">issuefx_no,</if>
+            <if test="maintLetter != null  and maintLetter != ''">maint_letter,</if>
+            <if test="rectProp != null  and rectProp != ''">rect_prop,</if>
+            <if test="putUnit != null  and putUnit != ''">put_unit,</if>
+            <if test="unitSchedule != null  and unitSchedule != ''">unit_schedule,</if>
+            <if test="checkName != null  and checkName != ''">check_name,</if>
+            <if test="status != null  and status != ''">status,</if>
+            <if test="leadName != null  and leadName != ''">lead_name,</if>
+            <if test="leadId != null  and leadId != ''">lead_id,</if>
+            <if test="invalidationMark != null  and invalidationMark != ''">invalidation_mark,</if>
+            <if test="createTime != null  and createTime != ''">create_time,</if>
+            <if test="iStatus != null  and iStatus != ''">i_status,</if>
+            <if test="jjTime != null  and jjTime != ''">jj_time,</if>
+            <if test="updateTime != null  and updateTime != ''">update_time,</if>
+            <if test="checkId != null  and checkId != ''">check_id,</if>
+            <if test="technologyauditName != null  and technologyauditName != ''">technologyaudit_name,</if>
+            <if test="technologyauditId != null  and technologyauditId != ''">technologyaudit_id,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="csId != null  and csId != ''">#{csId},</if>
+            <if test="csNo != null  and csNo != ''">#{csNo},</if>
+            <if test="sysid != null  and sysid != ''">#{sysid},</if>
+            <if test="sysName != null  and sysName != ''">#{sysName},</if>
+            <if test="importLevel != null  and importLevel != ''">#{importLevel},</if>
+            <if test="createOrg != null  and createOrg != ''">#{createOrg},</if>
+            <if test="createId != null  and createId != ''">#{createId},</if>
+            <if test="hiddenText != null  and hiddenText != ''">#{hiddenText},</if>
+            <if test="affectBusiness != null  and affectBusiness != ''">#{affectBusiness},</if>
+            <if test="hiddenSort != null  and hiddenSort != ''">#{hiddenSort},</if>
+            <if test="lastTime != null  and lastTime != ''">#{lastTime},</if>
+            <if test="issuefxNo != null  and issuefxNo != ''">#{issuefxNo},</if>
+            <if test="maintLetter != null  and maintLetter != ''">#{maintLetter},</if>
+            <if test="rectProp != null  and rectProp != ''">#{rectProp},</if>
+            <if test="putUnit != null  and putUnit != ''">#{putUnit},</if>
+            <if test="unitSchedule != null  and unitSchedule != ''">#{unitSchedule},</if>
+            <if test="checkName != null  and checkName != ''">#{checkName},</if>
+            <if test="status != null  and status != ''">#{status},</if>
+            <if test="leadName != null  and leadName != ''">#{leadName},</if>
+            <if test="leadId != null  and leadId != ''">#{leadId},</if>
+            <if test="invalidationMark != null  and invalidationMark != ''">#{invalidationMark},</if>
+            <if test="createTime != null  and createTime != ''">#{createTime},</if>
+            <if test="iStatus != null  and iStatus != ''">#{iStatus},</if>
+            <if test="jjTime != null  and jjTime != ''">#{jjTime},</if>
+            <if test="updateTime != null  and updateTime != ''">#{updateTime},</if>
+            <if test="checkId != null  and checkId != ''">#{checkId},</if>
+            <if test="technologyauditName != null  and technologyauditName != ''">#{technologyauditName},</if>
+            <if test="technologyauditId != null  and technologyauditId != ''">#{technologyauditId},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCheckSheet" parameterType="CheckSheet">
+        update check_sheet
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="csNo != null  and csNo != ''">cs_no = #{csNo},</if>
+            <if test="sysid != null  and sysid != ''">sysid = #{sysid},</if>
+            <if test="sysName != null  and sysName != ''">sysname = #{sysName},</if>
+            <if test="importLevel != null  and importLevel != ''">import_level = #{importLevel},</if>
+            <if test="createOrg != null  and createOrg != ''">create_org = #{createOrg},</if>
+            <if test="createId != null  and createId != ''">create_id = #{createId},</if>
+            <if test="hiddenText != null  and hiddenText != ''">hidden_text = #{hiddenText},</if>
+            <if test="affectBusiness != null  and affectBusiness != ''">affect_business = #{affectBusiness},</if>
+            <if test="hiddenSort != null  and hiddenSort != ''">hidden_sort = #{hiddenSort},</if>
+            <if test="lastTime != null  and lastTime != ''">last_time = #{lastTime},</if>
+            <if test="issuefxNo != null  and issuefxNo != ''">issuefx_no = #{issuefxNo},</if>
+            <if test="maintLetter != null  and maintLetter != ''">maint_letter = #{maintLetter},</if>
+            <if test="rectProp != null  and rectProp != ''">rect_prop = #{rectProp},</if>
+            <if test="putUnit != null  and putUnit != ''">put_unit = #{putUnit},</if>
+            <if test="unitSchedule != null  and unitSchedule != ''">unit_schedule = #{unitSchedule},</if>
+            <if test="checkName != null  and checkName != ''">check_name = #{checkName},</if>
+            <if test="status != null  and status != ''">status = #{status},</if>
+            <if test="leadName != null  and leadName != ''">lead_name = #{leadName},</if>
+            <if test="leadId != null  and leadId != ''">lead_id = #{leadId},</if>
+            <if test="invalidationMark != null  and invalidationMark != ''">invalidation_mark = #{invalidationMark},</if>
+            <if test="createTime != null  and createTime != ''">create_time = #{createTime},</if>
+            <if test="iStatus != null  and iStatus != ''">i_status = #{iStatus},</if>
+            <if test="jjTime != null  and jjTime != ''">jj_time = #{jjTime},</if>
+            <if test="updateTime != null  and updateTime != ''">update_time = #{updateTime},</if>
+            <if test="checkId != null  and checkId != ''">check_id = #{checkId},</if>
+            <if test="technologyauditName != null  and technologyauditName != ''">technologyaudit_name = #{technologyauditName},</if>
+            <if test="technologyauditId != null  and technologyauditId != ''">technologyaudit_id = #{technologyauditId},</if>
+        </trim>
+        where cs_id = #{csId}
+    </update>
+
+    <delete id="deleteCheckSheetById" parameterType="String">
+        delete from check_sheet where cs_id = #{csId}
+    </delete>
+
+    <delete id="deleteCheckSheetByIds" parameterType="String">
+        delete from check_sheet where cs_id in 
+        <foreach item="csId" collection="array" open="(" separator="," close=")">
+            #{csId}
+        </foreach>
+    </delete>
+    
+</mapper>

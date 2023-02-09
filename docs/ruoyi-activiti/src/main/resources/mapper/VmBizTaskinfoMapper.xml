@@ -1,0 +1,590 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.activiti.mapper.VmBizTaskinfoMapper">
+
+    <resultMap type="VmBizTaskinfo" id="VmBizTaskinfoResult">
+        <result property="taskId"    column="task_id"    />
+        <result property="versionInfoId"    column="version_info_id"    />
+        <result property="taskName"    column="task_name"    />
+        <result property="taskTypeId"    column="task_type_id"    />
+        <result property="taskStatus"    column="task_status"    />
+        <result property="taskContent"    column="task_content"    />
+        <result property="taskDealGroupId"    column="task_deal_group_id"    />
+        <result property="taskDealUserId"    column="task_deal_user_id"    />
+        <result property="taskDealUserName"    column="task_deal_user_name"    />
+        <result property="frontTaskId"    column="front_task_id"    />
+        <result property="followTaskId"    column="follow_task_id"    />
+        <result property="estStartDate"    column="est_start_date"    />
+        <result property="estFinishDate"    column="est_finish_date"    />
+        <result property="taskDealResult"    column="task_deal_result"    />
+        <result property="actualStartTime"    column="actual_start_time"    />
+        <result property="actualFinishTime"    column="actual_finish_time"    />
+        <result property="update_time"    column="update_time"    />
+        <result property="invalidationMark"    column="invalidation_mark"    />
+        <result property="taskproducetime"    column="taskproducetime"    />
+        <result property="org"    column="org"    />
+        <result property="taskNo"    column="task_no"    />
+        <result property="userId"    column="user_id"    />
+        <result property="manPhone"    column="man_phone"    />
+        <result property="messageFlag"    column="message_flag"    />
+        <result property="completeUserId"    column="complete_user_id"    />
+        <result property="completeUserName"    column="complete_user_name"    />
+        <result property="ifBigFault"    column="if_big_fault"    />
+        <result property="upgradeMemo"    column="upgrade_memo"    />
+        <result property="ifResultSmoothly"    column="if_result_smoothly"    />
+        <result property="ifSupport"    column="if_support"    />
+        <result property="supportAddress"    column="support_address"    />
+        <result property="supportPhone"    column="support_phone"    />
+        <result property="backExceptionMemo"    column="back_exception_memo"    />
+
+        <association property="vmBizInfo"           column="version_info_id" javaType="VmBizInfo" resultMap="VmBizInfoResult" />
+        <association property="ogOrg"           column="org" javaType="OgOrg" resultMap="OgOrgResult" />
+    </resultMap>
+
+    <resultMap type="VmBizInfo" id="VmBizInfoResult">
+        <id property="versionInfoId"    column="version_Info_Id"    />
+        <result property="versionInfoNo"    column="version_Info_No"    />
+        <result property="versionInfoName"    column="version_Info_Name"    />
+        <result property="versionProducerId"    column="version_Producer_Id"    />
+        <result property="versionProducerName"    column="version_Producer_Name"    />
+        <result property="versionCreateTime"    column="version_Create_Time"    />
+        <result property="sysId"    column="sys_Id"    />
+        <result property="versionName"    column="version_Name"    />
+        <result property="versionNo"    column="version_No"    />
+        <result property="versionDescription"    column="version_Description"    />
+        <result property="versionUpgradeContent"    column="version_Upgrade_Content"    />
+        <result property="businessChangeDescription"    column="business_Change_Description"    />
+        <result property="upgradeEnvironment"    column="upgrade_Environment"    />
+        <result property="noticeText"    column="notice_Text"    />
+        <result property="versionStatus"    column="version_Status"    />
+
+        <result property="technicalSupportId"    column="technical_Support_Id"    />
+        <result property="technicalSupportPhone"    column="technical_Support_Phone"    />
+        <result property="update_time"    column="update_time"    />
+        <result property="versionAttr"    column="version_Attr"    />
+        <result property="testReport"    column="test_Report"    />
+        <result property="questionId"    column="question_Id"    />
+        <result property="sendMsgFlag"    column="send_Msg_Flag"    />
+        <result property="versionType"    column="version_Type"    />
+        <result property="ifSafetyAudit"    column="if_Safety_Audit"    />
+        <result property="issuedUnit"    column="issued_Unit"    />
+        <result property="startUpgradeTime"    column="start_Upgrade_Time"    />
+        <result property="endUpgradeTime"    column="end_Upgrade_Time"    />
+        <result property="acceptOrganization"    column="accept_Organization"    />
+        <result property="acceptRole"    column="accept_Role"    />
+
+        <result property="createunits"    column="createunits"    />
+        <result property="copyRequiteUnit"    column="copy_Requite_Unit"    />
+        <result property="businessState"    column="business_State"    />
+        <result property="technologyState"    column="technology_State"    />
+        <result property="vmProActlogId"    column="vm_Pro_Actlog_Id"    />
+        <result property="drafterId"    column="drafter_Id"    />
+        <result property="issuedNo"    column="issued_No"    />
+        <result property="safetyAuditId"    column="safety_Audit_Id"    />
+        <result property="technologyAuditId"    column="technology_Audit_Id"    />
+        <result property="businessAuditId"    column="business_Audit_Id"    />
+        <result property="businessApprovalId"    column="business_Approval_Id"    />
+        <result property="technologyApprovalId"    column="technology_Approval_Id"    />
+        <result property="useApprovalId"    column="use_Approval_Id"    />
+        <result property="uploaderApprovalId"    column="uploader_Approval_Id"    />
+
+        <result property="ifIssueNotice"    column="if_Issue_Notice"    />
+        <result property="issuedBranch"    column="issued_Branch"    />
+        <result property="agencyCenter"    column="agency_Center"    />
+        <result property="invalidationMark"    column="invalidation_Mark"    />
+        <result property="agencyZx"    column="agency_Zx"    />
+        <result property="businessRequirementText"    column="business_Requirement_Text"    />
+        <result property="businessValidationText"    column="business_Validation_Text"    />
+        <result property="ifReportOffice"    column="if_Report_Office"    />
+        <result property="ifReportCbrc"    column="if_Report_Cbrc"    />
+        <result property="ifReportCallCenter"    column="if_Report_Call_Center"    />
+        <result property="ifStopBusiness"    column="if_Stop_Business"    />
+        <result property="sysName"    column="sys_Name"    />
+        <result property="sys_Id"    column="sys_Id"    />
+        <result property="useDivisionChiefApprovalId"    column="use_Division_Chief_Approval_Id"    />
+        <result property="jjspApprovalId"    column="jjsp_Approval_Id"    />
+        <result property="businessOrg"    column="business_Org"    />
+        <result property="isAutomate"    column="is_automate"    />
+        <result property="automateAuditId"    column="automate_audit_id"    />
+
+        <association property="ogSys"           column="sysid" javaType="OgSys" resultMap="OgSysResult" />
+
+    </resultMap>
+
+    <resultMap type="OgSys" id="OgSysResult">
+        <id     property="sysId"                column="sysId"         />
+        <result property="orgId"                column="orgId"         />
+        <result property="code"                 column="code"      />
+        <result property="caption"              column="caption"       />
+        <result property="memo"                 column="memo"       />
+        <result property="invalidationMark"     column="invalidation_Mark"           />
+        <result property="isExamination"        column="isExamination"     />
+        <result property="dept"                 column="dept"        />
+        <result property="pid"                  column="pid"            />
+        <result property="businessId"           column="businessId"          />
+        <result property="isKeySys"             column="is_Key_Sys"        />
+        <result property="sysType"              column="sys_Type"        />
+    </resultMap>
+
+    <resultMap type="OgOrg" id="OgOrgResult">
+        <id     property="orgId"     column="orgId"     />
+        <result property="parentId"   column="t_o_orgId"   />
+        <result property="orgCode"  column="orgCode"   />
+        <result property="orgName"   column="orgName"   />
+        <result property="orgLv"   column="orgLv"   />
+        <result property="adder"     column="adder"      />
+        <result property="addtime"      column="addtime"       />
+        <result property="moder"      column="moder"       />
+        <result property="modtime"     column="modtime"      />
+        <result property="updatetime"    column="update_time"    />
+        <result property="invalidationMark" column="invalidation_Mark" />
+        <result property="memo"   column="memo"   />
+        <result property="branchMark" column="branch_Mark" />
+        <result property="inoutsideMark"   column="inoutside_Mark"   />
+        <result property="levelCode" column="level_Code" />
+        <result property="leaf"  column="leaf"></result>
+        <result property="type" column="type"></result>
+        <result property="sort" column="sort"></result>
+        <result property="operaternum" column="operaternum"></result>
+        <result property="khnum" column="khnum"></result>
+        <result property="parentName" column="parent_name" />
+    </resultMap>
+
+    <sql id="selectVmBizTaskinfoVo">
+        select
+            t.task_id,
+            t.version_info_id,
+            t.task_name,
+            t.task_type_id,
+            t.task_status,
+            t.task_content,
+            t.task_deal_group_id,
+            t.task_deal_user_id,
+            t.front_task_id,
+            t.follow_task_id,
+            to_char(to_date(t.est_start_date, 'YYYYMMDDHH24MISS'),'YYYY-MM-DD HH24:MI:SS') est_start_date,
+            to_char(to_date(t.est_finish_date, 'YYYYMMDDHH24MISS'),'YYYY-MM-DD HH24:MI:SS') est_finish_date,
+            t.task_deal_result,
+            to_char(to_date(t.actual_start_time, 'YYYYMMDDHH24MISS'),'YYYY-MM-DD HH24:MI:SS') actual_start_time,
+            to_char(to_date(t.actual_finish_time, 'YYYYMMDDHH24MISS'),'YYYY-MM-DD HH24:MI:SS') actual_finish_time,
+            to_char(to_date(t.update_time, 'YYYYMMDDHH24MISS'),'YYYY-MM-DD HH24:MI:SS') update_time,
+            t.invalidation_mark,
+            to_char(to_date(t.taskproducetime, 'YYYYMMDDHH24MISS'),'YYYY-MM-DD HH24:MI:SS') taskproducetime,
+            t.org,
+            t.task_no,
+            t.user_id,
+            t.man_phone,
+            t.message_flag,
+            t.complete_user_id,
+            t.if_big_fault,
+            t.upgrade_memo,
+            t.if_result_smoothly,
+            t.if_support,
+            t.support_address,
+            t.support_phone,
+            t.back_exception_memo,
+            v.version_info_no,
+            v.version_info_name,
+            v.version_producer_id,
+            to_char(to_date(v.version_create_time, 'YYYYMMDDHH24MISS'),'YYYY-MM-DD HH24:MI:SS') version_create_time,
+            v.sysid,
+            v.version_name,
+            v.version_no,
+            v.version_description,
+            v.version_upgrade_content,
+            v.business_change_description,
+            v.upgrade_environment,
+            v.notice_text,
+            v.version_status,
+            v.technical_support_id,
+            v.technical_support_phone,
+            v.version_attr,
+            v.test_report,
+            v.question_id,
+            v.send_msg_flag,
+            v.version_type,
+            v.if_safety_audit,
+            v.issued_unit,
+            to_char(to_date(v.start_upgrade_time, 'YYYYMMDDHH24MISS'),'YYYY-MM-DD HH24:MI:SS') start_upgrade_time,
+            to_char(to_date(v.end_upgrade_time, 'YYYYMMDDHH24MISS'),'YYYY-MM-DD HH24:MI:SS') end_upgrade_time,
+            v.accept_organization,
+            v.accept_role,
+            v.createunits,
+            v.copy_requite_unit,
+            v.business_state,
+            v.technology_state,
+            v.vm_pro_actlog_id,
+            v.drafter_id,
+            v.issued_no,
+            v.safety_audit_id,
+            v.technology_audit_id,
+            v.business_audit_id,
+            v.business_approval_id,
+            v.technology_approval_id,
+            v.use_approval_id,
+            v.uploader_approval_id,
+            v.if_issue_notice,
+            v.issued_branch,
+            v.agency_center,
+            /*v.invalidation_mark,*/
+            v.agency_zx,
+            v.business_requirement_text,
+            v.business_validation_text,
+            v.if_report_office,
+            v.if_report_cbrc,
+            v.if_report_call_center,
+            v.if_stop_business,
+            v.sys_name,
+            v.sys_id,
+            v.use_division_chief_approval_id,
+            v.jjsp_approval_id,
+            v.business_org,
+            v.is_automate,
+            v.automate_audit_id,
+            s.caption,
+            o.orgid,
+            o.orgcode,
+            o.orgname,
+            p1.pname task_deal_user_name,
+            p2.pname complete_user_name,
+            p3.pname version_producer_name
+        from vm_biz_taskinfo t
+        left join vm_biz_info v
+          on t.version_info_id = v.version_info_id
+        left join og_sys s
+          on v.sysid=s.sysid
+        left join og_org o
+          on t.org=o.orgid
+        left join og_person p1
+          on t.task_deal_user_id = p1.pid
+        left join og_person p2
+          on t.complete_user_id = p2.pid
+        left join og_person p3
+          on v.version_producer_id = p3.pid
+    </sql>
+
+    <select id="selectVmBizTaskinfoList" parameterType="VmBizTaskinfo" resultMap="VmBizTaskinfoResult">
+        <include refid="selectVmBizTaskinfoVo"/>
+        <where>
+            <!-- 版本实施列表页面查询待下载｜已下载｜已完成,已评价的任务不查询 -->
+            <if test="params.taskStatusCompleteFlag != null and params.taskStatusCompleteFlag == 2">
+                and t.task_status in ('1','2','3')
+            </if>
+            <!-- 版本升级任务4种状态都查询 -->
+            <if test="params.taskStatusCompleteFlag != null and params.taskStatusCompleteFlag == 3">
+                and t.task_status in ('1','2','3','4')
+            </if>
+            <!-- 版本编号 -->
+            <if test="vmBizInfo != null  and vmBizInfo.versionInfoNo != null and vmBizInfo.versionInfoNo != ''">
+                and v.version_info_no like concat(concat('%',#{vmBizInfo.versionInfoNo}),'%')
+            </if>
+            <!-- 版本简称 -->
+            <if test="vmBizInfo != null  and vmBizInfo.versionInfoName != null and vmBizInfo.versionInfoName != ''">
+                and v.version_info_name like concat(concat('%',#{vmBizInfo.versionInfoName}),'%')
+            </if>
+            <!-- 是否自动化 -->
+            <if test="vmBizInfo != null  and vmBizInfo.isAutomate != null and vmBizInfo.isAutomate != ''">
+                and v.is_automate = #{vmBizInfo.isAutomate}
+            </if>
+            <if test="versionInfoId != null and versionInfoId != ''">
+                and t.version_info_id = #{versionInfoId}
+            </if>
+            <!-- 任务名称 -->
+            <if test="taskName != null  and taskName != ''">
+                and t.task_name like concat(concat('%',#{taskName}),'%')
+            </if>
+            <if test="taskTypeId != null  and taskTypeId != ''">
+                and t.task_type_id = #{taskTypeId}
+            </if>
+            <if test="taskStatus != null  and taskStatus != ''">
+                and t.task_status = #{taskStatus}
+            </if>
+            <if test="taskContent != null  and taskContent != ''">
+                and t.task_content = #{taskContent}
+            </if>
+            <if test="taskDealGroupId != null  and taskDealGroupId != ''">
+                and t.task_deal_group_id = #{taskDealGroupId}
+            </if>
+            <if test="taskDealUserId != null  and taskDealUserId != ''">
+                and t.task_deal_user_id = #{taskDealUserId}
+            </if>
+            <if test="frontTaskId != null  and frontTaskId != ''">
+                and t.front_task_id = #{frontTaskId}
+            </if>
+            <if test="followTaskId != null  and followTaskId != ''">
+                and t.follow_task_id = #{followTaskId}
+            </if>
+            <if test="estStartDate != null  and estStartDate != ''">
+                and t.est_start_date = #{estStartDate}
+            </if>
+            <if test="estFinishDate != null  and estFinishDate != ''">
+                and t.est_finish_date = #{estFinishDate}
+            </if>
+            <if test="taskDealResult != null  and taskDealResult != ''">
+                and t.task_deal_result = #{taskDealResult}
+            </if>
+
+            <!-- 升级时间起 -->
+            <if test="params.actualStartTimeStart != null  and params.actualStartTimeStart != ''">
+                and t.actual_start_time &gt;= #{params.actualStartTimeStart}
+            </if>
+            <if test="params.actualStartTimeEnd != null  and params.actualStartTimeEnd != ''">
+                and t.actual_start_time &lt;= #{params.actualStartTimeEnd}
+            </if>
+            <!-- 升级时间止 -->
+
+
+            <if test="actualFinishTime != null  and actualFinishTime != ''">
+                and t.actual_finish_time = #{actualFinishTime}
+            </if>
+            <if test="invalidationMark != null  and invalidationMark != ''">
+                and t.invalidation_mark = #{invalidationMark}
+            </if>
+            <if test="taskproducetime != null  and taskproducetime != ''">
+                and t.taskproducetime = #{taskproducetime}
+            </if>
+            <!-- 所属单位 -->
+            <if test="ogOrg != null and ogOrg.orgName != null  and ogOrg.orgName != ''">
+                and o.orgname like concat(concat('%',#{ogOrg.orgName}),'%')
+            </if>
+            <!-- 任务单号 -->
+            <if test="taskNo != null  and taskNo != ''">
+                and t.task_no like concat(concat('%',#{taskNo}),'%')
+            </if>
+            <!-- 是否引发生产事故 -->
+            <if test="ifBigFault != null  and ifBigFault != ''">
+                and t.if_big_fault = #{ifBigFault}
+            </if>
+            <!-- 升级结果填报 -->
+            <if test="ifResultSmoothly != null  and ifResultSmoothly != ''">
+                and t.if_result_smoothly = #{ifResultSmoothly}
+            </if>
+            <!-- 是否现场支持 -->
+            <if test="ifSupport != null  and ifSupport != ''">
+                and t.if_support = #{ifSupport}
+            </if>
+            <if test="userId != null  and userId != ''">
+                and t.user_id = #{userId}
+            </if>
+            <if test="manPhone != null  and manPhone != ''">
+                and t.man_phone = #{manPhone}
+            </if>
+            <if test="messageFlag != null  and messageFlag != ''">
+                and t.message_flag = #{messageFlag}
+            </if>
+            <if test="completeUserId != null  and completeUserId != ''">
+                and t.complete_user_id = #{completeUserId}
+            </if>
+            <if test="org != null  and org != ''">
+                and t.org = #{org}
+            </if>
+            <!-- 所属系统支持多选查询 -->
+            <if test="params.captionArray != null and params.captionArray != ''">
+                and s.caption in
+                <foreach collection="params.captionArray" item="caption" open="(" separator="," close=")">
+                    #{caption}
+                </foreach>
+            </if>
+        </where>
+        order by t.taskproducetime desc
+    </select>
+
+    <select id="selectVmBizTaskinfoListUnion" parameterType="VmBizTaskinfo" resultMap="VmBizTaskinfoResult">
+        select tt.* from (
+        <include refid="selectVmBizTaskinfoVo"/>
+        <where>
+            <!-- is_automate='1'表示自动化情况 -->
+            v.is_automate = '1'
+            <if test="params.automateAuditId != null and params.automateAuditId != ''">
+                and v.automate_audit_id=#{params.automateAuditId}
+            </if>
+            <!-- 版本实施不查询已评价的任务状态 -->
+            <if test="params.taskStatusCompleteFlag != null and params.taskStatusCompleteFlag == 2">
+                and t.task_status in ('1','2','3')
+            </if>
+            <!-- 版本升级任务4种状态都查询 -->
+            <if test="params.taskStatusCompleteFlag != null and params.taskStatusCompleteFlag == 3">
+                and t.task_status in ('1','2','3','4')
+            </if>
+            <if test="taskStatus != null  and taskStatus != ''">
+                and t.task_status = #{taskStatus}
+            </if>
+            <!-- 版本编号 -->
+            <if test="vmBizInfo != null  and vmBizInfo.versionInfoNo != null and vmBizInfo.versionInfoNo != ''">
+                and v.version_info_no like concat(concat('%',#{vmBizInfo.versionInfoNo}),'%')
+            </if>
+            <!-- 版本简称 -->
+            <if test="vmBizInfo != null  and vmBizInfo.versionInfoName != null and vmBizInfo.versionInfoName != ''">
+                and v.version_info_name like concat(concat('%',#{vmBizInfo.versionInfoName}),'%')
+            </if>
+            <if test="versionInfoId != null and versionInfoId != ''">
+                and t.version_info_id = #{versionInfoId}
+            </if>
+            <!-- 任务名称 -->
+            <if test="taskName != null  and taskName != ''">
+                and t.task_name like concat(concat('%',#{taskName}),'%')
+            </if>
+            <!-- 任务单号 -->
+            <if test="taskNo != null  and taskNo != ''">
+                and t.task_no like concat(concat('%',#{taskNo}),'%')
+            </if>
+        </where>
+        union all
+        <include refid="selectVmBizTaskinfoVo"/>
+        <where>
+            <!-- is_automate='1'表示非自动化情况 -->
+            v.is_automate = '2'
+            <!-- 版本实施不查询已评价的任务状态 -->
+            <if test="params.taskStatusCompleteFlag != null and params.taskStatusCompleteFlag == 2">
+                and t.task_status in ('1','2','3')
+            </if>
+            <!-- 版本升级任务4种状态都查询 -->
+            <if test="params.taskStatusCompleteFlag != null and params.taskStatusCompleteFlag == 3">
+                and t.task_status in ('1','2','3','4')
+            </if>
+            <if test="taskStatus != null  and taskStatus != ''">
+                and t.task_status = #{taskStatus}
+            </if>
+            <!-- 版本编号 -->
+            <if test="vmBizInfo != null  and vmBizInfo.versionInfoNo != null and vmBizInfo.versionInfoNo != ''">
+                and v.version_info_no like concat(concat('%',#{vmBizInfo.versionInfoNo}),'%')
+            </if>
+            <!-- 版本简称 -->
+            <if test="vmBizInfo != null  and vmBizInfo.versionInfoName != null and vmBizInfo.versionInfoName != ''">
+                and v.version_info_name like concat(concat('%',#{vmBizInfo.versionInfoName}),'%')
+            </if>
+            <if test="versionInfoId != null and versionInfoId != ''">
+                and t.version_info_id = #{versionInfoId}
+            </if>
+            <!-- 任务名称 -->
+            <if test="taskName != null  and taskName != ''">
+                and t.task_name like concat(concat('%',#{taskName}),'%')
+            </if>
+            <!-- 任务单号 -->
+            <if test="taskNo != null  and taskNo != ''">
+                and t.task_no like concat(concat('%',#{taskNo}),'%')
+            </if>
+            <if test="org != null  and org != ''">
+                and t.org = #{org}
+            </if>
+        </where>
+        )tt  order by tt.taskproducetime desc
+    </select>
+
+    <select id="selectVmBizTaskinfoById" parameterType="String" resultMap="VmBizTaskinfoResult">
+        <include refid="selectVmBizTaskinfoVo"/>
+        where task_id = #{taskId}
+    </select>
+
+    <select id="selectVmBizTaskinfoByTaskNo" parameterType="String" resultMap="VmBizTaskinfoResult">
+        <include refid="selectVmBizTaskinfoVo"/>
+        where task_no = #{taskNo}
+    </select>
+
+    <insert id="insertVmBizTaskinfo" parameterType="VmBizTaskinfo">
+        insert into vm_biz_taskinfo
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="taskId != null  and taskId != ''">task_id,</if>
+            <if test="versionInfoId != null  and versionInfoId != ''">version_info_id,</if>
+            <if test="taskName != null  and taskName != ''">task_name,</if>
+            <if test="taskTypeId != null  and taskTypeId != ''">task_type_id,</if>
+            <if test="taskStatus != null  and taskStatus != ''">task_status,</if>
+            <if test="taskContent != null  and taskContent != ''">task_content,</if>
+            <if test="taskDealGroupId != null  and taskDealGroupId != ''">task_deal_group_id,</if>
+            <if test="taskDealUserId != null  and taskDealUserId != ''">task_deal_user_id,</if>
+            <if test="frontTaskId != null  and frontTaskId != ''">front_task_id,</if>
+            <if test="followTaskId != null  and followTaskId != ''">follow_task_id,</if>
+            <if test="estStartDate != null  and estStartDate != ''">est_start_date,</if>
+            <if test="estFinishDate != null  and estFinishDate != ''">est_finish_date,</if>
+            <if test="taskDealResult != null  and taskDealResult != ''">task_deal_result,</if>
+            <if test="actualStartTime != null  and actualStartTime != ''">actual_start_time,</if>
+            <if test="actualFinishTime != null  and actualFinishTime != ''">actual_finish_time,</if>
+            <if test="updateTime != null  and updateTime != ''">update_time,</if>
+            <if test="invalidationMark != null  and invalidationMark != ''">invalidation_mark,</if>
+            <if test="taskproducetime != null  and taskproducetime != ''">taskproducetime,</if>
+            <if test="org != null  and org != ''">org,</if>
+            <if test="taskNo != null  and taskNo != ''">task_no,</if>
+            <if test="userId != null  and userId != ''">user_id,</if>
+            <if test="manPhone != null  and manPhone != ''">man_phone,</if>
+            <if test="messageFlag != null  and messageFlag != ''">message_flag,</if>
+            <if test="completeUserId != null  and completeUserId != ''">complete_user_id,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="taskId != null  and taskId != ''">#{taskId},</if>
+            <if test="versionInfoId != null  and versionInfoId != ''">#{versionInfoId},</if>
+            <if test="taskName != null  and taskName != ''">#{taskName},</if>
+            <if test="taskTypeId != null  and taskTypeId != ''">#{taskTypeId},</if>
+            <if test="taskStatus != null  and taskStatus != ''">#{taskStatus},</if>
+            <if test="taskContent != null  and taskContent != ''">#{taskContent},</if>
+            <if test="taskDealGroupId != null  and taskDealGroupId != ''">#{taskDealGroupId},</if>
+            <if test="taskDealUserId != null  and taskDealUserId != ''">#{taskDealUserId},</if>
+            <if test="frontTaskId != null  and frontTaskId != ''">#{frontTaskId},</if>
+            <if test="followTaskId != null  and followTaskId != ''">#{followTaskId},</if>
+            <if test="estStartDate != null  and estStartDate != ''">#{estStartDate},</if>
+            <if test="estFinishDate != null  and estFinishDate != ''">#{estFinishDate},</if>
+            <if test="taskDealResult != null  and taskDealResult != ''">#{taskDealResult},</if>
+            <if test="actualStartTime != null  and actualStartTime != ''">#{actualStartTime},</if>
+            <if test="actualFinishTime != null  and actualFinishTime != ''">#{actualFinishTime},</if>
+            <if test="updateTime != null  and updateTime != ''">#{updateTime},</if>
+            <if test="invalidationMark != null  and invalidationMark != ''">#{invalidationMark},</if>
+            <if test="taskproducetime != null  and taskproducetime != ''">#{taskproducetime},</if>
+            <if test="org != null  and org != ''">#{org},</if>
+            <if test="taskNo != null  and taskNo != ''">#{taskNo},</if>
+            <if test="userId != null  and userId != ''">#{userId},</if>
+            <if test="manPhone != null  and manPhone != ''">#{manPhone},</if>
+            <if test="messageFlag != null  and messageFlag != ''">#{messageFlag},</if>
+            <if test="completeUserId != null  and completeUserId != ''">#{completeUserId},</if>
+         </trim>
+    </insert>
+
+    <update id="updateVmBizTaskinfo" parameterType="VmBizTaskinfo">
+        update vm_biz_taskinfo
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="versionInfoId != null  and versionInfoId != ''">version_info_id = #{versionInfoId},</if>
+            <if test="taskName != null  and taskName != ''">task_name = #{taskName},</if>
+            <if test="taskTypeId != null  and taskTypeId != ''">task_type_id = #{taskTypeId},</if>
+            <if test="taskStatus != null  and taskStatus != ''">task_status = #{taskStatus},</if>
+            <if test="taskContent != null  and taskContent != ''">task_content = #{taskContent},</if>
+            <if test="taskDealGroupId != null  and taskDealGroupId != ''">task_deal_group_id = #{taskDealGroupId},</if>
+            <if test="taskDealUserId != null  and taskDealUserId != ''">task_deal_user_id = #{taskDealUserId},</if>
+            <if test="frontTaskId != null  and frontTaskId != ''">front_task_id = #{frontTaskId},</if>
+            <if test="followTaskId != null  and followTaskId != ''">follow_task_id = #{followTaskId},</if>
+            <if test="estStartDate != null  and estStartDate != ''">est_start_date = #{estStartDate},</if>
+            <if test="estFinishDate != null  and estFinishDate != ''">est_finish_date = #{estFinishDate},</if>
+            <if test="taskDealResult != null  and taskDealResult != ''">task_deal_result = #{taskDealResult},</if>
+            <if test="actualStartTime != null  and actualStartTime != ''">actual_start_time = #{actualStartTime},</if>
+            <if test="actualFinishTime != null  and actualFinishTime != ''">actual_finish_time = #{actualFinishTime},</if>
+            <if test="update_time != null  and update_time != ''">update_time = #{update_time},</if>
+            <if test="invalidationMark != null  and invalidationMark != ''">invalidation_mark = #{invalidationMark},</if>
+            <if test="taskproducetime != null  and taskproducetime != ''">taskproducetime = #{taskproducetime},</if>
+            <if test="org != null  and org != ''">org = #{org},</if>
+            <if test="taskNo != null  and taskNo != ''">task_no = #{taskNo},</if>
+            <if test="userId != null  and userId != ''">user_id = #{userId},</if>
+            <if test="manPhone != null  and manPhone != ''">man_phone = #{manPhone},</if>
+            <if test="messageFlag != null  and messageFlag != ''">message_flag = #{messageFlag},</if>
+            <if test="completeUserId != null  and completeUserId != ''">complete_user_id = #{completeUserId},</if>
+            <if test="ifBigFault != null  and ifBigFault != ''">if_big_fault = #{ifBigFault},</if>
+            <if test="upgradeMemo != null  and upgradeMemo != ''">upgrade_memo = #{upgradeMemo},</if>
+            <if test="ifResultSmoothly != null  and ifResultSmoothly != ''">if_result_smoothly = #{ifResultSmoothly},</if>
+            <if test="ifSupport != null  and ifSupport != ''">if_Support = #{ifSupport},</if>
+            <if test="supportAddress != null  and supportAddress != ''">support_Address = #{supportAddress},</if>
+            <if test="supportPhone != null  and supportPhone != ''">support_Phone = #{supportPhone},</if>
+            <if test="backExceptionMemo != null  and backExceptionMemo != ''">back_exception_memo = #{backExceptionMemo},</if>
+        </trim>
+        where task_id = #{taskId}
+    </update>
+
+    <delete id="deleteVmBizTaskinfoById" parameterType="String">
+        delete from vm_biz_taskinfo where task_id = #{taskId}
+    </delete>
+
+    <delete id="deleteVmBizTaskinfoByIds" parameterType="String">
+        delete from vm_biz_taskinfo where task_id in
+        <foreach item="taskId" collection="array" open="(" separator="," close=")">
+            #{taskId}
+        </foreach>
+    </delete>
+
+</mapper>

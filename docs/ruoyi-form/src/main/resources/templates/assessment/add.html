@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:include="include :: header('变更风险评估')"/>
+</head>
+<body class="white-bg">
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+    <form class="form-horizontal m" id="form-assessment-add" th:object="${riskAssessment}">
+        <div class="form-group">
+            <label class="col-sm-3 control-label">变更单单号：</label>
+            <div class="col-sm-8">
+                <input id="formId" name="formId" class="form-control" type="text" readonly th:value="*{formId}"/>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">可能影响的系统数量：</label>
+            <div class="col-sm-8">
+                <select id="infSysCount" name="infSysCount" class="form-control m-b"
+                        th:with="type=${@pubParaValue.selectPubParaValueByParaName('inf_sys_count')}" required>
+                    <option value=""></option>
+                    <option th:selected="${PubParaValue.value}==*{infSysCount}" th:each="PubParaValue : ${type}"
+                            th:text="${PubParaValue.valueDetail}" th:value="${PubParaValue.value}"></option>
+                </select>
+            </div>
+            <label class="col-sm-3 control-label">影响在用业务中断的情况：</label>
+            <div class="col-sm-8">
+                <select id="infFuncInterruptType" name="infFuncInterruptType" class="form-control m-b"
+                        th:with="type=${@pubParaValue.selectPubParaValueByParaName('inf_func_interrupt_type')}"
+                        required>
+                    <option value=""></option>
+                    <option th:selected="${PubParaValue.value}==*{infFuncInterruptType}"
+                            th:each="PubParaValue : ${type}" th:text="${PubParaValue.valueDetail}"
+                            th:value="${PubParaValue.value}"></option>
+                </select>
+            </div>
+            <label class="col-sm-3 control-label">变更类别：</label>
+            <div class="col-sm-8">
+                <select id="changeType" name="changeType" class="form-control m-b"
+                        th:with="type=${@pubParaValue.selectPubParaValueByParaName('riskassess_change_type')}" required>
+                    <option value=""></option>
+                    <option th:selected="${PubParaValue.value}==*{changeType}" th:each="PubParaValue : ${type}"
+                            th:text="${PubParaValue.valueDetail}" th:value="${PubParaValue.value}"></option>
+                </select>
+            </div>
+            <label class="col-sm-3 control-label">变更规划耗时：</label>
+            <div class="col-sm-8">
+                <select id="changePlanTime" name="changePlanTime" class="form-control m-b"
+                        th:with="type=${@pubParaValue.selectPubParaValueByParaName('change_plan_time')}" required>
+                    <option value=""></option>
+                    <option th:selected="${PubParaValue.value}==*{changePlanTime}" th:each="PubParaValue : ${type}"
+                            th:text="${PubParaValue.valueDetail}" th:value="${PubParaValue.value}"></option>
+                </select>
+            </div>
+            <label class="col-sm-3 control-label">变更实施耗时：</label>
+            <div class="col-sm-8">
+                <select id="changeImplTime" name="changeImplTime" class="form-control m-b"
+                        th:with="type=${@pubParaValue.selectPubParaValueByParaName('change_impl_time')}" required>
+                    <option value=""></option>
+                    <option th:selected="${PubParaValue.value}==*{changeImplTime}" th:each="PubParaValue : ${type}"
+                            th:text="${PubParaValue.valueDetail}" th:value="${PubParaValue.value}"></option>
+                </select>
+            </div>
+            <label class="col-sm-3 control-label">回退时间：</label>
+            <div class="col-sm-8">
+                <select id="backTime" name="backTime" class="form-control m-b"
+                        th:with="type=${@pubParaValue.selectPubParaValueByParaName('back_time')}" required>
+                    <option value=""></option>
+                    <option th:selected="${PubParaValue.value}==*{backTime}" th:each="PubParaValue : ${type}"
+                            th:text="${PubParaValue.valueDetail}" th:value="${PubParaValue.value}"></option>
+                </select>
+            </div>
+            <label class="col-sm-3 control-label">有无应急或退回方案：</label>
+            <div class="col-sm-8">
+                <select id="backPlanFlag" name="backPlanFlag" class="form-control m-b"
+                        th:with="type=${@pubParaValue.selectPubParaValueByParaName('back_plan_flag')}" required>
+                    <option value=""></option>
+                    <option th:selected="${PubParaValue.value}==*{backPlanFlag}" th:each="PubParaValue : ${type}"
+                            th:text="${PubParaValue.valueDetail}" th:value="${PubParaValue.value}"></option>
+                </select>
+            </div>
+            <label class="col-sm-3 control-label">实施所涉及的部室个数：</label>
+            <div class="col-sm-8">
+                <select id="referDeptCount" name="referDeptCount" class="form-control m-b"
+                        th:with="type=${@pubParaValue.selectPubParaValueByParaName('refer_dept_count')}" required>
+                    <option value=""></option>
+                    <option th:selected="${PubParaValue.value}==*{referDeptCount}" th:each="PubParaValue : ${type}"
+                            th:text="${PubParaValue.valueDetail}" th:value="${PubParaValue.value}"></option>
+                </select>
+            </div>
+            <label class="col-sm-3 control-label">软件所属变更模块：</label>
+            <div class="col-sm-8">
+                <select id="softwareChangeType" name="softwareChangeType" class="form-control m-b"
+                        th:with="type=${@pubParaValue.selectPubParaValueByParaName('software_change_type')}">
+                    <option value=""></option>
+                    <option th:selected="${PubParaValue.value}==*{softwareChangeType}" th:each="PubParaValue : ${type}"
+                            th:text="${PubParaValue.valueDetail}" th:value="${PubParaValue.value}"></option>
+                </select>
+            </div>
+            <label class="col-sm-3 control-label">应用所属变更模块：</label>
+            <div class="col-sm-8">
+                <select id="appChangeType" name="appChangeType" class="form-control m-b"
+                        th:with="type=${@pubParaValue.selectPubParaValueByParaName('app_change_type')}">
+                    <option value=""></option>
+                    <option th:selected="${PubParaValue.value}==*{appChangeType}" th:each="PubParaValue : ${type}"
+                            th:text="${PubParaValue.valueDetail}" th:value="${PubParaValue.value}"></option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <!--需要关联接口获取系统信息，目前暂时是手动输入-->
+            <label class="col-sm-3 control-label">涉及系统：</label>
+            <div class="col-sm-8">
+                <textarea name="referSys" class="form-control" required>[[*{referSys}]]</textarea>
+            </div>
+        </div>
+    </form>
+  <!--  <div class="row">
+        <div class="col-sm-offset-5 col-sm-10">
+            <button type="button" id="tj1" class="btn btn-sm btn-primary" onclick="assessAndSubmit()"><i
+                    class="fa fa-check"></i>评估
+            </button>&nbsp;
+            <button type="button" class="btn btn-sm btn-danger" onclick="closeItem()"><i class="fa fa-remove"></i>取消
+            </button>
+        </div>
+    </div>-->
+</div>
+<th:block th:include="include :: footer"/>
+<!--<script type="text/javascript">
+   /* var prefix = /!*ctx + *!/"/customerForm/assessment"
+    $("#form-assessment-add").validate({
+        onkeyup: false,
+        rules: {
+            "referDeptCount": true,
+            "backPlanFlag": true,
+            "backTime": true,
+            "changeImplTime": true,
+            "changePlanTime": true,
+            "changeType": true,
+            "infFuncInterruptType": true,
+            "infSysCount": true
+        },
+        messages: {
+            "referDeptCount": "不可为空",
+            "backPlanFlag": "不可为空",
+            "backTime": "不可为空",
+            "changeImplTime": "不可为空",
+            "changePlanTime": "不可为空",
+            "changeType": "不可为空",
+            "infFuncInterruptType": "不可为空",
+            "infSysCount": "不可为空"
+        },
+        focusCleanup: true
+    });*/
+
+   /* function assessAndSubmit() {
+        if ($.validate.form()) {
+            $.operate.save(prefix + "/add", $('#form-assessment-add').serialize());
+        } else {
+            $.modal.alertWarning("有必填参数未填写。");
+        }
+    }*/
+</script>-->
+</body>
+</html>

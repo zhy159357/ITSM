@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Customer Service</title>
+  <meta charset="utf-8" />
+
+  <meta name="keywords" content="视频客服" />
+  <meta name="description" content="视频客服" />
+  <meta name="content-type" content="text/html; charset=UTF-8" />
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Cache-Control" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+
+  <!-- <link href="css/bootstrap.min.css" rel="stylesheet" /> -->
+  <link href="../webrtc/iconfont/iconfont.css" rel="stylesheet" type="text/css"/>
+  <link href="../webrtc/css/webrtc.popup-2.0.0.css" rel="stylesheet" />
+</head>
+
+<body id="app">
+
+<script type="text/javascript" src="../config.js"></script>
+<script type="text/javascript" src="../webrtc/js/jquery-1.10.2.min.js"></script>
+<script type="text/javascript" src="../webrtc/js/jquery-ui.min.js"></script>
+<script type="text/javascript" src="../webrtc/js/common.api.js"></script>
+<script type="text/javascript" src="../webrtc/js/utils.js"></script>
+<script type="text/javascript" src="../webrtc/js/reconnecting-websocket.js"></script>
+<script type="text/javascript" src="../webrtc/js/webrtc.min.js"></script>
+<script type="text/javascript" src="../webrtc/js/recorder.min.js"></script>
+<script type="text/javascript" src="../webrtc/js/webrtc.uikit-2.0.0.js?version=8"></script>
+<script type="text/javascript" src="../webrtc/js/webrtc.message.handler.js?version=8"></script>
+<script type="text/javascript" src="js/xchat.min.js.bak?version=4"></script>
+<script type="text/javascript" src="../webrtc/wphone.api.js"></script>
+
+<script>
+  var tenantId;
+  var roomId;
+  var fromUser;
+  var makeType;
+  var wphoneMgw;
+  /**
+   * 页面加载完成，开始调用摄像头
+   */
+  $(document).ready(function () {
+    webRtcUiKit = new WebRTCUiKit()
+    tenantId = Utils.getQueryVariable('tenantId');
+    roomId = Utils.getQueryVariable('roomId');
+    fromUser = Utils.getQueryVariable('fromUser');
+    makeType = Utils.getQueryVariable('makeType');
+    parentId = Utils.getQueryVariable('parentId');
+    rtcType = Utils.getQueryVariable('rtcType') || 'WebRtc';
+    channelType = Utils.getQueryVariable('channelType');
+    tenantId = Utils.getQueryVariable('tenantId') || 'default';
+    opttype = Utils.getQueryVariable('opttype') || "";
+    turn = Utils.getQueryVariable('turn') || "";
+    camera = Utils.getQueryVariable('c') || window.CONFIG.RTC.camera;
+    window.CONFIG.RTC.camera = camera;
+    window.CONFIG.RTC.opttype = opttype;
+    wphonePage = true;
+/*    mgw = Utils.getQueryVariable('mgw') || window.CONFIG.RTC.MGW;
+    wphone = Utils.getQueryVariable('wphone') || window.CONFIG.RTC.MGW_WPhone;
+    command = Utils.getQueryVariable('command') || window.CONFIG.RTC.command;
+    window.CONFIG.RTC.command = command;
+    window.CONFIG.RTC.MGW_WPhone = wphone;
+    window.CONFIG.RTC.MGW = mgw;*/
+    if (!fromUser || !roomId) {
+      return;
+    }
+    localWPhoneSocket(roomId,makeType,opttype);
+    Utils.cookie.setCookie("tenantId",tenantId)
+    if(opttype) {
+      const options = {
+        rtcType: rtcType,
+        browserType: 'WPhone',
+        role: "Agent",
+        videoScreenClass: 'rtc-wphone-video-screen',
+        // 隐藏的按钮 'hangup', 'close', 'hide', 'hold', 'video', 'voice', 'speak', 'fullScreen'
+        btnMap: ['hide', 'close', 'fullScreen', 'videoHead', 'hold', 'video', 'voice', 'speak', 'change', 'takePhoto', 'changedrawingmode', 'share', 'startRecord', 'virtualBg', 'whiteboard', 'hold'],
+        shareSelfFlag: false,
+        wphonePage: true,
+        opttype: "testCamera"
+      }
+      webRtcUiKit.initTestCameraModule(roomId, fromUser, window.CONFIG.RTC.parentid, "Agent", "video", {
+        "channeltype": "xiaochengxu"
+      }, options);
+    }
+      window.onbeforeunload = function () {
+      if(!windowClosed){
+        webRtcUiKit.leaveConferenceForWPhone(webRtcUiKit.getmyjson().chatroom)
+      }
+    };
+    window.onunload = function () {
+      if(!windowClosed){
+        webRtcUiKit.leaveConferenceForWPhone(webRtcUiKit.getmyjson().chatroom)
+      }
+    };
+  });
+</script>
+
+</body>
+
+</html>

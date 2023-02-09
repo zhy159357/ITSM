@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:include="include :: header('事件单评价已解决')"/>
+    <th:block th:include="include :: select2-css"/>
+</head>
+<body>
+<div class="main-content">
+    <form id="form-fmbiz-add" class="form-horizontal">
+        <input name="fmId" id="fmId" class="form-control" type="hidden" required th:value="*{fmId}">
+        <input name="flag" id="flag" class="form-control" type="hidden" required th:value="${flag}">
+        <h4 class="form-header h4">事件单评价关闭</h4>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">评价结果：</label>
+                    <div class="col-sm-8">
+                        <select name="evaluateResult" class="form-control" id="evaluateResult"
+                                th:with="type=${@pubParaValue.selectPubParaValueByParaName('reviewlev')}"
+                                onchange="resultcChange()" required>
+                            <option th:each="PubParaValue : ${type}" th:text="${PubParaValue.valueDetail}"
+                                    th:value="${PubParaValue.value}"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6" id="edcategoryDiv">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">不满意类别：</label>
+                    <div class="col-sm-8">
+                        <select name="typeinfoId" id="typeinfoId" class="form-control"
+                                th:with="type=${@pubParaValue.selectPubParaValueByParaName('evaluation_dissatisfaction_category')}"
+                                required>
+                            <option value=""></option>
+                            <option th:each="PubParaValue : ${type}" th:text="${PubParaValue.valueDetail}"
+                                    th:value="${PubParaValue.value}"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">操作意见：</label>
+                    <div class="col-sm-10">
+                        <textarea id="evaluate" rows="3" cols="20" name="evaluate" maxlength="170"
+                                  class="form-control"></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<div class="row">
+    <div class="col-sm-offset-5 col-sm-10">
+        <button type="button" class="btn btn-sm btn-primary" onclick="submitHandler()" id="yes" value="winClose"><i
+                class="fa fa-check"></i>评 价
+        </button>&nbsp;
+        <button type="button" class="btn btn-sm btn-danger" onclick="closeItem()"><i class="fa fa-remove"></i>关 闭
+        </button>
+    </div>
+</div>
+<th:block th:include="include :: footer"/>
+<th:block th:include="include :: select2-js"/>
+<th:block th:include="include :: datetimepicker-js"/>
+<script>
+    var prefix_version = ctx + "fmbiz";
+
+    $(function () {
+        resultcChange();
+    });
+
+    $("#form-fmbiz-add").validate({
+        onkeyup: false,
+        rules: {},
+        messages: {},
+        focusCleanup: true
+    });
+
+    // 评价
+    function submitHandler() {
+        if ($.validate.form()) {
+            var flag = $("#flag").val();
+            var data = $("#form-fmbiz-add").serializeArray();
+            $.operate.saveTab(prefix_version + "/saveflowClose", data, asd);
+
+            function asd(a) {
+                if (a.code == 0) {
+                    var tabPanel = $(window.frameElement).attr('data-panel');
+                    var tabMain = parent.$('.menuTab[data-id="' + tabPanel + '"]').attr('data-panel');
+                    parent.$('.menuTab[data-id="' + tabMain + '"]').trigger('click');
+                    parent.$('.menuTab[data-id="' + tabPanel + '"]').remove();
+                    parent.$('.menuTab[data-panel="' + tabPanel + '"]').remove();
+                    parent.$('.mainContent .RuoYi_iframe[data-id="' + tabPanel + '"]').remove();
+                    if (flag == '1') {//判断是否工作台打开
+                        parent.$('.mainContent .RuoYi_iframe[name="iframe0"]').contents().find(".list01>li:nth-child(1)>a").trigger('click');
+                    }
+                } else {
+                    return
+                }
+            }
+        }
+    };
+
+    function resultcChange() {
+        var evaluateResult = $("#evaluateResult").val();
+        if (evaluateResult == '3') {
+            $("#edcategoryDiv").show();
+            $("#typeinfoId").attr("required", "true");
+            $("#evaluate").attr("required", "true");
+        } else {
+            $("#edcategoryDiv").hide();
+            $("#typeinfoId").attr("required", "false");
+            $("#typeinfoId").val("");
+            $("#evaluate").removeAttr("required");
+        }
+    }
+</script>
+</body>
+</html>

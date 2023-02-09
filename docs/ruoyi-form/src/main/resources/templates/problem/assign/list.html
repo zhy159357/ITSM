@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('问题单审核列表')"/>
+    <th:block th:include="include :: datetimepicker-css" />
+    <th:block th:include="include :: select2-css" />
+</head>
+<body class="gray-bg">
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-12 search-collapse">
+            <form id="formId">
+                <div class="select-list">
+                    <ul>
+                        <li>
+                            <p>问题单编号：</p>
+                            <input type="text" name="problemNo"/>
+                        </li>
+                        <li>
+                            <p>阶段：</p>
+                            <select name="stage" class="form-control" th:with="type=${@pubParaValue.selectPubParaValueByParaName('problem_stage')}" type="text">
+                                <option value=""></option>
+                                <option th:each="paraValue : ${type}" th:text="${paraValue.valueDetail}" th:value="${paraValue.value}"></option>
+                            </select>
+                        </li>
+                        <li>
+                            <p>状态：</p>
+                            <select name="status" class="form-control" th:with="type=${@pubParaValue.selectPubParaValueByParaName('problem_status')}" type="text">
+                                <option value=""></option>
+                                <option th:each="paraValue : ${type}" th:text="${paraValue.valueDetail}" th:value="${paraValue.value}"></option>
+                            </select>
+                        </li>
+                        <!--<li>
+                            <p>当前处理人：</p>
+                            <input type="text" name="problemCurrentHandler"/>
+                        </li>-->
+                       <!-- <li>
+                            <p>部室经理：</p>
+                            <input type="text" name="problemOriginateDepartManager"/>
+                        </li>
+                        <li>
+                            <p>问题发起人：</p>
+                            <input type="text" name="problemOriginator"/>
+                        </li>-->
+                        <!--<li>
+                            <p>问题管理员：</p>
+                            <input type="text" name="problem manager"/>
+                        </li>-->
+                        <li>
+                            <p>来源：</p>
+                            <select name="problemSource" class="form-control" th:with="type=${@pubParaValue.selectPubParaValueByParaName('problem_source')}" type="text">
+                                <option value=""></option>
+                                <option th:each="paraValue : ${type}" th:text="${paraValue.valueDetail}" th:value="${paraValue.value}"></option>
+                            </select>
+                        </li>
+                        <li>
+                            <p>类别：</p>
+                            <select id="problemCategory" name="problemCategory" class="form-control"
+                                    th:with="pList=${@pubParaValue.selectPubParaValueByParaName('problem_category')}">
+                                <option></option>
+                                <option th:each="p:${pList}" th:text="${p.valueDetail}" th:value="${p.value}"></option>
+                            </select>
+                        </li>
+                        <li>
+                            <p>子类：</p>
+                            <input type="text" name="problemSubclass"/>
+                        </li>
+                        <li>
+                            <p>条目：</p>
+                            <input type="text" name="problemEntry"/>
+                        </li>
+                        <li>
+                            <p>子条目：</p>
+                            <input type="text" name="problemSubentry"/>
+                        </li>
+                    <!--    <li>
+                            <p>临时解决标记：</p>
+                            <input type="text" name="tempSolveFlag"/>
+                        </li>-->
+                        <li>
+                            <p>问题类型：</p>
+                            <select id="problemType" name="problemType" class="form-control"
+                                    th:with="pList=${@pubParaValue.selectPubParaValueByParaName('problem_type')}">
+                                <option></option>
+                                <option th:each="p:${pList}" th:text="${p.valueDetail}" th:value="${p.value}"></option>
+                            </select>
+                        </li>
+                        <li>
+                            <p>风险程度：</p>
+                            <select id="riskLevel" name="riskLevel" class="form-control"
+                                    th:with="pList=${@pubParaValue.selectPubParaValueByParaName('risk_level')}">
+                                <option></option>
+                                <option th:each="p:${pList}" th:text="${p.valueDetail}" th:value="${p.value}"></option>
+                            </select>
+                        </li>
+                        <li>
+                            <p>发生频率：</p>
+                            <select id="frequency" name="frequency" class="form-control"
+                                    th:with="pList=${@pubParaValue.selectPubParaValueByParaName('frequency')}">
+                                <option></option>
+                                <option th:each="p:${pList}" th:text="${p.valueDetail}" th:value="${p.value}"></option>
+                            </select>
+                        </li>
+                        <li>
+                            <p>优先级：</p>
+                            <select id="priority" name="priority" class="form-control"
+                                    th:with="pList=${@pubParaValue.selectPubParaValueByParaName('priority')}" >
+                                <option></option>
+                                <option th:each="p:${pList}" th:text="${p.valueDetail}" th:value="${p.value}"></option>
+                            </select>
+                        </li>
+                       <!-- <li>
+                            <p>影响业务中断：</p>
+                            <input type="text" name="impactServiceInterruptFlag"/>
+                        </li>-->
+                        <li>
+                            <p>计划完成时间：</p>
+                            <input type="text" name="planSolveTime" id="planSolveTime" readonly style="background-color: #ffffff"/>
+                        </li>
+<!--                        <li>
+                            <p>问题牵头部室：</p>
+                            <input type="text" name="problemSolverDepartment"/>
+                        </li>
+                        <li>
+                            <p>问题审核人：</p>
+                            <input type="text" name="problemAuditor"/>
+                        </li>
+                        <li>
+                            <p>问题牵头人：</p>
+                            <input type="text" name="problemSolver"/>
+                        </li>
+                        <li>
+                            <p>根因分类一：</p>
+                            <input type="text" name="problemCauseClass1"/>
+                        </li>
+                        <li>
+                            <p>根因分类二：</p>
+                            <input type="text" name="problemCauseClass2"/>
+                        </li>
+                        <li>
+                            <p>解决方案修改次数：</p>
+                            <input type="text" name="solutionModifyNum"/>
+                        </li>
+                        <li>
+                            <p>计划解决时间修改次数：</p>
+                            <input type="text" name="planSolveTimeModifyNum"/>
+                        </li>
+                        <li class="select-time">
+                            <p>问题牵头人上次更新时间：</p>
+                            <input type="text" class="time-input" name="problemSolverLastUpdated"/>
+                        </li>
+                        <li class="select-time">
+                            <p>解决时间：</p>
+                            <input type="text" class="time-input" name="problemSolveTime"/>
+                        </li>
+                        <li>
+                            <p>观察期限：</p>
+                            <input type="text" name="observationPeriod"/>
+                        </li>
+                        <li>
+                            <p>问题重新打开次数：</p>
+                            <input type="text" name="problemReopenNum"/>
+                        </li>
+                        <li>
+                            <p>问题取消原因：</p>
+                            <input type="text" name="problemCancelReason"/>
+                        </li>
+                        <li class="select-time">
+                            <p>问题关闭时间：</p>
+                            <input type="text" class="time-input" name="problemCloseTime"/>
+                        </li>
+                        <li>
+                            <p>问题关闭分类：</p>
+                            <select name="problemCloseType" th:with="type=${@dict.getType('')}">
+                                <option value="">所有</option>
+                                <option th:each="dict : ${type}" th:text="${dict.dictLabel}"
+                                        th:value="${dict.dictValue}"></option>
+                            </select>
+                        </li>-->
+                        <li>
+                            <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i
+                                    class="fa fa-search"></i>&nbsp;搜索</a>
+                            <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i
+                                    class="fa fa-refresh"></i>&nbsp;重置</a>
+                        </li>
+                    </ul>
+                </div>
+            </form>
+        </div>
+
+        <div class="btn-group-sm" id="toolbar" role="group">
+            <a class="btn btn-success" onclick="assign()">
+                <i class="fa fa-plus"></i> 审核
+            </a>
+            <a class="btn btn-info single disabled" onclick="detail()">
+                <i class="fa fa-search"></i> 查看详情
+            </a>
+            <a class="btn btn-info single disabled" onclick="selectProcess()">
+                <i class="fa fa-search"></i> 查看流程
+            </a>
+        </div>
+        <div class="col-sm-12 select-table table-striped">
+            <table id="bootstrap-table"></table>
+        </div>
+    </div>
+</div>
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: datetimepicker-js" />
+<th:block th:include="include :: select2-js" />
+<script th:inline="javascript">
+    var statusData = [[${@pubParaValue.selectPubParaValueByParaName('problem_status')}]];
+    var stageData = [[${@pubParaValue.selectPubParaValueByParaName('problem_stage')}]];
+    var problemSource = [[${@pubParaValue.selectPubParaValueByParaName('problem_source')}]];
+    var problemCategory = [[${@pubParaValue.selectPubParaValueByParaName('problem_category')}]];
+    var riskLevel = [[${@pubParaValue.selectPubParaValueByParaName('risk_level')}]];
+    var problemType = [[${@pubParaValue.selectPubParaValueByParaName('problem_type')}]];
+    var frequency = [[${@pubParaValue.selectPubParaValueByParaName('frequency')}]];
+    var priority = [[${@pubParaValue.selectPubParaValueByParaName('priority')}]];
+    var problemCloseType = [[${@pubParaValue.selectPubParaValueByParaName('problem_close_type')}]];
+    var impactServiceInterruptFlag = [[${@pubParaValue.selectPubParaValueByParaName('impact_service_interrupt_flag')}]];
+    var tempSolveFlag = [[${@pubParaValue.selectPubParaValueByParaName('temp_solve_flag')}]];
+    var prefix = ctx + "problem/sheet";
+
+    $(function () {
+        $("#planSolveTime").datetimepicker({
+            format: "yyyy-mm-dd",
+            minView: "month",
+            autoclose: true
+        });
+        var options = {
+            url: prefix + "/problemAgencyList",
+            createUrl: prefix + "/add",
+            updateUrl: prefix + "/edit/{id}",
+            removeUrl: prefix + "/remove",
+            exportUrl: prefix + "/export",
+            clickToSelect:true,
+            singleSelect : true,
+            queryParams: queryParams,
+            modalName: "问题单",
+                columns: [{
+                    checkbox: true
+                },
+                    {
+                        field : 'problemId',
+                        title : '问题单id',
+                        visible: false
+                    },
+                    {
+                        field : 'problemNo',
+                        title : '问题单编号'
+                    },
+                    {
+                        field : 'stage',
+                        title : '阶段',
+                        formatter: function (value,row,index) {
+                            return selectDictLabel(stageData, value);
+                        }
+                    },
+                    {
+                        field : 'status',
+                        title : '状态',
+                        formatter: function (value,row,index) {
+                            return selectDictLabel(statusData, value);
+                        }
+                    },
+                    {
+                        field : 'statusReason',
+                        title : '状态理由',
+                        visible: false
+                    },
+                    {
+                        field : 'problemCurrentHandlerName',
+                        title : '问题当前处理人'
+                    },
+                    {
+                        field : 'problemOriginateDepartManagerName',
+                        title : '问题发起部室经理'
+                    },
+                    {
+                        field : 'problemOriginatorName',
+                        title : '问题发起人'
+                    },
+                    {
+                        field : 'problemManagerName',
+                        title : '问题管理员'
+                    },
+                    {
+                        field : 'problemTitle',
+                        title : '问题标题'
+                    },
+                    {
+                        field : 'problemDescription',
+                        title : '问题现象描述'
+                    },
+                    {
+                        field : 'problemSource',
+                        title : '来源',
+                        formatter: function (value,row,index) {
+                            return selectDictLabel(problemSource, value);
+                        }
+                    },
+                    /*{
+                        field : 'problemCategory',
+                        title : '类别',
+                    },
+                    {
+                        field : 'problemSubclass',
+                        title : '子类'
+                    },
+                    {
+                        field : 'problemEntry',
+                        title : '条目'
+                    },
+                    {
+                        field : 'problemSubentry',
+                        title : '子条目'
+                    },*/
+                    {
+                        field : 'tempSolveFlag',
+                        title : '问题是否有临时解决标记',
+                        formatter: function (value,row,index) {
+                            return selectDictLabel(tempSolveFlag, value);
+                        },
+                        visible: false
+                    },
+                    {
+                        field : 'tempSolutions',
+                        title : '事件临时解决措施'
+                    },
+                    {
+                        field : 'problemType',
+                        title : '问题类型',
+                        formatter: function (value,row,index) {
+                            return selectDictLabel(problemType, value);
+                        }
+                    },
+                    {
+                        field : 'riskLevel',
+                        title : '风险程度',
+                        formatter: function (value,row,index) {
+                            return selectDictLabel(riskLevel, value);
+                        }
+                    },
+                    {
+                        field : 'frequency',
+                        title : '发生频率',
+                        formatter: function (value,row,index) {
+                            return selectDictLabel(frequency, value);
+                        }
+                    },
+                    {
+                        field : 'priority',
+                        title : '优先级',
+                        formatter: function (value,row,index) {
+                            return selectDictLabel(priority, value);
+                        }
+                    },
+                    {
+                        field : 'impactServiceInterruptFlag',
+                        title : '影响业务中断',
+                        formatter: function (value,row,index) {
+                            return selectDictLabel(impactServiceInterruptFlag, value);
+                        }
+                    },
+                    {
+                        field : 'planSolveTime',
+                        title : '计划完成时间'
+                    },
+                    {
+                        field : 'problemSolverDepartmentName',
+                        title : '问题牵头部室'
+                    },
+                    {
+                        field : 'problemAuditorName',
+                        title : '问题审核人'
+                    },
+                    {
+                        field : 'problemSolverName',
+                        title : '问题牵头人'
+                    },
+                    {
+                        field : 'problemCauseSummary',
+                        title : '根因分析汇总'
+                    },
+                    {
+                        field : 'problemCauseClass1',
+                        title : '根因分类一'
+                    },
+                    {
+                        field : 'problemCauseClass2',
+                        title : '根因分类二'
+                    },
+                    {
+                        field : 'problemSolutionSummary',
+                        title : '解决方案汇总'
+                    },
+                    {
+                        field : 'solutionModifyNum',
+                        title : '解决方案修改次数'
+                    },
+                    {
+                        field : 'planSolveTimeModifyNum',
+                        title : '计划解决时间修改次数'
+                    },
+                    {
+                        field : 'resolutionCompletion',
+                        title : '解决完成情况'
+                    },
+                    {
+                        field : 'problemSolverLastUpdated',
+                        title : '问题牵头人上次更新时间'
+                    },
+                    {
+                        field : 'problemSolveTime',
+                        title : '解决时间'
+                    },
+                    {
+                        field : 'observationPeriod',
+                        title : '观察期限'
+                    },
+                    {
+                        field : 'observationExplain',
+                        title : '观察说明'
+                    },
+                    {
+                        field : 'problemReopenNum',
+                        title : '问题重新打开次数'
+                    },
+                    {
+                        field : 'problemCancelInstruction',
+                        title : '问题取消说明'
+                    },
+                    {
+                        field : 'problemCancelReason',
+                        title : '问题取消原因'
+                    },
+                    {
+                        field : 'problemCloseTime',
+                        title : '问题关闭时间'
+                    },
+                    {
+                        field : 'problemCloseType',
+                        title : '问题关闭分类',
+                        formatter: function (value,row,index) {
+                            return selectDictLabel(problemCloseType, value);
+                        }
+                    }]
+            };
+            $.table.init(options);
+        });
+
+    function queryParams(params) {
+        var search = $.table.queryParams(params);
+        search.ownerId = $("#problemId").val();
+        search.params={"description":"审核"};
+        return search;
+    }
+
+    // 分派页面
+    function assign() {
+        var id = $.table.selectFirstColumns();
+        var taskId = $.table.selectColumns("params.taskId");
+        var url = prefix + "/assignPage/" + id + "/" + taskId;
+        $.modal.openTab("问题单分派", url);
+    }
+
+    // 查看详情
+    function detail() {
+        var id = $.table.selectFirstColumns();
+        var url = prefix + "/detail/" + id;
+        $.modal.openTab("问题单详情", url);
+    }
+
+    // 查看流程
+    function selectProcess() {
+        var problemStatus = $.table.selectColumns("status");
+        if (problemStatus == '0') {
+            $.modal.alertWarning("草稿状态的问题单流程未开启，不可查看！");
+            return;
+        }
+        var businessKey = $.table.selectFirstColumns();
+        var url = ctx + 'process/processImg/' + businessKey;
+        $.modal.openFull("查看流程图", url, null, null, null, true);
+    }
+    /*字典*/
+    function selectDictLabel(datas, value) {
+        var actions = [];
+        $.each(datas, function(index, dict) {
+            if (dict.value == ('' + value)) {
+                var listClass = $.common.equals("default", dict.listClass) || $.common.isEmpty(dict.listClass) ? "" : "badge badge-" + dict.listClass;
+                actions.push($.common.sprintf("<span class='%s'>%s</span>", listClass, dict.valueDetail));
+                return false;
+            }
+        });
+        return actions.join('');
+    }
+</script>
+</body>
+</html>

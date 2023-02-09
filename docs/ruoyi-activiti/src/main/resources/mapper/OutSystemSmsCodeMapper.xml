@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.activiti.mapper.OutSystemSmsCodeMapper">
+    
+    <resultMap type="OutSystemSmsCode" id="OutSystemSmsCodeResult">
+        <result property="sysName"    column="sys_name"    />
+        <result property="sysCode"    column="sys_code"    />
+        <result property="phoneNumber"    column="phone_number"    />
+        <result property="loginId"    column="login_id"    />
+        <result property="smsCode"    column="sms_code"    />
+        <result property="msg"    column="message"    />
+        <result property="tryNum"    column="try_num"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="outId"    column="out_id"    />
+    </resultMap>
+
+    <sql id="selectOutSystemSmsCodeVo">
+        select sys_name, sys_code, phone_number, login_id, sms_code, message, try_num, create_time, update_time, out_id from out_system_sms_code
+    </sql>
+
+    <select id="selectOutSystemSmsCodeList" parameterType="OutSystemSmsCode" resultMap="OutSystemSmsCodeResult">
+        <include refid="selectOutSystemSmsCodeVo"/>
+        <where>  
+            <if test="sysName != null  and sysName != ''"> and sys_name like concat(concat('%', #{sysName}), '%')</if>
+            <if test="sysCode != null  and sysCode != ''"> and sys_code = #{sysCode}</if>
+            <if test="phoneNumber != null  and phoneNumber != ''"> and phone_number = #{phoneNumber}</if>
+            <if test="loginId != null  and loginId != ''"> and login_id = #{loginId}</if>
+            <if test="smsCode != null  and smsCode != ''"> and sms_code = #{smsCode}</if>
+            <if test="tryNum != null "> and try_num = #{tryNum}</if>
+            <if test="createTime != null ">
+                and create_time &lt;= #{createTime}
+            </if>
+        </where>
+        order by update_time desc
+    </select>
+    
+    <select id="selectOutSystemSmsCodeById" parameterType="String" resultMap="OutSystemSmsCodeResult">
+        <include refid="selectOutSystemSmsCodeVo"/>
+        where out_id = #{outId}
+    </select>
+        
+    <insert id="insertOutSystemSmsCode" parameterType="OutSystemSmsCode">
+        insert into out_system_sms_code
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="sysName != null  and sysName != ''">sys_name,</if>
+            <if test="sysCode != null  and sysCode != ''">sys_code,</if>
+            <if test="phoneNumber != null  and phoneNumber != ''">phone_number,</if>
+            <if test="loginId != null  and loginId != ''">login_id,</if>
+            <if test="smsCode != null  and smsCode != ''">sms_code,</if>
+            <if test="tryNum != null ">try_num,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="updateTime != null ">update_time,</if>
+            <if test="msg != null ">message,</if>
+            <if test="outId != null  and outId != ''">out_id,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="sysName != null  and sysName != ''">#{sysName},</if>
+            <if test="sysCode != null  and sysCode != ''">#{sysCode},</if>
+            <if test="phoneNumber != null  and phoneNumber != ''">#{phoneNumber},</if>
+            <if test="loginId != null  and loginId != ''">#{loginId},</if>
+            <if test="smsCode != null  and smsCode != ''">#{smsCode},</if>
+            <if test="tryNum != null ">#{tryNum},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+            <if test="msg != null ">#{msg},</if>
+            <if test="outId != null  and outId != ''">#{outId},</if>
+         </trim>
+    </insert>
+
+    <update id="updateOutSystemSmsCode" parameterType="OutSystemSmsCode">
+        update out_system_sms_code
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="sysName != null  and sysName != ''">sys_name = #{sysName},</if>
+            <if test="sysCode != null  and sysCode != ''">sys_code = #{sysCode},</if>
+            <if test="phoneNumber != null  and phoneNumber != ''">phone_number = #{phoneNumber},</if>
+            <if test="loginId != null  and loginId != ''">login_id = #{loginId},</if>
+            <if test="smsCode != null  and smsCode != ''">sms_code = #{smsCode},</if>
+            <if test="msg != null  and msg != ''">message = #{msg},</if>
+            <if test="tryNum != null ">try_num = #{tryNum},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+        </trim>
+        where out_id = #{outId}
+    </update>
+
+    <delete id="deleteOutSystemSmsCodeById" parameterType="String">
+        delete from out_system_sms_code where out_id = #{outId}
+    </delete>
+
+    <delete id="deleteOutSystemSmsCodeByIds" parameterType="String">
+        delete from out_system_sms_code where out_id in 
+        <foreach item="outId" collection="array" open="(" separator="," close=")">
+            #{outId}
+        </foreach>
+    </delete>
+
+    <insert id="insertOutSystemSmsLog" parameterType="OutSystemSmsLog">
+        insert into out_system_sms_log
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="sysName != null  and sysName != ''">sys_name,</if>
+            <if test="sysCode != null  and sysCode != ''">sys_code,</if>
+            <if test="phoneNumber != null  and phoneNumber != ''">phone_number,</if>
+            <if test="msg != null  and msg != ''">message,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="sendStatus != null ">send_status,</if>
+            <if test="logId != null  and logId != ''">log_id,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="sysName != null  and sysName != ''">#{sysName},</if>
+            <if test="sysCode != null  and sysCode != ''">#{sysCode},</if>
+            <if test="phoneNumber != null  and phoneNumber != ''">#{phoneNumber},</if>
+            <if test="msg != null  and msg != ''">#{msg},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="sendStatus != null ">#{sendStatus},</if>
+            <if test="logId != null  and logId != ''">#{logId},</if>
+        </trim>
+    </insert>
+    
+</mapper>

@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.form.mapper.TwWorkOrderMapper">
+    <select id="getTwWorkOrder" parameterType="com.ruoyi.form.entity.TwWorkOrder"
+            resultType="com.ruoyi.form.entity.TwWorkOrder">
+        SELECT t.*,p.pname contactName  FROM tw_work_order t
+        left join og_person p on p.pid = t.contact
+        where 1=1
+        <if test="workNum !=null and workNum!='' ">
+            AND work_num like concat(concat('%',#{workNum}),'%')
+        </if>
+        <if test="title !=null and title!='' ">
+            AND title like concat(concat('%',#{title}),'%')
+        </if>
+        <if test="appSystem !=null and appSystem!='' ">
+            and app_system =#{appSystem}
+        </if>
+        <if test="projectNum !=null and projectNum!='' ">
+            AND project_num like concat(concat('%',#{projectNum}),'%')
+        </if>
+        <if test="demandNum !=null and demandNum!='' ">
+            AND demand_num like concat(concat('%',#{demandNum}),'%')
+        </if>
+        <if test="createBy !=null and createBy!='' ">
+            and create_by=#{createBy}
+        </if>
+        <if test="params.startTime != null and params.startTime != ''">
+            AND create_time &gt;= #{params.startTime}
+        </if>
+        <if test="params.endTime != null and params.endTime != ''">
+            AND create_time &lt;= #{params.endTime}
+        </if>
+        order by create_time desc
+    </select>
+
+
+    <select id="getTwWorkOrderList" parameterType="com.ruoyi.form.entity.TwWorkOrder"
+            resultType="com.ruoyi.form.entity.TwWorkOrder">
+        SELECT t.*, p.pname contactName
+        FROM
+        tw_work_order t
+        left join og_person p on t.contact = p.pid
+        where 1=1
+        <if test="workNum !=null and workNum!='' ">
+            AND t.work_num like concat(concat('%',#{workNum}),'%')
+        </if>
+        <if test="title !=null and title!='' ">
+            AND t.title like concat(concat('%',#{title}),'%')
+        </if>
+        <if test="appSystem !=null and appSystem!='' ">
+            and t.app_system =#{appSystem}
+        </if>
+        <if test="projectNum !=null and projectNum!='' ">
+            AND t.project_num like concat(concat('%',#{projectNum}),'%')
+        </if>
+        <if test="demandNum !=null and demandNum!='' ">
+            AND t.demand_num like concat(concat('%',#{demandNum}),'%')
+        </if>
+        <if test="createBy !=null and createBy!='' ">
+            and t.create_by=#{createBy}
+        </if>
+        <if test="implementorId !=null and implementorId!='' ">
+            and t.implementor_id=#{implementorId}
+        </if>
+        <if test="dealPersonId !=null and dealPersonId!='' ">
+            and t.deal_person_id=#{dealPersonId}
+        </if>
+        <if test="params.startTime != null and params.startTime != ''">
+            AND create_time &gt;= #{params.startTime}
+        </if>
+        <if test="params.endTime != null and params.endTime != ''">
+            AND create_time &lt;= #{params.endTime}
+        </if>
+        <if test="statusList !=null and statusList.size>0">
+            and t.status in
+            <foreach collection="statusList" open="(" close=")" item="item" separator=",">
+                #{item}
+            </foreach>
+        </if>
+        order by create_time desc
+    </select>
+
+    <select id="selectTwWorkOrderById" parameterType="String"
+            resultType="com.ruoyi.form.entity.TwWorkOrder">
+        SELECT *  FROM
+        tw_work_order
+        where 1 = 1
+        <if test="id != null and id != ''">
+            AND id = #{id}
+        </if>
+    </select>
+
+    <select id="getTwWorkOrderByWorkNumAndTwWorkOrder" resultType="com.ruoyi.form.entity.TwWorkOrder">
+select * from tw_work_order where create_by=#{twWorkOrder.createBy} and `status`='待提交' union (
+        SELECT * FROM(SELECT * FROM tw_work_order
+        <if test="workNumList!=null and workNumList.size>0">
+            WHERE work_num in
+            <foreach collection="workNumList" open="(" close=")" item="item" separator=",">
+                #{item}
+            </foreach
+            >
+        </if>
+        )
+        as a
+        where 1=1
+        <if test="twWorkOrder.workNum !=null and twWorkOrder.workNum!='' ">
+            and a.work_num =#{twWorkOrder.workNum}
+        </if>
+        <if test="twWorkOrder.title !=null and twWorkOrder.title!='' ">
+            and a.title =#{twWorkOrder.title}
+        </if>
+        <if test="twWorkOrder.appSystem !=null and twWorkOrder.appSystem!='' ">
+            and a.app_system =#{twWorkOrder.appSystem}
+        </if>
+        <if test="twWorkOrder.projectNum !=null and twWorkOrder.projectNum!='' ">
+            and a.project_num =#{twWorkOrder.projectNum}
+        </if>
+        <if test="twWorkOrder.demandNum !=null and twWorkOrder.demandNum!='' ">
+            and a.demand_num =#{twWorkOrder.demandNum}
+        </if>
+       )
+    </select>
+
+    <update id="toCancle" parameterType="String">
+        update tw_work_order SET status = '作废' where id =#{id}
+    </update>
+</mapper>

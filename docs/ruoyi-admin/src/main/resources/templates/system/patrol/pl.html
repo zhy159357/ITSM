@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('舆情监测系统巡检列表')"/>
+    <th:block th:include="include :: datetimepicker-css"/>
+    <th:block th:include="include :: select2-css"/>
+</head>
+
+<body class="gray-bg">
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-12 search-collapse">
+            <form id="formId">
+                <!--申请机构-->
+                <input type="hidden" name="createOrgId" id="treeId"/>
+                <input type="hidden" name="dealOrgId" id="dealOrgId"/>
+                <div class="select-list">
+                    <ul>
+                        <li>
+                            <label>巡查人员：</label>
+                            <input type="text" name="patrolName"/>
+                        </li>
+                        <li>
+                            <label>系统负责人：</label>
+                            <input type="text" name="leaderName"/>
+                        </li>
+                        <li>
+                            <label>开始时间：</label>
+                            <input type="text" name="startTime" id="startTime" readonly
+                                   style="background-color: #ffffff"/>
+                        </li>
+                        <li>
+                            <label>结束时间：</label>
+                            <input type="text" name="endTime" id="endTime" readonly style="background-color: #ffffff"/>
+                        </li>
+                        <li>
+                            <label>巡检项最后更新时间：</label>
+                            <input type="text" name="endUpTime" id="endUpTime" readonly
+                                   style="background-color: #ffffff"/>
+                        </li>
+                        <li>
+                            <a class="btn btn-primary btn-rounded btn-sm" id="ss" onclick="$.table.search()"><i
+                                    class="fa fa-search"></i>&nbsp;搜索</a>
+                            <a class="btn btn-warning btn-rounded btn-sm" onclick="resetAll()"><i
+                                    class="fa fa-repeat"></i>&nbsp;重置</a>
+                        </li>
+                    </ul>
+                </div>
+            </form>
+        </div>
+
+        <div class="btn-group-sm" id="toolbar" role="group">
+            <a class="btn btn-success" onclick="$.operate.addTab()">
+                <i class="fa fa-plus"></i> 添加
+            </a>
+            <a class="btn btn-primary disabled" onclick="editTab()" id="editTab">
+                <i class="fa fa-edit"></i> 修改
+            </a>
+            <a class="btn btn-danger  disabled" onclick="removeAll()" id="removeAll">
+                <i class="fa fa-trash"></i> 删除草稿
+            </a>
+            <a class="btn btn-primary  disabled" onclick="plDetails()" id="plDetails">
+                <i class="fa fa-search"></i> 查看详情
+            </a>
+            <!--导出所有｜当前页按钮组合-->
+            <!--<div class="btn-group">
+                <button data-toggle="dropdown" class="btn btn-primary btn-sm dropdown-toggle"><i
+                        class="fa fa-cloud-upload"></i> 导出<span
+                        class="caret"></span>
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a onclick="$.table.exportExcel()">导出所有</a>
+                    </li>
+                    <li><a onclick="$.table.exportExcelCurrentPage()">导出当前页</a>
+                    </li>
+                </ul>
+            </div>-->
+        </div>
+        <div class="col-sm-12 select-table table-striped">
+            <table id="bootstrap-table"></table>
+        </div>
+    </div>
+</div>
+<th:block th:include="include :: footer"/>
+<th:block th:include="include :: datetimepicker-js"/>
+<th:block th:include="include :: select2-css"/>
+<th:block th:include="include :: select2-js"/>
+<th:block th:include="include :: bootstrap-select-js"/>
+<th:block th:include="include :: bootstrap-select-css"/>
+
+<script th:inline="javascript">
+    var userId = [[${user.userId}]];
+    var prefix = ctx + "patrol/monitoring";
+
+    $(function () {
+        $("#startTime").datetimepicker({
+            format: "yyyy-mm-dd",
+            minView: "month",
+            autoclose: true
+        });
+        $("#endTime").datetimepicker({
+            format: "yyyy-mm-dd",
+            minView: "month",
+            autoclose: true
+        });
+        $("#endUpTime").datetimepicker({
+            format: "yyyy-mm-dd",
+            minView: "month",
+            autoclose: true
+        });
+        document.onkeydown = function (e) {
+            var ev = document.all ? window.event : e;
+            if (ev.keyCode == 13) {
+                $('#ss').trigger('click');
+                return false;
+            } //搜索逻辑
+        }
+
+        var options = {
+            url: prefix + "/list",
+            createUrl: prefix + "/add/" + userId,
+            updateUrl: prefix + "/edit/{id}",
+            removeUrl: prefix + "/remove",
+            exportUrl: prefix + "/export",
+            modalName: "舆情监测系统巡检单",
+            sortName: "createTime",
+            sortOrder: "desc",
+            singleSelect: true,
+            clickToSelect: true,
+            onCheck: check,
+            onUncheck: uncheck,
+            queryParams: queryParams,
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'patrolId',
+                    title: '巡检单编号',
+                    visible: false
+                },
+                {
+                    field: 'patrolName',
+                    title: '应用系统名称版本',
+                    formatter: function (value, row, index) {
+                        return $.table.tooltip(value);
+                    },
+                    cellStyle: function cellStyle(value, row, index, field) {
+                        return {classes: 'text-nowrap'};
+                    }
+                },
+                {
+                    field: 'createName',
+                    title: '巡查人员',
+                    formatter: function (value, row, index) {
+                        return $.table.tooltip(value);
+                    },
+                    cellStyle: function cellStyle(value, row, index, field) {
+                        return {classes: 'text-nowrap'};
+                    }
+                },
+                {
+                    field: 'leaderName',
+                    title: '系统负责人',
+                    formatter: function (value, row, index) {
+                        return $.table.tooltip(value);
+                    },
+                    cellStyle: function cellStyle(value, row, index, field) {
+                        return {classes: 'text-nowrap'};
+                    }
+
+                },
+                {
+                    field: 'endUpTime',
+                    title: '巡检项最后更新日期',
+                    formatter: function (value, row, index) {
+                        return $.table.tooltip(value);
+                    },
+                    cellStyle: function cellStyle(value, row, index, field) {
+                        return {classes: 'text-nowrap'};
+                    }
+                },
+                {
+                    field: 'startTime',
+                    title: '开始时间',
+                    formatter: function (value, row, index) {
+                        return $.table.tooltip(value);
+                    },
+                    cellStyle: function cellStyle(value, row, index, field) {
+                        return {classes: 'text-nowrap'};
+                    }
+                },
+                {
+                    field: 'endTime',
+                    title: '结束时间',
+                    formatter: function (value, row, index) {
+                        return $.table.tooltip(value);
+                    },
+                    cellStyle: function cellStyle(value, row, index, field) {
+                        return {classes: 'text-nowrap'};
+                    }
+                },]
+        };
+        $.table.init(options);
+    });
+
+    function check(row) {
+        $('#editTab').removeClass('disabled')
+        $('#removeAll').removeClass('disabled')
+        $('#plDetails').removeClass('disabled')
+
+    }
+
+    function uncheck(row) {
+        $('#editTab').addClass('disabled')
+        $('#removeAll').addClass('disabled')
+        $('#plDetails').addClass('disabled')
+    }
+
+    function queryParams(params) {
+        var search = $.table.queryParams(params);
+        search.createId = userId;
+        return search;
+    }
+
+    //修改区分
+    function editTab() {
+        var url;
+        var row = $("#bootstrap-table").bootstrapTable('getSelections')[0];
+        url = prefix + "/edit/" + row.patrolId;
+        $.modal.openTab("修改" + table.options.modalName, url);
+
+    }
+
+    // 批量删除信息
+    function removeAll() {
+        table.set();
+        var rows = $.common.isEmpty(table.options.uniqueId) ? $.table.selectFirstColumns() : $.table.selectColumns(table.options.uniqueId);
+        if (rows.length == 0) {
+            $.modal.alertWarning("请至少选择一条记录");
+            return;
+        }
+
+        $.ajax({
+            type: 'POST',
+            url: prefix + "/selectById",
+            data: {"id": rows[0]},
+            success: function (result) {
+                $.modal.confirm("确认要删除该巡检单吗?", function () {
+                    var url = table.options.removeUrl;
+                    var data = {"ids": rows.join()};
+                    $.operate.submit(url, "post", "json", data);
+                });
+
+            },
+            dataType: 'json'
+        });
+
+
+    }
+
+    // 添加信息，以tab页展现
+    function addTab() {
+        $.modal.openTab("添加" + table.options.modalName, table.options.createUrl);
+    }
+
+    function plDetails() {
+        //获取当前选中数据的ID
+        //获取选中的row的Id
+        var row = $("#bootstrap-table").bootstrapTable('getSelections')[0];
+        $.modal.openTab("查看" + table.options.modalName, prefix + "/details/" + row.patrolId);
+    }
+
+    function resetAll() {
+        $('#treeId').val('');
+        $('#dealOrgId').val('');
+        //清空请求事项下拉框
+        $('#faultKind').html('');
+        $.form.resetAll('formId')
+    }
+
+</script>
+</body>
+</html>

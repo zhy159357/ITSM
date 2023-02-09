@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('下载附件')" />
+</head>
+<body class="white-bg">
+    <input name="id_" type="hidden" id="id_" th:value="*{id_}"/>
+    <input name="taskId" type="hidden" id="taskId" th:value="*{taskId}"/>
+    <!--下载标识  未下载为0，已下载为1-->
+    <input name="downloadFlag" type="hidden" id="downloadFlag" value="0"/>
+    <div class="btn-group-sm" id="toolbar" role="group">
+        <a class="btn btn-warning multiple disabled" onclick="taskDownload()">
+            <i class="fa fa-download"></i> 下载附件
+        </a>
+    </div>
+    <div class="col-sm-12 select-table table-striped">
+        <table id="bootstrap-table"></table>
+    </div>
+    <th:block th:include="include :: footer" />
+    <script type="text/javascript">
+        var prefix = ctx + "system/updown";
+        var prefix_updown = ctx + "system/updown";
+
+        $(function() {
+            var options = {
+                url: prefix_updown + "/list",
+                sortName: "fileTime",
+                sortOrder: "desc",
+                singleSelect : true,
+                clickToSelect: true,
+                queryParams:queryParams,
+                modalName: "附件列表",
+                columns: [{
+                    checkbox: true
+                },
+                    {
+                    field : 'id_',
+                    title : '附件ID',
+                    visible : false
+                },
+                {
+                    field : 'file_name_',
+                    title : '文件名称'
+                },
+                {
+                    field : 'size_',
+                    title : '文件大小'
+                },
+                {
+                    field : 'create_time_',
+                    title : '上传时间'
+                },
+                {
+                    field : 'create_user_',
+                    title : '创建人'
+                },
+                {
+                    field : 'folder_',
+                    title : '机构'
+                },
+                {
+                    field : 'file_path_',
+                    title : '路径'
+                }]
+            };
+            $.table.init(options);
+        });
+
+        function queryParams(params) {
+            var search = $.table.queryParams(params);
+            search.id_ = $("#id_").val() == '' ? 'version_task_info_no_owner_id' : $("#id_").val();
+            return search;
+        }
+
+        // 附件下载
+        function taskDownload() {
+            var rows = $.table.selectFirstColumns();
+            var id_ = rows[0];
+            var id = $("#id_").val();
+            var url = prefix_updown + "/download/"+id;
+            window.location.href = url;
+            $("#downloadFlag").val("1");
+            // 附件下载完成后自动调用方法刷新状态
+            submitHandler();
+        }
+
+        // 附件下载点击确定按钮更新任务状态
+        function submitHandler() {
+            var downloadFlag = $("#downloadFlag").val();
+            if(downloadFlag == '1'){
+                var url = prefix + "/complete";
+                var taskId = $("#taskId").val();
+                // taskStatus=2为已下载
+                var data = { "taskId": taskId,"taskStatus":"2" };
+                $.operate.submit(url, "post", "json", data);
+                $.modal.close();
+                window.parent.$.table.refresh('bootstrap-table');
+            }else{
+                $.modal.alertWarning("请先点击下载附件按钮下载附件");
+            }
+        }
+
+    </script>
+</body>
+</html>

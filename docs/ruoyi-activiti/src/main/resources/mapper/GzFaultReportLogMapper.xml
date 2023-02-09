@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.activiti.mapper.GzFaultReportLogMapper">
+    
+    <resultMap type="GzFaultReportLog" id="GzFaultReportLogResult">
+        <result property="gzLogId"    column="gz_log_id"    />
+        <result property="gzId"    column="gz_id"    />
+        <result property="gzNo"    column="gz_no"    />
+        <result property="sysId"    column="sys_id"    />
+        <result property="sysName"    column="sys_name"    />
+        <result property="sysLevel"    column="sys_level"    />
+        <result property="happenTime"    column="happen_time"    />
+        <result property="happenTimeInterval"    column="happen_time_interval"    />
+        <result property="gzInfluenceBusDuration"    column="gz_influence_bus_duration"    />
+        <result property="gzAppearance"    column="gz_appearance"    />
+        <result property="gzSysInfluence"    column="gz_sys_influence"    />
+        <result property="gzInfluenceDegree"    column="gz_influence_degree"    />
+        <result property="ifCapitalRisk"    column="if_capital_risk"    />
+        <result property="gzInfluenceAccount"    column="gz_influence_account"    />
+        <result property="gzInfluenceCustom"    column="gz_influence_custom"    />
+        <result property="ifErrorAccount"    column="if_error_account"    />
+        <result property="ifCustomDamage"    column="if_custom_damage"    />
+        <result property="ifCustomComplaint"    column="if_custom_complaint"    />
+        <result property="ifMonitorAlarm"    column="if_monitor_alarm"    />
+        <result property="ifMonitorNotAlarm"    column="if_monitor_not_alarm"    />
+        <result property="ifFirstFalseAlarm"    column="if_first_false_alarm"    />
+        <result property="gzMonitorMessage"    column="gz_monitor_message"    />
+        <result property="gzResolvent"    column="gz_resolvent"    />
+        <result property="gzDealProcess"    column="gz_deal_process"    />
+        <result property="gzReason"    column="gz_reason"    />
+        <result property="gzEventCauseAnaly"    column="gz_event_cause_analy"    />
+        <result property="ifSuspectedVersion"    column="if_suspected_version"    />
+        <result property="eventType"    column="event_type"    />
+        <result property="gzType"    column="gz_type"    />
+        <result property="eventReasonType"    column="event_reason_type"    />
+        <result property="ifCompleteSolve"    column="if_complete_solve"    />
+        <result property="gzRectificationMeasures"    column="gz_rectification_measures"    />
+        <result property="gzRectificationPlan"    column="gz_rectification_plan"    />
+        <result property="gzRectificationPlanPerson"    column="gz_rectification_plan_person"    />
+        <result property="ifSubmitProblem"    column="if_submit_problem"    />
+        <result property="problemNo"    column="problem_no"    />
+        <result property="gzMonitorRectificationPlan"    column="gz_monitor_rectification_plan"    />
+        <result property="gzMonitorRectificationPlanPerson"    column="gz_monitor_rectification_plan_person"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createName"    column="create_name"    />
+    </resultMap>
+
+    <sql id="selectGzFaultReportLogVo">
+        select l.gz_log_id,
+           l.gz_id,
+           l.gz_no,
+           l.sys_id,
+           l.sys_name,
+           l.sys_level,
+           l.happen_time,
+           l.happen_time_interval,
+           l.gz_influence_bus_duration,
+           l.gz_appearance,
+           l.gz_sys_influence,
+           l.gz_influence_degree,
+           l.if_capital_risk,
+           l.gz_influence_account,
+           l.gz_influence_custom,
+           l.if_error_account,
+           l.if_custom_damage,
+           l.if_custom_complaint,
+           l.if_monitor_alarm,
+           l.if_monitor_not_alarm,
+           l.if_first_false_alarm,
+           l.gz_monitor_message,
+           l.gz_resolvent,
+           l.gz_deal_process,
+           l.gz_reason,
+           l.gz_event_cause_analy,
+           l.if_suspected_version,
+           l.event_type,
+           l.gz_type,
+           l.event_reason_type,
+           l.if_complete_solve,
+           l.gz_rectification_measures,
+           l.gz_rectification_plan,
+           l.gz_rectification_plan_person,
+           l.if_submit_problem,
+           l.problem_no,
+           l.gz_monitor_rectification_plan,
+           l.gz_monitor_rectification_plan_person,
+           l.create_time,
+           l.create_by,
+           p.pname create_name
+        from gz_fault_report_log l
+        left join og_person p
+          on l.create_by = p.pid
+    </sql>
+
+    <select id="selectGzFaultReportLogList" parameterType="GzFaultReportLog" resultMap="GzFaultReportLogResult">
+        <include refid="selectGzFaultReportLogVo"/>
+        <where>  
+            <if test="gzId != null  and gzId != ''"> and gz_id = #{gzId}</if>
+            <if test="gzNo != null  and gzNo != ''"> and gz_no = #{gzNo}</if>
+            <if test="sysId != null  and sysId != ''"> and sys_id = #{sysId}</if>
+            <if test="sysName != null  and sysName != ''"> and sys_name like concat(concat('%', #{sysName}), '%')</if>
+            <if test="sysLevel != null  and sysLevel != ''"> and sys_level = #{sysLevel}</if>
+            <if test="happenTime != null  and happenTime != ''"> and happen_time = #{happenTime}</if>
+            <if test="happenTimeInterval != null  and happenTimeInterval != ''"> and happen_time_interval = #{happenTimeInterval}</if>
+            <if test="gzInfluenceBusDuration != null  and gzInfluenceBusDuration != ''"> and gz_influence_bus_duration = #{gzInfluenceBusDuration}</if>
+            <if test="gzAppearance != null  and gzAppearance != ''"> and gz_appearance = #{gzAppearance}</if>
+            <if test="gzSysInfluence != null  and gzSysInfluence != ''"> and gz_sys_influence = #{gzSysInfluence}</if>
+            <if test="gzInfluenceDegree != null  and gzInfluenceDegree != ''"> and gz_influence_degree = #{gzInfluenceDegree}</if>
+            <if test="ifCapitalRisk != null  and ifCapitalRisk != ''"> and if_capital_risk = #{ifCapitalRisk}</if>
+            <if test="gzInfluenceAccount != null  and gzInfluenceAccount != ''"> and gz_influence_account = #{gzInfluenceAccount}</if>
+            <if test="gzInfluenceCustom != null  and gzInfluenceCustom != ''"> and gz_influence_custom = #{gzInfluenceCustom}</if>
+            <if test="ifErrorAccount != null  and ifErrorAccount != ''"> and if_error_account = #{ifErrorAccount}</if>
+            <if test="ifCustomDamage != null  and ifCustomDamage != ''"> and if_custom_damage = #{ifCustomDamage}</if>
+            <if test="ifCustomComplaint != null  and ifCustomComplaint != ''"> and if_custom_complaint = #{ifCustomComplaint}</if>
+            <if test="ifMonitorAlarm != null  and ifMonitorAlarm != ''"> and if_monitor_alarm = #{ifMonitorAlarm}</if>
+            <if test="ifMonitorNotAlarm != null  and ifMonitorNotAlarm != ''"> and if_monitor_not_alarm = #{ifMonitorNotAlarm}</if>
+            <if test="ifFirstFalseAlarm != null  and ifFirstFalseAlarm != ''"> and if_first_false_alarm = #{ifFirstFalseAlarm}</if>
+            <if test="gzMonitorMessage != null  and gzMonitorMessage != ''"> and gz_monitor_message = #{gzMonitorMessage}</if>
+            <if test="gzResolvent != null  and gzResolvent != ''"> and gz_resolvent = #{gzResolvent}</if>
+            <if test="gzDealProcess != null  and gzDealProcess != ''"> and gz_deal_process = #{gzDealProcess}</if>
+            <if test="gzReason != null  and gzReason != ''"> and gz_reason = #{gzReason}</if>
+            <if test="ifSuspectedVersion != null  and ifSuspectedVersion != ''"> and if_suspected_version = #{ifSuspectedVersion}</if>
+            <if test="eventType != null  and eventType != ''"> and event_type = #{eventType}</if>
+            <if test="gzType != null  and gzType != ''"> and gz_type = #{gzType}</if>
+            <if test="eventReasonType != null  and eventReasonType != ''"> and event_reason_type = #{eventReasonType}</if>
+            <if test="ifCompleteSolve != null  and ifCompleteSolve != ''"> and if_complete_solve = #{ifCompleteSolve}</if>
+            <if test="gzRectificationMeasures != null  and gzRectificationMeasures != ''"> and gz_rectification_measures = #{gzRectificationMeasures}</if>
+            <if test="gzRectificationPlan != null  and gzRectificationPlan != ''"> and gz_rectification_plan = #{gzRectificationPlan}</if>
+            <if test="gzRectificationPlanPerson != null  and gzRectificationPlanPerson != ''"> and gz_rectification_plan_person = #{gzRectificationPlanPerson}</if>
+            <if test="ifSubmitProblem != null  and ifSubmitProblem != ''"> and if_submit_problem = #{ifSubmitProblem}</if>
+            <if test="problemNo != null  and problemNo != ''"> and problem_no = #{problemNo}</if>
+            <if test="gzMonitorRectificationPlan != null  and gzMonitorRectificationPlan != ''"> and gz_monitor_rectification_plan = #{gzMonitorRectificationPlan}</if>
+            <if test="gzMonitorRectificationPlanPerson != null  and gzMonitorRectificationPlanPerson != ''"> and gz_monitor_rectification_plan_person = #{gzMonitorRectificationPlanPerson}</if>
+        </where>
+        order by create_time desc
+    </select>
+    
+    <select id="selectGzFaultReportLogById" parameterType="String" resultMap="GzFaultReportLogResult">
+        <include refid="selectGzFaultReportLogVo"/>
+        where gz_log_id = #{gzLogId}
+    </select>
+        
+    <insert id="insertGzFaultReportLog" parameterType="GzFaultReportLog">
+        insert into gz_fault_report_log
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="gzLogId != null  and gzLogId != ''">gz_log_id,</if>
+            <if test="gzId != null  and gzId != ''">gz_id,</if>
+            <if test="gzNo != null  and gzNo != ''">gz_no,</if>
+            <if test="sysId != null  and sysId != ''">sys_id,</if>
+            <if test="sysName != null  and sysName != ''">sys_name,</if>
+            <if test="sysLevel != null  and sysLevel != ''">sys_level,</if>
+            <if test="happenTime != null  and happenTime != ''">happen_time,</if>
+            <if test="happenTimeInterval != null  and happenTimeInterval != ''">happen_time_interval,</if>
+            <if test="gzInfluenceBusDuration != null  and gzInfluenceBusDuration != ''">gz_influence_bus_duration,</if>
+            <if test="gzAppearance != null  and gzAppearance != ''">gz_appearance,</if>
+            <if test="gzSysInfluence != null  and gzSysInfluence != ''">gz_sys_influence,</if>
+            <if test="gzInfluenceDegree != null  and gzInfluenceDegree != ''">gz_influence_degree,</if>
+            <if test="ifCapitalRisk != null  and ifCapitalRisk != ''">if_capital_risk,</if>
+            <if test="gzInfluenceAccount != null  and gzInfluenceAccount != ''">gz_influence_account,</if>
+            <if test="gzInfluenceCustom != null  and gzInfluenceCustom != ''">gz_influence_custom,</if>
+            <if test="ifErrorAccount != null  and ifErrorAccount != ''">if_error_account,</if>
+            <if test="ifCustomDamage != null  and ifCustomDamage != ''">if_custom_damage,</if>
+            <if test="ifCustomComplaint != null  and ifCustomComplaint != ''">if_custom_complaint,</if>
+            <if test="ifMonitorAlarm != null  and ifMonitorAlarm != ''">if_monitor_alarm,</if>
+            <if test="ifMonitorNotAlarm != null  and ifMonitorNotAlarm != ''">if_monitor_not_alarm,</if>
+            <if test="ifFirstFalseAlarm != null  and ifFirstFalseAlarm != ''">if_first_false_alarm,</if>
+            <if test="gzMonitorMessage != null  and gzMonitorMessage != ''">gz_monitor_message,</if>
+            <if test="gzResolvent != null  and gzResolvent != ''">gz_resolvent,</if>
+            <if test="gzDealProcess != null  and gzDealProcess != ''">gz_deal_process,</if>
+            <if test="gzReason != null  and gzReason != ''">gz_reason,</if>
+            <if test="gzEventCauseAnaly != null  and gzEventCauseAnaly != ''">gz_event_cause_analy,</if>
+            <if test="ifSuspectedVersion != null  and ifSuspectedVersion != ''">if_suspected_version,</if>
+            <if test="eventType != null  and eventType != ''">event_type,</if>
+            <if test="gzType != null  and gzType != ''">gz_type,</if>
+            <if test="eventReasonType != null  and eventReasonType != ''">event_reason_type,</if>
+            <if test="ifCompleteSolve != null  and ifCompleteSolve != ''">if_complete_solve,</if>
+            <if test="gzRectificationMeasures != null  and gzRectificationMeasures != ''">gz_rectification_measures,</if>
+            <if test="gzRectificationPlan != null  and gzRectificationPlan != ''">gz_rectification_plan,</if>
+            <if test="gzRectificationPlanPerson != null  and gzRectificationPlanPerson != ''">gz_rectification_plan_person,</if>
+            <if test="ifSubmitProblem != null  and ifSubmitProblem != ''">if_submit_problem,</if>
+            <if test="problemNo != null  and problemNo != ''">problem_no,</if>
+            <if test="gzMonitorRectificationPlan != null  and gzMonitorRectificationPlan != ''">gz_monitor_rectification_plan,</if>
+            <if test="gzMonitorRectificationPlanPerson != null  and gzMonitorRectificationPlanPerson != ''">gz_monitor_rectification_plan_person,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="gzLogId != null  and gzLogId != ''">#{gzLogId},</if>
+            <if test="gzId != null  and gzId != ''">#{gzId},</if>
+            <if test="gzNo != null  and gzNo != ''">#{gzNo},</if>
+            <if test="sysId != null  and sysId != ''">#{sysId},</if>
+            <if test="sysName != null  and sysName != ''">#{sysName},</if>
+            <if test="sysLevel != null  and sysLevel != ''">#{sysLevel},</if>
+            <if test="happenTime != null  and happenTime != ''">#{happenTime},</if>
+            <if test="happenTimeInterval != null  and happenTimeInterval != ''">#{happenTimeInterval},</if>
+            <if test="gzInfluenceBusDuration != null  and gzInfluenceBusDuration != ''">#{gzInfluenceBusDuration},</if>
+            <if test="gzAppearance != null  and gzAppearance != ''">#{gzAppearance},</if>
+            <if test="gzSysInfluence != null  and gzSysInfluence != ''">#{gzSysInfluence},</if>
+            <if test="gzInfluenceDegree != null  and gzInfluenceDegree != ''">#{gzInfluenceDegree},</if>
+            <if test="ifCapitalRisk != null  and ifCapitalRisk != ''">#{ifCapitalRisk},</if>
+            <if test="gzInfluenceAccount != null  and gzInfluenceAccount != ''">#{gzInfluenceAccount},</if>
+            <if test="gzInfluenceCustom != null  and gzInfluenceCustom != ''">#{gzInfluenceCustom},</if>
+            <if test="ifErrorAccount != null  and ifErrorAccount != ''">#{ifErrorAccount},</if>
+            <if test="ifCustomDamage != null  and ifCustomDamage != ''">#{ifCustomDamage},</if>
+            <if test="ifCustomComplaint != null  and ifCustomComplaint != ''">#{ifCustomComplaint},</if>
+            <if test="ifMonitorAlarm != null  and ifMonitorAlarm != ''">#{ifMonitorAlarm},</if>
+            <if test="ifMonitorNotAlarm != null  and ifMonitorNotAlarm != ''">#{ifMonitorNotAlarm},</if>
+            <if test="ifFirstFalseAlarm != null  and ifFirstFalseAlarm != ''">#{ifFirstFalseAlarm},</if>
+            <if test="gzMonitorMessage != null  and gzMonitorMessage != ''">#{gzMonitorMessage},</if>
+            <if test="gzResolvent != null  and gzResolvent != ''">#{gzResolvent},</if>
+            <if test="gzDealProcess != null  and gzDealProcess != ''">#{gzDealProcess},</if>
+            <if test="gzReason != null  and gzReason != ''">#{gzReason},</if>
+            <if test="gzEventCauseAnaly != null  and gzEventCauseAnaly != ''">#{gzEventCauseAnaly},</if>
+            <if test="ifSuspectedVersion != null  and ifSuspectedVersion != ''">#{ifSuspectedVersion},</if>
+            <if test="eventType != null  and eventType != ''">#{eventType},</if>
+            <if test="gzType != null  and gzType != ''">#{gzType},</if>
+            <if test="eventReasonType != null  and eventReasonType != ''">#{eventReasonType},</if>
+            <if test="ifCompleteSolve != null  and ifCompleteSolve != ''">#{ifCompleteSolve},</if>
+            <if test="gzRectificationMeasures != null  and gzRectificationMeasures != ''">#{gzRectificationMeasures},</if>
+            <if test="gzRectificationPlan != null  and gzRectificationPlan != ''">#{gzRectificationPlan},</if>
+            <if test="gzRectificationPlanPerson != null  and gzRectificationPlanPerson != ''">#{gzRectificationPlanPerson},</if>
+            <if test="ifSubmitProblem != null  and ifSubmitProblem != ''">#{ifSubmitProblem},</if>
+            <if test="problemNo != null  and problemNo != ''">#{problemNo},</if>
+            <if test="gzMonitorRectificationPlan != null  and gzMonitorRectificationPlan != ''">#{gzMonitorRectificationPlan},</if>
+            <if test="gzMonitorRectificationPlanPerson != null  and gzMonitorRectificationPlanPerson != ''">#{gzMonitorRectificationPlanPerson},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+         </trim>
+    </insert>
+
+    <update id="updateGzFaultReportLog" parameterType="GzFaultReportLog">
+        update gz_fault_report_log
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="gzId != null  and gzId != ''">gz_id = #{gzId},</if>
+            <if test="gzNo != null  and gzNo != ''">gz_no = #{gzNo},</if>
+            <if test="sysId != null  and sysId != ''">sys_id = #{sysId},</if>
+            <if test="sysName != null  and sysName != ''">sys_name = #{sysName},</if>
+            <if test="sysLevel != null  and sysLevel != ''">sys_level = #{sysLevel},</if>
+            <if test="happenTime != null  and happenTime != ''">happen_time = #{happenTime},</if>
+            <if test="happenTimeInterval != null  and happenTimeInterval != ''">happen_time_interval = #{happenTimeInterval},</if>
+            <if test="gzInfluenceBusDuration != null  and gzInfluenceBusDuration != ''">gz_influence_bus_duration = #{gzInfluenceBusDuration},</if>
+            <if test="gzAppearance != null  and gzAppearance != ''">gz_appearance = #{gzAppearance},</if>
+            <if test="gzSysInfluence != null  and gzSysInfluence != ''">gz_sys_influence = #{gzSysInfluence},</if>
+            <if test="gzInfluenceDegree != null  and gzInfluenceDegree != ''">gz_influence_degree = #{gzInfluenceDegree},</if>
+            <if test="ifCapitalRisk != null  and ifCapitalRisk != ''">if_capital_risk = #{ifCapitalRisk},</if>
+            <if test="gzInfluenceAccount != null  and gzInfluenceAccount != ''">gz_influence_account = #{gzInfluenceAccount},</if>
+            <if test="gzInfluenceCustom != null  and gzInfluenceCustom != ''">gz_influence_custom = #{gzInfluenceCustom},</if>
+            <if test="ifErrorAccount != null  and ifErrorAccount != ''">if_error_account = #{ifErrorAccount},</if>
+            <if test="ifCustomDamage != null  and ifCustomDamage != ''">if_custom_damage = #{ifCustomDamage},</if>
+            <if test="ifCustomComplaint != null  and ifCustomComplaint != ''">if_custom_complaint = #{ifCustomComplaint},</if>
+            <if test="ifMonitorAlarm != null  and ifMonitorAlarm != ''">if_monitor_alarm = #{ifMonitorAlarm},</if>
+            <if test="ifMonitorNotAlarm != null  and ifMonitorNotAlarm != ''">if_monitor_not_alarm = #{ifMonitorNotAlarm},</if>
+            <if test="ifFirstFalseAlarm != null  and ifFirstFalseAlarm != ''">if_first_false_alarm = #{ifFirstFalseAlarm},</if>
+            <if test="gzMonitorMessage != null  and gzMonitorMessage != ''">gz_monitor_message = #{gzMonitorMessage},</if>
+            <if test="gzResolvent != null  and gzResolvent != ''">gz_resolvent = #{gzResolvent},</if>
+            <if test="gzDealProcess != null  and gzDealProcess != ''">gz_deal_process = #{gzDealProcess},</if>
+            <if test="gzReason != null  and gzReason != ''">gz_reason = #{gzReason},</if>
+            <if test="gzEventCauseAnaly != null  and gzEventCauseAnaly != ''">gz_event_cause_analy = #{gzEventCauseAnaly},</if>
+            <if test="ifSuspectedVersion != null  and ifSuspectedVersion != ''">if_suspected_version = #{ifSuspectedVersion},</if>
+            <if test="eventType != null  and eventType != ''">event_type = #{eventType},</if>
+            <if test="gzType != null  and gzType != ''">gz_type = #{gzType},</if>
+            <if test="eventReasonType != null  and eventReasonType != ''">event_reason_type = #{eventReasonType},</if>
+            <if test="ifCompleteSolve != null  and ifCompleteSolve != ''">if_complete_solve = #{ifCompleteSolve},</if>
+            <if test="gzRectificationMeasures != null  and gzRectificationMeasures != ''">gz_rectification_measures = #{gzRectificationMeasures},</if>
+            <if test="gzRectificationPlan != null  and gzRectificationPlan != ''">gz_rectification_plan = #{gzRectificationPlan},</if>
+            <if test="gzRectificationPlanPerson != null  and gzRectificationPlanPerson != ''">gz_rectification_plan_person = #{gzRectificationPlanPerson},</if>
+            <if test="ifSubmitProblem != null  and ifSubmitProblem != ''">if_submit_problem = #{ifSubmitProblem},</if>
+            <if test="problemNo != null  and problemNo != ''">problem_no = #{problemNo},</if>
+            <if test="gzMonitorRectificationPlan != null  and gzMonitorRectificationPlan != ''">gz_monitor_rectification_plan = #{gzMonitorRectificationPlan},</if>
+            <if test="gzMonitorRectificationPlanPerson != null  and gzMonitorRectificationPlanPerson != ''">gz_monitor_rectification_plan_person = #{gzMonitorRectificationPlanPerson},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+        </trim>
+        where gz_log_id = #{gzLogId}
+    </update>
+
+    <delete id="deleteGzFaultReportLogById" parameterType="String">
+        delete from gz_fault_report_log where gz_log_id = #{gzLogId}
+    </delete>
+
+    <delete id="deleteGzFaultReportLogByIds" parameterType="String">
+        delete from gz_fault_report_log where gz_log_id in 
+        <foreach item="gzLogId" collection="array" open="(" separator="," close=")">
+            #{gzLogId}
+        </foreach>
+    </delete>
+    
+</mapper>

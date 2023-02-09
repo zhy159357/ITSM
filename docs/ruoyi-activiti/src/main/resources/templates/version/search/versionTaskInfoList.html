@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:include="include :: header('版本升级任务查询列表')" />
+    <th:block th:include="include :: select2-css" />
+    <th:block th:include="include :: datetimepicker-css" />
+</head>
+<body class="gray-bg">
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-12 search-collapse">
+            <form id="formId">
+                <div class="select-list">
+                    <ul>
+                        <li>
+                            <p>任务编号：</p>
+                            <input type="text" name="taskNo"/>
+                        </li>
+                        <li>
+                            <p>版本编号：</p>
+                            <input type="text" name="vmBizInfo.versionInfoNo"/>
+                        </li>
+                        <li>
+                            <p>版本简称：</p>
+                            <input type="text" name="vmBizInfo.versionInfoName"/>
+                        </li>
+                        <li>
+                            <p>所属单位：</p>
+                            <input type="text" name="ogOrg.orgName"/>
+                        </li>
+                        <li>
+                            <p>升级时间(起)：</p>
+                            <input type="text" id="actualStartTimeStart" name="params[actualStartTimeStart]" readonly/>
+                        </li>
+                        <li>
+                            <p>升级时间(止)：</p>
+                            <input type="text" id="actualStartTimeEnd" name="params[actualStartTimeEnd]" readonly/>
+                        </li>
+                        <li>
+                            <p>任务状态：</p>
+                            <select name="taskStatus">
+                                <option></option>
+                                <option value="1">待下载</option>
+                                <option value="2">已下载</option>
+                                <option value="3">已完成</option>
+                                <option value="4">已评价</option>
+                            </select>
+                            <input type="hidden" name="params[taskStatusCompleteFlag]" th:value=3>
+                        </li>
+                        <li>
+                            <p>是否自动化：</p>
+                            <select name="vmBizInfo.isAutomate">
+                                <option></option>
+                                <option value="1">是</option>
+                                <option value="2">否</option>
+                            </select>
+                        </li>
+                        <li>
+                            <p>引发生产故障：</p>
+                            <select name="ifBigFault">
+                                <option></option>
+                                <option value="1">是</option>
+                                <option value="2">否</option>
+                            </select>
+                        </li>
+                        <li>
+                            <p>升级结果填报：</p>
+                            <select id="ifResultSmoothly" name="ifResultSmoothly" class="form-control" th:with="resultSmoothly=${@pubParaValue.selectPubParaValueByParaName('result_smoothly_status')}">
+                                <option value=""></option>
+                                <option th:each="result : ${resultSmoothly}" th:text="${result.valueDetail}" th:value="${result.value}"></option>
+                            </select>
+                        </li>
+                        <li>
+                            <p>现场支持：</p>
+                            <select name="ifSupport">
+                                <option></option>
+                                <option value="1">是</option>
+                                <option value="2">否</option>
+                            </select>
+                        </li>
+                        <li>
+                            <a class="btn btn-primary btn-rounded btn-sm" id="versionTaskInfoList" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                            <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.resetAll()"><i class="fa fa-repeat"></i>&nbsp;重置</a>
+                        </li>
+                    </ul>
+                </div>
+            </form>
+        </div>
+
+        <div class="btn-group-sm" id="toolbar" role="group">
+            <a class="btn btn-info single disabled" onclick="detail()">
+                <i class="fa fa-search"></i> 详情信息
+            </a>
+            <!--导出所有｜当前页按钮组合-->
+            <div class="btn-group">
+                <button data-toggle="dropdown" class="btn btn-primary btn-sm dropdown-toggle">导出<span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a class="btn btn-default" onclick="$.table.exportExcel()">导出所有</a>
+                    </li>
+                    <li><a class="btn btn-default" onclick="$.table.exportExcelCurrentPage()">导出当前页</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="col-sm-12 select-table table-striped">
+            <table id="bootstrap-table" style="table-layout: fixed"></table>
+        </div>
+    </div>
+</div>
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: select2-js" />
+<th:block th:include="include :: datetimepicker-js" />
+<script th:src="@{/js/activiti.js}"></script>
+<script th:inline="javascript">
+    var prefix = ctx + "version/taskInfo";
+    var datas = [[${@pubParaValue.selectPubParaValueByParaName('result_smoothly_status')}]];
+    $(function() {
+        // 回车键搜索
+        document.onkeydown = function(e){
+            var ev = document.all ? window.event : e;
+            if(ev.keyCode==13) {
+                $('#versionTaskInfoList').trigger('click');
+                return false;
+            }
+        };
+
+        var options = {
+            url: prefix + "/list",
+            createUrl: prefix + "/add",
+            updateUrl: prefix + "/edit/{id}",
+            removeUrl: prefix + "/remove",
+            detailUrl: prefix + "/edit/{id}",
+            exportUrl: prefix + "/export",
+            clickToSelect: true,
+            singleSelect: true,
+            queryParams: queryParams,
+            modalName: "版本任务查询",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field : 'taskId',
+                    title : '主键ID',
+                    width : 250,
+                    visible: false
+                },
+                {
+                    field : 'taskNo',
+                    title : '任务单号',
+                    width : 150
+                },
+                {
+                    field : 'vmBizInfo.versionInfoNo',
+                    title : '版本编号',
+                    width : 150
+                },
+                {
+                    field : 'actualStartTime',
+                    title : '升级时间',
+                    width : 150
+                },
+                {
+                    field : 'vmBizInfo.versionInfoName',
+                    title : '版本简称',
+                    width : 300,
+                    formatter: function (value, row, index) {
+                        return $.table.tooltip(value);
+                    }
+                },
+                {
+                    field : 'ogOrg.orgName',
+                    title : '所属单位',
+                    width : 150
+                },
+                {
+                    field : 'taskStatus',
+                    title : '任务状态',
+                    formatter: function(value, row, index) {
+                        if(row.taskStatus == '1'){
+                            return "待下载";
+                        }else if(row.taskStatus == '2'){
+                            return "已下载";
+                        }else if(row.taskStatus == '3'){
+                            return "已完成";
+                        } else if(row.taskStatus == '4'){
+                            return "已评价";
+                        }
+                    },
+                    width : 80
+                },
+                {
+                    field : 'taskDealUserName',
+                    title : '附件下载人',
+                    width : 150
+                },
+                {
+                    field : 'completeUserName',
+                    title : '确认完成人',
+                    width : 150
+                },
+                {
+                    field : 'estFinishDate',
+                    title : '版本下载时间',
+                    width : 150
+                },
+                {
+                    field : 'update_time',
+                    title : '确认操作时间',
+                    width : 150
+                },
+                {
+                    field : 'vmBizInfo.isAutomate',
+                    title : '自动化',
+                    formatter: function(value, row, index) {
+                        if(row.vmBizInfo.isAutomate == "1"){
+                            return "是";
+                        } else if(row.vmBizInfo.isAutomate == "2") {
+                            return "否";
+                        } else {
+                            return "";
+                        }
+                    },
+                    width : 80
+                },
+                {
+                    field : 'ifBigFault',
+                    title : '引发生产故障',
+                    formatter: function(value, row, index) {
+                        if(row.ifBigFault == '1'){
+                            return "是";
+                        }else if(row.ifBigFault == '2'){
+                            return "否";
+                        }
+                    },
+                    width : 150
+                },
+                {
+                    field : 'ifResultSmoothly',
+                    title : '升级结果填报',
+                    formatter: function(value, row, index) {
+                        return $.table.selectPubParaValueData(datas, value);
+                    },
+                    width : 150
+                },
+                {
+                    field : 'ifSupport',
+                    title : '现场支持',
+                    formatter: function(value, row, index) {
+                        if(row.ifSupport == "1"){
+                            return "是";
+                        } else if(row.ifSupport == "2") {
+                            return "否";
+                        }
+                    },
+                    width : 120
+                }]
+        };
+        $.table.init(options);
+    });
+
+    $("#actualStartTimeStart").datetimepicker({
+        autoclose: true,
+        format: "yyyy-mm-dd hh:ii:ss",
+        minView:0,
+        minuteStep:1,
+        Date:new Date()
+    });
+
+    $("#actualStartTimeEnd").datetimepicker({
+        autoclose: true,
+        format: "yyyy-mm-dd hh:ii:ss",
+        minView:0,
+        minuteStep:1,
+        Date:new Date()
+    });
+
+    function queryParams(params) {
+        var search = $.table.queryParams(params);
+        search.remark = "versionTaskInfoList";
+        return search;
+    }
+
+    // 查看详情
+    function detail() {
+        var taskId = $.table.selectFirstColumns();
+        var url = prefix + "/detail/" + taskId;
+        $.modal.openTab("版本信息",url);
+    }
+
+</script>
+</body>
+</html>

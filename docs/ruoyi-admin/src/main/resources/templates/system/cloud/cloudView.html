@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:include="include :: header('云图信息')"/>
+    <style>
+        .link-style{
+            text-align: center;
+            margin-top: 25px;
+        }
+    </style>
+</head>
+<body>
+   <div class="link-style">
+       <button class="btn btn-primary" onclick="openCloudView()">云图</button>
+   </div>
+   <th:block th:include="include :: footer" />
+   <script th:inline="javascript">
+       var cloudViewUrl =  [[${cloudViewUrl}]];
+       cloudViewUrl += '/login.html';
+        function openCloudView() {
+            window.open(cloudViewUrl,'云图系统');
+        }
+        
+        
+    </script>
+</body>
+</html>

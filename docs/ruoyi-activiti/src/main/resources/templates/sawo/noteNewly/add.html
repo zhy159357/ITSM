@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+	<th:block th:include="include :: header('通知工单')" />
+	<th:block th:include="include :: select2-css" />
+    <th:block th:include="include :: summernote-css" />
+    <th:block th:include="include :: datetimepicker-css" />
+</head>
+<body>
+    <div class="main-content">
+        <form id="form-line-add" class="form-horizontal">
+            <input id="noteId" type="hidden" name="noteId" th:value="${noteId}">
+            <input name="ownerId" type="hidden" id="ownerId"/>
+            <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+                <div class="panel-group">
+                    <div class="panel panel-default">
+                        <div class="panel-heading" style="green-color: #3c8dbc" data-toggle="collapse" data-target="#collapse1">
+                            <h4 class="panel-title" >
+                                通知工单
+                            </h4>
+                        </div>
+                        <div id="collapse1" class="panel-collapse in">
+                            <div class="panel-body">
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label is-required">工单单号：</label>
+                                            <div class="col-sm-8">
+                                                <input id="noteNo" name="noteNo" type="text" maxlength="60" th:value="*{num}" required="required" readonly class="form-control"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label is-required">创建时间：</label>
+                                            <div class="col-sm-8">
+                                                <input id="startTime" name="startTime" th:value="*{nowTime}" style="background-color: #fff; opacity: 1;" class="form-control"  type="text" placeholder="yyyy-MM-dd HH:mm:ss" required="required" readonly>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label is-required">工单名称：</label>
+                                            <div class="col-sm-8">
+                                                <input id="noteName" name="noteName" type="text" maxlength="60" class="form-control" required/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label is-required">工单类别：</label>
+                                            <div class="col-sm-8">
+                                                <input id="noteType" name="noteType" type="text" maxlength="60" class="form-control" required/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label is-required">是否反馈：</label>
+                                            <div class="col-sm-8 ">
+                                                <select class="form-control" id="ifFeedback" name="ifFeedback" th:with="type=${@dict.getParaType('Line_Isno')}" onchange="infor()" required>
+                                                    <option value=""></option>
+                                                    <option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6" id="forin">
+                                        <div class="form-group" >
+                                            <label class="col-sm-4 control-label is-required">反馈截止时间：</label>
+                                            <div class="col-sm-8">
+                                                <input id="feedbackAbortTime" name="feedbackAbortTime" class="form-control"  type="text" placeholder="yyyy-MM-dd HH:mm:ss" required="required">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row" id="changeArea">
+
+                                </div>
+
+                                <div class="row">
+
+                                </div>
+
+                                <h4 class="form-header h4">正文：</h4>
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label is-required" style="width:11%">正文：</label>
+                                            <div class="col-sm-10" style="width:89%">
+                                                <input id="square" name="square" type="hidden" readonly >
+                                                <div class="summernote" id="summernote"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                        <div class="panel-body">
+                            <!-- Nav tabs -->
+                            <ul class="nav nav-tabs" role="tablist">
+                                <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">附件</a></li>
+                            </ul>
+
+                            <!-- Tab panes -->
+                            <div class="tab-content">
+                                <div role="tabpanel" class="tab-pane active" id="home">
+                                    <div class="btn-group-sm" id="toolbar" role="tab" style="margin: 15px 0px;">
+                                        <a class="btn btn-success" type="button" onclick="upload()">
+                                            <i class="fa fa-upload"></i> 添加附件
+                                        </a>
+                                        <a class="btn btn-warning multiple disabled" onclick="downloadFile()">
+                                            <i class="fa fa-download"></i> 下载附件
+                                        </a>
+                                        <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()">
+                                            <i class="fa fa-trash"></i> 删除附件
+                                        </a>
+                                    </div>
+                                    <div class="col-sm-12 select-table table-striped">
+                                        <table id="file-table"></table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="row">
+        <div class="col-sm-offset-5 col-sm-10">
+            <button type="button" class="btn btn-sm btn-primary" onclick="submit()"><i class="fa fa-check"></i>提 交</button>
+            <button type="button" class="btn btn-sm btn-danger" onclick="closeItem()"><i class="fa fa-reply-all"></i>关 闭</button>
+        </div>
+    </div>
+	<th:block th:include="include :: footer" />
+	<th:block th:include="include :: select2-js" />
+    <th:block th:include="include :: summernote-js" />
+    <th:block th:include="include :: datetimepicker-js" />
+	<script>
+	    var prefix = ctx + "sawo/noteNewly";
+
+        var prefix_lxbg = ctx + "lxbg/addlxbg"
+
+        var prefix_attachment = ctx + "pub/attachment";
+        var prefix_p = ctx + "public";
+        var prefix_show = ctx + "system/peo";
+
+        $(function () {
+            //puFolwHistory($("#noteId").val());
+            var options = {
+                url: prefix_attachment + "/list",
+                id: "file-table",
+                createUrl: prefix_attachment + "/add",
+                updateUrl: prefix_attachment + "/edit/{id}",
+                removeUrl: prefix_attachment + "/remove",
+                detailUrl: prefix_attachment + "/edit/{id}",
+                sortName: "fileTime",
+                sortOrder: "desc",
+                singleSelect: true,
+                clickToSelect: true,
+                queryParams:queryParams,
+                modalName: "附件列表",
+                columns: [{
+                    checkbox: true
+                },
+                    {
+                        field : 'atId',
+                        title : '附件ID',
+                        visible : false
+                    },
+                    {
+                        field : 'person.pId',
+                        title : '上传人员Id',
+                        visible: false
+                    },
+                    {
+                        field : 'fileName',
+                        title : '文件名称'
+                    },
+                    {
+                        field : 'person.pName',
+                        title : '上传人'
+                    },
+                    {
+                        field : 'size',
+                        title : '文件大小'
+                    },
+                    {
+                        field : 'memo',
+                        title : '文件描述'
+                    },
+                    {
+                        field : 'fileTime',
+                        title : '上传时间'
+                    }]
+            };
+            $.table.init(options);
+        });
+
+        function queryParams(params) {
+            var search = $.table.queryParams(params);
+            search.ownerId =  $("#noteId").val();
+            return search;
+        }
+
+        function getMultiusers() {
+            $.modal.open("选择机构页面", prefix_lxbg   + "/multiusers");
+        }
+
+        $(function () {
+            $('.summernote').summernote({
+                placeholder: '',
+                height : 192,
+                lang : 'zh-CN',
+                followingToolbar: false,
+                callbacks: {
+                    onImageUpload: function (files) {
+                        sendFile(files[0], this);
+                    }
+                },
+                focus:true
+            });
+            changRange("1");
+        });
+
+        function changRange(type) {
+
+
+            $("#changeArea").html("");
+            var div1="                            <div class=\"col-sm-6\">\n" +
+                "                                <div class=\"form-group\">\n" +
+                "                                    <label class=\"col-sm-3 control-label\"></label>\n" +
+                "                                    <div class=\"col-sm-8\">\n" +
+                "                                        <a onclick=\"getMultiusers()\"><i class=\"fa fa-edit\"></i>执行机构</a>\n" +
+                "                                    </div>\n" +
+                "                                </div>\n" +
+                "                            </div>\n" +
+                "                            <div class=\"col-sm-12\">\n" +
+                "                                <div class=\"form-group\">\n" +
+                "                                    <label class=\"col-sm-2 control-label  text-right is-required\" style=\"width:13.5%\">执行机构名称：</label>\n" +
+                "                                    <div class=\"col-sm-10\" style=\"width:81.5%\">\n" +
+                "                                        <input id=\"multiusers\" name=\"params[masterOrgId]\" type=\"hidden\" value=\"\"/>\n" +
+                "                                        <textarea rows=\"10\" cols=\"20\" class=\"form-control\" type=\"text\" name=\"params[masterOrgIdName]\" id=\"multiusersName\" required readonly></textarea>\n" +
+                "                                    </div>\n" +
+                "                                </div>\n" +
+                "                            </div>";
+
+                $("#changeArea").append(div1);
+                $.ajax({
+                    cache : true,
+                    type : "POST",
+                    url : ctx+"system/value/listPara",
+                    data : {
+                        "amParaId": type
+                    },
+                    async : false,
+                    error : function(request) {
+                        $.modal.alertError("系统错误");
+                    },
+                    success : function(data) {
+                        var options="";
+                        var ids="";
+
+                        $.each(data, function(index, dict) {
+                            if( !$.common.isEmpty(dict.orgName)  ){
+                                options+=dict.orgName+",";
+                                ids+="orgId:"+dict.receivedeptid+","
+                            }
+                        });
+                        $("#multiusers").val(ids);
+                        $("#multiusersName").val(options);
+                    }
+                });
+        }
+
+        $(function () {
+            $('.summernote').summernote({
+                placeholder: '请输入',
+                height : 192,
+                lang : 'zh-CN',
+                followingToolbar: false,
+                callbacks: {
+                    onImageUpload: function (files) {
+                        sendFile(files[0], this);
+                    }
+                },
+                focus:true
+            });
+            var content = $("#square").val();
+            $('#summernote').summernote('code', content);
+
+        });
+
+        /**
+         * 1 显示 2 不显示
+         */
+        function infor() {
+            let id = document.getElementById('ifFeedback');
+            //var type = $('#eventType').value;
+            if(id.value=='1'){
+                $('#forin').show();
+            }else if (id.value=='2'){
+                $('#forin').hide();
+            }
+            //console.log(id.value);
+        }
+
+        // 附件上传页面
+        function upload() {
+            var url = ctx+"pub/attachment/upload/" + $("#noteId").val();
+            $.modal.open("附件上传", url);
+        }
+
+        // 附件下载
+        function downloadFile() {
+            var rows = $.table.selectFirstColumns();
+            var atId = rows[0];
+            var ownerId = $("#noteId").val();
+            var url = ctx + "pub/attachment/download/" + ownerId + "/" + atId;
+            window.location.href = url;
+        }
+
+        /* 选择审批机构树 */
+        function selectDept() {
+            debugger;
+            var orgId = $("#orgid").val();
+            var deptId = $.common.isEmpty(orgId) ? "310100001" : $("#orgid").val();
+            //var deptId = "310100001";
+            var url = prefix + "/selectDeptTree/" + deptId;
+            var options = {
+                title: '选择部门',
+                width: "380",
+                url: url,
+                callBack: doSubmitOne
+            };
+            $.modal.openOptions(options);
+        }
+
+        function doSubmitOne(index, layero) {
+            debugger;
+            var tree = layero.find("iframe")[0].contentWindow.$._tree;
+            var body = layer.getChildFrame('body', index);
+            $("#orgid").val(body.find('#treeId').val());
+            $("#n1").val(body.find('#treeName').val());
+            getchangeManager(body.find('#treeId').val());
+            layer.close(index);
+        }
+
+        //获取处置人
+        function getchangeManager(changeOrg) {
+            $.ajax({
+                cache: true,
+                type: "POST",
+                url: prefix_p + "/selectPersonByOrgIdOrOrgLvAndRole",
+                data: {
+                    "orgId": changeOrg,
+                    "rId": "88889",
+                    "pflag": "1",
+                    "params[isselect]": "1"
+                },
+                async: false,
+                error: function (request) {
+                    $.modal.alertError("系统错误");
+                },
+                success: function (data) {
+                    var options = "<option value='" + "" + "'>" + "" + "</option> \n";
+                    $("#disposeId").html("");
+                    for (var ak = 0; ak < data.rows.length; ak++) {
+                        options += "<option value='" + data.rows[ak].pId + "'>" + data.rows[ak].pName + "</option> \n";
+                    }
+                    $("#disposeId").append(options);
+                }
+            });
+        }
+
+        //新增  1 待分发
+        function submit() {
+            if ($.validate.form()) {
+                var code = $('#summernote').summernote('code');
+                $('#square').val(code);
+                var data = $("#form-line-add").serializeArray();
+                //单子状态
+                data.push({"name":"noteState","value": 1 });
+                //接手状态
+                data.push({"name":"acceptingState","value": 1 });
+                $.operate.saveTab(prefix + "/add", data);
+            }
+        }
+
+        //反馈截止时间
+        $("#feedbackAbortTime").datetimepicker({
+            format: "yyyy-mm-dd hh:ii:ss",
+            autoclose: true,
+            minView:0,
+            minuteStep:1,
+        });
+
+    </script>
+</body>
+</html>

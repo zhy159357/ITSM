@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.activiti.mapper.FmKindMapper">
+
+    <resultMap type="FmKind" id="FmKindResult">
+        <result property="fmTypeId" column="fm_type_id"/>
+        <result property="name" column="name"/>
+        <result property="sysId" column="sys_id"/>
+        <result property="invalidationMark" column="invalidation_mark"/>
+        <result property="knowledgeUrl" column="knowledge_url"/>
+        <result property="adderId" column="adder_id"/>
+        <result property="updaterId" column="updater_id"/>
+        <result property="addTime" column="add_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="type" column="type"/>
+        <result property="serialNum" column="serial_num"/>
+        <result property="parentId" column="parent_id"/>
+        <result property="parentName" column="parent_name" />
+    </resultMap>
+
+    <sql id="selectFmKindVo">
+        select fm_type_id,
+               name,
+               sys_id,
+               invalidation_mark,
+               knowledge_url,
+               adder_id,
+               updater_id,
+               add_time,
+               update_time,
+               type,
+               serial_num,
+               parent_id
+        from fm_kind
+    </sql>
+
+    <select id="selectFmKindList" parameterType="FmKind" resultMap="FmKindResult">
+        SELECT
+        f.fm_type_id,
+        f.NAME,
+        f.sys_id,
+        f.invalidation_mark,
+        f.knowledge_url,
+        f.adder_id,
+        f.updater_id,
+        f.add_time,
+        f.update_time,
+        f.TYPE,
+        f.serial_num,
+        f.parent_id
+        FROM
+        fm_kind f
+        <where>
+            <if test="name != null  and name != ''">
+                AND f.name like concat(concat('%',#{name}),'%')
+            </if>
+            <if test="sysId != null  and sysId != ''">
+                and f.sys_id = #{sysId}
+            </if>
+            <if test="invalidationMark != null  and invalidationMark != ''">
+                and f.invalidation_mark = #{invalidationMark}
+            </if>
+            <if test="type != null  and type != ''">
+                and f.type = #{type}
+            </if>
+            <if test="sysId!=null and sysId!=''">
+                and f.sys_id = #{sysId}
+            </if>
+            <if test="parentId!=null and parentId!=''">
+                and f.parent_id = #{parentId}
+            </if>
+        </where>
+        order by f.serial_num asc
+    </select>
+
+    <select id="selectFmKindById" parameterType="String" resultMap="FmKindResult">
+        <include refid="selectFmKindVo"/>
+        where fm_type_id = #{fmTypeId,jdbcType=VARCHAR}
+    </select>
+
+    <insert id="insertFmKind" parameterType="FmKind">
+        insert into fm_kind
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="fmTypeId != null  and fmTypeId != ''">fm_type_id,</if>
+            <if test="name != null  and name != ''">name,</if>
+            <if test="sysId != null  and sysId != ''">sys_id,</if>
+            <if test="invalidationMark != null  and invalidationMark != ''">invalidation_mark,</if>
+            <if test="knowledgeUrl != null  and knowledgeUrl != ''">knowledge_url,</if>
+            <if test="adderId != null  and adderId != ''">adder_id,</if>
+            <if test="updaterId != null  and updaterId != ''">updater_id,</if>
+            <if test="addTime != null  and addTime != ''">add_time,</if>
+            <if test="updateTime != null  and updateTime != ''">update_time,</if>
+            <if test="type != null  and type != ''">type,</if>
+            <if test="serialNum != null  and serialNum != ''">serial_num,</if>
+            <if test="parentId != null  and parentId != ''">parent_id,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="fmTypeId != null  and fmTypeId != ''">#{fmTypeId},</if>
+            <if test="name != null  and name != ''">#{name},</if>
+            <if test="sysId != null  and sysId != ''">#{sysId},</if>
+            <if test="invalidationMark != null  and invalidationMark != ''">#{invalidationMark},</if>
+            <if test="knowledgeUrl != null  and knowledgeUrl != ''">#{knowledgeUrl},</if>
+            <if test="adderId != null  and adderId != ''">#{adderId},</if>
+            <if test="updaterId != null  and updaterId != ''">#{updaterId},</if>
+            <if test="addTime != null  and addTime != ''">#{addTime},</if>
+            <if test="updateTime != null  and updateTime != ''">#{updateTime},</if>
+            <if test="type != null  and type != ''">#{type},</if>
+            <if test="serialNum != null  and serialNum != ''">#{serialNum},</if>
+            <if test="parentId != null  and parentId != ''">#{parentId},</if>
+        </trim>
+    </insert>
+
+    <update id="updateFmKind" parameterType="FmKind">
+        update fm_kind
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null  and name != ''">name = #{name},</if>
+            <if test="sysId != null  and sysId != ''">sys_id = #{sysId},</if>
+            <if test="invalidationMark != null  and invalidationMark != ''">invalidation_mark = #{invalidationMark},
+            </if>
+            <if test="knowledgeUrl != null  and knowledgeUrl != ''">knowledge_url = #{knowledgeUrl},</if>
+            <if test="adderId != null  and adderId != ''">adder_id = #{adderId},</if>
+            <if test="updaterId != null  and updaterId != ''">updater_id = #{updaterId},</if>
+            <if test="addTime != null  and addTime != ''">add_time = #{addTime},</if>
+            <if test="type != null  and type != ''">type = #{type},</if>
+            <if test="serialNum != null  and serialNum != ''">serial_num = #{serialNum},</if>
+            <if test="parentId != null  and parentId != ''">parent_id = #{parentId},</if>
+        </trim>
+        where fm_type_id = #{fmTypeId}
+    </update>
+
+    <delete id="deleteFmKindById" parameterType="String">
+        delete
+        from fm_kind
+        where fm_type_id = #{fmTypeId}
+    </delete>
+
+    <delete id="deleteFmKindByIds" parameterType="String">
+        delete from fm_kind where fm_type_id in
+        <foreach item="fmTypeId" collection="array" open="(" separator="," close=")">
+            #{fmTypeId}
+        </foreach>
+    </delete>
+
+    <select id="selectFmKindBySysid" parameterType="String" resultMap="FmKindResult">
+        <include refid="selectFmKindVo"/>
+        where sys_id = #{sysid}
+        and invalidation_mark = '1'
+        order by serial_num asc
+    </select>
+
+</mapper>

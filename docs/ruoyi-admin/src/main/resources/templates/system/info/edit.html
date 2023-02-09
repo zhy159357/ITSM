@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:include="include :: header('修改信息制度')"/>
+    <th:block th:include="include :: select2-css" />
+    <th:block th:include="include :: datetimepicker-css" />
+    <th:block th:include="include :: summernote-css" />
+    <style>
+
+    </style>
+</head>
+<body class="white-bg">
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+    <form class="form-horizontal m" id="form-info-edit"  th:object="${info}">
+        <input th:type="hidden" th:field="*{regime_info_id}"/>
+        <input name="ownerId" type="hidden" id="ownerId" th:value="*{regime_info_id}"/>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">制度标题:</label>
+                    <div class="col-sm-8">
+                        <input class="form-control" type="text" name="regime_title" id="regime_title" maxlength="20" th:field="*{regime_title}" required >
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label ">关键字:</label>
+                    <div class="col-sm-8">
+                        <input class="form-control" type="text" name="key_word" id="key_word" th:field="*{key_word}" maxlength="20"  >
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">印发日期:</label>
+                    <div class="col-sm-8">
+                        <div class="input-group date" >
+                            <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                            <input type="text" class="form-control" id="print_time" name="print_time"  th:value="*{print_time}" required readonly style="background-color: #fdfdfd">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">审核人:</label>
+                    <div class="col-sm-8">
+                        <select id="checker" name="checker" class="form-control" th:field="*{checker}" required>
+                            <option value=""></option>
+                            <option th:each="user : ${checkerList}" th:text="${user.pName}" th:value="${user.pId}"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label class="col-xs-2 control-label is-required">制度摘要:</label>
+                    <div class="col-xs-10">
+                        <textarea name="regime_digest"  class="form-control" rows="5" maxlength="200" th:field="*{regime_digest}" required></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">类别一:</label>
+                    <div class="col-sm-8">
+                        <select th:name="type_one" id="type_one" required class="form-control m-b" th:with="type=${@dict.getParaType('typeOne')}">
+                            <option value=""></option>
+                            <option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}" th:field="*{type_one}"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">类别二:</label>
+                    <div class="col-sm-8">
+                        <select th:name="type_two" id="type_two" required class="form-control m-b" th:with="type=${@dict.getParaType('typeTwo')}">
+                            <option value=""></option>
+                            <option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}" th:field="*{type_two}"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">状态:</label>
+                    <div class="col-sm-8">
+                        <select th:name="regime_info_type" id="regime_info_type" required class="form-control m-b" th:with="type=${@dict.getParaType('regimeinfotype')}">
+                            <option value=""></option>
+                            <option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}" th:field="*{regime_info_type}"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label ">印发文号:</label>
+                    <div class="col-sm-8">
+                        <input class="form-control" id="num" name="num" maxlength="20" th:field="*{num}" >
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label ">四级制度:</label>
+                    <div class="col-sm-8">
+                        <select th:name="sytem_four" id="sytem_four"  class="form-control m-b" th:with="type=${@dict.getParaType('systemFour')}">
+                            <option value=""></option>
+                            <option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}" th:field="*{sytem_four}"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label ">分类域:</label>
+                    <div class="col-sm-8">
+                        <select th:name="classify" id="classify"  class="form-control m-b" th:with="type=${@dict.getParaType('classify')}">
+                            <option value=""></option>
+                            <option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}" th:field="*{classify}"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label ">提交人:</label>
+                    <div class="col-sm-8">
+                        <input name="createName" id="createName" class="form-control" type="text" readonly
+                               th:field="*{createName}" >
+                        <input name="commit_id" id="commit_id" class="form-control" type="hidden" readonly
+                               th:field="*{commit_id}" >
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label ">提交时间:</label>
+                    <div class="col-sm-8">
+                        <input class="form-control" type="text" name="commit_time" id="commit_time" th:value="*{commit_time}" readonly>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="tabs-container">
+                <ul class="nav nav-tabs">
+                    <li class="active"><a data-toggle="tab" href="#tab-1" aria-expanded="true"> 附件上传</a>
+                    </li>
+                </ul>
+                <div class="tab-content">
+                    <div id="tab-1" class="tab-pane active">
+                        <div class="panel-body">
+                            <div class="btn-group-sm" id="toolbar1" role="group">
+                                <a class="btn btn-success" type="button" onclick="upload()">
+                                    <i class="fa fa-upload"></i> 添加附件
+                                </a>
+                                <a class="btn btn-primary multiple disabled" onclick="downloadAttachment()">
+                                    <i class="fa fa-download"></i> 下载附件
+                                </a>
+                                <a class="btn btn-danger multiple disabled" onclick="remove()">
+                                    <i class="fa fa-trash"></i> 删除附件
+                                </a>
+                            </div>
+                            <div class="col-sm-12 select-table table-striped">
+                                <table id="file-table"></table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<div class="row">
+    <div class="col-sm-offset-5 col-sm-10">
+        <button type="button" class="btn btn-sm btn-primary" onclick="submitHandler()"><i class="fa fa-repeat"></i>重新提交</button>&nbsp;
+        <button type="button" class="btn btn-sm btn-danger" onclick="closeItem()"><i class="fa fa-window-close"></i>关闭 </button>
+    </div>
+</div>
+</div>
+
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: summernote-js" />
+<th:block th:include="include :: datetimepicker-js" />
+<th:block th:include="include :: select2-js" />
+
+<script th:inline="javascript">
+    var prefix = ctx + "system/info";
+    var prefix_attachment = ctx + "pub/attachment";
+    $(function() {
+        var options = {
+            url: prefix_attachment + "/list",
+            createUrl: prefix_attachment + "/add",
+            updateUrl: prefix_attachment + "/edit/{id}",
+            removeUrl: prefix_attachment + "/remove",
+            detailUrl: prefix_attachment + "/edit/{id}",
+            sortName: "fileTime",
+            clickToSelect:true,
+            id:'file-table',
+            toolbar:"toolbar1",
+            sortOrder: "desc",
+            singleSelect : true,
+            modalName: "附件列表",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field : 'atId',
+                    title : '附件ID',
+                    visible : false
+                },
+                {
+                    field : 'fileName',
+                    title : '文件名称'
+                },
+                {
+                    field : 'person.pName',
+                    title : '上传人'
+                },
+                {
+                    field : 'size',
+                    title : '文件大小'
+                },
+                {
+                    field : 'memo',
+                    title : '文件描述'
+                },
+                {
+                    field : 'fileTime',
+                    title : '上传时间'
+                }]
+        };
+        $.table.init(options);
+    });
+
+    //** 关闭选项卡 */
+    function closeItem() {
+
+        var index = parent.layer.getFrameIndex(window.name);
+        parent.layer.close(index);//关闭当前页
+    }
+    //
+    $("#form-info-edit").validate({
+        onkeyup: false,
+        rules: {
+            sysname: {
+                remote: {
+                    url: ctx + "system/info/checkInfoNameUnique",
+                    type: "post",
+                    dataType: "json",
+                    data: {
+                        "id": function () {
+                            return $("#id").val();
+                        },
+                        "ip": function () {
+                            return $.common.trim($("#ip").val());
+                        }
+                    },
+                    dataFilter: function (data, type) {
+                        return $.validate.unique(data);
+                    }
+                }
+            },
+            appsort: {
+                digits: true
+            },
+        },
+        messages: {
+            "roleName": {
+                remote: "话机绑定名称已经存在"
+            }
+        },
+        focusCleanup: true
+    });
+
+    $('input').on('ifChanged', function (obj) {
+        var type = $(this).val();
+        var checked = obj.currentTarget.checked;
+        if (type == 1) {
+            if (checked) {
+                $._tree.expandAll(true);
+            } else {
+                $._tree.expandAll(false);
+            }
+        } else if (type == "2") {
+            if (checked) {
+                $._tree.checkAllNodes(true);
+            } else {
+                $._tree.checkAllNodes(false);
+            }
+        } else if (type == "3") {
+            if (checked) {
+                $._tree.setting.check.chkboxType = {"Y": "ps", "N": "ps"};
+            } else {
+                $._tree.setting.check.chkboxType = {"Y": "", "N": ""};
+            }
+        }
+    })
+
+    function submitHandler() {
+        var data = $("#form-info-edit").serializeArray();
+        if ($.validate.form()) {
+            $.operate.save(prefix + "/edit", data);
+        }
+    }
+    // 附件上传页面
+    function upload() {
+        var ownerId = $("#ownerId").val();
+        var url = prefix_attachment + "/upload/"+ownerId;
+        $.modal.open("信息制度附件上传",url);
+    };
+
+    // 附件下载
+    function downloadAttachment() {
+        var rows = $.table.selectFirstColumns();
+        var atId = rows[0];
+        var ownerId = $("#ownerId").val();
+        var url = prefix_attachment + "/download/"+ownerId+"/"+atId;
+        window.location.href = url;
+    }
+
+    /* 用户管理-新增-选择机构树 */
+    function selectInfoTree() {
+        var folder = $("#folder_").val();
+        var folder = $.common.isEmpty(folder) ? "8b8080f4583e530701583e96e3150065" : $("#treeId").val();
+        var url = ctx + "system/info/selectFolder/" + folder;
+        var options = {
+            title: '选择印发文号',
+            width: "380",
+            url: url,
+            callBack: doSubmit
+        };
+        $.modal.openOptions(options);
+    }
+
+    function doSubmit(index, layero){
+        var tree = layero.find("iframe")[0].contentWindow.$._tree;
+
+        if(jQuery.isEmptyObject(tree)) {
+            layer.close(index);
+        }else{
+            var selectNode = tree.getSelectedNodes();
+            if(selectNode.length!=0){
+                $("#folder").val(selectNode[0].id);
+                $("#folder_").val(selectNode[0].name);
+            }
+        }
+        layer.close(index);
+    }
+
+    $("#print_time").datetimepicker({
+        format: "yyyy-mm-dd",
+        minView: "month",
+        autoclose: true
+    });
+
+    function remove() {
+        var row = $('#file-table').bootstrapTable('getSelections')[0]
+        //获取当前登陆人员的id
+        $.get(prefix+'/selectOgUserByUserId',function (result) {
+            if(result.data.pId==row.person.pId){
+                $.operate.removeAll();
+            }else{
+                $.modal.alertError('不能删除非本人上传附件!');
+            }
+        });
+    }
+</script>
+</body>
+</html>

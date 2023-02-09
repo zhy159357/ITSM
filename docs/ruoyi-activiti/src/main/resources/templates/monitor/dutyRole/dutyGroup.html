@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('监控值班列表')" />
+</head>
+<body class="gray-bg">
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-12 search-collapse">
+            <form id="formId">
+                <div class="select-list">
+                    <ul>
+                        <li>
+                            <p>人员：</p>
+                            <input type="text" name="pid"/>
+                        </li>
+                        <li>
+                            <p>工作组：</p>
+                            <input type="text" name="groupName" id="groupName" onclick="chooseGroup()" readonly style="background-color: #ffffff"/>
+                            <input type="hidden" name="groupId" id="groupId"/>
+                        </li>
+                        <li>
+                            <p>监控工作组：</p>
+                            <select name="params[dutyType]"
+                                    class="form-control noselect2 selectpicker" data-none-selected-text="请选择"
+                                    multiple data-actions-box="true" data-width="200px" data-live-search="true"
+                                    th:with="type=${@pubParaValue.selectPubParaValueByParaName('duty_type')}">
+                                <option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.paraValueId}"></option>
+                            </select>
+                        </li>
+                        <li>
+                            <p>工作组类型：</p>
+                            <select id="dutyType" name="dutyType" class="form-control" th:with="dutyType=${@pubParaValue.selectPubParaValueByParaName('event_group_type')}">
+                                <option value="">请选择</option>
+                                <option th:each="itype : ${dutyType}" th:text="${itype.valueDetail}" th:value="${itype.value}"></option>
+                            </select>
+                        </li>
+                        <li>
+                            <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i> 搜索</a>
+                            <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.resetAll('formId')"><i class="fa fa-refresh"></i> 重置</a>
+                        </li>
+                    </ul>
+                </div>
+            </form>
+        </div>
+        <div th:if="${admin}" class="btn-group-sm" id="toolbar" role="group">
+            <a class="btn btn-success" onclick="$.operate.add()">
+                <i class="fa fa-plus"></i>添加监控值班
+            </a>
+            <a class="btn btn-primary single disabled" onclick="edit()">
+                <i class="fa fa-edit"></i> 修改监控值班
+            </a>
+            <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()">
+                <i class="fa fa-window-close"></i> 删除监控值班
+            </a>
+        </div>
+        <div class="col-sm-12 select-table table-striped">
+            <table id="bootstrap-table"></table>
+        </div>
+    </div>
+</div>
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: select2-css" />
+<th:block th:include="include :: select2-js" />
+<th:block th:include="include :: bootstrap-select-js" />
+<th:block th:include="include :: bootstrap-select-css" />
+<script th:inline="javascript">
+        var prefix = ctx + "monitor/dutyRole";
+         var dutyType=[[${@pubParaValue.selectPubParaValueByParaName('event_group_type')}]];
+        $(function() {
+            var options = {
+                url: prefix + "/list",
+                modalName: "监控值班",
+                clickToSelect:true,
+                createUrl: prefix + "/openAdd",
+                removeUrl: prefix + "/removeDuty",
+                columns: [{
+                    checkbox: true
+                },
+                {
+                    field : 'dutyId',
+                    title : '值班表id',
+                    visible: false
+                },
+                {
+                    field : 'pid',
+                    title : '人员'
+                },
+                {
+                    field : 'dutyName',
+                    title : '工作组'
+                },
+                {
+                    field : 'dutyType',
+                    title : '工作组类型',
+                     formatter:function (value) {
+                        return $.table.selectPubParaValueData(dutyType,value);
+                  }
+                  },
+                 {
+                    field : 'tel',
+                    title : '联系方式'
+                },{
+                    field : 'status',
+                    title : '状态',
+                    formatter:function(value){
+                    if(value==1){
+                        return "签到";
+                    }
+                    if(value==2){
+                        return "签退";
+                    }
+                    if(value==3){
+                        return "午休";
+                    }
+                    if(value==4){
+                        return "午休结束";
+                    }
+                    if(value==5){
+                        return "小休";
+                    }
+                    if(value==6){
+                        return "小休结束";
+                    }
+                    }
+                }, {
+                    field : 'statusTime',
+                    title : '状态更新时间',
+                     formatter: function (value, row, index) {
+                        var statusTime = '';
+                        if (value != '' && value != null) {
+                            var pattern = /(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/;
+                            statusTime = value.replace(pattern, '$1-$2-$3 $4:$5:$6');
+                        }
+                        return statusTime;
+                    }
+                },
+                {
+                    field : 'operateTime',
+                    title : '添加值班组时间'
+                },
+                {
+                    field : 'params.task',
+                    title : '任务数'
+                }
+               ]
+            };
+            $.table.init(options);
+        });
+        function edit(){
+            var dutyId=$.table.selectColumns("dutyId");
+            var groupType=$.table.selectColumns("dutyType");
+            $.modal.open("修改", prefix + "/edit/"+dutyId[0]);
+        }
+        function removeAll(){
+            var dutyId=$.table.selectColumns("dutyId");
+            var groupType=$.table.selectColumns("dutyType");
+            $.modal.confirm("确定删除该条" + table.options.modalName + "信息吗？", function() {
+                var data = { "ids": JSON.stringify(dutyId)};
+                $.operate.submit(prefix + "/removeDuty", "post", "json", data);
+            });
+
+        }
+        function chooseGroup(){
+            $.modal.open("选择工作组",prefix+"/workGroup");
+        }
+    </script>
+</body>
+</html>

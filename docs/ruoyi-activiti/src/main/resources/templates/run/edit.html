@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+	<th:block th:include="include :: header('监控事件单新增')" />
+	<th:block th:include="include :: select2-css" />
+</head>
+<body>
+<div class="main-content">
+	<form id="form-version-add" class="form-horizontal" th:object="${eventRun}">
+		<input name="eventId" type="hidden" id="eventId" th:value="*{eventId}"/>
+		<input name="createId" type="hidden" id="createId" th:value="*{createId}"/>
+		<h4 class="form-header h4">基本信息</h4>
+		<div class="row">
+			<div class="col-sm-6">
+				<div class="form-group">
+					<label class="col-sm-4 control-label is-required">事件单号：</label>
+					<div class="col-sm-7">
+						<input name="eventNo" id="eventNo" class="form-control" type="text" th:value="*{eventNo}" readonly required>
+					</div>
+				</div>
+			</div>
+			<div class="col-sm-6">
+				<div class="form-group">
+					<label class="col-sm-3 control-label is-required">事件来源：</label>
+							<div class="col-sm-7">
+								<select id="eventSource" name="eventSource" class="form-control" th:with="type=${@pubParaValue.selectPubParaValueByParaName('YXSJ_SOURCE')}" th:field="*{eventSource}">
+									<option value=""></option>
+									<option th:each="paraValue : ${type}"  th:if="${paraValue.value !='02'}" th:text="${paraValue.valueDetail}" th:value="${paraValue.value}" th:selected="${paraValue.value eq '01'}"></option>
+								</select>
+							</div>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-sm-6">
+				<div class="form-group">
+					<label class="col-sm-4 control-label is-required">事件标题：</label>
+					<div class="col-sm-7">
+						<input id="eventTitle" name="eventTitle" class="form-control" type="text" maxlength="80" th:value="*{eventTitle}" required>
+					</div>
+				</div>
+			</div>
+			<div class="col-sm-6">
+				<div class="form-group">
+					<label class="col-sm-3 control-label is-required">事件类型：</label>
+					<div class="col-sm-7">
+						<select id="eventType" name="eventType" class="form-control" th:with="eventType=${@pubParaValue.selectPubParaValueByParaName('duty_type')}" th:field="*{eventType}" onchange="changeType(this.value)" required>
+							<option value=""></option>
+							<option th:each="paraValue : ${eventType}" th:if="${paraValue.value !='7'}" th:text="${paraValue.valueDetail}" th:value="${paraValue.value}"></option>
+						</select>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-sm-6">
+				<div class="form-group">
+					<label class="col-sm-4 control-label is-required">发生时间：</label>
+					<div class="col-sm-7">
+						<input id="reportTime" name="reportTime" class="form-control" th:value="*{reportTime}"
+							     type="text" required>
+					</div>
+				</div>
+			</div>
+			<div class="col-sm-6">
+				<div class="form-group">
+					<label class="col-sm-3 control-label is-required">事件等级：</label>
+					<div class="col-sm-7">
+						<select id="eventLevel" name="eventLevel" class="form-control" th:with="eventLevel=${@pubParaValue.selectPubParaValueByParaName('dhsj_sjdj')}" th:field="*{eventLevel}" required>
+							<option value=""></option>
+							<option th:each="paraValue : ${eventLevel}" th:text="${paraValue.valueDetail}" th:value="${paraValue.value}"></option>
+						</select>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-sm-6">
+				<div class="form-group">
+					<label class="col-sm-4 control-label" id="appSystem">所属系统：</label>
+					<div class="col-sm-7">
+						<input id="appSystemCode" name="appSystemCode"  th:value="*{appSystemCode}" hidden >
+						<input id="appSystemName" name="appSystemName" type="text"   class="form-control" onclick="selectOneApplication()" th:value="*{appSystemName}" readonly style="background-color: #fdfdfd">
+					</div>
+				</div>
+			</div>
+			<div class="col-sm-6">
+				<div class="form-group">
+					<label class="col-sm-3 control-label is-required">所属中心：</label>
+					<div class="col-sm-7">
+						<select id="affiliatedCenter" name="affiliatedCenter" class="form-control" th:with="center=${@pubParaValue.selectPubParaValueByParaName('YXSJ_CENTER')}" th:field="*{affiliatedCenter}" required>
+							<option value=""></option>
+							<option th:each="paraValue : ${center}"   th:text="${paraValue.valueDetail}" th:value="${paraValue.value}"></option>
+						</select>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div th:if="${eventRun.closeTime !=null and eventRun.closeTime !=''}" class="col-sm-6">
+				<div class="form-group">
+					<label class="col-sm-4 control-label">告警关闭时间：</label>
+					<div class="col-sm-7">
+						<input id="closeTime" name="closeTime"  class="form-control" th:value="*{closeTime}" readonly>
+					</div>
+				</div>
+			</div>
+		</div>
+			<div class="row">
+				<div class="col-sm-12">
+					<div class="form-group">
+						<label class="col-sm-2 control-label is-required">详细描述：</label>
+						<div class="col-sm-9">
+						<textarea rows="6" cols="20" id="eventDescr" name="eventDescr" maxlength="500" th:text="*{eventDescr}" class="form-control" required></textarea>
+						</div>
+					</div>
+				</div>
+			</div>
+	</form>
+	<h4 class="form-header h4">上传附件</h4>
+	<div class="tab-content">
+		<div id="tab-1" class="tab-pane active">
+			<div class="panel-body">
+				<div class="btn-group-sm" id="toolbar1" role="group">
+					<a class="btn btn-success" type="button" onclick="upload()">
+						<i class="fa fa-upload"></i> 添加附件
+					</a>
+					<a class="btn btn-primary multiple disabled" onclick="downloadFile()">
+						<i class="fa fa-download"></i> 下载附件
+					</a>
+					<a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()">
+						<i class="fa fa-trash"></i> 删除附件
+					</a>
+				</div>
+				<div class="col-sm-12 select-table table-striped">
+					<table id="file-table"></table>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-sm-offset-5 col-sm-10">
+				<button type="button" class="btn btn-sm btn-primary" onclick="submit()"><i class="fa fa-check"></i>提 交</button>&nbsp;
+				<button type="button" class="btn btn-sm btn-primary" onclick="save()"><i class="fa fa-check"></i>暂 存</button>&nbsp;
+				<button type="button" class="btn btn-sm btn-danger" onclick="closeItem()"><i class="fa fa-window-close"></i>关闭当前窗口</button>
+			</div>
+		</div>
+	</div>
+</div>
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: select2-css" />
+<th:block th:include="include :: select2-js" />
+<th:block th:include="include :: datetimepicker-js" />
+<th:block th:include="include :: datetimepicker-css" />
+<script th:inline="javascript">
+	// var prefix_attachment = ctx + "pub/attachment";
+	var prefix = ctx + "activiti/run";
+	$(function() {
+	layui.use('laydate', function(){
+				var laydate = layui.laydate;
+				 laydate.render({
+							elem: '#reportTime',
+							type: 'datetime',
+							trigger: 'click'
+
+						  });
+       		  });
+		var optionsfj = {
+			url: ctx+"pub/attachment/list",
+			id:'file-table',
+			createUrl: ctx+"pub/attachment/add",
+			updateUrl: ctx+"pub/attachment/download/{id}",
+			removeUrl: ctx+"pub/attachment/remove",
+			sortName: "fileTime",
+			sortOrder: "desc",
+			clickToSelect: true,
+			toolbar:"toolbar1",
+			queryParams:queryParams,
+			modalName: "附件列表",
+			columns: [{
+				checkbox: true
+			},
+				{
+					field : 'atId',
+					title : '附件ID',
+					visible : false
+				},
+				{
+					field : 'fileName',
+					title : '文件名称'
+				},
+				{
+					field : 'person.pName',
+					title : '上传人'
+				},
+				{
+					field : 'size',
+					title : '文件大小'
+				},
+				{
+					field : 'memo',
+					title : '文件描述'
+				},
+				{
+					field : 'fileTime',
+					title : '上传时间'
+				}]
+		};
+		$.table.init(optionsfj);
+	});
+
+
+	$("#form-version-add").validate({
+		onkeyup: false,
+		rules:{
+		},
+		messages: {
+		},
+		focusCleanup: true
+	});
+	function save() {
+		var data = $("#form-version-add").serializeArray();
+		$.operate.saveTab(prefix + "/edit", data);
+	}
+	// 选择应用系统（只能单选）
+	function selectOneApplication() {
+		$.modal.open("选择应用系统", prefix + "/selectOneApplication/0");
+	}
+
+	function queryParams(params) {
+		var search = $.table.queryParams(params);
+		search.ownerId = $("#eventId").val();
+		return search;
+	}
+
+
+	// 附件上传页面
+	function upload() {
+		var url = ctx+"pub/attachment/upload/" + $("#eventId").val();
+		$.modal.open("附件上传", url);
+	}
+
+	// 附件下载
+	function downloadFile() {
+		var rows = $.table.selectFirstColumns();
+		var atId = rows[0];
+		var ownerId = $("#eventId").val();
+		var url = ctx + "pub/attachment/download/"+ownerId+"/"+atId;
+		window.location.href = url;
+	}
+	// 提交
+	function submit() {
+		if ($.validate.form()) {
+			if (!$.validate.form()) {
+				return $.modal.alertWarning("参数填写不全!");
+			}else {
+				var data = $("#form-version-add").serializeArray();
+				$.operate.saveTab(prefix + "/submit", data);
+			}
+		}}
+		//选择处理人
+	function chooseHandle() {
+		//类型
+		var eventType=$("#eventType").find("option:selected").text();
+		if($.common.isEmpty(eventType)){
+			return $.modal.alertWarning("请选择事件类型");
+		}
+		//中心
+		var affiliatedCenter=$("#affiliatedCenter").find("option:selected").text();
+		if($.common.isEmpty(affiliatedCenter)){
+			return $.modal.alertWarning("请选择所属中心");
+		}
+		$.modal.open("选择处理人",ctx+"activiti/run/chooseHandle?eventType="+eventType+"&affiliatedCenter="+affiliatedCenter);
+	}
+	function getHandlePerson(accountId) {
+		$.ajax({
+			cache : true,
+			type : "POST",
+			url : prefix + "/getHandlePerson",
+			data : {
+				"accountId": accountId
+			},
+			async : false,
+			error : function(request) {
+				$.modal.alertError("系统错误");
+			},
+			success : function(data) {
+				$("#handlePerson").val(data.pId);
+				$("#handlePersonName").val(data.pName);
+
+			}
+		})
+	}
+	function changeType(value){
+		if(value=='6'||value=='8'){
+			$("#appSystem").addClass("is-required");
+			$("#appSystemName").attr("required","true");
+		}else {
+			$("#appSystem").removeClass("is-required");
+			$("#appSystemName").removeAttr("required");
+		}
+	}
+</script>
+</body>
+</html>

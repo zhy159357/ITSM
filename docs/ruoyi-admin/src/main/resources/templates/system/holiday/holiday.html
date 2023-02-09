@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('节假日列表')" />
+    <th:block th:include="include :: datetimepicker-css" />
+    <th:block th:include="include :: select2-css" />
+
+</head>
+<body class="gray-bg">
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-12 search-collapse">
+            <form id="holiday-form">
+
+                <div class="select-list">
+                    <ul>
+                        <li>
+                            日期 :<input name="day" type="text" id="datetimepicker-demo-2" readonly style="background-color: #ffffff">
+                        </li>
+                        &nbsp;
+                        <li>
+                            类别：<select name="type" class="form-control" th:with="type=${@dict.getParaType('pub_holidayType')}">
+                            <option value=""></option>
+                            <option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+                        </select>
+                        </li>
+                        <li>
+                            节假日名称：<input type="text" name="name"/>
+                        </li>
+                        <li>
+                            使用范围：<select name="scope" class="form-control" th:with="type=${@dict.getParaType('pub_holidayScope')}">
+                            <option value=""></option>
+                            <option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+
+                        </select>
+                        </li>
+
+                        <li>
+                            <a class="btn btn-primary btn-rounded btn-sm" id="holidaySearch" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;查询</a>
+                            <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-repeat"></i>&nbsp;重置</a>
+                        </li>
+                    </ul>
+                </div>
+            </form>
+        </div>
+
+        <div class="btn-group-sm" id="toolbar" holiday="group">
+            <a class="btn btn-success" onclick="$.operate.add()" >
+                <i class="fa fa-plus"></i> 新增
+            </a>
+            <a class="btn btn-primary single disabled" onclick="$.operate.edit()">
+                <i class="fa fa-edit"></i> 修改
+            </a>
+            <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()">
+                <i class="fa fa-trash"></i> 删除
+            </a>
+        </div>
+
+        <div class="col-sm-12 select-table table-striped">
+            <table id="bootstrap-table"></table>
+        </div>
+    </div>
+</div>
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: datetimepicker-js" />
+<th:block th:include="include :: select2-js" />
+
+<script th:inline="javascript">
+
+    var datas=[[${@pubParaValue.selectPubParaValueByParaName('pub_holidayType')}]];
+    var datass=[[${@pubParaValue.selectPubParaValueByParaName('pub_holidayScope')}]];
+    var prefix = ctx + "system/holiday";
+
+    $(function() {
+        // 回车键搜索
+        document.onkeydown = function(e){
+            var ev = document.all ? window.event : e;
+            if(ev.keyCode==13) {
+                $('#holidaySearch').trigger('click');
+                return false;
+            }
+        };
+
+        var options = {
+            url: prefix + "/list",
+            createUrl: prefix + "/add",
+            updateUrl: prefix + "/edit/{id}",
+            removeUrl: prefix + "/remove",
+            exportUrl: prefix + "/export",
+            clickToSelect: true,
+            modalName: "节假日",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'holidayId',
+                    title: '节假日编号',
+                    visible: false
+                },
+                {
+                    field: 'day',
+                    title: '日期',
+                },
+                {
+                    field: 'name',
+                    title: '节假日名称',
+                },
+                {
+                    field: 'type',
+                    title: '类别',
+                    align: 'center',
+                    formatter:function (value){
+                        return selectPubParaValueData(datas,value);
+                    }
+                },
+                {
+                    field: 'scope',
+                    title: '使用范围',
+                    align: 'center',
+                    formatter:function (value){
+                        return selectPubParaValueData(datass,value);
+                    }
+                },
+            ]
+        };
+        $.table.init(options);
+    });
+
+    $("#datetimepicker-demo-2").datetimepicker({
+        format: "yyyy-mm-dd",
+        minView: "month",
+        autoclose: true
+    });
+
+
+    // 回显数据字典
+    function selectPubParaValueData(datas, value) {
+        var actions = [];
+        $.each(datas, function(index, pubParaValue) {
+            if (pubParaValue.value == ('' + value)) {
+                actions.push($.common.sprintf("<span class='%s'>%s</span>", "", pubParaValue.valueDetail));
+                return false;
+            }
+        });
+        return actions.join('');
+    }
+
+
+</script>
+</body>
+</html>

@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.form.mapper.CommonTreeMapper">
+    
+    <resultMap type="CommonTree" id="CommonTreeResult">
+        <result property="descs"    column="descs"    />
+        <result property="type"    column="type"    />
+        <result property="belongTo"    column="belong_to"    />
+        <result property="parentId"    column="parent_id"    />
+        <result property="ogId"    column="Og_Id"    />
+        <result property="name"    column="name"    />
+        <result property="orgFlag"    column="org_flag"    />
+        <result property="id"    column="id"    />
+    </resultMap>
+
+    <sql id="selectCommonTreeVo">
+        select descs, type, belong_to, parent_id, Og_Id, name,org_flag, id  from common_tree
+    </sql>
+
+    <select id="selectCommonTreeList" parameterType="CommonTree" resultMap="CommonTreeResult">
+        <include refid="selectCommonTreeVo"/>
+        <where>
+            <if test="id != null and id != ''"> and id = #{id}</if>
+            <if test="descs != null and descs != ''"> and descs = #{descs}</if>
+            <if test="type != null and type != ''"> and type = #{type}</if>
+            <if test="belongTo != null and belongTo != ''"> and belong_to = #{belongTo}</if>
+            <if test="parentId != null and parentId != ''"> and parent_id = #{parentId}</if>
+            <if test="ogId != null and ogId != ''"> and Og_Id = #{ogId}</if>
+            <if test="name != null and name != ''"> and name like concat(concat('%', #{name}), '%')</if>
+            <if test="orgFlag != null and orgFlag != ''"> and org_flag = #{orgFlag}</if>
+        </where>
+    </select>
+    
+    <select id="selectCommonTreeById" parameterType="Long" resultMap="CommonTreeResult">
+        <include refid="selectCommonTreeVo"/>
+        where id = #{id}
+    </select>
+
+    <select id="selectCommonTreeByName" parameterType="String" resultMap="CommonTreeResult">
+        <include refid="selectCommonTreeVo"/>
+        where name = #{name}
+    </select>
+    <select id="selectCommonTreeByOgId" parameterType="CommonTree" resultMap="CommonTreeResult">
+        <include refid="selectCommonTreeVo"/>
+        where og_id = #{ogId}
+    </select>
+    <select id="selectCommonTreeByStrId"  parameterType="String" resultMap="CommonTreeResult">
+        <include refid="selectCommonTreeVo"/>
+        where id = #{id}
+    </select>
+    <insert id="insertCommonTree" parameterType="CommonTree">
+        insert into common_tree
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="descs != null  and descs != ''">descs,</if>
+            <if test="type != null  and type != ''">type,</if>
+            <if test="belongTo != null  and belongTo != ''">belong_to,</if>
+            <if test="parentId != null  and parentId != ''">parent_id,</if>
+            <if test="ogId != null  and ogId != ''">Og_Id,</if>
+            <if test="name != null  and name != ''">name,</if>
+            <if test="orgFlag != null  and orgFlag != ''">org_flag,</if>
+            <if test="id != null ">id,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="descs != null  and descs != ''">#{descs},</if>
+            <if test="type != null  and type != ''">#{type},</if>
+            <if test="belongTo != null  and belongTo != ''">#{belongTo},</if>
+            <if test="parentId != null  and parentId != ''">#{parentId},</if>
+            <if test="ogId != null  and ogId != ''">#{ogId},</if>
+            <if test="name != null  and name != ''">#{name},</if>
+            <if test="orgFlag != null  and orgFlag != ''">org_flag,</if>
+            <if test="id != null ">#{id},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCommonTree" parameterType="CommonTree">
+        update common_tree
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="descs != null  and descs != ''">descs = #{descs},</if>
+            <if test="type != null  and type != ''">type = #{type},</if>
+            <if test="belongTo != null  and belongTo != ''">belong_to = #{belongTo},</if>
+            <if test="parentId != null  and parentId != ''">parent_id = #{parentId},</if>
+            <if test="ogId != null  and ogId != ''">og_Id = #{ogId},</if>
+            <if test="name != null  and name != ''">name = #{name},</if>
+            <if test="orgFlag != null  and orgFlag != ''">org_flag = #{orgFlag},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteCommonTreeById" parameterType="Long">
+        delete from common_tree where id = #{id}
+    </delete>
+
+    <delete id="deleteCommonTreeByIds" parameterType="String">
+        delete from common_tree where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.activiti.mapper.OgLineFaultMapper">
+
+    <resultMap type="SysLine" id="SysLineResult">
+        <result property="hardwareId"    column="hardware_id"    />
+        <result property="hardwareCentre"    column="hardware_centre"    />
+        <result property="hardwareEnvironment"    column="hardware_environment"    />
+        <result property="hardwareMistress"    column="hardware_mistress"    />
+        <result property="hardwareDevicename"    column="hardware_devicename"    />
+        <result property="hardwareBrand"    column="hardware_brand"    />
+        <result property="hardwareTypeOne"    column="hardware_type_one"    />
+        <result property="hardwareSerialNumber"    column="hardware_serial_number"    />
+        <result property="hardwareSerialNumberChange"    column="hardware_serial_number_change"    />
+        <result property="hardwareIsnoPolice"    column="hardware_isno_police"    />
+        <result property="hardwareTypeTwo"    column="hardware_type_two"    />
+        <result property="hardwareDot"    column="hardware_dot"    />
+        <result property="registerSystem"    column="register_system"    />
+        <result property="createTimeTwo"    column="create_time_two"    />
+        <result property="hardwareTime"    column="hardware_time"    />
+        <result property="partPresentTime"    column="part_present_time"    />
+        <result property="personPresentTime"    column="person_present_time"    />
+        <result property="disposeFinishTime"    column="dispose_finish_time"    />
+        <result property="partElapsedTime"    column="part_elapsed_time"    />
+        <result property="hardwareDisposeTime"    column="hardware_dispose_time"    />
+        <result property="personAnswerTime"    column="person_answer_time"    />
+        <result property="informationCase"    column="information_case"    />
+        <result property="continuityIsno"    column="continuity_isno"    />
+        <result property="watchkeeperPerson"    column="watchkeeper_person"    />
+        <result property="dealWith"    column="deal_with"    />
+        <result property="alterationNumbers"    column="alteration_numbers"    />
+        <result property="overtimeCause"    column="overtime_cause"    />
+        <result property="hardwareRemark"    column="hardware_remark"    />
+        <result property="lineStart"    column="line_start"    />
+        <result property="hardwarePerson"    column="hardware_person"    />
+        <result property="isNo"    column="is_no"    />
+        <result property="noIs"    column="no_is"    />
+        <result property="hardwareTypeThere"    column="hardware_type_there"    />
+    </resultMap>
+
+    <sql id="selectSysLineVo">
+        select * from sys_line
+    </sql>
+
+    <select id="selectOgLineFaultList" parameterType="SysLine" resultMap="SysLineResult">
+        <include refid="selectSysLineVo"/>
+        <where>
+            <if test="hardwareId != null  and hardwareId != ''"> and hardware_id = #{hardwareId}</if>
+            <if test="hardwareCentre != null  and hardwareCentre != ''"> and hardware_centre = #{hardwareCentre}</if>
+            <if test="hardwareEnvironment != null  and hardwareEnvironment != ''"> and hardware_environment = #{hardwareEnvironment}</if>
+            <if test="hardwareMistress != null  and hardwareMistress != ''"> and hardware_mistress = #{hardwareMistress}</if>
+            <if test="hardwareDevicename != null  and hardwareDevicename != ''"> and hardware_devicename like concat(concat('%', #{hardwareDevicename}), '%')</if>
+            <if test="hardwareBrand != null  and hardwareBrand != ''"> and hardware_brand = #{hardwareBrand}</if>
+            <if test="hardwareTypeOne != null  and hardwareTypeOne != ''"> and hardware_type_one = #{hardwareTypeOne}</if>
+            <if test="hardwareSerialNumber != null  and hardwareSerialNumber != ''"> and hardware_serial_number = #{hardwareSerialNumber}</if>
+            <if test="hardwareSerialNumberChange != null  and hardwareSerialNumberChange != ''"> and hardware_serial_number_change = #{hardwareSerialNumberChange}</if>
+            <if test="hardwareIsnoPolice != null  and hardwareIsnoPolice != ''"> and hardware_isno_police = #{hardwareIsnoPolice}</if>
+            <if test="hardwareTypeTwo != null  and hardwareTypeTwo != ''"> and hardware_type_two = #{hardwareTypeTwo}</if>
+            <if test="hardwareDot != null  and hardwareDot != ''"> and hardware_dot = #{hardwareDot}</if>
+            <if test="registerSystem != null  and registerSystem != ''"> and register_system like concat(concat('%', #{registerSystem}), '%')</if>
+            <if test="hardwareTime != null  and hardwareTime != ''"> and hardware_time = #{hardwareTime}</if>
+            <if test="partPresentTime != null  and partPresentTime != ''"> and part_present_time = #{partPresentTime}</if>
+            <if test="personPresentTime != null  and personPresentTime != ''"> and person_present_time = #{personPresentTime}</if>
+            <if test="disposeFinishTime != null  and disposeFinishTime != ''"> and dispose_finish_time = #{disposeFinishTime}</if>
+            <if test="partElapsedTime != null  and partElapsedTime != ''"> and part_elapsed_time = #{partElapsedTime}</if>
+            <if test="hardwareDisposeTime != null  and hardwareDisposeTime != ''"> and hardware_dispose_time = #{hardwareDisposeTime}</if>
+            <if test="personAnswerTime != null  and personAnswerTime != ''"> and person_answer_time = #{personAnswerTime}</if>
+            <if test="informationCase != null  and informationCase != ''"> and information_case = #{informationCase}</if>
+            <if test="continuityIsno != null  and continuityIsno != ''"> and continuity_isno = #{continuityIsno}</if>
+            <if test="watchkeeperPerson != null  and watchkeeperPerson != ''"> and watchkeeper_person like concat(concat('%', #{watchkeeperPerson}), '%')</if>
+            <if test="dealWith != null  and dealWith != ''"> and deal_with like concat(concat('%', #{dealWith}), '%')</if>
+            <if test="alterationNumbers != null  and alterationNumbers != ''"> and alteration_numbers = #{alterationNumbers}</if>
+            <if test="overtimeCause != null  and overtimeCause != ''"> and overtime_cause = #{overtimeCause}</if>
+            <if test="hardwareRemark != null  and hardwareRemark != ''"> and hardware_remark = #{hardwareRemark}</if>
+            <if test="hardwarePerson != null  and hardwarePerson != ''"> and hardware_person like concat(concat('%', #{hardwarePerson}), '%')</if>
+            <if test="lineStart != null  and lineStart != ''"> and line_start = #{lineStart}</if>
+            <if test="noIs != null  and noIs != ''"> and no_is = #{noIs}</if>
+            <if test="isNo != null  and isNo != ''"> and is_no = #{isNo}</if>
+            <if test="hardwareTypeThere != null  and hardwareTypeThere != ''"> and hardware_type_there = #{hardwareTypeThere}</if>
+
+            <if test="createTimeTwo != null  and createTimeTwo != ''">
+                and create_time_two &gt;= TO_CHAR(TO_DATE( #{createTimeTwo},'YYYY-MM-DD HH24:MI:SS'), 'YYYYMMDDHH24MISS')
+            </if>
+        </where>
+    </select>
+    <select id="selectOgLineFaultListMysql" parameterType="SysLine" resultMap="SysLineResult">
+        <include refid="selectSysLineVo"/>
+        <where>
+            <if test="hardwareId != null  and hardwareId != ''"> and hardware_id = #{hardwareId}</if>
+            <if test="hardwareCentre != null  and hardwareCentre != ''"> and hardware_centre = #{hardwareCentre}</if>
+            <if test="hardwareEnvironment != null  and hardwareEnvironment != ''"> and hardware_environment = #{hardwareEnvironment}</if>
+            <if test="hardwareMistress != null  and hardwareMistress != ''"> and hardware_mistress = #{hardwareMistress}</if>
+            <if test="hardwareDevicename != null  and hardwareDevicename != ''"> and hardware_devicename like concat(concat('%', #{hardwareDevicename}), '%')</if>
+            <if test="hardwareBrand != null  and hardwareBrand != ''"> and hardware_brand = #{hardwareBrand}</if>
+            <if test="hardwareTypeOne != null  and hardwareTypeOne != ''"> and hardware_type_one = #{hardwareTypeOne}</if>
+            <if test="hardwareSerialNumber != null  and hardwareSerialNumber != ''"> and hardware_serial_number = #{hardwareSerialNumber}</if>
+            <if test="hardwareSerialNumberChange != null  and hardwareSerialNumberChange != ''"> and hardware_serial_number_change = #{hardwareSerialNumberChange}</if>
+            <if test="hardwareIsnoPolice != null  and hardwareIsnoPolice != ''"> and hardware_isno_police = #{hardwareIsnoPolice}</if>
+            <if test="hardwareTypeTwo != null  and hardwareTypeTwo != ''"> and hardware_type_two = #{hardwareTypeTwo}</if>
+            <if test="hardwareDot != null  and hardwareDot != ''"> and hardware_dot = #{hardwareDot}</if>
+            <if test="registerSystem != null  and registerSystem != ''"> and register_system like concat(concat('%', #{registerSystem}), '%')</if>
+            <if test="hardwareTime != null  and hardwareTime != ''"> and hardware_time = #{hardwareTime}</if>
+            <if test="partPresentTime != null  and partPresentTime != ''"> and part_present_time = #{partPresentTime}</if>
+            <if test="personPresentTime != null  and personPresentTime != ''"> and person_present_time = #{personPresentTime}</if>
+            <if test="disposeFinishTime != null  and disposeFinishTime != ''"> and dispose_finish_time = #{disposeFinishTime}</if>
+            <if test="partElapsedTime != null  and partElapsedTime != ''"> and part_elapsed_time = #{partElapsedTime}</if>
+            <if test="hardwareDisposeTime != null  and hardwareDisposeTime != ''"> and hardware_dispose_time = #{hardwareDisposeTime}</if>
+            <if test="personAnswerTime != null  and personAnswerTime != ''"> and person_answer_time = #{personAnswerTime}</if>
+            <if test="informationCase != null  and informationCase != ''"> and information_case = #{informationCase}</if>
+            <if test="continuityIsno != null  and continuityIsno != ''"> and continuity_isno = #{continuityIsno}</if>
+            <if test="watchkeeperPerson != null  and watchkeeperPerson != ''"> and watchkeeper_person like concat(concat('%', #{watchkeeperPerson}), '%')</if>
+            <if test="dealWith != null  and dealWith != ''"> and deal_with like concat(concat('%', #{dealWith}), '%')</if>
+            <if test="alterationNumbers != null  and alterationNumbers != ''"> and alteration_numbers = #{alterationNumbers}</if>
+            <if test="overtimeCause != null  and overtimeCause != ''"> and overtime_cause = #{overtimeCause}</if>
+            <if test="hardwareRemark != null  and hardwareRemark != ''"> and hardware_remark = #{hardwareRemark}</if>
+            <if test="hardwarePerson != null  and hardwarePerson != ''"> and hardware_person like concat(concat('%', #{hardwarePerson}), '%')</if>
+            <if test="lineStart != null  and lineStart != ''"> and line_start = #{lineStart}</if>
+            <if test="noIs != null  and noIs != ''"> and no_is = #{noIs}</if>
+            <if test="isNo != null  and isNo != ''"> and is_no = #{isNo}</if>
+            <if test="hardwareTypeThere != null  and hardwareTypeThere != ''"> and hardware_type_there = #{hardwareTypeThere}</if>
+
+            <if test="createTimeTwo != null  and createTimeTwo != ''">
+                and create_time_two &gt;=  #{createTimeTwo}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectOgLineFaultById" parameterType="String" resultMap="SysLineResult">
+        <include refid="selectSysLineVo"/>
+        where hardware_id = #{hardwareId}
+    </select>
+
+    <insert id="insertOgLineFault" parameterType="SysLine">
+        insert into SYS_LINE
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="hardwareId != null  and hardwareId != ''">hardware_id,</if>
+            <if test="hardwareCentre != null  and hardwareCentre != ''">hardware_centre,</if>
+            <if test="hardwareEnvironment != null  and hardwareEnvironment != ''">hardware_environment,</if>
+            <if test="hardwareMistress != null  and hardwareMistress != ''">hardware_mistress,</if>
+            <if test="hardwareDevicename != null  and hardwareDevicename != ''">hardware_devicename,</if>
+            <if test="hardwareBrand != null  and hardwareBrand != ''">hardware_brand,</if>
+            <if test="hardwareTypeOne != null  and hardwareTypeOne != ''">hardware_type_one,</if>
+            <if test="hardwareSerialNumber != null  and hardwareSerialNumber != ''">hardware_serial_number,</if>
+            <if test="hardwareSerialNumberChange != null  and hardwareSerialNumberChange != ''">hardware_serial_number_change,</if>
+            <if test="hardwareIsnoPolice != null  and hardwareIsnoPolice != ''">hardware_isno_police,</if>
+            <if test="hardwareTypeTwo != null  and hardwareTypeTwo != ''">hardware_type_two,</if>
+            <if test="hardwareDot != null  and hardwareDot != ''">hardware_dot,</if>
+            <if test="registerSystem != null  and registerSystem != ''">register_system,</if>
+            <if test="createTimeTwo != null  and createTimeTwo != ''">create_time_two,</if>
+            <if test="hardwareTime != null  and hardwareTime != ''">hardware_time,</if>
+            <if test="partPresentTime != null  and partPresentTime != ''">part_present_time,</if>
+            <if test="personPresentTime != null  and personPresentTime != ''">person_present_time,</if>
+            <if test="disposeFinishTime != null  and disposeFinishTime != ''">dispose_finish_time,</if>
+            <if test="partElapsedTime != null  and partElapsedTime != ''">part_elapsed_time,</if>
+            <if test="hardwareDisposeTime != null  and hardwareDisposeTime != ''">hardware_dispose_time,</if>
+            <if test="personAnswerTime != null  and personAnswerTime != ''">person_answer_time,</if>
+            <if test="informationCase != null  and informationCase != ''">information_case,</if>
+            <if test="continuityIsno != null  and continuityIsno != ''">continuity_isno,</if>
+            <if test="watchkeeperPerson != null  and watchkeeperPerson != ''">watchkeeper_person,</if>
+            <if test="dealWith != null  and dealWith != ''">deal_with,</if>
+            <if test="alterationNumbers != null  and alterationNumbers != ''">alteration_numbers,</if>
+            <if test="overtimeCause != null  and overtimeCause != ''">overtime_cause,</if>
+            <if test="hardwareRemark != null  and hardwareRemark != ''">hardware_remark,</if>
+            <if test="hardwarePerson != null  and hardwarePerson != ''">hardware_person,</if>
+            <if test="lineStart != null  and lineStart != ''">line_start,</if>
+            <if test="noIs != null  and noIs != ''">no_is,</if>
+            <if test="isNo != null  and isNo != ''">is_no,</if>
+            <if test="hardwareTypeThere != null  and hardwareTypeThere != ''">hardware_type_there,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="hardwareId != null  and hardwareId != ''">#{hardwareId},</if>
+            <if test="hardwareCentre != null  and hardwareCentre != ''">#{hardwareCentre},</if>
+            <if test="hardwareEnvironment != null  and hardwareEnvironment != ''">#{hardwareEnvironment},</if>
+            <if test="hardwareMistress != null  and hardwareMistress != ''">#{hardwareMistress},</if>
+            <if test="hardwareDevicename != null  and hardwareDevicename != ''">#{hardwareDevicename},</if>
+            <if test="hardwareBrand != null  and hardwareBrand != ''">#{hardwareBrand},</if>
+            <if test="hardwareTypeOne != null  and hardwareTypeOne != ''">#{hardwareTypeOne},</if>
+            <if test="hardwareSerialNumber != null  and hardwareSerialNumber != ''">#{hardwareSerialNumber},</if>
+            <if test="hardwareSerialNumberChange != null  and hardwareSerialNumberChange != ''">#{hardwareSerialNumberChange},</if>
+            <if test="hardwareIsnoPolice != null  and hardwareIsnoPolice != ''">#{hardwareIsnoPolice},</if>
+            <if test="hardwareTypeTwo != null  and hardwareTypeTwo != ''">#{hardwareTypeTwo},</if>
+            <if test="hardwareDot != null  and hardwareDot != ''">#{hardwareDot},</if>
+            <if test="registerSystem != null  and registerSystem != ''">#{registerSystem},</if>
+            <if test="createTimeTwo != null  and createTimeTwo != ''">#{createTimeTwo},</if>
+            <if test="hardwareTime != null  and hardwareTime != ''">#{hardwareTime},</if>
+            <if test="partPresentTime != null  and partPresentTime != ''">#{partPresentTime},</if>
+            <if test="personPresentTime != null  and personPresentTime != ''">#{personPresentTime},</if>
+            <if test="disposeFinishTime != null  and disposeFinishTime != ''">#{disposeFinishTime},</if>
+            <if test="partElapsedTime != null  and partElapsedTime != ''">#{partElapsedTime},</if>
+            <if test="hardwareDisposeTime != null  and hardwareDisposeTime != ''">#{hardwareDisposeTime},</if>
+            <if test="personAnswerTime != null  and personAnswerTime != ''">#{personAnswerTime},</if>
+            <if test="informationCase != null  and informationCase != ''">#{informationCase},</if>
+            <if test="continuityIsno != null  and continuityIsno != ''">#{continuityIsno},</if>
+            <if test="watchkeeperPerson != null  and watchkeeperPerson != ''">#{watchkeeperPerson},</if>
+            <if test="dealWith != null  and dealWith != ''">#{dealWith},</if>
+            <if test="alterationNumbers != null  and alterationNumbers != ''">#{alterationNumbers},</if>
+            <if test="overtimeCause != null  and overtimeCause != ''">#{overtimeCause},</if>
+            <if test="hardwareRemark != null  and hardwareRemark != ''">#{hardwareRemark},</if>
+            <if test="hardwarePerson != null  and hardwarePerson != ''">#{hardwarePerson},</if>
+            <if test="lineStart != null  and lineStart != ''">#{lineStart},</if>
+            <if test="noIs != null  and noIs != ''">#{noIs},</if>
+            <if test="isNo != null  and isNo != ''">#{isNo},</if>
+            <if test="hardwareTypeThere != null  and hardwareTypeThere != ''">#{hardwareTypeThere},</if>
+        </trim>
+    </insert>
+
+    <update id="updateOgLineFault" parameterType="SysLine">
+        update SYS_LINE
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="hardwareCentre != null  and hardwareCentre != ''">hardware_centre = #{hardwareCentre},</if>
+            <if test="hardwareEnvironment != null  and hardwareEnvironment != ''">hardware_environment = #{hardwareEnvironment},</if>
+            <if test="hardwareMistress != null  and hardwareMistress != ''">hardware_mistress = #{hardwareMistress},</if>
+            <if test="hardwareDevicename != null  and hardwareDevicename != ''">hardware_devicename = #{hardwareDevicename},</if>
+            <if test="hardwareBrand != null  and hardwareBrand != ''">hardware_brand = #{hardwareBrand},</if>
+            <if test="hardwareTypeOne != null  and hardwareTypeOne != ''">hardware_type_one = #{hardwareTypeOne},</if>
+            <if test="hardwareSerialNumber != null  and hardwareSerialNumber != ''">hardware_serial_number = #{hardwareSerialNumber},</if>
+            <if test="hardwareSerialNumberChange != null  and hardwareSerialNumberChange != ''">hardware_serial_number_change = #{hardwareSerialNumberChange},</if>
+            <if test="hardwareIsnoPolice != null  and hardwareIsnoPolice != ''">hardware_isno_police = #{hardwareIsnoPolice},</if>
+            <if test="hardwareTypeTwo != null  and hardwareTypeTwo != ''">hardware_type_two = #{hardwareTypeTwo},</if>
+            <if test="hardwareDot != null  and hardwareDot != ''">hardware_dot = #{hardwareDot},</if>
+            <if test="registerSystem != null  and registerSystem != ''">register_system = #{registerSystem},</if>
+            <if test="createTimeTwo != null  and createTimeTwo != ''">create_time_two = #{createTimeTwo},</if>
+            <if test="hardwareTime != null  and hardwareTime != ''">hardware_time = #{hardwareTime},</if>
+            <if test="partPresentTime != null  and partPresentTime != ''">part_present_time = #{partPresentTime},</if>
+            <if test="personPresentTime != null  and personPresentTime != ''">person_present_time = #{personPresentTime},</if>
+            <if test="disposeFinishTime != null  and disposeFinishTime != ''">dispose_finish_time = #{disposeFinishTime},</if>
+            <if test="partElapsedTime != null  and partElapsedTime != ''">part_elapsed_time = #{partElapsedTime},</if>
+            <if test="hardwareDisposeTime != null  and hardwareDisposeTime != ''">hardware_dispose_time = #{hardwareDisposeTime},</if>
+            <if test="personAnswerTime != null  and personAnswerTime != ''">person_answer_time = #{personAnswerTime},</if>
+            <if test="informationCase != null  and informationCase != ''">information_case = #{informationCase},</if>
+            <if test="continuityIsno != null  and continuityIsno != ''">continuity_isno = #{continuityIsno},</if>
+            <if test="watchkeeperPerson != null  and watchkeeperPerson != ''">watchkeeper_person = #{watchkeeperPerson},</if>
+            <if test="dealWith != null  and dealWith != ''">deal_with = #{dealWith,jdbcType=VARCHAR},</if>
+            <if test="alterationNumbers != null  and alterationNumbers != ''">alteration_numbers = #{alterationNumbers},</if>
+            <if test="overtimeCause != null  and overtimeCause != ''">overtime_cause = #{overtimeCause},</if>
+            <if test="hardwareRemark != null  and hardwareRemark != ''">hardware_remark = #{hardwareRemark},</if>
+            <if test="lineStart != null  and lineStart != ''">line_start = #{lineStart},</if>
+            <if test="hardwarePerson != null  and hardwarePerson != ''">hardware_person = #{hardwarePerson},</if>
+            <if test="isNo != null  and isNo != ''">is_no = #{isNo},</if>
+            <if test="noIs != null  and noIs != ''">no_is = #{noIs},</if>
+            <if test="hardwareTypeThere != null  and hardwareTypeThere != ''">hardware_type_there = #{hardwareTypeThere},</if>
+        </trim>
+        where hardware_id = #{hardwareId}
+    </update>
+
+    <delete id="deleteOgLineFaultById" parameterType="String">
+        delete from SYS_LINE where hardware_id = #{hardwareId}
+    </delete>
+
+    <delete id="deleteOgLineFaultByIds" parameterType="String">
+        delete from SYS_LINE where hardware_id in
+        <foreach item="hardwareId" collection="array" open="(" separator="," close=")">
+            #{hardwareId}
+        </foreach>
+    </delete>
+
+</mapper>

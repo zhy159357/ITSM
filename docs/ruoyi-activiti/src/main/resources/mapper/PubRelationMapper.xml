@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.activiti.mapper.PubRelationMapper">
+
+    <resultMap type="PubRelation" id="PubRelationResult">
+        <result property="relationId" column="relation_id"/>
+        <result property="obj1Id" column="obj1_id"/>
+        <result property="obj2Id" column="obj2_id"/>
+        <result property="type" column="type"/>
+        <result property="hangupTask" column="hangup_task"/>
+    </resultMap>
+
+    <sql id="selectPubRelationVo">
+        select relation_id, obj1_id, obj2_id, type, hangup_task from pub_relation
+    </sql>
+
+    <select id="selectPubRelationList" parameterType="PubRelation" resultMap="PubRelationResult">
+        <include refid="selectPubRelationVo"/>
+        <where>
+            <if test="obj1Id != null  and obj1Id != ''">and obj1_id = #{obj1Id}</if>
+            <if test="obj2Id != null  and obj2Id != ''">and obj2_id = #{obj2Id}</if>
+            <if test="type != null  and type != ''">and type = #{type}</if>
+            <if test="hangupTask != null  and hangupTask != ''">and hangup_task = #{hangupTask}</if>
+        </where>
+    </select>
+
+    <select id="selectPubRelationById" parameterType="String" resultMap="PubRelationResult">
+        <include refid="selectPubRelationVo"/>
+        where relation_id = #{relationId}
+    </select>
+
+    <insert id="insertPubRelation" parameterType="PubRelation">
+        insert into pub_relation
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="relationId != null  and relationId != ''">relation_id,</if>
+            <if test="obj1Id != null  and obj1Id != ''">obj1_id,</if>
+            <if test="obj2Id != null  and obj2Id != ''">obj2_id,</if>
+            <if test="type != null  and type != ''">type,</if>
+            <if test="hangupTask != null  and hangupTask != ''">hangup_task,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="relationId != null  and relationId != ''">#{relationId},</if>
+            <if test="obj1Id != null  and obj1Id != ''">#{obj1Id},</if>
+            <if test="obj2Id != null  and obj2Id != ''">#{obj2Id},</if>
+            <if test="type != null  and type != ''">#{type},</if>
+            <if test="hangupTask != null  and hangupTask != ''">#{hangupTask},</if>
+        </trim>
+    </insert>
+
+    <update id="updatePubRelation" parameterType="PubRelation">
+        update pub_relation
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="obj1Id != null  and obj1Id != ''">obj1_id = #{obj1Id},</if>
+            <if test="obj2Id != null  and obj2Id != ''">obj2_id = #{obj2Id},</if>
+            <if test="type != null  and type != ''">type = #{type},</if>
+            <if test="hangupTask != null  and hangupTask != ''">hangup_task = #{hangupTask},</if>
+        </trim>
+        where relation_id = #{relationId}
+    </update>
+
+    <delete id="deletePubRelationById" parameterType="String">
+        delete from pub_relation where relation_id = #{relationId}
+    </delete>
+
+    <delete id="deletePubRelationByIds" parameterType="String">
+        delete from pub_relation where relation_id in
+        <foreach item="relationId" collection="array" open="(" separator="," close=")">
+            #{relationId}
+        </foreach>
+    </delete>
+
+    <delete id="deletePubRelationByFmId" parameterType="String">
+        delete from pub_relation where obj1_id = #{fmId} and type='14'
+    </delete>
+
+</mapper>

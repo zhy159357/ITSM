@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+	<th:block th:include="include :: header('建设单位统计报表')" />
+</head>
+<body class="gray-bg">
+	<div class="container-div">
+		<div class="row">
+	        <div class="col-sm-12 select-table table-striped">
+			    <table id="bootstrap-table"></table>
+			</div>
+		</div>
+	</div>
+	<th:block th:include="include :: footer" />
+	<th:block th:include="include :: bootstrap-table-export-js" />
+	<script th:src="@{/js/activiti.js}"></script>
+	<script type="text/javascript">
+	</script>
+	<script th:inline="javascript">
+		var prefixAct=ctx+"issueList/activiti";
+		$(function() {
+		    var options = {
+		        url: prefixAct + "/statementBulidList",
+				showSearch: false,
+				showRefresh: true,
+				showToggle: false,
+				showColumns: false,
+				pagination: false,
+				showFooter: true,
+				striped:true,
+				showExport:true,
+		        modalName: "问题单",
+				footerStyle: footerStyle,
+				singleSelect:true,
+		        columns:[
+				[{
+					title : '基本信息',
+					align : 'center',
+					colspan : 9
+				}],[
+				{
+					title: "序号",
+					formatter: function (value, row, index) {
+						return $.table.serialNumber(index);
+					}
+				},
+				{
+					field: 'STATUS',
+					title: '问题单状态',
+					footerFormatter:function (value) {
+						return "总计";
+					}
+				}, {
+					field: 'XXKJB',
+					title: '信息科技部',
+					footerFormatter:function (value) {
+						var sumBalance = 0;
+						for (var i in value) {
+							sumBalance += parseInt(value[i]['XXKJB']);
+						}
+						return sumBalance;
+					}
+					},
+		        {
+		            field: 'SJZX',
+		            title: '数据中心',
+					footerFormatter:function (value) {
+						var sumBalance = 0;
+						for (var i in value) {
+							sumBalance += parseInt(value[i].SJZX);
+						}
+						return sumBalance;
+					}
+		        },
+		        {
+		            field: 'JRCXB',
+		            title: '金融创新部',
+					footerFormatter:function (value) {
+						var sumBalance = 0;
+						for (var i in value) {
+							sumBalance += parseInt(value[i].JRCXB);
+						}
+						return sumBalance;
+					}
+
+		        },
+				{
+					field: 'XYKZX',
+					title: '信用卡中心',
+					footerFormatter:function (value) {
+						var sumBalance = 0;
+						for (var i in value) {
+							sumBalance += parseInt(value[i].XYKZX);
+						}
+						return sumBalance;
+					}
+
+				},
+				{
+					field: 'GLXXB',
+					title: '管理信息部',
+					footerFormatter:function (value) {
+						var sumBalance = 0;
+						for (var i in value) {
+							sumBalance += parseInt(value[i].GLXXB);
+						}
+						return sumBalance;
+					}
+				},
+				{
+					field: 'RJYFZX',
+					title: '软件研发中心',
+					footerFormatter:function (value) {
+						var sumBalance = 0;
+						for (var i in value) {
+							sumBalance += parseInt(value[i].RJYFZX);
+						}
+						return sumBalance;
+					}
+
+				},{
+					field: 'TOTAL',
+					title: '小计',
+					formatter:function (value,row,index){
+						return parseInt(row.XXKJB)+parseInt(row.SJZX)+parseInt(row.JRCXB)+
+								parseInt(row.XYKZX)+parseInt(row.GLXXB)+parseInt(row.RJYFZX);
+					},
+					footerFormatter:function (value) {
+						var sumBalance = 0;
+						for (var i in value) {
+							sumBalance += parseInt(value[i].XXKJB)+parseInt(value[i].SJZX)+
+									parseInt(value[i].JRCXB)+parseInt(value[i].XYKZX)+parseInt(value[i].GLXXB)+parseInt(value[i].RJYFZX);
+						}
+						return sumBalance;
+					}
+		        }
+		     ]]
+		    };
+		    $.table.init(options);
+		});
+		function footerStyle(column) {
+			return {
+//         	    userBalance: {
+//         	        classes: 'class'
+//         	    },
+				userBalance: {
+					css: { color: 'red', 'font-weight': 'normal' }
+				}
+			}[column.field]
+		}
+	</script>
+</body>
+</html>

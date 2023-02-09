@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:include="include :: header('评价未解决退回')"/>
+    <th:block th:include="include :: select2-css"/>
+</head>
+<body>
+<div class="main-content">
+    <form id="form-fmbiz-add" class="form-horizontal">
+        <input name="fmId" id="fmId" class="form-control" type="hidden" required th:value="*{fmId}">
+        <input name="flag" id="flag" class="form-control" type="hidden" required th:value="${flag}">
+        <h4 class="form-header h4">评价未解决退回</h4>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">退单原因类别：</label>
+                    <div class="col-sm-8">
+                        <select name="params[catory]" id="catory" class="form-control"
+                                th:with="type=${@pubParaValue.selectPubParaValueByParaName('chargeback_dissatisfaction_category')}"
+                                required>
+                            <option value=""></option>
+                            <option th:each="PubParaValue : ${type}" th:text="${PubParaValue.valueDetail}"
+                                    th:value="${PubParaValue.value}"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label is-required">操作意见：</label>
+                    <div class="col-sm-10">
+                        <textarea id="comment" rows="3" cols="20" maxlength="170" name="params[comment]"
+                                  class="form-control" required></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<div class="row">
+    <div class="col-sm-offset-5 col-sm-10">
+        <button type="button" class="btn btn-sm btn-primary" onclick="submitHandler()" id="yes" value="winClose"><i
+                class="fa fa-retweet"></i>退 回
+        </button>&nbsp;
+        <button type="button" class="btn btn-sm btn-danger" onclick="closeItem()"><i class="fa fa-remove"></i>关 闭
+        </button>
+    </div>
+</div>
+<th:block th:include="include :: footer"/>
+<th:block th:include="include :: select2-js"/>
+<th:block th:include="include :: datetimepicker-js"/>
+<script>
+    var prefix_version = ctx + "fmbiz";
+
+    $("#form-fmbiz-add").validate({
+        onkeyup: false,
+        rules: {},
+        messages: {},
+        focusCleanup: true
+    });
+
+    // 提交
+    function submitHandler() {
+        if ($.validate.form()) {
+            var flag = $("#flag").val();
+            var data = $("#form-fmbiz-add").serializeArray();
+            $.operate.saveTab(prefix_version + "/saveflowremoveRecord", data, asd);
+
+            function asd(a) {
+                if (a.code == 0) {
+                    var tabPanel = $(window.frameElement).attr('data-panel');
+                    var tabMain = parent.$('.menuTab[data-id="' + tabPanel + '"]').attr('data-panel');
+                    parent.$('.menuTab[data-id="' + tabMain + '"]').trigger('click');
+                    parent.$('.menuTab[data-id="' + tabPanel + '"]').remove();
+                    parent.$('.menuTab[data-panel="' + tabPanel + '"]').remove();
+                    parent.$('.mainContent .RuoYi_iframe[data-id="' + tabPanel + '"]').remove();
+                    if (flag == '1') {//判断是否工作台打开
+                        parent.$('.mainContent .RuoYi_iframe[name="iframe0"]').contents().find(".list01>li:nth-child(1)>a").trigger('click');
+                    }
+                } else {
+                    return
+                }
+            }
+        }
+    };
+</script>
+</body>
+</html>

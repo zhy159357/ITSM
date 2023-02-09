@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.activiti.mapper.CmDbRecoveryRegisterMapper">
+    
+    <resultMap type="CmDbRecoveryRegister" id="CmDbRecoveryRegisterResult">
+        <result property="recoveryRegisterId"    column="recovery_register_id"    />
+        <result property="centreName"    column="centre_name"    />
+        <result property="sysId"    column="sys_id"    />
+        <result property="sysName"    column="sys_name"    />
+        <result property="hostName"    column="host_name"    />
+        <result property="backupDate"    column="backup_date"    />
+        <result property="recoveryStartTime"    column="recovery_start_time"    />
+        <result property="recoveryEndTime"    column="recovery_end_time"    />
+        <result property="recoveryTime"    column="recovery_time"    />
+        <result property="verificationResult"    column="verification_result"    />
+        <result property="remark"    column="remark"    />
+        <result property="dataSize"    column="data_size"    />
+        <result property="type"    column="type"    />
+        <result property="lineStart"    column="line_start"    />
+        <result property="pId"    column="PID"    />
+        <result property="orgId"    column="ORGID"    />
+        <result property="orgName"    column="ORGNAME"    />
+        <result property="somment"    column="SOMMENT"    />
+    </resultMap>
+
+    <sql id="selectCmDbRecoveryRegisterVo">
+        SELECT
+            recovery_register_id,
+            centre_name,
+            sys_id,
+            sys_name,
+            host_name,
+            TO_CHAR (
+                    TO_DATE (
+                         backup_date,
+                        'YYYYMMDD'
+                       ),
+                 'YYYY-MM-DD'
+             ) AS backup_date,
+            recovery_start_time,
+            recovery_end_time,
+            recovery_time,
+            verification_result,
+            remark,
+            data_size,
+            TYPE,
+            line_start,
+            pid,
+            orgid,
+            orgname,
+            somment
+        FROM
+            cm_db_recovery_register
+    </sql>
+    <sql id="selectCmDbRecoveryRegisterVoMysql">
+        SELECT
+            recovery_register_id,
+            centre_name,
+            sys_id,
+            sys_name,
+            host_name,
+            date_format(backup_date, '%Y-%m-%d')AS backup_date,
+            recovery_start_time,
+            recovery_end_time,
+            recovery_time,
+            verification_result,
+            remark,
+            data_size,
+            TYPE,
+            line_start,
+            pid,
+            orgid,
+            orgname,
+            somment
+        FROM
+            cm_db_recovery_register
+    </sql>
+
+    <select id="selectCmDbRecoveryRegisterList" parameterType="CmDbRecoveryRegister" resultMap="CmDbRecoveryRegisterResult">
+        <include refid="selectCmDbRecoveryRegisterVo"/>
+        <where>  
+            <if test="centreName != null  and centreName != ''"> and centre_name like concat(concat('%', #{centreName}), '%')</if>
+            <if test="sysId != null  and sysId != ''"> and sys_id = #{sysId}</if>
+            <if test="sysName != null  and sysName != ''"> and sys_name like concat(concat('%', #{sysName}), '%')</if>
+            <if test="hostName != null  and hostName != ''"> and host_name like concat(concat('%', #{hostName}), '%')</if>
+            <if test="recoveryStartTime != null  and recoveryStartTime != ''"> and recovery_start_time = #{recoveryStartTime}</if>
+            <if test="recoveryEndTime != null  and recoveryEndTime != ''"> and recovery_end_time = #{recoveryEndTime}</if>
+            <if test="recoveryTime != null  and recoveryTime != ''"> and recovery_time = #{recoveryTime}</if>
+            <if test="verificationResult != null  and verificationResult != ''"> and verification_result = #{verificationResult}</if>
+            <if test="dataSize != null  and dataSize != ''"> and data_size = #{dataSize}</if>
+            <if test="type != null  and type != ''"> and type = #{type}</if>
+            <if test="lineStart != null  and lineStart != ''"> and line_start =#{lineStart}</if>
+            <if test="backupDate != null  and backupDate != ''">
+                and backup_date &gt;= TO_CHAR(TO_DATE( #{backupDate},'YYYY-MM-DD'), 'YYYYMMDD')
+            </if>
+
+            <if test="orgId != null  and orgId != ''"> and orgId =#{orgId}</if>
+            <if test="orgName != null  and orgName != ''"> and orgName =#{orgName}</if>
+            <if test="somment != null  and somment != ''"> and somment =#{somment}</if>
+
+        </where>
+    </select>
+    <select id="selectCmDbRecoveryRegisterListMysql" parameterType="CmDbRecoveryRegister" resultMap="CmDbRecoveryRegisterResult">
+        <include refid="selectCmDbRecoveryRegisterVoMysql"/>
+        <where>
+            <if test="centreName != null  and centreName != ''"> and centre_name like concat(concat('%', #{centreName}), '%')</if>
+            <if test="sysId != null  and sysId != ''"> and sys_id = #{sysId}</if>
+            <if test="sysName != null  and sysName != ''"> and sys_name like concat(concat('%', #{sysName}), '%')</if>
+            <if test="hostName != null  and hostName != ''"> and host_name like concat(concat('%', #{hostName}), '%')</if>
+            <if test="recoveryStartTime != null  and recoveryStartTime != ''"> and recovery_start_time = #{recoveryStartTime}</if>
+            <if test="recoveryEndTime != null  and recoveryEndTime != ''"> and recovery_end_time = #{recoveryEndTime}</if>
+            <if test="recoveryTime != null  and recoveryTime != ''"> and recovery_time = #{recoveryTime}</if>
+            <if test="verificationResult != null  and verificationResult != ''"> and verification_result = #{verificationResult}</if>
+            <if test="dataSize != null  and dataSize != ''"> and data_size = #{dataSize}</if>
+            <if test="type != null  and type != ''"> and type = #{type}</if>
+            <if test="lineStart != null  and lineStart != ''"> and line_start =#{lineStart}</if>
+            <if test="backupDate != null  and backupDate != ''">
+                and backup_date &gt;= date_format(#{backupDate}, '%Y%m%d')
+            </if>
+
+            <if test="orgId != null  and orgId != ''"> and orgId =#{orgId}</if>
+            <if test="orgName != null  and orgName != ''"> and orgName =#{orgName}</if>
+            <if test="somment != null  and somment != ''"> and somment =#{somment}</if>
+
+        </where>
+    </select>
+    <select id="selectCmDbRecoveryRegisterById" parameterType="String" resultMap="CmDbRecoveryRegisterResult">
+        <include refid="selectCmDbRecoveryRegisterVo"/>
+        where recovery_register_id = #{recoveryRegisterId}
+    </select>
+
+    <select id="selectCmDbRecoveryRegisterByIdMysql" parameterType="String" resultMap="CmDbRecoveryRegisterResult">
+        <include refid="selectCmDbRecoveryRegisterVoMysql"/>
+        where recovery_register_id = #{recoveryRegisterId}
+    </select>
+
+    <insert id="insertCmDbRecoveryRegister" parameterType="CmDbRecoveryRegister">
+        insert into cm_db_recovery_register
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="recoveryRegisterId != null  and recoveryRegisterId != ''">recovery_register_id,</if>
+            <if test="centreName != null  and centreName != ''">centre_name,</if>
+            <if test="sysId != null  and sysId != ''">sys_id,</if>
+            <if test="sysName != null  and sysName != ''">sys_name,</if>
+            <if test="hostName != null  and hostName != ''">host_name,</if>
+            <if test="backupDate != null  and backupDate != ''">backup_date,</if>
+            <if test="recoveryStartTime != null  and recoveryStartTime != ''">recovery_start_time,</if>
+            <if test="recoveryEndTime != null  and recoveryEndTime != ''">recovery_end_time,</if>
+            <if test="recoveryTime != null  and recoveryTime != ''">recovery_time,</if>
+            <if test="verificationResult != null  and verificationResult != ''">verification_result,</if>
+            <if test="remark != null  and remark != ''">remark,</if>
+            <if test="dataSize != null  and dataSize != ''">data_size,</if>
+            <if test="type != null  and type != ''">type,</if>
+            <if test="lineStart != null  and lineStart != ''">line_start,</if>
+            <if test="pId != null  and pId != ''">pid,</if>
+            <if test="orgId != null  and orgId != ''">orgid,</if>
+            <if test="orgName != null  and orgName != ''">orgname,</if>
+            <if test="somment != null  and somment != ''">somment,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="recoveryRegisterId != null  and recoveryRegisterId != ''">#{recoveryRegisterId},</if>
+            <if test="centreName != null  and centreName != ''">#{centreName},</if>
+            <if test="sysId != null  and sysId != ''">#{sysId},</if>
+            <if test="sysName != null  and sysName != ''">#{sysName},</if>
+            <if test="hostName != null  and hostName != ''">#{hostName},</if>
+            <if test="backupDate != null  and backupDate != ''">#{backupDate},</if>
+            <if test="recoveryStartTime != null  and recoveryStartTime != ''">#{recoveryStartTime},</if>
+            <if test="recoveryEndTime != null  and recoveryEndTime != ''">#{recoveryEndTime},</if>
+            <if test="recoveryTime != null  and recoveryTime != ''">#{recoveryTime},</if>
+            <if test="verificationResult != null  and verificationResult != ''">#{verificationResult},</if>
+            <if test="remark != null  and remark != ''">#{remark},</if>
+            <if test="dataSize != null  and dataSize != ''">#{dataSize},</if>
+            <if test="type != null  and type != ''">#{type},</if>
+            <if test="lineStart != null  and lineStart != ''">#{lineStart},</if>
+            <if test="pId != null  and pId != ''">#{pId},</if>
+            <if test="orgId != null  and orgId != ''">#{orgId,jdbcType=VARCHAR},</if>
+            <if test="orgName != null  and orgName != ''">#{orgName,jdbcType=VARCHAR},</if>
+            <if test="somment != null  and somment != ''">#{somment,jdbcType=VARCHAR},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCmDbRecoveryRegister" parameterType="CmDbRecoveryRegister">
+        update cm_db_recovery_register
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="centreName != null  and centreName != ''">centre_name = #{centreName},</if>
+            <if test="sysId != null  and sysId != ''">sys_id = #{sysId},</if>
+            <if test="sysName != null  and sysName != ''">sys_name = #{sysName},</if>
+            <if test="hostName != null  and hostName != ''">host_name = #{hostName},</if>
+            <if test="backupDate != null  and backupDate != ''">backup_date = #{backupDate},</if>
+            <if test="recoveryStartTime != null  and recoveryStartTime != ''">recovery_start_time = #{recoveryStartTime},</if>
+            <if test="recoveryEndTime != null  and recoveryEndTime != ''">recovery_end_time = #{recoveryEndTime},</if>
+            <if test="recoveryTime != null  and recoveryTime != ''">recovery_time = #{recoveryTime},</if>
+            <if test="verificationResult != null  and verificationResult != ''">verification_result = #{verificationResult},</if>
+            <if test="remark != null  and remark != ''">remark = #{remark},</if>
+            <if test="dataSize != null  and dataSize != ''">data_size = #{dataSize},</if>
+            <if test="type != null  and type != ''">type = #{type},</if>
+            <if test="lineStart != null  and lineStart != ''">line_start = #{lineStart},</if>
+            <if test="pId != null  and pId != ''">pid = #{pId},</if>
+            <if test="orgId != null  and orgId != ''">orgid = #{orgId,jdbcType=VARCHAR},</if>
+            <if test="orgName != null  and orgName != ''">orgname = #{orgName,jdbcType=VARCHAR},</if>
+            <if test="somment != null  and somment != ''">somment = #{somment,jdbcType=VARCHAR},</if>
+        </trim>
+        where recovery_register_id = #{recoveryRegisterId}
+    </update>
+
+    <delete id="deleteCmDbRecoveryRegisterById" parameterType="String">
+        delete from cm_db_recovery_register where recovery_register_id = #{recoveryRegisterId}
+    </delete>
+
+    <delete id="deleteCmDbRecoveryRegisterByIds" parameterType="String">
+        delete from cm_db_recovery_register where recovery_register_id in 
+        <foreach item="recoveryRegisterId" collection="array" open="(" separator="," close=")">
+            #{recoveryRegisterId}
+        </foreach>
+    </delete>
+    
+</mapper>

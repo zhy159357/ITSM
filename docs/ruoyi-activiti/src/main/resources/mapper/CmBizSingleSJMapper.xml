@@ -1,0 +1,1764 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.activiti.mapper.CmBizSingleSJMapper">
+
+    <resultMap id="listResult" type="CmBizSingleSJVo">
+        <id property="changeSingleId" column="CHANGE_SINGLE_ID"></id>
+        <result property="changeCode" column="CHANGE_CODE"></result>
+        <result property="changeApplicant" column="CHANGE_APPLICANT"></result>
+        <result property="createTime" column="CREAT_TIME"></result>
+        <result property="createTimeText" column="CREAT_TIME_TEXT"></result>
+        <result property="changeSingleStatus" column="CHANGE_SINGLE_STATUS"></result>
+        <result property="changeSingleStatusName" column="CHANGE_SINGLE_STATUS_NAME"></result>
+        <result property="importantLev" column="IMPORTANT_LEV"></result>
+        <result property="changeCategoryId" column="CHANGE_CATEGORY_ID"></result>
+        <result property="changeCategoryName" column="CHANGE_CATEGORY_NAME"></result>
+        <result property="expectStartTime" column="EXPECT_START_TIME"></result>
+        <result property="expectEndTime" column="EXPECT_END_TIME"></result>
+        <result property="relateSystemId" column="RELATE_SYSTEM_ID"></result>
+        <result property="checkManager" column="CHECK_MANAGER"></result>
+        <result property="approveManager" column="APPROVE_MANAGER"></result>
+        <result property="changeSingleName" column="CHANGE_SINGLE_NAME"></result>
+        <result property="changeCauseText" column="CHANGE_CAUSE_TEXT"></result>
+        <result property="changeDetails" column="CHANGE_DETAILS"></result>
+        <result property="changeProgram" column="CHANGE_PROGRAM"></result>
+        <result property="ImplementSupviser" column="IMPLEMENT_SUPVISER"></result>
+        <result property="practicalStart" column="PRACTICAL_START"></result>
+        <result property="practicalEnd" column="PRACTICAL_END"></result>
+        <result property="startcloseTime" column="startcloseTime"></result>
+        <result property="endcloseTime" column="endcloseTime"></result>
+        <result property="implementor" column="IMPLEMENTOR"></result>
+        <result property="createOrgId" column="CREATE_ORG_ID"></result>
+        <result property="invalidationMark" column="INVALIDATION_MARK"></result>
+        <result property="sysId" column="SYSID"></result>
+        <result property="groupId" column="GROUP_ID"></result>
+        <result property="fmNo" column="FM_NO"></result>
+        <result property="fmTitle" column="FM_TITLE"></result>
+        <result property="chiefManager" column="CHIEF_MANAGER"></result>
+        <result property="changeReason" column="CHANGE_REASON"></result>
+        <result property="changeOrgtype" column="CHANGE_ORGTYPE"></result>
+        <result property="changeNum" column="CHANGE_NUM"></result>
+        <result property="chiefyManager" column="CHIEFY_MANAGER"></result>
+        <result property="ifAQBL" column="IF_AQBL"></result>
+        <result property="sqsPsm" column="SQSPSM"></result>
+        <result property="isTools" column="IS_TOOLS"></result>
+        <result property="toolsName" column="TOOLS_NAME"></result>
+        <result property="closeTime" column="CLOSE_TIME"></result>
+        <result property="procheckManager" column="PROCHECK_MANAGER"></result>
+        <result property="technologyAuditId" column="TECHNOLOGY_AUDIT_ID"></result>
+        <result property="technologyAuditName" column="TECHNOLOGY_AUDIT_NAME"></result>
+        <result property="changeApplicantName" column="CHANGE_APPLICANT_NAME"></result>
+        <result property="checkManagerName" column="CHECK_MANAGER_NAME"></result>
+        <result property="implementorName" column="IMPLEMENTOR_NAME"></result>
+        <result property="sysName" column="SYS_NAME"></result>
+        <result property="groupName" column="GROUP_NAME"></result>
+        <result property="chiefyManagerName" column="CHIEFY_MANAGER_NAME"></result>
+        <result property="isChangeOPS" column="IS_CHANGE_OPS"></result>
+        <result property="procheckManagerName" column="PROCHECK_MANAGER_NAME"></result>
+        <result property="implementorPMName" column="IMPLEMENTOR_PM_NAME"></result>
+        <result property="buildChiefManagerName" column="BUILD_CHIEF_MANAGER_NAME"></result>
+        <result property="buildChiefManager" column="BUILD_CHIEF_MANAGER"></result>
+        <result property="implementorPM" column="IMPLEMENTOR_PM"></result>
+        <result property="changeOrgtypeName" column="CHANGE_ORGTYPE_NAME"></result>
+        <result property="changeSingleType" column="CHANGE_SINGLE_TYPE"></result>
+        <result property="changeSingleType" column="CHANGE_SINGLE_TYPE"></result>
+        <result property="closeName" column="CLOSE_NAME"></result>
+        <result property="orgName" column="ORGNAME"></result>
+        <result property="caption" column="CAPTION"></result>
+        <result property="cmBizSjNum" column="cmBizSjNum"></result>
+        <result property="isToolsNum" column="isToolsNum"></result>
+        <result property="checkOrgName" column="checkOrgName"></result>
+        <result property="isToolsName" column="IS_TOOLS_NAME"></result>
+        <result property="countEfficiency" column="countEfficiency"></result>
+        <result property="changeCopy" column="CHANGE_COPY"></result>
+        <result property="changeBack" column="CHANGE_BACK"></result>
+        <result property="sjflag" column="sjflag"></result>
+        <result property="imId" column="im_id"></result>
+    </resultMap>
+    <sql id="taskVo">
+        SELECT * FROM (
+             SELECT CHANGE_SINGLE_ID,
+            (
+                        select value_detail from PUB_PARAVALUE
+                        where para_id = '8b8080f457412c9f0157413ec427000d' and value = SJ.CHANGE_CATEGORY_ID
+
+                    ) CHANGE_CATEGORY_NAME,CHANGE_CATEGORY_ID,CHANGE_CODE,(
+                        select value_detail from PUB_PARAVALUE
+                        where para_id = '402881f056440e5c0156443f536b0004' and value = SJ.CHANGE_SINGLE_STATUS
+
+                    ) CHANGE_SINGLE_STATUS_NAME,FM_TITLE,(
+                select pname from OG_PERSON op
+                where op.PID = SJ.CHANGE_APPLICANT
+            ) CHANGE_APPLICANT_NAME,"TO_CHAR"("TO_DATE"(SJ.CREAT_TIME, 'yyyymmddhh24miss'),'yyyy-mm-dd hh24:mi:ss') CREAT_TIME_TEXT,CREAT_TIME,INVALIDATION_MARK
+            from CM_BIZ_SINGLE_SJ SJ
+        ) dual
+    </sql>
+
+    <!--mysql-->
+    <sql id="taskVoMysql">
+        SELECT * FROM (
+                          SELECT CHANGE_SINGLE_ID,
+                                 (
+                                     select value_detail from PUB_PARAVALUE
+                                     where para_id = '8b8080f457412c9f0157413ec427000d' and value = SJ.CHANGE_CATEGORY_ID
+
+                                 ) CHANGE_CATEGORY_NAME,CHANGE_CATEGORY_ID,CHANGE_CODE,(
+                                     select value_detail from PUB_PARAVALUE
+                                     where para_id = '402881f056440e5c0156443f536b0004' and value = SJ.CHANGE_SINGLE_STATUS
+
+                                 ) CHANGE_SINGLE_STATUS_NAME,FM_TITLE,(
+                                     select pname from OG_PERSON op
+                                     where op.PID = SJ.CHANGE_APPLICANT
+                                 ) CHANGE_APPLICANT_NAME,DATE_FORMAT(SJ.CREAT_TIME,'%Y-%m-%d %H:%i:%s') CREAT_TIME_TEXT,CREAT_TIME,INVALIDATION_MARK
+                          from CM_BIZ_SINGLE_SJ SJ
+                      ) t
+    </sql>
+
+    <sql id="listVo">
+        SELECT
+            *
+        FROM
+            (
+                SELECT
+                    CHANGE_COPY,
+                    CHANGE_BACK,
+                    SJ.CHANGE_SINGLE_ID,
+                    SJ.CHANGE_CODE,
+                    SJ.CHANGE_APPLICANT,
+                    "TO_CHAR" (
+                        "TO_DATE" (
+                            SJ.CREAT_TIME,
+                            'yyyymmddhh24miss'
+                        ),
+                        'yyyy-mm-dd hh24:mi:ss'
+                    ) CREAT_TIME_TEXT,
+                    CREAT_TIME,
+                    SJ.CHANGE_SINGLE_STATUS,
+                    SJ.IMPORTANT_LEV,
+                    SJ.CHANGE_CATEGORY_ID,
+                    (
+                        SELECT
+                            value_detail
+                        FROM
+                            PUB_PARAVALUE
+                        WHERE
+                            para_id = '8b8080f457412c9f0157413ec427000d'
+                        AND
+                        VALUE
+                            = SJ.CHANGE_CATEGORY_ID
+                    ) CHANGE_CATEGORY_NAME,
+                    (
+                        SELECT
+                            value_detail
+                        FROM
+                            PUB_PARAVALUE
+                        WHERE
+                            para_id = '402881f056440e5c0156443f536b0004'
+                        AND
+                        VALUE
+                            = SJ.CHANGE_SINGLE_STATUS
+                    ) CHANGE_SINGLE_STATUS_NAME,
+                    SJ.EXPECT_START_TIME,
+                    SJ.EXPECT_END_TIME,
+                    SJ.RELATE_SYSTEM_ID,
+                    SJ.CHECK_MANAGER,
+                    SJ.APPROVE_MANAGER,
+                    SJ.CHANGE_SINGLE_NAME,
+                    SJ.CHANGE_CAUSE_TEXT,
+                    SJ.CHANGE_DETAILS,
+                    SJ.CHANGE_PROGRAM,
+                    SJ.IMPLEMENT_SUPVISER,
+                    SJ.PRACTICAL_START,
+                    SJ.PRACTICAL_END,
+                    SJ.IMPLEMENTOR,
+                    SJ.CREATE_ORG_ID,
+                    SJ.INVALIDATION_MARK,
+                    SJ.SYSID,
+                    SJ. GROUP_ID,
+                    SJ.FM_NO,
+                    SJ.FM_TITLE,
+                    SJ.CHIEF_MANAGER,
+                    SJ.CHANGE_REASON,
+                    SJ.CHANGE_ORGTYPE,
+                    SJ.CHANGE_NUM,
+                    SJ.CHIEFY_MANAGER,
+                    SJ.IF_AQBL,
+                    SJ.SQSPSM,
+                    SJ.IS_TOOLS,
+                    SJ.CLOSE_TIME,
+                    SJ.SJFLAG,
+                    SJ.IM_ID,
+                    SJ.PROCHECK_MANAGER,
+                    SJ.TECHNOLOGY_AUDIT_ID,
+                    IS_CHANGE_OPS,
+                    CHANGE_SINGLE_TYPE,
+                    (
+                        SELECT
+                            pname
+                        FROM
+                            OG_PERSON op
+                        WHERE
+                            OP.PID = SJ.CHANGE_APPLICANT
+                    ) CHANGE_APPLICANT_NAME,
+                    (
+                        SELECT
+                            pname
+                        FROM
+                            OG_PERSON OP
+                        WHERE
+                            OP.PID = SJ.CHECK_MANAGER
+                    ) CHECK_MANAGER_NAME,
+                    (
+                        SELECT
+                            pname
+                        FROM
+                            OG_PERSON OP
+                        WHERE
+                            OP.PID = SJ.IMPLEMENTOR
+                    ) IMPLEMENTOR_NAME,
+                    (
+                        SELECT
+                            pname
+                        FROM
+                            OG_PERSON OP
+                        WHERE
+                            OP.PID = SJ.CHANGE_APPLICANT
+                    ) CLOSE_NAME,
+                    (
+                        SELECT
+                            CAPTION
+                        FROM
+                            OG_SYS os
+                        WHERE
+                            os.SYSID = SJ.SYSID
+                    ) SYS_NAME,
+                    (
+                        SELECT
+                            GRPNAME
+                        FROM
+                            OG_GROUP og
+                        WHERE
+                            og.GROUPID = SJ. GROUP_ID
+                    ) GROUP_NAME,
+                    (
+                        SELECT
+                            pname
+                        FROM
+                            OG_PERSON OP
+                        WHERE
+                            OP.PID = SJ.CHIEFY_MANAGER
+                    ) CHIEFY_MANAGER_NAME,
+                    (
+                        SELECT
+                            pname
+                        FROM
+                            OG_PERSON OP
+                        WHERE
+                            OP.PID = SJ.TECHNOLOGY_AUDIT_ID
+                    ) TECHNOLOGY_AUDIT_NAME,
+                    (
+                        SELECT
+                            pname
+                        FROM
+                            OG_PERSON OP
+                        WHERE
+                            OP.PID = SJ.PROCHECK_MANAGER
+                    ) PROCHECK_MANAGER_NAME,
+                    (
+                        SELECT
+                            ORGNAME
+                        FROM
+                            OG_ORG OG
+                        WHERE
+                            OG.ORGID = SJ.CHANGE_ORGTYPE
+                    ) CHANGE_ORGTYPE_NAME,
+                    (
+                        SELECT
+                            ORG.ORGNAME
+                        FROM
+                            OG_PERSON per,
+                            OG_ORG org
+                        WHERE
+                            per.pid = SJ.CHECK_MANAGER
+                        AND PER.ORGID = ORG.ORGID
+                    ) checkOrgName
+                FROM
+                    CM_BIZ_SINGLE_SJ SJ
+            ) dual
+
+    </sql>
+
+    <sql id="listVoForMysql">
+        SELECT
+            *
+        FROM
+            (
+                SELECT
+                    CHANGE_COPY,
+                    CHANGE_BACK,
+                    SJ.CHANGE_SINGLE_ID,
+                    SJ.CHANGE_CODE,
+                    SJ.CHANGE_APPLICANT,
+                    date_format (
+                        STR_TO_DATE (
+                            SJ.CREAT_TIME,
+                            'yyyymmddhh24miss'
+                        ),
+                        'yyyy-mm-dd hh24:mi:ss'
+                    ) CREAT_TIME_TEXT,
+                    CREAT_TIME,
+                    SJ.CHANGE_SINGLE_STATUS,
+                    SJ.IMPORTANT_LEV,
+                    SJ.CHANGE_CATEGORY_ID,
+                    (
+                        SELECT
+                            value_detail
+                        FROM
+                            PUB_PARAVALUE
+                        WHERE
+                            para_id = '8b8080f457412c9f0157413ec427000d'
+                        AND
+                        VALUE
+                            = SJ.CHANGE_CATEGORY_ID
+                    ) CHANGE_CATEGORY_NAME,
+                    (
+                        SELECT
+                            value_detail
+                        FROM
+                            PUB_PARAVALUE
+                        WHERE
+                            para_id = '402881f056440e5c0156443f536b0004'
+                        AND
+                        VALUE
+                            = SJ.CHANGE_SINGLE_STATUS
+                    ) CHANGE_SINGLE_STATUS_NAME,
+                    SJ.EXPECT_START_TIME,
+                    SJ.EXPECT_END_TIME,
+                    SJ.RELATE_SYSTEM_ID,
+                    SJ.CHECK_MANAGER,
+                    SJ.APPROVE_MANAGER,
+                    SJ.CHANGE_SINGLE_NAME,
+                    SJ.CHANGE_CAUSE_TEXT,
+                    SJ.CHANGE_DETAILS,
+                    SJ.CHANGE_PROGRAM,
+                    SJ.IMPLEMENT_SUPVISER,
+                    SJ.PRACTICAL_START,
+                    SJ.PRACTICAL_END,
+                    SJ.IMPLEMENTOR,
+                    SJ.CREATE_ORG_ID,
+                    SJ.INVALIDATION_MARK,
+                    SJ.SYSID,
+                    SJ. GROUP_ID,
+                    SJ.FM_NO,
+                    SJ.FM_TITLE,
+                    SJ.CHIEF_MANAGER,
+                    SJ.CHANGE_REASON,
+                    SJ.CHANGE_ORGTYPE,
+                    SJ.CHANGE_NUM,
+                    SJ.CHIEFY_MANAGER,
+                    SJ.IF_AQBL,
+                    SJ.SQSPSM,
+                    SJ.IS_TOOLS,
+                    SJ.CLOSE_TIME,
+                    SJ.SJFLAG,
+                    SJ.IM_ID,
+                    SJ.PROCHECK_MANAGER,
+                    SJ.TECHNOLOGY_AUDIT_ID,
+                    IS_CHANGE_OPS,
+                    CHANGE_SINGLE_TYPE,
+                    (
+                        SELECT
+                            pname
+                        FROM
+                            OG_PERSON op
+                        WHERE
+                            OP.PID = SJ.CHANGE_APPLICANT
+                    ) CHANGE_APPLICANT_NAME,
+                    (
+                        SELECT
+                            pname
+                        FROM
+                            OG_PERSON OP
+                        WHERE
+                            OP.PID = SJ.CHECK_MANAGER
+                    ) CHECK_MANAGER_NAME,
+                    (
+                        SELECT
+                            pname
+                        FROM
+                            OG_PERSON OP
+                        WHERE
+                            OP.PID = SJ.IMPLEMENTOR
+                    ) IMPLEMENTOR_NAME,
+                    (
+                        SELECT
+                            pname
+                        FROM
+                            OG_PERSON OP
+                        WHERE
+                            OP.PID = SJ.CHANGE_APPLICANT
+                    ) CLOSE_NAME,
+                    (
+                        SELECT
+                            CAPTION
+                        FROM
+                            OG_SYS os
+                        WHERE
+                            os.SYSID = SJ.SYSID
+                    ) SYS_NAME,
+                    (
+                        SELECT
+                            GRPNAME
+                        FROM
+                            OG_GROUP og
+                        WHERE
+                            og.GROUPID = SJ. GROUP_ID
+                    ) GROUP_NAME,
+                    (
+                        SELECT
+                            pname
+                        FROM
+                            OG_PERSON OP
+                        WHERE
+                            OP.PID = SJ.CHIEFY_MANAGER
+                    ) CHIEFY_MANAGER_NAME,
+                    (
+                        SELECT
+                            pname
+                        FROM
+                            OG_PERSON OP
+                        WHERE
+                            OP.PID = SJ.TECHNOLOGY_AUDIT_ID
+                    ) TECHNOLOGY_AUDIT_NAME,
+                    (
+                        SELECT
+                            pname
+                        FROM
+                            OG_PERSON OP
+                        WHERE
+                            OP.PID = SJ.PROCHECK_MANAGER
+                    ) PROCHECK_MANAGER_NAME,
+                    (
+                        SELECT
+                            ORGNAME
+                        FROM
+                            OG_ORG OG
+                        WHERE
+                            OG.ORGID = SJ.CHANGE_ORGTYPE
+                    ) CHANGE_ORGTYPE_NAME,
+                    (
+                        SELECT
+                            ORG.ORGNAME
+                        FROM
+                            OG_PERSON per,
+                            OG_ORG org
+                        WHERE
+                            per.pid = SJ.CHECK_MANAGER
+                        AND PER.ORGID = ORG.ORGID
+                    ) checkOrgName
+                FROM
+                    CM_BIZ_SINGLE_SJ SJ
+            ) dualO
+
+    </sql>
+
+    <select id="list" parameterType="CmBizSingleSJVo" resultMap="listResult">
+        <include refid="listVo"></include>
+        <where>
+            AND INVALIDATION_MARK = '1'
+            <if test="changeApplicant!=null and changeApplicant!=''">
+                AND CHANGE_APPLICANT = #{changeApplicant}
+            </if>
+            <if test="changeCode!=null and changeCode!=''">
+                AND CHANGE_CODE like concat('%',concat(#{changeCode},'%'))
+            </if>
+            <if test="statusArray!=null and statusArray!=''">
+                AND CHANGE_SINGLE_STATUS IN
+                <foreach item="id" collection="statusArray" open="(" close=")" separator=",">
+                    #{id}
+                </foreach>
+            </if>
+            <if test="changeCategoryId!=null and changeCategoryId!=''">
+                AND CHANGE_CATEGORY_ID = #{changeCategoryId}
+            </if>
+            <if test="changeApplicantName!=null and changeApplicantName!=''">
+                AND CHANGE_APPLICANT_NAME like concat('%',concat(#{changeApplicantName},'%'))
+            </if>
+            <if test="checkManagerName!=null and checkManagerName!=''">
+                AND CHECK_MANAGER_NAME like concat('%',concat(#{checkManagerName},'%'))
+            </if>
+            <if test="implementorName!=null and implementorName!=''">
+                AND IMPLEMENTOR_NAME like concat('%',concat(#{implementorName},'%'))
+            </if>
+
+            <if test="chiefyManagerName!=null and chiefyManagerName!=''">
+                AND CHIEFY_MANAGER_NAME like concat('%',concat(#{chiefyManagerName},'%'))
+            </if>
+
+            <if test="closeName!=null and closeName!=''">
+                AND CLOSE_NAME like concat('%',concat(#{closeName},'%'))
+            </if>
+            <if test="sysName!=null and sysName!=''">
+                AND SYS_NAME like concat('%',concat(#{sysName},'%'))
+            </if>
+            <if test="groupName!=null and groupName!=''">
+                AND GROUP_NAME like concat('%',concat(#{groupName},'%'))
+            </if>
+            <if test="changeReason!=null and changeReason!=''">
+                AND CHANGE_REASON = #{changeReason}
+            </if>
+            <if test="changeOrgtype!=null and changeOrgtype!=''">
+                AND CHANGE_ORGTYPE like concat('%',concat(#{changeOrgtype},'%'))
+            </if>
+            <if test="startChangeNum!=null and startChangeNum!=''">
+                AND NVL(CHANGE_NUM,0) >= #{startChangeNum}
+            </if>
+            <if test="endChangeNum!=null and endChangeNum!=''">
+                AND NVL(CHANGE_NUM,0) &lt;= #{endChangeNum}
+            </if>
+            <if test="startCreateTime!=null and startCreateTime!=''">
+                AND CREAT_TIME >= #{startCreateTime}
+            </if>
+            <if test="endCreateTime!=null and endCreateTime!=''">
+                AND CREAT_TIME <![CDATA[<=]]> #{endCreateTime}
+            </if>
+            <if test="isTools!=null and isTools!=''">
+                AND IS_TOOLS = #{isTools}
+            </if>
+            <if test="groupId!=null and groupId!=''">
+                AND GROUP_ID = #{groupId}
+            </if>
+            <if test="fmNo!=null and fmNo!=''">
+                AND FM_NO like concat('%',concat(#{fmNo},'%'))
+            </if>
+            <if test="changeSingleId!=null and changeSingleId!=''">
+                AND CHANGE_SINGLE_ID = #{changeSingleId}
+            </if>
+        </where>
+    </select>
+
+    <select id="listMysql" parameterType="CmBizSingleSJVo" resultMap="listResult">
+        <include refid="listVoForMysql"></include>
+        <where>
+            AND INVALIDATION_MARK = '1'
+            <if test="changeApplicant!=null and changeApplicant!=''">
+                AND CHANGE_APPLICANT = #{changeApplicant}
+            </if>
+            <if test="changeCode!=null and changeCode!=''">
+                AND CHANGE_CODE like concat('%',concat(#{changeCode},'%'))
+            </if>
+            <if test="statusArray!=null and statusArray!=''">
+                AND CHANGE_SINGLE_STATUS IN
+                <foreach item="id" collection="statusArray" open="(" close=")" separator=",">
+                    #{id}
+                </foreach>
+            </if>
+            <if test="changeCategoryId!=null and changeCategoryId!=''">
+                AND CHANGE_CATEGORY_ID = #{changeCategoryId}
+            </if>
+            <if test="changeApplicantName!=null and changeApplicantName!=''">
+                AND CHANGE_APPLICANT_NAME like concat('%',concat(#{changeApplicantName},'%'))
+            </if>
+            <if test="checkManagerName!=null and checkManagerName!=''">
+                AND CHECK_MANAGER_NAME like concat('%',concat(#{checkManagerName},'%'))
+            </if>
+            <if test="implementorName!=null and implementorName!=''">
+                AND IMPLEMENTOR_NAME like concat('%',concat(#{implementorName},'%'))
+            </if>
+
+            <if test="chiefyManagerName!=null and chiefyManagerName!=''">
+                AND CHIEFY_MANAGER_NAME like concat('%',concat(#{chiefyManagerName},'%'))
+            </if>
+
+            <if test="closeName!=null and closeName!=''">
+                AND CLOSE_NAME like concat('%',concat(#{closeName},'%'))
+            </if>
+            <if test="sysName!=null and sysName!=''">
+                AND SYS_NAME like concat('%',concat(#{sysName},'%'))
+            </if>
+            <if test="groupName!=null and groupName!=''">
+                AND GROUP_NAME like concat('%',concat(#{groupName},'%'))
+            </if>
+            <if test="changeReason!=null and changeReason!=''">
+                AND CHANGE_REASON = #{changeReason}
+            </if>
+            <if test="changeOrgtype!=null and changeOrgtype!=''">
+                AND CHANGE_ORGTYPE like concat('%',concat(#{changeOrgtype},'%'))
+            </if>
+            <if test="startChangeNum!=null and startChangeNum!=''">
+                AND IFNULL(CHANGE_NUM,0) >= #{startChangeNum}
+            </if>
+            <if test="endChangeNum!=null and endChangeNum!=''">
+                AND IFNULL(CHANGE_NUM,0) &lt;= #{endChangeNum}
+            </if>
+            <if test="startCreateTime!=null and startCreateTime!=''">
+                AND CREAT_TIME >= #{startCreateTime}
+            </if>
+            <if test="endCreateTime!=null and endCreateTime!=''">
+                AND CREAT_TIME <![CDATA[<=]]> #{endCreateTime}
+            </if>
+            <if test="isTools!=null and isTools!=''">
+                AND IS_TOOLS = #{isTools}
+            </if>
+            <if test="groupId!=null and groupId!=''">
+                AND GROUP_ID = #{groupId}
+            </if>
+            <if test="fmNo!=null and fmNo!=''">
+                AND FM_NO like concat('%',concat(#{fmNo},'%'))
+            </if>
+            <if test="changeSingleId!=null and changeSingleId!=''">
+                AND CHANGE_SINGLE_ID = #{changeSingleId}
+            </if>
+        </where>
+    </select>
+
+    <!--  之前查询数据变更单里的单号不支持模糊搜索
+        <if test="changeCode!=null and changeCode!=''">
+            AND CHANGE_CODE = #{changeCode}
+        </if>
+    -->
+    <select id="listByOrg" parameterType="CmBizSingleSJVo" resultMap="listResult">
+        <include refid="listVo"></include>
+        <where>
+            AND INVALIDATION_MARK = '1'
+            <if test="changeCode!=null and changeCode!=''">
+                AND CHANGE_CODE like concat('%',concat(#{changeCode},'%'))
+            </if>
+            <if test="changeSingleStatus != null  and changeSingleStatus != ''">
+                and CHANGE_SINGLE_STATUS in
+                <foreach collection="params.state" item="changeSingleStatus" index="index" open="(" close=")" separator=",">
+                    #{changeSingleStatus}
+                </foreach>
+            </if>
+            <if test="changeCategoryId!=null and changeCategoryId!=''">
+                AND CHANGE_CATEGORY_ID = #{changeCategoryId}
+            </if>
+            <if test="changeApplicantName!=null and changeApplicantName!=''">
+                AND CHANGE_APPLICANT_NAME like concat('%',concat(#{changeApplicantName},'%'))
+            </if>
+            <if test="checkManagerName!=null and checkManagerName!=''">
+                AND CHECK_MANAGER_NAME like concat('%',concat(#{checkManagerName},'%'))
+            </if>
+            <if test="chiefyManagerName!=null and chiefyManagerName!=''">
+                AND CHIEFY_MANAGER_NAME like concat('%',concat(#{chiefyManagerName},'%'))
+            </if>
+            <if test="sysName!=null and sysName!=''">
+                AND SYS_NAME like concat('%',concat(#{sysName},'%'))
+            </if>
+            <if test="groupName!=null and groupName!=''">
+                AND GROUP_NAME like concat('%',concat(#{groupName},'%'))
+            </if>
+            <if test="changeReason!=null and changeReason!=''">
+                AND CHANGE_REASON = #{changeReason}
+            </if>
+            <if test="changeOrgtypeName!=null and changeOrgtypeName!=''">
+                AND CHANGE_ORGTYPE_NAME like concat('%',concat(#{changeOrgtypeName},'%'))
+            </if>
+            <if test="changeOrgtype!=null and changeOrgtype!=''">
+                AND CHANGE_ORGTYPE like concat('%',concat(#{changeOrgtype},'%'))
+            </if>
+            <if test="startChangeNum!=null and startChangeNum!=''">
+                AND CHANGE_NUM >=#{startChangeNum}
+            </if>
+            <if test="endChangeNum!=null and endChangeNum!=''">
+                AND CHANGE_NUM &lt;= #{endChangeNum}
+            </if>
+            /*关闭日期*/
+            <if test="startcloseTime!=null and startcloseTime!=''">
+                and CLOSE_TIME &gt;= #{startcloseTime}
+            </if>
+            <if test="endcloseTime!=null and endcloseTime!=''">
+                and CLOSE_TIME &lt;= #{endcloseTime}
+            </if>
+            <if test="startCreateTime!=null and startCreateTime!=''">
+                AND CREAT_TIME >= #{startCreateTime}
+            </if>
+            <if test="endCreateTime!=null and endCreateTime!=''">
+                AND CREAT_TIME <![CDATA[<=]]> #{endCreateTime}
+            </if>
+            <if test="isTools!=null and isTools!=''">
+                AND IS_TOOLS = #{isTools}
+            </if>
+            <if test="ifAQBL!=null and ifAQBL!=''">
+                AND IF_AQBL = #{ifAQBL}
+            </if>
+            <if test="checkOrgName!=null and checkOrgName!=''">
+                AND checkOrgName like concat('%',concat(#{checkOrgName},'%'))
+            </if>
+            /*变更实施人*/
+            <if test="implementorName!=null and implementorName!=''">
+                AND IMPLEMENTOR_NAME like concat('%',concat(#{implementorName},'%'))
+            </if>
+
+            /*关闭人*/
+            <if test="closeName!=null and closeName!=''">
+                AND CLOSE_NAME like concat('%',concat(#{closeName},'%'))
+            </if>
+            /*业务事件单号*/
+            <if test="fmNo!=null and fmNo!=''">
+                AND FM_NO like concat('%',concat(#{fmNo},'%'))
+            </if>
+            /*授权审批说明*/
+            <if test="sqsPsm!=null and sqsPsm!=''">
+                AND SQSPSM like concat('%',concat(#{sqsPsm},'%'))
+            </if>
+            <if test="createOrgId!=null and createOrgId!=''">
+                <choose>
+                    <when test="params.groupList!=null and params.groupList!=''">
+                        and (CREATE_ORG_ID = #{createOrgId} or (
+                        <trim prefix="" suffix="" suffixOverrides="or">
+                            <foreach collection="params.groupList" item="group">
+                                GROUP_ID = #{group.groupId} or
+                            </foreach>
+                        </trim>
+                        ))
+                    </when>
+                    <otherwise>
+                        and CREATE_ORG_ID = #{createOrgId}
+                    </otherwise>
+                </choose>
+            </if>
+            /*工作组id*/
+            <if test="params.groupList!=null and params.groupList!=''">
+                <choose>
+                    <when test="createOrgId!=null and createOrgId!=''">
+                        and (CREATE_ORG_ID = #{createOrgId} or (
+                        <trim prefix="" suffix="" suffixOverrides="or">
+                            <foreach collection="params.groupList" item="group">
+                                GROUP_ID = #{group.groupId} or
+                            </foreach>
+                        </trim>
+                        ))
+                    </when>
+                    <otherwise>
+                        and
+                        <trim prefix="" suffix="" suffixOverrides="or">
+                            <foreach collection="params.groupList" item="group">
+                                GROUP_ID = #{group.groupId} or
+                            </foreach>
+                        </trim>
+
+                    </otherwise>
+                </choose>
+            </if>
+
+
+            <if test="levelCode!=null and levelCode!=''">
+                AND PROCHECK_MANAGER IN (select p.pid from og_person p where p.orgid in (select o.orgid from og_org o
+                where o.level_code like concat('%',concat(#{levelCode},'%'))))
+            </if >
+
+        </where>
+        ORDER BY CREAT_TIME_TEXT DESC
+
+    </select>
+    <select id="listByOrgMysql" parameterType="CmBizSingleSJVo" resultMap="listResult">
+        <include refid="listVoForMysql"></include>
+        <where>
+            AND INVALIDATION_MARK = '1'
+            <if test="changeCode!=null and changeCode!=''">
+                AND CHANGE_CODE like concat('%',concat(#{changeCode},'%'))
+            </if>
+            <if test="changeSingleStatus != null  and changeSingleStatus != ''">
+                and CHANGE_SINGLE_STATUS in
+                <foreach collection="params.state" item="changeSingleStatus" index="index" open="(" close=")" separator=",">
+                    #{changeSingleStatus}
+                </foreach>
+            </if>
+            <if test="changeCategoryId!=null and changeCategoryId!=''">
+                AND CHANGE_CATEGORY_ID = #{changeCategoryId}
+            </if>
+            <if test="changeApplicantName!=null and changeApplicantName!=''">
+                AND CHANGE_APPLICANT_NAME like concat('%',concat(#{changeApplicantName},'%'))
+            </if>
+            <if test="checkManagerName!=null and checkManagerName!=''">
+                AND CHECK_MANAGER_NAME like concat('%',concat(#{checkManagerName},'%'))
+            </if>
+            <if test="chiefyManagerName!=null and chiefyManagerName!=''">
+                AND CHIEFY_MANAGER_NAME like concat('%',concat(#{chiefyManagerName},'%'))
+            </if>
+            <if test="sysName!=null and sysName!=''">
+                AND SYS_NAME like concat('%',concat(#{sysName},'%'))
+            </if>
+            <if test="groupName!=null and groupName!=''">
+                AND GROUP_NAME like concat('%',concat(#{groupName},'%'))
+            </if>
+            <if test="changeReason!=null and changeReason!=''">
+                AND CHANGE_REASON = #{changeReason}
+            </if>
+            <if test="changeOrgtypeName!=null and changeOrgtypeName!=''">
+                AND CHANGE_ORGTYPE_NAME like concat('%',concat(#{changeOrgtypeName},'%'))
+            </if>
+            <if test="changeOrgtype!=null and changeOrgtype!=''">
+                AND CHANGE_ORGTYPE like concat('%',concat(#{changeOrgtype},'%'))
+            </if>
+            <if test="startChangeNum!=null and startChangeNum!=''">
+                AND CHANGE_NUM >=#{startChangeNum}
+            </if>
+            <if test="endChangeNum!=null and endChangeNum!=''">
+                AND CHANGE_NUM &lt;= #{endChangeNum}
+            </if>
+            /*关闭日期*/
+            <if test="startcloseTime!=null and startcloseTime!=''">
+                and CLOSE_TIME &gt;= #{startcloseTime}
+            </if>
+            <if test="endcloseTime!=null and endcloseTime!=''">
+                and CLOSE_TIME &lt;= #{endcloseTime}
+            </if>
+            <if test="startCreateTime!=null and startCreateTime!=''">
+                AND CREAT_TIME >= #{startCreateTime}
+            </if>
+            <if test="endCreateTime!=null and endCreateTime!=''">
+                AND CREAT_TIME <![CDATA[<=]]> #{endCreateTime}
+            </if>
+            <if test="isTools!=null and isTools!=''">
+                AND IS_TOOLS = #{isTools}
+            </if>
+            <if test="ifAQBL!=null and ifAQBL!=''">
+                AND IF_AQBL = #{ifAQBL}
+            </if>
+            <if test="checkOrgName!=null and checkOrgName!=''">
+                AND checkOrgName like concat('%',concat(#{checkOrgName},'%'))
+            </if>
+            /*变更实施人*/
+            <if test="implementorName!=null and implementorName!=''">
+                AND IMPLEMENTOR_NAME like concat('%',concat(#{implementorName},'%'))
+            </if>
+
+            /*关闭人*/
+            <if test="closeName!=null and closeName!=''">
+                AND CLOSE_NAME like concat('%',concat(#{closeName},'%'))
+            </if>
+            /*业务事件单号*/
+            <if test="fmNo!=null and fmNo!=''">
+                AND FM_NO like concat('%',concat(#{fmNo},'%'))
+            </if>
+            /*授权审批说明*/
+            <if test="sqsPsm!=null and sqsPsm!=''">
+                AND SQSPSM like concat('%',concat(#{sqsPsm},'%'))
+            </if>
+            <if test="createOrgId!=null and createOrgId!=''">
+                <choose>
+                    <when test="params.groupList!=null and params.groupList!=''">
+                        and (CREATE_ORG_ID = #{createOrgId} or (
+                        <trim prefix="" suffix="" suffixOverrides="or">
+                            <foreach collection="params.groupList" item="group">
+                                GROUP_ID = #{group.groupId} or
+                            </foreach>
+                        </trim>
+                        ))
+                    </when>
+                    <otherwise>
+                        and CREATE_ORG_ID = #{createOrgId}
+                    </otherwise>
+                </choose>
+            </if>
+            /*工作组id*/
+            <if test="params.groupList!=null and params.groupList!=''">
+                <choose>
+                    <when test="createOrgId!=null and createOrgId!=''">
+                        and (CREATE_ORG_ID = #{createOrgId} or (
+                        <trim prefix="" suffix="" suffixOverrides="or">
+                            <foreach collection="params.groupList" item="group">
+                                GROUP_ID = #{group.groupId} or
+                            </foreach>
+                        </trim>
+                        ))
+                    </when>
+                    <otherwise>
+                        and
+                        <trim prefix="" suffix="" suffixOverrides="or">
+                            <foreach collection="params.groupList" item="group">
+                                GROUP_ID = #{group.groupId} or
+                            </foreach>
+                        </trim>
+
+                    </otherwise>
+                </choose>
+            </if>
+
+
+            <if test="levelCode!=null and levelCode!=''">
+                AND PROCHECK_MANAGER IN (select p.pid from og_person p where p.orgid in (select o.orgid from og_org o
+                where o.level_code like concat('%',concat(#{levelCode},'%'))))
+            </if >
+
+        </where>
+        ORDER BY CREAT_TIME_TEXT DESC
+
+    </select>
+
+    <select id="selectListByTask" parameterType="CmBizSingleSJVo" resultMap="listResult">
+        <include refid="taskVo"></include>
+        <where>
+            AND INVALIDATION_MARK = '1'
+            <if test="ids !=null and ids!=''">
+                and CHANGE_SINGLE_ID
+                <trim prefix="in (" suffix=")" suffixOverrides=",">
+                    <foreach collection="ids" item="id">
+                        #{id},
+                    </foreach>
+                </trim>
+            </if>
+            <if test="fmTitle!=null and fmTitle!=''">
+                AND FM_TITLE like concat('%',concat(#{fmTitle},'%'))
+            </if>
+            <if test="changeCode!=null and changeCode!=''">
+                AND CHANGE_CODE like concat('%',concat(#{changeCode},'%'))
+            </if>
+            <if test="changeCategoryId!=null and changeCategoryId!=''">
+                AND CHANGE_CATEGORY_ID = #{changeCategoryId}
+            </if>
+            <if test="changeApplicantName!=null and changeApplicantName!=''">
+                AND CHANGE_APPLICANT_NAME like concat('%',concat(#{changeApplicantName},'%'))
+            </if>
+            ORDER BY CREAT_TIME_TEXT DESC
+        </where>
+
+    </select>
+
+    <!--    mysql-->
+    <select id="selectListByTaskMysql" parameterType="CmBizSingleSJVo" resultMap="listResult">
+        <include refid="taskVoMysql"></include>
+        <where>
+            AND INVALIDATION_MARK = '1'
+            <if test="ids !=null and ids!=''">
+                and CHANGE_SINGLE_ID
+                <trim prefix="in (" suffix=")" suffixOverrides=",">
+                    <foreach collection="ids" item="id">
+                        #{id},
+                    </foreach>
+                </trim>
+            </if>
+            <if test="fmTitle!=null and fmTitle!=''">
+                AND FM_TITLE like concat('%',concat(#{fmTitle},'%'))
+            </if>
+            <if test="changeCode!=null and changeCode!=''">
+                AND CHANGE_CODE like concat('%',concat(#{changeCode},'%'))
+            </if>
+            <if test="changeCategoryId!=null and changeCategoryId!=''">
+                AND CHANGE_CATEGORY_ID = #{changeCategoryId}
+            </if>
+            <if test="changeApplicantName!=null and changeApplicantName!=''">
+                AND CHANGE_APPLICANT_NAME like concat('%',concat(#{changeApplicantName},'%'))
+            </if>
+            ORDER BY CREAT_TIME_TEXT DESC
+        </where>
+
+    </select>
+
+    <select id="selectSjbgById" parameterType="java.lang.String" resultMap="listResult">
+        <include refid="listVo"></include>
+        where CHANGE_SINGLE_ID = #{changeSingleId}
+    </select>
+    <select id="selectSjbgByIdMysql" parameterType="java.lang.String" resultMap="listResult">
+        <include refid="listVoForMysql"></include>
+        where CHANGE_SINGLE_ID = #{changeSingleId}
+    </select>
+
+    <select id="selectSjbgByChangeCode" parameterType="java.lang.String" resultMap="listResult">
+
+        <include refid="listVo"></include>
+
+        where CHANGE_CODE = #{changeCode}
+    </select>
+    <select id="selectSjbgByChangeCodeMysql" parameterType="java.lang.String" resultMap="listResult">
+
+        <include refid="listVoForMysql"></include>
+
+        where CHANGE_CODE = #{changeCode}
+    </select>
+
+    <select id="selectListByFmNo" parameterType="java.lang.String" resultMap="listResult">
+        select * from cm_biz_single_sj SJ where SJ.fm_no= #{fmNo}
+                                            and SJ.INVALIDATION_MARK ='1'
+                                            and SJ.change_single_status not in ('07','10','13','20','21')
+    </select>
+    <!--事件单关联数据变更单查询-->
+    <select id="selectListByFmNo2" parameterType="java.lang.String" resultMap="listResult">
+        <include refid="listVo"></include>
+        where fm_no= #{fmNo}
+    </select>
+    <select id="selectListByFmNo2Mysql" parameterType="java.lang.String" resultMap="listResult">
+        <include refid="listVoForMysql"></include>
+        where fm_no= #{fmNo}
+    </select>
+
+    <insert id="insertSjbg" parameterType="CmBizSingleSJ">
+        insert into CM_BIZ_SINGLE_SJ
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="changeSingleId!=null and changeSingleId!=''">
+                CHANGE_SINGLE_ID,
+            </if>
+            <if test="changeCode!=null and changeCode!=''">
+                CHANGE_CODE,
+            </if>
+            <if test="changeApplicant!=null and changeApplicant!=''">
+                CHANGE_APPLICANT,
+            </if>
+            <if test="createTime!=null and createTime!=''">
+                CREAT_TIME,
+            </if>
+            <if test="changeSingleStatus!=null and changeSingleStatus!=''">
+                CHANGE_SINGLE_STATUS,
+            </if>
+            <if test="importantLev!=null and importantLev!=''">
+                IMPORTANT_LEV,
+            </if>
+            <if test="changeCategoryId!=null and changeCategoryId!=''">
+                CHANGE_CATEGORY_ID,
+            </if>
+            <if test="expectStartTime!=null and expectStartTime!=''">
+                EXPECT_START_TIME,
+            </if>
+            <if test="expectEndTime!=null and expectEndTime!=''">
+                EXPECT_END_TIME,
+            </if>
+            <if test="relateSystemId!=null and relateSystemId!=''">
+                RELATE_SYSTEM_ID,
+            </if>
+            <if test="checkManager!=null and checkManager!=''">
+                CHECK_MANAGER,
+            </if>
+            <if test="approveManager!=null and approveManager!=''">
+                APPROVE_MANAGER,
+            </if>
+            <if test="changeSingleName!=null and changeSingleName!=''">
+                CHANGE_SINGLE_NAME,
+            </if>
+            <if test="changeCauseText!=null and changeCauseText!=''">
+                CHANGE_CAUSE_TEXT,
+            </if>
+            <if test="changeDetails!=null and changeDetails!=''">
+                CHANGE_DETAILS,
+            </if>
+            <if test="changeProgram!=null and changeProgram!=''">
+                CHANGE_PROGRAM,
+            </if>
+            <if test="ImplementSupviser!=null and ImplementSupviser!=''">
+                IMPLEMENT_SUPVISER,
+            </if>
+            <if test="practicalStart!=null and practicalStart!=''">
+                PRACTICAL_START,
+            </if>
+            <if test="practicalEnd!=null and practicalEnd!=''">
+                PRACTICAL_END,
+            </if>
+            <if test="implementor!=null and implementor!=''">
+                IMPLEMENTOR,
+            </if>
+            <if test="implementorPM!=null and implementorPM!=''">
+                IMPLEMENTOR_PM,
+            </if>
+            <if test="createOrgId!=null and createOrgId!=''">
+                CREATE_ORG_ID,
+            </if>
+            <if test="invalidationMark!=null and invalidationMark!=''">
+                INVALIDATION_MARK,
+            </if>
+            <if test="sysId!=null and sysId!=''">
+                SYSID,
+            </if>
+            <if test="groupId!=null and groupId!=''">
+                GROUP_ID,
+            </if>
+            <if test="fmNo!=null and fmNo!=''">
+                FM_NO,
+            </if>
+            <if test="fmTitle!=null and fmTitle!=''">
+                FM_TITLE,
+            </if>
+            <if test="chiefManager!=null and chiefManager!=''">
+                CHIEF_MANAGER,
+            </if>
+            <if test="buildChiefManager!=null and buildChiefManager!=''">
+                BUILD_CHIEF_MANAGER,
+            </if>
+            <if test="changeReason!=null and changeReason!=''">
+                CHANGE_REASON,
+            </if>
+            <if test="changeOrgtype!=null and changeOrgtype!=''">
+                CHANGE_ORGTYPE,
+            </if>
+            <if test="changeNum!=null and changeNum!=''">
+                CHANGE_NUM,
+            </if>
+            <if test="chiefyManager!=null and chiefyManager!=''">
+                CHIEFY_MANAGER,
+            </if>
+            <if test="ifAQBL!=null and ifAQBL!=''">
+                IF_AQBL,
+            </if>
+            <if test="sqsPsm!=null and sqsPsm!=''">
+                SQSPSM,
+            </if>
+            <if test="isTools!=null and isTools!=''">
+                IS_TOOLS,
+            </if>
+            <if test="toolsName!=null and toolsName!=''">
+                TOOLS_NAME,
+            </if>
+            <if test="closeTime!=null and closeTime!=''">
+                CLOSE_TIME,
+            </if>
+            <if test="procheckManager!=null and procheckManager!=''">
+                PROCHECK_MANAGER,
+            </if>
+            <if test="technologyAuditId!=null and technologyAuditId!=''">
+                TECHNOLOGY_AUDIT_ID,
+            </if>
+            <if test="isChangeOPS!=null and isChangeOPS!=''">
+                IS_CHANGE_OPS,
+            </if>
+            <if test="changeSingleType!=null and changeSingleType!=''">
+                CHANGE_SINGLE_TYPE,
+            </if>
+            <if test="sjflag!=null and sjflag!=''">
+                sjflag,
+            </if>
+            <if test="imId!=null and imId!=''">
+                im_id,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="changeSingleId!=null and changeSingleId!=''">
+                #{changeSingleId},
+            </if>
+            <if test="changeCode!=null and changeCode!=''">
+                #{changeCode},
+            </if>
+            <if test="changeApplicant!=null and changeApplicant!=''">
+                #{changeApplicant},
+            </if>
+            <if test="createTime!=null and createTime!=''">
+                #{createTime},
+            </if>
+            <if test="changeSingleStatus!=null and changeSingleStatus!=''">
+                #{changeSingleStatus},
+            </if>
+            <if test="importantLev!=null and importantLev!=''">
+                #{importantLev},
+            </if>
+            <if test="changeCategoryId!=null and changeCategoryId!=''">
+                #{changeCategoryId},
+            </if>
+            <if test="expectStartTime!=null and expectStartTime!=''">
+                #{expectStartTime},
+            </if>
+            <if test="expectEndTime!=null and expectEndTime!=''">
+                #{expectEndTime},
+            </if>
+            <if test="relateSystemId!=null and relateSystemId!=''">
+                #{relateSystemId},
+            </if>
+            <if test="checkManager!=null and checkManager!=''">
+                #{checkManager},
+            </if>
+            <if test="approveManager!=null and approveManager!=''">
+                #{approveManager},
+            </if>
+            <if test="changeSingleName!=null and changeSingleName!=''">
+                #{changeSingleName},
+            </if>
+            <if test="changeCauseText!=null and changeCauseText!=''">
+                #{changeCauseText},
+            </if>
+            <if test="changeDetails!=null and changeDetails!=''">
+                #{changeDetails},
+            </if>
+            <if test="changeProgram!=null and changeProgram!=''">
+                #{changeProgram},
+            </if>
+            <if test="ImplementSupviser!=null and ImplementSupviser!=''">
+                #{ImplementSupviser},
+            </if>
+            <if test="practicalStart!=null and practicalStart!=''">
+                #{practicalStart},
+            </if>
+            <if test="practicalEnd!=null and practicalEnd!=''">
+                #{practicalEnd},
+            </if>
+            <if test="implementor!=null and implementor!=''">
+                #{implementor},
+            </if>
+            <if test="implementorPM!=null and implementorPM!=''">
+                #{implementorPM},
+            </if>
+            <if test="createOrgId!=null and createOrgId!=''">
+                #{createOrgId},
+            </if>
+            <if test="invalidationMark!=null and invalidationMark!=''">
+                #{invalidationMark},
+            </if>
+            <if test="sysId!=null and sysId!=''">
+                #{sysId},
+            </if>
+            <if test="groupId!=null and groupId!=''">
+                #{groupId},
+            </if>
+            <if test="fmNo!=null and fmNo!=''">
+                #{fmNo},
+            </if>
+            <if test="fmTitle!=null and fmTitle!=''">
+                #{fmTitle},
+            </if>
+            <if test="chiefManager!=null and chiefManager!=''">
+                #{chiefManager},
+            </if>
+            <if test="buildChiefManager!=null and buildChiefManager!=''">
+                #{buildChiefManager},
+            </if>
+            <if test="changeReason!=null and changeReason!=''">
+                #{changeReason},
+            </if>
+            <if test="changeOrgtype!=null and changeOrgtype!=''">
+                #{changeOrgtype},
+            </if>
+            <if test="changeNum!=null and changeNum!=''">
+                #{changeNum},
+            </if>
+            <if test="chiefyManager!=null and chiefyManager!=''">
+                #{chiefyManager},
+            </if>
+            <if test="ifAQBL!=null and ifAQBL!=''">
+                #{ifAQBL},
+            </if>
+            <if test="sqsPsm!=null and sqsPsm!=''">
+                #{sqsPsm},
+            </if>
+            <if test="isTools!=null and isTools!=''">
+                #{isTools},
+            </if>
+            <if test="toolsName!=null and toolsName!=''">
+                #{toolsName},
+            </if>
+            <if test="closeTime!=null and closeTime!=''">
+                #{closeTime},
+            </if>
+            <if test="procheckManager!=null and procheckManager!=''">
+                #{procheckManager},
+            </if>
+            <if test="technologyAuditId!=null and technologyAuditId!=''">
+                #{technologyAuditId},
+            </if>
+            <if test="isChangeOPS!=null and isChangeOPS!=''">
+                #{isChangeOPS},
+            </if>
+
+            <if test="changeSingleType!=null and changeSingleType!=''">
+                #{changeSingleType},
+            </if>
+            <if test="sjflag!=null and sjflag!=''">
+                #{sjflag},
+            </if>
+            <if test="imId!=null and imId!=''">
+                #{imId},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="updateById" parameterType="java.lang.String">
+        update CM_BIZ_SINGLE_SJ
+        set INVALIDATION_MARK = '0'
+        where CHANGE_SINGLE_ID = #{id}
+    </update>
+
+    <update id="updateSjbg" parameterType="CmBizSingleSJ">
+        update CM_BIZ_SINGLE_SJ
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="changeCode!=null and changeCode!=''">
+                CHANGE_CODE = #{changeCode},
+            </if>
+            <if test="changeApplicant!=null and changeApplicant!=''">
+                CHANGE_APPLICANT = #{changeApplicant},
+            </if>
+            <if test="createTime!=null and createTime!=''">
+                CREAT_TIME = #{createTime},
+            </if>
+            <if test="changeSingleStatus!=null and changeSingleStatus!=''">
+                CHANGE_SINGLE_STATUS = #{changeSingleStatus},
+            </if>
+            <if test="importantLev!=null and importantLev!=''">
+                IMPORTANT_LEV = #{importantLev},
+            </if>
+            <if test="changeCategoryId!=null and changeCategoryId!=''">
+                CHANGE_CATEGORY_ID = #{changeCategoryId},
+            </if>
+            <if test="expectStartTime!=null and expectStartTime!=''">
+                EXPECT_START_TIME = #{expectStartTime},
+            </if>
+            <if test="expectEndTime!=null and expectEndTime!=''">
+                EXPECT_END_TIME = #{expectEndTime},
+            </if>
+            <if test="relateSystemId!=null and relateSystemId!=''">
+                RELATE_SYSTEM_ID = #{relateSystemId},
+            </if>
+            <if test="checkManager!=null and checkManager!=''">
+                CHECK_MANAGER = #{checkManager},
+            </if>
+            <if test="approveManager!=null and approveManager!=''">
+                APPROVE_MANAGER = #{approveManager},
+            </if>
+            <if test="changeSingleName!=null and changeSingleName!=''">
+                CHANGE_SINGLE_NAME = #{changeSingleName},
+            </if>
+            <if test="changeCauseText!=null and changeCauseText!=''">
+                CHANGE_CAUSE_TEXT = #{changeCauseText},
+            </if>
+            <if test="changeDetails!=null and changeDetails!=''">
+                CHANGE_DETAILS = #{changeDetails},
+            </if>
+            <if test="changeCopy!=null and changeCopy!=''">
+                CHANGE_COPY = #{changeCopy},
+            </if>
+            <if test="changeProgram!=null and changeProgram!=''">
+                CHANGE_PROGRAM = #{changeProgram},
+            </if>
+            <if test="changeBack!=null and changeBack!=''">
+                CHANGE_BACK = #{changeBack},
+            </if>
+            <if test="ImplementSupviser!=null and ImplementSupviser!=''">
+                IMPLEMENT_SUPVISER = #{ImplementSupviser},
+            </if>
+            <if test="practicalStart!=null and practicalStart!=''">
+                PRACTICAL_START = #{practicalStart},
+            </if>
+            <if test="practicalEnd!=null and practicalEnd!=''">
+                PRACTICAL_END = #{practicalEnd},
+            </if>
+            <if test="implementor!=null and implementor!=''">
+                IMPLEMENTOR = #{implementor},
+            </if>
+            <if test="createOrgId!=null and createOrgId!=''">
+                CREATE_ORG_ID = #{createOrgId},
+            </if>
+            <if test="invalidationMark!=null and invalidationMark!=''">
+                INVALIDATION_MARK = #{invalidationMark},
+            </if>
+            <if test="sysId!=null and sysId!=''">
+                SYSID = #{sysId},
+            </if>
+            <if test="groupId!=null and groupId!=''">
+                GROUP_ID = #{groupId},
+            </if>
+            <if test="fmNo!=null and fmNo!=''">
+                FM_NO = #{fmNo},
+            </if>
+            <if test="fmTitle!=null and fmTitle!=''">
+                FM_TITLE = #{fmTitle},
+            </if>
+            <if test="changeReason!=null and changeReason!=''">
+                CHANGE_REASON = #{changeReason},
+            </if>
+            <if test="changeOrgtype!=null and changeOrgtype!=''">
+                CHANGE_ORGTYPE = #{changeOrgtype},
+            </if>
+            <if test="changeNum!=null and changeNum!=''">
+                CHANGE_NUM = #{changeNum},
+            </if>
+            <if test="chiefyManager!=null and chiefyManager!=''">
+                CHIEFY_MANAGER = #{chiefyManager},
+            </if>
+            <if test="ifAQBL!=null and ifAQBL!=''">
+                IF_AQBL = #{ifAQBL},
+            </if>
+            <if test="sqsPsm!=null and sqsPsm!=''">
+                SQSPSM = #{sqsPsm},
+            </if>
+            <if test="isTools!=null and isTools!=''">
+                IS_TOOLS = #{isTools},
+            </if>
+            <if test="toolsName!=null and toolsName!=''">
+                TOOLS_NAME = #{toolsName},
+            </if>
+            <if test="closeTime!=null and closeTime!=''">
+                CLOSE_TIME = #{closeTime},
+            </if>
+            <if test="procheckManager!=null and procheckManager!=''">
+                PROCHECK_MANAGER = #{procheckManager},
+            </if>
+            <if test="technologyAuditId!=null and technologyAuditId!=''">
+                TECHNOLOGY_AUDIT_ID = #{technologyAuditId},
+            </if>
+            <if test="isChangeOPS!=null and isChangeOPS!=''">
+                IS_CHANGE_OPS = #{isChangeOPS},
+            </if>
+            <if test="result!=null and result!=''">
+                RESULT = #{result},
+            </if>
+        </trim>
+        <where>
+            <if test="changeSingleId!=null and changeSingleId!=''">
+                CHANGE_SINGLE_ID = #{changeSingleId}
+            </if>
+        </where>
+    </update>
+
+    <update id="updateEditSjbg" parameterType="CmBizSingleSJ">
+        update CM_BIZ_SINGLE_SJ
+        <trim prefix="SET" suffixOverrides=",">
+            <choose>
+                <when test="changeSingleStatus!=null and changeSingleStatus!=''">
+                    CHANGE_SINGLE_STATUS = #{changeSingleStatus},
+                </when>
+                <otherwise>
+                    CHANGE_SINGLE_STATUS = '',
+                </otherwise>
+            </choose>
+
+            <choose>
+                <when test="importantLev!=null and importantLev!=''">
+                    IMPORTANT_LEV = #{importantLev},
+                </when>
+                <otherwise>
+                    IMPORTANT_LEV = '',
+                </otherwise>
+            </choose>
+
+            <choose>
+                <when test="changeCategoryId!=null and changeCategoryId!=''">
+                    CHANGE_CATEGORY_ID = #{changeCategoryId},
+                </when>
+                <otherwise>
+                    CHANGE_CATEGORY_ID = '',
+                </otherwise>
+            </choose>
+
+            <choose>
+                <when test="expectStartTime!=null and expectStartTime!=''">
+                    EXPECT_START_TIME = #{expectStartTime},
+                </when>
+                <otherwise>
+                    EXPECT_START_TIME = '',
+                </otherwise>
+            </choose>
+
+            <choose>
+                <when test="expectEndTime!=null and expectEndTime!=''">
+                    EXPECT_END_TIME = #{expectEndTime},
+                </when>
+                <otherwise>
+                    EXPECT_END_TIME = '',
+                </otherwise>
+            </choose>
+
+            <choose>
+                <when test="relateSystemId!=null and relateSystemId!=''">
+                    RELATE_SYSTEM_ID = #{relateSystemId},
+                </when>
+                <otherwise>
+                    RELATE_SYSTEM_ID = '',
+                </otherwise>
+            </choose>
+
+            <choose>
+                <when test="checkManager!=null and checkManager!=''">
+                    CHECK_MANAGER = #{checkManager},
+                </when>
+                <otherwise>
+                    CHECK_MANAGER = '',
+                </otherwise>
+            </choose>
+
+            <choose>
+                <when test="approveManager!=null and approveManager!=''">
+                    APPROVE_MANAGER = #{approveManager},
+                </when>
+                <otherwise>
+                    APPROVE_MANAGER = '',
+                </otherwise>
+            </choose>
+
+            <choose>
+                <when test="changeSingleName!=null and changeSingleName!=''">
+                    CHANGE_SINGLE_NAME = #{changeSingleName},
+                </when>
+                <otherwise>
+                    CHANGE_SINGLE_NAME = '',
+                </otherwise>
+            </choose>
+
+            <choose>
+                <when test="changeCauseText!=null and changeCauseText!=''">
+                    CHANGE_CAUSE_TEXT = #{changeCauseText},
+                </when>
+                <otherwise>
+                    CHANGE_CAUSE_TEXT = '',
+                </otherwise>
+            </choose>
+
+            <choose>
+                <when test="changeDetails!=null and changeDetails!=''">
+                    CHANGE_DETAILS = #{changeDetails},
+                </when>
+                <otherwise>
+                    CHANGE_DETAILS = '',
+                </otherwise>
+            </choose>
+
+            <choose>
+                <when test="changeCopy!=null and changeCopy!=''">
+                    CHANGE_COPY = #{changeCopy},
+                </when>
+                <otherwise>
+                    CHANGE_COPY = '',
+                </otherwise>
+            </choose>
+
+            <choose>
+                <when test="changeProgram!=null and changeProgram!=''">
+                    CHANGE_PROGRAM = #{changeProgram},
+                </when>
+                <otherwise>
+                    CHANGE_PROGRAM = '',
+                </otherwise>
+            </choose>
+
+            <choose>
+                <when test="changeBack!=null and changeBack!=''">
+                    CHANGE_BACK = #{changeBack},
+                </when>
+                <otherwise>
+                    CHANGE_BACK = '',
+                </otherwise>
+            </choose>
+
+            <choose>
+                <when test="ImplementSupviser!=null and ImplementSupviser!=''">
+                    IMPLEMENT_SUPVISER = #{ImplementSupviser},
+                </when>
+                <otherwise>
+                    IMPLEMENT_SUPVISER = '',
+                </otherwise>
+            </choose>
+
+            <choose>
+                <when test="practicalStart!=null and practicalStart!=''">
+                    PRACTICAL_START = #{practicalStart},
+                </when>
+                <otherwise>
+                    PRACTICAL_START = '',
+                </otherwise>
+            </choose>
+
+            <choose>
+                <when test="practicalEnd!=null and practicalEnd!=''">
+                    PRACTICAL_END = #{practicalEnd},
+                </when>
+                <otherwise>
+                    PRACTICAL_END = '',
+                </otherwise>
+            </choose>
+
+            <choose>
+                <when test="implementor!=null and implementor!=''">
+                    IMPLEMENTOR = #{implementor},
+                </when>
+                <otherwise>
+                    IMPLEMENTOR = '',
+                </otherwise>
+            </choose>
+
+            <choose>
+                <when test="createOrgId!=null and createOrgId!=''">
+                    CREATE_ORG_ID = #{createOrgId},
+                </when>
+                <otherwise>
+                    CREATE_ORG_ID = '',
+                </otherwise>
+            </choose>
+
+            <choose>
+                <when test="sysId!=null and sysId!=''">
+                    SYSID = #{sysId},
+                </when>
+                <otherwise>
+                    SYSID = '',
+                </otherwise>
+            </choose>
+
+            <choose>
+                <when test="groupId!=null and groupId!=''">
+                    GROUP_ID = #{groupId},
+                </when>
+                <otherwise>
+                    GROUP_ID = '',
+                </otherwise>
+            </choose>
+            <choose>
+                <when test="changeReason!=null and changeReason!=''">
+                    CHANGE_REASON = #{changeReason},
+                </when>
+                <otherwise>
+                    CHANGE_REASON = '',
+                </otherwise>
+            </choose>
+
+            <choose>
+                <when test="changeNum!=null and changeNum!=''">
+                    CHANGE_NUM = #{changeNum},
+                </when>
+                <otherwise>
+                    CHANGE_NUM = '',
+                </otherwise>
+            </choose>
+
+            <choose>
+                <when test="chiefyManager!=null and chiefyManager!=''">
+                    CHIEFY_MANAGER = #{chiefyManager},
+                </when>
+                <otherwise>
+                    CHIEFY_MANAGER = '',
+                </otherwise>
+            </choose>
+
+            <choose>
+                <when test="ifAQBL!=null and ifAQBL!=''">
+                    IF_AQBL = #{ifAQBL},
+                </when>
+                <otherwise>
+                    IF_AQBL = '',
+                </otherwise>
+            </choose>
+
+            <choose>
+                <when test="sqsPsm!=null and sqsPsm!=''">
+                    SQSPSM = #{sqsPsm},
+                </when>
+                <otherwise>
+                    SQSPSM = '',
+                </otherwise>
+            </choose>
+
+            <choose>
+                <when test="isTools!=null and isTools!=''">
+                    IS_TOOLS = #{isTools},
+                </when>
+                <otherwise>
+                    IS_TOOLS = '',
+                </otherwise>
+            </choose>
+
+            <choose>
+                <when test="toolsName!=null and toolsName!=''">
+                    TOOLS_NAME = #{toolsName},
+                </when>
+                <otherwise>
+                    TOOLS_NAME = '',
+                </otherwise>
+            </choose>
+
+            <choose>
+                <when test="procheckManager!=null and procheckManager!=''">
+                    PROCHECK_MANAGER = #{procheckManager},
+                </when>
+                <otherwise>
+                    PROCHECK_MANAGER = '',
+                </otherwise>
+            </choose>
+
+            <choose>
+                <when test="technologyAuditId!=null and technologyAuditId!=''">
+                    TECHNOLOGY_AUDIT_ID = #{technologyAuditId},
+                </when>
+                <otherwise>
+                    TECHNOLOGY_AUDIT_ID = '',
+                </otherwise>
+            </choose>
+
+            <choose>
+                <when test="isChangeOPS!=null and isChangeOPS!=''">
+                    IS_CHANGE_OPS = #{isChangeOPS},
+                </when>
+                <otherwise>
+                    IS_CHANGE_OPS = '',
+                </otherwise>
+            </choose>
+
+            <choose>
+                <when test="result!=null and result!=''">
+                    RESULT = #{result},
+                </when>
+                <otherwise>
+                    RESULT = '',
+                </otherwise>
+            </choose>
+            <choose>
+                <when test="changeOrgtype!=null and changeOrgtype!=''">
+                    CHANGE_ORGTYPE = #{changeOrgtype},
+                </when>
+                <otherwise>
+                    CHANGE_ORGTYPE = '',
+                </otherwise>
+            </choose>
+            <if test="sjflag != null  and sjflag != ''">sjflag = #{sjflag},</if>
+            <if test="imId != null  and imId != ''">im_id = #{imId},</if>
+        </trim>
+        <where>
+            <if test="changeSingleId!=null and changeSingleId!=''">
+                CHANGE_SINGLE_ID = #{changeSingleId}
+            </if>
+        </where>
+    </update>
+    <!-- 根据事件单号查询对应的变更单 -->
+    <select id="selectCmAndFmBiz" parameterType="java.lang.String" resultMap="listResult">
+        <include refid="listVo"></include>
+        where FM_NO = #{fmNo}
+        and CHANGE_SINGLE_STATUS not in ('07','08','10','11','13','15')
+        and INVALIDATION_MARK ='1'
+    </select>
+    <select id="selectCmAndFmBizMysql" parameterType="java.lang.String" resultMap="listResult">
+        <include refid="listVoForMysql"></include>
+        where FM_NO = #{fmNo}
+        and CHANGE_SINGLE_STATUS not in ('07','08','10','11','13','15')
+        and INVALIDATION_MARK ='1'
+    </select>
+
+    <select id="selectToolsCountBySys" parameterType="CmBizSingleSJVo" resultMap="listResult">
+        select s.CAPTION,o.ORGNAME,nvl(count(c.CHANGE_CODE),0) as cmBizSjNum,nvl(sum(CASE WHEN c.IS_TOOLS = '1' THEN c.IS_TOOLS END),0) as isToolsNum,concat(nvl(ROUND((sum(CASE WHEN c.IS_TOOLS = '1' THEN c.IS_TOOLS END)/count(c.CHANGE_CODE)*100),2),0),'%')as countEfficiency from CM_BIZ_SINGLE_SJ c, OG_ORG o,OG_SYS s where o.ORGID = s.ORGID and c.SYSID = s.SYSID and c.CHANGE_SINGLE_STATUS = '10' and c.CREAT_TIME>= #{startCreateTime,jdbcType=VARCHAR} and c.CREAT_TIME <![CDATA[<=]]> #{endCreateTime,jdbcType=VARCHAR} GROUP BY s.CAPTION,o.ORGNAME
+    </select>
+
+    <select id="selectToolsCountByCaption" parameterType="CmBizSingleSJVo" resultMap="listResult">
+        select o.ORGNAME,nvl(count(c.CHANGE_CODE),0) as cmBizSjNum,nvl(sum(CASE WHEN c.IS_TOOLS = '1' THEN c.IS_TOOLS END),0) as isToolsNum,concat(nvl(ROUND((sum(CASE WHEN c.IS_TOOLS = '1' THEN c.IS_TOOLS END)/count(c.CHANGE_CODE)*100),2),0),'%')as countEfficiency from CM_BIZ_SINGLE_SJ c, OG_ORG o,OG_SYS s where o.ORGID = s.ORGID and c.SYSID = s.SYSID and c.CHANGE_SINGLE_STATUS = '10' and c.CREAT_TIME>=#{startCreateTime} and c.CREAT_TIME <![CDATA[<=]]> #{endCreateTime} GROUP BY o.ORGNAME
+    </select>
+    <!--查询在规定事件内创建的数据变更单-->
+    <select id="fmAndCmList" parameterType="CmBizSingleSJVo" resultMap="listResult">
+        <include refid="listVo"></include>
+        <where>
+            <if test="params.startTime!=null and params.startTime!=''">
+                AND CREAT_TIME &gt;= #{params.startTime}
+            </if>
+            <if test="params.endTime!=null and params.endTime!=''">
+                AND CREAT_TIME &lt;= #{params.endTime}
+            </if>
+            <if test="fmNo!=null and fmNo!=''">
+                AND FM_NO = #{fmNo}
+            </if>
+        </where>
+    </select>
+    <select id="fmAndCmListMysql" parameterType="CmBizSingleSJVo" resultMap="listResult">
+        <include refid="listVoForMysql"></include>
+        <where>
+            <if test="params.startTime!=null and params.startTime!=''">
+                AND CREAT_TIME &gt;= #{params.startTime}
+            </if>
+            <if test="params.endTime!=null and params.endTime!=''">
+                AND CREAT_TIME &lt;= #{params.endTime}
+            </if>
+            <if test="fmNo!=null and fmNo!=''">
+                AND FM_NO = #{fmNo}
+            </if>
+        </where>
+    </select>
+
+    <select id="sjbgTask" parameterType="String" resultMap="listResult">
+        select distinct c.change_code
+                from cm_biz_single_sj c
+                where c.change_single_status ='02'
+                and c.invalidation_mark='1'
+                and c.check_manager is not null
+                and c.check_manager in(select r.ywid from og_r_pyw_rywcz r where r.cz_name = #{pname})
+    </select>
+
+
+</mapper>

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('参数类别列表')" />
+    <th:block th:include="include :: layout-latest-css" />
+    <th:block th:include="include :: ztree-css" />
+</head>
+<body class="gray-bg">
+<div class="ui-layout-center">
+    <div class="container-div">
+        <div class="row">
+            <div class="col-sm-12 search-collapse">
+                <form id="user-form">
+                    <div class="select-list">
+                        <ul>
+                            <li>
+                                用户名称：<input type="text" name="pname"/>
+                            </li>
+                            <li>
+                                <a id="search" class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-repeat"></i>&nbsp;重置</a>
+                            </li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+            <div class="col-sm-12 select-table table-striped">
+                <table id="bootstrap-table"></table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: layout-latest-js" />
+<th:block th:include="include :: ztree-js" />
+<script th:inline="javascript">
+    var prefix = ctx + "knowledge/ranking";
+
+    $(function() {
+        document.onkeydown = function (e) {
+            var ev = document.all?window.event:e;
+            if(ev.keyCode==13){
+                $("#search").trigger('click');
+                return;
+            }
+        }
+        var options = {
+            url: prefix + "/list",
+            createUrl: prefix + "/add",
+            updateUrl: prefix + "/edit/{id}",
+            removeUrl: prefix + "/remove",
+            modalName: "知识排名",
+            sidePagination: "client",       	
+            columns: [{
+                checkbox: true
+            },
+            {
+                field: 'createId',
+                title: '用户id',
+                visible: false
+            },
+            {
+                field: 'pname',
+                title: '用户名称'
+            },
+            {
+                field: 'totalNum',
+                title: '文档数量',
+                sortable:true,
+            },
+            {
+                field: 'goodNum',
+                title: '好评文章',
+                sortable:true
+            },
+            {
+                field: 'badNum',
+                title: '差评文章',
+                sortable:true
+            },
+            {
+                field: 'goodRate',
+                title: '文章好评率',
+                sortable:true
+            },
+            {
+                field: 'visitedNum',
+                title: '被访问量',
+                sortable:true
+            },
+            {
+                field: 'cumulativecGood',
+                title: '累计好评',
+                sortable:true
+            },
+            {
+                field: 'cumulativeBad',
+                title: '累计差评',
+                sortable:true
+            }]
+        };
+        $.table.init(options);
+        
+    });
+
+</script>
+</body>
+</html>

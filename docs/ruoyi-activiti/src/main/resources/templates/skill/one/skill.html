@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:include="include :: header('部门列表')"/>
+    <th:block th:include="include :: layout-latest-css" />
+    <th:block th:include="include :: ztree-css" />
+</head>
+<body class="gray-bg">
+<div class="ui-layout-west">
+    <div class="box box-main">
+        <div class="box-header">
+            <div class="box-title">
+                <i class="fa icon-grid"></i> 组织机构
+            </div>
+            <div class="box-tools pull-right">
+                <button type="button" class="btn btn-box-tool" id="btnExpand" title="展开" style="display:none;"><i class="fa fa-chevron-up"></i></button>
+                <button type="button" class="btn btn-box-tool" id="btnCollapse" title="折叠"><i class="fa fa-chevron-down"></i></button>
+                <button type="button" class="btn btn-box-tool" id="btnRefresh" title="刷新部门"><i class="fa fa-refresh"></i></button>
+            </div>
+        </div>
+        <div class="ui-layout-content">
+            <div id="tree" class="ztree"></div>
+        </div>
+    </div>
+</div>
+
+<div class="ui-layout-center">
+    <div class="container-div">
+        <div class="row">
+            <div class="col-sm-12 search-collapse">
+                <form id="dept-form">
+                    <input type="hidden"  id="treeId" name="ogOrgId" value="">
+                    <input type="hidden" id="id" name="id">
+                    <input type="hidden" id="parentId" name="parentId">
+                    <div class="select-list">
+                        <ul>
+                            <li>
+                                <p>技能组名称：</p>
+                                <input type="text" name="skillsGroupTelname"/>
+                            </li>
+                            <li>
+                                <p>技能组别名：</p>
+                                <input type="text" name="skillsGroupName"/>
+                            </li>
+                            <li>
+                                <p>状态：</p>
+                                <select class="form-control" id="skillsStatus" name="skillsStatus" th:with="type=${@dict.getParaType('sys_people_status')}">
+                                    <option value=""></option>
+                                    <option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}" required></option>
+                                </select>
+                            </li>
+                            <li>
+                                <a class="btn btn-primary btn-rounded btn-sm" id="ss" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                            </li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+
+            <div class="btn-group-sm" id="toolbar" role="group">
+                <a class="btn btn-success" onclick="addTab()">
+                    <i class="fa fa-plus"></i> 添加
+                </a>
+                <a class="btn btn-primary single disabled" onclick="$.operate.editTab()">
+                    <i class="fa fa-edit"></i> 修改
+                </a>
+                <a class="btn btn-danger single disabled" onclick="$.operate.removeAll()">
+                    <i class="fa fa-refresh"></i> 删除
+                </a>
+            </div>
+            <div class="col-sm-12 select-table table-striped">
+                <table id="bootstrap-table"></table>
+            </div>
+        </div>
+        </div>
+    </div>
+</div>
+</div>
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: layout-latest-js" />
+<th:block th:include="include :: ztree-js" />
+<script th:inline="javascript">
+    var prefix = ctx + "skill/one";
+    var contactOrg =  [[${@dict.getParaType('sys_people_status')}]];
+
+    $(function () {
+        // 回车键搜索
+        document.onkeydown = function (e) {
+            var ev = document.all ? window.event : e;
+            if (ev.keyCode == 13) {
+                $('#orgSearch').trigger('click');
+                return false;
+            }
+        };
+
+        var panehHidden = false;
+        if ($(this).width() < 769) {
+            panehHidden = true;
+        }
+        $('body').layout({initClosed: panehHidden, west__size: 185});
+        // 回到顶部绑定
+        if ($.fn.toTop !== undefined) {
+            var opt = {
+                win: $('.ui-layout-center'),
+                doc: $('.ui-layout-center')
+            };
+            $('#scroll-up').toTop(opt);
+        }
+
+        queryDeptList();
+        queryDeptTree();
+    });
+
+    function queryDeptList() {
+        var options = {
+            url: prefix + "/list",
+            /*createUrl: prefix + "/add/"+$('#treeId').val()==''?'not_exeit':$('#treeId').val(),*/
+            updateUrl: prefix + "/edit/{id}",
+            exportUrl: prefix + "/export",
+            removeUrl: prefix + "/remove",
+            singleSelect:true,
+            clickToSelect: true,
+            sortName: "createTime",
+            queryParams: queryParams,
+            modalName: "技能组管理维护",
+            columns: [{
+                checkbox: true
+            },{
+                field : 'id',
+                title : 'ID',
+                visible: false
+            },
+                {
+                    field : 'skillsGroupTelname',
+                    title : '技能组名称'
+                },
+                {
+                    field : 'skillsGroupName',
+                    title : '技能组别名'
+                },
+                {
+                    field : 'createTime',
+                    title : '创建时间',
+                    formatter: function (value, row, index) {
+                        var createTimeTwo = '';
+                        if(value!='' && value !=null){
+                            var pattern = /(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/;
+                            createTimeTwo = value.replace(pattern, '$1-$2-$3 $4:$5:$6');
+                        }
+                        return createTimeTwo;
+                    }
+                },
+                {
+                    field : 'pName',
+                    title : '技能添加人'
+                },
+                {
+                    field : 'skillsStatus',
+                    title : '状态',
+                    formatter: function (value,row,index) {
+                        return selectDictLabel(contactOrg, value);
+                    }
+                },
+                {
+                    field: 'orgId',
+                    title: '机构ID',
+                    visible: false
+                },
+                {
+                    field: 'parentId',
+                    title: '机构父ID',
+                    visible: false
+                }]
+        };
+        $.table.init(options);
+    }
+
+    function queryParams(params) {
+        var search = $.table.queryParams(params);
+        var treeId = $("#treeId").val();
+        search.ogOrgId = treeId;
+        console.log(treeId);
+        return search;
+    }
+
+    // 添加事件单
+    function addTab() {
+        /*alert("24234234234234");
+        alert($('#treeId').val());*/
+        var treeId = $('#treeId').val();
+        if(treeId=='' || treeId==null || treeId==undefined){
+            treeId = '1';
+        }
+        var url = prefix + '/add/' + treeId;
+        console.log(url);
+        $.modal.openTab("添加技能组管理维护", url);
+    }
+
+    function edit() {
+        var deptId = $.table.selectColumns("orgId");
+        var url = prefix + "/edit/" + deptId;
+        $.modal.open("修改机构",url);
+    }
+
+    /*部门管理-新增-选择父部门树*/
+    function selectDeptTree() {
+        var options = {
+            title: '部门选择',
+            width: "380",
+            url: prefix + "/selectDeptTreeAll",
+            callBack: doSubmit
+        };
+        $.modal.openOptions(options);
+    }
+
+    function doSubmit(index, layero) {
+        var tree = layero.find("iframe")[0].contentWindow.$._tree;
+
+        if(jQuery.isEmptyObject(tree)) {
+            layer.close(index);
+        }else{
+            var selectNode = tree.getSelectedNodes();
+            if(selectNode.length!=0){
+                $("#treeId").val(selectNode[0].id);
+
+            }
+        }
+        layer.close(index);
+    }
+
+    /*function queryDeptTreeInit()
+    {
+        var url = ctx + "system/dept/selectAllTree";
+        var options = {
+            url: url,
+            expandLevel: 1,
+            onClick : zOnClick
+        };
+        $.tree.init(options);
+
+        function zOnClick(event, treeId, treeNode) {
+            $("#id").val(treeNode.id);
+            $("#treeId").val(treeNode.id);
+            $.table.search();
+        }
+    }*/
+
+    function queryDeptTree()
+    {
+        var url = ctx + "system/dept/treeData";
+        var options = {
+            url: url,
+            expandLevel: 2,
+            onClick : zOnClick
+        };
+        $.tree.init(options);
+
+        function zOnClick(event, treeId, treeNode) {
+            $("#treeId").val(treeNode.id);
+            $("#treeName").val(treeNode.name);
+            $.table.search();
+        }
+    }
+
+
+    //状态显示（字典项）
+    function selectDictLabel(datas, value) {
+        var actions = [];
+        $.each(datas, function(index, dict) {
+            if (dict.value == ('' + value)) {
+                var listClass = $.common.equals("default", dict.listClass) || $.common.isEmpty(dict.listClass) ? "" : "badge badge-" + dict.listClass;
+                actions.push($.common.sprintf("<span class='%s'>%s</span>", listClass, dict.valueDetail));
+                return false;
+            }
+        });
+        return actions.join('');
+    }
+
+</script>
+</body>
+</html>

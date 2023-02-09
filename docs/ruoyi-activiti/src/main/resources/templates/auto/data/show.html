@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:include="include :: header('数据变更单场景服务和参数')" />
+</head>
+<body class="gray-bg">
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-7">
+            <div class="container-div">
+                <div class="row">
+                    <div class="col-sm-12 select-table table-striped">
+                        <table id="bootstrap-table1"></table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-5">
+            <div class="container-div">
+                <div class="row">
+                    <div class="col-sm-12 search-collapse">
+                        <form id="form-post">
+                            <div class="select-list">
+                                <ul>
+                                    <li>
+                                        <a class="btn btn-warning btn-rounded btn-sm" id="param-reset" onclick="$.form.reset()"><i class="fa fa-repeat"></i>&nbsp;重置</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="col-sm-12 select-table table-striped">
+                        <table id="bootstrap-table2"></table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<th:block th:include="include :: footer" />
+<script th:inline="javascript">
+
+
+    var prefix = ctx + "auto/data"
+    $(function () {
+        var options_auto = {
+            url: prefix + "/list",
+            id: "bootstrap-table1",
+            singleSelect: true,
+            clickToSelect: true,
+            showSearch: false,
+            showRefresh: false,
+            showColumns: false,
+            showToggle: false,
+            modalName: "服务列表",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'scriptUuid',
+                    title: '服务Id',
+                    visible: false
+                },
+                {
+                    field: 'serviceName',
+                    title: '服务名称',
+                },
+                {
+                    field: 'bussName',
+                    title: '一级分类'
+                }]
+        };
+        $.table.init(options_auto);
+
+
+        var options_param = {
+            url: prefix + "/param/list",
+            id: "bootstrap-table2",
+            singleSelect: true,
+            clickToSelect: true,
+            showSearch: false,
+            showRefresh: false,
+            showColumns: false,
+            showToggle: false,
+            modalName: "参数列表",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'paramDesc',
+                    title: '参数描述'
+                },
+                {
+                    field: 'paramType',
+                    title: '参数类型',
+                },
+                {
+                    field: 'paramOrder',
+                    title: '顺序'
+                },
+                {
+                    field: 'paramValue',
+                    title: '参数值'
+                }]
+        };
+        $.table.init(options_param);
+
+        /*
+        *
+        *
+        * “paramDesc”: “常用任务1”,
+		“paramType:“String”,
+		“paramOrder”: “1”,
+		“paramValue”: “通用”*/
+    });
+</script>
+</body>
+</html>
+

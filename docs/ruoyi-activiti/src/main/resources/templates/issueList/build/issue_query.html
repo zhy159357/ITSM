@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+	<th:block th:include="include :: header('我的问题单')" />
+</head>
+<body class="gray-bg">
+	<div class="container-div">
+		<div class="row">
+			<div class="col-sm-12 search-collapse">
+				<form id="account-form">
+					<div class="select-list">
+						<ul>
+							<li>
+								<label style="width: 80px">问题单号：</label>
+								<input type="text" name="issuefxNo" maxlength="20"/>
+							</li>
+							<li>
+								<label style="width: 80px">问题标题：</label>
+								<input type="text" name="issuefxName" maxlength="64"/>
+							</li>
+							<li>
+								<label style="width: 80px">问题来源：</label>
+								<select id="issuesource" name="issuesource"  class="form-control " th:with="issuesources=${@pubParaValue.selectPubParaValueByParaName('WT_SOUCE')}" >
+									<option value="">请选择</option>
+									<option th:each="itype : ${issuesources}" th:text="${itype.valueDetail}" th:value="${itype.value}"></option>
+								</select>
+							</li>
+							<li>
+								<label style="width: 80px">问题分类：</label>
+								<select id="issueFenlei" name="issueFenlei"  class="form-control " th:with="issueFenleis=${@pubParaValue.selectPubParaValueByParaName('WT_FENLEI')}">
+									<option value="">所有</option>
+									<option th:each="itype : ${issueFenleis}" th:text="${itype.valueDetail}" th:value="${itype.value}"></option>
+								</select>
+							</li>
+							<li>
+								<label style="width: 80px">问题类型：</label>
+								<select id="issueType" name="issueType"  class="form-control " th:with="issue_type=${@pubParaValue.selectPubParaValueByParaName('WT_TYPE')}">
+									<option value="">所有</option>
+									<option th:each="itype : ${issue_type}" th:text="${itype.valueDetail}" th:value="${itype.value}"></option>
+								</select>
+							</li>
+							<li>
+								<label style="width: 80px">所属机构：</label>
+								<select id="issueOrg" name="issueOrg" class="form-control " >
+									<option value="">所有</option>
+									<option th:each="itype : ${issueOrgs}" th:text="${itype.orgName}" th:value="${itype.orgId}"></option>
+								</select>
+							</li>
+							<li>
+								<label style="width: 80px">涉及系统：</label>
+								<input type="text" name="sysName" maxlength="50"/>
+							</li>
+							<li class="select-time">
+								<label style="width: 80px">创建时间： </label>
+								<input style="width:90px" type="text" class="time-input" id="paramsstartTime" placeholder="开始时间" name="params[startTime]" readonly>
+								<span style="width:10px">-</span>
+								<input style="width:90px" type="text" class="time-input" id="paramsendTime" placeholder="结束时间" name="params[endTime]" readonly>
+							</li>
+							<li>
+								<label style="width: 80px">发现人：</label>
+								<input type="text" name="reportname" maxlength="5">
+							</li>
+							<li>
+								<label style="width: 80px">审核人：</label>
+								<select id="reviewerId" name="reviewerId"  class="form-control ">
+								</select>
+							</li>
+							<li>
+								<label style="width: 80px">技术经理：</label>
+								<input  type="hidden" name="auditId" id="auditId">
+								<input   onclick="getAuditId()" type="text" id="auditName" >
+							</li>
+							<li>
+								<label style="width: 80px">问题等级：</label>
+								<select id="seriousLev" class="form-control " name="seriousLev"  th:with="issue_serious_lev=${@pubParaValue.selectPubParaValueByParaName('issue_serious_lev')}" >
+									<option value="">请选择</option>
+									<option th:each="itype : ${issue_serious_lev}" th:text="${itype.valueDetail}" th:value="${itype.value}"></option>
+								</select>
+							</li>
+							<!--<li>
+								<label style="width: 80px">隐患排查&nbsp;&nbsp;<br>单号：</label>
+								<input type="text" name="csno" maxlength="20"/>
+							</li>-->
+							<li>
+								<label style="width: 80px">问题状态：</label>
+								<select  name="currentState"
+										 class="form-control noselect2 selectpicker" data-none-selected-text="请选择状态"
+										 multiple data-actions-box="true" data-width="200px" data-live-search="true"
+										 th:with="issue_status=${@pubParaValue.selectPubParaValueByParaName('issue_status')}">
+									<option th:each="itype : ${issue_status}" th:text="${itype.valueDetail}" th:value="${itype.value}"></option>
+								</select>
+							</li>
+							<li>
+								<label style="width: 80px">问题归属：</label>
+								<select id="isInside" class="form-control " name="isInside"  th:with="isInside=${@pubParaValue.selectPubParaValueByParaName('WT_ISINSIDE')}" >
+									<option value="">请选择</option>
+									<option th:each="itype : ${isInside}" th:text="${itype.valueDetail}" th:value="${itype.value}"></option>
+								</select>
+							</li>
+							<li>
+								<a class="btn btn-primary btn-rounded btn-sm" id="searchBut" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+							    <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.resetAll('account-form')"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+							</li>
+						</ul>
+					</div>
+				</form>
+			</div>
+		
+			<div class="btn-group-sm" id="toolbar" role="group">
+				<a class="btn btn-info multiple disabled" onclick="view()">
+					<i class="fa fa-search"></i>详情
+				</a>
+				<a class="btn btn-warning single disabled" onclick="showProcessImgDialog()">
+					<i class="fa fa-edit"></i> 查看流程图
+				</a>
+				<!--导出所有｜当前页按钮组合-->
+				<div class="btn-group">
+					<button data-toggle="dropdown" class="btn btn-warning btn-sm dropdown-toggle">导出<span
+							class="caret"></span>
+					</button>
+					<ul class="dropdown-menu">
+						<li><a onclick="$.table.exportExcel()">导出所有</a>
+						</li>
+						<li><a onclick="$.table.exportExcelCurrentPage()">导出当前页</a>
+						</li>
+					</ul>
+				</div>
+	        </div>
+	        <div class="col-sm-12 select-table table-striped">
+			    <table id="bootstrap-table"></table>
+			</div>
+		</div>
+	</div>
+	<th:block th:include="include :: footer" />
+	<th:block th:include="include :: datetimepicker-js" />
+	<th:block th:include="include :: datetimepicker-css" />
+	<th:block th:include="include :: select2-css" />
+	<th:block th:include="include :: select2-js" />
+	<th:block th:include="include :: bootstrap-select-js" />
+	<th:block th:include="include :: bootstrap-select-css" />
+	<script th:src="@{/js/activiti.js}"></script>
+	<script type="text/javascript">
+	</script>
+	<script th:inline="javascript">
+		var issueFenlei=[[${@pubParaValue.selectPubParaValueByParaName('WT_FENLEI')}]];
+		var issueType=[[${@pubParaValue.selectPubParaValueByParaName('WT_TYPE')}]];
+		var allstatus=[[${@pubParaValue.selectPubParaValueByParaName('issue_status')}]];
+		var issuesource=[[${@pubParaValue.selectPubParaValueByParaName('WT_SOUCE')}]];
+		var prefix = ctx + "issueList/build/selectMyList";
+		$(function() {
+			// 回车键搜索
+			document.onkeydown = function(e){
+				var ev = document.all ? window.event : e;
+				if(ev.keyCode==13) {
+					$('#searchBut').trigger('click');
+					return false;
+				}
+			};
+			orgPer("","-1");
+
+		    var options = {
+		        url: prefix,
+		        createUrl: prefix + "/add",
+		        updateUrl: prefix + "/edit/{id}",
+		        removeUrl: prefix + "/remove",
+		        exportUrl: ctx + "issueList/build/myExport",
+		        clickToSelect:true,
+		        showColumns: false,
+				striped:true,
+				showExport:true,
+		        modalName: "问题单",
+				singleSelect:true,
+		        columns: [{
+		            checkbox: true
+		        },
+				{
+					field: 'issuefxId',
+					title: '问题单ID',
+					visible: false
+				},
+		        {
+		            field: 'issuefxNo',
+		            title: '问题单号'
+		        },
+		        {
+		            field: 'issuefxName',
+		            title: '问题标题',
+		           formatter: function (value, row, index) {
+						 return $.table.tooltip(value);
+					},
+					cellStyle: function cellStyle(value, row, index, field) {
+						return { classes: 'text-nowrap'};
+					}
+		        },
+				{
+					field: 'sysName',
+					title: '涉及系统',
+					formatter: function (value, row, index) {
+						 return $.table.tooltip(value);
+					},
+					cellStyle: function cellStyle(value, row, index, field) {
+						return { classes: 'text-nowrap'};
+					}
+				},
+				{
+					field: 'issueOrgName',
+					title: '所属机构',
+				},
+				{
+					field: 'issueFenlei',
+					title: '问题分类',
+					formatter:function (value){
+						return selectPubParaValueData(issueFenlei,value);
+					}
+				},
+		        {
+		            field: 'issueType',
+		            title: '问题类型',
+					formatter:function (value){
+		            	return selectPubParaValueData(issueType,value);
+					}
+		        },
+				{
+					field: 'issuesource',
+					title: '问题来源',
+					formatter:function (value){
+						return selectPubParaValueData(issuesource,value);
+					}
+				},
+				{
+					field: 'creatTime',
+					title: '创建时间',
+				},
+				{
+					field: 'currentState',
+					title: '问题状态',
+					formatter: function (value, row, index) {
+						 return selectPubParaValueData(allstatus,value);
+					}
+				}
+		     ]
+		    };
+			options.columns.push()
+		    $.table.init(options);
+		});
+		//详情
+		function view(){
+			var url = ctx + "issueList/activiti/view?"
+			var row = $.table.selectFirstColumns("bootstrap-table");
+			$.modal.openTab("详情", url +"issuefxId="+ row[0]+"&&type=flowview");
+		}
+		// 回显数据字典
+		function selectPubParaValueData(datas, value) {
+			var actions = [];
+			$.each(datas, function(index, pubParaValue) {
+				if (pubParaValue.value == ('' + value)) {
+					actions.push($.common.sprintf("<span class='%s'>%s</span>", "", pubParaValue.valueDetail));
+					return false;
+				}
+			});
+			return actions.join('');
+		}
+
+		function showProcessImgDialog() {
+			var row = $("#bootstrap-table").bootstrapTable("getSelections");
+			if(row[0].currentState=="0"){
+				return $.modal.alertWarning("待提交状态没有流程图！");
+			}
+			var url = ctx + 'process/processImg/' + row[0].issuefxId;
+			$.modal.openNoBtn("查看流程图", url);
+		}
+		/*选择技术经理*/
+		function getAuditId() {
+			var userIds = $("#auditId").val();
+			console.log(userIds);
+			if($.common.isEmpty(userIds)){
+				userIds = "0";
+			}
+			var url = ctx + "issueList/build/audit/" + userIds;
+			$.modal.open("选择技术经理", url);
+		}
+		/* 选择部门树 */
+		function selectDeptTree() {
+			var deptId ="310100001";
+			var url = ctx + "system/dept/selectDeptTree/" + deptId;
+			var options = {
+				title: '选择部门',
+				width: "380",
+				url: url,
+				callBack: doSubmit
+			};
+			$.modal.openOptions(options);
+		}
+		function doSubmit(index, layero){
+			var tree = layero.find("iframe")[0].contentWindow.$._tree;
+			var body = layer.getChildFrame('body', index);
+			$("#deptId").val(body.find('#treeId').val());
+			$("#deptName").val(body.find('#treeName').val());
+			layer.close(index);
+		}
+		function orgPer(orgId,type){
+			$.ajax({
+				cache : true,
+				type : "POST",
+				url : ctx + "issueList/build/orgPer",
+				data : {
+					"orgId": orgId,
+					"type": type
+				},
+				async : false,
+				error : function(request) {
+					$.modal.alertError("系统错误");
+				},
+				success : function(data) {
+					var options = "<option value=''>所有</option>";
+					if(-1 == type){
+						$("#reviewerId").html("");
+						for(var ak=0;ak<data.length;ak++){
+							options += "<option value='"+data[ak].pId+"'>"+data[ak].pName+"</option> \n";
+						}
+						$("#reviewerId").append(options);
+					}
+				}
+			});
+		}
+	</script>
+</body>
+</html>

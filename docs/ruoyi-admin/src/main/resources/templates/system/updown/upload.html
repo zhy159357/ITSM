@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:include="include :: header('文件上传')"/>
+    <th:block th:include="include :: bootstrap-fileinput-css"/>
+</head>
+<body class="gray-bg">
+<div class="wrapper wrapper-content animated fadeInRight" >
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-content">
+                    <div class="form-group">
+                        <input id="folder_" name="folder" type="hidden" th:value="*{folder_}">
+                        <select id="fileType" name="fileType" class="form-control" style="pointer-events:none" readonly>
+                            <option value="1">普通附件</option>
+                            <option value="2">版本包</option>
+                            <option value="3">自动化步骤</option>
+                        </select>
+                        <label class="font-noraml">多文件上传</label>
+                        <div class="file-loading">
+                            <input id="attachment-upload" type="file" multiple>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<th:block th:include="include :: footer"/>
+<th:block th:include="include :: bootstrap-fileinput-js"/>
+<script type="text/javascript">
+    var url = "";
+    $(document).ready(function () {
+        url = ctx + "system/updown/saveUpdown";
+        $("#attachment-upload").fileinput({
+            'theme': 'explorer-fas',
+            'uploadUrl': url,
+            'uploadExtraData': function () {
+                var data = {
+                    folder_: $("#folder_").val(),
+                    fileType: $("#fileType").val()
+                };
+                return data;
+            },
+            overwriteInitial: false,
+            initialPreviewAsData: true
+        });
+
+        $("#attachment-upload").on("fileuploaded", function (event, data, proviewId, index) {
+            if (data.response.code == 0) {
+                $.modal.alertSuccess("上传成功")
+            } else {
+                $.modal.alertSuccess(data.response.msg);
+            }
+        });
+
+    });
+
+    function submitHandler() {
+        $.modal.close();
+        //附件列表刷新 table id 为 bootstrap-table
+        window.parent.$.table.refresh('bootstrap-table');
+    }
+</script>
+</body>
+</html>

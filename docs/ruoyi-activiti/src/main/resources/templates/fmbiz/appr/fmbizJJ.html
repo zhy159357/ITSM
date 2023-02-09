@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+
+
+<head>
+    <th:block th:include="include :: header('紧急事件单统计')"/>
+    <th:block th:include="include :: select2-css"/>
+</head>
+<body class="gray-bg">
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-12 search-collapse">
+            <form id="formId">
+                <div class="select-list">
+                    <ul>
+                        <h4 style="color:#f00330;" align="center">默认加载最近一个月的数据，可根据实施日期筛选条件进行范围查询</h4>
+                        <li>
+                            <p>创建时间：</p>
+                            <input type="text" class="time-input" id="startCreatTime" placeholder="创建时间起"
+                                   name="params[startCreatTime]" readonly/>
+                        </li>
+                        <li>
+                            <p>创建时间：</p>
+                            <input type="text" class="time-input" id="endCreatTime" placeholder="创建时间止"
+                                   name="params[endCreatTime]" readonly/>
+                        </li>
+                        <li>
+                            <a class="btn btn-primary btn-rounded btn-sm" id="searchBiz" onclick="$.table.search()"><i
+                                    class="fa fa-search"></i>&nbsp;搜索</a>
+                            <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i
+                                    class="fa fa-refresh"></i>&nbsp;重置</a>
+                        </li>
+                    </ul>
+                </div>
+            </form>
+        </div>
+        <div class="btn-group-sm" id="toolbar" role="group">
+            <div class="btn-group">
+                <button data-toggle="dropdown" class="btn btn-primary btn-sm dropdown-toggle">导出<span
+                        class="caret"></span>
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a onclick="$.table.exportExcel()">导出所有</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="col-sm-12 select-table table-striped">
+            <table id="bootstrap-table"></table>
+        </div>
+    </div>
+</div>
+<th:block th:include="include :: footer"/>
+<th:block th:include="include :: select2-js"/>
+<th:block th:include="include :: datetimepicker-js"/>
+<script th:inline="javascript">
+    var prefix = ctx + "fmbiz";
+    $(function () {
+        // 回车键搜索
+        document.onkeydown = function(e){
+            var ev = document.all ? window.event : e;
+            if(ev.keyCode==13) {
+                $('#searchBiz').trigger('click');
+                return false;
+            }
+        };
+        var options = {
+            url: prefix + "/selectFmBizCount",
+            exportUrl: prefix + "/exportjj",
+            pagination: false,
+            clickToSelect: true,
+            singleSelect: true,
+            modalName: "运维事件单",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'orgName',
+                    title: '所属机构'
+                },
+                {
+                    field: 'couNum',
+                    title: '事件单总数'
+                },
+                {
+                    field: 'jjCouNum',
+                    title: '紧急数量'
+                },
+                {
+                    field: 'countEfficiency',
+                    title: '紧急占比'
+                }]
+        };
+        $.table.init(options);
+    });
+</script>
+</body>
+</html>

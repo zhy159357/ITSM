@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.activiti.mapper.OgSysEmergencyphoneMapper">
+
+    <resultMap type="OgSysEmergencyphone" id="OgSysEmergencyphoneResult">
+        <result property="sysId"    column="sys_id"    />
+        <result property="sysName"    column="sys_name"    />
+        <result property="pid"    column="pid"    />
+        <result property="pname"    column="pname"    />
+        <result property="phone"    column="phone"    />
+        <result property="mobilPhone"    column="mobil_phone"    />
+        <result property="addTime"    column="add_time"    />
+        <result property="editTime"    column="update_time"    />
+        <result property="emId"    column="em_id"    />
+        <result property="invalipationMark"    column="invalipation_mark"    />
+        <result property="orgName"    column="org_name"    />
+        <result property="roleName"    column="role_name"    />
+        <result property="updatePerson"    column="update_person"    />
+    </resultMap>
+
+    <resultMap type="OgSys" id="OgSysResult">
+        <id     property="sysId"                column="sysId"         />
+        <result property="orgId"                column="orgId"         />
+        <result property="code"                 column="code"      />
+        <result property="caption"              column="caption"       />
+        <result property="memo"                 column="memo"       />
+        <result property="invalidationMark"     column="invalidation_Mark"           />
+        <result property="isExamination"        column="isExamination"     />
+        <result property="dept"                 column="dept"        />
+        <result property="pid"                  column="pid"            />
+        <result property="businessId"           column="businessId"          />
+        <result property="isKeySys"             column="is_key_sys"        />
+        <result property="sysType"              column="sys_Type"        />
+        <result property="isOutChannel"              column="is_out_channel"        />
+    </resultMap>
+
+    <sql id="selectOgSysEmergencyphoneVo">
+        SELECT
+            sys_id,
+            sys_name,
+            pid,
+            pname,
+            phone,
+            mobil_phone,
+            add_time,
+            update_time,
+            em_id,
+            invalipation_mark,
+            org_name,
+            role_name,
+            update_person
+        FROM
+            og_sys_emergencyphone
+    </sql>
+
+    <select id="selectOgSysEmergencyphoneList" parameterType="OgSysEmergencyphone" resultMap="OgSysEmergencyphoneResult">
+        <include refid="selectOgSysEmergencyphoneVo"/>
+        <where>
+            <if test="sysId != null  and sysId != ''"> and sys_id = #{sysId}</if>
+            <if test="sysName != null  and sysName != ''"> and sys_name like concat(concat('%', #{sysName}), '%')</if>
+            <if test="pid != null  and pid != ''"> and pid = #{pid}</if>
+            <if test="pname != null  and pname != ''"> and pname like concat(concat('%', #{pname}), '%')</if>
+            <if test="phone != null  and phone != ''"> and phone like concat(concat('%', #{phone}), '%')</if>
+            <if test="mobilPhone != null  and mobilPhone != ''"> and mobil_phone like concat(concat('%', #{mobilPhone}), '%')</if>
+            <if test="addTime != null  and addTime != ''"> and add_time = #{addTime}</if>
+            <if test="invalipationMark != null  and invalipationMark != ''"> and invalipation_mark = #{invalipationMark}</if>
+            <if test="orgName != null  and orgName != ''"> and org_name like concat(concat('%', #{orgName}), '%')</if>
+            <if test="roleName != null  and roleName != ''"> and role_name like concat(concat('%', #{roleName}), '%')</if>
+        </where>
+    </select>
+
+    <select id="selectOgSysEmergencyphoneById" parameterType="String" resultMap="OgSysEmergencyphoneResult">
+        <include refid="selectOgSysEmergencyphoneVo"/>
+        where em_id = #{emId}
+    </select>
+
+    <insert id="importEmergencyphone" parameterType="ArrayList" useGeneratedKeys="false">
+        insert into og_sys_emergencyphone(
+        em_id,
+        sys_id,
+        sys_name,
+        pname,
+        phone,
+        mobil_phone,
+        add_time,
+        invalipation_mark,
+        org_name,
+        role_name,
+        update_person)
+        SELECT A.* FROM (
+        <foreach collection="list" item="item" index="index" separator="UNION">
+            SELECT #{item.emId,jdbcType = VARCHAR},
+            #{item.sysId,jdbcType = VARCHAR},
+            #{item.sysName,jdbcType = VARCHAR},
+            #{item.pname,jdbcType = VARCHAR},
+            #{item.phone,jdbcType = VARCHAR},
+            #{item.mobilPhone,jdbcType = VARCHAR},
+            #{item.addTime,jdbcType = VARCHAR},
+            #{item.invalipationMark,jdbcType = VARCHAR},
+            #{item.orgName,jdbcType = VARCHAR},
+            #{item.roleName,jdbcType = VARCHAR},
+            #{item.updatePerson,jdbcType = VARCHAR}
+            FROM DUAL
+        </foreach>
+        ) A
+    </insert>
+
+    <insert id="insertOgSysEmergencyphone" parameterType="OgSysEmergencyphone">
+        insert into og_sys_emergencyphone
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="emId != null  and emId != ''">em_id,</if>
+            <if test="sysId != null  and sysId != ''">sys_id,</if>
+            <if test="sysName != null  and sysName != ''">sys_name,</if>
+            <if test="pid != null  and pid != ''">pid,</if>
+            <if test="pname != null  and pname != ''">pname,</if>
+            <if test="phone != null  and phone != ''">phone,</if>
+            <if test="mobilPhone != null  and mobilPhone != ''">mobil_phone,</if>
+            <if test="addTime != null  and addTime != ''">add_time,</if>
+            <if test="updateTime != null  and updateTime != ''">update_time,</if>
+            <if test="invalipationMark != null  and invalipationMark != ''">invalipation_mark,</if>
+            <if test="orgName != null  and orgName != ''">org_name,</if>
+            <if test="roleName != null  and roleName != ''">role_name,</if>
+            <if test="updatePerson != null  and updatePerson != ''">update_person</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="emId != null  and emId != ''">#{emId},</if>
+            <if test="sysId != null  and sysId != ''">#{sysId},</if>
+            <if test="sysName != null  and sysName != ''">#{sysName},</if>
+            <if test="pid != null  and pid != ''">#{pid},</if>
+            <if test="pname != null  and pname != ''">#{pname},</if>
+            <if test="phone != null  and phone != ''">#{phone},</if>
+            <if test="mobilPhone != null  and mobilPhone != ''">#{mobilPhone},</if>
+            <if test="addTime != null  and addTime != ''">#{addTime},</if>
+            <if test="updateTime != null  and updateTime != ''">#{updateTime},</if>
+            <if test="invalipationMark != null  and invalipationMark != ''">#{invalipationMark},</if>
+            <if test="orgName != null  and orgName != ''">#{orgName},</if>
+            <if test="roleName != null  and roleName != ''">#{roleName},</if>
+            <if test="updatePerson != null  and updatePerson != ''">#{updatePerson}</if>
+        </trim>
+    </insert>
+
+    <update id="updateOgSysEmergencyphone" parameterType="OgSysEmergencyphone">
+        update og_sys_emergencyphone
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="sysId != null  and sysId != ''">sys_id = #{sysId},</if>
+            <if test="sysName != null  and sysName != ''">sys_name = #{sysName},</if>
+            <if test="pid != null  and pid != ''">pid = #{pid},</if>
+            pname = #{pname},
+            phone = #{phone},
+            mobil_phone = #{mobilPhone},
+            org_name = #{orgName},
+            role_name = #{roleName},
+            <if test="addTime != null  and addTime != ''">add_time = #{addTime},</if>
+            <if test="editTime != null  and editTime != ''">update_time = #{editTime},</if>
+            <if test="invalipationMark != null  and invalipationMark != ''">invalipation_mark = #{invalipationMark},</if>
+            <if test="updatePerson != null  and updatePerson != ''">update_person = #{updatePerson}</if>
+        </trim>
+        where em_id = #{emId}
+    </update>
+
+    <delete id="deleteOgSysEmergencyphoneById" parameterType="String">
+        delete from og_sys_emergencyphone where em_id = #{emId}
+    </delete>
+
+    <delete id="deleteOgSysEmergencyphoneByIds" parameterType="String">
+        delete from og_sys_emergencyphone where em_id in
+        <foreach item="emId" collection="array" open="(" separator="," close=")">
+            #{emId}
+        </foreach>
+    </delete>
+
+    <select id="selectOgSysTreeForEmergencyPhone" parameterType="OgSys" resultMap="OgSysResult">
+        SELECT
+            o.sysid,
+            o.orgid,
+            o.code,
+            o.caption,
+            o.memo,
+            o.invalidation_mark,
+            o.isexamination,
+            o.upgrade_time,
+            o.dept,
+            o.pid,
+            o.businessid,
+            o.is_key_sys,
+            o.sys_type,
+            o.is_out_channel
+        FROM
+            og_sys o
+        WHERE
+            o.SYSID IN (SELECT o.sysid FROM OG_GROUP o WHERE o.INVALIDATION_MARK = '1')
+    </select>
+
+    <select id="ifGroupLeader" parameterType="OgSysEmergencyphone" resultType="java.lang.String">
+        SELECT
+            gposition
+        FROM
+            OG_GROUP_PERSON
+        WHERE
+            pid = #{params.pId}
+        AND groupid IN (
+            SELECT
+                groupid
+            FROM
+                OG_GROUP
+            WHERE
+                sysid = #{params.sysId}
+        )
+    </select>
+</mapper>

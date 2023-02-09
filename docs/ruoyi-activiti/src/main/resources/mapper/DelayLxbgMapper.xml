@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.activiti.mapper.DelayLxbgMapper">
+
+	<resultMap type="SmBizLxbgapply" id="SmBizLxbgapplyResult">
+		<result property="id"    column="id"    />
+		<result property="schedulingId"    column="scheduling_id"    />
+		<result property="createId"    column="create_id"    />
+		<result property="reason"    column="reason"    />
+		<result property="createTime"    column="create_time"    />
+		<result property="releaseTime"    column="release_time"    />
+		<result property="checkId"    column="check_id"    />
+		<result property="appType"    column="app_type"    />
+		<result property="ctorChecktext"    column="ctor_checktext"    />
+		<result property="jhChecktext"    column="jh_checktext"    />
+	</resultMap>
+
+	<sql id="selectSmBizLxbgapplyVo">
+        select id, scheduling_id, create_id, reason, create_time, release_time, check_id, app_type, ctor_checktext, jh_checktext from sm_biz_lxbgapply
+	</sql>
+
+
+	<insert id="insertDelayLxbg" parameterType="SmBizLxbgapply">
+		insert into sm_biz_lxbgapply
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null  and id != ''">id,</if>
+			<if test="schedulingId != null  and schedulingId != ''">scheduling_id,</if>
+			<if test="createId != null  and createId != ''">create_id,</if>
+			<if test="reason != null  and reason != ''">reason,</if>
+			<if test="createTime != null  and createTime != ''">create_time,</if>
+			<if test="releaseTime != null  and releaseTime != ''">release_time,</if>
+			<if test="checkId != null  and checkId != ''">check_id,</if>
+			<if test="appType != null  and appType != ''">app_type,</if>
+			<if test="ctorChecktext != null  and ctorChecktext != ''">ctor_checktext,</if>
+			<if test="jhChecktext != null  and jhChecktext != ''">jh_checktext,</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null  and id != ''">#{id},</if>
+			<if test="schedulingId != null and schedulingId != ''">#{schedulingId},</if>
+			<if test="createId != null  and createId != ''">#{createId},</if>
+			<if test="reason != null  and reason != ''">#{reason},</if>
+			<if test="createTime != null  and createTime != ''">#{createTime},</if>
+			<if test="releaseTime != null  and releaseTime != ''">#{releaseTime},</if>
+			<if test="checkId != null  and checkId != ''">#{checkId},</if>
+			<if test="appType != null  and appType != ''">#{appType},</if>
+			<if test="ctorChecktext != null  and ctorChecktext != ''">#{ctorChecktext},</if>
+			<if test="jhChecktext != null  and jhChecktext != ''">#{jhChecktext},</if>
+		</trim>
+	</insert>
+
+	<select id="selectByScId" parameterType="SmBizLxbgapply" resultMap="SmBizLxbgapplyResult">
+		<include refid="selectSmBizLxbgapplyVo"></include>
+		<where>
+			<if test="schedulingId != null  and schedulingId != ''"> and scheduling_id = #{schedulingId}</if>
+		</where>
+	</select>
+
+    <select id="selectSmBizLxbgapplyList" parameterType="SmBizLxbgapply" resultMap="SmBizLxbgapplyResult">
+		<include refid="selectSmBizLxbgapplyVo"/>
+		<where>
+			<if test="schedulingId != null  and schedulingId != ''"> and scheduling_id = #{schedulingId}</if>
+			<if test="createId != null  and createId != ''"> and create_id = #{createId}</if>
+			<if test="reason != null  and reason != ''"> and reason = #{reason}</if>
+			<if test="releaseTime != null  and releaseTime != ''"> and release_time = #{releaseTime}</if>
+			<if test="checkId != null  and checkId != ''"> and check_id = #{checkId}</if>
+			<if test="appType != null  and appType != ''"> and app_type = #{appType}</if>
+			<if test="ctorChecktext != null  and ctorChecktext != ''"> and ctor_checktext = #{ctorChecktext}</if>
+			<if test="jhChecktext != null  and jhChecktext != ''"> and jh_checktext = #{jhChecktext}</if>
+		</where>
+	</select>
+
+    <update id="updateSmBizLxbgapply" parameterType="SmBizLxbgapply">
+		update sm_biz_lxbgapply
+		<trim prefix="SET" suffixOverrides=",">
+			<if test="schedulingId != null  and schedulingId != ''">scheduling_id = #{schedulingId},</if>
+			<if test="createId != null  and createId != ''">create_id = #{createId},</if>
+			<if test="reason != null  and reason != ''">reason = #{reason},</if>
+			<if test="createTime != null  and createTime != ''">create_time = #{createTime},</if>
+			<if test="releaseTime != null  and releaseTime != ''">release_time = #{releaseTime},</if>
+			<if test="checkId != null  and checkId != ''">check_id = #{checkId},</if>
+			<if test="appType != null  and appType != ''">app_type = #{appType},</if>
+			<if test="ctorChecktext != null  and ctorChecktext != ''">ctor_checktext = #{ctorChecktext},</if>
+			<if test="jhChecktext != null  and jhChecktext != ''">jh_checktext = #{jhChecktext},</if>
+		</trim>
+		where id = #{id}
+	</update>
+
+
+
+</mapper>

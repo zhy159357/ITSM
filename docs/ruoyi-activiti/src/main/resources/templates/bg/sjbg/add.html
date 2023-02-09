@@ -1,0 +1,1331 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:include="include :: header('新增数据事件单')"/>
+    <th:block th:include="include :: summernote-css"/>
+    <th:block th:include="include :: datetimepicker-css"/>
+    <th:block th:include="include :: select2-css" />
+
+    <style>
+        .form-control[disabled], fieldset[disabled] .form-control {
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+<div class="main-content">
+    <form class="form-horizontal" id="form-sjbg-add">
+        <input type="hidden" id="showGroupId" th:value="${fmBiz.groupId}" th:if="${flag}==1">
+        <input type="hidden" id="fmBizStatus" th:value="${fmBiz.currentState}" th:if="${flag}==1">
+        <input type="hidden" id="changeSingleId" th:value="${changeSingleId}" name="changeSingleId"/>
+        <input type="hidden" id="isHasGroup">
+        <input type="hidden" id="flag" name="flag">
+        <input type="hidden" id="changeSingleStatus" name="changeSingleStatus">
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-heading" style="background-color: #3c8dbc" data-toggle="collapse"
+                     data-target="#collapse1">
+                    <h4 class="panel-title">
+                        基本信息
+                    </h4>
+                </div>
+                <div id="collapse1" class="panel-collapse in">
+                    <div class="panel-body">
+                        <div class="row ">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label  text-right">变更单单号：</label>
+                                    <div class="col-sm-8">
+                                        <input name="changeCode" class="form-control" type="text" readonly
+                                               th:value="*{sjbgNum}" id="changeCode">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label  text-right is-required">变更风险等级：</label>
+                                    <div class="col-sm-8">
+                                        <select class="form-control" name="importantLev" id="importantLev"
+                                                th:with="type=${@dict.getParaType('ci_urg_lev')}">
+                                            <option value=""></option>
+                                            <option th:each="dict : ${type}" th:text="${dict.valueDetail}"
+                                                    th:value="${dict.value}"></option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row " th:if="${flag}==1">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label  text-right">事件单编号：</label>
+                                    <div class="col-sm-8">
+                                        <input name="fmNo" class="form-control" type="text" readonly
+                                               th:value="${fmBiz.faultNo}" id="faultNo">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label  text-right">变更单创建类型：</label>
+                                    <div class="col-sm-8">
+                                        <select class="form-control" name="changeSingleType" id="changeSingleType"
+                                                th:with="type=${@dict.getParaType('cmsj_type')}" disabled>
+                                            <option value=""></option>
+                                            <option th:selected="${dict.value eq flag}" th:each="dict : ${type}"
+                                                    th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label  text-right is-required">数据变更类别：</label>
+                                    <div class="col-sm-8">
+                                        <select class="form-control" name="changeCategoryId" id="changeCategoryId"
+                                                th:with="type=${@dict.getParaType('cm_CateGory')}">
+                                            <option value=""></option>
+                                            <option th:each="dict : ${type}" th:text="${dict.valueDetail}"
+                                                    th:value="${dict.value}"></option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label  text-right is-required">变更条数：</label>
+                                    <div class="col-sm-8">
+                                        <input name="changeNum" class="form-control" type="text" id="changeNum">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row ">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label  text-right is-required">变更起因：</label>
+                                    <div class="col-sm-8">
+                                        <select class="form-control" name="changeReason" id="changeReason"
+                                                th:with="type=${@dict.getParaType('SJChangReason')}">
+                                            <option value=""></option>
+                                            <option th:each="dict : ${type}" th:text="${dict.valueDetail}"
+                                                    th:value="${dict.value}"></option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label  text-right is-required">变更省份：</label>
+                                    <div class="col-sm-8">
+                                        <div id="changeOrgtype" class="xm-select-normal"
+                                             style=" display:inline;height: 31px;"></div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row ">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label  text-right is-required">计划变更开始时间：</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control" name="expectStartTime"
+                                               id="expectStartTime"  readonly style="background: #ffffff;"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label  text-right is-required">计划变更结束时间：</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control" name="expectEndTime" id="expectEndTime"
+                                               readonly style="background-color: #ffffff"/>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="row ">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label  text-right is-required">所属系统：</label>
+                                    <div class="col-sm-8">
+                                        <input type="hidden" class="form-control" name="sysId" id="sysId"
+                                               th:value="${fmBiz.sysid}" th:if="${flag}==1"/>
+                                        <input type="hidden" class="form-control" name="sysId" id="sysId"
+                                               th:if="${flag}==0"/>
+                                        <input type="text" class="form-control" id="relateSystemName"
+                                               onclick="selectAppSys()" readonly style="background-color: #ffffff"
+                                               th:value="${fmBiz.ogSys.caption}" th:if="${flag}==1"/>
+                                        <input type="text" class="form-control" id="relateSystemName"
+                                               onclick="selectAppSys()" readonly style="background-color: #ffffff"
+                                               th:if="${flag}==0"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label  text-right is-required">所属工作组：</label>
+                                    <div class="col-sm-8">
+                                        <div onclick="isSelectSystem()">
+                                            <select class="form-control" name="groupId"  id="groupId"
+                                                    readonly="" onchange="changeGroup()" th:if="${flag}==1">
+                                            </select>
+
+                                            <select class="form-control" name="groupId"  id="groupId"
+                                                    onchange="changeGroup()" th:if="${flag}==0">
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label  text-right is-required">是否转运维：</label>
+                                    <div class="col-sm-8">
+                                        <div onclick="isOperationOPS()">
+                                            <select class="form-control" onchange="isOperation()" id="statusFlag"
+                                                    name="isChangeOPS"  th:if="${flag}==0">
+                                            </select>
+
+                                            <select class="form-control" onchange="isOperation()" id="statusFlag"
+                                                    name="isChangeOPS"
+                                                    th:with="type=${@dict.getParaType('isChangeOPS')}"
+                                                    th:if="${flag}==1">
+                                                <option value=""></option>
+                                                <option th:each="dict : ${type}" th:text="${dict.valueDetail}"
+                                                        th:value="${dict.value}"></option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label  text-right is-required">业务审核：</label>
+                                    <div class="col-sm-8">
+                                        <div onclick="selectCheckManager()">
+                                            <select class="form-control"  name="checkManager" id="checkManager">
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row ">
+
+                            <div class="col-md-6">
+                                <div class="form-group" th:if="${flag}==1">
+                                    <label class="col-sm-4 control-label  text-right">省处理人：</label>
+                                    <div class="col-sm-8">
+
+                                        <input type="hidden" name="procheckManager" id="procheckManager" th:value="${fmBiz.createId}"/>
+                                        <input type="text" id="showProcheckManager" name="showProcheckManager"
+                                               readonly th:value="${fmBiz.createName}" class="form-control"/>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label  text-right is-required">方案提出人：</label>
+                                    <div class="col-sm-8">
+                                        <select class="form-control"  name="technologyAuditId" id="technologyAuditId">
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="row ">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label  text-right">关闭人：</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" name="changeAppliant" class="form-control"
+                                               th:value="${changeApplicant}" readonly/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6" th:if="${flag}==0">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label  text-right">变更单创建类型：</label>
+                                    <div class="col-sm-8">
+                                        <select class="form-control" name="changeSingleType"
+                                                th:with="type=${@dict.getParaType('cmsj_type')}" disabled
+                                                id="changeSingleType">
+                                            <option value=""></option>
+                                            <option th:selected="${dict.value eq flag}" th:each="dict : ${type}"
+                                                    th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label  text-right is-required">处长审核：</label>
+                                    <div class="col-sm-8">
+                                        <div onclick="selectChiefManager()">
+                                            <select class="form-control" name="chiefyManager" id="chiefyManager" >
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label  text-right is-required">变更实施人：</label>
+                                    <div class="col-sm-8">
+                                        <div onclick="selectImplementor()">
+                                            <select class="form-control" name="implementor" id="implementor" >
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row " th:if="${flag}==1">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label  text-right">事件单标题：</label>
+                                    <div class="col-sm-10">
+                                        <input type="text" class="form-control" name="fmTitle" id="fmTitle" readonly
+                                               th:value="${fmBiz.faultDecriptSummary}"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading" style="background-color: #3c8dbc;" data-toggle="collapse"
+                     data-target="#collapse2">
+
+                    <h4 class="panel-title">
+                        变更单详情
+                    </h4>
+                </div>
+                <div id="collapse2" class="panel-collapse in">
+
+                    <div class="panel-body">
+                        <div class="row form-group">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label  text-right is-required">变更主题：</label>
+                                    <div class="col-sm-10">
+                                        <input th:if="${flag}==0" name="changeSingleName" id="changeSingleName" class="form-control" type="text" >
+                                        <input  th:if="${flag}==1" name="changeSingleName" id="changeSingleName" class="form-control"
+                                                th:value="${fmBiz.faultDecriptSummary}" type="text" >
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row form-group">
+                            <div class="col-md-12">
+                                <label class="col-sm-2 control-label  text-right is-required">变更原因：</label>
+                                <div class="col-sm-10">
+                                    <textarea class="form-control" rows="5"  name="changeCauseText" maxlength="1000" placeholder="【变更原因】最大长度不能超过1000"
+                                              id="changeCauseText"></textarea>
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="row form-group">
+                            <div class="col-md-12">
+                                <label class="col-sm-2 control-label  text-right is-required">变更内容：</label>
+                                <div class="col-sm-10">
+                                    <textarea th:if="${flag}==0" class="form-control" rows="5"  name="changeDetails" id="changeDetails" maxlength="2000" placeholder="【变更内容】最大长度不能超过2000"></textarea>
+                                    <textarea th:if="${flag}==1" class="form-control" rows="5"  name="changeDetails" maxlength="2000"
+                                              th:utext="${fmBiz.faultDecriptDetail}" id="changeDetails"></textarea>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- <div class="row" style="margin:15px 0px;text-align: center">
+                 <div class="col-md-12">
+                     <div class="col-sm-10">
+                         <span style="color: #ff0000;">数据变更自动化方式：</span>
+                         <input type="radio" name="autoType" id="autoOne" value="0"> 场景变更
+                         <input type="radio" name="autoType" id="autoTwo" value="1"> sql变更
+                     </div>
+                 </div>
+             </div>-->
+            <!--<div class="panel panel-default">
+                <div class="panel-body">
+                    <ul class="nav nav-tabs" role="tablist">
+                        <li role="presentation" class="active"><a href="#auto" aria-controls="auto" role="tab"
+                                                                  data-toggle="tab">场景服务</a></li>
+                    </ul>
+                    <div class="tab-content">
+                        <div role="tabpanel" class="tab-pane active" id="auto">
+                            <div class="btn-group-sm" id="toolbarAuto" role="tab" style="margin: 15px 0px;">
+                                <a class="btn btn-success" type="button" onclick="addAutoService()">
+                                    <i class="fa fa-upload"></i> 添加服务
+                                </a>
+
+                                <a class="btn btn-danger multiple disabled" onclick="remove()">
+                                    <i class="fa fa-remove"></i> 删除服务
+                                </a>
+                            </div>
+                            <div class="col-sm-12 select-table table-striped">
+                                <table id="auto-table"></table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <ul class="nav nav-tabs" role="tablist">
+                        <li role="presentation" class="active"><a href="#params" aria-controls="params" role="tab"
+                                                                  data-toggle="tab">场景服务参数</a></li>
+                    </ul>
+                    <div class="tab-content">
+                        <div role="tabpanel" class="tab-pane active" id="params">
+                            <div class="col-sm-12 select-table table-striped">
+                                <table id="params-table"></table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <ul class="nav nav-tabs" role="tablist">
+                        <li role="presentation" class="active"><a href="#datasource" aria-controls="datasource" role="tab"
+                                                                  data-toggle="datasource">数据源</a></li>
+                    </ul>
+                    <div class="tab-content">
+                        <div role="tabpanel" class="tab-pane active" id="datasource">
+                            <div class="btn-group-sm" id="toolbarDataSource" role="tab" style="margin: 15px 0px;">
+                                <a class="btn btn-success" type="button" onclick="upload()">
+                                    <i class="fa fa-upload"></i> 添加数据源
+                                </a>
+
+                                <a class="btn btn-danger multiple disabled" onclick="remove()">
+                                    <i class="fa fa-remove"></i> 删除数据源
+                                </a>
+                            </div>
+                            <div class="col-sm-12 select-table table-striped">
+                                <table id="datasource-table"></table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>-->
+
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <ul class="nav nav-tabs" role="tablist">
+                        <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab"
+                                                                  data-toggle="tab">附件</a></li>
+                    </ul>
+                    <div class="tab-content">
+                        <div role="tabpanel" class="tab-pane active" id="home">
+                            <div class="btn-group-sm" id="toolbar" role="tab" style="margin: 15px 0px;">
+                                <a class="btn btn-success" type="button" onclick="upload()">
+                                    <i class="fa fa-upload"></i> 添加附件
+                                </a>
+                                <a class="btn btn-warning multiple disabled" onclick="downloadFile()">
+                                    <i class="fa fa-download"></i> 下载附件
+                                </a>
+                                <a class="btn btn-danger multiple disabled" onclick="remove()">
+                                    <i class="fa fa-remove"></i> 删除附件
+                                </a>
+                            </div>
+                            <div class="col-sm-12 select-table table-striped">
+                                <table id="file-table"></table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-offset-5 col-sm-10">
+                <button type="button" class="btn btn-sm btn-primary" onclick="submitHandler(this)" id="commit"><i
+                        class="fa fa-check"></i>提交
+                </button>&nbsp;&nbsp;
+                <button type="button" class="btn btn-sm btn-primary" onclick="submitHandler(this)" id="temporary"><i
+                        class="fa fa-check"></i>暂存
+                </button>&nbsp;&nbsp;
+                <button type="button" class="btn btn-sm btn-danger" onclick="closeItem()"><i
+                        class="fa fa-window-close"></i>关 闭
+                </button>
+            </div>
+        </div>
+    </form>
+
+</div>
+<th:block th:include="include :: footer"/>
+<th:block th:include="include :: summernote-js"/>
+<th:block th:include="include :: datetimepicker-js"/>
+<th:block th:include="include :: select2-js" />
+<script th:inline="javascript">
+
+
+    var flag = [[${flag}]];
+    var prefix = ctx + "bg/sjbg"
+    var work_prefix = ctx + "system/work/selectGroupBySysId";
+    var prefix_attachment = ctx + "pub/attachment";
+    var prefix_delete = ctx + "bg/sjbg";
+    var changeOrgtype = '';
+    $(function () {
+
+        var options = {
+            url: prefix_attachment + "/list",
+            id: "file-table",
+            createUrl: prefix_attachment + "/add",
+            updateUrl: prefix_attachment + "/edit/{id}",
+            removeUrl: prefix_attachment + "/remove",
+            detailUrl: prefix_attachment + "/edit/{id}",
+            sortName: "fileTime",
+            sortOrder: "desc",
+            singleSelect: true,
+            clickToSelect: true,
+            queryParams: queryParams,
+            modalName: "附件列表",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'atId',
+                    title: '附件ID',
+                    visible: false
+                },
+                {
+                    field: 'person.pId',
+                    title: '上传人员Id',
+                    visible: false
+                },
+                {
+                    field: 'fileName',
+                    title: '文件名称'
+                },
+                {
+                    field: 'person.pName',
+                    title: '上传人'
+                },
+                {
+                    field: 'size',
+                    title: '文件大小'
+                },
+                {
+                    field: 'memo',
+                    title: '文件描述'
+                },
+                {
+                    field: 'fileTime',
+                    title: '上传时间',
+                    formatter: function (value, row, index) {
+                        var uploadTime = '';
+                        if (value != '' && value != null) {
+                            var pattern = /(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/;
+                            uploadTime = value.replace(pattern, '$1-$2-$3 $4:$5:$6');
+                        }
+                        return uploadTime;
+                    }
+                }]
+        };
+        $.table.init(options);
+
+        /* var options_auto = {
+             url: prefix_attachment + "/list",
+             id: "file-table",
+             createUrl: prefix_attachment + "/add",
+             updateUrl: prefix_attachment + "/edit/{id}",
+             removeUrl: prefix_attachment + "/remove",
+             detailUrl: prefix_attachment + "/edit/{id}",
+             sortName: "fileTime",
+             sortOrder: "desc",
+             singleSelect: true,
+             clickToSelect: true,
+             queryParams: queryParams,
+             modalName: "服务列表",
+             columns: [{
+                 checkbox: true
+             },
+                 {
+                     field: 'scriptUuid',
+                     title: '服务Id',
+                     visible: false
+                 },
+                 {
+                     field: 'serviceName',
+                     title: '服务名称',
+                 },
+                 {
+                     field: 'bussName',
+                     title: '一级分类'
+                 },
+                 {
+                     field: 'bussTypeName',
+                     title: '二级分类'
+                 },
+                 {
+                     field: 'threeTypeName',
+                     title: '三级分类'
+                 }]
+         };
+         $.table.init(options);
+
+         var options = {
+             url: prefix_attachment + "/list",
+             id: "file-table",
+             createUrl: prefix_attachment + "/add",
+             updateUrl: prefix_attachment + "/edit/{id}",
+             removeUrl: prefix_attachment + "/remove",
+             detailUrl: prefix_attachment + "/edit/{id}",
+             sortName: "fileTime",
+             sortOrder: "desc",
+             singleSelect: true,
+             clickToSelect: true,
+             queryParams: queryParams,
+             modalName: "附件列表",
+             columns: [{
+                 checkbox: true
+             },
+                 {
+                     field: 'atId',
+                     title: '附件ID',
+                     visible: false
+                 },
+                 {
+                     field: 'person.pId',
+                     title: '上传人员Id',
+                     visible: false
+                 },
+                 {
+                     field: 'fileName',
+                     title: '文件名称'
+                 },
+                 {
+                     field: 'person.pName',
+                     title: '上传人'
+                 },
+                 {
+                     field: 'size',
+                     title: '文件大小'
+                 },
+                 {
+                     field: 'memo',
+                     title: '文件描述'
+                 },
+                 {
+                     field: 'fileTime',
+                     title: '上传时间',
+                     formatter: function (value, row, index) {
+                         var uploadTime = '';
+                         if (value != '' && value != null) {
+                             var pattern = /(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/;
+                             uploadTime = value.replace(pattern, '$1-$2-$3 $4:$5:$6');
+                         }
+                         return uploadTime;
+                     }
+                 }]
+         };
+         $.table.init(options);*/
+
+        //计划变更开始时间
+        $('#expectStartTime').datetimepicker({
+            format: 'yyyy-mm-dd hh:ii:ss',
+            autoclose:true
+        });
+        //计划变更结束时间
+        $('#expectEndTime').datetimepicker({
+            format: 'yyyy-mm-dd hh:ii:ss',
+            autoclose:true
+        });
+        //加载变更省份
+        var url = prefix + "/getOneAndTwoLvOrg";
+        $.get(url, function (result) {
+            var arr = [];
+            $.each(result.data, function (index, item) {
+                var obj = {};
+                obj.name = item.orgName;
+                obj.value = item.orgId;
+                arr.push(obj);
+
+            })
+
+            layui.config({
+                base: ctx + 'ajax/libs/layui/',
+            }).extend({
+                xmSelect: 'xm-select'
+            }).use(['xmSelect'], function () {
+                var xmSelect = layui.xmSelect;
+
+                //渲染多选
+                changeOrgtype = xmSelect.render({
+                    el: '#changeOrgtype',
+                    data: arr,
+                    toolbar: {
+                        show: true,
+                    },
+                    theme: {
+                        color: '#3c8dbc',
+                    },
+                    name: 'changeOrgtype',
+                    autoRow: true,
+                    filterable: true,
+                    direction: 'down',
+                    paging: true,
+                    pageSize: 5,
+                    layVerify: 'required',
+                    layVerType: 'msg'
+                })
+
+
+            });
+
+            var technologyAuditIdParam = {
+                rId: '2300',
+                pflag: '1'
+            }
+
+
+            //加载方案提交人
+            $.post(ctx+'public/selPersonByOrgOrOrgLvAndRole', technologyAuditIdParam, function (responseResult) {
+                $('#technologyAuditId').html('');
+                var str = '';
+                str += '<option value=""></option>';
+                $.each(responseResult.data, function (index, element) {
+                    str += '<option value="' + element.pId + '">' + element.pName + '</option>';
+                })
+                $('#technologyAuditId').html(str);
+            }, "json");
+
+            if (flag == 1) {
+                var showGroupId = $('#showGroupId').val();
+                //加载对应的工作组
+                //获取当前应用系统的工作组
+                $.post(work_prefix, {'sysId': $('#sysId').val()}, function (result) {
+                    if (result.data.length == 0) {
+                        $('#groupId').html('')
+                        $('#groupId').attr('readonly', true)
+                        $('#isHasGroup').val('0')
+                    } else {
+                        $('#groupId').removeAttr('readonly')
+                        var opts = '<option value=""></option>';
+                        $.each(result.data, function (index, item) {
+                            if (showGroupId == item.groupId) {
+                                opts += '<option selected="selected" value="' + item.groupId + '">' + item.grpName + '</option>';
+                            } else {
+                                opts += '<option value="' + item.groupId + '">' + item.grpName + '</option>';
+                            }
+
+                        })
+                        $('#groupId').html(opts)
+                        $('#isHasGroup').val('1')
+                    }
+
+                }, 'json');
+
+                //加载当前工作组对应的业务人员
+                var checkManagerParam = {
+                    rId: '2201',
+                    groupId: showGroupId
+                }
+                //加载业务审核人根据选择对应的组信息
+                $.post(ctx+'system/ogperson/selectPersonByGroupIdAndRoleId', checkManagerParam, function (responseResult) {
+
+                    $('#checkManager').html('');
+                    var str = '';
+                    str += '<option value=""></option>';
+                    $.each(responseResult.data, function (index, element) {
+                        str += '<option value="' + element.pId + '">' + element.pName + '</option>';
+                    })
+                    $('#checkManager').html(str);
+                }, "json");
+
+            }
+        });
+    });
+
+    function queryParams(params) {
+        var search = $.table.queryParams(params);
+        search.ownerId = $("#changeSingleId").val();
+        return search;
+    }
+
+    function submitHandler(elementObj) {
+        //判断当前点击的是暂存还是提交 暂存为待提交 提交为待审核
+        if ($(elementObj).attr("id") == 'temporary') {
+            var errorInfo = '';
+            //判断变更条数的长度
+            var changeNum = $('#changeNum').val();
+            if(getValueLen(changeNum)>6){
+                errorInfo += '【变更条数】最大长度不能大于6 ';
+            }
+
+            //变更主题
+            var changeSingleName = $('#changeSingleName').val();
+            if(getValueLen(changeSingleName)>60){
+                errorInfo += '【变更主题】最大长度不能超过60 ';
+            }
+            var changeCauseText = $('#changeCauseText').val();
+            //变更原因
+            if(getValueLen(changeCauseText)>1000){
+                errorInfo += '【变更原因】最大长度不能超过1000 ';
+            }
+            //变更内容
+            var changeDetails = $('#changeDetails').val();
+            if(getValueLen(changeDetails)>2000){
+                errorInfo += '【变更内容】最大长度不能超过2000 ';
+            }
+            if(isEmpty(errorInfo)){
+                $("#changeSingleStatus").val('01');
+                $('#flag').val('temporary')
+                $('#changeSingleType').removeAttr('disabled')
+                $.operate.saveTab(prefix + "/add", $('#form-sjbg-add').serialize());
+            }else{
+                $.modal.alertError(errorInfo);
+            }
+        } else {
+            var errorInfo = '';
+            //变更风险等级
+            var importantLev = $('#importantLev').val();
+            if(isEmpty(importantLev)){
+                errorInfo += '【变更风险等级】不能为空 ';
+            }
+
+            //数据变更类别
+            var changeCategoryId = $('#changeCategoryId').val();
+            if(isEmpty(changeCategoryId)){
+                errorInfo += '【数据变更类别】不能为空 ';
+            }
+
+            //判断变更条数必须为正整数
+            var changeNum = $('#changeNum').val();
+            if(isEmpty(changeNum)){
+                errorInfo += '【变更条数】不能为空 ';
+            }else{
+                if(getValueLen(changeNum)>6){
+                    errorInfo += '【变更条数】最大长度不能大于6 ';
+                }else{
+                    if (!(/(^[1-9]\d*$)/.test(changeNum))) {
+                        errorInfo += '【变更条数】必须为正整数 ';
+                    }
+                }
+
+            }
+
+            //变更起因
+            var changeReason = $('#changeReason').val();
+            if(isEmpty(changeReason)){
+                errorInfo += '【变更起因】不能为空 ';
+            }
+
+            //变更省份
+            var str = changeOrgtype.getValue();
+            if (str.length == 0) {
+                errorInfo += '【变更省份】不能为空 ';
+            }
+
+            //当前系统时间
+            var curDate = new Date().getTime()
+            //计划变更开始时间
+            var expectStartTime = $('#expectStartTime').val();
+            var startDate = new Date(expectStartTime).getTime();
+            if(isEmpty(expectStartTime)){
+                errorInfo += '【计划变更开始时间】不能为空 ';
+            }else{
+                if (startDate < curDate) {
+                    errorInfo += '计划变更开始时间必须大于当前日期 ';
+                }
+            }
+
+            //计划变更结束时间
+            var expectEndTime = $('#expectEndTime').val();
+            var endDate = new Date(expectEndTime).getTime();
+            if (startDate > endDate) {
+                errorInfo += '计划变更开始时间必须小于计划变更结束时间 ';
+            }
+            //所属系统
+            var sysId = $('#sysId').val();
+            if(isEmpty(sysId)){
+                errorInfo += '【所属系统】不能为空 ';
+            }
+            //所属工作组
+            var groupId = $('#groupId').val();
+            if(isEmpty(groupId)){
+                errorInfo += '【所属工作组】不能为空 ';
+            }
+            //是否转运维
+            var statusFlag = $('#statusFlag').val();
+            if(isEmpty(statusFlag)){
+                errorInfo += '【是否转运维】不能为空 ';
+            }
+            //业务审核
+            var checkManager = $('#checkManager').val();
+            if(isEmpty(checkManager)){
+                errorInfo += '【业务审核】不能为空 ';
+            }
+            //方案提出人
+            var technologyAuditId = $('#technologyAuditId').val();
+            if(isEmpty(technologyAuditId)){
+                errorInfo += '【方案提出人】不能为空 ';
+            }
+            //处长审核
+            var chiefyManager = $('#chiefyManager').val();
+            if(isEmpty(chiefyManager)){
+                errorInfo += '【处长审核】不能为空 ';
+            }
+            //变更实施人
+            var implementor = $('#implementor').val();
+            if(isEmpty(implementor)){
+                errorInfo += '【变更实施人】不能为空 ';
+            }
+
+            //变更主题
+            var changeSingleName = $('#changeSingleName').val();
+            if(isEmpty(changeSingleName)){
+                errorInfo += '【变更主题】不能为空 ';
+            }else{
+                if(getValueLen(changeSingleName)>60){
+                    errorInfo += '【变更主题】最大长度不能超过60 ';
+                }
+            }
+
+            //变更原因
+            var changeCauseText = $('#changeCauseText').val();
+            if(isEmpty(changeCauseText)){
+                errorInfo += '【变更原因】不能为空 ';
+            }else{
+                if(getValueLen(changeCauseText)>1000){
+                    errorInfo += '【变更原因】最大长度不能超过1000 ';
+                }
+            }
+
+            //变更内容
+            var changeDetails = $('#changeDetails').val();
+            if(isEmpty(changeDetails)){
+                errorInfo += '【变更内容】不能为空 ';
+            }else{
+                if(getValueLen(changeDetails)>2000){
+                    errorInfo += '【变更内容】最大长度不能超过2000 ';
+                }
+            }
+
+            //是否进行了数据变更自动化类型的选择
+            /* var size = $("input[type='radio']:checked").size();
+             if(size==0){
+                 errorInfo += '【数据变更自动化方式】必须选择 ';
+             }else{
+                 var selVa = $("input[type='radio']:checked").val();
+                 //根据所选的类型确定是场景还是sql进行验证
+                 if(selVa=='0'){
+                     alert('场景方式');
+                     //是否进行对应应用系统的场景服务信息
+                     var rows = $('#auto-table').bootstrapTable('getData');
+                     alert(rows.length);
+                 }else{
+                     alert('sql方式');
+                     //判断是否进行sql脚本文件的上传
+
+                 }
+             }*/
+
+            //判断当前业务单的状态如何为处理中可以进行数据变更单的转换
+            var changeSingleType = $('#changeSingleType').val();
+            if(changeSingleType=='1'){
+                var fmBizStatus = $('#fmBizStatus').val();
+                if(fmBizStatus!='04'){
+                    errorInfo += '当前业务事件单不是处理中状态，无法进行数据变更单的转换 '
+                }
+            }
+
+            if(isEmpty(errorInfo)){
+                if(changeSingleType=='1'){
+                    $("#changeSingleStatus").val('14');
+                }else{
+                    $("#changeSingleStatus").val('02');
+                }
+                $('#flag').val('commit')
+                $('#changeSingleType').removeAttr('disabled')
+                $.operate.saveTab(prefix + "/add", $('#form-sjbg-add').serialize());
+            }else{
+                $.modal.alertError(errorInfo);
+            }
+        }
+    }
+
+    /**
+     * 应用系统问题
+     */
+    function selectAppSys() {
+        var prefix = ctx + "bg/sjbg";
+        var url = prefix + '/application';
+        $.modal.open('系统选择', url)
+    }
+
+    /**
+     * 是否选择了应用系统
+     */
+    function isSelectSystem() {
+        var relateSystemName = $('#relateSystemName').val()
+        if (relateSystemName == '') {
+            $.modal.alertError('请先选择所属应用系统 ')
+        } else {
+            if ($('#isHasGroup').val() == '0') {
+                $.modal.alertError('当前所属应用系统没有工作组 ')
+            }
+
+        }
+
+    }
+
+
+
+    /**
+     * 是否转运维
+     */
+    function isOperation() {
+        var statusFlag = $('#statusFlag').val();
+        if (statusFlag == '') {
+            //重置处长审核和方案实施人
+            $('#chiefyManager').html('');
+            $('#implementor').html('');
+        } else {
+
+            if (statusFlag == 1) {
+                //判断是否有工作组选中
+                var groupId = $('#groupId').val();
+                if (groupId != '' && groupId != null) {
+                    /**
+                     *加载应用处长
+                     */
+                    var chiefManagerParam = {
+                        postId: '0011'
+                    }
+                    $.post( ctx+'system/ogperson/selectPersonByPostId', chiefManagerParam, function (responseResult) {
+                        debugger
+                        $('#chiefyManager').html('');
+                        var str = '';
+                        str += '<option value=""></option>';
+                        $.each(responseResult.data, function (index, element) {
+                            str += '<option value="' + element.pId + '">' + element.pName + '</option>';
+                        })
+                        $('#chiefyManager').html(str);
+                    }, "json");
+
+                    //加载应用实施人
+                    var implementorParam = {
+                        rId: '2203',
+                        groupId: $('#groupId').val()
+                    }
+                    $.post(ctx+'system/ogperson/selectPersonByGroupIdAndRoleId', implementorParam, function (responseResult) {
+                        if (responseResult.data.length == 0) {
+                            $('#implementor').html('');
+                        } else {
+                            $('#implementor').html('');
+                            var str = '';
+                            str += '<option value=""></option>';
+                            $.each(responseResult.data, function (index, element) {
+                                str += '<option value="' + element.pId + '">' + element.pName + '</option>';
+                            })
+                            $('#implementor').html(str);
+                        }
+
+                    }, "json")
+                }
+            } else {
+                var groupId = $('#groupId').val();
+                if (groupId != '' && groupId != null) {
+                    var buildChiefManagerParam = {
+                        postId: '0016'
+                    }
+                    $.post(ctx+'system/ogperson/selectPersonByPostId', buildChiefManagerParam, function (responseResult) {
+                        $('#chiefyManager').html('');
+                        var str = '';
+                        str += '<option value=""></option>';
+                        $.each(responseResult.data, function (index, element) {
+                            str += '<option value="' + element.pId + '">' + element.pName + '</option>';
+                        })
+                        $('#chiefyManager').html(str);
+                    }, "json");
+
+                    var proposedPersonParam = {
+                        rId: '2300',
+                        pflag: '1'
+                    };
+
+                    //加载建设实施人
+                    $.post(ctx+'public/selPersonByOrgOrOrgLvAndRole', proposedPersonParam, function (responseResult) {
+                        $('#implementor').html('');
+                        var str = '';
+                        str += '<option value=""></option>';
+                        $.each(responseResult.data, function (index, element) {
+                            str += '<option value="' + element.pId + '">' + element.pName + '</option>';
+                        })
+                        $('#implementor').html(str);
+                    }, "json");
+                }
+
+            }
+        }
+
+    }
+
+
+    function isOperationOPS() {
+        var sysId = $('#sysId').val();
+        if (sysId == '' || sysId == null) {
+            $.modal.alertError('请先选择所属应用系统 ')
+            return
+        }
+
+    }
+
+    function changeGroup() {
+        var groupId = $('#groupId').val();
+
+        //判断是否转运维
+        if (groupId != '') {
+            var checkManagerParam = {
+                rId: '2201',
+                groupId: groupId
+            }
+            //加载业务审核人根据选择对应的组信息
+            $.post(ctx+'system/ogperson/selectPersonByGroupIdAndRoleId', checkManagerParam, function (responseResult) {
+                if (responseResult.data.length > 0) {
+                    $('#checkManager').html('');
+                    var str = '';
+                    str += '<option value=""></option>';
+                    $.each(responseResult.data, function (index, element) {
+                        str += '<option value="' + element.pId + '">' + element.pName + '</option>';
+                    })
+                    $('#checkManager').html(str);
+                } else {
+                    $('#checkManager').html('');
+                }
+            }, "json");
+            //判断是否选择了转运维
+            var statusFlag = $('#statusFlag').val();
+
+            //
+            if(statusFlag!='' && statusFlag!=null){
+                if (statusFlag == 1) {
+                    /**
+                     *加载应用处长
+                     */
+                    var chiefManagerParam = {
+                        postId: '0011'
+                    }
+                    $.post(ctx+'system/ogperson/selectPersonByPostId', chiefManagerParam, function (responseResult) {
+                        $('#chiefyManager').html('');
+                        var str = '';
+                        str += '<option value=""></option>';
+                        $.each(responseResult.data, function (index, element) {
+                            str += '<option value="' + element.pId + '">' + element.pName + '</option>';
+                        })
+                        $('#chiefyManager').html(str);
+                    }, "json");
+                    /**
+                     * 加载应用实施人
+                     */
+                    var implementorParam = {
+                        rId: '2203',
+                        groupId: groupId
+                    }
+                    $.post(ctx+'system/ogperson/selectPersonByGroupIdAndRoleId', implementorParam, function (responseResult) {
+                        if (responseResult.data.length == 0) {
+                            $('#implementor').html('');
+                        } else {
+                            $('#implementor').html('');
+                            var str = '';
+                            str += '<option value=""></option>';
+                            $.each(responseResult.data, function (index, element) {
+                                str += '<option value="' + element.pId + '">' + element.pName + '</option>';
+                            })
+                            $('#implementor').html(str);
+                        }
+
+                    }, "json");
+                }
+
+                if (statusFlag == 0) {
+                    var buildChiefManagerParam = {
+                        postId: '0016'
+                    }
+                    $.post(ctx+'system/ogperson/selectPersonByPostId', buildChiefManagerParam, function (responseResult) {
+                        $('#chiefyManager').html('');
+                        var str = '';
+                        str += '<option value=""></option>';
+                        $.each(responseResult.data, function (index, element) {
+                            str += '<option value="' + element.pId + '">' + element.pName + '</option>';
+                        })
+                        $('#chiefyManager').html(str);
+                    }, "json");
+
+                    var proposedPersonParam = {
+                        rId: '2300',
+                        pflag: '1'
+                    };
+
+                    //加载建设实施人
+                    $.post(ctx+'public/selPersonByOrgOrOrgLvAndRole', proposedPersonParam, function (responseResult) {
+                        $('#implementor').html('');
+                        var str = '';
+                        str += '<option value=""></option>';
+                        $.each(responseResult.data, function (index, element) {
+                            str += '<option value="' + element.pId + '">' + element.pName + '</option>';
+                        })
+                        $('#implementor').html(str);
+                    }, "json");
+                }
+            }
+
+        } else {
+            $('#checkManager').html(''); //业务审核
+            $('#chiefyManager').html('');
+            $('#implementor').html('');
+
+        }
+    }
+
+    function selectCheckManager() {
+        var groupId = $('#groupId').val();
+        if (groupId == '' || groupId == null) {
+            $.modal.alertError('请先选择所属工作组 ');
+        } else {
+            var checkManagerParam = {
+                rId: '2201',
+                groupId: groupId
+            }
+            //加载业务审核人根据选择对应的组信息
+            $.post(ctx+'system/ogperson/selectPersonByGroupIdAndRoleId', checkManagerParam, function (responseResult) {
+                if (responseResult.data.length == 0) {
+                    $.modal.alertError('当前工作组没有业务审核人 ');
+                }
+            }, "json");
+        }
+    }
+
+
+    function selectImplementor() {
+        var groupId = $('#groupId').val();
+        if (groupId == '' || groupId == null) {
+            $.modal.alertError('请先选择所属工作组 ');
+            return
+        }
+        //判断是否转运维
+        var statusFlag  = $('#statusFlag').val();
+
+        if(statusFlag=='' || statusFlag==null){
+            $.modal.alertError('请先选择是否转运维 ');
+            return
+        }
+    }
+
+    function selectChiefManager() {
+        var groupId = $('#groupId').val();
+        if (groupId == '' || groupId == null) {
+            $.modal.alertError('请先选择所属工作组 ');
+            return
+        }
+
+        var statusFlag  = $('#statusFlag').val();
+
+        if(statusFlag=='' || statusFlag==null){
+            $.modal.alertError('请先选择是否转运维 ');
+            return
+        }
+    }
+
+
+    // 附件上传页面
+    function upload() {
+        var url = ctx+"pub/attachment/upload/" + $("#changeSingleId").val();
+        $.modal.open("数据变更单附件上传", url);
+    }
+
+    // 附件下载
+    function downloadFile() {
+        var rows = $.table.selectFirstColumns();
+        var atId = rows[0];
+        var ownerId = $("#changeSingleId").val();
+        var url = ctx + "pub/attachment/download/" + ownerId + "/" + atId;
+        window.location.href = url;
+    }
+
+    function remove() {
+        var row = $('#file-table').bootstrapTable('getSelections')[0]
+        //获取当前登陆人员的id
+        $.get(prefix_delete + '/selectOgUserByUserId', function (result) {
+            if (result.data.pId == row.person.pId) {
+                $.operate.removeAll();
+            } else {
+                $.modal.alertError('不能删除非本人上传附件 ');
+            }
+        });
+    }
+
+    /**
+     * 输入空值校验
+     * @param valueStr
+     * @returns {boolean}
+     */
+    function  isEmpty(valueStr) {
+        if(valueStr=='' || valueStr==null){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+
+    /**
+     * 获取输入数值的长度
+     * @param valueStr
+     * @returns {number}
+     */
+    function getValueLen(valueStr){
+        return isEmpty(valueStr)?0:valueStr.length;
+    }
+
+
+    /*function addAutoService() {
+        //判断当前是否进行了场景变更的选择
+        //是否进行了数据变更自动化类型的选择
+        var size = $("input[type='radio']:checked").size();
+        if(size==0){
+            $.modal.alertError('请先选择【数据变更自动化方式】为场景变更 ');
+        }else{
+            //判断是否进行了应用系统的选择
+            var sysId = $('#sysId').val();
+            var relateSystemName = $('#relateSystemName').val();
+            if(isEmpty(sysId) || isEmpty(relateSystemName)){
+                $.modal.alertError('请先选择【所属系统】 ');
+            }else{
+                var sysId = $("#sysId").val();
+                var relateSystemName = $('#relateSystemName').val();
+                //打开对应的列表数据
+                var url = "/auto/data/show";
+                $.modal.open("应用系统场景服务选择", url);
+            }
+
+        }
+    }*/
+</script>
+</body>
+</html>

@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+	<th:block th:include="include :: header('新建事件单')" />
+	<th:block th:include="include :: select2-css" />
+    <th:block th:include="include :: summernote-css" />
+    <th:block th:include="include :: datetimepicker-css" />
+</head>
+<body>
+    <div class="main-content">
+        <form id="form-group-add" class="form-horizontal">
+            <input name="orgId" type="hidden" id="treeId"/>
+            <input id="ogEmerg" type="hidden" th:value="*{ogEmerg}"/>
+            <input name="ownerId" type="hidden" id="ownerId"/>
+            <input id="idOne" type="hidden" name="id" th:value="*{id}"/>
+            <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+                <div class="panel-group">
+                    <div class="panel panel-default">
+                        <div class="panel-heading" style="green-color: #3c8dbc" data-toggle="collapse" data-target="#collapse1">
+                            <h4 class="panel-title" >
+                                应急事件单信息
+                            </h4>
+                        </div>
+                        <div id="collapse1" class="panel-collapse in">
+                            <div class="panel-body">
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label is-required">事件单号：</label>
+                                            <div class="col-sm-8">
+                                                <input name="emergId" id="emergId" class="form-control" type="text" th:value="*{num}" required readonly>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label">事件来源：</label>
+                                            <div class="col-sm-8">
+                                                <select class="form-control"  name="emergLy" th:with="type=${@dict.getParaType('em_sjd_source')}" id="emergLy" required >
+                                                    <option value=""></option>
+                                                    <option th:selected="${dict.value == '2'}" th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}" required></option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label">应急启动时间：</label>
+                                            <div class="col-sm-8">
+                                                <input id="startTime" name="startTime" th:value="${nowTime}" style="background-color: #fff; opacity: 1;" class="form-control" type="text" readonly required>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label is-required">应急结束时间：</label>
+                                            <div class="col-sm-8">
+                                                <input id="endTime" name="endTime" style="background-color: #fff; opacity: 1;" class="form-control" type="text" placeholder="yyyy-MM-dd HH:mm:ss" readonly required>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <div class="form-group" >
+                                            <label class="col-sm-4 control-label is-required">故障时长：</label>
+                                            <div class="col-sm-8">
+                                                <input id="emergFault" name="emergFault" placeholder="故障时长" class="form-control" type="text" required="required" readonly>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label is-required">事件等级：</label>
+                                            <div class="col-sm-8">
+                                                <select class="form-control" name="emergGrade" th:with="type=${@dict.getParaType('dhsj_sjdj')}" required>
+                                                    <option value=""></option>
+                                                    <option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label is-required">事件类别：</label>
+                                            <div class="col-sm-8">
+                                                <select class="form-control" name="emergSort" th:with="type=${@dict.getParaType('fm_fmKindType')}" required>
+                                                    <option value=""></option>
+                                                    <option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label is-required">发生时间：</label>
+                                            <div class="col-sm-8">
+                                                <input id="occurTime" name="occurTime" onchange="timedate()" style="background-color: #fff; opacity: 1;" class="form-control" type="text" placeholder="yyyy-MM-dd HH:mm:ss" readonly required>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label is-required">所属系统：</label>
+                                            <div class="col-sm-8"><!--id="sysId"-->
+                                                <input id="xtId" name="xtId" type="hidden" class="form-control" />
+                                                <input id="emergSystem" name="emergSystem" type="text" class="form-control" onclick="selectOneApplication()" required/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label">系统类别：</label>
+                                            <div class="col-sm-8">
+                                                <select class="form-control" name="systemRank" th:with="type=${@dict.getParaType('CS_LEVEL')}">
+                                                    <option value=""></option>
+                                                    <option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label is-required">启动应急系统：</label>
+                                            <div class="col-sm-8">
+                                                <input id="startSystem" name="sysId" type="hidden" class="form-control" />
+                                                <input id="sysName" name="startSystem" type="text" class="form-control" onclick="selectApplication()" required/>
+                                                <!--<input id="sysid" name="sysid" type="hidden" class="form-control" />
+                                                <input id="sysname" name="sysname" type="text" style="background-color: #ffffff"
+                                                       class="form-control" onclick="selectOneApplication()" required/>-->
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label is-required is-required">联系电话：</label>
+                                            <div class="col-sm-8">
+                                                <div class="input-group">
+                                                    <input id="emergPhone" name="emergPhone" type="text" onclick="isPoneAvailable()" class="form-control" isPhone="true" required>
+                                                    <span class="input-group-addon"><i class="fa fa-mobile"></i></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--<div class="row">
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label is-required is-required">所属工作组：</label>
+                                            <div class="col-sm-8">
+                                                <select id="emergWork" name="emergWork" class="form-control" onchange="getPerson()" required>
+                                                    <option value=""></option>
+                                                    <option th:each="item : ${groups}" th:text="${item.grpName}" th:value="${item.groupId}"></option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label is-required is-required">处理人：</label>
+                                            <div class="col-sm-8">
+                                                <select id="emergHandler" name="emergHandler" class="form-control" required>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>-->
+                                <!--<h4 class="form-header h4">创建人：</h4>
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="form-group">
+                                            <div class="col-sm-6">
+                                                <label class="col-sm-4 control-label">创建人：</label>
+                                                <div class="col-sm-8">
+                                                    <input id="personemergId" name="personemergId" th:field="*{ogPerson.pName}" class="form-control" type="text" required readonly>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>-->
+                                <h4 class="form-header h4">应急标题：</h4>
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label is-required" style="width:11%">应急标题：</label>
+                                            <div class="col-sm-10" style="width:89%">
+                                                <input id="emergTitle" name="emergTitle" type="text"
+                                                       class="form-control" maxlength="42" required/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <h4 class="form-header h4">现象和影响业务的描述：</h4>
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label is-required">现象和影响业务的描述：</label>
+                                            <div class="col-sm-10">
+                                                <textarea rows="6" cols="20" id="emergMemo" name="emergMemo" maxlength="110" class="form-control" required></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <h4 class="form-header h4">上传版本程序及操作手册等附件</h4>
+                                <div class="row">
+                                    <div class="panel panel-default">
+                                        <div class="panel-body">
+                                            <!-- Nav tabs -->
+                                            <ul class="nav nav-tabs" role="tablist">
+                                                <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">附件</a></li>
+                                            </ul>
+
+                                            <!-- Tab panes -->
+                                            <div class="tab-content">
+                                                <div role="tabpanel" class="tab-pane active" id="home">
+                                                    <div class="btn-group-sm" id="toolbar" role="tab" style="margin: 15px 0px;">
+                                                        <a class="btn btn-success" type="button" onclick="upload()">
+                                                            <i class="fa fa-upload"></i> 添加附件
+                                                        </a>
+                                                        <a class="btn btn-warning multiple disabled" onclick="downloadFile()">
+                                                            <i class="fa fa-download"></i> 下载附件
+                                                        </a>
+                                                        <a class="btn btn-danger multiple disabled" onclick="remove()">
+                                                            <i class="fa fa-remove"></i> 删除附件
+                                                        </a>
+                                                    </div>
+                                                    <div class="col-sm-12 select-table table-striped">
+                                                        <table id="file-table"></table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="row">
+        <div class="col-sm-offset-5 col-sm-10">
+            <button type="button" class="btn btn-sm btn-primary" onclick="submit()"><i class="fa fa-check"></i>提 交</button>&nbsp;
+            <button type="button" class="btn btn-sm btn-primary" onclick="save()"><i class="fa fa-check"></i>暂 存</button>&nbsp;
+            <button type="button" class="btn btn-sm btn-danger" onclick="closeItem()"><i class="fa fa-reply-all"></i>关 闭</button>
+        </div>
+    </div>
+	<th:block th:include="include :: footer" />
+	<th:block th:include="include :: select2-js" />
+    <th:block th:include="include :: datetimepicker-js" />
+    <th:block th:include="include :: summernote-js" />
+	<script>
+	    var prefix = ctx + "emerg/xz";
+
+	    //附件保存在这个路径下
+        var prefix_two = ctx + "trans/sw"
+
+        var prefix_version = ctx + "version/public";
+
+        var prefix_bg = ctx + "bg/sjbg";
+
+        var prefix_attachment = ctx + "pub/attachment";
+
+        $(function () {
+            var options = {
+                url: prefix_attachment + "/list",
+                id: "file-table",
+                createUrl: prefix_attachment + "/add",
+                updateUrl: prefix_attachment + "/edit/{id}",
+                removeUrl: prefix_attachment + "/remove",
+                detailUrl: prefix_attachment + "/edit/{id}",
+                sortName: "fileTime",
+                sortOrder: "desc",
+                singleSelect: true,
+                clickToSelect: true,
+                queryParams:queryParams,
+                modalName: "附件列表",
+                columns: [{
+                    checkbox: true
+                },
+                    {
+                        field : 'atId',
+                        title : '附件ID',
+                        visible : false
+                    },
+                    {
+                        field : 'person.pId',
+                        title : '上传人员Id',
+                        visible: false
+                    },
+                    {
+                        field : 'fileName',
+                        title : '文件名称'
+                    },
+                    {
+                        field : 'person.pName',
+                        title : '上传人'
+                    },
+                    {
+                        field : 'size',
+                        title : '文件大小'
+                    },
+                    {
+                        field : 'memo',
+                        title : '文件描述'
+                    },
+                    {
+                        field : 'fileTime',
+                        title : '上传时间',
+                        formatter: function (value, row, index) {
+                            var startTime = '';
+                            if (value != '' && value != null) {
+                                var pattern = /(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/;
+                                startTime = value.replace(pattern, '$1-$2-$3 $4:$5:$6');
+                            }
+                            return startTime;
+                        }
+                    }]
+            };
+            $.table.init(options);
+
+            //加载应急启动系统
+            /*var url = prefix + "/getAllSys";
+            $.get(url, function (result) {
+                var arr = [];
+                $.each(result.data, function (index, item) {
+                    var obj = {};
+                    obj.name = item.caption;
+                    obj.value = item.sysId;
+                    arr.push(obj);
+
+                })
+
+                layui.config({
+                    base: '/ajax/libs/layui/',
+                }).extend({
+                    xmSelect: 'xm-select'
+                }).use(['xmSelect'], function () {
+                    var xmSelect = layui.xmSelect;
+
+                    //渲染多选
+                    sysNameCompent = xmSelect.render({
+                        el: '#sysId',
+                        model: {
+                            label: {
+                                type: 'block',
+                                block: {
+                                    //最大显示数量, 0:不限制
+                                    showCount: 5,
+                                    //是否显示删除图标
+                                    showIcon: true,
+                                }
+                            }
+                        },
+                        data: arr,
+                        toolbar: {
+                            show: true,
+                        },
+                        theme: {
+                            color: '#3c8dbc',
+                        },
+                        name: 'sysId',
+                        autoRow: true,
+                        filterable: true,
+                        direction: 'down',
+                        paging: true,
+                        pageSize: 5,
+                        layVerify: 'required',
+                        layVerType: 'msg'
+                    })
+
+
+                });
+            });*/
+
+        });
+
+        //参数查询
+        function queryParams(params) {
+            var search = $.table.queryParams(params);
+            search.ownerId =  $("#idOne").val();
+            return search;
+        }
+
+        // 附件上传页面
+        /*function upload() {
+            var url = "/pub/attachment/upload/" + $("#idOne").val();
+            $.modal.open("应急事件单附件上传", url);
+        }*/
+        // 附件上传页面
+        function upload() {
+            var url1 = prefix_two + "/fileSave";
+            var data = $("#form-group-add").serializeArray();
+            $.ajax({
+                url: url1,
+                type: "post",
+                dataType: "json",
+                data: data,
+                success: function (result) {
+                    if (result.code == 0) {
+                        var ownerId = result.data;
+                        // 将ownerId保存到页面隐藏框
+                        $("#ownerId").val(ownerId);
+                        $("#idOne").val(ownerId);
+                        var url = prefix_attachment + "/upload/" + ownerId;
+                        $.modal.open("应急事件单附件上传", url);
+                    } else {
+                        //$.modal.alertWarning("上传失败！！！！！！");
+                        $.operate.successCallback(result);
+                    }
+                }
+            });
+        }
+        //附件下载
+        function downloadFile() {
+            var rows = $.table.selectFirstColumns();
+            var atId = rows[0];
+            var ownerId = $("#idOne").val();
+            var url = ctx + "pub/attachment/download/"+ownerId+"/"+atId;
+            window.location.href = url;
+        }
+        //附件删除
+        function remove() {
+            var row = $('#file-table').bootstrapTable('getSelections')[0]
+            //获取当前登陆人员的id
+            $.get(prefix_bg+'/selectOgUserByUserId',function (result) {
+                if(result.data.pId==row.person.pId){
+                    $.operate.removeAll();
+                }else{
+                    $.modal.alertError('不能删除非本人上传附件!!!');
+                }
+            });
+        }
+
+        $("#form-group-add").validate({
+            onkeyup: false,
+            rules:{
+            },
+            messages: {
+            },
+            focusCleanup: true
+        });
+
+		//日期
+        //发生时间
+        $("#occurTime").datetimepicker({
+            format: "yyyy-mm-dd hh:ii:ss",
+            autoclose: true,
+            minView:0,
+            minuteStep:1,
+        });
+
+        /*$("#startTime").datetimepicker({
+            format: "yyyy-mm-dd hh:ii:ss",
+            autoclose: true
+        });*/
+
+        $("#endTime").datetimepicker({
+            format: "yyyy-mm-dd hh:ii:ss",
+            autoclose: true,
+            minView:0,
+            minuteStep:1,
+        }).on('changeDate',function (emergFault) { //changeDate ev
+
+            var startTime = $('#startTime').val();
+            var endTime = $('#endTime').val();
+            // 开始时间
+            let d1 = startTime.replace(/\-/g, "/");
+            let date1 = new Date(d1);
+
+            // 结束时间
+            let d2 = endTime.replace(/\-/g, "/");
+            let date2 = new Date(d2);
+
+            var dateDiff = date2.getTime() - date1.getTime(); //时间差的毫秒数
+            var dayDiff = Math.floor(dateDiff / (24 * 3600 * 1000)); //计算出相差天数
+            var leave1 = dateDiff % (24 * 3600 * 1000) //计算天数后剩余的毫秒数
+            var hours = Math.floor(leave1 / (3600 * 1000)) //计算出小时数
+
+            //计算相差分钟数
+            var leave2 = leave1 % (3600 * 1000) //计算小时数后剩余的毫秒数
+            var minutes = Math.floor(leave2 / (60 * 1000)) //计算相差分钟数
+
+            //按分钟计算
+            var number = Math.floor(dateDiff / (60 * 1000))+"分钟";
+            console.log(number);
+
+            //计算相差秒数
+            /*var leave3 = leave2 % (60 * 1000) //计算分钟数后剩余的毫秒数
+            var seconds = Math.round(leave3 / 1000)
+            var onttwo =  dayDiff + "天 " + hours + "小时 " + minutes + " 分钟" + seconds + " 秒";
+            //console.log(dayDiff + "天 " + hours + "小时 " + minutes + " 分钟" + seconds + " 秒")*/
+
+            var time = "0分";
+
+            if(endTime>=startTime){
+                $('#emergFault').val(number);
+                return true;
+            }else if (number<=time){
+                alert("结束时间不能小于开始时间哟");
+                $('#endTime').val(null);
+                return false;
+            }
+
+        });
+
+        //选取应用系统的时候加载系统类别
+        function onalert() {
+            alert("这里是对应要弹出类别的前提条件");
+        }
+
+        //发生时间不应该大于开始时间
+        function timedate() {
+            var startTime = $('#startTime').val();
+            var occurTime = $('#occurTime').val();
+
+            if (occurTime<startTime){
+                return true;
+            }else if (occurTime>startTime){
+                alert("发生时间不能大于开始时间,请从新输入！！！！");
+                $('#occurTime').val(null);
+                return false;
+            }
+        }
+
+        //应急标题
+        //监听事件   描述的长度
+        $('#emergTitle').bind('input propertychange',function(){ //添加监听input值的改变事件
+            var tvalmum;
+            //统计input输入字段的长度
+            tvalnum = $(this).val().length;
+            //如果大于8个字直接进行字符串截取
+            if(tvalnum>255){
+                var tval = $(this).val();
+                tval = tval.substring(0,255);
+                $(this).val(tval);
+                alert('长度超过限制！只能输入255个字。。');
+            }
+        });
+
+        //现象和影响业务的描述
+        //监听事件   描述的长度
+        $('#emergMemo').bind('input propertychange',function(){ //添加监听input值的改变事件
+            var tvalmum;
+            //统计input输入字段的长度
+            tvalnum = $(this).val().length;
+            //如果大于8个字直接进行字符串截取
+            if(tvalnum>255){
+                var tval = $(this).val();
+                tval = tval.substring(0,255);
+                $(this).val(tval);
+                alert('长度超过限制！只能输入255个字。。');
+            }
+        });
+
+        //根据选择组获取人员信息
+        function getPerson() {
+            var val = $('#emergWork').val();
+            var prefix_work = ctx+'system/work/groupPerson/personListByGroupId';
+            var data = {
+                'groupId' :val
+            }
+            $.post(prefix_work,data,function (result) {
+                $('#emergHandler').html('');
+                var str = '';
+                str += "<option value = ''></option>";
+                $.each(result.data,function (index,item) {
+                    str += "<option value='"+item.person.pId+"'>"+item.person.pName+"</option>";
+                });
+
+                $('#emergHandler').html(str);
+            })
+        }
+
+        //作废
+        function zf() {
+            if ($.validate.form()) {
+                var data = $("#form-group-add").serializeArray();
+                data.push({"name":"emergMark","value": 5 });
+                $.operate.saveTab(prefix + "/add", data);
+            }
+        }
+
+        //新增
+        function submit() {
+            if ($.validate.form()) {
+                var data = $("#form-group-add").serializeArray();
+                data.push({"name":"emergMark","value": 8 }); //2
+                //获取当前选择的系统负责人
+                /*var sysId = sysNameCompent.getValue('nameStr');
+                data.push({"name":"startSystem","value": sysId});*/
+                $.operate.saveTab(prefix + "/add", data);
+            }
+        }
+        // 暂存
+        function save() {
+             var data = $("#form-group-add").serializeArray();
+             data.push({"name":"emergMark","value": 1 });
+            //获取当前选择的系统负责人
+            /*var sysId = sysNameCompent.getValue('nameStr');
+            data.push({"name":"startSystem","value": sysId});*/
+             $.operate.saveTab(prefix + "/add", data);
+
+        };
+
+        /* 选择部门树 */
+        function selectDeptTree() {
+            var treeId = $("#treeId").val();
+            var deptId = $.common.isEmpty(treeId) ? "310100001" : $("#treeId").val();
+            var url = ctx + "system/dept/selectDeptTree/" + deptId;
+            var options = {
+                title: '选择部门',
+                width: "380",
+                url: url,
+                callBack: doSubmit
+            };
+            $.modal.openOptions(options);
+        }
+
+        function doSubmit(index, layero){
+            var tree = layero.find("iframe")[0].contentWindow.$._tree;
+            var body = layer.getChildFrame('body', index);
+            $("#treeId").val(body.find('#treeId').val());
+            $("#treeName").val(body.find('#treeName').val());
+            layer.close(index);
+        }
+
+
+        // 选择应用系统（只能单选）
+        function selectOneApplication() {
+            $.modal.open("选择应用系统", prefix + "/selectOneApplication");
+        };
+
+        // 选择外围系统(可以多选)
+        function selectApplication() {
+            $.modal.open("选择应用系统", prefix_version + "/selectApplication");
+        }
+
+        function Application() {
+            $.modal.open("选择运行事件", prefix_version + "/Application");
+        }
+
+        $("#form-sw-add").validate({
+            focusCleanup: true
+        });
+
+    </script>
+</body>
+</html>

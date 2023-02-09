@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+	<th:block th:include="include :: header('态势感知工单')" />
+	<th:block th:include="include :: select2-css" />
+    <th:block th:include="include :: summernote-css" />
+    <th:block th:include="include :: datetimepicker-css" />
+</head>
+<body>
+    <div class="main-content">
+        <form id="form-line-add" class="form-horizontal">
+            <input id="ordId" type="hidden" name="ordId" th:value="${ordId}">
+            <input name="ownerId" type="hidden" id="ownerId"/>
+            <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+                <div class="panel-group">
+                    <div class="panel panel-default">
+                        <div class="panel-heading" style="green-color: #3c8dbc" data-toggle="collapse" data-target="#collapse1">
+                            <h4 class="panel-title" >
+                                态势感知工单
+                            </h4>
+                        </div>
+                        <div id="collapse1" class="panel-collapse in">
+                            <div class="panel-body">
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label is-required">工单单号：</label>
+                                            <div class="col-sm-8">
+                                                <input id="ordNo" name="ordNo" type="text" maxlength="20" th:value="*{num}" required="required" readonly
+                                                       class="form-control"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label is-required">告警/漏洞名称：</label>
+                                            <div class="col-sm-8">
+                                                <input id="gaaName" name="gaaName" type="text" maxlength="20"
+                                                       class="form-control" required/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label is-required">告警/漏洞级别：</label>
+                                            <div class="col-sm-8">
+                                                <select class="form-control" id="gaaLev" name="gaaLev" th:with="type=${@dict.getParaType('customer_impact_degree')}" required>
+                                                    <option value=""></option>
+                                                    <option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label is-required">创建时间：</label>
+                                            <div class="col-sm-8">
+                                                <input id="createrTime" name="createrTime" th:value="${nowTime}" class="form-control"  type="text" placeholder="yyyy-MM-dd HH:mm:ss" required="required" readonly>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label is-required">工单类型：</label>
+                                            <div class="col-sm-8 ">
+                                                <select class="form-control" id="ordType" name="ordType" th:with="type=${@dict.getParaType('ord_type')}" required>
+                                                    <option value=""></option>
+                                                    <option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group" >
+                                            <label class="col-sm-4 control-label is-required">告警/漏洞类型：</label>
+                                            <div class="col-sm-8">
+                                                <select class="form-control" id="gaaType" name="gaaType" th:with="type=${@dict.getParaType('gaa_type')}" required>
+                                                    <option value=""></option>
+                                                    <option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label is-required">来源IP：</label>
+                                            <div class="col-sm-8">
+                                                <input id="sourceIp" name="sourceIp" type="text" class="form-control" required/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label is-required">目的IP：</label>
+                                            <div class="col-sm-8">
+                                                <input id="objIp" name="objIp" type="text" class="form-control" required/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label is-required">告警/漏洞类别：</label>
+                                            <div class="col-sm-8">
+                                                <select class="form-control" id="gaaCategory" name="gaaCategory" th:with="type=${@dict.getParaType('gaa_category')}" required>
+                                                    <option value=""></option>
+                                                    <option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label is-required">目的IP所属系统：</label>
+                                            <div class="col-sm-8">
+                                                <input id="sysId" name="sysId" class="form-control" maxlength="20" type="text" required>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label is-required">所属部门/分行：</label>
+                                            <div class="col-sm-8">
+                                                <select class="form-control" id="belDept" name="belDept" th:with="type=${@dict.getParaType('bel_dept')}" required>
+                                                    <option value=""></option>
+                                                    <option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label is-required">责任处室/分行：</label>
+                                            <div class="col-sm-8">
+                                                <input id="resDept" name="resDept" class="form-control" maxlength="20" type="text" required>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label is-required">系统管理员：</label>
+                                            <div class="col-sm-8">
+                                                <input id="sysAdmin" name="sysAdmin" type="text" class="form-control">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label is-required">应用管理员：</label>
+                                            <div class="col-sm-8">
+                                                <input id="appAdmin" name="appAdmin" type="text" class="form-control">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <h4 class="form-header h4">告警/漏洞描述</h4>
+                                <div class="col-sm-12">
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label">告警/漏洞描述：</label>
+                                        <div class="col-sm-10">
+                                                <textarea rows="6" cols="20" id="gaaDesc" name="gaaDesc" maxlength="150" class="form-control"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                                </div>
+                            </div>
+                        <div class="panel-body">
+                            <!-- Nav tabs -->
+                            <ul class="nav nav-tabs" role="tablist">
+                                <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">附件</a></li>
+                            </ul>
+
+                            <!-- Tab panes -->
+                            <div class="tab-content">
+                                <div role="tabpanel" class="tab-pane active" id="home">
+                                    <div class="btn-group-sm" id="toolbar" role="tab" style="margin: 15px 0px;">
+                                        <a class="btn btn-success" type="button" onclick="upload()">
+                                            <i class="fa fa-upload"></i> 添加附件
+                                        </a>
+                                        <a class="btn btn-warning multiple disabled" onclick="downloadFile()">
+                                            <i class="fa fa-download"></i> 下载附件
+                                        </a>
+                                        <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()">
+                                            <i class="fa fa-trash"></i> 删除附件
+                                        </a>
+                                    </div>
+                                    <div class="col-sm-12 select-table table-striped">
+                                        <table id="file-table"></table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="row">
+        <div class="col-sm-offset-5 col-sm-10">
+            <button type="button" class="btn btn-sm btn-primary" onclick="submit()"><i class="fa fa-check"></i>提 交</button>
+            <button type="button" class="btn btn-sm btn-danger" onclick="closeItem()"><i class="fa fa-reply-all"></i>关 闭</button>
+        </div>
+    </div>
+	<th:block th:include="include :: footer" />
+	<th:block th:include="include :: select2-js" />
+    <th:block th:include="include :: summernote-js" />
+    <th:block th:include="include :: datetimepicker-js" />
+	<script>
+	    var prefix = ctx + "sawo/newly";
+
+        var prefix_attachment = ctx + "pub/attachment";
+
+        $(function () {
+            var options = {
+                url: prefix_attachment + "/list",
+                id: "file-table",
+                createUrl: prefix_attachment + "/add",
+                updateUrl: prefix_attachment + "/edit/{id}",
+                removeUrl: prefix_attachment + "/remove",
+                detailUrl: prefix_attachment + "/edit/{id}",
+                sortName: "fileTime",
+                sortOrder: "desc",
+                singleSelect: true,
+                clickToSelect: true,
+                queryParams:queryParams,
+                modalName: "附件列表",
+                columns: [{
+                    checkbox: true
+                },
+                    {
+                        field : 'atId',
+                        title : '附件ID',
+                        visible : false
+                    },
+                    {
+                        field : 'person.pId',
+                        title : '上传人员Id',
+                        visible: false
+                    },
+                    {
+                        field : 'fileName',
+                        title : '文件名称'
+                    },
+                    {
+                        field : 'person.pName',
+                        title : '上传人'
+                    },
+                    {
+                        field : 'size',
+                        title : '文件大小'
+                    },
+                    {
+                        field : 'memo',
+                        title : '文件描述'
+                    },
+                    {
+                        field : 'fileTime',
+                        title : '上传时间'
+                    }]
+            };
+            $.table.init(options);
+        });
+
+        function queryParams(params) {
+            var search = $.table.queryParams(params);
+            search.ownerId =  $("#ordId").val();
+            return search;
+        }
+
+        // 附件上传页面
+        function upload() {
+            var url = ctx+"pub/attachment/upload/" + $("#ordId").val();
+            $.modal.open("附件上传", url);
+        }
+
+        // 附件下载
+        function downloadFile() {
+            var rows = $.table.selectFirstColumns();
+            var atId = rows[0];
+            var ownerId = $("#ordId").val();
+            var url = ctx + "pub/attachment/download/" + ownerId + "/" + atId;
+            window.location.href = url;
+        }
+
+        //字符串yyyyMMddHHmmss转yyyy-MM-dd HH:mm:ss
+        $(function () {
+            var backupDate = $("#createrTime").val();
+            var pattern = /(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/;
+            backupDate = backupDate.replace(pattern, '$1-$2-$3 $4:$5:$6');
+            $("#createrTime").val(backupDate);
+        });
+
+        //字符串yyyyMMddHHmmss转yyyy-MM-dd HH:mm:ss
+        $(function () {
+
+            var backupDate = $("#createrTime").val();
+            var pattern = /^(\d{4})(\d{2})(\d{2})$/;
+            backupDate = backupDate.replace(pattern, '$1-$2-$3');
+            $("#createrTime").val(backupDate);
+
+        });
+
+        //新增  1 待分发
+        function submit() {
+            if ($.validate.form()) {
+                var data = $("#form-line-add").serializeArray();
+                //改变状态
+                data.push({"name":"ordState","value": 1 });
+                $.operate.saveTab(prefix + "/addSave", data);
+                //parent.layer.close(index);//关闭当前页
+            }
+        }
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:include="include :: header('修改信息制度')"/>
+    <th:block th:include="include :: ztree-css"/>
+</head>
+<body class="white-bg">
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+    <form class="form-horizontal m" id="form-info-detail"  th:object="${info}">
+        <input id="regime_info_id" name="regime_info_id" type="hidden" th:field="*{regime_info_id}"/>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label ">制度标题:</label>
+                    <div class="col-sm-8">
+                        <input class="form-control" type="text" name="regime_title" id="regime_title" th:field="*{regime_title}" readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label ">关键字:</label>
+                    <div class="col-sm-8">
+                        <input class="form-control" type="text" name="datetime" id="key_word" th:field="*{key_word}" readonly>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label ">印发日期:</label>
+                    <div class="col-sm-8">
+                        <input class="form-control" type="text" name="print_time" id="datetime" th:field="*{print_time}" readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label ">审核人:</label>
+                    <div class="col-sm-8">
+                        <select id="checkId" name="checker" class="form-control" th:field="*{checker}" readonly>
+                            <option th:each="user : ${checkerList}" th:text="${user.pName}" th:value="${user.pId}"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label class="col-xs-2 control-label">制度摘要：</label>
+                    <div class="col-xs-10">
+                        <textarea name="regime_digest" maxlength="500" class="form-control" rows="5"  th:field="*{regime_digest}" readonly></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label ">类型一:</label>
+                    <div class="col-sm-8">
+                        <select id="type_one" name="type_one" class="form-control m-b" th:field="*{type_one}" readonly >
+                            <option value="0">基础制度与政策类</option>
+                            <option value="1">管理办法与规定类</option>
+                            <option value="2">操作规范与实施细则嘞</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label ">类型二:</label>
+                    <div class="col-sm-8">
+                        <select id="type_two" name="type_two" class="form-control m-b" th:field="*{type_two}" readonly >
+                            <option value="0">系统</option>
+                            <option value="1">网络</option>
+                            <option value="2">应用</option>
+                            <option value="3">安全</option>
+                            <option value="4">动力</option>
+                        </select>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label ">状态:</label>
+                    <div class="col-sm-8">
+                        <select id="current_state" name="current_state" class="form-control m-b" th:field="*{current_state}" readonly >
+                            <option value="0">正式</option>
+                            <option value="1">试行</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label ">印发文号:</label>
+                    <div class="col-sm-8">
+                        <input class="form-control" type="text" name="folder_" id="folder_" th:field="*{folder_}" readonly >
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label ">四级制度:</label>
+                    <div class="col-sm-8">
+                        <select id="sytem_four" name="sytem_four" class="form-control m-b" th:field="*{sytem_four}" readonly >
+                            <option value="0">一级</option>
+                            <option value="1">二级</option>
+                            <option value="2">三级</option>
+                            <option value="3">四级</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label ">分类域:</label>
+                    <div class="col-sm-8">
+                        <select id="classify" name="classify" class="form-control m-b" th:field="*{classify}" readonly >
+                            <option value="0">服务治理</option>
+                            <option value="1">服务管理</option>
+                            <option value="2">常态运维</option>
+                            <option value="3">应急态运维</option>
+                            <option value="4">系统和设施运维和维护</option>
+                            <option value="5">质量管理</option>
+                            <option value="6">信息安全管理</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label ">提交人:</label>
+                    <div class="col-sm-8">
+                        <input class="form-control" type="text" name="commit_id" id="commit_id" th:value="${commit_id}"  readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label ">提交时间:</label>
+                    <div class="col-sm-8">
+                        <input class="form-control" type="text" name="commit_time" id="commit_time" th:field="*{commit_time}" readonly>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<th:block th:include="include :: footer"/>
+<th:block th:include="include :: ztree-js"/>
+<script type="text/javascript">
+
+    $("#form-info-detail").validate({
+        onkeyup: false,
+        rules: {
+            sysname: {
+                remote: {
+                    url: ctx + "system/info/checkInfoNameUnique",
+                    type: "post",
+                    dataType: "json",
+                    data: {
+                        "id": function () {
+                            return $("#regime_info_id").val();
+                        },
+                    },
+                    dataFilter: function (data, type) {
+                        return $.validate.unique(data);
+                    }
+                }
+            },
+            appsort: {
+                digits: true
+            },
+        },
+        messages: {
+            "roleName": {
+                remote: "系统名称已经存在"
+            }
+        },
+        focusCleanup: true
+    });
+
+    $('input').on('ifChanged', function (obj) {
+        var type = $(this).val();
+        var checked = obj.currentTarget.checked;
+        if (type == 1) {
+            if (checked) {
+                $._tree.expandAll(true);
+            } else {
+                $._tree.expandAll(false);
+            }
+        } else if (type == "2") {
+            if (checked) {
+                $._tree.checkAllNodes(true);
+            } else {
+                $._tree.checkAllNodes(false);
+            }
+        } else if (type == "3") {
+            if (checked) {
+                $._tree.setting.check.chkboxType = {"Y": "ps", "N": "ps"};
+            } else {
+                $._tree.setting.check.chkboxType = {"Y": "", "N": ""};
+            }
+        }
+    })
+
+
+</script>
+</body>
+</html>

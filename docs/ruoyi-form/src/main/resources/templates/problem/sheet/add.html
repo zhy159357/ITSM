@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:include="include :: header('新增问题单')"/>
+    <th:block th:include="include :: datetimepicker-css"/>
+</head>
+<body class="white-bg">
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+    <form class="form-horizontal m" id="form-sheet-add">
+        <input name="ownerId" type="hidden" id="ownerId"/>
+        <input name="problemId" type="hidden" id="problemId"/>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">问题单编号：</label>
+                    <div class="col-sm-8">
+                        <input name="problemNo" id="problemNo" class="form-control" type="text" th:value="*{num}"
+                               readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">问题发起人：</label>
+                    <div class="col-sm-8">
+                        <input name="problemOriginatorName" id="problemOriginatorName" class="form-control" type="text"
+                               th:value="${problemOriginatorName}" readonly>
+                        <input name="problemOriginator" id="problemOriginator" th:value="${problemOriginator}" hidden>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">问题标题：</label>
+                    <div class="col-sm-8">
+                        <input name="problemTitle" class="form-control" type="text" maxlength="50">
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">问题发起部室经理：</label>
+                    <div class="col-sm-8">
+                        <input name="problemOriginateDepartManagerName" id="problemOriginateDepartManagerName"
+                               class="form-control" type="text"
+                               th:value="${problemOriginateDepartManagerName}" readonly>
+                        <input name="problemOriginateDepartManager" id="problemOriginateDepartManager"
+                               th:value="${problemOriginateDepartManager}" hidden>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label is-required">问题现象描述：</label>
+                    <div class="col-sm-10">
+                        <textarea cols="3" placeholder="1、问题现象及解决要求：问题现象需详细描述事件发生情况、趋势分析或相关潜在风险的具体情况包括事件再次发生的风险。解决要求需明确问题解决的目标。
+2、影响范围：描述影响信息科技系统运维服务的具体系统以及可能对业务造成的影响。
+3、故障处理情况：针对从突发事件发起的问题，简要描述事件临时解决方案描述。
+4、问题处理的相关团队及人员：由问题发起人初步确认问题解决对应的相关团队。
+5、初步分析结果（可选）：由问题发起人提交初步确认的分析结果。" rows="5" name="problemDescription" class="form-control"
+                                  maxlength="1600"></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">来源：</label>
+                    <div class="col-sm-8">
+                        <!--<input name="eventSource" class="form-control" type="text">-->
+                        <select id="problemSource" name="problemSource" class="form-control"
+                                th:with="pList=${@pubParaValue.selectPubParaValueByParaName('problem_source')}">
+                            <option></option>
+                            <option th:each="p:${pList}" th:text="${p.valueDetail}" th:value="${p.value}"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">影响业务中断：</label>
+                    <div class="col-sm-8">
+                        <select id="impactServiceInterruptFlag" name="impactServiceInterruptFlag" class="form-control"
+                                th:with="pList=${@pubParaValue.selectPubParaValueByParaName('temp_solve_flag')}">
+                            <option th:each="p:${pList}" th:text="${p.valueDetail}" th:value="${p.value}">
+                            </option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">类别：</label>
+                    <div class="col-sm-8">
+                        <select id="problemCategory" name="problemCategory" class="form-control m-b">
+                            <option value="">请选择</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">子类：</label>
+                    <div class="col-sm-8">
+                        <select id="problemSubclass" name="problemSubclass" class="form-control m-b">
+                            <option value="">请选择</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">条目：</label>
+                    <div class="col-sm-8">
+                        <select id="problemEntry" name="problemEntry" class="form-control m-b">
+                            <option value="">请选择</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">子条目：</label>
+                    <div class="col-sm-8">
+                        <select id="problemSubentry" name="problemSubentry" class="form-control m-b">
+                            <option value="">请选择</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">问题类型：</label>
+                    <div class="col-sm-8">
+                        <!--<input name="eventSource" class="form-control" type="text">-->
+                        <select id="problemType" name="problemType" class="form-control"
+                                th:with="pList=${@pubParaValue.selectPubParaValueByParaName('problem_type')}">
+                            <option></option>
+                            <option th:each="p:${pList}" th:text="${p.valueDetail}" th:value="${p.value}"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">风险程度：</label>
+                    <div class="col-sm-8">
+                        <!--<input name="eventSource" class="form-control" type="text">-->
+                        <select id="riskLevel" name="riskLevel" class="form-control"
+                                th:with="pList=${@pubParaValue.selectPubParaValueByParaName('risk_level')}">
+                            <option></option>
+                            <option th:each="p:${pList}" th:text="${p.valueDetail}" th:value="${p.value}"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">发生频率：</label>
+                    <div class="col-sm-8">
+                        <!--<input name="eventSource" class="form-control" type="text">-->
+                        <select id="frequency" name="frequency" class="form-control"
+                                th:with="pList=${@pubParaValue.selectPubParaValueByParaName('frequency')}">
+                            <option></option>
+                            <option th:each="p:${pList}" th:text="${p.valueDetail}" th:value="${p.value}"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">优先级：</label>
+                    <div class="col-sm-8">
+                        <!--<input name="eventSource" class="form-control" type="text">-->
+                        <select id="priority" name="priority" class="form-control"
+                                th:with="pList=${@pubParaValue.selectPubParaValueByParaName('priority')}">
+                            <option></option>
+                            <option th:each="p:${pList}" th:text="${p.valueDetail}" th:value="${p.value}"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">事件是否有临时解决措施</label>
+                    <div class="col-sm-8">
+                        <select id="tempSolveFlag" name="tempSolveFlag" class="form-control"
+                                th:with="pList=${@pubParaValue.selectPubParaValueByParaName('temp_solve_flag')}">
+                            <option th:each="p:${pList}" th:text="${p.valueDetail}" th:value="${p.value}">
+                            </option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">事件临时解决措施：</label>
+                    <div class="col-sm-8">
+                        <input id="tempSolution-id" name="tempSolutions" class="form-control" type="text"
+                               maxlength="500" value="无">
+                        <!--<textarea cols="2" rows="2" id="tempSolution-id" name="tempSolutions" class="form-control"
+                                  maxlength="500" value="无"></textarea>-->
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">已知错误：</label>
+                    <div class="col-sm-8">
+                        <select id="knownError" name="knownError" class="form-control">
+                            <option value="0" selected="selected">否</option>
+                            <option value="1">是</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">计划完成时间：</label>
+                    <div class="col-sm-8">
+                        <input id="planSolveTime" name="planSolveTime" class="form-control" type="text"
+                               placeholder="yyyy-MM-dd HH:mm:ss" required>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--        <div class="row" id="problemSolver-id">
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label is-required">问题牵头人：</label>
+                            <div class="col-sm-8">
+                                <input name="problemSolver" id="problemSolver" class="form-control" type="text" maxlength="50">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">问题审核人：</label>
+                            <div class="col-sm-8">
+                                <input name="problemAuditor" class="problemAuditor" type="text" maxlength="50">
+                            </div>
+                        </div>
+                    </div>
+                </div>-->
+        <div class="row" id="problemSolverDepartment-id">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">问题牵头部室：</label>
+                    <div class="col-sm-8">
+                        <input id="problemSolverDepartmentName" name="problemSolverDepartmentName" th:value="*{problemSolverDepartmentName}" class="form-control"  onclick="selectAssignedGroup()">
+                        <input name="problemSolverDepartment" id="problemSolverDepartment" type="hidden">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row" id="problemSolver-id">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">问题审核人：</label>
+                    <div class="col-sm-8">
+                        <input name="problemAuditor" id="problemAuditor" type="hidden">
+                        <input id="problemAuditorName" name="problemAuditorName" th:value="*{problemAuditorName}" class="form-control" type="text">
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">问题牵头人：</label>
+                    <div class="col-sm-8">
+                        <input name="problemSolver" id="problemSolver" type="hidden">
+                        <input id="problemSolverName" name="problemSolverName" th:value="*{problemSolverName}" class="form-control"  onclick="selectAssignedPerson()">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row" id="problemCauseClass-id">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">根因分类一：</label>
+                    <div class="col-sm-8">
+                        <select id="problemCauseClass1" name="problemCauseClass1" class="form-control m-b">
+                            <option value="">请选择</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">根因分类二：</label>
+                    <div class="col-sm-8">
+                        <select id="problemCauseClass2" name="problemCauseClass2" class="form-control m-b">
+                            <option value="">请选择:</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row" id="problemSolutionSummary-id">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label is-required">根因分析汇总：</label>
+                    <div class="col-sm-10">
+                        <textarea rows="3" cols="5" id="problemCauseSummary" maxlength="500"
+                                  name="problemCauseSummary" class="form-control" required></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--        <div class="row">
+                    <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">根因分类一：</label>
+                                <div class="col-sm-8">
+                                    <select id="problemCauseClass1" name="problemCauseClass1" class="form-control m-b">
+                                        <option value="">请选择根因分类一</option>
+                                    </select>
+                                </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">根因分类二：</label>
+                                <div class="col-sm-8">
+                                    <select id="problemCauseClass2" name="problemCauseClass2" class="form-control m-b">
+                                    </select>
+                                </div>
+                            </div>
+                    </div>
+                </div>-->
+    </form>
+</div>
+<h4 class="form-header h4">上传附件</h4>
+<div class="btn-group-sm" id="toolbar" role="group">
+    <a class="btn btn-success" type="button" onclick="upload()">
+        <i class="fa fa-upload"></i> 添加附件
+    </a>
+    <a class="btn btn-primary multiple disabled" onclick="downloadAttachment()">
+        <i class="fa fa-download"></i> 下载附件
+    </a>
+    <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()">
+        <i class="fa fa-trash"></i> 删除附件
+    </a>
+</div>
+
+<div class="col-sm-12 select-table table-striped">
+    <table id="file-table"></table>
+</div>
+
+
+<div class="row">
+    <div class="col-sm-offset-5 col-sm-10">
+        <button type="button" class="btn btn-sm btn-primary" onclick="submit()"><i class="fa fa-check"></i>提 交</button>&nbsp;
+        <button type="button" class="btn btn-sm btn-primary" onclick="save()"><i class="fa fa-check"></i>暂 存</button>&nbsp;
+        <button type="button" class="btn btn-sm btn-danger" onclick="closeItem()"><i class="fa fa-window-close"></i>关 闭
+        </button>
+    </div>
+</div>
+
+<th:block th:include="include :: footer"/>
+<th:block th:include="include :: datetimepicker-js"/>
+<script th:inline="javascript">
+    var prefix = ctx + "problem/sheet";
+    var prefix_attachment = ctx + "pub/attachment";
+    var prefix_typeInfo = ctx + "system/typeinfo/selectOgTypeInfoByEvent";
+
+    $('#tempSolveFlag').change(function () {
+        var value = $("#tempSolveFlag").val()
+        $('#tempSolution-id').focus()
+        if (value == 0) {
+            $('#tempSolution-id').val('无')
+        } else {
+            $('#tempSolution-id').val('')
+        }
+    })
+
+    $('#knownError').change(function () {
+        var value = $("#knownError").val()
+        if (value == 0   && false ) {
+            $('#problemSolver-id').hide()
+            $('#problemCauseClass-id').hide()
+            $('#problemSolutionSummary-id').hide()
+            $('#problemSolverDepartment-id').hide()
+        } else {
+            $('#problemSolver-id').show()
+            $('#problemCauseClass-id').show()
+            $('#problemSolutionSummary-id').show()
+            $('#problemSolverDepartment-id').show()
+        }
+    })
+
+
+    $(function () {
+        $('#problemSolver-id').hide()
+        $('#problemCauseClass-id').hide()
+        $('#problemSolutionSummary-id').hide()
+        $('#problemSolverDepartment-id').hide()
+        var options = {
+            url: prefix_attachment + "/list",
+            id: "file-table",
+            createUrl: prefix_attachment + "/add",
+            updateUrl: prefix_attachment + "/edit/{id}",
+            removeUrl: prefix_attachment + "/remove",
+            detailUrl: prefix_attachment + "/edit/{id}",
+            sortName: "fileTime",
+            sortOrder: "desc",
+            singleSelect: true,
+            clickToSelect: true,
+            queryParams: queryParams,
+            modalName: "附件列表",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'atId',
+                    title: '附件ID',
+                    visible: false
+                },
+                {
+                    field: 'fileName',
+                    title: '文件名称'
+                },
+                {
+                    field: 'person.pName',
+                    title: '上传人'
+                },
+                {
+                    field: 'size',
+                    title: '文件大小'
+                },
+                {
+                    field: 'memo',
+                    title: '文件描述'
+                },
+                {
+                    field: 'fileTime',
+                    title: '上传时间',
+                    formatter: function (value, row, index) {
+                        var startTime = '';
+                        if (value != '' && value != null) {
+                            var pattern = /(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/;
+                            startTime = value.replace(pattern, '$1-$2-$3 $4:$5:$6');
+                        }
+                        return startTime;
+                    }
+                }]
+        };
+        $.table.init(options);
+        var str = [[${problemCauseList}]];
+        var problemCauseArray = JSON.parse(str);
+        setFirstType(problemCauseArray);
+        // 如果根因分类一发生变化，则重新加载根因分类二
+        $("#problemCauseClass1").change(function () {
+            setSecondType();
+        });
+
+        var strCat = [[${problemCategoryList}]];
+        var problemCatArray = JSON.parse(strCat);
+        setFirstCatType(problemCatArray);
+        // 如果一级分类发生变化，则重新加载二级分类
+        $("#problemCategory").change(function () {
+            setSecondCategory();
+        });
+        // 如果二级分类发生变化，则重新加载三级分类
+        $("#problemSubclass").change(function () {
+            setSThreeCategory();
+        });
+        // 如果三级分类发生变化，则重新加载四级分类
+        $("#problemEntry").change(function () {
+            setSFourCategory();
+        });
+    });
+
+    // form表单校验
+    $("#form-sheet-add").validate({
+        rules: {
+            problemTitle: {
+                required: true
+            },
+            problemDescription: {
+                required: true
+            },
+            problemSource: {
+                required: true
+            },
+            problemCategory: {
+                required: true
+            },
+            problemSubclass: {
+                required: true
+            },
+            problemEntry: {
+                required: true
+            },
+            problemSubentry: {
+                required: true
+            },
+            tempSolveFlag: {
+                required: true
+            },
+            tempSolutions: {
+                required: true
+            },
+            problemType: {
+                required: true
+            },
+            riskLevel: {
+                required: true
+            },
+            frequency: {
+                required: true
+            },
+            priority: {
+                required: true
+            },
+            impactServiceInterruptFlag: {
+                required: true
+            },
+            problemSolver: {
+                required: true
+            },
+        },
+        messages: {
+            problemTitle: {
+                required: "请输入问题标题"
+            },
+            problemDescription: {
+                required: "请输入问题现象描述"
+            },
+            problemSource: {
+                required: "请输入问题来源"
+            },
+            problemCategory: {
+                required: "请选择类别"
+            },
+            problemSubclass: {
+                required: "请选择子类"
+            },
+            problemEntry: {
+                required: "请选择条目"
+            },
+            problemSubentry: {
+                required: "请选择子条目"
+            },
+            tempSolveFlag: {
+                required: "请选择事件是否有临时解决措施"
+            },
+            tempSolutions: {
+                required: "请输入事件临时解决措施"
+            },
+            problemType: {
+                required: "请选择问题类型"
+            },
+            riskLevel: {
+                required: "请选择风险程度"
+            },
+            frequency: {
+                required: "请选择发生频率"
+            },
+            priority: {
+                required: "请选择优先级"
+            },
+            impactServiceInterruptFlag: {
+                required: "请选择是否影响业务中断"
+            },
+            problemSolver: {
+                required: "请选择问题牵头人"
+            },
+        },
+        onfocusout: function (element) {
+            $(element).valid();
+        },
+        focusCleanup: true
+    });
+
+    function queryParams(params) {
+        var search = $.table.queryParams(params);
+        search.ownerId = $("#ownerId").val() == '' ? 'problem_sheet_add_no_owner_id' : $("#ownerId").val();
+        return search;
+    }
+
+    // 附件上传页面
+    function upload() {
+        // 将生成的业务单号作为附件目录查找的唯一依据
+        var url = prefix + "/saveOrSubmit";
+        var data = getData('save');
+        var config = {
+            url: url,
+            type: "post",
+            dataType: "json",
+            data: data,
+            success: function (result) {
+                if (result.code == 0) {
+                    var ownerId = result.data;
+                    // 将ownerId保存到页面隐藏框
+                    $("#ownerId").val(ownerId);
+                    $("#problemId").val(ownerId);
+                    var uploadUrl = prefix_attachment + "/uploadSH/" + ownerId;
+                    $.modal.openNoBtnFileFlush("问题单附件上传", uploadUrl);
+                } else {
+                    $.operate.successCallback(result);
+                }
+            }
+        };
+        // 第一次上传附件需要保存版本业务单数据并打开附件上传页面
+        var ownerId = $("#ownerId").val();
+        if (ownerId == '') {
+            $.ajax(config);
+        } else {
+            // 不是第一次保存只需要打开附件上传页面
+            var url = prefix_attachment + "/uploadSH/" + ownerId;
+            $.modal.openNoBtnFileFlush("问题单附件上传", url);
+        }
+    }
+
+    // 附件下载
+    function downloadAttachment() {
+        var atId = $.table.selectFirstColumns()[0];
+        var ownerId = $("#ownerId").val();
+        var url = prefix_attachment + "/downloadSH/" + ownerId + "/" + atId;
+        window.location.href = url;
+    }
+
+    function submit() {
+        if ($.validate.form()) {
+            var url = prefix + "/saveOrSubmit";
+            var data = getData("submit");
+            $.operate.saveTab(url, data);
+        }
+    }
+
+    function save() {
+        var url = prefix + "/saveOrSubmit";
+        var data = getData("save");
+        $.operate.saveTab(url, data);
+    }
+
+    function getData(flag) {
+        var data = $('#form-sheet-add').serializeArray();
+        data.push({"name": "remark", "value": flag});
+        return data;
+    }
+
+    $("#endUpTime").datetimepicker({
+        format: "yyyy-mm-dd hh:ii:ss",
+        autoclose: true,
+        minView: 0,
+        minuteStep: 1
+    });
+    // 选择受派组
+    function selectAssignedGroup() {
+        var url = prefix + "/assignedGroup";
+        $.modal.open("问题牵头部室", url);
+    }
+
+    // 选择受派人
+    function selectAssignedPerson() {
+        var groupId = $("#problemSolverDepartment").val();
+        if($.common.isEmpty(groupId)) {
+            $.modal.alert("选择牵头人之前，请先选择问题牵头部室！");
+            return;
+        }
+        var url = prefix + "/assignedPerson/" + groupId;
+        $.modal.open("问题牵头人", url);
+    }
+
+    // 选择审核人
+    function selectAuditPerson() {
+        var groupId = $("#problemSolverDepartment").val();
+        if($.common.isEmpty(groupId)) {
+            $.modal.alert("选择审核人之前，请先选择问题牵头部室！");
+            return;
+        }
+        var url = prefix + "/auditPerson/" + groupId;
+        $.modal.open("问题审核人", url);
+    }
+
+    // 组装问题单根因分类一select下拉框
+    function setFirstType(firstArr){
+        var options = "<option value=''>请选择</option>";
+        for (var i = 0; i < firstArr.length; i++) {
+            $("#problemCauseClass1").append("<option value='" + firstArr[i].typeNo + "'>" + firstArr[i].typeName + "</option>");
+        }
+    };
+
+    // 组装事件单二级分类select下拉框
+    function setSecondType(){
+        var typeNo = $("#problemCauseClass1").val();
+        //异步查询数据
+        $.ajax({
+            type: "POST",
+            url: prefix_typeInfo,
+            data: {typeNo: typeNo},
+            dataType: "json",
+            success: function (res) {
+                var data = res.data;
+                //移除根因分类二下拉框数据
+                $("#problemCauseClass2").find("option").remove();
+                //添加下拉框数据
+                $("#problemCauseClass2").prepend("<option value=''>请选择根因分类二</option>");
+                for (var i = 0; i < data.length; i++) {
+                    $("#problemCauseClass2").append("<option value='" + data[i].typeNo + "'>" + data[i].typeName + "</option>");
+                }
+            }
+        });
+    }
+
+    // 组装问题单类别select下拉框
+    function setFirstCatType(firstArr){
+        var options = "<option value=''>请选择</option>";
+        for (var i = 0; i < firstArr.length; i++) {
+            $("#problemCategory").append("<option value='" + firstArr[i].typeNo + "'>" + firstArr[i].typeName + "</option>");
+        }
+    };
+    // 组装事件单子类
+    function setSecondCategory(){
+        var typeNo = $("#problemCategory").val();
+        //异步查询数据
+        $.ajax({
+            type: "POST",
+            url: prefix_typeInfo,
+            data: {typeNo: typeNo},
+            dataType: "json",
+            success: function (res) {
+                var data = res.data;
+                //移除下拉框数据（子类、条目、子条目）
+                $("#problemSubclass").find("option").remove();
+                $("#problemEntry").find("option").remove();
+                $("#problemSubentry").find("option").remove();
+                //添加下拉框数据
+                $("#problemSubclass").prepend("<option value=''>-请选择子类-</option>");
+                for (var i = 0; i < data.length; i++) {
+                    $("#problemSubclass").append("<option value='" + data[i].typeNo + "'>" + data[i].typeName + "</option>");
+                }
+            }
+        });
+    };
+
+    // 组装事件单条目
+    function setSThreeCategory(){
+        var typeNo = $("#problemSubclass").val();
+        //异步查询数据
+        $.ajax({
+            type: "POST",
+            url: prefix_typeInfo,
+            data: {typeNo: typeNo},
+            dataType: "json",
+            success: function (res) {
+                var data = res.data;
+                //移除下拉框数据
+                $("#problemEntry").find("option").remove();
+                $("#problemSubentry").find("option").remove();
+                if(data != null && data.length > 0) {
+                    //添加下拉框数据
+                    $("#problemEntry").prepend("<option value=''>-请选择条目-</option>");
+                    for (var i = 0; i < data.length; i++) {
+                        $("#problemEntry").append("<option value='" + data[i].typeNo + "'>" + data[i].typeName + "</option>");
+                    }
+                } else {
+                    $("#problemEntry").prepend("<option value='0'></option>");
+                    $("#problemSubentry").prepend("<option value='0'></option>");
+                }
+            }
+        });
+    };
+
+    // 组装事件单子条目
+    function setSFourCategory(){
+        var typeNo = $("#problemEntry").val();
+        //异步查询数据
+        $.ajax({
+            type: "POST",
+            url: prefix_typeInfo,
+            data: {typeNo: typeNo},
+            dataType: "json",
+            success: function (res) {
+                var data = res.data;
+                //移除下拉框数据
+                $("#problemSubentry").find("option").remove();
+                if(data != null && data.length > 0) {
+                    //添加下拉框数据
+                    $("#problemSubentry").prepend("<option value=''>-请选择子条目-</option>");
+                    for (var i = 0; i < data.length; i++) {
+                        $("#problemSubentry").append("<option value='" + data[i].typeNo + "'>" + data[i].typeName + "</option>");
+                    }
+                } else {
+                    $("#problemSubentry").prepend("<option value='0'></option>");
+                }
+            }
+        });
+    };
+
+
+    $(function () {
+        layui.use('laydate', function () {
+            var laydate = layui.laydate;
+            laydate.render({
+                elem: '#planSolveTime',
+                type: 'datetime',
+                trigger: 'click'
+            });
+        });
+    });
+</script>
+</body>
+</html>

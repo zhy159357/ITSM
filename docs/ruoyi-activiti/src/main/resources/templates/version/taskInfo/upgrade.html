@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <!--升级后情况确认页面-->
+    <th:block th:include="include :: header('升级后情况确认')" />
+    <th:block th:include="include :: select2-css" />
+</head>
+<body>
+<div class="main-content">
+    <form id="form-task-upgrade" class="form-horizontal">
+        <input name="taskId" type="hidden" id="taskId" th:value="*{taskId}"/>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label is-required">是否引发生产故障：</label>
+                    <div class="col-sm-10">
+                        <select id="ifBigFault" name="ifBigFault" class="form-control" onchange="checkUpgradeMemo()" required>
+                            <option value=""></option>
+                            <option value="1">是</option>
+                            <option value="2">否</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row" id="upgradeMemoDiv">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">故障情况描述：</label>
+                    <div class="col-sm-10">
+                        <textarea rows="5" cols="10" id="upgradeMemo" name="upgradeMemo" class="form-control" placeholder="请填写升级后情况描述,没有填写无" maxlength="1000"></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label is-required">升级结果填报：</label>
+                    <div class="col-sm-10">
+                        <h4 style="color: #d5000d">
+                            若升级结果填报选择【回退】或【其他异常】，必须上传拉群请示领导的截图，运维管理平台做强制性校验！
+                        </h4>
+                        <select id="ifResultSmoothly" name="ifResultSmoothly" class="form-control" th:with="resultSmoothly=${@pubParaValue.selectPubParaValueByParaName('result_smoothly_status')}" onchange="checkSmoothlyMemo()">
+                            <option value=""></option>
+                            <option th:each="result : ${resultSmoothly}" th:text="${result.valueDetail}" th:value="${result.value}"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row" id="backExceptionMemoDiv">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">异常或回退内容：</label>
+                    <div class="col-sm-10">
+                        <textarea rows="5" cols="10" id="backExceptionMemo" name="backExceptionMemo" class="form-control" placeholder="请填写异常或回退内容" maxlength="1000"></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label is-required">升级次日开发是否现场支持：</label>
+                    <div class="col-sm-10">
+                        <select id="ifSupport" name="ifSupport" class="form-control" onchange="checkSupportMemo()" required>
+                            <option value=""></option>
+                            <option value="1">是</option>
+                            <option value="2">否</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row" id="supportDiv">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">升级支持地点：</label>
+                    <div class="col-sm-10">
+                        <input id="supportAddress" name="supportAddress" class="form-control" placeholder="请填写支持地点" maxlength="128"/>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">升级支持人员：</label>
+                    <div class="col-sm-10">
+                        <input id="supportPhone" name="supportPhone" class="form-control" placeholder="请填写支持人员" maxlength="128"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: select2-js" />
+<th:block th:include="include :: datetimepicker-js" />
+<script>
+    var prefix = ctx + "version/taskInfo";
+
+    function checkUpgradeMemo() {
+        var ifBigFault = $("#ifBigFault").val();
+        if(ifBigFault == "1"){
+            $("#upgradeMemoDiv").show();
+        } else {
+            $("#upgradeMemoDiv").hide();
+            $("#upgradeMemo").val("");
+        }
+    }
+
+    function checkSmoothlyMemo() {
+        var ifResultSmoothly = $("#ifResultSmoothly").val();
+        if(ifResultSmoothly == "2" || ifResultSmoothly == "3"){
+            uploadImage();
+            $("#backExceptionMemoDiv").show();
+        } else {
+            $("#backExceptionMemoDiv").hide();
+            $("#backExceptionMemo").val("");
+        }
+    }
+
+    function checkSupportMemo() {
+        var ifSupport = $("#ifSupport").val();
+        if(ifSupport == "1"){
+            $("#supportDiv").show();
+        } else {
+            $("#supportDiv").hide();
+            $("#supportAddress").val("");
+            $("#supportPhone").val("");
+        }
+    }
+
+    function submitHandler(){
+        var url = prefix + "/upgradeAfterCondition";
+        var ifBigFault = $("#ifBigFault").val();
+        if(ifBigFault == null || ifBigFault == ""){
+            $.modal.alertWarning("是否引发生产故障必选！");
+            return;
+        }
+        var upgradeMemo = $("#upgradeMemo").val();
+        if(ifBigFault == "1"){
+            if(upgradeMemo == null || upgradeMemo == ""){
+                $.modal.alertWarning("引发生产故障，则故障情况描述必填！");
+                return;
+            }
+        } else {
+            $("#upgradeMemo").val("升级正常");
+        }
+
+        var ifResultSmoothly = $("#ifResultSmoothly").val();
+        if(ifResultSmoothly == "" || ifResultSmoothly == null){
+            $.modal.alertWarning("升级结果填报必选！");
+            return;
+        }
+        var backExceptionMemo = $("#backExceptionMemo").val();
+        if(ifResultSmoothly == "2" || ifResultSmoothly == "3"){
+            if(backExceptionMemo == "" || backExceptionMemo == null){
+                $.modal.alertWarning("升级结果填报选择【回退】或【其他异常】，异常或回退内容必填！");
+                return;
+            }
+        }
+
+        var ifSupport = $("#ifSupport").val();
+        if(ifSupport == null || ifSupport == ""){
+            $.modal.alertWarning("升级次日开发是否现场支持必选！");
+            return;
+        }
+        var supportAddress = $("#supportAddress").val();
+        var supportPhone = $("#supportPhone").val();
+        if(ifSupport == "1"){
+            if((supportAddress == null || supportAddress == "")){
+                $.modal.alertWarning("选择升级次日支持，支持地点必填！");
+                return;
+            }
+            if(supportPhone == null || supportPhone == ""){
+                $.modal.alertWarning("选择升级次日支持，支持人员必填！");
+                return;
+            }
+        }
+
+        var data = $("#form-task-upgrade").serializeArray();
+        var taskId = $("#taskId").val();
+        data.push("taskId", taskId);
+        $.post(url, data, function (result) {
+            window.parent.$.table.refresh('bootstrap-table');
+            if (result.code == 0) {
+                $.modal.alertSuccess(result.msg);
+                $.modal.close();
+            } else {
+                $.modal.alertError(result.msg);
+            }
+        });
+
+    }
+
+    // 附件上传页面
+    function uploadImage() {
+        var url = prefix + "/upload/" + $("#taskId").val();
+        $.modal.openNoBtnFileFlush("升级后评估结果填报截图上传", url);
+    }
+
+</script>
+</body>
+</html>

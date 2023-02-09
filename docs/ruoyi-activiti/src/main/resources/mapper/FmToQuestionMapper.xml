@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.activiti.mapper.FmToQuestionMapper">
+
+    <resultMap type="FmToQuestion" id="FmToQuestionResult">
+        <result property="id"    column="id"    />
+        <result property="sysId"    column="sys_id"    />
+        <result property="notCommitCount"    column="not_commit_count"    />
+        <result property="notCommitReport"    column="not_commit_report"    />
+        <result property="commitQuestionCount"    column="commit_question_count"    />
+        <result property="closeStatusCount"    column="close_status_count"    />
+        <result property="dateTime"    column="date_time"    />
+        <result property="notCountType"    column="not_count_type"    />
+    </resultMap>
+
+    <sql id="selectFmToQuestionVo">
+        select id, sys_id, not_commit_count, not_commit_report, commit_question_count, close_status_count, date_time, not_count_type from fm_to_question
+    </sql>
+
+    <select id="selectFmToQuestionList" parameterType="FmToQuestion" resultMap="FmToQuestionResult">
+        <include refid="selectFmToQuestionVo"/>
+        <where>
+            <if test="sysId != null  and sysId != ''"> and sys_id = #{sysId}</if>
+            <if test="notCommitCount != null  and notCommitCount != ''"> and not_commit_count = #{notCommitCount}</if>
+            <if test="notCommitReport != null  and notCommitReport != ''"> and not_commit_report = #{notCommitReport}</if>
+            <if test="commitQuestionCount != null  and commitQuestionCount != ''"> and commit_question_count = #{commitQuestionCount}</if>
+            <if test="closeStatusCount != null  and closeStatusCount != ''"> and close_status_count = #{closeStatusCount}</if>
+            <if test="dateTime != null  and dateTime != ''"> and date_time = #{dateTime}</if>
+            <if test="notCountType != null  and notCountType != ''"> and not_count_type = #{notCountType}</if>
+        </where>
+    </select>
+
+    <select id="selectFmToQuestionById" parameterType="String" resultMap="FmToQuestionResult">
+        <include refid="selectFmToQuestionVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertFmToQuestion" parameterType="FmToQuestion">
+        <selectKey keyProperty="id" resultType="long" order="BEFORE">
+            SELECT seq_fm_to_question.NEXTVAL as id FROM DUAL
+        </selectKey>
+        insert into fm_to_question
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null  and id != ''">id,</if>
+            <if test="sysId != null  and sysId != ''">sys_id,</if>
+            <if test="notCommitCount != null  and notCommitCount != ''">not_commit_count,</if>
+            <if test="notCommitReport != null  and notCommitReport != ''">not_commit_report,</if>
+            <if test="commitQuestionCount != null  and commitQuestionCount != ''">commit_question_count,</if>
+            <if test="closeStatusCount != null  and closeStatusCount != ''">close_status_count,</if>
+            <if test="dateTime != null  and dateTime != ''">date_time,</if>
+            <if test="notCountType != null  and notCountType != ''">not_count_type,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null  and id != ''">#{id},</if>
+            <if test="sysId != null  and sysId != ''">#{sysId},</if>
+            <if test="notCommitCount != null  and notCommitCount != ''">#{notCommitCount},</if>
+            <if test="notCommitReport != null  and notCommitReport != ''">#{notCommitReport},</if>
+            <if test="commitQuestionCount != null  and commitQuestionCount != ''">#{commitQuestionCount},</if>
+            <if test="closeStatusCount != null  and closeStatusCount != ''">#{closeStatusCount},</if>
+            <if test="dateTime != null  and dateTime != ''">#{dateTime},</if>
+            <if test="notCountType != null  and notCountType != ''">#{notCountType},</if>
+        </trim>
+    </insert>
+
+    <update id="updateFmToQuestion" parameterType="FmToQuestion">
+        update fm_to_question
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="sysId != null  and sysId != ''">sys_id = #{sysId},</if>
+            <if test="notCommitCount != null  and notCommitCount != ''">not_commit_count = #{notCommitCount},</if>
+            <if test="notCommitReport != null  and notCommitReport != ''">not_commit_report = #{notCommitReport},</if>
+            <if test="commitQuestionCount != null  and commitQuestionCount != ''">commit_question_count = #{commitQuestionCount},</if>
+            <if test="closeStatusCount != null  and closeStatusCount != ''">close_status_count = #{closeStatusCount},</if>
+            <if test="dateTime != null  and dateTime != ''">date_time = #{dateTime},</if>
+            <if test="notCountType != null  and notCountType != ''">not_count_type = #{notCountType},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteFmToQuestionById" parameterType="String">
+        delete from fm_to_question where id = #{id}
+    </delete>
+
+    <delete id="deleteFmToQuestionByIds" parameterType="String">
+        delete from fm_to_question where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

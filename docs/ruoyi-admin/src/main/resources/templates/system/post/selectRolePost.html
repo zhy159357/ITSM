@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+	<th:block th:include="include :: header('添加角色')" />
+</head>
+
+<body class="gray-bg">
+<div class="container-div">
+	<div class="row">
+		<div class="col-sm-12 search-collapse">
+			<form id="post-form">
+				<input type="hidden" id="postId" name="postId" th:value="${post.postId}">
+				<div class="select-list">
+					<ul>
+						<li>
+							角色名称：<input type="text" name="rName"/>
+						</li>
+						<li>
+							<a class="btn btn-primary btn-rounded btn-sm" id="jsSearch" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+							<a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+						</li>
+					</ul>
+				</div>
+			</form>
+		</div>
+
+
+		<div class="col-sm-12 select-table table-striped">
+			<table id="bootstrap-table"></table>
+		</div>
+	</div>
+</div>
+<th:block th:include="include :: footer" />
+<script th:inline="javascript">
+    var prefix = ctx + "system/post/authRolePost" ;
+
+    $(function() {
+
+        // 回车键搜索
+        document.onkeydown = function(e){
+            var ev = document.all ? window.event : e;
+            if(ev.keyCode==13) {
+                $('#jsSearch').trigger('click');
+                return false;
+            }
+        };
+
+        var options = {
+            url: prefix + "/unallocatedListRolePost",
+            createUrl: prefix + "/add",
+            updateUrl: prefix + "/edit/{id}",
+            removeUrl: prefix + "/remove",
+            exportUrl: prefix + "/export",
+            importUrl: prefix + "/importData",
+            importTemplateUrl: prefix + "/importTemplatePost",
+            sortOrder: "desc",
+            modalName: "角色",
+            showSearch: false,
+            showRefresh: false,
+            showToggle: false,
+            showColumns: false,
+            clickToSelect: true,
+            rememberSelected: true,
+            columns: [{
+                field: 'state',
+                checkbox: true
+            },
+                {
+                    field: 'rid',
+                    title: '角色ID',
+                    visible: false
+                },
+                {
+                    field: 'rName',
+                    title: '角色名称',
+                },
+                {
+                    field: 'memo',
+                    title: '角色说明'
+                }
+               ]
+        };
+        $.table.init(options);
+    });
+
+
+
+    /* 添加角色-选择用户-提交 */
+    function submitHandler() {
+        var rows = $.table.selectFirstColumns();
+        if (rows.length == 0) {
+            $.modal.alertWarning("请至少选择一条记录");
+            return;
+        }
+        var data = { "postId": $("#postId").val(), "rids": rows.join() };
+        $.operate.save(prefix + "/selectAll", data);
+        parent.$.table.search('type-form-js','bootstrap-table-js');
+    }
+</script>
+</body>
+</html>

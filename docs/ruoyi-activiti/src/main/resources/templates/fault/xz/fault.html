@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('网络条线故障展示')" />
+    <th:block th:include="include :: datetimepicker-css" />
+</head>
+<body class="gray-bg">
+     <div class="container-div">
+        <div class="row">
+            <div class="col-sm-12 search-collapse">
+                <form id="formId">
+                    <div class="select-list">
+                        <ul>
+                            <li>
+                                <label> 中心：</label><select class="form-control"  name="hardwareCentre" th:with="type=${@dict.getParaType('Line_Center')}" id="hardwareCentre">
+                                    <option value=""></option>
+                                    <option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+                                </select>
+                            </li>
+                            <li>
+                                <label>环境：</label><select class="form-control"  name="hardwareEnvironment" th:with="type=${@dict.getParaType('fault_hardware')}" id="hardwareEnvironment">
+                                    <option value=""></option>
+                                    <option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+                                </select>
+                            </li>
+                            <li>
+                                <label> 处室：</label><select class="form-control"  name="hardwareMistress" th:with="type=${@dict.getParaType('fault_Mistress')}" id="hardwareMistress">
+                                <option value=""></option>
+                                <option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+                            </select>
+                            </li>
+                            <li>
+                                <label>品牌：</label><select class="form-control"  name="hardwareBrand" th:with="type=${@dict.getParaType('fault_Brand')}" id="hardwareBrand">
+                                <option value=""></option>
+                                <option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+                            </select>
+                            </li>
+                            <li>
+                                <label> 是否监控告警：</label><select class="form-control"  name="hardwareIsnoPolice" th:with="type=${@dict.getParaType('Line_Isno')}" id="hardwareIsnoPolice">
+                                <option value=""></option>
+                                <option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+                            </select>
+                            </li>
+                            <li>
+                                <label>故障点：</label><select class="form-control"  name="hardwareDot" th:with="type=${@dict.getParaType('fault_Dot')}" id="hardwareDot">
+                                    <option value=""></option>
+                                    <option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+                                </select>
+                            </li>
+                            <li>
+                                <label>处置措施：</label><input type="text" id="registerSystem" name="registerSystem" class="form-control">
+                            </li>
+                            <li>
+                                <label>故障发生时间：</label><input id="createTimeTwo" name="createTimeTwo" class="form-control" type="text" style="background-color: #fff; opacity: 1;" readonly required>
+                            </li>
+                            <li>
+                                <label>是否影响业务连续性：</label><select class="form-control"  name="continuityIsno" th:with="type=${@dict.getParaType('Line_Isno')}" id="continuityIsno">
+                                <option value=""></option>
+                                <option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+                            </select>
+                            </li>
+                            <li>
+                                <label>值班人员：</label><input type="text" id="watchkeeperPerson" name="watchkeeperPerson" class="form-control">
+                            </li>
+                            <li>
+                                <label>处理人员：</label><input type="text" id="hardwarePerson" name="hardwarePerson" class="form-control">
+                            </li>
+                            <li>
+                                <label>处理结果：</label><input type="text" id="dealWith" name="dealWith" class="form-control">
+                            </li>
+                            <li>
+                                <label>状态：</label><select class="form-control"  name="lineStart" th:with="type=${@dict.getParaType('line_start')}" id="lineStart">
+                                <option value=""></option>
+                                <option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+                            </select>
+                            </li>
+                            <li>
+                                <a class="btn btn-primary btn-rounded btn-sm" id="ss" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-repeat"></i>&nbsp;重置</a>
+                            </li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+
+            <div class="btn-group-sm" id="toolbar" role="group">
+                <a class="btn btn-success" onclick="$.operate.addTab()">
+                    <i class="fa fa-plus"></i> 新建
+                </a>
+                <a class="btn btn-primary single disabled" onclick="editTab()">
+                    <i class="fa fa-edit"></i> 修改
+                </a>
+                <a class="btn btn-danger multiple disabled" onclick="removeAll()">
+                    <i class="fa fa-trash"></i> 删除草稿
+                </a>
+                <a class="btn btn-info single disabled" onclick="detailTab()">
+                    <i class="fa fa-search"></i> 详情
+                </a>
+                <a class="btn btn-warning" onclick="$.table.exportExcel()">
+                    <i class="fa fa-download"></i> 导出
+                </a>
+            </div>
+            <div class="col-sm-12 select-table table-striped">
+                <table id="bootstrap-table"></table>
+            </div>
+        </div>
+    </div>
+    <th:block th:include="include :: footer" />
+     <th:block th:include="include :: datetimepicker-js" />
+    <script th:inline="javascript">
+        var lineCore =  [[${@dict.getParaType('Line_Center')}]];
+        var faultDot =  [[${@dict.getParaType('fault_Dot')}]];
+        var faultMistress =  [[${@dict.getParaType('fault_Mistress')}]];
+        var faultBrand =  [[${@dict.getParaType('fault_Brand')}]];
+        var faultTypeOne =  [[${@dict.getParaType('fault_TypeOne')}]];
+
+        var prefix = ctx + "fault/xz";
+
+        $(function() {
+            document.onkeydown = function(e){
+                var ev = document.all ? window.event : e;
+                console.log(ev);
+                if(ev.keyCode==13) {
+                    $('#ss').trigger('click');
+                    return false;
+                } //搜索逻辑
+            }
+            var options = {
+                url: prefix + "/list",
+                createUrl: prefix + "/add",
+                updateUrl: prefix + "/edit/{id}",
+                removeUrl: prefix + "/remove",
+                detailUrl: prefix + "/detail/{id}",
+                exportUrl: prefix + "/export",
+                sortName: "createTimeTwo",
+                sortOrder: "desc",
+                singleSelect:true,
+                clickToSelect: true,
+                modalName: "网络条线故障",
+                columns: [{
+                    checkbox: true
+                },
+                {
+                    field: 'hardwareId',
+                    title: '序号',
+                    visible: false
+                },
+                    {
+                        field: 'hardwareCentre',
+                        title: '中心',
+                        formatter: function (value,row,index) {
+                            return selectDictLabel(lineCore, value);
+                        }
+                    },
+                {
+                    field: 'hardwareMistress',
+                    title: '处室',
+                    formatter: function (value,row,index) {
+                        return selectDictLabel(faultMistress, value);
+                    }
+                },
+                {
+                    field: 'hardwareDevicename',
+                    title: '设备名称'
+                },
+                {
+                    field: 'hardwareBrand',
+                    title: '品牌',
+                    formatter: function (value,row,index) {
+                        return selectDictLabel(faultBrand, value);
+                    }
+                },
+                    {
+                        field: 'hardwareTypeOne',
+                        title: '设备型号',
+                    },
+                {
+                    field: 'createTimeTwo',
+                    title: '故障发生时间',
+                    formatter: function (value, row, index) {
+                        var createTimeTwo = '';
+                        if(value!='' && value !=null){
+                            var pattern = /(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/;
+                            createTimeTwo = value.replace(pattern, '$1-$2-$3 $4:$5:$6');
+                        }
+                        return createTimeTwo;
+                    }
+                },
+                {
+                    field: 'hardwareTime',
+                    title: '确认故障时间',
+                    formatter: function (value, row, index) {
+                        var hardwareTime = '';
+                        if(value!='' && value !=null){
+                            var pattern = /(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/;
+                            hardwareTime = value.replace(pattern, '$1-$2-$3 $4:$5:$6');
+                        }
+                        return hardwareTime;
+                    }
+                },
+                    {
+                        field: 'partElapsedTime',
+                        title: '备件耗时（分钟）'
+                    },
+                {
+                    field: "hardwareDisposeTime",
+                    title: '故障处理耗时（分钟）'
+                },
+                    {
+                        field: "personAnswerTime",
+                        title: '人员响应耗时（分钟）'
+                    },
+                {
+                    field: "hardwareDot",
+                    title: '故障点',
+                    formatter: function (value,row,index) {
+                        return selectDictLabel(faultDot, value);
+                    },
+                }]
+            };
+            $.table.init(options);
+        });
+
+        // 添加
+        function addLine(lineId) {
+            var url = prefix + '/addEmerg/' + lineId;
+            $.modal.openTab("添加故障", url);
+        }
+
+        //修改之前判断只有待提交的才能修改
+        function editTab(hardwareId) {
+            table.set();
+            var rows = $.common.isEmpty(table.options.uniqueId) ? $.table.selectFirstColumns() : $.table.selectColumns(table.options.uniqueId);
+            $.ajax({
+                type: 'POST',
+                url: prefix+"/selectById",
+                data: {"hardwareId":rows[0]},
+                success: function (result) {
+                    if(result.data.lineStart=='1'){
+                        debugger;
+                        $.modal.openTab("修改" + table.options.modalName, $.operate.editUrl(hardwareId));
+                    }else{
+                        $.modal.alertError("状态为：已提交，无法修改!");
+                    }
+                },
+                dataType: 'json'
+            });
+        }
+
+        //已提交的不可以删除
+        function removeAll(hardwareId) {
+            debugger;
+            table.set();
+            var rows = $.common.isEmpty(table.options.uniqueId) ? $.table.selectFirstColumns() : $.table.selectColumns(table.options.uniqueId);
+            $.ajax({
+                type: 'POST',
+                url: prefix+"/selectById",
+                data: {"hardwareId":rows[0]},
+                success: function (result) {
+                    if(result.data.lineStart=='1'){
+                        $.modal.openTab("删除" + table.options.modalName, $.operate.removeAll(hardwareId));
+                    }else{
+                        $.modal.alertError("状态为：已提交，无法删除!");
+                    }
+                },
+                dataType: 'json'
+            });
+        }
+
+        // 查看详情
+        function detailTab() {
+            var hardwareId = $.table.selectFirstColumns();
+            var url = prefix + '/detail/' + hardwareId;
+            $.modal.openTab("查看详情", url);
+        }
+
+        //发生时间
+        $("#createTimeTwo").datetimepicker({
+            format: "yyyy-mm-dd hh:ii:ss",
+            minView: "month",
+            autoclose: true,
+            minView:0,
+            minuteStep:1,
+        });
+
+        //事件来源（字典项）
+        function selectDictLabel(datas, value) {
+            var actions = [];
+            $.each(datas, function(index, dict) {
+                if (dict.value == ('' + value)) {
+                    var listClass = $.common.equals("default", dict.listClass) || $.common.isEmpty(dict.listClass) ? "" : "badge badge-" + dict.listClass;
+                    actions.push($.common.sprintf("<span class='%s'>%s</span>", listClass, dict.valueDetail));
+                    return false;
+                }
+            });
+            return actions.join('');
+        }
+
+    </script>
+</body>
+</html>

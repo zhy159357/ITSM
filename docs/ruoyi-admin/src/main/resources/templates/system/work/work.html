@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:include="include :: header('系统管理工作组列表')"/>
+</head>
+<body class="gray-bg">
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="container-div">
+                <div class="row">
+                    <div class="col-sm-12 search-collapse">
+                        <form id="type-form">
+                            <input type="hidden" id="deptIdGroup" name="orgId">
+                            <div class="select-list">
+                                <ul>
+                                    <li>
+                                        <p>工作组名称：</p><input type="text" name="grpName" id="grpNameInput"/>
+                                    </li>
+                                    <li>
+                                        <p> 隶属机构：</p><input id="deptNameGroup" type="text" onclick="selectDeptTree('group')" readonly style="background-color: #ffffff"
+                                                    name="orgName"/>
+                                    </li>
+                                    <li>
+                                        <p>工作组类别：</p>
+                                        <select name="groupType" id="groupType" class="form-control" th:with="type=${@pubParaValue.selectPubParaValueByParaName('GROUP_TYPE')}">
+                                            <option value=""></option>
+                                            <option th:each="paraValue : ${type}" th:text="${paraValue.valueDetail}" th:value="${paraValue.value}"></option>
+                                        </select>
+                                    </li>
+                                    <li>
+                                        <p>所属应用系统：</p>
+                                        <input id="sysId" name="sysId" type="hidden" class="form-control"/>
+                                        <input id="sName" name="sName" type="text" class="form-control" readonly style="background-color: #ffffff"
+                                               onclick="selectOgSysListByCondition()"/>
+                                    </li>
+                                    <li>
+                                        <a class="btn btn-primary btn-rounded btn-sm" id="ss"
+                                           onclick="$.table.search('type-form','bootstrap-table')"><i
+                                                class="fa fa-search"></i>&nbsp;搜索</a>
+                                        <a class="btn btn-warning btn-rounded btn-sm"
+                                           onclick="Reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="btn-group-sm" id="toolbar" role="group">
+                        <a class="btn btn-success" onclick="$.operate.add()">
+                            <i class="fa fa-plus"></i> 新增
+                        </a>
+                        <a class="btn btn-primary single disabled" onclick="$.operate.edit()">
+                            <i class="fa fa-edit"></i> 修改
+                        </a>
+                        <!--<a class="btn btn-danger" onclick="clearCache()" shiro:hasPermission="system:dict:remove">
+                            <i class="fa fa-refresh"></i> 清理缓存
+                        </a>-->
+                    </div>
+
+                    <div class="col-sm-12 select-table table-striped">
+                        <table id="bootstrap-table"></table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="container-div">
+                <div class="row">
+                    <div class="col-sm-12 search-collapse">
+                        <form id="data-form">
+                            <input type="hidden" id="deptIdUser" name="orgId">
+                            <input type="hidden" name="groupId" id="groupId">
+                            <div class="select-list">
+                                <ul>
+                                    <li>
+                                        成员姓名：<input id="userName" type="text" name="person.pName"/>
+                                    </li>
+                                    <li>
+                                        所属机构：<input id="deptNameUser" type="text"  onclick="selectDeptTree('user')" readonly style="background-color: #ffffff"
+                                                    name="orgName"/>
+                                    </li>
+                                    <li>
+                                        <a class="btn btn-primary btn-rounded btn-sm" id="sss"
+                                           onclick="$.table.search('data-form','bootstrap-table-data')"><i
+                                                class="fa fa-search"></i>&nbsp;搜索</a>
+                                        <a class="btn btn-warning btn-rounded btn-sm"
+                                           onclick="$.form.reset('data-form','bootstrap-table-data')"><i
+                                                class="fa fa-refresh"></i>&nbsp;重置</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="btn-group-sm" id="data_toolbar" role="group">
+                        <a id="data_toolbar_btn" class="btn btn-success" onclick="validatePubPara()">
+                            <i class="fa fa-plus"></i> 新增
+                        </a>
+                        <a class="btn btn-primary multiple disabled" onclick="$.operate.edit()">
+                            <i class="fa fa-edit"></i> 修改
+                        </a>
+                        <a class="btn btn-danger single disabled" onclick="$.operate.removeAll()">
+                            <i class="fa fa-refresh"></i> 删除
+                        </a>
+                    </div>
+
+                    <div class="col-sm-12 select-table table-striped">
+                        <table id="bootstrap-table-data"></table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<th:block th:include="include :: footer"/>
+<script th:inline="javascript">
+    var prefix = ctx + "system/work";
+
+    var dataprefix = ctx + "system/work/groupPerson";
+    var datas = [[${@dict.getParaType('post_type')}]];
+    var groupType = [[${@pubParaValue.selectPubParaValueByParaName('GROUP_TYPE')}]];
+
+    var formtype ='0';
+
+    function Reset() {
+        location.replace(location);
+    }
+
+    $(function () {
+        oneGz();
+        twoRy();
+
+        // 工作组
+        $('#grpNameInput').focus(function(){
+            formtype = '2';
+        });
+        $('#deptNameGroup').focus(function(){
+            formtype = '2';
+        });
+        $('#groupType').focus(function(){
+            formtype = '2';
+        });
+        $('#sName').focus(function(){
+            formtype = '2';
+        });
+
+        // 工作组人员
+        $('#userName').focus(function(){
+            formtype = '1';
+        });
+        $('#deptNameUser').focus(function(){
+            formtype = '1';
+        });
+
+    })
+
+    //工作组
+    function oneGz(){
+        formtype = '2';
+        //回车搜索
+        document.onkeydown = function(e){
+            var ev = document.all ? window.event : e;
+            console.log(ev);
+            if(ev.keyCode==13) {
+                if(formtype == '1'){
+                    $('#sss').trigger('click');
+                }
+                if(formtype == '2'){
+                    $('#ss').trigger('click');
+                }
+                return false;
+            } //搜索逻辑
+        }
+
+        var options = {
+            url: prefix + "/listWork",
+            createUrl: prefix + "/add",
+            updateUrl: prefix + "/edit/{id}",
+            pageSize:10,
+            onClickRow:onChoose,
+            onCheck:onChoose,
+            modalName: "工作组",
+            onClickRow: function (row, $element) {
+                $('#toolbar a').removeClass('disabled');
+                $('#groupId').val(row.groupId);
+                $($element).find("input[type='radio']").prop('checked', 'checked')
+                $($element).find("input[type='radio']").trigger('click');
+                $.table.search('data-form', 'bootstrap-table-data')
+            },
+            columns: [{
+                radio: true
+            },
+                {
+                    field: 'groupId',
+                    title: '工作组ID',
+                    visible: false
+                },
+                {
+                    field: 'grpName',
+                    title: '工作组名称'
+                },
+                {
+                    field: 'ogOrg.orgName',
+                    title: '隶属机构'
+                },
+                {
+                    field: 'sysId',
+                    title: '所属应用系统'
+                },
+                {
+                    field: 'groupType',
+                    title: '类别',
+                    formatter: function (value, row, index) {
+                        return $.table.selectPubParaValueData(groupType,value);
+                    }
+                },
+                {
+                    field: "invalidationMark",
+                    title: '状态',
+                    align: 'center',
+                    formatter: function (value, row, index) {
+                        if (row.invalidationMark == 1) {
+                            return "启用";
+                        } else {
+                            return "停止";
+                        }
+                    }
+                }]
+        };
+        $.table.init(options);
+
+    }
+
+    //人员
+    function twoRy(){
+
+        formtype = '1';
+        //回车搜索
+        document.onkeydown = function(e){
+            var ev = document.all ? window.event : e;
+            console.log(ev);
+            if(ev.keyCode==13) {
+                if(formtype == '1'){
+                    $('#sss').trigger('click');
+                }
+                if(formtype == '2'){
+                    $('#ss').trigger('click');
+                }
+                return false;
+            } //搜索逻辑
+        }
+
+        var data_options = {
+            id: 'bootstrap-table-data',
+            url: dataprefix + "/groupPersonList",
+            createUrl: dataprefix + "/add/{id}",
+            updateUrl: dataprefix + "/editGroupPerson/{id}",
+            removeUrl: dataprefix + "/removeGroupPerson",
+            exportUrl: dataprefix + "/export",
+            modalName: "人员",
+            singleSelect:true,
+            clickToSelect: true,
+            toolbar: 'data_toolbar',
+            clickToSelect: true,
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'gpId',
+                    title: '人员ID',
+                    visible: false
+                },
+                {
+                    field: 'person.pName',
+                    title: '姓名',
+                    visible: true
+                },
+                {
+                    field: 'person.sex',
+                    title: '性别',
+                    formatter: function (value, row, index) {
+                        if (value == 1) {
+                            return "男";
+                        } else {
+                            return "女";
+                        }
+                    }
+                },
+                {
+                    field: 'person.mobilPhone',
+                    title: '手机号'
+                },
+                {
+                    field: 'ogOrg.orgName',
+                    title: '所属机构'
+                },
+                {
+                    field: 'gpOsition',
+                    title: '组内职位',
+                    formatter: function (value, row, index) {
+                        return $.table.selectPubParaValueData(datas, value);
+                    }
+                },
+                {
+                    field: 'gpOrder',
+                    title: '组内顺序',
+                }]
+        };
+        $.table.init(data_options);
+    }
+
+    /*$(function () {
+        var data_options = {
+            id: 'bootstrap-table-data',
+            url: dataprefix + "/groupPersonList",
+            singleSelect:true,
+            createUrl: dataprefix + "/add/{id}",
+            updateUrl: dataprefix + "/editGroupPerson/{id}",
+            removeUrl: dataprefix + "/removeGroupPerson",
+            exportUrl: dataprefix + "/export",
+            modalName: "人员",
+            toolbar: 'data_toolbar',
+            clickToSelect: true,
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'gpId',
+                    title: '人员ID',
+                    visible: false
+                },
+                {
+                    field: 'person.pName',
+                    title: '姓名',
+                    visible: true
+                },
+                {
+                    field: 'person.sex',
+                    title: '性别',
+                    formatter: function (value, row, index) {
+                        if (value == 1) {
+                            return "男";
+                        } else {
+                            return "女";
+                        }
+                    }
+                },
+                {
+                    field: 'person.mobilPhone',
+                    title: '手机号'
+                },
+                {
+                    field: 'ogOrg.orgName',
+                    title: '所属机构'
+                },
+                {
+                    field: 'gpOsition',
+                    title: '组内职位',
+                    formatter: function (value, row, index) {
+                        return $.table.selectPubParaValueData(datas, value);
+                    }
+                },
+                {
+                    field: 'gpOrder',
+                    title: '组内顺序',
+                }]
+        };
+        $.table.init(data_options);
+        var options = {
+            url: prefix + "/list",
+            createUrl: prefix + "/add",
+            updateUrl: prefix + "/edit/{id}",
+            pageSize:10,
+            modalName: "工作组",
+            onClickRow: function (row, $element) {
+                $('#toolbar a').removeClass('disabled');
+                $('#groupId').val(row.groupId);
+                $($element).find("input[type='radio']").prop('checked', 'checked')
+                $($element).find("input[type='radio']").trigger('click');
+                $.table.search('data-form', 'bootstrap-table-data')
+            },
+            columns: [{
+                radio: true
+            },
+                {
+                    field: 'groupId',
+                    title: '工作组ID',
+                    visible: false
+                },
+                {
+                    field: 'grpName',
+                    title: '工作组名称'
+                },
+                {
+                    field: 'ogOrg.orgName',
+                    title: '隶属机构'
+                },
+                {
+                    field: 'sysId',
+                    title: '所属应用系统'
+                },
+                {
+                    field: 'groupType',
+                    title: '类别',
+                    formatter: function (value, row, index) {
+                        if (row.groupType == 1) {
+                            return "一线工作组";
+                        } else {
+                            return "二线工作组";
+                        }
+                    }
+                },
+                {
+                    field: "invalidationMark",
+                    title: '状态',
+                    align: 'center',
+                    formatter: function (value, row, index) {
+                        if (row.invalidationMark == 1) {
+                            return "启用";
+                        } else {
+                            return "停止";
+                        }
+                    }
+                }]
+        };
+        $.table.init(options);
+    });*/
+
+    var dept = "";
+
+    function selectDeptTree(flag) {
+        dept = flag;
+        var deptId = $.common.isEmpty($("#treeId").val()) ? "310100001" : $("#treeId").val();
+        var url = ctx + "system/ogperson/selectDeptTree/" + deptId;
+        var options = {
+            title: '选择部门',
+            width: "380",
+            url: url,
+            callBack: doSubmit
+        };
+        $.modal.openOptions(options);
+    }
+
+    function doSubmit(index, layero) {
+        var tree = layero.find("iframe")[0].contentWindow.$._tree;
+        var body = layer.getChildFrame('body', index);
+
+        // 使用dept作为变量标识，区别工作组列表的机构和工作组成员的列表
+        if (dept == "group") {
+            $("#deptIdGroup").val(body.find('#treeId').val());
+            $("#deptNameGroup").val(body.find('#treeName').val());
+        } else if (dept == "user") {
+            $("#deptIdUser").val(body.find('#treeId').val());
+            $("#deptNameUser").val(body.find('#treeName').val());
+        }
+        layer.close(index);
+    }
+
+    function onChoose(row,obj){
+        $("#groupId").val(row.groupId);
+        $(obj).siblings().removeClass("selected")
+        $(obj).addClass("selected");
+        $(obj).find("input[type='radio']").prop('checked','checked')
+        $.table.search('data-form','bootstrap-table-data')
+    }
+
+    function validatePubPara() {
+        var groupId = $('#groupId').val();
+
+        if (groupId == '') {
+            $.modal.alertError("请先选择要添加人员的工作组!");
+        } else {
+            var url = dataprefix + '/selectUser/' + groupId;
+            $.modal.open("选择人员", url);
+        }
+    }
+
+    /** 清理字典缓存 */
+    function clearCache() {
+        $.operate.get(prefix + "/clearCache");
+    }
+
+    // 选择应用系统（只能单选）
+    function selectOgSysListByCondition() {
+        $.modal.open("选择应用系统", prefix + "/sysGrouplist");
+    }
+
+    function getFmKindOneList(sysid){
+
+    }
+    function getGroupList(sysid){
+
+    }
+
+</script>
+</body>
+</html>

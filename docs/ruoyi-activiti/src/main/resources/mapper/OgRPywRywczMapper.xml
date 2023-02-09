@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.activiti.mapper.OgRPywRywczMapper">
+    
+    <resultMap type="OgRPywRywcz" id="OgRPywRywczResult">
+        <result property="ywid"    column="ywid"    />
+        <result property="czName"    column="cz_name"    />
+        <result property="czPhone"    column="cz_phone"    />
+    </resultMap>
+
+    <sql id="selectOgRPywRywczVo">
+        select distinct cz_name from og_r_pyw_rywcz
+    </sql>
+
+    <select id="selectOgRPywRywczList" parameterType="OgRPywRywcz" resultMap="OgRPywRywczResult">
+        <include refid="selectOgRPywRywczVo"/>
+        <where>  
+            <if test="ywid != null  and ywid != ''"> and ywid = #{ywid}</if>
+            <if test="czName != null  and czName != ''"> and cz_name like concat(concat('%', #{czName}), '%')</if>
+            <if test="czPhone != null  and czPhone != ''"> and cz_phone = #{czPhone}</if>
+        </where>
+    </select>
+    
+    <select id="selectOgRPywRywczById" parameterType="String" resultMap="OgRPywRywczResult">
+        <include refid="selectOgRPywRywczVo"/>
+        where ywid = #{ywid}
+    </select>
+        
+    <insert id="insertOgRPywRywcz" parameterType="OgRPywRywcz">
+        insert into og_r_pyw_rywcz
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="ywid != null  and ywid != ''">ywid,</if>
+            <if test="czName != null  and czName != ''">cz_name,</if>
+            <if test="czPhone != null  and czPhone != ''">cz_phone,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="ywid != null  and ywid != ''">#{ywid},</if>
+            <if test="czName != null  and czName != ''">#{czName},</if>
+            <if test="czPhone != null  and czPhone != ''">#{czPhone},</if>
+         </trim>
+    </insert>
+
+    <update id="updateOgRPywRywcz" parameterType="OgRPywRywcz">
+        update og_r_pyw_rywcz
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="czName != null  and czName != ''">cz_name = #{czName},</if>
+            <if test="czPhone != null  and czPhone != ''">cz_phone = #{czPhone},</if>
+        </trim>
+        where ywid = #{ywid}
+    </update>
+
+    <delete id="deleteOgRPywRywczById" parameterType="String">
+        delete from og_r_pyw_rywcz where ywid = #{ywid}
+    </delete>
+
+    <delete id="deleteOgRPywRywczByIds" parameterType="String">
+        delete from og_r_pyw_rywcz where ywid in 
+        <foreach item="ywid" collection="array" open="(" separator="," close=")">
+            #{ywid}
+        </foreach>
+    </delete>
+    
+</mapper>

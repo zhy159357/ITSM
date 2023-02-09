@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.activiti.mapper.FmSysDTimeMapper">
+    
+    <resultMap type="FmSysDTime" id="FmSysDTimeResult">
+        <result property="fmSysDTimeId"    column="fm_sys_d_time_id"    />
+        <result property="bizId"    column="biz_id"    />
+        <result property="sysId"    column="sys_id"    />
+        <result property="performName"    column="perform_name"    />
+        <result property="dealUseTime"    column="deal_use_time"    />
+        <result property="dealId"    column="dealId"    />
+        <result property="dealTime"    column="dealTime"    />
+        <result property="groupId"    column="group_id"    />
+    </resultMap>
+
+    <sql id="selectFmSysDTimeVo">
+        select fm_sys_d_time_id, biz_id, sys_id, perform_name, deal_use_time ,dealId ,dealTime,group_id from fm_sys_d_time
+    </sql>
+
+    <select id="selectFmSysDTimeList" parameterType="FmSysDTime" resultMap="FmSysDTimeResult">
+        <include refid="selectFmSysDTimeVo"/>
+        <where>  
+            <if test="bizId != null  and bizId != ''"> and biz_id = #{bizId}</if>
+            <if test="sysId != null  and sysId != ''"> and sys_id = #{sysId}</if>
+            <if test="performName != null  and performName != ''"> and perform_name like concat(concat('%', #{performName}), '%')</if>
+            <if test="dealUseTime != null  and dealUseTime != ''"> and deal_use_time = #{dealUseTime}</if>
+            <if test="dealId != null  and dealId != ''"> and dealId = #{dealId}</if>
+            <if test="dealTime != null  and dealTime != ''"> and dealTime = #{dealTime}</if>
+            <if test="groupId != null  and groupId != ''"> and group_id = #{groupId}</if>
+        </where>
+    </select>
+    
+    <select id="selectFmSysDTimeById" parameterType="String" resultMap="FmSysDTimeResult">
+        <include refid="selectFmSysDTimeVo"/>
+        where fm_sys_d_time_id = #{fmSysDTimeId}
+    </select>
+        
+    <insert id="insertFmSysDTime" parameterType="FmSysDTime">
+        insert into fm_sys_d_time
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="fmSysDTimeId != null  and fmSysDTimeId != ''">fm_sys_d_time_id,</if>
+            <if test="bizId != null  and bizId != ''">biz_id,</if>
+            <if test="sysId != null  and sysId != ''">sys_id,</if>
+            <if test="dealId != null  and dealId != ''">dealId,</if>
+            <if test="dealTime != null  and dealTime != ''">dealTime,</if>
+            <if test="groupId != null  and groupId != ''">group_id,</if>
+            <if test="performName != null  and performName != ''">perform_name,</if>
+            <if test="dealUseTime != null  and dealUseTime != ''">deal_use_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="fmSysDTimeId != null  and fmSysDTimeId != ''">#{fmSysDTimeId},</if>
+            <if test="bizId != null  and bizId != ''">#{bizId},</if>
+            <if test="sysId != null  and sysId != ''">#{sysId},</if>
+            <if test="dealId != null  and dealId != ''">#{dealId},</if>
+            <if test="dealTime != null  and dealTime != ''">#{dealTime},</if>
+            <if test="groupId != null  and groupId != ''">#{groupId},</if>
+            <if test="performName != null  and performName != ''">#{performName},</if>
+            <if test="dealUseTime != null  and dealUseTime != ''">#{dealUseTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateFmSysDTime" parameterType="FmSysDTime">
+        update fm_sys_d_time
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="bizId != null  and bizId != ''">biz_id = #{bizId},</if>
+            <if test="sysId != null  and sysId != ''">sys_id = #{sysId},</if>
+            <if test="performName != null  and performName != ''">perform_name = #{performName},</if>
+            <if test="dealUseTime != null  and dealUseTime != ''">deal_use_time = #{dealUseTime},</if>
+        </trim>
+        where fm_sys_d_time_id = #{fmSysDTimeId}
+    </update>
+
+    <delete id="deleteFmSysDTimeById" parameterType="String">
+        delete from fm_sys_d_time where fm_sys_d_time_id = #{fmSysDTimeId}
+    </delete>
+
+    <delete id="deleteFmSysDTimeByIds" parameterType="String">
+        delete from fm_sys_d_time where fm_sys_d_time_id in 
+        <foreach item="fmSysDTimeId" collection="array" open="(" separator="," close=")">
+            #{fmSysDTimeId}
+        </foreach>
+    </delete>
+    
+</mapper>

@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:include="include :: header('修改话机绑定')"/>
+    <th:block th:include="include :: ztree-css"/>
+</head>
+<body class="white-bg">
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+    <form class="form-horizontal m" id="form-bind-detail" th:object="${bind}">
+        <input id="id" name="id" type="hidden" th:field="*{id}"/>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label ">创建人:</label>
+                    <div class="col-sm-8">
+                        <input class="form-control" type="text" name="creater" id="creater" th:field="*{creater}"
+                               readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label ">创建时间:</label>
+                    <div class="col-sm-8">
+                        <input class="form-control" type="text" name="datetime" id="datetime" th:field="*{datetime}"
+                               readonly>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label ">I  P:</label>
+                    <div class="col-sm-8">
+                        <input class="form-control" type="text" name="sysname" id="sysname" th:field="*{ip}" readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label ">电话银行工号:</label>
+                    <div class="col-sm-8">
+                        <input class="form-control" type="text" name="sysurl" id="sysurl" th:field="*{telbankid}"
+                               readonly>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label ">分机号:</label>
+                    <div class="col-sm-8">
+                        <input class="form-control" type="text" name="appSort" id="appsort" th:field="*{extensnum}"
+                               readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">工号:</label>
+                    <div class="col-sm-8">
+                        <input id="remark" name="remark" class="form-control" type="text" th:field="*{jobnum}" readonly>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<th:block th:include="include :: footer"/>
+<th:block th:include="include :: ztree-js"/>
+<script type="text/javascript">
+
+    $("#form-bind-detail").validate({
+        onkeyup: false,
+        rules: {
+            sysname: {
+                remote: {
+                    url: ctx + "system/bind/checkBindNameUnique",
+                    type: "post",
+                    dataType: "json",
+                    data: {
+                        "id": function () {
+                            return $("#id").val();
+                        },
+                        "ip": function () {
+                            return $.common.trim($("#ip").val());
+                        }
+                    },
+                    dataFilter: function (data, type) {
+                        return $.validate.unique(data);
+                    }
+                }
+            },
+            appsort: {
+                digits: true
+            },
+        },
+        messages: {
+            "roleName": {
+                remote: "系统名称已经存在"
+            }
+        },
+        focusCleanup: true
+    });
+
+    $('input').on('ifChanged', function (obj) {
+        var type = $(this).val();
+        var checked = obj.currentTarget.checked;
+        if (type == 1) {
+            if (checked) {
+                $._tree.expandAll(true);
+            } else {
+                $._tree.expandAll(false);
+            }
+        } else if (type == "2") {
+            if (checked) {
+                $._tree.checkAllNodes(true);
+            } else {
+                $._tree.checkAllNodes(false);
+            }
+        } else if (type == "3") {
+            if (checked) {
+                $._tree.setting.check.chkboxType = {"Y": "ps", "N": "ps"};
+            } else {
+                $._tree.setting.check.chkboxType = {"Y": "", "N": ""};
+            }
+        }
+    })
+
+    function edit() {
+        var id = $("#id").val();
+        var ip = $("input[name='ip']").val();
+        var telbankid = $("input[name='telbankid']").val();
+        var extensnum = $("input[name='extensnum']").val();
+        var jobnum = $("input[name='jobnum']").val();
+        $.ajax({
+            cache: true,
+            type: "POST",
+            url: ctx + "system/bind/edit",
+            data: {
+                "id": id,
+                "ip": ip,
+                "telbankid": telbankid,
+                "extensnum": extensnum,
+                "jobnum": jobnum
+            },
+            async: false,
+            error: function (request) {
+                $.modal.alertError("系统错误");
+            },
+            success: function (data) {
+                $.operate.successCallback(data);
+            }
+        });
+    }
+
+    function submitHandler() {
+        if ($.validate.form()) {
+            edit();
+        }
+    }
+</script>
+</body>
+</html>

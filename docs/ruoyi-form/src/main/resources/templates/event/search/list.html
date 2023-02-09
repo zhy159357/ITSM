@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:include="include :: header('事件单查询列表')"/>
+</head>
+<body class="gray-bg">
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-12 search-collapse">
+            <form id="formId">
+                <div class="select-list">
+                    <ul>
+                        <li>
+                            <p>事件单编号：</p>
+                            <input type="text" name="eventNo"/>
+                        </li>
+                        <li>
+                            <p>上报部门：</p>
+                            <input type="text" name="reportOrg"/>
+                        </li>
+                        <li>
+                            <p>上报人：</p>
+                            <input type="text" name="reportPerson"/>
+                        </li>
+                        <li>
+                            <p>上报电话：</p>
+                            <input type="text" name="reportPhone"/>
+                        </li>
+                        <li>
+                            <p>事件标题：</p>
+                            <input type="text" name="eventTitle"/>
+                        </li>
+                        <li>
+                            <p>事件详述：</p>
+                            <input type="text" name="eventInfo"/>
+                        </li>
+                        <li>
+                            <p>客户信息：</p>
+                            <input type="text" name="customInfo"/>
+                        </li>
+                        <li>
+                            <p>总分行事件标记：</p>
+                            <select name="orgFlag" th:with="pList=${@pubParaValue.selectPubParaValueByParaName('org_flag')}">
+                                <option></option>
+                                <option th:each="p:${pList}" th:text="${p.valueDetail}" th:value="${p.value}"></option>
+                            </select>
+                        </li>
+                        <li>
+                            <p>中心侧/网点侧事件：</p>
+                            <select name="sideFlag" th:with="pList=${@pubParaValue.selectPubParaValueByParaName('side_flag')}">
+                                <option></option>
+                                <option th:each="p:${pList}" th:text="${p.valueDetail}" th:value="${p.value}"></option>
+                            </select>
+                        </li>
+                        <li>
+                            <p>类别：</p>
+                            <select id="eventCategory" name="eventCategory">
+                                <option value="">-请选择类别-</option>
+                            </select>
+                        </li>
+                        <li>
+                            <p>子类：</p>
+                            <select id="eventSubclass" name="eventSubclass">
+                            </select>
+                        </li>
+                        <li>
+                            <p>条目：</p>
+                            <select id="eventEntry" name="eventEntry">
+                            </select>
+                        </li>
+                        <li>
+                            <p>子条目：</p>
+                            <select id="eventSubentry" name="eventSubentry">
+                            </select>
+                        </li>
+                        <li>
+                            <p>来源：</p>
+                            <select name="eventSource" th:with="pList=${@pubParaValue.selectPubParaValueByParaName('event_source')}">
+                                <option></option>
+                                <option th:each="p:${pList}" th:text="${p.valueDetail}" th:value="${p.value}"></option>
+                            </select>
+                        </li>
+                        <li>
+                            <p>影响程度：</p>
+                            <input type="text" name="infLevel"/>
+                        </li>
+                        <li>
+                            <p>影响范围：</p>
+                            <input type="text" name="infRange"/>
+                        </li>
+                        <li>
+                            <p>优先级：</p>
+                            <input type="text" name="eventPriority"/>
+                        </li>
+                        <li>
+                            <p>目标解决日期：</p>
+                            <input type="text" name="targetResolveDate"/>
+                        </li>
+                        <li>
+                            <p>一级：</p>
+                            <select id="eventFirstType" name="eventFirstType">
+                                <option value="">-请选择一级分类-</option>
+                            </select>
+                        </li>
+                        <li>
+                            <p>二级：</p>
+                            <select id="eventSecondType" name="eventSecondType" >
+                            </select>
+                        </li>
+                        <li>
+                            <p>三级：</p>
+                            <select id="eventThreeType" name="eventThreeType">
+                            </select>
+                        </li>
+                        <li>
+                            <p>是否加急：</p>
+                            <input type="text" name="urgentFlag"/>
+                        </li>
+                        <li>
+                            <p>财务类事件：</p>
+                            <input type="text" name="financeFlag"/>
+                        </li>
+                        <li>
+                            <p>受派组：</p>
+                            <input type="text" name="assignedGroup"/>
+                        </li>
+                        <li>
+                            <p>受派人：</p>
+                            <input type="text" name="assignedPerson"/>
+                        </li>
+                        <li>
+                            <p>状态：</p>
+                            <select name="eventStatus" th:with="pList=${@pubParaValue.selectPubParaValueByParaName('event_status')}">
+                                <option></option>
+                                <option th:each="p:${pList}" th:text="${p.valueDetail}" th:value="${p.value}"></option>
+                            </select>
+                        </li>
+                        <li>
+                            <p>事件分类：</p>
+                            <select name="eventType" th:with="type=${@dict.getType('')}">
+                                <option value="">所有</option>
+                                <option th:each="dict : ${type}" th:text="${dict.dictLabel}"
+                                        th:value="${dict.dictValue}"></option>
+                            </select>
+                        </li>
+                        <li>
+                            <p>事件原因类型：</p>
+                            <select name="eventReasonType" th:with="type=${@dict.getType('')}">
+                                <option value="">所有</option>
+                                <option th:each="dict : ${type}" th:text="${dict.dictLabel}"
+                                        th:value="${dict.dictValue}"></option>
+                            </select>
+                        </li>
+                        <li>
+                            <p>影响面：</p>
+                            <input type="text" name="infFace"/>
+                        </li>
+                        <li>
+                            <p>二线处理部门：</p>
+                            <input type="text" name="secondDealOrg"/>
+                        </li>
+                        <li>
+                            <p>二线处理人员：</p>
+                            <input type="text" name="secondDealPerson"/>
+                        </li>
+                        <li>
+                            <p>二线解决方案：</p>
+                            <input type="text" name="solutionValidFlag"/>
+                        </li>
+                        <li>
+                            <p>数据质量问题：</p>
+                            <input type="text" name="dataQualityFlag"/>
+                        </li>
+                        <li>
+                            <p>关闭代码：</p>
+                            <select name="closeCode" th:with="pList=${@pubParaValue.selectPubParaValueByParaName('close_code')}" >
+                                <option value="">所有</option>
+                                <option th:each="p:${pList}" th:text="${p.valueDetail}" th:value="${p.value}"
+                                </option>
+                            </select>
+                        </li>
+                        <li>
+                            <p>事件级别：</p>
+                            <input type="text" name="eventLevel"/>
+                        </li>
+                        <li>
+                            <p>关联的变更、需求号：</p>
+                            <input type="text" name="changeNo"/>
+                        </li>
+                        <li>
+                            <p>关联的问题号：</p>
+                            <input type="text" name="problemNo"/>
+                        </li>
+                        <li>
+                            <p>IT服务台分派人：</p>
+                            <input type="text" name="assignId"/>
+                        </li>
+                        <li>
+                            <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i
+                                    class="fa fa-search"></i>&nbsp;搜索</a>
+                            <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i
+                                    class="fa fa-refresh"></i>&nbsp;重置</a>
+                        </li>
+                    </ul>
+                </div>
+            </form>
+        </div>
+
+        <div class="btn-group-sm" id="toolbar" role="group">
+            <a class="btn btn-info single disabled" onclick="detail()">
+                <i class="fa fa-search"></i> 查看详情
+            </a>
+            <a class="btn btn-info single disabled" onclick="selectProcess()">
+                <i class="fa fa-search"></i> 查看流程
+            </a>
+        </div>
+        <div class="col-sm-12 select-table table-striped">
+            <table id="bootstrap-table" style="table-layout: fixed"></table>
+        </div>
+    </div>
+</div>
+<th:block th:include="include :: footer"/>
+<script th:inline="javascript">
+    var prefix = ctx + "event/sheet";
+    var prefix_typeInfo = ctx + "system/typeinfo/selectOgTypeInfoByEvent";
+    var eventStatusDatas = [[${@pubParaValue.selectPubParaValueByParaName('event_status')}]];// 事件单状态
+    var orgFlagDatas = [[${@pubParaValue.selectPubParaValueByParaName('org_flag')}]];// 总分行事件标记
+    var sideFlagDatas = [[${@pubParaValue.selectPubParaValueByParaName('side_flag')}]];// 中心侧/网点侧事件
+    var eventSourceDatas = [[${@pubParaValue.selectPubParaValueByParaName('event_source')}]];// 来源
+    var impactDegreeDatas = [[${@pubParaValue.selectPubParaValueByParaName('event_impact_degree')}]];// 影响程度
+    var impactScopeDatas = [[${@pubParaValue.selectPubParaValueByParaName('event_impact_scope')}]];// 影响范围
+    var yesNoCommonDatas = [[${@pubParaValue.selectPubParaValueByParaName('yes_or_no')}]];// 是否通用
+
+    $(function () {
+        var options = {
+            url: prefix + "/list",
+            createUrl: prefix + "/add",
+            updateUrl: prefix + "/edit/{id}",
+            removeUrl: prefix + "/remove",
+            exportUrl: prefix + "/export",
+            clickToSelect: true,
+            singleSelect: true,
+            queryParams: queryParams,
+            modalName: "事件单",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'eventId',
+                    title: '事件单id',
+                    visible: false,
+                    width : 150
+                },
+                {
+                    field: 'eventNo',
+                    title: '事件单编号',
+                    width : 150
+                },
+                {
+                    field: 'reportOrg',
+                    title: '上报部门',
+                    width : 150
+                },
+                {
+                    field: 'reportPerson',
+                    title: '上报人',
+                    width : 150
+                },
+                {
+                    field: 'reportPhone',
+                    title: '上报电话',
+                    width : 150
+                },
+                {
+                    field: 'eventTitle',
+                    title: '事件标题',
+                    width : 220,
+                    formatter: function (value, row, index) {
+                        return $.table.tooltip(value);
+                    }
+                },
+                {
+                    field: 'eventInfo',
+                    title: '事件详述',
+                    width: 220,
+                    formatter: function (value, row, index) {
+                        return $.table.tooltip(value);
+                    }
+                },
+                {
+                    field: 'customInfo',
+                    title: '客户信息',
+                    width: 220,
+                    formatter: function (value, row, index) {
+                        return $.table.tooltip(value);
+                    }
+                },
+                {
+                    field: 'orgFlag',
+                    title: '总分行事件标记',
+                    width : 150,
+                    formatter: function(value, row, index) {
+                        return $.table.selectPubParaValueData(orgFlagDatas, value);
+                    }
+                },
+                {
+                    field: 'sideFlag',
+                    title: '中心侧/网点侧事件',
+                    width : 150,
+                    formatter: function(value, row, index) {
+                        return $.table.selectPubParaValueData(sideFlagDatas, value);
+                    }
+                },
+                {
+                    field: 'eventCategoryName',
+                    title: '类别',
+                    width : 200
+                },
+                {
+                    field: 'eventSubclassName',
+                    title: '子类',
+                    width : 200
+                },
+                {
+                    field: 'eventEntryName',
+                    title: '条目',
+                    width : 200
+                },
+                {
+                    field: 'eventSubentryName',
+                    title: '子条目',
+                    width : 200
+                },
+                {
+                    field: 'eventSource',
+                    title: '来源',
+                    width : 200,
+                    formatter: function(value, row, index) {
+                        return $.table.selectPubParaValueData(eventSourceDatas, value);
+                    }
+                },
+                {
+                    field: 'infLevel',
+                    title: '影响程度',
+                    width : 200,
+                    formatter: function(value, row, index) {
+                        return $.table.selectPubParaValueData(impactDegreeDatas, value);
+                    }
+                },
+                {
+                    field: 'infRange',
+                    title: '影响范围',
+                    width : 200,
+                    formatter: function(value, row, index) {
+                        return $.table.selectPubParaValueData(impactScopeDatas, value);
+                    }
+                },
+                {
+                    field: 'eventPriority',
+                    title: '优先级',
+                    width : 100,
+                },
+                {
+                    field: 'targetResolveDate',
+                    title: '目标解决日期',
+                    width : 150
+                },
+                {
+                    field: 'eventFirstTypeName',
+                    title: '一级',
+                    width : 200
+                },
+                {
+                    field: 'eventSecondTypeName',
+                    title: '二级',
+                    width : 200
+                },
+                {
+                    field: 'eventThreeTypeName',
+                    title: '三级',
+                    width : 200
+                },
+                {
+                    field: 'urgentFlag',
+                    title: '是否加急',
+                    width : 100,
+                    formatter: function(value, row, index) {
+                        return $.table.selectPubParaValueData(yesNoCommonDatas, value);
+                    }
+                },
+                {
+                    field: 'financeFlag',
+                    title: '是否财务类事件',
+                    width : 100,
+                    formatter: function(value, row, index) {
+                        return $.table.selectPubParaValueData(yesNoCommonDatas, value);
+                    }
+                },
+                {
+                    field: 'eventStatus',
+                    title: '状态',
+                    width : 120,
+                    formatter: function(value, row, index) {
+                        return $.table.selectPubParaValueData(eventStatusDatas, value);
+                    }
+                },
+                /*{
+                    field: 'assignedGroup',
+                    title: '受派组',
+                    width : 150
+                },
+                {
+                    field: 'assignedPerson',
+                    title: '受派人',
+                    width : 150
+                },
+                {
+                    field: 'eventType',
+                    title: '事件分类'
+                },
+                {
+                    field: 'eventHelperResult',
+                    title: '事件助手处理结果'
+                },
+                {
+                    field: 'eventHealResult',
+                    title: '事件自愈处理结果'
+                },
+                {
+                    field: 'eventSolution',
+                    title: '解决方案'
+                },
+                {
+                    field: 'eventReasonType',
+                    title: '事件原因类型'
+                },
+                {
+                    field: 'eventReason',
+                    title: '事件原因'
+                },
+                {
+                    field: 'infSystem',
+                    title: '受影响的系统'
+                },
+                {
+                    field: 'actualFaultSystem',
+                    title: '实际故障系统'
+                },
+                {
+                    field: 'faultKnowPoint',
+                    title: '故障知识点'
+                },
+                {
+                    field: 'finalSolutionCategory',
+                    title: '最终解决方案分类'
+                },
+                {
+                    field: 'infFace',
+                    title: '影响面'
+                },
+                {
+                    field: 'secondDealOrg',
+                    title: '二线处理部门'
+                },
+                {
+                    field: 'secondDealPerson',
+                    title: '二线处理人员'
+                },
+                {
+                    field: 'solutionValidFlag',
+                    title: '二线解决方案是否有效'
+                },
+                {
+                    field: 'dataQualityFlag',
+                    title: '是否数据质量问题'
+                },
+                {
+                    field: 'closeCode',
+                    title: '关闭代码'
+                },
+                {
+                    field: 'eventLevel',
+                    title: '事件级别'
+                },
+                {
+                    field: 'changeNo',
+                    title: '关联的变更、需求号'
+                },
+                {
+                    field: 'problemNo',
+                    title: '关联的问题号'
+                },
+                {
+                    field: 'assignId',
+                    title: 'IT服务台分派人'
+                },
+                {
+                    field: 'receiveGroupId',
+                    title: '接单'
+                },
+                {
+                    field: 'dealId',
+                    title: '处理人id'
+                },
+                {
+                    field: 'drawId',
+                    title: '领取人id'
+                },
+                {
+                    field: 'preSolutionId',
+                    title: '预解决人id'
+                },
+                {
+                    field: 'solutionId',
+                    title: '解决人id'
+                },
+                {
+                    field: 'closeId',
+                    title: '关闭人id'
+                }*/]
+        };
+        $.table.init(options);
+
+        var str = [[${firstTypeList}]];
+        var firstTypeArray = JSON.parse(str);
+        setFirstType(firstTypeArray);
+        // 如果一级分类发生变化，则重新加载二级分类
+        $("#eventFirstType").change(function () {
+            setSecondType();
+        });
+        // 如果二级分类发生变化，则重新加载三级分类
+        $("#eventSecondType").change(function () {
+            setSThreeType();
+        });
+
+        /***事件单分类下拉框赋值****/
+        var eventCategoryStr = [[${eventCategoryList}]];
+        var eventCategoryArray = JSON.parse(eventCategoryStr);
+
+        setFirstCategory(eventCategoryArray);
+        // 如果一级分类发生变化，则重新加载二级分类
+        $("#eventCategory").change(function () {
+            setSecondCategory();
+        });
+        // 如果二级分类发生变化，则重新加载三级分类
+        $("#eventSubclass").change(function () {
+            setSThreeCategory();
+        });
+        // 如果三级分类发生变化，则重新加载四级分类
+        $("#eventEntry").change(function () {
+            setSFourCategory();
+        });
+    });
+
+    // 组装事件单一级分类select下拉框
+    function setFirstType(firstArr){
+        for (var i = 0; i < firstArr.length; i++) {
+            $("#eventFirstType").append("<option value='" + firstArr[i].typeNo + "'>" + firstArr[i].typeName + "</option>");
+        }
+    };
+
+    // 组装事件单二级分类select下拉框
+    function setSecondType(){
+        var typeNo = $("#eventFirstType").val();
+        //异步查询数据
+        $.ajax({
+            type: "POST",
+            url: prefix_typeInfo,
+            data: {typeNo: typeNo},
+            dataType: "json",
+            success: function (res) {
+                var data = res.data;
+                //移除下拉框数据（二级和三级）
+                $("#eventSecondType").find("option").remove();
+                $("#eventThreeType").find("option").remove();
+                //添加下拉框数据
+                $("#eventSecondType").prepend("<option value=''>-请选择二级分类-</option>");
+                for (var i = 0; i < data.length; i++) {
+                    $("#eventSecondType").append("<option value='" + data[i].typeNo + "'>" + data[i].typeName + "</option>");
+                }
+            }
+        });
+    };
+
+    // 组装事件单三级分类select下拉框
+    function setSThreeType(){
+        var typeNo = $("#eventSecondType").val();
+        //异步查询数据
+        $.ajax({
+            type: "POST",
+            url: prefix_typeInfo,
+            data: {typeNo: typeNo},
+            dataType: "json",
+            success: function (res) {
+                var data = res.data;
+                //移除下拉框数据
+                $("#eventThreeType").find("option").remove();
+                if(data != null && data.length > 0) {
+                    //添加下拉框数据
+                    $("#eventThreeType").prepend("<option value=''>-请选择三级分类-</option>");
+                    for (var i = 0; i < data.length; i++) {
+                        $("#eventThreeType").append("<option value='" + data[i].typeNo + "'>" + data[i].typeName + "</option>");
+                    }
+                } else {
+                    $("#eventThreeType").prepend("<option value='0'>无</option>");
+                }
+            }
+        });
+    };
+
+    // 事件单类别
+    function setFirstCategory(arr) {
+        for (var i = 0; i < arr.length; i++) {
+            $("#eventCategory").append("<option value='" + arr[i].typeNo + "'>" + arr[i].typeName + "</option>");
+        }
+    }
+
+    // 组装事件单子类
+    function setSecondCategory(){
+        var typeNo = $("#eventCategory").val();
+        //异步查询数据
+        $.ajax({
+            type: "POST",
+            url: prefix_typeInfo,
+            data: {typeNo: typeNo},
+            dataType: "json",
+            success: function (res) {
+                var data = res.data;
+                //移除下拉框数据（子类、条目、子条目）
+                $("#eventSubclass").find("option").remove();
+                $("#eventEntry").find("option").remove();
+                $("#eventSubentry").find("option").remove();
+                //添加下拉框数据
+                $("#eventSubclass").prepend("<option value=''>-请选择子类-</option>");
+                for (var i = 0; i < data.length; i++) {
+                    $("#eventSubclass").append("<option value='" + data[i].typeNo + "'>" + data[i].typeName + "</option>");
+                }
+            }
+        });
+    };
+
+    // 组装事件单条目
+    function setSThreeCategory(){
+        var typeNo = $("#eventSubclass").val();
+        //异步查询数据
+        $.ajax({
+            type: "POST",
+            url: prefix_typeInfo,
+            data: {typeNo: typeNo},
+            dataType: "json",
+            success: function (res) {
+                var data = res.data;
+                //移除下拉框数据
+                $("#eventEntry").find("option").remove();
+                $("#eventSubentry").find("option").remove();
+                if(data != null && data.length > 0) {
+                    //添加下拉框数据
+                    $("#eventEntry").prepend("<option value=''>-请选择条目-</option>");
+                    for (var i = 0; i < data.length; i++) {
+                        $("#eventEntry").append("<option value='" + data[i].typeNo + "'>" + data[i].typeName + "</option>");
+                    }
+                } else {
+                    $("#eventEntry").prepend("<option value=''>无</option>");
+                }
+            }
+        });
+    };
+
+    // 组装事件单子条目
+    function setSFourCategory(){
+        var typeNo = $("#eventEntry").val();
+        //异步查询数据
+        $.ajax({
+            type: "POST",
+            url: prefix_typeInfo,
+            data: {typeNo: typeNo},
+            dataType: "json",
+            success: function (res) {
+                var data = res.data;
+                //移除下拉框数据
+                $("#eventSubentry").find("option").remove();
+                if(data != null && data.length > 0) {
+                    //添加下拉框数据
+                    $("#eventSubentry").prepend("<option value=''>-请选择子条目-</option>");
+                    for (var i = 0; i < data.length; i++) {
+                        $("#eventSubentry").append("<option value='" + data[i].typeNo + "'>" + data[i].typeName + "</option>");
+                    }
+                } else {
+                    $("#eventSubentry").prepend("<option value=''>无</option>");
+                }
+            }
+        });
+    };
+
+    function queryParams(params) {
+        var search = $.table.queryParams(params);
+        search.remark = "eventCreateSearch";
+        return search;
+    }
+
+    // 查看详情
+    function detail() {
+        var id = $.table.selectFirstColumns();
+        var url = prefix + "/detail/" + id;
+        $.modal.openTab("事件单详情", url);
+    }
+
+    // 查看流程
+    function selectProcess() {
+        var eventStatus = $.table.selectColumns("eventStatus");
+        if (eventStatus == '1') {
+            $.modal.alertWarning("待提交状态的事件单流程未开启，不可查看！");
+            return;
+        }
+        var businessKey = $.table.selectFirstColumns();
+        var url = ctx + 'process/processImg/' + businessKey;
+        $.modal.openFull("查看流程图", url, null, null, null, true);
+    }
+</script>
+</body>
+</html>

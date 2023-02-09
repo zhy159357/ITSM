@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ruoyi.es.mapper.KnowledgeOperationHistoryMapper">
+	 <resultMap type="com.ruoyi.es.domain.KnowledgeOperationHistory" id="OperationHistoryResult">
+        <result property="id" column="id"/>
+        <result property="contentId" column="content_id"/>
+        <result property="contentTitle" column="content_title"/>
+        <result property="operId" column="oper_id"/>
+        <result property="operName" column="oper_name"/>
+        <result property="operTime" column="oper_time"/>
+        <result property="operation" column="operation"/>
+        <result property="remark" column="remark"/>
+   		<result property="eventType" column="event_type"/>
+    </resultMap>
+
+    
+    <insert id="insertKnowledgeOperationHistory" parameterType="KnowledgeOperationHistory">
+        insert into knowledge_operation_history(  
+            id,content_id,oper_id,oper_time, 
+            <if test="remark != null  and remark != ''">remark,</if>
+            operation
+ 			)values(
+            #{id},#{contentId},#{operId},#{operTime},
+            <if test="remark != null  and remark != ''">#{remark},</if>
+            #{operation}
+			)
+    </insert>
+    
+    
+    <sql id="selectKnowledgeOperationHistoryVo">
+		select koh.id, koh.content_id, koh.oper_id, koh.oper_time, koh.operation, koh.remark ,
+		kc.title as content_title,kc.event_type as event_type, op.pname	as oper_name	
+		from knowledge_operation_history koh
+		left join knowledge_content kc on koh.content_id = kc.id
+		left join og_person op on op.pid = koh.oper_id
+    </sql>
+    
+    <select id="selectKnowledgeOperationHistoryList" parameterType="KnowledgeOperationHistory" resultMap="OperationHistoryResult">
+		select * from (<include refid="selectKnowledgeOperationHistoryVo"/>) a
+		<where>
+			<if test="contentId != null  and contentId != ''">
+            	 and a.content_id = #{contentId}
+           	</if>
+            <if test="contentTitle != null  and contentTitle != ''">
+            	 and a.content_title like concat('%',concat(#{contentTitle},'%'))
+           	</if>
+           	<if test="operName != null  and operName != ''">
+            	 and a.oper_name like concat('%',concat(#{operName},'%'))
+           	</if>
+            <if test="params.startTime != null and params.startTime != ''"><!-- 开始时间检索 -->
+				and to_date(a.oper_time,'yyyy-MM-dd hh24:mi:ss') &gt;= to_date(#{params.startTime},'yyyy-MM-dd hh24:mi:ss')
+			</if>
+			<if test="params.endTime != null and params.endTime != ''"><!-- 结束时间检索 -->
+				and to_date(a.oper_time,'yyyy-MM-dd hh24:mi:ss') &lt;= to_date(#{params.endTime},'yyyy-MM-dd hh24:mi:ss')
+			</if>
+			<if test="operation!= null  and operation != ''">
+            	 and a.operation = #{operation}
+           	</if>
+           	<if test="eventType!= null  and eventType != ''">
+            	 and a.event_type = #{eventType}
+           	</if>
+        </where>
+        order by a.oper_time desc
+    </select>
+    <select id="selectKnowledgeOperationHistoryMySqlList" parameterType="KnowledgeOperationHistory" resultMap="OperationHistoryResult">
+		select * from (<include refid="selectKnowledgeOperationHistoryVo"/>) a
+		<where>
+			<if test="contentId != null  and contentId != ''">
+            	 and a.content_id = #{contentId}
+           	</if>
+            <if test="contentTitle != null  and contentTitle != ''">
+            	 and a.content_title like concat('%',concat(#{contentTitle},'%'))
+           	</if>
+           	<if test="operName != null  and operName != ''">
+            	 and a.oper_name like concat('%',concat(#{operName},'%'))
+           	</if>
+            <if test="params.startTime != null and params.startTime != ''"><!-- 开始时间检索 -->
+				and DATE_FORMAT(a.oper_time,'yyyy-MM-dd hh24:mi:ss') &gt;= DATE_FORMAT(#{params.startTime},'yyyy-MM-dd hh24:mi:ss')
+			</if>
+			<if test="params.endTime != null and params.endTime != ''"><!-- 结束时间检索 -->
+				and DATE_FORMAT(a.oper_time,'yyyy-MM-dd hh24:mi:ss') &lt;= DATE_FORMAT(#{params.endTime},'yyyy-MM-dd hh24:mi:ss')
+			</if>
+			<if test="operation!= null  and operation != ''">
+            	 and a.operation = #{operation}
+           	</if>
+           	<if test="eventType!= null  and eventType != ''">
+            	 and a.event_type = #{eventType}
+           	</if>
+        </where>
+        order by a.oper_time desc
+    </select>
+
+</mapper>

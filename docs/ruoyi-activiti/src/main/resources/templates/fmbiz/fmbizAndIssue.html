@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+
+
+<head>
+    <th:block th:include="include :: header('待关联事件单')"/>
+    <th:block th:include="include :: select2-css"/>
+</head>
+<body class="gray-bg">
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-12 search-collapse">
+            <form id="formId">
+                <div class="select-list">
+                    <ul>
+                        <li>
+                            <p>事件单号：</p>
+                            <input type="text" name="faultNo"/>
+                        </li>
+                        <li>
+                            <p>事件标题：</p>
+                            <input type="text" name="faultDecriptSummary"/>
+                        </li>
+                        <li>
+                            <p>所属系统：</p>
+                            <input id="sysid" name="sysid" type="hidden" class="form-control"/>
+                            <input id="applicationName" name="applicationName" type="text" class="form-control"
+                                   onclick="selectOgSysListByCondition()"/>
+                        </li>
+                        <li>
+                            <p>工作组：</p>
+                            <select id="groupId" name="groupId" class="form-control">
+                                <option th:each="OgGroup : ${groupList}" th:text="${OgGroup.grpName}"
+                                        th:value="${OgGroup.groupId}"></option>
+                            </select>
+                        </li>
+                        <li>
+                            <p>发生机构：</p>
+                            <input name="occurrenceOrgId" id="occurrenceOrgId" class="form-control" type="hidden">
+                            <input id="occurrenceOrgName" name="occurrenceOrgName" type="text" class="form-control"
+                                   onclick="selectogOrg()"/>
+                        </li>
+                        <li class="select-time">
+                            <p>创建时间：</p>
+                            <input type="text" class="time-input" id="startCreatTime" placeholder="开始时间"
+                                   name="params[startCreatTime]" readonly/>
+                            <span>-</span>
+                            <input type="text" class="time-input" id="endCreatTime" placeholder="结束时间"
+                                   name="params[endCreatTime]" readonly/>
+                        </li>
+                        <li class="select-time">
+                            <p>处理时间：</p>
+                            <input type="text" class="time-input" id="startDealTime" name="params[startDealTime]"
+                                   placeholder="开始时间" readonly/>
+                            <span>-</span>
+                            <input type="text" class="time-input" id="endDealTime" name="params[endDealTime]"
+                                   placeholder="结束时间" readonly/>
+                        </li>
+                        <li>
+                            <p>当前处理人：</p>
+                            <input type="text" name="dealerId"/>
+                        </li>
+                        <li>
+                            <a class="btn btn-primary btn-rounded btn-sm" id="searchBut" onclick="$.table.search()"><i
+                                    class="fa fa-search"></i>&nbsp;搜索</a>
+                            <a class="btn btn-warning btn-rounded btn-sm" onclick="reset()"><i
+                                    class="fa fa-refresh"></i>&nbsp;重置</a>
+                        </li>
+                    </ul>
+                </div>
+            </form>
+        </div>
+        <div class="btn-group-sm" id="toolbar" role="group">
+            <a class="btn btn-primary single disabled" onclick="relation()">
+                <i class="fa fa-edit"></i>关联
+            </a>
+            <!--导出所有｜当前页按钮组合-->
+            <div class="btn-group">
+                <button data-toggle="dropdown" class="btn btn-primary btn-sm dropdown-toggle">导出<span
+                        class="caret"></span>
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a onclick="$.table.exportExcel()">导出所有</a>
+                    </li>
+                    <li><a onclick="$.table.exportExcelCurrentPage()">导出当前页</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="col-sm-12 select-table table-striped">
+            <table id="bootstrap-table" style="table-layout:fixed;"></table>
+        </div>
+    </div>
+</div>
+<th:block th:include="include :: footer"/>
+<th:block th:include="include :: select2-js"/>
+<th:block th:include="include :: datetimepicker-js"/>
+<script th:src="@{/js/activiti.js}"></script>
+<script th:inline="javascript">
+    var prefix = ctx + "fmbiz";
+    var datas = [[${@pubParaValue.selectPubParaValueByParaName('fmStatus')}]];
+    var fmdealModeV = [[${@pubParaValue.selectPubParaValueByParaName('fm_dealMode')}]];//处理方式
+    var fmLevelV = [[${@pubParaValue.selectPubParaValueByParaName('fmLevel')}]];//等级
+    $(function () {
+        // 回车键搜索
+        document.onkeydown = function (e) {
+            var ev = document.all ? window.event : e;
+            if (ev.keyCode == 13) {
+                $('#searchBut').trigger('click');
+                return false;
+            }
+        };
+        var options = {
+            url: prefix + "/getFmBizAndIssueList",
+            exportUrl: prefix + "/exportRelationIssue",
+            clickToSelect: true,
+            singleSelect: true,
+            modalName: "业务事件单",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'fmId',
+                    title: '主键ID',
+                    visible: false
+                },
+                {
+                    field: 'faultNo',
+                    width: 150,
+                    title: '事件编号'
+                },
+                {
+                    field: 'faultDecriptSummary',
+                    width: 250,
+                    title: '事件标题',
+                    formatter: function (value, row, index) {
+                        return $.table.tooltip(value);
+                    },
+                    cellStyle: function cellStyle(value, row, index, field) {
+                        return {classes: 'text-nowrap'};
+                    }
+                },
+                {
+                    field: 'ogSys.caption',
+                    width: 220,
+                    title: '所属系统'
+                },
+                {
+                    field: 'createGroupName',
+                    width: 220,
+                    title: '所属工作组'
+                },
+                {
+                    field: 'seriousLev',
+                    width: 100,
+                    title: '事件等级',
+                    formatter: function (value, row, index) {
+                        return $.table.selectPubParaValueData(fmLevelV, value);
+                    }
+                },
+                {
+                    field: 'currentState',
+                    width: 100,
+                    title: '当前状态',
+                    formatter: function (value, row, index) {
+                        return $.table.selectPubParaValueData(datas, value);
+                    }
+                },
+                {
+                    field: 'dealMode',
+                    width: 100,
+                    title: '处理方式',
+                    formatter: function (value, row, index) {
+                        return $.table.selectPubParaValueData(fmdealModeV, value);
+                    }
+                },
+                {
+                    field: 'dealName',
+                    width: 150,
+                    title: '处理人'
+                },
+                {
+                    field: 'dealTime',
+                    width: 150,
+                    title: '处理时间',
+                    formatter: function (value, row, index) {
+                        var startTime = '';
+                        if (value != '' && value != null) {
+                            var pattern = /(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/;
+                            startTime = value.replace(pattern, '$1-$2-$3 $4:$5:$6');
+                        }
+                        return startTime;
+                    }
+                }]
+        };
+        $.table.init(options);
+    });
+
+    // 回显数据字典
+    function selectPubParaValueData(datas, value) {
+        var actions = [];
+        $.each(datas, function (index, pubParaValue) {
+            if (pubParaValue.value == ('' + value)) {
+                actions.push($.common.sprintf("<span class='%s'>%s</span>", "", pubParaValue.valueDetail));
+                return false;
+            }
+        });
+        return actions.join('');
+    }
+
+    //关联问题单
+    function relation() {
+        var fmId = $.table.selectFirstColumns();
+        var url = prefix + "/relation/" + fmId + "/0";
+        $.modal.openTab("事件单关联问题", url);
+    }
+
+    // 选择应用系统（只能单选）
+    function selectOgSysListByCondition() {
+        $.modal.open("选择应用系统", prefix + "/sysGrouplist");
+    }
+
+    // 选择创建机构（只能单选）
+    function selectogOrg() {
+        $.modal.open("选择创建机构", prefix + "/selectogOrg");
+    }
+
+    //根据系统查询工作组
+    function getGroupList(sysid) {
+        $.ajax({
+            cache: true,
+            type: "POST",
+            url: prefix + "/selectOgGroupBySys",
+            data: {
+                "sysid": sysid
+            },
+            async: false,
+            error: function (request) {
+                $.modal.alertError("系统错误");
+            },
+            success: function (data) {
+                var options = "<option value='" + "" + "'>" + "" + "</option> \n";
+                $("#groupId").html("");
+                for (var ak = 0; ak < data.rows.length; ak++) {
+                    options += "<option value='" + data.rows[ak].groupId + "'>" + data.rows[ak].grpName + "</option> \n";
+                }
+                $("#groupId").append(options);
+            }
+        });
+    }
+
+    //根据系统查询分类
+
+    function getFmKindOneList(sysid) {
+
+    }
+    //** 重置 */
+    function reset() {
+        $("#groupId").html("");
+        $.form.resetAll('formId');
+    }
+</script>
+</body>
+</html>

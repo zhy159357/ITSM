@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<th:block th:include="include :: header('日期和时间')" />
+<th:block th:include="include :: ztree-css" />
+
+<th:block th:include="include :: datetimepicker-css" />
+<head>
+	<th:block th:include="include :: header('修改')" />
+</head>
+<body class="white-bg">
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+	<form class="form-horizontal m" id="form-jsontemplate-edit" th:object="${customTemplateForm}">
+	<input id="id" name="id" type="hidden" th:field="*{id}"/>
+	 <div class="row">
+		    <div class="col-sm-12">
+		        <div class="form-group">
+		            <label class="col-sm-1 control-label">json：</label>
+		            <div class="col-sm-11">
+		                <textarea rows="16" cols="20" id="json" name="json"  class="form-control" th:field="*{json}"  ></textarea>
+		            </div>
+		        </div>
+		    </div>
+		</div>
+	</form>
+</div>
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: ztree-js" />
+
+<th:block th:include="include :: datetimepicker-js" />
+<script type="text/javascript">
+    var prefix = ctx + "system/formjson/template";
+    function submitHandler() {
+        if ($.validate.form()) {
+           $.operate.save(prefix + "/edit", $('#form-jsontemplate-edit').serialize());
+        }
+    }
+</script>
+</body>
+</html>

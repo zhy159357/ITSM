@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:include="include :: header('文件上传')"/>
+    <th:block th:include="include :: bootstrap-fileinput-css"/>
+</head>
+<body class="gray-bg">
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-content">
+                    <div class="form-group">
+                        <input id="ownerId" name="ownerId" type="hidden" th:value="*{ownerId}">
+                        <input id="businessNumberNo" name="businessNumberNo" type="hidden" th:value="*{businessNumberNo}">
+                        <label class="font-noraml">附件类型</label>
+                        <select id="fileType" name="fileType" class="form-control" style="pointer-events:none" readonly>
+                            <option value="1">普通附件</option>
+                            <option value="2">版本包</option>
+                        </select>
+                        <label class="font-noraml">文件描述</label>
+                        <input id="memo" name="memo" rows="5" cols="10" placeholder="可为空" maxlength="32" class="form-control"/>
+                        <label class="font-noraml">多文件上传</label>
+                        <div class="file-loading">
+                            <input id="attachment-upload" type="file" multiple>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<th:block th:include="include :: footer"/>
+<th:block th:include="include :: bootstrap-fileinput-js"/>
+<script th:inline="javascript">
+    var url = "";
+    $(document).ready(function () {
+        url = ctx + "pub/attachment/save";
+        $("#attachment-upload").fileinput({
+            'theme': 'explorer-fas',
+            'uploadUrl': url,
+            'ajaxSettings': {
+                "timeout": 1*60*60*1000
+            },
+            'uploadExtraData': function () {
+                var data = {
+                    ownerId: $("#ownerId").val(),
+                    fileType: $("#fileType").val(),
+                    memo: $("#memo").val(),
+                    businessNumberNo: $("#businessNumberNo").val(),
+                };
+                return data;
+            },
+            overwriteInitial: false,
+            initialPreviewAsData: true
+        });
+
+        $("#attachment-upload").on("fileuploaded", function (event, data, proviewId, index) {
+            if (data.response.code == 0) {
+                $.modal.alertSuccess("上传成功")
+            } else {
+                $.modal.alertSuccess(data.response.msg);
+            }
+        });
+
+    });
+
+    function submitHandler() {
+        $.modal.close();
+        //附件列表刷新 table id 为 file-table
+        window.parent.$.table.refresh('file-table');
+    }
+
+    function flushFileTable() {
+        $.modal.close();
+        //附件列表刷新 table id 为 file-table
+        window.parent.$.table.refresh('file-table');
+    }
+</script>
+</body>
+</html>

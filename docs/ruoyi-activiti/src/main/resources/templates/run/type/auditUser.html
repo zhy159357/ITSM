@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+	<th:block th:include="include :: header('选择值班人')" />
+</head>
+<body class="gray-bg">
+<div class="container-div">
+	<div class="row">
+		<div class="col-sm-12 search-collapse">
+			<form id="account-form">
+				<div class="select-list">
+					<ul>
+						<li>
+							人员名称：<input type="text" name="pName"/>
+						</li>
+						<li>
+							所属机构：<input type="text" name="orgname"/>
+						</li>
+						<li>
+							<a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+							<a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+						</li>
+					</ul>
+				</div>
+			</form>
+		</div>
+
+		<div class="col-sm-12 select-table table-striped">
+			<table id="bootstrap-table"></table>
+		</div>
+	</div>
+</div>
+<th:block th:include="include :: footer" />
+<script th:inline="javascript">
+	var url = ctx + "eventRun/Dict/listUser";
+	var paraIds=[[${paraId}]];
+	$(function() {
+		var options = {
+			url: url,
+			clickToSelect:true,
+			modalName: "技术经理",
+			singleSelect : true, // 单选checkbox
+			sortable: false,
+			columns: [{
+				checkbox: true
+			},
+				{
+					field: 'pId',
+					title: '人员ID',
+					visible: false
+				},
+				{
+					field: 'pName',
+					title: '人员名称'
+				},
+				{
+					field: 'sex',
+					title: '性别',
+					formatter: function (value, row, index) {
+							return value=='1'?'男':'女'
+						}
+				},
+				{
+					field: 'orgname',
+					title: '所属机构'
+				},
+
+				{
+					field: 'mobilPhone',
+					title: '移动电话'
+
+				},
+				{
+					field: 'pflag',
+					title: '状态',
+					formatter: function (value, row, index) {
+						return value=='1'?'启用':'禁用'
+					}
+				}]
+		};
+		$.table.init(options);
+	});
+
+	 function submitHandler(index, layero) {
+            var rows = $.table.selectFirstColumns();
+            if (rows.length == 0) {
+                $.modal.alertWarning("请至少选择一条记录");
+                return;
+            }
+              var sysNameRows = $.table.selectColumns('pName');
+		 var prefix = ctx + "eventRun/Dict/Data/add";
+		 var data=[];
+		 var paraId={
+		 	name:'paraId',
+			 value:paraIds
+		 }
+		 var valueDetail={
+		 	name:'valueDetail',
+			 value:sysNameRows.join()
+		 }
+		 var value={
+		 	name:'value',
+			 value:rows.join()
+		 }
+		var serail={
+		 	name:'serail',
+			value:1
+		}
+		data.push(paraId);
+		data.push(valueDetail);
+		data.push(value);
+		data.push(serail);
+		 $.operate.save(prefix, data);
+		 parent.$.table.refresh('bootstrap-table-data');
+		 $.modal.close();
+        }
+
+</script>
+</body>
+</html>

@@ -1,0 +1,790 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.activiti.mapper.VmBizInfoMapper">
+
+    <resultMap type="VmBizInfo" id="VmBizInfoResult">
+        <id property="versionInfoId" column="version_Info_Id"/>
+        <result property="versionInfoNo" column="version_Info_No"/>
+        <result property="versionInfoName" column="version_Info_Name"/>
+        <result property="versionProducerId" column="version_Producer_Id"/>
+        <result property="versionCreateTime" column="version_Create_Time"/>
+        <result property="sysId" column="sysId"/>
+        <result property="versionName" column="version_Name"/>
+        <result property="versionNo" column="version_No"/>
+        <result property="versionDescription" column="version_Description"/>
+        <result property="versionUpgradeContent" column="version_Upgrade_Content"/>
+        <result property="businessChangeDescription" column="business_Change_Description"/>
+        <result property="upgradeEnvironment" column="upgrade_Environment"/>
+        <result property="noticeText" column="notice_Text"/>
+        <result property="versionStatus" column="version_Status"/>
+
+        <result property="technicalSupportId" column="technical_Support_Id"/>
+        <result property="technicalSupportPhone" column="technical_Support_Phone"/>
+        <result property="update_time" column="update_time"/>
+        <result property="versionAttr" column="version_Attr"/>
+        <result property="testReport" column="test_Report"/>
+        <result property="questionId" column="question_Id"/>
+        <result property="sendMsgFlag" column="send_Msg_Flag"/>
+        <result property="versionType" column="version_Type"/>
+        <result property="ifSafetyAudit" column="if_Safety_Audit"/>
+        <result property="issuedUnit" column="issued_Unit"/>
+        <result property="startUpgradeTime" column="start_Upgrade_Time"/>
+        <result property="endUpgradeTime" column="end_Upgrade_Time"/>
+        <result property="acceptOrganization" column="accept_Organization"/>
+        <result property="acceptRole" column="accept_Role"/>
+
+        <result property="createunits" column="createunits"/>
+        <result property="copyRequiteUnit" column="copy_Requite_Unit"/>
+        <result property="businessState" column="business_State"/>
+        <result property="technologyState" column="technology_State"/>
+        <result property="vmProActlogId" column="vm_Pro_Actlog_Id"/>
+        <result property="drafterId" column="drafter_Id"/>
+        <result property="issuedNo" column="issued_No"/>
+        <result property="safetyAuditId" column="safety_Audit_Id"/>
+        <result property="technologyAuditId" column="technology_Audit_Id"/>
+        <result property="businessAuditId" column="business_Audit_Id"/>
+        <result property="businessApprovalId" column="business_Approval_Id"/>
+        <result property="technologyApprovalId" column="technology_Approval_Id"/>
+        <result property="useApprovalId" column="use_Approval_Id"/>
+        <result property="uploaderApprovalId" column="uploader_Approval_Id"/>
+
+        <result property="ifIssueNotice" column="if_Issue_Notice"/>
+        <result property="issuedBranch" column="issued_Branch"/>
+        <result property="agencyCenter" column="agency_Center"/>
+        <result property="invalidationMark" column="invalidation_Mark"/>
+        <result property="agencyZx" column="agency_Zx"/>
+        <result property="businessRequirementText" column="business_Requirement_Text"/>
+        <result property="businessValidationText" column="business_Validation_Text"/>
+        <result property="ifReportOffice" column="if_Report_Office"/>
+        <result property="ifReportCbrc" column="if_Report_Cbrc"/>
+        <result property="ifReportCallCenter" column="if_Report_Call_Center"/>
+        <result property="ifStopBusiness" column="if_Stop_Business"/>
+        <result property="sysName" column="sys_Name"/>
+        <result property="sys_Id" column="sys_Id"/>
+        <result property="useDivisionChiefApprovalId" column="use_Division_Chief_Approval_Id"/>
+        <result property="jjspApprovalId" column="jjsp_Approval_Id"/>
+        <result property="businessOrg" column="business_Org"/>
+        <result property="isAutomate" column="is_automate"/>
+        <result property="automateAuditId" column="automate_audit_id"/>
+
+        <!-- 以下名称作为页面回显展示用，并不是数据库字段-->
+        <result property="safetyAuditName" column="safetyAuditName"/>
+        <result property="technologyAuditName" column="technologyAuditName"/>
+        <result property="businessAuditName" column="businessAuditName"/>
+        <result property="businessApprovalName" column="businessApprovalName"/>
+        <result property="technologyApprovalName" column="technologyApprovalName"/>
+        <result property="useApprovalName" column="useApprovalName"/>
+        <result property="uploaderApprovalName" column="uploaderApprovalName"/>
+        <result property="useDivisionChiefApprovalName" column="useDivisionChiefApprovalName"/>
+        <result property="jjspApprovalName" column="jjspApprovalName"/>
+        <result property="versionProducerName" column="versionProducerName"/>
+        <result property="automateAuditName" column="automateAuditName"/>
+
+        <association property="ogSys" column="sysid" javaType="OgSys" resultMap="OgSysResult"/>
+
+    </resultMap>
+
+    <resultMap type="OgSys" id="OgSysResult">
+        <id property="sysId" column="sysId"/>
+        <result property="orgId" column="orgId"/>
+        <result property="code" column="code"/>
+        <result property="caption" column="caption"/>
+        <result property="memo" column="memo"/>
+        <result property="invalidationMark" column="invalidation_Mark"/>
+        <result property="isExamination" column="isExamination"/>
+        <result property="dept" column="dept"/>
+        <result property="pid" column="pid"/>
+        <result property="businessId" column="businessId"/>
+        <result property="isKeySys" column="is_Key_Sys"/>
+        <result property="sysType" column="sys_Type"/>
+        <result property="upgradeTime" column="upgrade_time"/>
+        <result property="isOutChannel" column="is_out_channel"/>
+    </resultMap>
+
+    <resultMap type="OgPerson" id="OgPersonResult">
+        <id property="pId" column="PID"/>
+        <result property="orgId" column="ORGID"/>
+        <result property="pName" column="PNAME"/>
+        <result property="sex" column="SEX"/>
+        <result property="edu" column="EDU"/>
+        <result property="birthday" column="BIRTHDAY"/>
+        <result property="nativePlace" column="NATIVE_PLACE"/>
+        <result property="phone" column="PHONE"/>
+        <result property="mobilPhone" column="mobil_phone"/>
+        <result property="emall" column="EMALL"/>
+        <result property="address" column="ADDRESS"/>
+        <result property="createBy" column="create_by"/>
+        <result property="momer" column="MOMER"/>
+        <result property="mome" column="MOME"/>
+        <result property="updatetime" column="UPDATE_TIME"/>
+        <result property="invalidationMark" column="INVALIDATION_MARK"/>
+        <result property="position" column="POSITION"/>
+        <result property="leader" column="LEADER"/>
+        <result property="pOrder" column="P_ORDER"/>
+        <result property="pflag" column="P_FLAG"/>
+        <result property="orgname" column="orgname"/>
+    </resultMap>
+
+    <sql id="selectVmBizInfo">
+        select v.version_info_id,
+           v.version_info_no,
+           v.version_info_name,
+           v.version_producer_id,
+           v.version_create_time,
+           v.sysid,
+           v.version_name,
+           v.version_no,
+           v.version_description,
+           v.version_upgrade_content,
+           v.business_change_description,
+           v.upgrade_environment,
+           v.notice_text,
+           v.version_status,
+           v.technical_support_id,
+           v.technical_support_phone,
+           v.update_time,
+           v.version_attr,
+           v.test_report,
+           v.question_id,
+           v.send_msg_flag,
+           v.version_type,
+           v.if_safety_audit,
+           v.issued_unit,
+           v.start_upgrade_time,
+           v.end_upgrade_time,
+           v.accept_organization,
+           v.accept_role,
+           v.createunits,
+           v.copy_requite_unit,
+           v.business_state,
+           v.technology_state,
+           v.vm_pro_actlog_id,
+           v.drafter_id,
+           v.issued_no,
+           v.safety_audit_id,
+           v.technology_audit_id,
+           v.business_audit_id,
+           v.business_approval_id,
+           v.technology_approval_id,
+           v.use_approval_id,
+           v.uploader_approval_id,
+           v.if_issue_notice,
+           v.issued_branch,
+           v.agency_center,
+           v.invalidation_mark,
+           v.agency_zx,
+           v.business_requirement_text,
+           v.business_validation_text,
+           v.if_report_office,
+           v.if_report_cbrc,
+           v.if_report_call_center,
+           v.if_stop_business,
+           v.sys_name,
+           v.sys_id,
+           v.use_division_chief_approval_id,
+           v.jjsp_approval_id,
+           v.business_org,
+           v.is_automate,
+           v.automate_audit_id,
+           s.caption,
+           s.code,
+           s.upgrade_time,
+           s.is_out_channel,
+           p1.pname safetyAuditName,
+           p2.pname technologyAuditName,
+           p3.pname businessAuditName,
+           p4.pname businessApprovalName,
+           p5.pname technologyApprovalName,
+           p6.pname useApprovalName,
+           p7.pname uploaderApprovalName,
+           p8.pname useDivisionChiefApprovalName,
+           p9.pname jjspApprovalName,
+           p10.pname versionProducerName,
+           p11.pname automateAuditName
+        from Vm_Biz_Info v
+        left join og_sys s
+          on v.sysid=s.sysid
+        left join og_person p1
+          on v.safety_Audit_Id = p1.pid
+        left join og_person p2
+          on v.technology_Audit_Id = p2.pid
+        left join og_person p3
+          on v.business_Audit_Id = p3.pid
+        left join og_person p4
+          on v.business_Approval_Id = p4.pid
+        left join og_person p5
+          on v.technology_Approval_Id = p5.pid
+        left join og_person p6
+          on v.use_Approval_Id = p6.pid
+        left join og_person p7
+          on v.uploader_Approval_Id = p7.pid
+        left join og_person p8
+          on v.use_Division_Chief_Approval_Id = p8.pid
+        left join og_person p9
+          on v.jjsp_Approval_Id = p9.pid
+        left join og_person p10
+          on v.version_producer_id = p10.pid
+        left join og_person p11
+          on v.automate_audit_id = p11.pid
+    </sql>
+
+    <!--定时任务查询不带时间处理-->
+    <sql id="selectVmBizInfoQuartz">
+        select v.version_info_id,
+           v.version_info_no,
+           v.version_info_name,
+           v.version_producer_id,
+           v.version_create_time,
+           v.sysid,
+           v.version_name,
+           v.version_no,
+           v.version_description,
+           v.version_upgrade_content,
+           v.business_change_description,
+           v.upgrade_environment,
+           v.notice_text,
+           v.version_status,
+           v.technical_support_id,
+           v.technical_support_phone,
+           v.update_time,
+           v.version_attr,
+           v.test_report,
+           v.question_id,
+           v.send_msg_flag,
+           v.version_type,
+           v.if_safety_audit,
+           v.issued_unit,
+           v.start_upgrade_time,
+           v.end_upgrade_time,
+           v.accept_organization,
+           v.accept_role,
+           v.createunits,
+           v.copy_requite_unit,
+           v.business_state,
+           v.technology_state,
+           v.vm_pro_actlog_id,
+           v.drafter_id,
+           v.issued_no,
+           v.safety_audit_id,
+           v.technology_audit_id,
+           v.business_audit_id,
+           v.business_approval_id,
+           v.technology_approval_id,
+           v.use_approval_id,
+           v.uploader_approval_id,
+           v.if_issue_notice,
+           v.issued_branch,
+           v.agency_center,
+           v.invalidation_mark,
+           v.agency_zx,
+           v.business_requirement_text,
+           v.business_validation_text,
+           v.if_report_office,
+           v.if_report_cbrc,
+           v.if_report_call_center,
+           v.if_stop_business,
+           v.sys_name,
+           v.sys_id,
+           v.use_division_chief_approval_id,
+           v.jjsp_approval_id,
+           v.business_org,
+           v.is_automate,
+           v.automate_audit_id,
+           s.caption,
+           s.code,
+           p1.pname safetyAuditName,
+           p2.pname technologyAuditName,
+           p3.pname businessAuditName,
+           p4.pname businessApprovalName,
+           p5.pname technologyApprovalName,
+           p6.pname useApprovalName,
+           p7.pname uploaderApprovalName,
+           p8.pname useDivisionChiefApprovalName,
+           p9.pname jjspApprovalName,
+           p10.pname versionProducerName
+        from Vm_Biz_Info v
+        left join og_sys s
+          on v.sysid=s.sysid
+        left join og_person p1
+          on v.safety_Audit_Id = p1.pid
+        left join og_person p2
+          on v.technology_Audit_Id = p2.pid
+        left join og_person p3
+          on v.business_Audit_Id = p3.pid
+        left join og_person p4
+          on v.business_Approval_Id = p4.pid
+        left join og_person p5
+          on v.technology_Approval_Id = p5.pid
+        left join og_person p6
+          on v.use_Approval_Id = p6.pid
+        left join og_person p7
+          on v.uploader_Approval_Id = p7.pid
+        left join og_person p8
+          on v.use_Division_Chief_Approval_Id = p8.pid
+        left join og_person p9
+          on v.jjsp_Approval_Id = p9.pid
+        left join og_person p10
+          on v.version_producer_id = p10.pid
+    </sql>
+
+    <select id="selectVmBizInfoList" parameterType="VmBizInfo" resultMap="VmBizInfoResult">
+        <include refid="selectVmBizInfo"/>
+        <where>
+            <!-- 版本编号使用like查询 -->
+            <if test="versionInfoNo != null  and versionInfoNo != ''">
+                and v.version_info_no like concat(concat('%',#{versionInfoNo}),'%')
+            </if>
+            <!-- 版本名称 -->
+            <if test="versionInfoName != null  and versionInfoName != ''">
+                and v.version_info_name like concat(concat('%',#{versionInfoName}),'%')
+            </if>
+            <!-- 版本发起人 -->
+            <if test="versionProducerName != null  and versionProducerName != ''">
+                and p10.pname like concat(concat('%',#{versionProducerName}),'%')
+            </if>
+            <!-- 所属系统查询，如果是一个，则使用like模糊查询，如果是多个使用数组IN查询 -->
+            <choose>
+                <when test="params.captionArray != null and params.captionArray != ''">
+                    and s.caption in
+                    <foreach collection="params.captionArray" item="caption" open="(" separator="," close=")">
+                        #{caption}
+                    </foreach>
+                </when>
+                <otherwise>
+                    <if test="ogSys != null and ogSys.caption != null and ogSys.caption != ''">
+                        and s.caption like concat(concat('%',#{ogSys.caption}),'%')
+                    </if>
+                </otherwise>
+            </choose>
+            <!-- 版本发起起始时间 -->
+            <if test="params.versionCreateTimeStart != null and params.versionCreateTimeStart != ''">
+                and v.version_create_time &gt;= #{params.versionCreateTimeStart}
+            </if>
+            <!-- 版本发起截至时间 -->
+            <if test="params.versionCreateTimeEnd != null and params.versionCreateTimeEnd != ''">
+                and v.version_create_time &lt;= #{params.versionCreateTimeEnd}
+            </if>
+            <!-- 升级时间(起) -->
+            <if test="startUpgradeTime != null  and startUpgradeTime != ''">
+                and v.start_upgrade_time &gt;= #{startUpgradeTime}
+            </if>
+            <!-- 升级时间(止) -->
+            <if test="endUpgradeTime != null  and endUpgradeTime != ''">
+                and v.start_upgrade_time &lt;= #{endUpgradeTime}
+            </if>
+            <!-- 版本管理员 -->
+            <if test="useApprovalName != null  and useApprovalName != ''">
+                and p6.pname like concat(concat('%',#{useApprovalName}),'%')
+            </if>
+            <!-- 运维主管 -->
+            <if test="useDivisionChiefApprovalName != null  and useDivisionChiefApprovalName != ''">
+                and p8.pname like concat(concat('%',#{useDivisionChiefApprovalName}),'%')
+            </if>
+            <!-- 发布审批人 -->
+            <if test="uploaderApprovalName != null  and uploaderApprovalName != ''">
+                and p7.pname like concat(concat('%',#{uploaderApprovalName}),'%')
+            </if>
+            <!-- 状态支持多选使用IN查询 -->
+            <if test="versionStatus != null and versionStatus != ''">
+                and v.version_status in
+                <foreach collection="params.versionStatusArray" item="versionStatus" open="(" separator="," close=")">
+                    #{versionStatus}
+                </foreach>
+            </if>
+            <!-- 是否紧急审批 -->
+            <if test="acceptRole != null and acceptRole != ''">
+                and v.accept_role = #{acceptRole}
+            </if>
+            <!-- 版本创建人ID -->
+            <if test="versionProducerId != null and versionProducerId != ''">
+                and v.version_producer_id = #{versionProducerId}
+            </if>
+            <!-- 自动化实施人 -->
+            <if test="automateAuditId != null and automateAuditId != ''">
+                and v.automate_audit_id = #{automateAuditId}
+            </if>
+            <!-- 自动化标识 -->
+            <if test="isAutomate != null and isAutomate != ''">
+                and v.is_automate = #{isAutomate}
+            </if>
+
+            <!-- 业务审核人|领导 -->
+            <if test="businessOrg != null and businessOrg != ''">
+                and (v.business_audit_id like concat(concat('%',#{businessOrg}),'%') or
+                     v.business_approval_id like concat(concat('%',#{businessOrg}),'%') or
+            </if>
+            <if test="businessOrg == null and params.businessOrgFlag == 0">
+                and (
+            </if>
+
+            <!-- 版本创建人、技术审核人、技术领导所在机构的人员均可以看到版本单，根据机构使用子查询 -->
+            <if test="params.orgId != null and params.orgId != ''">
+                v.version_producer_id in (select p.pid from og_person p where p.orgid = #{params.orgId})
+                or v.technology_audit_id in (select p.pid from og_person p where p.orgid = #{params.orgId})
+                or v.technology_approval_id in (select p.pid from og_person p where p.orgid = #{params.orgId}) )
+            </if>
+        </where>
+        order by v.version_create_time desc
+    </select>
+
+    <select id="selectVmBizInfoByCondition" parameterType="VmBizInfo" resultMap="VmBizInfoResult">
+        <include refid="selectVmBizInfo"/>
+        <where>
+            <if test="versionInfoNo != null  and versionInfoNo != ''">
+                and v.version_info_no like concat(concat('%',#{versionInfoNo}),'%')
+            </if>
+            <if test="versionInfoName != null  and versionInfoName != ''">
+                and v.version_info_name like concat(concat('%',#{versionInfoName}),'%')
+            </if>
+            <if test="versionCreateTime != null  and versionCreateTime != ''">
+                and v.version_create_time >= #{versionCreateTime}
+            </if>
+            <if test="ogSys != null and ogSys.caption != null and ogSys.caption != ''">
+                and s.caption like concat(concat('%',#{ogSys.caption}),'%')
+            </if>
+            <!-- 版本发起人 -->
+            <if test="versionProducerName != null  and versionProducerName != ''">
+                and p10.pname like concat(concat('%',#{versionProducerName}),'%')
+            </if>
+            <if test="versionProducerId != null  and versionProducerId != ''">
+                and v.version_producer_id = #{versionProducerId}
+            </if>
+            and v.version_info_id = #{versionInfoId}
+        </where>
+    </select>
+
+    <select id="selectVmBizInfoByVersionStatus" parameterType="list" resultMap="VmBizInfoResult">
+        <include refid="selectVmBizInfo"/>
+        where v.version_status in
+        <foreach item="sta" collection="list" open="(" separator="," close=")">
+            #{sta}
+        </foreach>
+    </select>
+
+    <select id="selectVmBizInfoById" parameterType="String" resultMap="VmBizInfoResult">
+        <include refid="selectVmBizInfo"/>
+        where v.version_info_id = #{versionInfoId}
+    </select>
+
+    <select id="selectVmBizInfoByIdList" parameterType="String" resultMap="VmBizInfoResult">
+        <include refid="selectVmBizInfo"/>
+        where v.version_info_id in
+        <foreach item="id" collection="list" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+
+    <select id="selectVmBizInfoByNo" parameterType="String" resultMap="VmBizInfoResult">
+        <include refid="selectVmBizInfo"/>
+        where v.version_info_no = #{versionInfoNo}
+    </select>
+
+    <select id="selectVmBizInfoByQuartz" parameterType="String" resultMap="VmBizInfoResult">
+        <include refid="selectVmBizInfoQuartz"/>
+        where v.version_info_id = #{versionInfoId}
+    </select>
+
+    <select id="selectCountByVersionInfoNo" parameterType="String" resultType="int">
+        select count(1) from VM_BIZ_INFO where version_info_no = #{versionInfoNo}
+    </select>
+
+    <select id="selectStatusByVersionInfoNo" parameterType="String" resultType="String">
+        select v.version_status from VM_BIZ_INFO v where v.version_info_no = #{versionInfoNo}
+    </select>
+
+    <insert id="insertVmBizInfo" parameterType="VmBizInfo" useGeneratedKeys="false" keyProperty="versionInfoId">
+        insert into Vm_Biz_Info(
+        version_info_id,
+        <if test="versionInfoNo != null  and versionInfoNo != ''">version_info_no,</if>
+        <if test="versionInfoName != null  and versionInfoName != ''">version_info_name,</if>
+        <if test="versionProducerId != null  and versionProducerId != ''">version_producer_id,</if>
+        <if test="sysId != null and sysId != '' ">sysid,</if>
+        <if test="versionName != null and versionName != '' ">version_Name,</if>
+        <if test="versionNo != null and versionNo != ''">version_No,</if>
+        <if test="versionDescription != null  and versionDescription != ''">version_Description,</if>
+        <if test="versionUpgradeContent != null  and versionUpgradeContent != ''">version_Upgrade_Content,</if>
+        <if test="businessChangeDescription != null and businessChangeDescription != ''">business_Change_Description,
+        </if>
+        <if test="upgradeEnvironment != null and upgradeEnvironment != ''">upgrade_Environment,</if>
+        <if test="noticeText != null and noticeText != ''">notice_Text,</if>
+
+        <if test="versionStatus != null  and versionStatus != ''">version_Status,</if>
+        <if test="technicalSupportId != null  and technicalSupportId != ''">technical_Support_Id,</if>
+        <if test="technicalSupportPhone != null  and technicalSupportPhone != ''">technical_Support_Phone,</if>
+        <if test="update_time != null and update_time != '' ">update_time,</if>
+        <if test="versionAttr != null and versionAttr != ''">version_Attr,</if>
+        <if test="testReport != null  and testReport != ''">test_Report,</if>
+        <if test="questionId != null  and questionId != ''">question_Id,</if>
+        <if test="sendMsgFlag != null and sendMsgFlag != ''">send_Msg_Flag,</if>
+        <if test="versionType != null and versionType != ''">version_Type,</if>
+        <if test="ifSafetyAudit != null and ifSafetyAudit != ''">if_Safety_Audit,</if>
+
+        <if test="issuedUnit != null  and issuedUnit != ''">issued_Unit,</if>
+        <if test="startUpgradeTime != null  and startUpgradeTime != ''">start_Upgrade_Time,</if>
+        <if test="endUpgradeTime != null  and endUpgradeTime != ''">end_Upgrade_Time,</if>
+        <if test="acceptOrganization != null and acceptOrganization != '' ">accept_Organization,</if>
+        <if test="acceptRole != null and acceptRole != ''">accept_Role,</if>
+        <if test="createunits != null  and createunits != ''">createunits,</if>
+        <if test="copyRequiteUnit != null  and copyRequiteUnit != ''">copy_Requite_Unit,</if>
+        <if test="businessState != null and businessState != ''">business_State,</if>
+        <if test="technologyState != null and technologyState != ''">technology_State,</if>
+        <if test="vmProActlogId != null and vmProActlogId != ''">vm_Pro_Actlog_Id,</if>
+
+        <if test="drafterId != null  and drafterId != ''">drafter_Id,</if>
+        <if test="issuedNo != null  and issuedNo != ''">issued_No,</if>
+        <if test="safetyAuditId != null  and safetyAuditId != ''">safety_Audit_Id,</if>
+        <if test="technologyAuditId != null and technologyAuditId != '' ">technology_Audit_Id,</if>
+        <if test="businessAuditId != null and businessAuditId != '' and params.cleanBusinessFlag == 0">
+            business_Audit_Id,
+        </if>
+        <if test="businessApprovalId != null  and businessApprovalId != '' and params.cleanBusinessFlag == 0">
+            business_Approval_Id,
+        </if>
+        <if test="technologyApprovalId != null  and technologyApprovalId != ''">technology_Approval_Id,</if>
+        <if test="useApprovalId != null and useApprovalId != ''">use_Approval_Id,</if>
+        <if test="uploaderApprovalId != null and uploaderApprovalId != ''">uploader_Approval_Id,</if>
+        <if test="ifIssueNotice != null and ifIssueNotice != ''">if_Issue_Notice,</if>
+
+        <if test="issuedBranch != null  and issuedBranch != ''">issued_Branch,</if>
+        <if test="agencyCenter != null  and agencyCenter != ''">agency_Center,</if>
+        <if test="invalidationMark != null  and invalidationMark != ''">invalidation_Mark,</if>
+        <if test="agencyZx != null and agencyZx != '' ">agency_Zx,</if>
+        <if test="businessRequirementText != null and businessRequirementText != ''">business_Requirement_Text,</if>
+        <if test="businessValidationText != null  and businessValidationText != ''">business_Validation_Text,</if>
+        <if test="ifReportOffice != null  and ifReportOffice != ''">if_Report_Office,</if>
+        <if test="ifReportCbrc != null and ifReportCbrc != ''">if_Report_Cbrc,</if>
+        <if test="ifReportCallCenter != null and ifReportCallCenter != ''">if_Report_Call_Center,</if>
+        <if test="ifStopBusiness != null and ifStopBusiness != ''">if_Stop_Business,</if>
+
+        <if test="sysName != null and sysName != '' ">sys_Name,</if>
+        <if test="sys_Id != null and sys_Id != ''">sys_Id,</if>
+        <if test="useDivisionChiefApprovalId != null  and useDivisionChiefApprovalId != ''">
+            use_Division_Chief_Approval_Id,
+        </if>
+        <if test="jjspApprovalId != null  and jjspApprovalId != ''">jjsp_Approval_Id,</if>
+        <if test="businessOrg != null and businessOrg != '' and params.cleanBusinessFlag == 0">business_Org,</if>
+        <if test="isAutomate != null and isAutomate != ''">is_automate,</if>
+        <if test="automateAuditId != null and automateAuditId != ''">automate_audit_id,</if>
+
+        <!-- 清除业务审核数据-->
+        <if test="params.cleanBusinessFlag == 1">
+            business_audit_id ,business_approval_id,business_org,
+        </if>
+
+        version_create_time
+        )
+        values(
+        #{versionInfoId},
+        <if test="versionInfoNo != null  and versionInfoNo != ''">#{versionInfoNo},</if>
+        <if test="versionInfoName != null  and versionInfoName != ''">#{versionInfoName},</if>
+        <if test="versionProducerId != null  and versionProducerId != ''">#{versionProducerId},</if>
+        <if test="sysId != null and sysId != ''">#{sysId},</if>
+        <if test="versionName != null and versionName != ''">#{versionName},</if>
+        <if test="versionNo != null and versionNo != ''">#{versionNo},</if>
+        <if test="versionDescription != null  and versionDescription != ''">#{versionDescription},</if>
+        <if test="versionUpgradeContent != null  and versionUpgradeContent != ''">#{versionUpgradeContent},</if>
+        <if test="businessChangeDescription != null and businessChangeDescription != ''">#{businessChangeDescription},
+        </if>
+        <if test="upgradeEnvironment != null  and upgradeEnvironment != ''">#{upgradeEnvironment},</if>
+        <if test="noticeText != null and noticeText != ''">#{noticeText},</if>
+
+        <if test="versionStatus != null  and versionStatus != ''">#{versionStatus},</if>
+        <if test="technicalSupportId != null  and technicalSupportId != ''">#{technicalSupportId},</if>
+        <if test="technicalSupportPhone != null  and technicalSupportPhone != ''">#{technicalSupportPhone},</if>
+        <if test="update_time != null and update_time != ''">#{update_time},</if>
+        <if test="versionAttr != null and versionAttr != ''">#{versionAttr},</if>
+        <if test="testReport != null and testReport != ''">#{testReport},</if>
+        <if test="questionId != null  and questionId != ''">#{questionId},</if>
+        <if test="sendMsgFlag != null  and sendMsgFlag != ''">#{sendMsgFlag},</if>
+        <if test="versionType != null and versionType != ''">#{versionType},</if>
+        <if test="ifSafetyAudit != null  and ifSafetyAudit != ''">#{ifSafetyAudit},</if>
+
+        <if test="issuedUnit != null  and issuedUnit != ''">#{issuedUnit},</if>
+        <if test="startUpgradeTime != null  and startUpgradeTime != ''">#{startUpgradeTime},</if>
+        <if test="endUpgradeTime != null  and endUpgradeTime != ''">#{endUpgradeTime},</if>
+        <if test="acceptOrganization != null and acceptOrganization != ''">#{acceptOrganization},</if>
+        <if test="acceptRole != null and acceptRole != ''">#{acceptRole},</if>
+        <if test="createunits != null and createunits != ''">#{createunits},</if>
+        <if test="copyRequiteUnit != null  and copyRequiteUnit != ''">#{copyRequiteUnit},</if>
+        <if test="businessState != null  and businessState != ''">#{businessState},</if>
+        <if test="technologyState != null and technologyState != ''">#{technologyState},</if>
+        <if test="vmProActlogId != null  and vmProActlogId != ''">#{vmProActlogId},</if>
+
+        <if test="drafterId != null  and drafterId != ''">#{drafterId},</if>
+        <if test="issuedNo != null  and issuedNo != ''">#{issuedNo},</if>
+        <if test="safetyAuditId != null  and safetyAuditId != ''">#{safetyAuditId},</if>
+        <if test="technologyAuditId != null and technologyAuditId != ''">#{technologyAuditId},</if>
+        <if test="businessAuditId != null and businessAuditId != '' and params.cleanBusinessFlag == 0">
+            #{businessAuditId},
+        </if>
+        <if test="businessApprovalId != null and businessApprovalId != '' and params.cleanBusinessFlag == 0">
+            #{businessApprovalId},
+        </if>
+        <if test="technologyApprovalId != null  and technologyApprovalId != ''">#{technologyApprovalId},</if>
+        <if test="useApprovalId != null  and useApprovalId != ''">#{useApprovalId},</if>
+        <if test="uploaderApprovalId != null and uploaderApprovalId != ''">#{uploaderApprovalId},</if>
+        <if test="ifIssueNotice != null  and ifIssueNotice != ''">#{ifIssueNotice},</if>
+
+        <if test="issuedBranch != null  and issuedBranch != ''">#{issuedBranch},</if>
+        <if test="agencyCenter != null  and agencyCenter != ''">#{agencyCenter},</if>
+        <if test="invalidationMark != null  and invalidationMark != ''">#{invalidationMark},</if>
+        <if test="agencyZx != null and agencyZx != ''">#{agencyZx},</if>
+        <if test="businessRequirementText != null and businessRequirementText != ''">#{businessRequirementText},</if>
+        <if test="businessValidationText != null and businessValidationText != ''">#{businessValidationText},</if>
+        <if test="ifReportOffice != null  and ifReportOffice != ''">#{ifReportOffice},</if>
+        <if test="ifReportCbrc != null  and ifReportCbrc != ''">#{ifReportCbrc},</if>
+        <if test="ifReportCallCenter != null and ifReportCallCenter != ''">#{ifReportCallCenter},</if>
+        <if test="ifStopBusiness != null  and ifStopBusiness != ''">#{ifStopBusiness},</if>
+
+        <if test="sysName != null and sysName != ''">#{sysName},</if>
+        <if test="sys_Id != null  and sys_Id != ''">#{sys_Id},</if>
+        <if test="useDivisionChiefApprovalId != null  and useDivisionChiefApprovalId != ''">
+            #{useDivisionChiefApprovalId},
+        </if>
+        <if test="jjspApprovalId != null and jjspApprovalId != ''">#{jjspApprovalId},</if>
+        <if test="businessOrg != null  and businessOrg != '' and params.cleanBusinessFlag == 0">#{businessOrg},</if>
+        <if test="isAutomate != null and isAutomate != ''">#{isAutomate},</if>
+        <if test="automateAuditId != null and automateAuditId != ''">#{automateAuditId},</if>
+
+        <!-- 清除业务审核数据-->
+        <if test="params.cleanBusinessFlag == 1">
+            null,null,null,
+        </if>
+
+        #{versionCreateTime}
+        )
+    </insert>
+
+    <update id="updateVmBizInfo" parameterType="VmBizInfo">
+        update Vm_Biz_Info
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="versionInfoNo != null  and versionInfoNo != ''">version_info_no = #{versionInfoNo},</if>
+            <if test="versionInfoName != null  and versionInfoName != ''">version_info_name=#{versionInfoName},</if>
+            <if test="versionProducerId != null  and versionProducerId != ''">
+                version_producer_id=#{versionProducerId},
+            </if>
+            <if test="sysId != null and sysId != '' ">sysid=#{sysId},</if>
+            <if test="versionName != null and versionName != '' ">version_name=#{versionName},</if>
+            <if test="versionNo != null and versionNo != ''">version_no=#{versionNo},</if>
+            <if test="versionDescription != null  and versionDescription != ''">
+                version_description=#{versionDescription},
+            </if>
+            <if test="versionUpgradeContent != null  and versionUpgradeContent != ''">
+                version_upgrade_content=#{versionUpgradeContent},
+            </if>
+            <if test="businessChangeDescription != null and businessChangeDescription != ''">
+                business_change_description=#{businessChangeDescription},
+            </if>
+            <if test="upgradeEnvironment != null and upgradeEnvironment != ''">
+                upgrade_environment=#{upgradeEnvironment},
+            </if>
+            <if test="noticeText != null and noticeText != ''">notice_text=#{noticeText},</if>
+
+            <if test="versionStatus != null  and versionStatus != ''">version_status=#{versionStatus},</if>
+            <if test="technicalSupportId != null  and technicalSupportId != ''">
+                technical_support_id=#{technicalSupportId},
+            </if>
+            <if test="technicalSupportPhone != null  and technicalSupportPhone != ''">
+                technical_support_phone=#{technicalSupportPhone},
+            </if>
+            <if test="versionAttr != null and versionAttr != ''">version_attr=#{versionAttr},</if>
+            <if test="testReport != null  and testReport != ''">test_report=#{testReport},</if>
+            <if test="questionId != null  and questionId != ''">question_Id=#{questionId},</if>
+            <if test="sendMsgFlag != null and sendMsgFlag != ''">send_Msg_Flag=#{sendMsgFlag},</if>
+            <if test="ifSafetyAudit != null and ifSafetyAudit != ''">if_Safety_Audit=#{ifSafetyAudit},</if>
+
+            <if test="startUpgradeTime != null  and startUpgradeTime != ''">start_Upgrade_Time=#{startUpgradeTime},</if>
+            <if test="endUpgradeTime != null  and endUpgradeTime != ''">end_Upgrade_Time=#{endUpgradeTime},</if>
+            <if test="acceptOrganization != null and acceptOrganization != '' ">
+                accept_Organization=#{acceptOrganization},
+            </if>
+            <if test="acceptRole != null and acceptRole != ''">accept_Role=#{acceptRole},</if>
+            <if test="createunits != null  and createunits != ''">createunits=#{createunits},</if>
+            <if test="copyRequiteUnit != null  and copyRequiteUnit != ''">copy_Requite_Unit=#{copyRequiteUnit},</if>
+            <if test="businessState != null and businessState != ''">business_State=#{businessState},</if>
+            <if test="technologyState != null and technologyState != ''">technology_State=#{technologyState},</if>
+            <if test="vmProActlogId != null and vmProActlogId != ''">vm_Pro_Actlog_Id=#{vmProActlogId},</if>
+
+            <if test="drafterId != null  and drafterId != ''">drafter_Id=#{drafterId},</if>
+            <if test="issuedNo != null  and issuedNo != ''">issued_No=#{issuedNo},</if>
+            <if test="safetyAuditId != null  and safetyAuditId != ''">safety_Audit_Id=#{safetyAuditId},</if>
+            <if test="technologyAuditId != null and technologyAuditId != ''">technology_Audit_Id=#{technologyAuditId},
+            </if>
+            <if test="businessAuditId != null and businessAuditId != '' and params.cleanBusinessFlag == 0">
+                business_Audit_Id=#{businessAuditId},
+            </if>
+            <if test="businessApprovalId != null  and businessApprovalId != '' and params.cleanBusinessFlag == 0">
+                business_Approval_Id=#{businessApprovalId},
+            </if>
+            <if test="technologyApprovalId != null  and technologyApprovalId != ''">
+                technology_Approval_Id=#{technologyApprovalId},
+            </if>
+            <if test="useApprovalId != null and useApprovalId != ''">use_Approval_Id=#{useApprovalId},</if>
+            <if test="uploaderApprovalId != null and uploaderApprovalId != ''">
+                uploader_Approval_Id=#{uploaderApprovalId},
+            </if>
+            <if test="ifIssueNotice != null and ifIssueNotice != ''">if_Issue_Notice=#{ifIssueNotice},</if>
+
+            <!--下发分行｜技术局｜总行数据中心｜版本类型4个字段只有在新增｜编辑时页面传递orgFlag == 1时空值也要更新，其他情况是非空更新-->
+            <if test="params.orgFlag == 1">
+                issued_Branch=#{issuedBranch,jdbcType=VARCHAR},
+                agency_Center=#{agencyCenter,jdbcType=VARCHAR},
+                issued_Unit=#{issuedUnit,jdbcType=VARCHAR},
+                version_Type=#{versionType,jdbcType=VARCHAR},
+            </if>
+            <if test="params.orgFlag != 1">
+                <if test="issuedUnit != null  and issuedUnit != ''">issued_Unit=#{issuedUnit},</if>
+                <if test="issuedBranch != null  and issuedBranch != ''">issued_Branch=#{issuedBranch},</if>
+                <if test="agencyCenter != null  and agencyCenter != ''">agency_Center=#{agencyCenter},</if>
+                <if test="versionType != null and versionType != ''">version_Type=#{versionType},</if>
+            </if>
+            <if test="invalidationMark != null  and invalidationMark != ''">invalidation_Mark=#{invalidationMark},</if>
+            <if test="agencyZx != null and agencyZx != '' ">agency_Zx=#{agencyZx},</if>
+            <if test="businessRequirementText != null and businessRequirementText != ''">
+                business_Requirement_Text=#{businessRequirementText},
+            </if>
+            <if test="businessValidationText != null  and businessValidationText != ''">
+                business_Validation_Text=#{businessValidationText},
+            </if>
+            <if test="ifReportOffice != null  and ifReportOffice != ''">if_Report_Office=#{ifReportOffice},</if>
+            <if test="ifReportCbrc != null and ifReportCbrc != ''">if_Report_Cbrc=#{ifReportCbrc},</if>
+            <if test="ifReportCallCenter != null and ifReportCallCenter != ''">
+                if_Report_Call_Center=#{ifReportCallCenter},
+            </if>
+            <if test="ifStopBusiness != null and ifStopBusiness != ''">if_Stop_Business=#{ifStopBusiness},</if>
+
+            <if test="sysName != null and sysName != '' ">sys_Name=#{sysName},</if>
+            <if test="sys_Id != null and sys_Id != ''">sys_Id=#{sys_Id},</if>
+            <if test="useDivisionChiefApprovalId != null  and useDivisionChiefApprovalId != ''">
+                use_Division_Chief_Approval_Id=#{useDivisionChiefApprovalId},
+            </if>
+            <if test="jjspApprovalId != null  and jjspApprovalId != ''">jjsp_Approval_Id=#{jjspApprovalId},</if>
+            <if test="businessOrg != null and businessOrg != '' and params.cleanBusinessFlag == 0">
+                business_Org=#{businessOrg},
+            </if>
+
+            <!-- 清除业务审核数据-->
+            <if test="params.cleanBusinessFlag == 1">
+                business_audit_id = null,business_approval_id = null,business_org = null,
+            </if>
+            <if test="update_time != null and update_time != ''">update_time=#{update_time},</if>
+            <if test="isAutomate != null and isAutomate != '' ">is_automate=#{isAutomate},</if>
+            <if test="automateAuditId != null and automateAuditId != ''">automate_audit_id=#{automateAuditId},</if>
+        </trim>
+        where version_info_id = #{versionInfoId}
+    </update>
+
+    <delete id="deleteVmBizInfoById" parameterType="String">
+        delete from Vm_Biz_Info where version_info_id = #{id}
+    </delete>
+
+    <delete id="deleteVmBizInfoByIds" parameterType="list">
+        delete from Vm_Biz_Info where version_info_id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

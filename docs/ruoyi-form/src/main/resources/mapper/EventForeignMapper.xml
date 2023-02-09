@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.form.mapper.ItBizExtendMapper">
+    <resultMap type="OgRole" id="OgRoleResult">
+        <id     property="rid"       column="rid"        />
+        <result property="rName"     column="rName"      />
+        <result property="invalidationMark"      column="invalidation_mark"       />
+        <result property="memo"      column="memo"      />
+        <result property="funclist"    column="funclist"     />
+        <result property="adder"       column="adder"         />
+        <result property="addTime"      column="addTime"       />
+        <result property="moder"     column="moder"      />
+        <result property="modTime"   column="modTime"    />
+        <result property="updatetime"   column="update_time"    />
+    </resultMap>
+    <resultMap type="com.ruoyi.common.core.domain.entity.OgGroup" id="SysOgGroupResult">
+        <id property="groupId" column="GROUPID"/>
+        <result property="grpName" column="GRPNAME"/>
+        <result property="grpLeader" column="GRPLEADER"/>
+        <result property="adder" column="adder"/>
+        <result property="addTime" column="addTime"/>
+        <result property="moder" column="moder"/>
+        <result property="modTime" column="modTime"/>
+        <result property="invalidationMark" column="INVALIDATION_MARK"/>
+        <result property="memo" column="MEMO"/>
+        <result property="orgId" column="ORGID"/>
+        <result property="count" column="COUNT"/>
+        <result property="tel" column="TEL"/>
+        <result property="sysId" column="SYSID"/>
+        <result property="whiteList" column="WHITE_LIST"/>
+        <result property="groupType" column="group_type"/>
+        <result property="userid" column="userid"/>
+        <result property="sName" column="sName"/>
+    </resultMap>
+  <select id="selectITserviceAllGroups"  resultMap="SysOgGroupResult">
+    SELECT
+        o.groupid,
+        o.grpname,
+        o.grpleader,
+        o.invalidation_mark,
+        o.memo,
+        o.orgid,
+        o.addtime  ,
+        o.COUNT,
+        o.tel,
+        o.sysid,
+        o.white_list,
+        o.group_type
+    FROM
+        OG_GROUP o
+  </select>
+</mapper>

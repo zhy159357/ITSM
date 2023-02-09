@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+	<th:block th:include="include :: header('电话事件添加')" />
+    <th:block th:include="include :: select2-css" />
+    <th:block th:include="include :: summernote-css" />
+    <th:block th:include="include :: datetimepicker-css" />
+</head>
+<body>
+    <div class="main-content">
+        <form id="form-group-add" class="form-horizontal">
+            <input name="orgId" type="hidden" id="treeId"/>
+            <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+                <div class="panel-group">
+
+                    <div class="panel panel-default">
+                        <div class="panel-heading" style="green-color: #3c8dbc" data-toggle="collapse" data-target="#collapse1">
+                            <h4 class="panel-title" >
+                                电话事件单信息
+                            </h4>
+                        </div>
+                        <div id="collapse1" class="panel-collapse in">
+                            <input name="telid" id="telid" class="form-control" type="hidden" readonly>
+                            <div class="panel-body">
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label is-required">事件单号：</label>
+                                            <div class="col-sm-8">
+                                                <input name="telno" id="telno" class="form-control" type="text" th:value="*{num}" required="required" readonly>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label is-required">组号：</label>
+                                            <div class="col-sm-8">
+                                                <input name="groupNo" onclick="groupNo" id="groupNo" class="form-control" th:value="*{groupNo}" type="text" readonly/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label">接入时间：</label>
+                                            <div class="col-sm-8">
+                                                <input id="createTime" name="createTime" th:value="${nowTime}" class="form-control" type="text" placeholder="yyyy-MM-dd HH:mm:ss" required="required" readonly>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label is-required">应用系统：</label>
+                                            <div class="col-sm-8"><!--id="sysId"-->
+                                                <input id="sysId" name="sysId" type="hidden" class="form-control" />
+                                                <input id="applicationName" type="text" style="background-color: #fff; opacity: 1;" class="form-control" onclick="selectOneApplication()" readonly required/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label is-required">来电人：</label>
+                                            <div class="col-sm-8">
+                                                <input type="text" name="contactName" id="contactName" class="form-control" maxlength="8" required/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label is-required">来电号码：</label>
+                                            <div class="col-sm-8">
+                                                <div class="input-group">
+                                                    <input id="contactPhone" name="contactPhone" type="text" class="form-control" onchange="phone()" required>
+                                                    <span class="input-group-addon"><i class="fa fa-mobile"></i></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label is-required">事件类型：</label>
+                                            <div class="col-sm-8">
+                                                <select class="form-control" id="telType" name="telType" th:with="type=${@dict.getParaType('TelBiz_Type')}" required>
+                                                    <option value=""></option>
+                                                    <option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}" required></option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label is-required">工单类型：</label>
+                                            <div class="col-sm-8">
+                                                <select class="form-control" id="eventType" name="eventType" th:with="type=${@dict.getParaType('TelBiz_EventType')}" onchange="infor()" required>
+                                                    <option value=""></option>
+                                                    <option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}" required></option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row" id="forin">
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label">溢出组：</label>
+                                            <div class="col-sm-8" >
+                                                <input name="overFlowGroup" id="overFlowGroup" class="form-control" maxlength="15" type="text">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label">溢出时间：</label>
+                                            <div class="col-sm-8">
+                                                <input id="overFlowTime" name="overFlowTime" class="form-control" style="background-color: #fff; opacity: 1;" type="text" placeholder="yyyy-MM-dd HH:mm:ss" readonly>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label is-required">来电机构：</label>
+                                            <div class="col-sm-8">
+                                                <select class="form-control" id="contactOrg" name="contactOrg" th:with="type=${@dict.getParaType('TelBiz_Org')}" required>
+                                                    <option value=""></option>
+                                                    <option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}" required></option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label is-required">是否解决：</label>
+                                            <div class="col-sm-8"><!--istransfer-->
+                                                <select class="form-control" name="isSolve" id="isSolve" th:with="type=${@dict.getParaType('SAFETY_AUDIT')}" required>
+                                                    <option value=""></option>
+                                                    <option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="form-group">
+                                            <label class="col-sm-2 control-label is-required">来电内容：</label>
+                                            <div class="col-sm-10">
+                                                <textarea rows="6" cols="20" id="content" name="content" onclick="getBytes()" maxlength="255" class="form-control" required></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="row">
+        <div class="col-sm-offset-5 col-sm-10">
+            <button type="button" class="btn btn-sm btn-primary" onclick="submit()"><i class="fa fa-check"></i>提 交</button>&nbsp;
+            <button type="button" class="btn btn-sm btn-primary" onclick="save()"><i class="fa fa-check"></i>暂 存</button>&nbsp;
+        </div>
+    </div>
+    <th:block th:include="include :: select2-js" />
+    <th:block th:include="include :: summernote-js" />
+    <th:block th:include="include :: footer" />
+    <th:block th:include="include :: datetimepicker-js" />
+
+	<script>
+        //本地的路径
+	    var prefix = ctx + "phone/xz";
+
+        var prefix_version = ctx + "version/public";
+
+        var prefix_f = ctx + "fmbiz";
+
+        //挂机时间
+        $("#closeTime").datetimepicker({
+            format: "yyyy-mm-dd hh:ii:ss",
+            autoclose: true,
+            minView:0,
+            minuteStep:1,
+        });
+        //溢出时间
+        $("#overFlowTime").datetimepicker({
+            format: "yyyy-mm-dd hh:ii:ss",
+            autoclose: true,
+            minView:0,
+            minuteStep:1,
+        });
+
+        function phone() {
+            var contactPhone = $('#contactPhone').val();
+
+            var vv = document.getElementById('contactPhone').value;
+            //var re = /(^[1-9]\d*$)/;
+            var re = /^(((\d{3,4}-)?[0-9]{7,8})|(1(3|4|5|6|7|8|9)\d{9}))$/;
+            if(!re.test(vv)){
+                alert("输入的不正确，请重新输入");
+                $('#contactPhone').val(null);
+                return false;
+            }
+        }
+
+        //监听事件 来电人
+        $('#contactName').bind('input propertychange',function(){ //添加监听input值的改变事件
+            var tvalmum;
+            //统计input输入字段的长度
+            tvalnum = $(this).val().length;
+            //如果大于8个字直接进行字符串截取
+            if(tvalnum>8){
+                var tval = $(this).val();
+                tval = tval.substring(0,8);
+                $(this).val(tval);
+            }
+        });
+
+        //溢出组的长度限制
+        $('#overFlowGroup').bind('input propertychange',function(){ //添加监听input值的改变事件
+            var tvalmum;
+            //统计input输入字段的长度
+            tvalnum = $(this).val().length;
+            //如果大于8个字直接进行字符串截取
+            if(tvalnum>8){
+                var tval = $(this).val();
+                tval = tval.substring(0,8);
+                $(this).val(tval);
+            }
+        });
+
+        //来电内容
+        //监听事件   描述的长度
+        $('#content').bind('input propertychange',function(){ //添加监听input值的改变事件
+            var tvalmum;
+            //统计input输入字段的长度
+            tvalnum = $(this).val().length;
+            //如果大于8个字直接进行字符串截取
+            if(tvalnum>255){
+                var tval = $(this).val();
+                tval = tval.substring(0,255);
+                $(this).val(tval);
+            }
+        });
+
+        /**
+         * 这里选择工单类型为‘2’，显示 为‘1’，不显示（溢出组、溢出时间）
+         */
+        function infor() {
+            //var eventType = $('#eventType').value;
+            let id = document.getElementById('eventType');
+            //var type = $('#eventType').value;
+            if(id.value=='2'){
+                $('#forin').show();
+            }else if (id.value=='1'){
+                $('#forin').hide();
+                $('#overFlowGroup').val(null);
+                $('#overFlowTime').val(null);
+            }
+            //console.log(id.value);
+        }
+
+        //提交校验
+        $("#form-group-add").validate({
+            onkeyup: false,
+            rules: {
+                "contactName":true,
+                "telType": true,
+                "eventType": true,
+                "sysId": true,
+                "contactOrg": true,
+                "content": true,
+                "isSolve": true,
+            },
+            messages: {
+                "contactName":true,
+                "telType": true,
+                "eventType": true,
+                "sysId": true,
+                "contactOrg": true,
+                "content": true,
+                "isSolve": true,
+
+                "contactName": "来电人不能为空",
+                "telType": "事件类型不可为空",
+                "eventType": "工单类型不能为空",
+                "sysId": "应用系统不能为空",
+                "contactOrg": "来电机构不能为空",
+                "content": "来电内容不能为空",
+                "isSolve": "是否解决不能为空",
+            },
+            focusCleanup: true
+        });
+
+        //新增 这里根据那个下拉框来改变状态
+        function submit() {
+            debugger;
+            if ($.validate.form()) {
+                var isSolve = $('#isSolve').val();
+                var data = $("#form-group-add").serializeArray();
+                if(isSolve=='1'){
+                    data.push({"name":"state","value": 3 });
+                    //data.push({"name":"closeTime","value": dateTime});
+
+                }else if(isSolve=='2'){
+                    data.push({"name":"state","value": 2 });
+                    //data.push({"name":"closeTime","value": dateTime});
+                }
+                $.operate.saveTab(prefix + "/add", data);
+            }
+        }
+
+        // 暂存   1：待提交
+        function save() {
+            // var versionType = selectVersionType();
+            var data = $("#form-group-add").serializeArray();
+            data.push({"name":"state","value": 1 });
+            //data.push({"name":"closeTime","value": dateTime});
+            $.operate.saveTab(prefix + "/add", data);
+        };
+
+        // 选择创建机构（只能单选）
+        function selectogOrg() {
+            $.modal.open("选择创建机构", prefix_f + "/selectogOrg");
+        }
+
+        // 选择应用系统（只能单选）
+        function selectOneApplication() {
+            $.modal.open("选择应用系统", prefix + "/selectOneApplication");
+        }
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:include="include :: header('新建巡检记录单')"/>
+    <th:block th:include="include :: datetimepicker-css"/>
+    <th:block th:include="include :: ztree-css"/>
+    <th:block th:include="include :: summernote-css"/>
+    <th:block th:include="include :: select2-css"/>
+    <link th:href="@{/css/fmbizMaint.css}" rel="stylesheet"/> <!-- 自定css -->
+</head>
+<body>
+<div class="main-content">
+    <form id="form-inspection-add" class="form-horizontal">
+        <input name="id" type="hidden" id="id"/>
+        <h4 class="form-header h4">基本信息</h4>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">系统名称：</label>
+                    <div class="col-sm-8">
+                        <input name="sysName" id="sysName" class="form-control" type="text" maxlength="18">
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">运维单位：</label>
+                    <div class="col-sm-8">
+                        <input name="sysCompany" id="sysCompany" class="form-control" type="text" maxlength="30">
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">巡查人员：</label>
+                    <div class="col-sm-8">
+                        <input name="inspectors" id="inspectors" class="form-control" type="text" maxlength="18">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">联系方式：</label>
+                    <div class="col-sm-8">
+                        <input name="contact" id="contact" class="form-control" type="text" maxlength="18">
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">系统负责人：</label>
+                    <div class="col-sm-8">
+                        <input name="sysManager" id="sysManager" class="form-control" type="text" maxlength="18">
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">更新日期：</label>
+                    <div class="col-sm-8">
+                        <input type="text" class="form-control" placeholder="yyyy-MM-dd" id="lastDate"
+                               name="lastDate" required readonly style="background-color: #fdfdfd"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">开始时间：</label>
+                    <div class="col-sm-8">
+                        <input type="text" class="form-control" placeholder="yyyy-MM-dd HH:mm:ss" id="startTime"
+                               name="startTime" required readonly style="background-color: #fdfdfd"/>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">结束时间：</label>
+                    <div class="col-sm-8">
+                        <input type="text" class="form-control" placeholder="yyyy-MM-dd HH:mm:ss" id="endTime"
+                               name="endTime" required readonly style="background-color: #fdfdfd"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">爬虫进程是否正常：</label>
+                    <div class="col-sm-8">
+                        <div class="col-sm-8">
+                            <label class="radio-box"> <input type="radio" checked="" name="crawlerStates" value="1" /> 正常 </label>
+                            <label class="radio-box"> <input type="radio" name="crawlerStates" value="0" /> 异常 </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-8">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">爬虫进程情况说明：</label>
+                    <div class="col-sm-10">
+                        <input name="crawlerAnnotation" id="crawlerAnnotation" class="form-control" type="text" maxlength="250">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">采集调度进程运行是否正常：</label>
+                    <div class="col-sm-8">
+                        <div class="col-sm-8">
+                            <label class="radio-box"> <input type="radio" checked="" name="dispatchingStates" value="1" /> 正常 </label>
+                            <label class="radio-box"> <input type="radio" name="dispatchingStates" value="0" /> 异常 </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-8">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">采集调度进程运行情况说明：</label>
+                    <div class="col-sm-10">
+                        <input name="dispatchingAnnotation" id="dispatchingAnnotation" class="form-control" type="text" maxlength="280">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">采集进程运行是否正常：</label>
+                    <div class="col-sm-8">
+                        <div class="col-sm-8">
+                            <label class="radio-box"> <input type="radio" checked="" name="processStates" value="1" /> 正常 </label>
+                            <label class="radio-box"> <input type="radio" name="processStates" value="0" /> 异常 </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-8">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">采集进程运行情况说明：</label>
+                    <div class="col-sm-10">
+                        <input name="processAnnotation" id="processAnnotation" class="form-control" type="text" maxlength="250">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">异常预警运行是否正常：</label>
+                    <div class="col-sm-8">
+                        <div class="col-sm-8">
+                            <label class="radio-box"> <input type="radio" checked="" name="warningStates" value="1" /> 正常 </label>
+                            <label class="radio-box"> <input type="radio" name="warningStates" value="0" /> 异常 </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-8">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">异常预警运行情况说明：</label>
+                    <div class="col-sm-10">
+                        <input name="warningAnnotation" id="warningAnnotation" class="form-control" type="text" maxlength="250">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">爬虫更新进程运行是否正常：</label>
+                    <div class="col-sm-8">
+                        <div class="col-sm-8">
+                            <label class="radio-box"> <input type="radio" checked="" name="updateStates" value="1" /> 正常 </label>
+                            <label class="radio-box"> <input type="radio" name="updateStates" value="0" /> 异常 </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-8">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">爬虫更新进程运行情况说明：</label>
+                    <div class="col-sm-10">
+                        <input name="globalAnnotation" id="updateAnnotation" class="form-control" type="text" maxlength="280">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">数据质量核验运行是否正常：</label>
+                    <div class="col-sm-8">
+                        <div class="col-sm-8">
+                            <label class="radio-box"> <input type="radio" checked="" name="qualityStates" value="1" /> 正常 </label>
+                            <label class="radio-box"> <input type="radio" name="qualityStates" value="0" /> 异常 </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-8">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">数据质量核验运行情况说明：</label>
+                    <div class="col-sm-10">
+                        <input name="qualityAnnotation" id="qualityAnnotation" class="form-control" type="text" maxlength="280">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="input-group" style="display:-webkit-box">
+                    <label class="col-sm-2 control-label" style="width:10%">备注：</label>
+                    <div class="col-sm-12">
+                        <textarea rows="12" cols="20" id="remark" name="remark"
+                                   class="zdy_input" maxlength="3000" required></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<div class="row">
+    <div class="col-sm-offset-5 col-sm-10">
+        <button type="button" id="tj1"class="btn btn-sm btn-primary" onclick="submit()"><i class="fa fa-check"></i>提 交
+        </button>&nbsp;
+        <button type="button" class="btn btn-sm btn-danger" onclick="closeItem()"><i class="fa fa-remove"></i>关 闭
+        </button>
+    </div>
+</div>
+<th:block th:include="include :: footer"/>
+<th:block th:include="include :: bootstrap-suggest-js" />
+<th:block th:include="include :: bootstrap-typeahead-js" />
+<th:block th:include="include :: select2-js"/>
+<th:block th:include="include :: summernote-js"/>
+<th:block th:include="include :: datetimepicker-js"/>
+
+<script>
+    let prefix = ctx + "collecting/forms";
+    $(function () {
+        $("#lastDate").datetimepicker({
+            format: "yyyy-mm-dd",
+            minView: "month",
+            autoclose: true,
+            endDate:new Date()
+        });
+        $("#startTime").datetimepicker({
+            format: "yyyy-mm-dd hh:ii:ss",
+            autoclose: true,
+            minView:0,
+            minuteStep:1,
+            endDate:new Date()
+        });
+        $("#endTime").datetimepicker({
+            format: "yyyy-mm-dd hh:ii:ss",
+            autoclose: true,
+            minView:0,
+            minuteStep:1,
+            endDate:new Date()
+        });
+    });
+
+    // 提交数据
+    function submit() {
+        var data = $("#form-inspection-add").serializeArray();
+        $.operate.saveTab(prefix + "/saveCollectingData", data);
+    }
+</script>
+</body>
+</html>

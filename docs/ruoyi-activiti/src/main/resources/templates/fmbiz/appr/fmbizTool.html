@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+
+
+<head>
+    <th:block th:include="include :: header('工具使用情况统计')"/>
+    <th:block th:include="include :: select2-css"/>
+</head>
+<body class="gray-bg">
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-12 search-collapse">
+            <form id="formId">
+                <div class="select-list">
+                    <ul>
+                        <li>
+                            <p>创建时间：</p>
+                            <input type="text" class="time-input" id="startCreatTime" placeholder="创建时间起"
+                                   name="params[startCreatTime]" readonly/>
+                        </li>
+                        <li>
+                            <p>创建时间：</p>
+                            <input type="text" class="time-input" id="endCreatTime" placeholder="创建时间止"
+                                   name="params[endCreatTime]" readonly/>
+                        </li>
+                        <li>
+                            <p>统计类型：</p>
+                            <select id="countType" name="params[countType]" class="form-control"
+                                    th:with="type=${@pubParaValue.selectPubParaValueByParaName('cmBizSjCount_type')}">
+                                <option></option>
+                                <option th:each="PubParaValue : ${type}" th:text="${PubParaValue.valueDetail}"
+                                        th:value="${PubParaValue.value}"></option>
+                            </select>
+                        </li>
+                        <li>
+                            <a class="btn btn-primary btn-rounded btn-sm" id="searchBiz" onclick="$.table.search()"><i
+                                    class="fa fa-search"></i>&nbsp;搜索</a>
+                            <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i
+                                    class="fa fa-refresh"></i>&nbsp;重置</a>
+                        </li>
+                    </ul>
+                </div>
+            </form>
+        </div>
+
+        <div class="btn-group-sm" id="toolbar" role="group">
+            <div class="btn-group">
+                <button data-toggle="dropdown" class="btn btn-primary btn-sm dropdown-toggle">导出<span
+                        class="caret"></span>
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a onclick="$.table.exportExcel()">导出所有</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="col-sm-12 select-table table-striped">
+            <table id="bootstrap-table"></table>
+        </div>
+    </div>
+</div>
+<th:block th:include="include :: footer"/>
+<th:block th:include="include :: select2-js"/>
+<th:block th:include="include :: datetimepicker-js"/>
+<script th:inline="javascript">
+    var prefix = ctx + "system/tool";
+    $(function () {
+        // 回车键搜索
+        document.onkeydown = function(e){
+            var ev = document.all ? window.event : e;
+            if(ev.keyCode==13) {
+                $('#searchBiz').trigger('click');
+                return false;
+            }
+        };
+        var options = {
+            url: prefix + "/selectFmBizTool",
+            exportUrl: prefix + "/export",
+            clickToSelect: true,
+            singleSelect: true,
+            modalName: "事件单工具",
+            pagination: false,
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'ogSys.caption',
+                    title: '所属系统'
+                },
+                {
+                    field: 'orgName',
+                    title: '所属公司'
+                },
+                {
+                    field: 'dealCouNum',
+                    title: '处理步骤总数'
+                },
+                {
+                    field: 'isToolsNum',
+                    title: '使用工具数量'
+                },
+                {
+                    field: 'countTool',
+                    title: '工具使用比例'
+                }]
+        };
+        $.table.init(options);
+    });
+</script>
+</body>
+</html>

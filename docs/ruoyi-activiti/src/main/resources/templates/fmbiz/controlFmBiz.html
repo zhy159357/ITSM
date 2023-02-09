@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+
+
+<head>
+    <th:block th:include="include :: header('业务事件单监控')"/>
+    <th:block th:include="include :: select2-css"/>
+</head>
+<body class="gray-bg">
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-12 search-collapse">
+            <form id="formId">
+                <div class="select-list">
+                    <ul>
+                        <li>
+                            <p>所属系统：</p>
+                            <input id="sysId" name="sysId" type="hidden" class="form-control"/>
+                            <input id="applicationName" name="applicationName" type="text" class="form-control"
+                                   onclick="selectOgSysListByCondition()"/>
+                        </li>
+                        <li>
+                            <p>工作组：</p>
+                            <select id="groupId" name="groupId" class="form-control">
+                                <option th:each="OgGroup : ${groupList}" th:text="${OgGroup.grpName}"
+                                        th:value="${OgGroup.groupId}"></option>
+                            </select>
+                        </li>
+                        <li>
+                            <p>异常分类：</p>
+                            <select id="unusualType" name="unusualType" class="form-control"
+                                    th:with="type=${@pubParaValue.selectPubParaValueByParaName('fm_unusualType')}">
+                                <option value=""></option>
+                                <option th:each="PubParaValue : ${type}" th:text="${PubParaValue.valueDetail}"
+                                        th:value="${PubParaValue.value}"></option>
+                            </select>
+                        </li>
+                        <li>
+                            <a class="btn btn-primary btn-rounded btn-sm" id="searchBut" onclick="$.table.search()"><i
+                                    class="fa fa-search"></i>&nbsp;搜索</a>
+                            <a class="btn btn-warning btn-rounded btn-sm" onclick="reset()"><i
+                                    class="fa fa-refresh"></i>&nbsp;重置</a>
+                        </li>
+                    </ul>
+                </div>
+            </form>
+        </div>
+
+        <div class="btn-group-sm" id="toolbar" role="group">
+            <a class="btn btn-primary single disabled" onclick="detail()">
+                <i class="fa fa-search"></i>查看详情
+            </a>
+            <a class="btn btn-primary single disabled" onclick="tongbao()">
+                <i class="fa fa-edit"></i>通报
+            </a>
+            <!--导出所有｜当前页按钮组合-->
+            <div class="btn-group">
+                <button data-toggle="dropdown" class="btn btn-warning btn-sm dropdown-toggle">导出<span
+                        class="caret"></span>
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a onclick="$.table.exportExcel()">导出所有</a>
+                    </li>
+                    <li><a onclick="$.table.exportExcelCurrentPage()">导出当前页</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="col-sm-12 select-table table-striped">
+            <table id="bootstrap-table"></table>
+        </div>
+    </div>
+</div>
+<th:block th:include="include :: footer"/>
+<th:block th:include="include :: select2-js"/>
+<th:block th:include="include :: datetimepicker-js"/>
+<script th:src="@{/js/activiti.js}"></script>
+<script th:inline="javascript">
+    var prefix = ctx + "fmBizControl";
+    var fmPrefix = ctx + "fmbiz";
+    var datas = [[${@pubParaValue.selectPubParaValueByParaName('fmStatus')}]];
+    var fmdealModeV = [[${@pubParaValue.selectPubParaValueByParaName('fm_dealMode')}]];//处理方式
+    var fmunusualTypeV = [[${@pubParaValue.selectPubParaValueByParaName('fm_unusualType')}]];//异常分类
+    $(function () {
+        // 回车键搜索
+        document.onkeydown = function (e) {
+            var ev = document.all ? window.event : e;
+            if (ev.keyCode == 13) {
+                $('#searchBut').trigger('click');
+                return false;
+            }
+        };
+        var options = {
+            url: prefix + "/list",
+            modalName: "业务事件单监控",
+            exportUrl: prefix + "/export",
+            clickToSelect: true,
+            singleSelect: true,
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'controlId',
+                    title: '主键ID',
+                    visible: false
+                },
+                {
+                    field: 'fmBizId',
+                    title: '业务事件单主键ID',
+                    visible: false
+                },
+                {
+                    field: 'fmNo',
+                    title: '事件编号'
+                },
+                {
+                    field: 'faultDecs',
+                    title: '事件标题',
+                    formatter: function (value, row, index) {
+                        return $.table.tooltip(value);
+                    }
+                },
+                {
+                    field: 'sysName',
+                    title: '所属应用系统'
+                },
+                {
+                    field: 'groupName',
+                    title: '所属工作组'
+                },
+                {
+                    field: 'dealId',
+                    width: 150,
+                    title: '当前处理人'
+                },
+                {
+                    field: 'fmDealMode',
+                    title: '处理方式',
+                    formatter: function (value, row, index) {
+                        return $.table.selectPubParaValueData(fmdealModeV, value);
+                    }
+                },
+                {
+                    field: 'fmBulletion',
+                    title: '是否已通报',
+                    formatter: function (value, row, index) {
+                        if (row.fmBulletion == 1) {
+                            return "是";
+                        } else {
+                            return "否";
+                        }
+                    }
+                },
+                {
+                    field: 'unusualType',
+                    title: '异常分类',
+                    formatter: function (value, row, index) {
+                        return $.table.selectPubParaValueData(fmunusualTypeV, value);
+                    }
+                },
+                {
+                    field: 'fmCurrentState',
+                    title: '当前状态',
+                    formatter: function (value, row, index) {
+                        return $.table.selectPubParaValueData(datas, value);
+                    }
+                },
+                {
+                    field: 'controlTime',
+                    title: '监控时间',
+                    formatter: function (value, row, index) {
+                        var startTime = '';
+                        if (value != '' && value != null) {
+                            var pattern = /(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/;
+                            startTime = value.replace(pattern, '$1-$2-$3 $4:$5:$6');
+                        }
+                        return startTime;
+                    }
+                }]
+        };
+        $.table.init(options);
+    });
+
+    // 回显数据字典
+    function selectPubParaValueData(datas, value) {
+        var actions = [];
+        $.each(datas, function (index, pubParaValue) {
+            if (pubParaValue.value == ('' + value)) {
+                actions.push($.common.sprintf("<span class='%s'>%s</span>", "", pubParaValue.valueDetail));
+                return false;
+            }
+        });
+        return actions.join('');
+    }
+
+    // 选择应用系统（只能单选）
+    function selectOgSysListByCondition() {
+        $.modal.open("选择应用系统", prefix + "/sysGrouplist");
+    }
+
+    //根据系统查询工作组
+    function getGroupList(sysid) {
+        $.ajax({
+            cache: true,
+            type: "POST",
+            url: fmPrefix + "/selectOgGroupBySys",
+            data: {
+                "sysid": sysid
+            },
+            async: false,
+            error: function (request) {
+                $.modal.alertError("系统错误");
+            },
+            success: function (data) {
+                var options = "<option value='" + "" + "'>" + "" + "</option> \n";
+                $("#groupId").html("");
+                for (var ak = 0; ak < data.rows.length; ak++) {
+                    options += "<option value='" + data.rows[ak].groupId + "'>" + data.rows[ak].grpName + "</option> \n";
+                }
+                $("#groupId").append(options);
+            }
+        });
+    }
+
+    //根据系统查询分类
+    function getFmKindOneList(sysid) {
+
+    }
+
+    /*查看详情*/
+    function detail() {
+        var fmId = $.table.selectColumns("fmBizId");
+        var url = fmPrefix + "/detail/" + fmId;
+        $.modal.openTab("查看事件单", url);
+    }
+
+    /*通报*/
+    function tongbao() {
+        var fmId = $.table.selectColumns("fmBizId");
+        $.modal.open("通报事件单", prefix + "/tongbao/" + fmId, 1200, window.innerHeight / 1);
+        $.modal.close();
+    }
+    //** 重置 */
+    function reset() {
+        $("#groupId").html("");
+        $.form.resetAll('formId');
+    }
+</script>
+</body>
+</html>

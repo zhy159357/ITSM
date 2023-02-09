@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('业务分析')" />
+    <th:block th:include="include :: layout-latest-css" />
+</head>
+<body class="gray-bg">
+<div class="ui-layout-center">
+    <div class="container-div">
+        <div class="row">
+            <div class="col-sm-12 search-collapse">
+                <form id="cont-form">
+                    <input type="text" style="display: none" id="treeId" name="categoryId">
+                    <div class="select-list">
+                        <ul>
+                            <li>
+                                <label style="width: 100px">所属应用系统：</label>
+                                <input type="text" name="systemName"/>
+                            </li>
+                            <li>
+                                <a class="btn btn-primary btn-rounded btn-sm" id="sou" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.resetAll('cont-form')"><i class="fa fa-repeat"></i>&nbsp;重置</a>
+                            </li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+            <div class="col-sm-12 select-table table-striped">
+                <table id="bootstrap-table"></table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: layout-latest-js" />
+<script th:inline="javascript">
+    var prefix = ctx + "knowledge/business";
+
+    $(function() {
+        var options = {
+            url: prefix + "/businessAnalizeList",
+            columns: [{
+                checkbox: true
+            },
+            {
+                field: 'systemName',
+                title: '所属应用系统'
+            },
+            {
+                field: 'content',
+                title: '一级分类'
+            },
+            {
+                field: 'sectitle',
+                title: '二级分类'
+            },
+            {
+                field: 'threetitle',
+                title: '三级分类'
+            },
+            {
+                field: 'name',
+                title: '关键字'
+            },
+            {
+                field: 'describe',
+                title: '描述'
+            },
+            {
+            	field: 'atId',
+                title: '知识id',
+                visible: false
+            },
+            {
+            	field: 'filename',
+                title: '检索结果',
+                formatter: function (value, row, index) {
+                	if(row.atId == null || row.filename == null){
+                		return "";
+                	}else{
+                		return '<a href="javascript:void(0)" onclick=detail(\''+row.atId+'\')>《'+row.filename+'》</a>';
+                	}   
+                }
+            }]
+        };
+        $.table.init(options);
+    });
+	
+    function detail(id){
+    	$.modal.openTab("知识详情", ctx+"es/detail/"+id);
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('新增监控值班')" />
+</head>
+<body class="white-bg">
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+    <form class="form-horizontal m" id="form-duty-add">
+        <div class="form-group">
+            <label class="col-sm-3 control-label is-required">人员：</label>
+            <div class="col-sm-8">
+                <input name="pName" id="pName" class="form-control" type="text" onclick="choseUser()" readonly style="background-color: #fdfdfd" required>
+                <input name="pid" id="pid" class="form-control" type="hidden">
+                <input name="userId" id="userId" class="form-control" type="hidden" value="">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label is-required">工作组：</label>
+            <div class="col-sm-8">
+                <input name="dutyName" id="dutyName" class="form-control" type="text" onclick="choseGroup()" readonly style="background-color: #fdfdfd" required>
+                <input name="groupId" id="groupId" class="form-control" type="hidden">
+                <input name="params[dutyTypeOriginal]" id="dutyTypeOriginal" class="form-control" type="hidden">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label is-required">工作组类型：</label>
+            <div class="col-sm-8">
+                <select id="dutyType" name="dutyType" class="form-control" th:with="dutyType=${@pubParaValue.selectPubParaValueByParaName('event_group_type')}" required>
+                    <option value="">请选择</option>
+                    <option th:each="itype : ${dutyType}" th:text="${itype.valueDetail}" th:value="${itype.value}"></option>
+                </select>
+            </div>
+        </div>
+
+    </form>
+</div>
+<th:block th:include="include :: footer" />
+<script type="text/javascript">
+       var prefix = ctx + "monitor/dutyRole";
+        $("#form-duty-add").validate({
+            focusCleanup: true
+        });
+
+        function submitHandler() {
+            if ($.validate.form()) {
+                $.operate.save(prefix + "/add", $('#form-duty-add').serialize());
+            }else{
+                 return $.modal.alertWarning("入参不全！");
+            }
+
+        }
+        // 添加页面查询所有符合的值班组角色
+        function choseGroup() {
+            if($.common.isEmpty($("#userId").val())){
+              return $.modal.alertWarning("请选择运行值班人员！");
+            }
+            var url = prefix + "/choseGroup/"+$("#userId").val();
+            $.modal.open("添加值班工作组", url);
+        }
+        function choseUser(){
+            var url =  ctx + "issueList/build/multiusers/1";
+			$.modal.open("选择协运行值班人员", url);
+        }
+          function changeType(value){
+            $("#dutyType").val(value);
+        }
+    </script>
+</body>
+</html>

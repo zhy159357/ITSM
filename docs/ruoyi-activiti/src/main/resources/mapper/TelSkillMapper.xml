@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.activiti.mapper.TelSkillMapper">
+    
+    <resultMap type="TelSkillsOrg" id="TelSkillResult">
+        <result property="id"    column="id"    />
+        <result property="ogOrgId"    column="OG_ORG_ID"    />
+        <result property="skillsGroupTelname"    column="SKILLS_GROUP_TELNAME"    />
+        <result property="skillsGroupName"    column="SKILLS_GROUP_NAME"    />
+        <result property="skillsStatus"    column="SKILLS_STATUS"    />
+        <result property="createTime"    column="CREATE_TIME"    />
+        <result property="updateTime"    column="UPDATE_TIME"    />
+        <result property="createPerson"    column="CREATE_PERSON"    />
+        <result property="pName"    column="pName"    />
+        <result property="orgName"    column="orgName"    />
+    </resultMap>
+
+    <sql id="selectTelSkillVo">
+        select
+            t.id,
+            t.SKILLS_GROUP_TELNAME,
+            t.SKILLS_GROUP_NAME,
+            t.SKILLS_STATUS,
+            t.OG_ORG_ID,
+            t.CREATE_PERSON,
+            t.UPDATE_TIME,
+            t.CREATE_TIME,
+            p.PNAME,
+            g.orgName
+        from TEL_SKILLS_ORG t
+        left join og_person p on p.pid = t.CREATE_PERSON
+        left join OG_ORG g on g.orgid = t.og_org_id
+        <!--<where>
+            <choose>
+                <when test="ogOrgId != null and ogOrgId != ''">
+                    and t.OG_ORG_ID = #{ogOrgId}
+                </when>
+                <otherwise>
+                    and t.OG_ORG_ID = ''
+                </otherwise>
+            </choose>
+        </where>-->
+    </sql>
+
+    <select id="selectTelSkillList" parameterType="TelSkillsOrg" resultMap="TelSkillResult">
+        <include refid="selectTelSkillVo"/>
+        <where>  
+            <if test="skillsGroupTelname != null  and skillsGroupTelname != ''"> and SKILLS_GROUP_TELNAME like concat(concat('%', #{skillsGroupTelname}), '%')</if>
+            <if test="skillsGroupName != null  and skillsGroupName != ''"> and SKILLS_GROUP_NAME like concat(concat('%', #{skillsGroupName}), '%')</if>
+            <if test="skillsStatus != null  and skillsStatus != ''"> and SKILLS_STATUS = #{skillsStatus}</if>
+            <if test="id != null  and id != ''"> and id = #{id}</if>
+             <choose>
+                 <when test="ogOrgId != null and ogOrgId != ''">
+                     and t.OG_ORG_ID = #{ogOrgId}
+                 </when>
+                 <otherwise>
+                     and t.OG_ORG_ID = ''
+                 </otherwise>
+             </choose>
+        </where>
+    </select>
+
+    <select id="selectTelSkillListByName" parameterType="TelSkillsOrg" resultMap="TelSkillResult">
+        <include refid="selectTelSkillVo"/>
+        <where>
+            <if test="skillsGroupName != null  and skillsGroupName != ''"> and SKILLS_GROUP_NAME =#{skillsGroupName}</if>
+            <choose>
+                <when test="ogOrgId != null and ogOrgId != ''">
+                    and t.OG_ORG_ID = #{ogOrgId}
+                </when>
+                <otherwise>
+                    and t.OG_ORG_ID = ''
+                </otherwise>
+            </choose>
+        </where>
+    </select>
+
+    <select id="selectTelSkillListByTelName" parameterType="TelSkillsOrg" resultMap="TelSkillResult">
+        <include refid="selectTelSkillVo"/>
+        <where>
+            <if test="skillsGroupTelname != null  and skillsGroupTelname != ''"> and SKILLS_GROUP_TELNAME = #{skillsGroupTelname}</if>
+            <choose>
+                <when test="ogOrgId != null and ogOrgId != ''">
+                    and t.OG_ORG_ID = #{ogOrgId}
+                </when>
+                <otherwise>
+                    and t.OG_ORG_ID = ''
+                </otherwise>
+            </choose>
+        </where>
+    </select>
+
+    <select id="selectTelSkillListtwo" parameterType="TelSkillsOrg" resultMap="TelSkillResult">
+        <include refid="selectTelSkillVo"/>
+        <where>
+            SKILLS_STATUS ='1'
+            <if test="ogOrgId != null  and ogOrgId != ''">
+                and OG_ORG_ID = #{ogOrgId}
+            </if>
+            <if test="skillsGroupTelname != null  and skillsGroupTelname != ''"> and SKILLS_GROUP_TELNAME like concat(concat('%', #{skillsGroupTelname}), '%')</if>
+            <if test="skillsGroupName != null  and skillsGroupName != ''"> and SKILLS_GROUP_NAME like concat(concat('%', #{skillsGroupName}), '%')</if>
+            <if test="orgName != null  and orgName != ''"> and orgName like concat(concat('%', #{orgName}), '%')</if>
+            <if test="id != null  and id != ''"> and id &lt;&gt; #{id}</if>
+        </where>
+    </select>
+
+    <select id="checkBindInfoUnique" parameterType="TelSkillsOrg" resultType="int">
+        select count(1) from tel_skills_org where skills_group_telname=#{skillsGroupTelname}
+    </select>
+    
+    <select id="selectTelSkillById" parameterType="String" resultMap="TelSkillResult">
+        <include refid="selectTelSkillVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertTelSkill" parameterType="TelSkillsOrg">
+        insert into TEL_SKILLS_ORG
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null  and id != ''">id,</if>
+            <if test="ogOrgId != null  and ogOrgId != ''">OG_ORG_ID,</if>
+            <if test="skillsGroupTelname != null  and skillsGroupTelname != ''">SKILLS_GROUP_TELNAME,</if>
+            <if test="skillsGroupName != null  and skillsGroupName != ''">SKILLS_GROUP_NAME,</if>
+            <if test="skillsStatus != null  and skillsStatus != ''">SKILLS_STATUS,</if>
+            <if test="createTime != null  and createTime != ''">CREATE_TIME,</if>
+            <if test="updateTime != null  and updateTime != ''">UPDATE_TIME,</if>
+            <if test="createPerson != null  and createPerson != ''">CREATE_PERSON,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null  and id != ''">#{id},</if>
+            <if test="ogOrgId != null  and ogOrgId != ''">#{ogOrgId},</if>
+            <if test="skillsGroupTelname != null  and skillsGroupTelname != ''">#{skillsGroupTelname},</if>
+            <if test="skillsGroupName != null  and skillsGroupName != ''">#{skillsGroupName},</if>
+            <if test="skillsStatus != null  and skillsStatus != ''">#{skillsStatus},</if>
+            <if test="createTime != null  and createTime != ''">#{createTime},</if>
+            <if test="updateTime != null  and updateTime != ''">#{updateTime},</if>
+            <if test="createPerson != null  and createPerson != ''">#{createPerson},</if>
+         </trim>
+    </insert>
+
+    <update id="updateTelSkill" parameterType="TelSkillsOrg">
+        update TEL_SKILLS_ORG
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="ogOrgId != null  and ogOrgId != ''">OG_ORG_ID = #{ogOrgId},</if>
+            <if test="skillsGroupTelname != null  and skillsGroupTelname != ''">SKILLS_GROUP_TELNAME = #{skillsGroupTelname},</if>
+            <if test="skillsGroupName != null  and skillsGroupName != ''">SKILLS_GROUP_NAME = #{skillsGroupName},</if>
+            <if test="skillsStatus != null  and skillsStatus != ''">SKILLS_STATUS = #{skillsStatus},</if>
+            <if test="createTime != null  and createTime != ''">CREATE_TIME = #{createTime},</if>
+            <if test="updateTime != null  and updateTime != ''">UPDATE_TIME = #{updateTime},</if>
+            <if test="createPerson != null  and createPerson != ''">CREATE_PERSON = #{createPerson},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteTelSkillById" parameterType="String">
+        delete from TEL_SKILLS_ORG where id = #{id}
+    </delete>
+
+    <delete id="deleteTelSkillByIds" parameterType="String">
+        delete from TEL_SKILLS_ORG where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

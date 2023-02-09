@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<th:block th:include="include :: header('工作组列表')" />
+	<th:block th:include="include :: layout-latest-css" />
+	<th:block th:include="include :: ztree-css" />
+</head>
+<body class="gray-bg">
+<div class="ui-layout-center">
+	<div class="container-div">
+		<div class="row">
+			<div class="col-sm-12 search-collapse">
+				<form id="group-form">
+					<input type="hidden" id="userId" name="userId" th:value="*{userId}">
+				</form>
+			</div>
+
+			<div class="col-sm-12 select-table table-striped">
+				<table id="bootstrap-table"></table>
+			</div>
+		</div>
+	</div>
+</div>
+
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: layout-latest-js" />
+<th:block th:include="include :: ztree-js" />
+<script th:inline="javascript">
+    var prefix = ctx + "system/ogperson";
+
+    $(function() {
+        var panehHidden = false;
+        if ($(this).width() < 769) {
+            panehHidden = true;
+        }
+        $('body').layout({ initClosed: panehHidden, west__size: 185 });
+        // 回到顶部绑定
+        if ($.fn.toTop !== undefined) {
+            var opt = {
+                win:$('.ui-layout-center'),
+                doc:$('.ui-layout-center')
+            };
+            $('#scroll-up').toTop(opt);
+        }
+        queryWorkList();
+    });
+
+    function queryWorkList() {
+        var options = {
+            url: prefix + "/selectGroupByUserId",
+            createUrl: prefix + "/add",
+            updateUrl: prefix + "/edit/{id}",
+            removeUrl: prefix + "/remove",
+            exportUrl: prefix + "/export",
+            importUrl: prefix + "/importData",
+            importTemplateUrl: prefix + "/importTemplate",
+            modalName: "工作组",
+            queryParams : queryParams,
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'groupId',
+                    title: '工作组ID',
+                    visible : false
+                },
+                {
+                    field: 'grpName',
+                    title: '工作组名称'
+                },
+                {
+                    field: 'ogOrg.orgName',
+                    title: '职位'
+                },
+                {
+                    field: 'createTime',
+                    title: '创建时间'
+                }]
+        };
+        $.table.init(options);
+    }
+
+    function queryParams(params) {
+        var search = $.table.queryParams(params);
+        search.pId = $("#userId").val();
+        return search;
+    }
+
+</script>
+</body>
+</html>

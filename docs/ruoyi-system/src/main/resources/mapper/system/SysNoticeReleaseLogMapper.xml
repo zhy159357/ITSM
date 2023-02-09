@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.SysNoticeReleaseLogMapper">
+
+    <resultMap type="SysNoticeReleaseLog" id="SysNoticeReleaseLogResult">
+        <result property="amTaskId"       column="am_task_id"       />
+        <result property="amBizId"    column="am_biz_id"    />
+        <result property="updateTime"     column="update_time"     />
+        <result property="personId"         column="person_id"          />
+        <result property="amState"         column="am_state"          />
+        <result property="processName"  column="process_name"  />
+        <result property="description"         column="description"          />
+        <result property="num"         column="num"          />
+    </resultMap>
+
+    <sql id="selectNoticeReleaseLogVo">
+        SELECT
+        T.AM_TASK_ID AS AM_TASK_ID,
+        T.AM_BIZ_ID AS AM_BIZ_ID,
+        T.UPDATE_TIME AS UPDATE_TIME,
+        T.PERSON_ID AS PERSON_ID,
+        T.AM_STATE AS AM_STATE,
+        T.PROCESS_NAME AS PROCESS_NAME,
+        T.DESCRIPTION AS DESCRIPTION,
+        T.NUM AS NUM
+        FROM
+        AM_BIZ_TASKLOG T
+    </sql>
+
+    <select id="selectNoticeReleaseLogById" parameterType="String" resultMap="SysNoticeReleaseLogResult">
+        <include refid="selectNoticeReleaseLogVo"/>
+        WHERE am_actlog_id = #{amActlogId}
+    </select>
+
+    <select id="selectNoticeReleaseLogList" parameterType="SysNoticeReleaseLog" resultMap="SysNoticeReleaseLogResult">
+        <include refid="selectNoticeReleaseLogVo"/>
+    </select>
+
+    <select id="selectMaxNum" parameterType="SysNoticeReleaseLog" resultMap="SysNoticeReleaseLogResult">
+        <include refid="selectNoticeReleaseLogVo"/>
+        WHERE UPDATE_TIME = ( SELECT MAX(UPDATE_TIME) FROM AM_BIZ_TASKLOG)
+    </select>
+
+
+    <insert id="insertNoticeReleaseLog" parameterType="SysNoticeReleaseLog">
+        insert into am_biz_tasklog (
+        am_task_id,
+        <if test="amBizId != null and amBizId != '' ">am_biz_id, </if>
+        <if test="updateTime != null and updateTime != '' ">update_time, </if>
+        <if test="personId != null and personId != '' ">person_id, </if>
+        <if test="amState != null and amState != '' ">am_state, </if>
+        <if test="processName != null and processName != '' ">process_name, </if>
+        <if test="description != null and description != '' ">description, </if>
+        <if test="num != null and num != '' ">num </if>
+        )values(
+        #{amTaskId},
+        <if test="amBizId != null and amBizId != '' ">#{amBizId}, </if>
+        <if test="updateTime != null and updateTime != '' ">#{updateTime}, </if>
+        <if test="personId != null and personId != '' ">#{personId}, </if>
+        <if test="amState != null and amState != '' ">#{amState}, </if>
+        <if test="processName != null and processName != '' ">#{processName}, </if>
+        <if test="description != null and description != '' ">#{description}, </if>
+        <if test="num != null and num != '' ">#{num} </if>
+        )
+    </insert>
+
+
+</mapper>

@@ -1,0 +1,412 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.OgSysMapper">
+
+    <resultMap type="OgSys" id="OgSysResult">
+        <id property="sysId" column="sysId"/>
+        <result property="orgId" column="orgId"/>
+        <result property="code" column="code"/>
+        <result property="moder" column="moder"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="adder" column="adder"/>
+        <result property="addTime" column="addTime"/>
+        <result property="caption" column="caption"/>
+        <result property="memo" column="memo"/>
+        <result property="invalidationMark" column="invalidation_Mark"/>
+        <result property="isExamination" column="isExamination"/>
+        <result property="dept" column="dept"/>
+        <result property="pid" column="pid"/>
+        <result property="businessId" column="businessId"/>
+        <result property="isKeySys" column="is_key_sys"/>
+        <result property="sysType" column="sys_Type"/>
+        <result property="isOutChannel" column="is_out_channel"/>
+        <result property="upgradeTime" column="upgrade_time"/>
+        <result property="systemStage" column="system_stage"/>
+        <result property="FrontlineDate" column="frontline_date"/>
+        <result property="SecondlineDate" column="secondline_date"/>
+        <result property="redlineTime" column="redline_time"/>
+        <association property="ogOrg" column="orgId" javaType="OgOrg" resultMap="OgOrgResult"/>
+        <association property="ogBusiness" column="businessId" javaType="OgOrg" resultMap="OgOrgResult"/>
+        <association property="ogPerson" column="pid" javaType="OgPerson" resultMap="OgPersonResult"/>
+    </resultMap>
+
+    <resultMap type="OgOrg" id="OgOrgResult">
+        <id property="orgId" column="orgId"/>
+        <result property="parentId" column="t_o_orgid"/>
+        <result property="orgCode" column="orgcode"/>
+        <result property="orgName" column="orgName"/>
+        <result property="orgLv" column="orgLv"/>
+        <result property="adder" column="adder"/>
+        <result property="addtime" column="addtime"/>
+        <result property="moder" column="moder"/>
+        <result property="modtime" column="modtime"/>
+        <result property="updatetime" column="updatetime"/>
+        <result property="invalidationMark" column="invalidationMark"/>
+        <result property="memo" column="memo"/>
+        <result property="branchMark" column="branchMark"/>
+        <result property="inoutsideMark" column="inoutsideMark"/>
+        <result property="levelCode" column="levelCode"/>
+        <result property="leaf" column="leaf"/>
+        <result property="type" column="type"/>
+        <result property="sort" column="sort"/>
+        <result property="operaternum" column="operaternum"/>
+        <result property="khnum" column="khnum"/>
+    </resultMap>
+    <resultMap type="OgPerson" id="OgPersonResult">
+        <id property="pId" column="PID"/>
+        <result property="orgId" column="ORGID"/>
+        <result property="pName" column="PNAME"/>
+        <result property="sex" column="SEX"/>
+        <result property="edu" column="EDU"/>
+        <result property="birthday" column="BIRTHDAY"/>
+        <result property="birthPlace" column="BIRTHPLACE"/>
+        <result property="phone" column="PHONE"/>
+        <result property="mobilPhone" column="MOBIL_PHONE"/>
+        <result property="email" column="EMAIL"/>
+        <result property="address" column="ADDRESS"/>
+        <result property="createBy" column="create_by"/>
+        <result property="momer" column="MOMER"/>
+        <result property="memo" column="MEMO"/>
+        <result property="updatetime" column="UPDATE_TIME"/>
+        <result property="invalidationMark" column="INVALIDATION_MARK"/>
+        <result property="position" column="POSITION"/>
+        <result property="leader" column="LEADER"/>
+        <result property="pOrder" column="P_ORDER"/>
+        <result property="pflag" column="P_FLAG"/>
+        <result property="orgname" column="ORGNAME"/>
+    </resultMap>
+    <sql id="selectOgSysVo">
+        SELECT
+            o.sysid,
+            o.orgid,
+            o.code,
+            o.caption,
+            o.memo,
+            o.invalidation_mark,
+            o.isexamination,
+            o.upgrade_time,
+            o.dept,
+            o.pid,
+            o.moder,
+            o.businessid,
+            o.is_key_sys,
+            o.sys_type,
+            o.is_out_channel,
+            o.redline_time,
+            o.system_stage,
+            G .orgname AS orgCode,
+            D .t_o_orgid,
+            D .orgname,
+            P .pname
+        FROM
+            og_sys o
+        LEFT JOIN og_org D ON o.orgid = D .orgid
+        LEFT JOIN og_org G ON o.businessid = G .orgid
+        LEFT JOIN og_user T ON o.pid = T.username
+        LEFT JOIN og_person P ON T.pid = P.pid
+    </sql>
+
+    <select id="selectOgSysList" parameterType="OgSys" resultMap="OgSysResult">
+        <include refid="selectOgSysVo"/>
+        <where>
+            <if test="code != null and code != ''">
+                AND o.code like concat('%',concat(#{code},'%'))
+            </if>
+            <if test="isKeySys != null and isKeySys != ''">
+                AND o.is_key_sys = #{isKeySys}
+            </if>
+            <if test="dept != null and dept != ''">
+                AND o.dept like concat('%',concat(#{dept},'%'))
+            </if>
+            <if test="caption != null and caption != ''">
+                AND o.caption like concat('%',concat(#{caption},'%'))
+            </if>
+            <if test="orgId != null and orgId != ''">
+                AND o.orgId = #{orgId}
+            </if>
+            <if test="orgName != null and orgName != ''">
+                AND d.orgname like concat('%',concat(#{orgName},'%'))
+            </if>
+            <if test="isExamination != null and isExamination != ''">
+                AND o.isExamination = #{isExamination}
+            </if>
+            <if test="sysType != null and sysType != ''">
+                AND o.sys_type = #{sysType}
+            </if>
+            <if test="invalidationMark != null and invalidationMark != ''">
+                AND o.invalidation_mark = #{invalidationMark}
+            </if>
+            <if test="ogOrg != null and ogOrg.levelCode != null and ogOrg.levelCode != ''">
+                AND d.level_Code like concat('%',concat(#{ogOrg.levelCode},'%'))
+            </if>
+            <if test="pid != null and pid != ''">
+                AND o.pid = #{pid}
+            </if>
+            <if test="redlineTime != null and redlineTime != ''">
+                AND o.redline_time = #{redlineTime}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectOgSysListForCaption" parameterType="OgSys" resultMap="OgSysResult">
+        <include refid="selectOgSysVo"/>
+        <where>
+            <if test="code != null and code != ''">
+                AND o.code like concat('%',concat(#{code},'%'))
+            </if>
+            <if test="isKeySys != null and isKeySys != ''">
+                AND o.is_key_sys = #{isKeySys}
+            </if>
+            <if test="dept != null and dept != ''">
+                AND o.dept like concat('%',concat(#{dept},'%'))
+            </if>
+            <if test="caption != null and caption != ''">
+                AND o.caption = #{caption}
+            </if>
+            <if test="orgId != null and orgId != ''">
+                AND o.orgId = #{orgId}
+            </if>
+            <if test="orgName != null and orgName != ''">
+                AND d.orgname like concat('%',concat(#{orgName},'%'))
+            </if>
+            <if test="isExamination != null and isExamination != ''">
+                AND o.isExamination = #{isExamination}
+            </if>
+            <if test="sysType != null and sysType != ''">
+                AND o.sys_type = #{sysType}
+            </if>
+            <if test="invalidationMark != null and invalidationMark != ''">
+                AND o.invalidation_mark = #{invalidationMark}
+            </if>
+            <if test="ogOrg != null and ogOrg.levelCode != null and ogOrg.levelCode != ''">
+                AND d.level_Code like concat('%',concat(#{ogOrg.levelCode},'%'))
+            </if>
+        </where>
+    </select>
+
+    <select id="selectOgSysBySysId" parameterType="OgSys" resultMap="OgSysResult">
+        <include refid="selectOgSysVo"/>
+        <where>
+            <if test="sysId != null and sysId != ''">
+                AND o.sysId = #{sysId}
+            </if>
+        </where>
+
+    </select>
+    <!--系统编码查询-->
+    <select id="selectOgSysBySysCode" parameterType="String" resultMap="OgSysResult">
+        <include refid="selectOgSysVo"/>
+        where 1=1
+        <if test="code != null and code != ''">
+            AND o.code = #{sysCode}
+            AND o.invalidation_mark ='1'
+        </if>
+    </select>
+    <select id="selectOgSysBySysCodeForProblem" parameterType="String" resultType="OgSys">
+        SELECT
+        code,
+        caption
+        FROM
+        og_sys
+        where 1=1
+        <if test="code != null and code != ''">
+            AND code = #{sysCode}
+        </if>
+    </select>
+    <select id="selectOgSysBySysName" parameterType="String" resultMap="OgSysResult">
+        select o.sysid,o.orgid,o.code,o.caption,o.memo,o.invalidation_mark,o.isexamination,
+        o.dept,o.pid,o.businessid,o.is_key_sys,o.sys_type from og_sys o
+        where o.caption = #{caption}
+    </select>
+
+    <select id="selectOgSysListByCondition" parameterType="OgSys" resultMap="OgSysResult">
+        select o.sysid,o.orgid,o.code,o.caption,o.memo,o.invalidation_mark,o.isexamination,
+        o.dept,o.pid,o.businessid,o.is_key_sys,o.system_stage,o.sys_type,g.orgname
+        from og_sys o
+        left join og_org g on g.orgid=o.orgid
+        where o.sysid in(select sysid from og_group where group_type = '1' and invalidation_mark ='1' and sysid is not
+        null)
+        <if test="caption != null and caption != ''">
+            AND o.caption like concat('%',concat(#{caption},'%'))
+        </if>
+        AND o.invalidation_mark = '1'
+    </select>
+
+    <insert id="insertOgSys" parameterType="OgSys" useGeneratedKeys="false" keyProperty="sysId">
+        insert into Og_Sys
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="sysId != null and sysId != ''">sysId,</if>
+            <if test="orgId != null and orgId != ''">orgId,</if>
+            <if test="code != null and code != ''">code,</if>
+            <if test="caption != null and caption != ''">caption,</if>
+            <if test="memo != null and memo != ''">memo,</if>
+            <if test="invalidationMark != null and invalidationMark != ''">invalidation_Mark,</if>
+            <if test="isExamination != null and isExamination != ''">isExamination,</if>
+            <if test="dept != null and dept != ''">dept,</if>
+            <if test="pid != null and pid != ''">pid,</if>
+            <if test="moder != null and moder != ''">moder,</if>
+            <if test="businessId != null and businessId != ''">businessId,</if>
+            <if test="isKeySys != null and isKeySys != ''">is_Key_Sys,</if>
+            <if test="sysType != null and sysType != ''">sys_Type,</if>
+            <if test="isOutChannel != null and isOutChannel != ''">is_out_channel,</if>
+            <if test="addTime != null and addTime != ''">addTime,</if>
+            <if test="adder != null and adder != ''">adder,</if>
+            <if test="redlineTime != null and redlineTime != ''">redline_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="sysId != null and sysId != ''">#{sysId},</if>
+            <if test="orgId != null and orgId != ''">#{orgId},</if>
+            <if test="code != null and code != ''">#{code},</if>
+            <if test="caption != null and caption != ''">#{caption},</if>
+            <if test="memo != null and memo != ''">#{memo},</if>
+            <if test="invalidationMark != null and invalidationMark != ''">#{invalidationMark},</if>
+            <if test="isExamination != null and isExamination != ''">#{isExamination},</if>
+            <if test="dept != null and dept != ''">#{dept},</if>
+            <if test="pid != null and pid != ''">#{pid},</if>
+            <if test="moder != null and moder != ''">moder,</if>
+            <if test="businessId != null and businessId != ''">#{businessId},</if>
+            <if test="isKeySys != null and isKeySys != ''">#{isKeySys},</if>
+            <if test="sysType != null and sysType != ''">#{sysType},</if>
+            <if test="isOutChannel != null and isOutChannel != ''">#{isOutChannel},</if>
+            <if test="addTime != null and addTime != ''">#{addTime},</if>
+            <if test="adder != null and adder != ''">#{adder},</if>
+            <if test="redlineTime != null and redlineTime != ''">#{redlineTime},</if>
+        </trim>
+    </insert>
+
+    <update id="updateOgSys" parameterType="OgSys">
+        update og_sys
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="orgId != null and orgId != ''">orgid = #{orgId},</if>
+            <if test="code != null and code != ''">code = #{code},</if>
+            <if test="caption != null and caption != ''">caption = #{caption},</if>
+            <if test="memo != null and memo != ''">memo = #{memo},</if>
+            <if test="invalidationMark != null and invalidationMark != ''">invalidation_Mark = #{invalidationMark},</if>
+            <if test="isExamination != null and isExamination != ''">isExamination = #{isExamination},</if>
+            <if test="dept != null and dept != ''">dept = #{dept},</if>
+            <if test="pid != null and pid != ''">pid = #{pid},</if>
+            <if test="businessId != null and businessId != ''">businessId = #{businessId},</if>
+            <if test="isKeySys != null and isKeySys != ''">is_Key_Sys = #{isKeySys},</if>
+            <if test="sysType != null and sysType != ''">sys_Type = #{sysType},</if>
+            <if test="isOutChannel != null and isOutChannel != ''">is_out_channel = #{isOutChannel},</if>
+            <if test="moder != null and moder != ''">moder = #{moder},</if>
+            <if test="updateTime != null and updateTime != ''">update_time = #{updateTime},</if>
+            <if test="redlineTime != null and redlineTime != ''">redline_time = #{redlineTime},</if>
+        </trim>
+        where sysId = #{sysId,jdbcType = VARCHAR}
+    </update>
+
+
+    <update id="updateOgSysAndCmdb">
+        UPDATE og_sys
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="caption != null and caption != ''">caption = #{caption},</if>
+            <if test="sysType != null and sysType != ''">sys_Type = #{sysType},</if>
+            <if test="upgradeTime != null and upgradeTime != ''">upgrade_time = #{upgradeTime},</if>
+            <if test="systemStage != null and systemStage != ''">system_stage = #{systemStage}</if>
+        </trim>
+
+        where code = #{code}
+
+    </update>
+
+    <delete id="deleteOgSysByIds" parameterType="String">
+        delete from og_sys where sysid in
+        <foreach collection="array" item="sysId" open="(" separator="," close=")">
+            #{sysId}
+        </foreach>
+    </delete>
+
+    <select id="selectOgSysListWork" parameterType="OgSys" resultMap="OgSysResult">
+        <include refid="selectOgSysVo"/>
+        where o.invalidation_mark = '1'
+        <if test="code != null and code != ''">
+            AND o.code like concat('%',concat(#{code},'%'))
+        </if>
+        <if test="isKeySys != null and isKeySys != ''">
+            AND o.is_key_sys = #{isKeySys}
+        </if>
+        <if test="dept != null and dept != ''">
+            AND o.dept like concat('%',concat(#{dept},'%'))
+        </if>
+        <if test="caption != null and caption != ''">
+            AND o.caption like concat('%',concat(#{caption},'%'))
+        </if>
+        <if test="orgId != null and orgId != ''">
+            AND o.orgId = #{orgId}
+        </if>
+        <if test="orgName != null and orgName != ''">
+            AND d.orgname like concat('%',concat(#{orgName},'%'))
+        </if>
+        <if test="isExamination != null and isExamination != ''">
+            AND o.isExamination = #{isExamination}
+        </if>
+        <if test="sysType != null and sysType != ''">
+            AND o.sys_type = #{sysType}
+        </if>
+        <if test="invalidationMark != null and invalidationMark != ''">
+            AND o.invalidation_mark = #{invalidationMark}
+        </if>
+        <if test="ogOrg != null and ogOrg.levelCode != null and ogOrg.levelCode != ''">
+            AND d.level_Code like concat('%',concat(#{ogOrg.levelCode},'%'))
+        </if>
+
+    </select>
+
+    <select id="selectOgSysByName" parameterType="String" resultMap="OgSysResult">
+        select
+        o.sysid,o.orgid,o.code,o.caption,o.memo,o.invalidation_mark,o.isexamination,
+        o.dept,o.pid,o.businessid,o.is_key_sys,o.system_stage,o.sys_type from og_sys o
+        where o.caption like concat('%',concat(#{caption},'%'))
+    </select>
+    <!--根据多个系统ID批量查询-->
+    <select id="selectOgSysByIds" parameterType="String" resultMap="OgSysResult">
+        select * from og_sys where
+        sysid in
+        <foreach collection="list" item="sysId" open="(" separator="," close=")">
+            #{sysId}
+        </foreach>
+    </select>
+<!--    in(#{sysids})-->
+    <select id="selectOgSysListByLoginUser" parameterType="OgSys" resultMap="OgSysResult">
+        select o.sysid,o.orgid,o.code,o.caption,o.memo,o.invalidation_mark,o.isexamination,
+        o.dept,o.pid,o.businessid,o.is_key_sys,o.system_stage,o.sys_type,g.orgname
+        from og_sys o
+        left join og_org g on g.orgid=o.orgid
+        where  o.invalidation_mark = '1'
+        <if test="sysids != null and sysids.size()>0">
+            AND o.sysid in
+            <foreach collection="sysids" item="item" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        <if test="caption != null and caption != ''">
+            AND o.caption like concat('%',concat(#{caption},'%'))
+        </if>
+
+    </select>
+
+    <select id="getSysId" resultType="java.lang.String">
+        select  sysid from og_group where groupid in(SELECT groupid from og_group_person WHERE pid=#{userId})
+                                      and invalidation_mark ='1' and sysid is not null
+    </select>
+    <select id="selectOgSysListByName" parameterType="OgSys" resultMap="OgSysResult">
+        SELECT
+        o.code,
+        o.caption
+        FROM
+        og_sys o
+        <where>
+            invalidation_mark = '1'
+            <if test="code != null and code != ''">
+                AND o.code like concat(#{code},'%')
+            </if>
+
+            <if test="caption != null and caption != ''">
+                AND o.caption like concat(#{caption},'%')
+            </if>
+        </where>
+    </select>
+</mapper>

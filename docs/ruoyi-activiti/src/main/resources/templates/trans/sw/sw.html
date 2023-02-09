@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('事务事件单列表')" />
+    <th:block th:include="include :: datetimepicker-css" />
+    <th:block th:include="include :: select2-css" />
+</head>
+<body class="gray-bg">
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-12 search-collapse">
+            <form id="formId">
+                <!--申请机构-->
+                <input type="hidden" name="createOrgId" id="treeId"/>
+                <input type="hidden" name="dealOrgId" id="dealOrgId"/>
+                <div class="select-list">
+                    <ul>
+                        <li>
+                            <label>事件编号：</label>
+                            <input type="text" name="faultNo"/>
+                        </li>
+                        <li>
+                            <label>事件标题：</label>
+                            <input type="text" name="faultTitle"/>
+                        </li>
+                        <li>
+                            <label>受理处室：</label>
+                            <input  onclick="selectDeptTree(this)" th:id="dealOrgName"  type="text" readonly style="background-color: #ffffff">
+                        </li>
+                        <li  onclick="test()">
+                            <label>请求事项：</label>
+                            <select name="faultKind" class="form-control" id="faultKind" >
+                            </select>
+                        </li>
+                        <li>
+                            <label>申请处室：</label>
+                            <input  onclick="selectDeptTree(this)" th:id="treeName"  type="text" readonly style="background-color: #ffffff"/>
+                        </li>
+                        <li>
+                            <label>状态：</label>
+                            <select name="currentState" class="form-control" th:with="type=${@dict.getParaType('fmSw_status')}">
+                                <option value="">所有</option>
+                                <option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+                            </select>
+                        </li>
+                        <li>
+                            <label>申请人：</label>
+                            <input type="text" name="createName"/>
+                        </li>
+                        <li>
+                            <label>处理人：</label>
+                            <input type="text" name="dealname"/>
+                        </li>
+                        <li >
+                            <label>申请时间：</label>
+                            <input type="text" name="startCreateTime" id="startCreateTime" readonly style="background-color: #ffffff"/>
+                        </li>
+                        <li>
+                            <label>至：</label>
+                            <input type="text" name="endCreateTime" id="endCreateTime" readonly style="background-color: #ffffff"/>
+                        </li>
+                        <li>
+                            <label>我的标识：</label>
+                            <select name="label" class="form-control" th:with="type=${@dict.getParaType('pub_myFlag')}">
+                                <option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+                            </select>
+                        </li>
+                        <!--<li>-->
+                        <!--    <label>处理人5：</label>-->
+                        <!--    <input type="text" name="dealerFiveName"/>-->
+                        <!--</li>-->
+                        <li>
+                            <a class="btn btn-primary btn-rounded btn-sm" id="ss" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                            <a class="btn btn-warning btn-rounded btn-sm" onclick="resetAll()"><i class="fa fa-repeat"></i>&nbsp;重置</a>
+                        </li>
+                    </ul>
+                </div>
+            </form>
+        </div>
+
+        <div class="btn-group-sm" id="toolbar" role="group">
+            <a class="btn btn-success" onclick="$.operate.addTab()" >
+                <i class="fa fa-plus"></i> 添加
+            </a>
+            <a class="btn btn-primary disabled" onclick="editTab()" id="editTab">
+                <i class="fa fa-edit"></i> 修改
+            </a>
+            <a class="btn btn-danger  disabled" onclick="removeAll()" id="removeAll">
+                <i class="fa fa-trash"></i> 删除草稿
+            </a>
+            <a class="btn btn-primary  disabled" onclick="SwDetails()" id="SwDetails">
+                <i class="fa fa-search"></i> 查看详情
+            </a>
+            <a class="btn btn-primary disabled" onclick="showProcessImg()" id="showProcessImg">
+                <i class="fa fa-search"></i>查看流程
+            </a>
+            <!--导出所有｜当前页按钮组合-->
+            <div class="btn-group">
+                <button data-toggle="dropdown" class="btn btn-primary btn-sm dropdown-toggle"> <i class="fa fa-cloud-upload"></i> 导出<span
+                        class="caret"></span>
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a onclick="$.table.exportExcel()">导出所有</a>
+                    </li>
+                    <li><a onclick="$.table.exportExcelCurrentPage()">导出当前页</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="col-sm-12 select-table table-striped">
+            <table id="bootstrap-table"></table>
+        </div>
+    </div>
+</div>
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: datetimepicker-js" />
+<th:block th:include="include :: select2-js" />
+<script th:inline="javascript" >
+    var userId = [[${user.userId}]];
+    var prefix = ctx + "trans/sw";
+    var prefix_mb_show = ctx +"transmb/mb";
+
+    $(function() {
+        $("#startCreateTime").datetimepicker({
+            format: "yyyy-mm-dd",
+            minView: "month",
+            autoclose: true
+        });
+        $("#endCreateTime").datetimepicker({
+            format: "yyyy-mm-dd",
+            minView: "month",
+            autoclose: true
+        });
+        document.onkeydown = function(e){
+            var ev = document.all ? window.event : e;
+            if(ev.keyCode==13) {
+                $('#ss').trigger('click');
+                return false;
+            } //搜索逻辑
+        }
+
+        var options = {
+            url: prefix + "/list",
+            createUrl: prefix + "/add/"+userId,
+            updateUrl: prefix + "/edit/{id}",
+            removeUrl: prefix + "/remove",
+            exportUrl: prefix + "/export",
+            modalName: "事务事件单",
+            sortName: "createTime",
+            sortOrder: "desc",
+            singleSelect:true,
+            clickToSelect: true,
+            onCheck: check,
+            onUncheck: uncheck,
+            queryParams:queryParams,
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field:'fmSwId',
+                    title: '事件单ID',
+                    visible:false
+                },
+                {
+                    field:'faultNo',
+                    title: '事件单编号'
+                },
+                {
+                    field:'faultTitle',
+                    title: '事件标题',
+                    formatter: function(value,row,index){
+                        return $.table.tooltip(value);
+                    },
+                    cellStyle: function cellStyle(value, row, index, field) {
+                        return { classes: 'text-nowrap'};
+                    }
+                },
+                {
+                    field:'faultKind',
+                    title: '请求事项',
+                    formatter: function(value,row,index){
+                        return $.table.tooltip(value);
+                    },
+                    cellStyle: function cellStyle(value, row, index, field) {
+                        return { classes: 'text-nowrap'};
+                    }
+
+                },
+                {
+                    field:'createOrgName',
+                    title: '申请处室',
+                    formatter: function(value,row,index){
+                        return $.table.tooltip(value);
+                    },
+                    cellStyle: function cellStyle(value, row, index, field) {
+                        return { classes: 'text-nowrap'};
+                    }
+                },
+                {
+                    field:'createName',
+                    title: '申请人',
+                    formatter: function(value,row,index){
+                        return $.table.tooltip(value);
+                    },
+                    cellStyle: function cellStyle(value, row, index, field) {
+                        return { classes: 'text-nowrap'};
+                    }
+                },
+                {
+                    field:'checkedName',
+                    title: '审核人',
+                    formatter: function(value,row,index){
+                        return $.table.tooltip(value);
+                    },
+                    cellStyle: function cellStyle(value, row, index, field) {
+                        return { classes: 'text-nowrap'};
+                    }
+                },
+                {
+                    field:'dealOrgname',
+                    title: '受理处室',
+                    formatter: function(value,row,index){
+                        return $.table.tooltip(value);
+                    },
+                    cellStyle: function cellStyle(value, row, index, field) {
+                        return { classes: 'text-nowrap'};
+                    }
+                },
+                {
+                    field:'authName',
+                    title: '授权人',
+                    formatter: function(value,row,index){
+                        return $.table.tooltip(value);
+                    },
+                    cellStyle: function cellStyle(value, row, index, field) {
+                        return { classes: 'text-nowrap'};
+                    }
+                },
+                {
+                    field:'dealname',
+                    title: '处理人',
+                    formatter: function(value,row,index){
+                        return $.table.tooltip(value);
+                    },
+                    cellStyle: function cellStyle(value, row, index, field) {
+                        return { classes: 'text-nowrap'};
+                    }
+                },
+                // {
+                //     field:'checkerTwoName',
+                //     title: '审核人2',
+                //     formatter: function(value,row,index){
+                //         return $.table.tooltip(value);
+                //     },
+                //     cellStyle: function cellStyle(value, row, index, field) {
+                //         return { classes: 'text-nowrap'};
+                //     }
+                // },
+                // {
+                //     field:'checkerThreeName',
+                //     title: '审核人3',
+                //     formatter: function(value,row,index){
+                //         return $.table.tooltip(value);
+                //     },
+                //     cellStyle: function cellStyle(value, row, index, field) {
+                //         return { classes: 'text-nowrap'};
+                //     }
+                // },
+                // {
+                //     field:'checkerFourName',
+                //     title: '审核人4',
+                //     formatter: function(value,row,index){
+                //         return $.table.tooltip(value);
+                //     },
+                //     cellStyle: function cellStyle(value, row, index, field) {
+                //         return { classes: 'text-nowrap'};
+                //     }
+                // },
+                // {
+                //     field:'dealerFiveName',
+                //     title: '处理人5',
+                //     formatter: function(value,row,index){
+                //         return $.table.tooltip(value);
+                //     },
+                //     cellStyle: function cellStyle(value, row, index, field) {
+                //         return { classes: 'text-nowrap'};
+                //     }
+                // },
+                {
+                    field:'dealResult',
+                    title: '处理结果',
+                    formatter: function(value,row,index){
+                        return $.table.tooltip(value);
+                    },
+                    cellStyle: function cellStyle(value, row, index, field) {
+                        return { classes: 'text-nowrap'};
+                    }
+                },
+                {
+                    field:'dealContent',
+                    title: '处理说明',
+                    formatter: function(value,row,index){
+                        return $.table.tooltip(value);
+                    },
+                    cellStyle: function cellStyle(value, row, index, field) {
+                        return { classes: 'text-nowrap'};
+                    }
+                },
+                {
+                    field: 'createTime',
+                    title: '申请时间',
+                    formatter: function(value,row,index){
+                        return $.table.tooltip(value);
+                    },
+                    cellStyle: function cellStyle(value, row, index, field) {
+                        return { classes: 'text-nowrap'};
+                    }
+                },
+                {
+                    field: 'params.performerTime',
+                    title: '处理时间',
+                    visible:false,
+                    formatter: function (value, row, index) {
+                        var startTime = '';
+                        if (value != '' && value != null) {
+                            var pattern = /(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/;
+                            startTime = value.replace(pattern, '$1-$2-$3 $4:$5:$6');
+                        }
+                        return startTime;
+                    },
+                    cellStyle: function cellStyle(value, row, index, field) {
+                        return { classes: 'text-nowrap'};
+                    }
+                },
+                {
+                    field: 'currentStateName',
+                    title: '当前状态',
+                    formatter: function(value,row,index){
+                        return $.table.tooltip(value);
+                    },
+                    cellStyle: function cellStyle(value, row, index, field) {
+                        return { classes: 'text-nowrap'};
+                    }
+                }]
+        };
+        $.table.init(options);
+    });
+
+    function  isSelect() {
+        //获取受理机构是否选中
+        var dealOrgName = $("#dealOrgName").val();
+        if(dealOrgName==''){
+            $.modal.alertError("请先选择【受理处室】 ")
+        }
+    }
+    function check(row) {
+        var currentState = row.currentState;
+        if(currentState=='01'){
+            $('#editTab').removeClass('disabled')
+            $('#removeAll').removeClass('disabled')
+            $('#SwDetails').removeClass('disabled')
+            $('#showProcessImg').addClass('disabled')
+            return
+        }
+        if(currentState=='08'){
+            $('#showProcessImg').removeClass('disabled')
+            $('#editTab').removeClass('disabled')
+            $('#removeAll').addClass('disabled')
+            $('#SwDetails').removeClass('disabled')
+            return
+        }
+
+        if(currentState == '02' || currentState=='03' || currentState=='04' || currentState=='05' || currentState=='07'|| currentState=='11'|| currentState=='12'|| currentState=='13'|| currentState=='14'|| currentState=='15'){
+            $('#editTab').addClass('disabled')
+            $('#removeAll').addClass('disabled')
+        }
+
+        $('#showProcessImg').removeClass('disabled')
+        $('#SwDetails').removeClass('disabled')
+
+    }
+    function uncheck(row) {
+
+        $('#showProcessImg').addClass('disabled')
+        $('#editTab').addClass('disabled')
+        $('#removeAll').addClass('disabled')
+        $('#SwDetails').addClass('disabled')
+
+
+    }
+    function queryParams(params) {
+        var search = $.table.queryParams(params);
+        search.createId = userId;
+        return search;
+    }
+
+    var targetId;
+    /* 用户管理-新增-选择部门树 */
+    function selectDeptTree(elementObj) {
+        checkeId =  elementObj.id;
+        var treeId = $("#treeId").val();
+        var deptId = $.common.isEmpty(treeId) ? "310100001" : $("#treeId").val();
+        var url = ctx + "system/dept/selectDeptTree/" + deptId;
+        var options = {
+            title: '选择部门',
+            width: "380",
+            url: url,
+            callBack: doSubmit
+        };
+        $.modal.openOptions(options);
+    }
+
+    function doSubmit(index, layero){
+
+        $("select[disabled]").removeAttr("disabled");
+        $("div").removeAttr("onclick")
+        var tree = layero.find("iframe")[0].contentWindow.$._tree;
+        if(jQuery.isEmptyObject(tree)) {
+            layer.close(index);
+        }else{
+            var selectNode = tree.getSelectedNodes();
+            if(selectNode.length!=0){
+                if("treeName"==checkeId){
+                    $("#treeId").val(selectNode[0].id);
+                    $("#treeName").val(selectNode[0].name);
+                }else{
+                    $("#dealOrgId").val(selectNode[0].id);
+                    $("#dealOrgName").val(selectNode[0].name);
+                    //获取当前选择的机构Id //获取授权人 处理人 和模板信息
+                    //发去ajax请求
+                    $.ajax({
+                        type: 'POST',
+                        url: prefix_mb_show+"/levelcodeAndMbInfo",
+                        data: {"nodeId":selectNode[0].id,"rId":"0102,0103"},
+                        success: function (result) {
+                            var swmb_opts = "<option value=''></option>";
+                            $.each(result.data[2], function (index, item){
+                                swmb_opts += "<option value='"+item.swmdId+"'>"+item.faultKind+"</option>";
+                            })
+                            $("#faultKind").html(swmb_opts);
+                        },
+                        dataType: 'json'
+                    });
+                }
+
+            }
+        }
+        layer.close(index);
+    }
+
+
+    //修改区分
+    function editTab(id) {
+        var url;
+        var row = $("#bootstrap-table").bootstrapTable('getSelections')[0];
+        if(row.currentState == '01'){
+            url = prefix + "/edit/"+row.fmSwId;
+            $.modal.openTab("修改" + table.options.modalName, url);
+        }else{
+            //退回待修改的编辑
+            url = prefix + "/returnedEdit/"+row.fmSwId;
+            $.modal.openTab("修改" + table.options.modalName, url);
+        }
+
+    }
+    // 批量删除信息
+    function removeAll() {
+        table.set();
+        var rows = $.common.isEmpty(table.options.uniqueId) ? $.table.selectFirstColumns() : $.table.selectColumns(table.options.uniqueId);
+        if (rows.length == 0) {
+            $.modal.alertWarning("请至少选择一条记录");
+            return;
+        }
+
+        $.ajax({
+            type: 'POST',
+            url: prefix+"/selectById",
+            data: {"id":rows[0]},
+            success: function (result) {
+                if(result.data.currentState=='01'){
+                    $.modal.confirm("确认要删除该事务事件单吗?", function() {
+                        var url = table.options.removeUrl;
+                        var data = { "ids": rows.join() };
+                        $.operate.submit(url, "post", "json", data);
+                    });
+                }else{
+                    $.modal.alertError("当前选中事务事件单不为待提交状态,无法删除 ");
+                }
+            },
+            dataType: 'json'
+        });
+
+
+    }
+
+    function SwDetails() {
+        //获取当前选中数据的ID
+        //获取选中的row的Id
+        var row = $("#bootstrap-table").bootstrapTable('getSelections')[0];
+        $.modal.openTab("查看" + table.options.modalName, prefix+"/details/"+row.fmSwId);
+    }
+    function showProcessImg() {
+        var row = $("#bootstrap-table").bootstrapTable('getSelections')[0];
+        var url = ctx+'process/processImg/' + row.fmSwId;
+        $.modal.openNoBtn("查看流程图", url, null, null, null, true);
+    }
+
+    function resetAll() {
+        $('#treeId').val('');
+        $('#dealOrgId').val('');
+        //清空请求事项下拉框
+        $('#faultKind').html('');
+        $.form.resetAll('formId')
+    }
+    
+    function test() {
+        var dealOrgId = $('#dealOrgId').val()
+        var dealOrgName = $('#dealOrgName').val()
+        if(dealOrgId=='' || dealOrgName==''){
+            $.modal.alertError("请先选择【受理处室】 ")
+            return;
+        }
+    }
+</script>
+</body>
+</html>

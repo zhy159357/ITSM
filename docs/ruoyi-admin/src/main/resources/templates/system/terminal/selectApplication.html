@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('选择技能组')"/>
+</head>
+<body class="gray-bg">
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-12 search-collapse">
+            <form id="role-form">
+                <input type="hidden" id="deptId" name="orgId">
+                <input type="hidden" id="id" name="id">
+                <input type="hidden" id="pId" name="pId" th:value="*{pId}">
+                <div class="select-list">
+                    <ul>
+                        <li>
+                            技能组名称：<input type="text" name="skillsGroupTelname"/>
+                        </li>
+                        <li>
+                            所属机构：<input id="deptName" type="text" onclick="selectDeptTree()" name="orgName" readonly/>
+                        </li>
+                        <li>
+                            <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()" id="searchBut"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                            <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                        </li>
+                    </ul>
+                </div>
+            </form>
+        </div>
+
+        <div class="col-sm-12 select-table table-striped">
+            <table id="bootstrap-table"></table>
+        </div>
+    </div>
+</div>
+<th:block th:include="include :: footer" />
+<script th:inline="javascript">
+   /* var prefix = ctx + "system/application";*/
+
+   var prefix = ctx + "skill/one";
+
+    $(function() {
+        // 回车键搜索
+        document.onkeydown = function (e) {
+            var ev = document.all ? window.event : e;
+            if (ev.keyCode == 13) {
+                $('#searchBut').trigger('click');
+                return false;
+            }
+        };
+        var pId=$("#pId").val();
+        console.log("///////////////"+pId);
+        var options = {
+            url: prefix + "/listtwo/"+pId,
+            singleSelect:true,
+            clickToSelect: true,
+            pagination: true,
+            queryParams: queryParams,
+            modalName: "技能组",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'id',
+                    visible : false,
+                    width : 300
+                },
+                {
+                    field: 'skillsGroupTelname',
+                    title: '技能组名称',
+                    width : 200
+                },
+                {
+                    field: 'orgName',
+                    title: '所属机构',
+                    width : 200
+                },
+                {
+                    field: 'skillsGroupName',
+                    title: '技能组别名',
+                    formatter: function(value, row, index) {
+                        return $.table.tooltip(value);
+                    },
+                    width : 300
+                },
+                {
+                    field: 'skillsStatus',
+                    title: '状态',
+                    formatter: function (value, row, index) {
+                        if(row.isKeySys == 1){
+                            return "停用";
+                        }else{
+                            return "启用";
+                        }
+                    },
+                    width : 100
+                }]
+        };
+        $.table.init(options);
+    });
+
+    // 查询条件默认有效标识为1
+    function queryParams(params) {
+        var search = $.table.queryParams(params);
+        search.invalidationMark = "1";
+        search.isPage = "2";
+        return search;
+    }
+
+    /* 选择部门树 */
+    function selectDeptTree() {
+        var deptId = $.common.isEmpty($("#treeId").val()) ? "310100001" : $("#treeId").val();
+        var url = ctx + "system/dept/selectDeptTree/" + deptId;
+        var options = {
+            title: '选择部门',
+            width: "380",
+            url: url,
+            callBack: doSubmit
+        };
+        $.modal.openOptions(options);
+    }
+
+    function doSubmit(index, layero){
+        var tree = layero.find("iframe")[0].contentWindow.$._tree;
+        var body = layer.getChildFrame('body', index);
+        $("#deptId").val(body.find('#treeId').val());
+        $("#deptName").val(body.find('#treeName').val());
+        layer.close(index);
+    }
+    /* 选择外围系统 */
+    function submitHandler(index, layero) {
+
+        var rows = $("#bootstrap-table").bootstrapTable('getSelections');
+
+        if (rows.length == 0) {
+            $.modal.alertWarning("请至少选择一条记录");
+            return;
+
+
+        }
+        var row = rows[0];
+        debugger;
+        // 外围系统选择赋值
+        parent.$('#skillId').val(row.id);
+        parent.$('#skillsGroupTelname').val(row.skillsGroupTelname);
+        $.modal.close();
+
+    }
+
+</script>
+</body>
+</html>

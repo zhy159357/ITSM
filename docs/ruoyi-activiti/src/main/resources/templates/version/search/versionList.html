@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('版本单查询')" />
+    <th:block th:include="include :: select2-css" />
+    <th:block th:include="include :: datetimepicker-css" />
+</head>
+<body class="gray-bg">
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-12 search-collapse">
+            <form id="formId">
+                <div class="select-list">
+                    <ul>
+                        <li>
+                            <p>版本编号：</p>
+                            <input type="text" id="versionInfoNo" name="versionInfoNo"/>
+                        </li>
+                        <li>
+                            <p>版本简称：</p>
+                            <input type="text" id="versionInfoName" name="versionInfoName"/>
+                        </li>
+                        <li>
+                            <p>版本发起人：</p>
+                            <input type="text" id="versionProducerName" name="versionProducerName"/>
+                        </li>
+                        <li>
+                            <p>创建时间(起)：</p>
+                            <input type="text" class="time-input" id="versionCreateTimeStart" name="params[versionCreateTimeStart]" readonly/>
+                        </li>
+                        <li>
+                            <p>创建时间(止)：</p>
+                            <input type="text" class="time-input" id="versionCreateTimeEnd" name="params[versionCreateTimeEnd]" readonly/>
+                        </li>
+                        <li>
+                            <p>升级时间(起)：</p>
+                            <input type="text" class="time-input" id="startUpgradeTime" name="startUpgradeTime" readonly/>
+                        </li>
+                        <li>
+                            <p>升级时间(止)：</p>
+                            <input type="text" class="time-input" id="endUpgradeTime" name="endUpgradeTime" readonly/>
+                        </li>
+                        <li>
+                            <p>版本管理员：</p>
+                            <input type="text" id="useApprovalName" name="useApprovalName"/>
+                        </li>
+                        <li>
+                            <p>运维主管：</p>
+                            <input type="text" id="useDivisionChiefApprovalName" name="useDivisionChiefApprovalName"/>
+                        </li>
+                        <li>
+                            <p>发布审批人：</p>
+                            <input type="text" id="uploaderApprovalName" name="uploaderApprovalName"/>
+                        </li>
+                        <li>
+                            <p>状态：</p>
+                            <select id="versionStatus" name="versionStatus" class="form-control noselect2 selectpicker"
+                                    multiple data-actions-box="true" data-width="200px" data-live-search="true"
+                                    data-none-selected-text="请选择状态"
+                                    th:with="type=${@pubParaValue.selectPubParaValueByParaName('VERSION_STATUS')}">
+                                    <option th:each="value : ${type}" th:text="${value.valueDetail}" th:value="${value.value}"></option>
+                            </select>
+                        </li>
+                        <li>
+                            <p>是否紧急审批：</p>
+                            <select id="acceptRole" name="acceptRole">
+                                <option></option>
+                                <option value="1">是</option>
+                                <option value="2">否</option>
+                            </select>
+                        </li>
+                        <li>
+                            <p>是否自动化：</p>
+                            <select id="isAutomate" name="isAutomate">
+                                <option></option>
+                                <option value="1">是</option>
+                                <option value="2">否</option>
+                            </select>
+                        </li>
+                        <li>
+                            <p>所属系统：</p>
+                            <select id="ogSys.caption" name="ogSys.caption" class="form-control noselect2 selectpicker"
+                                    multiple data-actions-box="true" data-width="200px" data-live-search="true"
+                                    data-none-selected-text="请选择系统"
+                                    th:with="type=${@application.selectOgSysList(null)}">
+                                <option th:each="app : ${type}" th:text="${app.caption}" th:value="${app.caption}"></option>
+                            </select>
+                        </li>
+                        <li>
+                            <a class="btn btn-primary btn-rounded btn-sm" id="versionList" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                            <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.resetAll()"><i class="fa fa-repeat"></i>&nbsp;重置</a>
+                        </li>
+                    </ul>
+                </div>
+            </form>
+        </div>
+
+        <div class="btn-group-sm" id="toolbar" role="group">
+            <a class="btn btn-info single disabled" onclick="detail()">
+                <i class="fa fa-search"></i> 详情
+            </a>
+            <a class="btn btn-info single disabled" onclick="selectProcess()">
+                <i class="fa fa-search"></i> 查看流程
+            </a>
+            <!--导出所有｜当前页按钮组合-->
+            <div class="btn-group">
+                <button data-toggle="dropdown" class="btn btn-primary btn-sm dropdown-toggle">导出<span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a class="btn btn-default" onclick="$.table.exportExcel()">导出所有</a>
+                    </li>
+                    <li><a class="btn btn-default" onclick="$.table.exportExcelCurrentPage()">导出当前页</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="col-sm-12 select-table table-striped">
+            <table id="bootstrap-table" style="table-layout: fixed"></table>
+        </div>
+    </div>
+</div>
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: select2-js" />
+<th:block th:include="include :: datetimepicker-js" />
+<th:block th:include="include :: bootstrap-select-js"/>
+<th:block th:include="include :: bootstrap-select-css"/>
+<script th:src="@{/js/activiti.js}"></script>
+<script th:inline="javascript">
+    var prefix = ctx + "version/public";
+    var datas = [[${@pubParaValue.selectPubParaValueByParaName('VERSION_STATUS')}]];
+
+    $(function() {
+        // 回车键搜索
+        document.onkeydown = function(e){
+            var ev = document.all ? window.event : e;
+            if(ev.keyCode==13) {
+                $('#versionList').trigger('click');
+                return false;
+            }
+        };
+
+        var options = {
+            url: prefix + "/list",
+            createUrl: prefix + "/add",
+            updateUrl: prefix + "/edit/{id}",
+            removeUrl: prefix + "/remove",
+            detailUrl: prefix + "/edit/{id}",
+            exportUrl: prefix + "/export",
+            queryParams: queryParams,
+            singleSelect: true,
+            clickToSelect: true,
+            modalName: "版本发布申请",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field : 'versionInfoId',
+                    title : '主键ID',
+                    width : 250,
+                    visible: false
+                },
+                {
+                    field : 'versionInfoNo',
+                    title : '版本编号',
+                    width : 150
+                },
+                {
+                    field : 'versionInfoName',
+                    title : '版本简称',
+                    width : 300,
+                    formatter: function (value, row, index) {
+                        return $.table.tooltip(value);
+                    }
+                },
+                {
+                    field : 'versionProducerName',
+                    title : '版本发起人',
+                    width : 150
+                },
+                {
+                    field : 'versionCreateTime',
+                    title : '创建时间',
+                    width : 150
+                },
+                {
+                    field : 'startUpgradeTime',
+                    title : '升级时间',
+                    width : 150
+                },
+                {
+                    field : 'ogSys.caption',
+                    title : '所属系统',
+                    width : 150
+                },
+                {
+                    field : 'versionAttr',
+                    title : '版本属性',
+                    formatter: function(value, row, index) {
+                        return row.versionAttr == '1' ? "版本" : "工具";
+                    },
+                    width : 80
+                },
+                {
+                    field : 'useApprovalName',
+                    title : '版本管理员',
+                    width : 150
+                },
+                {
+                    field : 'useDivisionChiefApprovalName',
+                    title : '运维主管',
+                    width : 150
+                },
+                {
+                    field : 'versionStatus',
+                    title : '状态',
+                    formatter: function(value, row, index) {
+                        return $.table.selectPubParaValueData(datas, value);
+                    },
+                    width : 120
+                },
+                {
+                    field : 'isAutomate',
+                    title : '自动化',
+                    formatter: function(value, row, index) {
+                        if(row.isAutomate == "1"){
+                            return "是";
+                        } else {
+                            return "否";
+                        }
+                    },
+                    width : 80
+                },
+                {
+                    field : 'versionName',
+                    title : '版本摘要',
+                    width : 300,
+                    formatter: function (value, row, index) {
+                        return $.table.tooltip(value);
+                    }
+                }]
+        };
+        $.table.init(options);
+    });
+
+    /*详情*/
+    function detail(){
+        var id = $.table.selectFirstColumns();
+        var url = prefix + "/detail/" + id;
+        $.modal.openTab("版本信息",url);
+    }
+
+    // 查看流程
+    function selectProcess() {
+        var versionStatus = $.table.selectColumns("versionStatus");
+        if(versionStatus == '1'){
+            $.modal.alertWarning("待提交状态的版本单流程未开启，不可查看！！！！！！");
+            return;
+        }
+        var businessKey = $.table.selectFirstColumns();
+        var url = ctx + '/process/processImg/' + businessKey;
+        $.modal.openFull("查看流程图", url, null, null, null, true);
+    }
+
+    function queryParams(params) {
+        var search = $.table.queryParams(params);
+        search.remark = "versionList";
+        return search;
+    }
+
+
+    /* 数据问题单关联版本单号 */
+    function submitHandler(index, layero) {
+        var rows = $.table.selectFirstColumns();
+        if (rows.length == 0) {
+            $.modal.alertWarning("请至少选择一条记录");
+            return;
+        }
+        var sysNameRows = $.table.selectColumns('versionInfoNo');
+        var a = sysNameRows.join()
+
+        // 关联变更选择赋值
+        parent.$('#versionNo').val(sysNameRows.join());
+
+        console.log(parent.$('#versionNo'))
+
+        $.modal.close();
+    }
+
+</script>
+</body>
+</html>

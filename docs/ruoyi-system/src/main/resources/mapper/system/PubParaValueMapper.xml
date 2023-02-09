@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.PubParaValueMapper">
+    <resultMap id="pubParaValueResult" type="PubParaValue">
+        <id property="paraValueId" column="para_value_id"></id>
+        <result property="paraId" column="para_id"></result>
+        <result property="value" column="value"></result>
+        <result property="valueDetail" column="value_detail"></result>
+        <result property="serail" column="serail"></result>
+        <result property="paraExplain" column="para_explain"></result>
+    </resultMap>
+
+    <sql id="pubParaValueOV">
+        select pv.para_value_id,
+               pv.para_id,
+               pv.value,
+               pv.value_detail,
+               pv.serail,
+               p.para_explain
+        from pub_paravalue pv
+                 left join pub_para p
+                           on pv.para_id = p.para_id
+    </sql>
+    <select id="selectParaValueList" parameterType="PubParaValue" resultMap="pubParaValueResult">
+        <include refid="pubParaValueOV">
+        </include>
+        <where>
+            <if test="paraId != null and paraId != ''">
+                and pv.para_id = #{paraId}
+            </if>
+            <if test="paraId == null or paraId == ''">
+                and pv.para_id = ''
+            </if>
+            <if test="value != null and value != ''">
+                AND value like concat(concat('%', #{value}), '%')
+            </if>
+            <if test="valueDetail != null and valueDetail != ''">
+                AND value_detail like concat(concat('%', #{valueDetail}), '%')
+            </if>
+        </where>
+    </select>
+
+    <select id="selectPubParaValueById" parameterType="String" resultMap="pubParaValueResult">
+        <include refid="pubParaValueOV">
+        </include>
+        where pv.para_id = #{paraId}
+        order by pv.serail
+    </select>
+
+    <select id="selectParaValueDataById" parameterType="String" resultMap="pubParaValueResult">
+        select pv.para_value_id, pv.para_id, pv.value, pv.value_detail, pv.serail
+        from pub_paravalue pv
+        where pv.para_value_id = #{paraValueId}
+        order by pv.serail
+    </select>
+
+    <insert id="insertParaValueData" parameterType="PubParaValue">
+        insert into pub_paravalue
+        (
+        <if test="paraValueId != null and paraValueId != ''">
+            para_value_id,
+        </if>
+        <if test="paraId != null and paraId != ''">
+            para_id,
+        </if>
+        <if test="value != null and value != ''">
+            value,
+        </if>
+        <if test="valueDetail != null and valueDetail != ''">
+            value_detail,
+        </if>
+        <if test="serail != null and serail != 0">
+            serail
+        </if>
+        )
+        values
+        (
+        <if test="paraValueId != null and paraValueId != ''">
+            #{paraValueId},
+        </if>
+        <if test="paraId != null and paraId != ''">
+            #{paraId},
+        </if>
+        <if test="value != null and value != ''">
+            #{value},
+        </if>
+        <if test="valueDetail != null and valueDetail != ''">
+            #{valueDetail},
+        </if>
+        <if test="serail != null and serail != 0">
+            #{serail}
+        </if>
+        )
+    </insert>
+
+    <update id="updateParaValueData" parameterType="PubParaValue">
+        update pub_paravalue
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="paraId != null and paraId != ''">
+                para_id = #{paraId},
+            </if>
+            <if test="value != null and value != ''">
+                value=#{value},
+            </if>
+            <if test="valueDetail != null and valueDetail != ''">
+                value_detail=#{valueDetail},
+            </if>
+            <if test="serail != null and serail != 0">
+                serail = #{serail}
+            </if>
+        </trim>
+        where para_value_id = #{paraValueId}
+    </update>
+
+    <delete id="deleteParaValueDataByIds" parameterType="String">
+        delete
+        from pub_paravalue
+        where para_value_id = #{paraValueId,jdbcType=VARCHAR}
+    </delete>
+
+    <select id="selectPubParaValueByParaName" parameterType="String" resultMap="pubParaValueResult">
+        select p.para_value_id, p.para_id, p.value, p.value_detail, p.serail
+        from pub_paravalue p
+        where p.para_id in
+              (select p2.para_id from pub_para p2 where p2.para_name = #{paraName})
+        order by p.serail asc
+    </select>
+    <!-- 字典描述 及 value 翻译字段-->
+    <select id="selectPubParaValueByNameValue" parameterType="java.util.Map" resultType="java.lang.String">
+        select p.value_detail
+        from pub_paravalue p
+        where p.para_id in
+              (select p2.para_id from pub_para p2 where p2.para_name = #{paraName})
+          and p.value = #{paravalue}
+    </select>
+    <select id="selectParaPaValue" parameterType="java.util.Map" resultMap="pubParaValueResult">
+        select pv.para_value_id,
+               pv.para_id,
+               pv.value,
+               pv.value_detail,
+               pv.serail,
+               p.para_explain
+        from pub_paravalue pv
+                 left join pub_para p
+                           on pv.para_id = p.para_id
+        where p.para_name = #{paraName}
+          and pv.value = #{paravalue}
+    </select>
+    <select id="selectPubParaValueByVersionType" parameterType="list" resultMap="pubParaValueResult">
+        select p.para_value_id, p.para_id, p.value, p.value_detail, p.serail
+        from pub_paravalue p
+        where p.para_id in
+        (select p2.para_id
+         from pub_para p2 where p2.para_name = 'version_type'
+                            and p.value in
+        <foreach collection="array" item="item" index="index" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        )
+    </select>
+
+    <select id="selectOrgNameByParaValue" parameterType="java.util.Map" resultMap="pubParaValueResult">
+        select p.para_value_id, p.para_id, p.value, p.value_detail, p.serail
+        from pub_paravalue p
+        where p.value = #{paraValue}
+          and p.para_id in
+              (select p2.para_id from pub_para p2 where p2.para_name = #{paraName})
+    </select>
+
+    <select id="selectParaPaValueDetail" parameterType="String"
+            resultType="com.ruoyi.common.core.domain.entity.PubParaValue">
+        select pv.para_value_id,
+               pv.para_id,
+               pv.value,
+               pv.value_detail,
+               pv.serail,
+               p.para_explain
+        from pub_paravalue pv
+                 left join pub_para p
+                           on pv.para_id = p.para_id
+        where pv.value_detail = #{valueDetail,jdbcType=VARCHAR}
+          and pv.PARA_ID = #{paraId,jdbcType=VARCHAR}
+    </select>
+
+
+    <select id="priority" parameterType="String" resultType="com.ruoyi.common.core.domain.entity.PubParaValue">
+        SELECT b.para_value_id, b.value_detail
+        FROM pub_para a
+                 JOIN pub_paravalue b
+                      ON a.para_id = b.para_id
+        WHERE a.para_name = #{code}
+    </select>
+
+    <select id="selectAllParams" resultType="map">
+        SELECT pv.VALUE code_value,
+               pv.value_detail,
+               p.para_explain,
+               p.para_name
+        FROM pub_paravalue pv
+                 LEFT JOIN pub_para p ON pv.para_id = p.para_id
+    </select>
+</mapper>

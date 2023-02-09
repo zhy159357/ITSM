@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.activiti.mapper.FmBizDhyhMapper">
+
+    <resultMap type="FmBizDhyh" id="FmBizDhyhResult">
+        <result property="fdId" column="fd_id"/>
+        <result property="telId" column="tel_id"/>
+        <result property="dealId" column="deal_id"/>
+        <result property="dealTel" column="deal_tel"/>
+        <result property="fmId" column="fm_id"/>
+        <result property="dealDept" column="deal_dept"/>
+        <result property="dealContent" column="deal_content"/>
+        <result property="dealResult" column="deal_result"/>
+        <result property="fdStatus" column="fd_status"/>
+        <result property="sendNum" column="send_num"/>
+        <result property="fdType" column="fd_type"/>
+        <result property="sendTime" column="send_time"/>
+    </resultMap>
+
+    <sql id="selectFmBizDhyhVo">
+        select fd_id,
+               tel_id,
+               deal_id,
+               deal_tel,
+               fm_id,
+               deal_dept,
+               deal_content,
+               deal_result,
+               fd_status,
+               send_num,
+               fd_type,
+               send_time
+        from fm_biz_dhyh
+    </sql>
+
+    <select id="selectFmBizDhyhList" parameterType="FmBizDhyh" resultMap="FmBizDhyhResult">
+        <include refid="selectFmBizDhyhVo"/>
+        <where>
+            <if test="fdId != null  and fdId != ''">and fd_id = #{fdId}</if>
+            <if test="telId != null  and telId != ''">and tel_id = #{telId}</if>
+            <if test="dealId != null  and dealId != ''">and deal_id = #{dealId}</if>
+            <if test="dealTel != null  and dealTel != ''">and deal_tel = #{dealTel}</if>
+            <if test="fmId != null  and fmId != ''">and fm_id = #{fmId}</if>
+            <if test="dealDept != null  and dealDept != ''">and deal_dept = #{dealDept}</if>
+            <if test="dealContent != null  and dealContent != ''">and deal_content = #{dealContent}</if>
+            <if test="dealResult != null  and dealResult != ''">and deal_result = #{dealResult}</if>
+            <if test="fdStatus != null  and fdStatus != ''">and fd_status = #{fdStatus}</if>
+            <if test="sendNum != null  and sendNum != ''">and send_num = #{sendNum}</if>
+            <if test="fdType != null  and fdType != ''">and fd_type = #{fdType}</if>
+            <if test="sendTime != null  and sendTime != ''">and send_time = #{sendTime}</if>
+        </where>
+    </select>
+
+    <select id="selectFmBizDhyhById" parameterType="String" resultMap="FmBizDhyhResult">
+        <include refid="selectFmBizDhyhVo"/>
+        where fd_id = #{fdId}
+    </select>
+
+    <insert id="insertFmBizDhyh" parameterType="FmBizDhyh">
+        insert into fm_biz_dhyh
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="fdId != null  and fdId != ''">fd_id,</if>
+            <if test="telId != null  and telId != ''">tel_id,</if>
+            <if test="dealId != null  and dealId != ''">deal_id,</if>
+            <if test="dealTel != null  and dealTel != ''">deal_tel,</if>
+            <if test="fmId != null  and fmId != ''">fm_id,</if>
+            <if test="dealDept != null  and dealDept != ''">deal_dept,</if>
+            <if test="dealContent != null  and dealContent != ''">deal_content,</if>
+            <if test="dealResult != null  and dealResult != ''">deal_result,</if>
+            <if test="fdStatus != null  and fdStatus != ''">fd_status,</if>
+            <if test="sendNum != null  and sendNum != ''">send_num,</if>
+            <if test="fdType != null  and fdType != ''">fd_type,</if>
+            <if test="sendTime != null  and sendTime != ''">send_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="fdId != null  and fdId != ''">#{fdId},</if>
+            <if test="telId != null  and telId != ''">#{telId},</if>
+            <if test="dealId != null  and dealId != ''">#{dealId},</if>
+            <if test="dealTel != null  and dealTel != ''">#{dealTel},</if>
+            <if test="fmId != null  and fmId != ''">#{fmId},</if>
+            <if test="dealDept != null  and dealDept != ''">#{dealDept},</if>
+            <if test="dealContent != null  and dealContent != ''">#{dealContent},</if>
+            <if test="dealResult != null  and dealResult != ''">#{dealResult},</if>
+            <if test="fdStatus != null  and fdStatus != ''">#{fdStatus},</if>
+            <if test="sendNum != null  and sendNum != ''">#{sendNum},</if>
+            <if test="fdType != null  and fdType != ''">#{fdType},</if>
+            <if test="sendTime != null  and sendTime != ''">#{sendTime},</if>
+        </trim>
+    </insert>
+
+    <update id="updateFmBizDhyh" parameterType="FmBizDhyh">
+        update fm_biz_dhyh
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="telId != null  and telId != ''">tel_id = #{telId},</if>
+            <if test="dealId != null  and dealId != ''">deal_id = #{dealId},</if>
+            <if test="dealTel != null  and dealTel != ''">deal_tel = #{dealTel},</if>
+            <if test="fmId != null  and fmId != ''">fm_id = #{fmId},</if>
+            <if test="dealDept != null  and dealDept != ''">deal_dept = #{dealDept},</if>
+            <if test="dealContent != null  and dealContent != ''">deal_content = #{dealContent},</if>
+            <if test="dealResult != null  and dealResult != ''">deal_result = #{dealResult},</if>
+            <if test="fdStatus != null  and fdStatus != ''">fd_status = #{fdStatus},</if>
+            <if test="sendNum != null  and sendNum != ''">send_num = #{sendNum},</if>
+            <if test="fdType != null  and fdType != ''">fd_type = #{fdType},</if>
+            <if test="sendTime != null  and sendTime != ''">send_time = #{sendTime},</if>
+        </trim>
+        where fd_id = #{fdId}
+    </update>
+
+    <delete id="deleteFmBizDhyhById" parameterType="String">
+        delete
+        from fm_biz_dhyh
+        where fd_id = #{fdId}
+    </delete>
+
+    <delete id="deleteFmBizDhyhByIds" parameterType="String">
+        delete from fm_biz_dhyh where fd_id in
+        <foreach item="fdId" collection="array" open="(" separator="," close=")">
+            #{fdId}
+        </foreach>
+    </delete>
+
+</mapper>

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('短信检索展示')"/>
+    <th:block th:include="include :: datetimepicker-css"/>
+</head>
+<body class="gray-bg">
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-12 search-collapse">
+            <form id="formId">
+                <div class="select-list">
+                    <ul>
+                        <li>
+                            <label>手机号：</label><input type="text" name="telephone"/>
+                        </li>
+                        <li>
+                            <label>检索内容：</label><input type="text" name="smsText"/>
+                        </li>
+                        <li>
+                            <a class="btn btn-primary btn-rounded btn-sm" id="ss" onclick="$.table.search()"><i
+                                    class="fa fa-search"></i>&nbsp;搜索</a>
+                            <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i
+                                    class="fa fa-repeat"></i>&nbsp;重置</a>
+                        </li>
+                    </ul>
+                </div>
+            </form>
+        </div>
+        <div class="col-sm-12 select-table table-striped">
+            <table id="bootstrap-table"></table>
+        </div>
+    </div>
+</div>
+<th:block th:include="include :: footer"/>
+<th:block th:include="include :: datetimepicker-js"/>
+<script th:inline="javascript">
+
+    var prefix = ctx + "new/newTwo";
+
+    $(function () {
+        document.onkeydown = function (e) {
+            var ev = document.all ? window.event : e;
+            console.log(ev);
+            if (ev.keyCode == 13) {
+                $('#ss').trigger('click');
+                return false;
+            } //搜索逻辑
+        }
+        var options = {
+            url: prefix + "/list",
+            singleSelect: true,
+            clickToSelect: true,
+            pageSize: 10,
+            pageList: [10, 10, 10],
+            modalName: "短息检索",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'telephone',
+                    width: 150,
+                    title: '手机号',
+                },
+                {
+                    field: "smsText",
+                    width: 600,
+                    title: '检索内容',
+                },
+                {
+                    field: "smsTime",
+                    title: '发送时间',
+                    width: 150,
+                    formatter: function (value, row, index) {
+                        var startTime = '';
+                        if (value != '' && value != null) {
+                            var pattern = /(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/;
+                            startTime = value.replace(pattern, '$1-$2-$3 $4:$5:$6');
+                        }
+                        return startTime;
+                    }
+                }]
+        };
+        $.table.init(options);
+    });
+
+</script>
+</body>
+</html>

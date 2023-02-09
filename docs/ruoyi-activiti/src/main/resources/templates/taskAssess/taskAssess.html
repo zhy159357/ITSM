@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('厂商考核列表')" />
+</head>
+<body class="gray-bg">
+     <div class="container-div">
+        <div class="row">
+            <div class="col-sm-12 search-collapse">
+                <form id="formId">
+                    <div class="select-list">
+                        <ul>
+                            <li>
+                                <p>任务类别：</p>
+                                <select name="taskType" th:with="type=${@pubParaValue.selectPubParaValueByParaName('TASK_TYPE')}">
+                                    <option value="">所有</option>
+                                    <option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+                                </select>
+                            </li>
+                            <li>
+                                <p>用户名：</p>
+                                <input type="text" name="userName"/>
+                            </li>
+                            <li>
+                                <p>机构名称：</p>
+                                <input type="text" name="sysName"/>
+                            </li>
+                            <li>
+                                <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                            </li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+
+            <div class="btn-group-sm" id="toolbar" role="group">
+                <a class="btn btn-warning" onclick="$.table.exportExcel()" shiro:hasPermission="taskAssess:tasfAssess:export">
+                    <i class="fa fa-download"></i> 导出
+                 </a>
+            </div>
+            <div class="col-sm-12 select-table table-striped">
+                <table id="bootstrap-table"></table>
+            </div>
+        </div>
+    </div>
+    <th:block th:include="include :: footer" />
+    <script th:inline="javascript">
+        var editFlag = [[${@permission.hasPermi('taskAssess:tasfAssess:edit')}]];
+        var removeFlag = [[${@permission.hasPermi('taskAssess:tasfAssess:remove')}]];
+        var prefix = ctx + "taskAssess";
+
+        $(function() {
+            var options = {
+                url: prefix + "/list",
+                exportUrl: prefix + "/export",
+                modalName: "厂商考核",
+                columns: [{
+                    checkbox: true
+                },
+                {
+                    field : 'userName',
+                    title : '用户名'
+                },
+                {
+                    field : 'sysName',
+                    title : '机构'
+                },
+                {
+                    field : 'manyidu', 
+                    title : '满意度',
+                    formatter: function (value, row, index) {
+                        if(row.end!=null&&row.end!=0){
+                            var NewNum=Math.round((row.end -value)/ row.end * 10000) / 100;
+                            return NewNum+"%";
+                        }
+                    }
+                },
+                {
+                    field : 'taskType', 
+                    title : '任务类别'
+                },
+                {
+                    field : 'qianDao', 
+                    title : '签到'
+                },
+                {
+                    field : 'end', 
+                    title : '已完成'
+                },
+                {
+                    field : 'unEnd', 
+                    title : '未完成'
+                },
+                {
+                    field : 'timeOut', 
+                    title : '超时'
+                }]
+            };
+            $.table.init(options);
+        });
+    </script>
+</body>
+</html>

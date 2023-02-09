@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('接收工作组列表')"/>
+</head>
+<body class="gray-bg">
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-12 search-collapse">
+            <form id="role-form">
+                <input type="hidden" id="receiveGroupId" name="receiveGroupId" th:value="*{rid}">
+                <div class="select-list">
+                    <ul>
+                        <li>
+                            工作组名称：<input type="text" name="grpName"/>
+                        </li>
+                        <li>
+                            <a class="btn btn-primary btn-rounded btn-sm" id="searchBut" onclick="checked(),$.table.search()"><i
+                                    class="fa fa-search"></i>&nbsp;搜索</a>
+                            <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset(),checked()"><i
+                                    class="fa fa-refresh"></i>&nbsp;重置</a>
+                        </li>
+                    </ul>
+                </div>
+            </form>
+        </div>
+
+        <div class="col-sm-12 select-table table-striped">
+            <table id="bootstrap-table"></table>
+        </div>
+    </div>
+</div>
+<th:block th:include="include :: footer"/>
+<script th:inline="javascript">
+    var prefix = ctx + "system/notice";
+    var checkedId="";
+    var checkedName="";
+    $(function () {
+        // 回车键搜索
+        document.onkeydown = function(e){
+            var ev = document.all ? window.event : e;
+            if(ev.keyCode==13) {
+                $('#searchBut').trigger('click');
+                return false;
+            }
+        };
+        var options = {
+            url: prefix + "/selectNoticeReceiveGroupList",
+            rememberSelected: true,
+            clickToSelect: true,
+            pagesize: 10,
+            pageList: [10],
+            modalName: "接收工作组",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'groupId',
+                    title: '工作组Id',
+                    visible: false
+                },
+                {
+                    field: 'grpName',
+                    title: '工作组名称'
+                }]
+        };
+        $.table.init(options);
+    });
+
+    function checked(){
+        var groupId =$.table.selectColumns("groupId");
+        var grpName = $.table.selectColumns('grpName');
+        if (groupId.length != 0) {
+            checkedId += groupId.join()+",";
+            checkedName += grpName.join()+",";
+        }
+    }
+
+    /* 接收工作组 */
+    function submitHandler(index, layero) {
+        var rows = $.table.selectFirstColumns();
+        if (rows.length == 0 && !$.common.isEmpty(checkedId)) {
+            $.modal.alertWarning("请至少选择一条记录");
+            return;
+        }
+
+        var valueRows = $.table.selectColumns('groupId');
+        var valueDetailRows = $.table.selectColumns('grpName');
+        $.modal.close();
+        if($.common.isEmpty(checkedId)){
+            parent.$('#receiveGroupId').val('');
+            parent.$('#receiveGroupId').val(valueRows.join());
+            parent.$('#receiveDeptGroupName').val('');
+            parent.$('#receiveDeptGroupName').val(valueDetailRows.join());
+        }else {
+            checkedId += valueRows.join();
+            checkedName += valueDetailRows.join();
+            var checkedIdList=checkedId.split(',');
+            var checkedNameList=checkedName.split(',');
+            var reCheckedId=[];
+            var reCheckedName=[];
+            for(var i=0;i<checkedIdList.length;i++){
+                var id=checkedIdList[i];
+                var name=checkedNameList[i];
+                if(reCheckedId.indexOf(id)<0){
+                    reCheckedId.push(checkedIdList[i]);
+                    reCheckedName.push(checkedNameList[i]);
+                }
+            }
+            parent.$('#receiveGroupId').val('');
+            parent.$('#receiveGroupId').val(reCheckedId);
+            parent.$('#receiveGroupId').val('');
+            parent.$('#receiveGroupId').val(reCheckedId);
+            parent.$('#receiveDeptGroupName').val('');
+            parent.$('#receiveDeptGroupName').val(reCheckedName);
+        }
+    }
+</script>
+</body>
+</html>

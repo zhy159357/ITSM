@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('排班信息列表')" />
+    <th:block th:include="include :: layout-latest-css" />
+    <th:block th:include="include :: ztree-css" />
+    <th:block th:include="include :: select2-css" />
+
+</head>
+<body class="gray-bg">
+<div class="ui-layout-center">
+    <div class="container-div">
+        <div class="row">
+            <div class="col-sm-12 search-collapse">
+                <form id="user-form">
+                    <input type="hidden" id="typeinfoId" name="typeinfoId">
+                    <input type="hidden" id="parentId" name="parentId">
+                    <div class="select-list">
+                        <ul>
+                            <li>
+                                姓名：<input type="text" name="pname"/>
+                            </li>
+                            <li>
+                                联系电话：<input type="text" name="mobilephone"/>
+                            </li>
+                            <li>
+                                类别编码：<input type="text" name="typeNo"/>
+                            </li>
+                            <li class="select-time">
+                                <label>值班时间： </label>
+                                <input type="text" class="time-input" id="startTime" placeholder="开始时间" name="startTime" readonly/>
+                                <span>-</span>
+                                <input type="text" class="time-input" id="endTime" placeholder="结束时间" name="endTime" readonly/>
+                            </li>
+                            <li>
+                                <a class="btn btn-primary btn-rounded btn-sm" id="searchList" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                            </li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+
+            <div class="btn-group-sm" id="toolbar" role="group">
+                <a class="btn btn-success" onclick="$.operate.add()">
+                    <i class="fa fa-plus"></i> 新增
+                </a>
+                <a class="btn btn-primary single disabled" onclick="$.operate.edit()">
+                    <i class="fa fa-edit"></i> 修改
+                </a>
+                <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()">
+                    <i class="fa fa-trash"></i> 删除
+                </a>
+                <a class="btn btn-info" onclick="$.table.importExcel()">
+                    <i class="fa fa-upload"></i> 导入
+                </a>
+                <a class="btn btn-info" onclick="$.table.importTemplate()">
+                    <i class="fa fa-download"></i> 下载导入模板
+                </a>
+                <a class="btn btn-warning" onclick="$.table.exportExcel()">
+                    <i class="fa fa-download"></i> 导出人员信息
+                </a>
+            </div>
+            <div class="col-sm-12 select-table table-striped">
+                <table id="bootstrap-table"></table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: select2-js" />
+<th:block th:include="include :: layout-latest-js" />
+<script th:inline="javascript">
+    var prefix = ctx + "duty/scheduling";
+
+    $(function() {
+        // 回车键搜索
+        document.onkeydown = function(e){
+            var ev = document.all ? window.event : e;
+            if(ev.keyCode==13) {
+                $('#searchList').trigger('click');
+                return false;
+            }
+        };
+        var options = {
+            url: prefix + "/list",
+            createUrl: prefix + "/add",
+            updateUrl: prefix + "/edit/{id}",
+            removeUrl: prefix + "/remove",
+            exportUrl: prefix + "/exportExcel",
+            importUrl: prefix + "/importData",
+            importTemplateUrl: prefix + "/importTemplate",
+            modalName: "人员信息",
+            clickToSelect: true,
+            columns: [{
+                checkbox: true
+            },
+            {
+                field: 'schedulingId',
+                title: '排班id',
+                visible: false
+            },
+            {
+                field: 'pname',
+                title: '姓名'
+            },
+            {
+                field: 'mobilephone',
+                title: '联系电话'
+            },
+            {
+                field: 'dutyDate',
+                title: '值班时间'
+            },
+            {
+                field: 'typeNo',
+                title: '上级机构'
+            },
+            {
+                field: 'typeName',
+                title: '类别名称'
+            },
+            {
+                field: 'accountName',
+                title: '类别编码'
+            }]
+        };
+        $.table.init(options);
+    });
+
+    /* 修改排班信息 */
+    function editCheck(schedulingId) {
+        if(0==schedulingId){
+            table.set();
+            var id = $.common.isEmpty(table.options.uniqueId) ? $.table.selectFirstColumns() : $.table.selectColumns(table.options.uniqueId);
+            if (id.length == 0) {
+                $.modal.alertWarning("请至少选择一条记录");
+                return;
+            }
+            schedulingId = id[0];
+        }
+        $.ajax({
+                cache : true,
+                type : "POST",
+                url : prefix + "/editCheck",
+                data : {"schedulingId":schedulingId},
+                async : false,
+                error : function(request) {
+                    $.modal.alertError("系统错误");
+                },
+                success : function(data) {
+                    if("1"==data){
+                        $.modal.alertWarning("当前时间不可修改排班信息！");
+                    }else{
+                        $.modal.openTab("修改" + table.options.modalName, prefix + "/edit/"+schedulingId);
+                    }
+                }
+            });
+
+    }
+
+</script>
+<th:block th:include="include :: ztree-js" />
+<!-- 导入区域 -->
+<script id="importTpl" type="text/template">
+    <form enctype="multipart/form-data" class="mt20 mb10">
+        <div class="col-xs-offset-1">
+            <input type="file" id="file" name="file"/>
+            <font color="red" class="pull-left mt10">
+                提示：仅允许导入“xls”或“xlsx”格式文件！
+            </font>
+        </div>
+    </form>
+</script>
+</body>
+</html>

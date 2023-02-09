@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:include="include :: header('事件单关闭')"/>
+</head>
+<body class="white-bg">
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+    <form class="form-horizontal m" id="form-sheet-evaluate" th:object="${eventSheet}">
+        <input name="params[taskId]" type="hidden" id="taskId" th:value="*{params.taskId}"/>
+        <input name="eventId" id="eventId" th:field="*{eventId}" type="hidden">
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">事件单编号：</label>
+                    <div class="col-sm-8">
+                        <input name="eventNo" th:field="*{eventNo}" class="form-control" type="text" readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">上报部门：</label>
+                    <div class="col-sm-8">
+                        <input name="reportOrg" th:field="*{reportOrg}" class="form-control" type="text" readonly>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">上报人：</label>
+                    <div class="col-sm-8">
+                        <input name="reportPerson" th:field="*{reportPerson}" class="form-control" type="text" readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">上报电话：</label>
+                    <div class="col-sm-8">
+                        <input name="reportPhone" th:field="*{reportPhone}" class="form-control" type="text" readonly>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">事件标题：</label>
+                    <div class="col-sm-10">
+                        <input name="eventTitle" th:field="*{eventTitle}" class="form-control" type="text" readonly>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">事件详述：</label>
+                    <div class="col-sm-10">
+                        <textarea cols="3" rows="5" name="eventInfo" class="form-control" readonly>[[*{eventInfo}]]</textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">客户信息：</label>
+                    <div class="col-sm-10">
+                        <textarea name="customInfo" cols="3" rows="5" class="form-control" readonly>[[*{customInfo}]]</textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">总分行事件标记：</label>
+                    <div class="col-sm-8">
+                        <select id="orgFlag" th:field="*{orgFlag}" name="orgFlag" class="form-control"
+                                th:with="pList=${@pubParaValue.selectPubParaValueByParaName('org_flag')}" disabled>
+                            <option th:each="p:${pList}" th:text="${p.valueDetail}" th:value="${p.value}"
+                                    th:selected="${p.value eq orgFlag}">
+                            </option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">中心侧/网点侧事件：</label>
+                    <div class="col-sm-8">
+                        <select id="sideFlag" name="sideFlag" class="form-control"
+                                th:with="pList=${@pubParaValue.selectPubParaValueByParaName('side_flag')}" disabled>
+                            <option th:each="p:${pList}" th:text="${p.valueDetail}" th:value="${p.value}"
+                                    th:selected="${p.value eq sideFlag}">
+                            </option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--<div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">类别：</label>
+                    <div class="col-sm-8">
+                        <select id="eventCategory" name="eventCategory" th:field="*{eventCategory}" class="form-control"
+                                th:with="pList=${@pubParaValue.selectPubParaValueByParaName('event_category')}" disabled>
+                            <option th:each="p:${pList}" th:text="${p.valueDetail}" th:value="${p.value}"
+                                    th:selected="${p.value eq eventCategory}">
+                            </option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">子类：</label>
+                    <div class="col-sm-8">
+                        <input name="eventSubclass" th:field="*{eventSubclass}" class="form-control" type="text" readonly>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">条目：</label>
+                    <div class="col-sm-8">
+                        <input name="eventEntry" th:field="*{eventEntry}" class="form-control" type="text" readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">子条目：</label>
+                    <div class="col-sm-8">
+                        <input name="eventSubentry" th:field="*{eventSubentry}" class="form-control" type="text" readonly>
+                    </div>
+                </div>
+            </div>
+        </div>-->
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">来源：</label>
+                    <div class="col-sm-8">
+                        <select id="eventSource" name="eventSource" class="form-control" th:field="*{eventSource}"
+                                th:with="pList=${@pubParaValue.selectPubParaValueByParaName('event_source')}" disabled>
+                            <option th:each="p:${pList}" th:text="${p.valueDetail}" th:value="${p.value}" th:selected="${p.value eq eventSource}"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">影响程度：</label>
+                    <div class="col-sm-8">
+                        <select id="infLevel" name="infLevel" class="form-control" th:field="*{infLevel}"
+                                th:with="pList=${@pubParaValue.selectPubParaValueByParaName('event_impact_degree')}" disabled>
+                            <option th:each="p:${pList}" th:text="${p.valueDetail}" th:value="${p.value}" th:selected="${p.value eq infLevel}"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">影响范围：</label>
+                    <div class="col-sm-8">
+                        <select id="infRange" name="infRange" class="form-control" th:field="*{infRange}"
+                                th:with="pList=${@pubParaValue.selectPubParaValueByParaName('event_impact_scope')}" disabled>
+                            <option th:each="p:${pList}" th:text="${p.valueDetail}" th:value="${p.value}" th:selected="${p.value eq infRange}"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">优先级：</label>
+                    <div class="col-sm-8">
+                        <input name="eventPriority" th:field="*{eventPriority}" class="form-control" type="text" readonly>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">目标解决日期：</label>
+                    <div class="col-sm-8">
+                        <input name="targetResolveDate" th:field="*{targetResolveDate}" class="form-control" type="text" readonly>
+                    </div>
+                </div>
+            </div>
+            <!--<div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">一级：</label>
+                    <div class="col-sm-8">
+                        <select name="eventFirstType" th:field="*{eventFirstType}" class="form-control m-b" disabled>
+                            <option value="">所有</option>
+                        </select>
+                    </div>
+                </div>
+            </div>-->
+        </div>
+        <!--<div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">二级：</label>
+                    <div class="col-sm-8">
+                        <select name="eventSecondType" th:field="*{eventSecondType}" class="form-control m-b" disabled>
+                            <option value="">所有</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">三级：</label>
+                    <div class="col-sm-8">
+                        <select name="eventThreeType" th:field="*{eventThreeType}" class="form-control m-b" disabled>
+                            <option value="">所有</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>-->
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">是否加急</label>
+                    <div class="col-sm-8">
+                        <select id="urgentFlag" name="urgentFlag" th:field="*{urgentFlag}" class="form-control"
+                                th:with="pList=${@pubParaValue.selectPubParaValueByParaName('yes_or_no')}" disabled>
+                            <option th:each="p:${pList}" th:text="${p.valueDetail}" th:value="${p.value}"
+                                    th:selected="${p.value eq urgentFlag}">
+                            </option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">是否财务类事件：</label>
+                    <div class="col-sm-8">
+                        <select id="financeFlag" name="financeFlag" th:field="*{financeFlag}" class="form-control"
+                                th:with="pList=${@pubParaValue.selectPubParaValueByParaName('yes_or_no')}" disabled>
+                            <option th:each="p:${pList}" th:text="${p.valueDetail}" th:value="${p.value}"
+                                    th:selected="${p.value eq financeFlag}">
+                            </option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">受派组：</label>
+                    <div class="col-sm-8">
+                        <input id="assignedGroupName" name="assignedGroupName" th:value="*{assignedGroupName}" class="form-control"  readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">受派人：</label>
+                    <div class="col-sm-8">
+                        <input id="assignedPersonName" name="assignedPersonName" th:field="*{assignedPersonName}" class="form-control" readonly>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">状态：</label>
+                    <div class="col-sm-8">
+                        <!--<input id="eventStatus" name="eventStatus" th:field="*{eventStatus}" class="form-control">-->
+                        <select id="eventStatus" th:field="*{eventStatus}" name="eventStatus" class="form-control"
+                                th:with="pList=${@pubParaValue.selectPubParaValueByParaName('event_status')}" disabled>
+                            <option th:each="p:${pList}" th:text="${p.valueDetail}" th:value="${p.value}"
+                                    th:selected="${p.value eq eventStatus}">
+                            </option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">事件助手处理结果：</label>
+                    <div class="col-sm-10">
+                        <textarea cols="3" rows="5" name="eventHelperResult" class="form-control" readonly>[[*{eventHelperResult}]]</textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">事件自愈处理结果：</label>
+                    <div class="col-sm-10">
+                        <textarea cols="3" rows="5" name="eventHealResult" class="form-control" readonly>[[*{eventHealResult}]]</textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <h4 class="form-header h4">审核信息</h4>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label is-required">处理意见：</label>
+                    <div class="col-sm-10">
+                        <textarea rows="3" cols="5" id="comment" name="params[comment]" class="form-control" maxlength="200"></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<div class="row">
+    <div class="col-sm-12">
+        <div class="tabs-container">
+            <ul class="nav nav-tabs">
+                <li class="active"><a data-toggle="tab" href="#tab-1" aria-expanded="true">流程记录</a>
+                </li>
+                <li class=""><a data-toggle="tab" href="#tab-2" aria-expanded="false">附件</a>
+                </li>
+            </ul>
+            <div class="tab-content">
+                <div id="tab-1" class="tab-pane active">
+                    <div class="panel-body">
+                        <div class="btn-group-sm" id="toolbar1" role="group">
+                        </div>
+                        <div class="col-sm-12 select-table table-striped">
+                            <table id="history-table"></table>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="tab-2" class="tab-pane">
+                    <div class="panel-body">
+                        <div class="btn-group-sm" id="toolbar2" role="group">
+                            <a class="btn btn-primary multiple disabled" onclick="downloadAttachment()">
+                                <i class="fa fa-edit"></i> 下载附件
+                            </a>
+                        </div>
+                        <div class="col-sm-12 select-table table-striped">
+                            <table id="file-table"></table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-sm-offset-5 col-sm-10">
+        <button type="button" class="btn btn-sm btn-primary" onclick="end()"><i class="fa fa-check"></i>结 束</button>&nbsp;
+        <button type="button" class="btn btn-sm btn-danger" onclick="closeItem()"><i class="fa fa-window-close"></i>关 闭</button>
+    </div>
+</div>
+
+<th:block th:include="include :: footer"/>
+<th:block th:include="include :: datetimepicker-js"/>
+<script th:src="@{/js/activiti.js}"></script>
+<script th:inline="javascript">
+    var prefix = ctx + "event/sheet";
+    var prefix_attachment = ctx + "pub/attachment";
+
+    // 流程记录
+    $(function() {
+        puFolwHistory($("#eventId").val());
+    });
+
+    $(function () {
+        var options = {
+            url: prefix_attachment + "/list",
+            id: "file-table",
+            createUrl: prefix_attachment + "/add",
+            updateUrl: prefix_attachment + "/edit/{id}",
+            removeUrl: prefix_attachment + "/remove",
+            detailUrl: prefix_attachment + "/edit/{id}",
+            sortName: "fileTime",
+            sortOrder: "desc",
+            singleSelect: true,
+            clickToSelect: true,
+            queryParams: queryParams,
+            modalName: "附件列表",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'atId',
+                    title: '附件ID',
+                    visible: false
+                },
+                {
+                    field: 'fileName',
+                    title: '文件名称'
+                },
+                {
+                    field: 'person.pName',
+                    title: '上传人'
+                },
+                {
+                    field: 'size',
+                    title: '文件大小'
+                },
+                {
+                    field: 'memo',
+                    title: '文件描述'
+                },
+                {
+                    field: 'fileTime',
+                    title: '上传时间',
+                    formatter: function (value, row, index) {
+                        var startTime = '';
+                        if (value != '' && value != null) {
+                            var pattern = /(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/;
+                            startTime = value.replace(pattern, '$1-$2-$3 $4:$5:$6');
+                        }
+                        return startTime;
+                    }
+                }]
+        };
+        $.table.init(options);
+    });
+
+    // form表单校验
+    $("#form-sheet-deal").validate({
+        rules:{
+            comment:{
+                required:true
+            }
+        },
+        messages:{
+            comment:{
+                required:"处理意见必填"
+            }
+        },
+        onfocusout: function(element) {
+            $(element).valid();
+        },
+        focusCleanup: true
+    });
+
+    function queryParams(params) {
+        var search = $.table.queryParams(params);
+        search.ownerId = $("#eventId").val();
+        return search;
+    }
+
+    // 附件上传页面
+    function upload() {
+        var ownerId = $("#eventId").val();
+        var url = prefix_attachment + "/uploadSH/" + ownerId;
+        $.modal.openNoBtnFileFlush("事件单附件上传", url);
+
+    }
+
+    // 附件下载
+    function downloadAttachment() {
+        var atId = $.table.selectFirstColumns()[0];
+        var ownerId = $("#eventId").val();
+        var url = prefix_attachment + "/downloadSH/" + ownerId + "/" + atId;
+        window.location.href = url;
+    }
+
+    // 关闭评价环节结束
+    function end() {
+        if ($.validate.form()) {
+            if($.common.isEmpty($("#comment").val())) {
+                $.modal.alert("处理意见不可为空！");
+                return;
+            }
+            var url = prefix + "/evaluateEvent";
+            var data = $('#form-sheet-evaluate').serializeArray();
+            $.operate.saveTab(url, data);
+        }
+    }
+</script>
+</body>
+</html>

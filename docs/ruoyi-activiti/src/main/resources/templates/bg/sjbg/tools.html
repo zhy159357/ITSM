@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('工具使用情况列表')" />
+    <th:block th:include="include :: datetimepicker-css" />
+    <style>
+        .select-list li p, .select-list li label:not(.radio-box) {
+            float: left;
+            width: 100px;
+            margin: 5px 0px 0px 0px;
+            text-align: right;
+        }
+
+        label {
+            color:red;
+        }
+    </style>
+</head>
+<body class="gray-bg">
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-12 search-collapse">
+            <form id="sjbg-query-form">
+                <div class="select-list">
+                    <ul>
+                        <li>
+                            <label>创建时间： </label><input type="text" th:value="${toolsStartTime}" name="startCreateTime" id="startCreateTime" class="glyphicon glyphicon-calendar"/>
+                        </li>
+                        <li>
+                            <label>至： </label><input type="text" th:value="${toolsEndTime}" name="endCreateTime" id="endCreateTime" class="glyphicon glyphicon-calendar"/>
+                        </li>
+                        <li>
+                            <label>统计类型： </label>
+                            <select name="cmBizSjCountType" id="cmBizSjCountType" th:with="type=${@dict.getParaType('cmBizSjCount_type')}">
+                                <option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+                            </select>
+                        </li>
+                        <li>
+                            <a class="btn btn-primary btn-rounded btn-sm" id="ss" onclick="searchQuery()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                            <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-repeat"></i>&nbsp;重置</a>
+                        </li>
+                    </ul>
+                </div>
+            </form>
+        </div>
+
+        <div style="text-align: center;color: red;margin: 15px 0px;">
+            创建时间和统计类型不能为空！
+        </div>
+        <!--导出所有｜当前页按钮组合-->
+        <div class="btn-group">
+            <button data-toggle="dropdown" class="btn btn-primary btn-sm dropdown-toggle"> <i class="fa fa-cloud-upload"></i> 导出<span
+                    class="caret"></span>
+            </button>
+            <ul class="dropdown-menu">
+                <li><a onclick="$.table.exportExcel()">导出所有</a>
+                </li>
+                <li><a onclick="$.table.exportExcelCurrentPage()">导出当前页</a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="col-sm-12 select-table table-striped">
+            <table id="bootstrap-table"></table>
+        </div>
+    </div>
+</div>
+
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: datetimepicker-js" />
+<script th:inline="javascript">
+    var prefix = ctx + "bg/sjbg";
+
+
+    $(function() {
+
+        //加载日期
+        layui.use('laydate', function() {
+            var laydate = layui.laydate;
+            //日期时间选择器
+            laydate.render({
+                elem: '#startCreateTime'
+                , type: 'date'
+            });
+            laydate.render({
+                elem: '#endCreateTime'
+                , type: 'date'
+            });
+            //自定义重要日
+            laydate.render({
+                elem: '#test18'
+                , mark: {
+                    '0-10-14': '生日'
+                    , '0-12-31': '跨年' //每年的日期
+                    , '0-0-10': '工资' //每月某天
+                    , '0-0-15': '月中'
+                    , '2017-8-15': '' //如果为空字符，则默认显示数字+徽章
+                    , '2099-10-14': '呵呵'
+                }
+                , done: function (value, date) {
+                    if (date.year === 2017 && date.month === 8 && date.date === 15) { //点击2017年8月15日，弹出提示语
+                        layer.msg('这一天是：中国人民抗日战争胜利72周年');
+                    }
+                }
+            });
+        });
+        document.onkeydown = function(e){
+            var ev = document.all ? window.event : e;
+            if(ev.keyCode==13) {
+                $('#ss').trigger('click');
+                return false;
+            } //搜索逻辑
+        }
+        var options = {
+            id: 'bootstrap-table',
+            url: prefix + "/tools/list",
+            exportUrl: prefix + "/tools/export",
+            modalName: "工具使用情况统计",
+            singleSelect:true,
+            clickToSelect: true,
+            queryParams: queryParams,
+            columns: [{
+                checkbox: true
+            },
+
+                {
+                    field: 'caption',
+                    title: '所属系统'
+                },
+                {
+                    field: 'orgName',
+                    title: '所属公司'
+                },
+                {
+                    field: 'cmBizSjNum',
+                    title: '数据变更单总数'
+                },
+                {
+                    field: 'isToolsNum',
+                    title: '使用工具的数量'
+                },
+                {
+                    field: 'countEfficiency',
+                    title: '工具使用比例'
+                }]
+        };
+        $.table.init(options);
+
+        function queryParams(params) {
+            var search = $.table.queryParams(params);
+            search.endCreateTime = $('#endCreateTime').val();
+            search.startCreateTime = $('#startCreateTime').val();
+            search.cmBizSjCountType = $('#cmBizSjCountType').val();
+            return search;
+        }
+    });
+
+
+    function searchQuery() {
+        var startCreateTime = $('#startCreateTime').val();
+        if(startCreateTime=='' || startCreateTime==null){
+            $.modal.alertError("创建开始时间不能为空!");
+            return;
+        }
+        var endCreateTime = $('#endCreateTime').val();
+        if(endCreateTime=='' || endCreateTime==null){
+            $.modal.alertError("创建结束时间不能为空!");
+            return;
+        }
+
+        //计划变更开始时间必须大于当前时间
+        var curDate = new Date().getTime();
+        var startDate = new Date(startCreateTime).getTime();
+        var endDate = new Date(endCreateTime).getTime();
+        if(startDate>curDate){
+            $.modal.alertError("创建开始时间不能大于当前时间!");
+            return;
+        }
+        if(endDate>curDate){
+            $.modal.alertError("创建结束时间不能大于当前时间!");
+            return;
+        }
+
+        if(startDate>endDate){
+            $.modal.alertError("创建开始时间不能大于创建结束时间!");
+            return;
+        }
+
+        var cmBizSjCountType  = $('#cmBizSjCountType').val();
+        if(cmBizSjCountType=='' || cmBizSjCountType==null){
+            $.modal.alertError("统计类型不能为空!");
+            return;
+        }
+
+
+        $.table.search();
+    }
+
+</script>
+</body>
+</html>

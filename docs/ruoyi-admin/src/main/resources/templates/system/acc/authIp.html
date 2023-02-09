@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+	<th:block th:include="include :: header('新增账号')" />
+	<th:block th:include="include :: ztree-css" />
+</head>
+<body class="white-bg">
+	<div id="accountDiv">
+		<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+			<form class="form-horizontal m" id="form-autoIp" th:object="${account}">
+				<input id="userId" name="userId" th:field="*{userId}"  class="form-control" type="hidden" >
+				<div class="form-group">
+					<label class="col-sm-3 control-label">账号名称：</label>
+					<div class="col-sm-8">
+						<input class="form-control" type="text" name="username" id="username" th:field="*{username}"readonly >
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-3 control-label">用户名称：</label>
+					<div class="col-sm-8">
+						<input id="pname" name="pname"  class="form-control" type="text" th:field="*{pname}" readonly>
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-3 control-label">IP范围起：</label>
+					<div class="col-sm-8">
+						<input id="ipStart" name="ipStart" class="form-control" type="text" th:field="*{ipStart}" required>
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-3 control-label">IP范围止：</label>
+					<div class="col-sm-8">
+						<input id="ipEnd" name="ipEnd" class="form-control" type="text" th:field="*{ipEnd}" required>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+
+	<th:block th:include="include :: footer" />
+	<th:block th:include="include :: ztree-js" />
+	<script type="text/javascript">
+		var editFlag = "";
+		/** 关闭选项卡 */
+		var closeItem = function(dataId){
+			var topWindow = $(window.parent.document);
+			if($.common.isNotEmpty(dataId)){
+				window.parent.$.modal.closeLoading();
+				// 根据dataId关闭指定选项卡
+				$('.menuTab[data-id="' + dataId + '"]', topWindow).remove();
+				// 移除相应tab对应的内容区
+				$('.mainContent .RuoYi_iframe[data-id="' + dataId + '"]', topWindow).remove();
+				return;
+			}
+			var panelUrl = window.frameElement.getAttribute('data-panel');
+			$('.page-tabs-content .active i', topWindow).click();
+			if($.common.isNotEmpty(panelUrl)){
+				$('.menuTab[data-id="' + panelUrl + '"]', topWindow).addClass('active').siblings('.menuTab').removeClass('active');
+				$('.mainContent .RuoYi_iframe', topWindow).each(function() {
+					if ($(this).data('id') == panelUrl) {
+						$(this).show().siblings('.RuoYi_iframe').hide();
+						return false;
+					}
+				});
+			}
+		}
+
+		function submitHandler() {
+			$.operate.save(ctx+"system/account/edit", $('#form-autoIp').serialize());
+	    }
+	
+		function add() {
+			var accountId = $("#accountId").val();
+			var ipStart = $("#ipStart").val();
+			var ipEnd = $("#ipEnd").val();
+			$.ajax({
+				cache : true,
+				type : "POST",
+				url : ctx + "system/account/autoIpSave",
+				data : {
+					"id": accountId,
+					"ipStart": ipStart,
+					"ipEnd":ipEnd
+				},
+				async : false,
+				error : function(request) {
+					$.modal.alertError("系统错误");
+				},
+				success : function(data) {
+					$.operate.successCallback(data);
+				}
+			});
+		}
+
+	</script>
+</body>
+</html>

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+	<th:block th:include="include :: header('选择机构信息')" />
+	<th:block th:include="include :: ztree-css" />
+</head>
+<body class="white-bg">
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+	<form class="form-horizontal m" id="form-role-add">
+		<input name="orgId" type="hidden" id="treeId"/>
+
+		<input type="hidden" id="deptId" name="deptId">
+
+		<div class="form-group">
+			<label class="col-sm-3 control-label">机构信息：</label>
+			<div class="col-sm-8" id="box">
+				<label class="check-box">
+					<input type="checkbox" value="1">展开/折叠</label>
+				<label class="check-box">
+					<input type="checkbox" value="2">全选/全不选</label>
+				<label class="check-box">
+					<input type="checkbox" value="3" checked>父子联动</label>
+				<label class="check-box">
+					<input type="checkbox" value="4">省/市邮储一级分行</label>
+				<label class="check-box">
+					<input type="checkbox" value="5">省/市邮储信息技术局</label>
+				<label class="check-box">
+					<input type="checkbox" value="6">计划单列市</label>
+				<div id="menuTrees" class="ztree ztree-border"></div>
+			</div>
+		</div>
+	</form>
+</div>
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: ztree-js" />
+<script type="text/javascript">
+    $(function() {
+        deptTree('0');
+    });
+
+    function deptTree(type) {
+        var deptIds = '';
+        if ('0' == type) {
+            deptIds = parent.$('#multiusers').val();
+        }
+        var url = ctx + "system/notice/selectAllTree" + "?type=" + type + "&deptIds=" + deptIds;
+        var options = {
+            id: "menuTrees",
+            url: url,
+            check: { enable: true },
+            expandLevel: 1,
+
+        };
+        $.tree.init(options);
+    }
+
+    $('input').on('ifChanged', function(obj){
+        var type = $(this).val();
+        var checked = obj.currentTarget.checked;
+        if (type == 1) {
+            if (checked) {
+                $._tree.expandAll(true);
+            } else {
+                $._tree.expandAll(false);
+            }
+        } else if (type == "2") {
+            if (checked) {
+                $._tree.checkAllNodes(true);
+            } else {
+                $._tree.checkAllNodes(false);
+            }
+        } else if (type == "3") {
+            if (checked) {
+                $._tree.setting.check.chkboxType = { "Y": "ps", "N": "ps" };
+            } else {
+                $._tree.setting.check.chkboxType = { "Y": "", "N": "" };
+            }
+        }else if (type == "4" || type == "5" || type == "6") {
+        deptTree(checkedBox());
+    }
+    })
+
+    function submitHandler() {
+        add();
+    }
+
+    function add() {
+        parent.$('#multiusers').val($.tree.getCheckedNodes());
+        parent.$('#multiusersName').val($.tree.getCheckedNodesName());
+        $.modal.close();
+
+    }
+
+    function checkedBox() {
+        var type = '';
+        var box = document.getElementById('box');
+        var inputs = box.getElementsByTagName('input');
+        for (var i = 3; i < inputs.length; i ++){
+            if (inputs[i].checked == true){
+                type += inputs[i].value;
+            } else {
+                type += '0';
+            }
+            type += ','
+        }
+        return type;
+    };
+</script>
+</body>
+</html>

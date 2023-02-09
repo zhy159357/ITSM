@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('申请人确认事务事件单')" />
+    <th:block th:include="include :: summernote-css" />
+    <th:block th:include="include :: select2-css" />
+    <style>
+        .form-control[disabled], fieldset[disabled] .form-control {
+            cursor: pointer;
+        }
+
+        .select2-container--open {
+
+            z-index: 9999999 !important;
+
+        }
+    </style>
+</head>
+<body>
+<div class="main-content">
+    <form class="form-horizontal" id="form-sw-check" th:object="${fmSw}">
+        <input name="fmSwId" type="hidden" th:field="*{fmSwId}" id="fmSwId"/>
+        <input name="currentState" type="hidden" id="currentState">
+        <input type="hidden" id="createId" th:field="*{createId}">
+        <input type="hidden" id="faultDescription" th:field="*{faultDescription}"/>
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-heading" style="background-color: #3c8dbc" data-toggle="collapse" data-target="#collapse1">
+                    <h4 class="panel-title" >
+                        基本信息
+                    </h4>
+                </div>
+                <div id="collapse1" class="panel-collapse in">
+                    <div class="panel-body">
+                        <div class="row form-group">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label  text-right">事件单编号：</label>
+                                    <div class="col-sm-8">
+                                        <input class="form-control" type="text" readonly th:field="*{faultNo}" >
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label  text-right ">申请处室：</label>
+                                    <div class="col-sm-8">
+                                        <input  class="form-control" type="text"  th:field="*{createOrgName}" readonly >
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label  text-right ">受理处室：</label>
+                                    <div class="col-sm-8">
+                                        <input    class="form-control" type="text"  th:field="*{dealOrgname}" readonly >
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label  text-right">请求事项：</label>
+                                    <div class="col-sm-8">
+                                        <select  class="form-control" disabled>
+                                            <option value=""th:if="${not #strings.isEmpty(fmSw.dealOrgId)}"></option>
+                                            <option th:each="fmSwMb : ${fmSwMbList}" th:value="${fmSwMb.swmdId}" th:text="${fmSwMb.faultKind}" th:field="*{faultKind}"></option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label  text-right ">事件标题：</label>
+                                    <div class="col-sm-10">
+                                        <input class="form-control" type="text"  th:field="*{faultTitle}" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row form-group">
+                            <label class="col-sm-2 control-label  text-right ">事件内容：</label>
+                            <div class="col-sm-10">
+                                <div class="summernote" required id="summernote"></div>
+                            </div>
+                        </div>
+
+                        <div class="row form-group">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label  text-right ">申请人：</label>
+                                    <div class="col-sm-8">
+                                        <input    class="form-control" type="text" th:field="*{createName}" readonly >
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label  text-right ">审核人2：</label>
+                                    <div class="col-sm-8">
+                                        <input    class="form-control" type="text" th:field="*{checkerTwoName}" readonly >
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label  text-right ">审核人3：</label>
+                                    <div class="col-sm-8">
+                                        <input class="form-control" type="text" th:field="*{checkerThreeName}" readonly >
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="col-sm-4 control-label  text-right ">审核人4：</label>
+                                <div class="col-sm-8">
+                                    <input class="form-control" type="text" th:field="*{checkerFourName}" readonly >
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="row form-group">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label  text-right ">申请时间：</label>
+                                    <div class="col-sm-8">
+                                        <input    class="form-control" type="text" th:field="*{createTime}" readonly >
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label  text-right ">当前状态：</label>
+                                    <div class="col-sm-8">
+                                        <input  class="form-control" type="text" th:field="*{currentStateName}" readonly >
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading" style="background-color: #3c8dbc" data-toggle="collapse" data-target="#collapse2">
+
+                    <h4 class="panel-title" >
+                        处理信息
+                    </h4>
+                </div>
+                <div id="collapse2" class="panel-collapse in">
+
+                    <div class="panel-body">
+                        <div class="row ">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label  text-right ">处理结果：</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" th:field="*{dealResult}"  class="form-control" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6"></div>
+                        </div>
+                        <div class="row form-group">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label  text-right ">处理说明：</label>
+                                    <div class="col-sm-10">
+                                        <textarea class="form-control" rows="10" th:field="*{dealContent}" readonly></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label  text-right">处理人5：</label>
+                                    <div class="col-sm-8">
+                                        <input  class="form-control" type="text" th:field="*{dealerFiveName}" readonly >
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6"></div>
+                        </div>
+                    </div>
+                </div>
+            <div class="panel panel-default">
+                <div class="panel-body">
+                <!-- Nav tabs -->
+                <ul class="nav nav-tabs" role="tablist">
+                    <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">操作日志</a></li>
+                    <li role="presentation"><a href="#profile" aria-controls="profile" role="tab" data-toggle="tab">附件</a></li>
+                </ul>
+
+                <!-- Tab panes -->
+                <div class="tab-content">
+                    <div role="tabpanel" class="tab-pane active" id="home">
+                        <div class="col-sm-12 select-table table-striped">
+                            <table id="history-table"></table>
+                        </div>
+                    </div>
+                    <div role="tabpanel" class="tab-pane" id="profile">
+                        <div class="btn-group-sm" id="toolbar" role="tab" style="margin: 15px 0px;">
+                            <a class="btn btn-success" type="button" onclick="upload()">
+                                <i class="fa fa-upload"></i> 添加附件
+                            </a>
+                            <a class="btn btn-warning multiple disabled" onclick="downloadFile()">
+                                <i class="fa fa-download"></i> 下载附件
+                            </a>
+                            <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAllCurrentUser();">
+                                <i class="fa fa-trash"></i> 删除附件
+                            </a>
+                        </div>
+                        <div class="col-sm-12 select-table table-striped">
+                            <table id="file-table"></table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </div>
+        </div>
+        <div class="row" style="margin-top: 15px;">
+            <div class="col-sm-offset-5 col-sm-10">
+                <button type="button" class="btn btn-sm btn-primary" onclick="checkPass()" ><i class="fa fa-check"></i>确认完成</button>&nbsp;
+                <button type="button" class="btn btn-sm btn-danger" onclick="closeItem()"><i class="fa fa-window-close"></i>关 闭 </button>
+            </div>
+        </div>
+        </div>
+    </form>
+
+
+</div>
+<script th:src="@{/js/activiti.js}"></script>
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: summernote-js" />
+<th:block th:include="include :: select2-js" />
+<script th:inline="javascript" >
+    var prefix = ctx + 'trans/sw';
+    var prefix_attachment = ctx + "pub/attachment";
+    var prefix_delete = ctx + "bg/sjbg";
+    $(function () {
+        $.fn.modal.Constructor.prototype.enforceFocus = function () { };
+        $("#authorModal").on("shown.bs.modal", function(){
+            var opts = '<option value=""></option>';
+            var authorList = [[${authorList}]];
+            $(authorList).each(function (index,item) {
+                opts += '<option value="'+item.pId+'">'+item.pName+'</option>';
+            })
+            $('#authorId').html(opts);
+        })
+        //回显事件内容
+        $('.summernote').summernote('code',$('#faultDescription').val());
+        $('.summernote').summernote('disable');
+        puFolwHistory($("#fmSwId").val());
+        var options = {
+            url: prefix_attachment + "/list",
+            id: "file-table",
+            createUrl: prefix_attachment + "/add",
+            updateUrl: prefix_attachment + "/edit/{id}",
+            removeUrl: prefix_attachment + "/remove",
+            detailUrl: prefix_attachment + "/edit/{id}",
+            sortName: "fileTime",
+            sortOrder: "desc",
+            singleSelect: true,
+            clickToSelect: true,
+            queryParams:queryParams,
+            modalName: "附件列表",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field : 'atId',
+                    title : '附件ID',
+                    visible : false
+                },
+                {
+                    field : 'person.pId',
+                    title : '上传人员Id',
+                    visible: false
+                },
+                {
+                    field : 'fileName',
+                    title : '文件名称'
+                },
+                {
+                    field : 'person.pName',
+                    title : '上传人'
+                },
+                {
+                    field : 'size',
+                    title : '文件大小'
+                },
+                {
+                    field : 'memo',
+                    title : '文件描述'
+                },
+                {
+                    field : 'fileTime',
+                    title : '上传时间'
+                }]
+        };
+        $.table.init(options);
+    });
+
+    function queryParams(params) {
+        var search = $.table.queryParams(params);
+        search.ownerId =  $("#fmSwId").val();
+        return search;
+    }
+
+    function checkPass() {
+
+        //处理结果
+        var dealResult = $('#dealResult').val();
+        if(dealResult==''){
+            $.modal.alertError('请选择处理结果');
+            return;
+        }
+        //判断处理说明是否填写
+        var dealContent = $('#dealContent').val().trim();
+        if(isEmpty(dealContent)){
+            $.modal.alertError('请输入处理说明');
+            return;
+        }else{
+            if (getValueLen(dealContent) > 256) {
+                $.modal.alertError('处理说明输入长度不能大于256');
+                return;
+            }
+        }
+
+
+        var data = {};
+        //获取事件单Id
+        var fmSwId = $('#fmSwId').val();
+        //获取当前状态
+        var currentState = '05';
+        data.fmSwId = fmSwId;
+        data.currentState = currentState;
+        data.dealContent = dealContent;
+        //审计结果已关闭默认为未审计
+        data.auditResult = '00';
+        //处理结果
+        data.dealResult = dealResult;
+        var logPerformDesc = '成功';
+        data.logPerformDesc = logPerformDesc;
+        //处理通过
+        $.operate.saveTab(prefix + "/checkPass",data);
+
+    }
+
+    function dealReturn(){
+        var logPerformDesc = $('#logPerformDesc').val().trim();
+        if(isEmpty(logPerformDesc)){
+            $.modal.alertError('请输入退回意见');
+            return;
+        }else{
+            if (getValueLen(logPerformDesc) > 256) {
+                $.modal.alertError('退回意见输入长度不能大于256');
+                return;
+            }
+           var data = {};
+           //获取事件单编号
+           var fmSwId = $('#fmSwId').val();
+           data.fmSwId = fmSwId;
+           data.currentState = '08';
+           data.createId = $('#createId').val()
+           data.logPerformDesc = logPerformDesc;
+           //处理退回
+           $.operate.saveTab(prefix + "/dealPass",data);
+       }
+    }
+    
+    
+    function authorSubmit() {
+        var authorId = $('#authorId').val();
+        if(isEmpty(authorId)){
+            $.modal.alertError('请选择授权人');
+            return;
+        }
+
+        //判断处理说明是否填写
+        var authorDesc = $('#authorDesc').val().trim();
+        if(isEmpty(authorDesc)){
+            $.modal.alertError('请输入授权说明');
+            return;
+        }else{
+            if (getValueLen(authorDesc) > 256) {
+                $.modal.alertError('授权说明输入长度不能大于256');
+                return;
+            }
+        }
+
+        var data = {};
+        //获取事件单编号
+        var fmSwId = $('#fmSwId').val();
+        data.fmSwId = fmSwId;
+        data.currentState = '03';
+        data.logPerformDesc = authorDesc;
+        data.authId = authorId;
+        //授权申请
+        $.operate.save(prefix + "/dealPass",data);
+
+    }
+
+    // 附件上传页面
+    function upload() {
+
+        var url = prefix_attachment+"/upload/" + $("#fmSwId").val();
+        $.modal.open("问题单附件上传", url);
+    }
+    // 附件下载
+    function downloadFile() {
+        var rows = $.table.selectFirstColumns();
+        var atId = rows[0];
+        var ownerId = $("#fmSwId").val();
+        var url = prefix_attachment+"/download/"+ownerId+"/"+atId;
+        window.location.href = url;
+    }
+
+
+    /**
+     * 输入空值校验
+     * @param valueStr
+     * @returns {boolean}
+     */
+    function  isEmpty(valueStr) {
+        if(valueStr=='' || valueStr==null){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+
+    /**
+     * 获取输入数值的长度
+     * @param valueStr
+     * @returns {number}
+     */
+    function getValueLen(valueStr){
+        return isEmpty(valueStr)?0:valueStr.length;
+    }
+</script>
+</body>
+</html>

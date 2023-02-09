@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.PubHolidayMapper">
+
+	<resultMap type="PubHoliday" id="PubHolidayResult">
+		<id     property="holidayId"        column="holiday_id"         />
+		<result property="scope"        column="scope"         />
+		<result property="day"     column="day"      />
+		<result property="name"      column="name"       />
+		<result property="type"      column="type"       />
+		<result property="memo"         column="memo"           />
+		<result property="agencyId"         column="agency_id"           />
+		<result property="agencyName"         column="agency_name"           />
+
+
+	</resultMap>
+
+    <!--添加节假日信息 -->
+	<insert id="insert" parameterType="PubHoliday" >
+		insert into PUB_HOLIDAY(
+		holiday_id,
+		<if test="memo != null and memo != ''">memo,</if>
+		scope,
+		day,
+		name,
+		type
+		)values(
+		#{holidayId},
+		<if test="memo != null and memo != ''">#{memo},</if>
+		<if test="scope != null and scope != ''">#{scope},</if>
+		<if test="day != null and day != ''">to_char(to_date(#{day},'yyyy-MM-dd'), 'yyyyMMdd'),</if>
+		<if test="name != null and name != ''">#{name},</if>
+		<if test="type != null and type != ''">#{type}</if>
+
+		)
+	</insert>
+
+	<insert id="insertMysql" parameterType="PubHoliday" >
+		insert into PUB_HOLIDAY(
+		holiday_id,
+		<if test="memo != null and memo != ''">memo,</if>
+		scope,
+		day,
+		name,
+		type
+		)values(
+		#{holidayId},
+		<if test="memo != null and memo != ''">#{memo},</if>
+		<if test="scope != null and scope != ''">#{scope},</if>
+		<if test="day != null and day != ''">#{day},</if>
+		<if test="name != null and name != ''">#{name},</if>
+		<if test="type != null and type != ''">#{type}</if>
+
+		)
+	</insert>
+
+    <!--修改节假日信息 -->
+	<update id="edit" parameterType="PubHoliday">
+		update PUB_HOLIDAY
+		<set>
+		<if test="day != null and day != ''">
+			day =to_char(to_date(#{day},'yyyy-MM-dd'), 'yyyyMMdd'),
+		</if>
+		<if test="scope != null and scope != ''">scope = #{scope},</if>
+		<if test="name != null and name != ''">name = #{name},</if>
+		<if test="type != null and type != ''">type = #{type},</if>
+		<if test="memo != null and memo != ''">memo = #{memo}</if>
+		</set>
+		where holiday_id = #{holidayId}
+
+	</update>
+
+	<update id="editMysql" parameterType="PubHoliday">
+		update PUB_HOLIDAY
+		<set>
+			<if test="day != null and day != ''">
+				day = #{day},
+			</if>
+			<if test="scope != null and scope != ''">scope = #{scope},</if>
+			<if test="name != null and name != ''">name = #{name},</if>
+			<if test="type != null and type != ''">type = #{type},</if>
+			<if test="memo != null and memo != ''">memo = #{memo}</if>
+		</set>
+		where holiday_id = #{holidayId}
+
+	</update>
+
+	<!--删除节假日-->
+	<delete id="deleteHolidayByIds"  parameterType="String">
+		delete from PUB_HOLIDAY where holiday_id in
+		<foreach collection="array" item="holidayId" open="(" separator="," close=")">
+			#{holidayId}
+		</foreach>
+	</delete>
+
+
+
+	<!--展示节假日列表 -->
+	<select id="selectHolidayList" parameterType="PubHoliday" resultMap="PubHolidayResult">
+
+		SELECT holiday_id,scope,to_char(to_date(day,'yyyy-MM-dd'), 'yyyy-MM-dd') day,name,type,memo,agency_id,agency_name
+		from PUB_HOLIDAY
+		<where>
+		<if test="day != null and day != ''">
+			AND day= to_char(to_date(#{day},'yyyy-MM-dd'), 'yyyyMMdd')
+		</if>
+		<if test="type != null and type != ''">
+			AND type like concat(concat('%',#{type}),'%')
+		</if>
+		<if test="name != null and name != ''">
+			AND name like concat(concat('%',#{name}),'%')
+		</if>
+		<if test="scope != null and scope != ''">
+			AND scope like concat(concat('%',#{scope}),'%')
+		</if>
+
+		</where>
+
+		ORDER BY day desc
+		<!-- 数据范围过滤-->
+		${params.dataScope}
+
+	</select>
+
+	<select id="selectHolidayListMysql" parameterType="PubHoliday" resultMap="PubHolidayResult">
+
+		SELECT holiday_id,scope,day,name,type,memo,agency_id,agency_name
+		from PUB_HOLIDAY
+		<where>
+			<if test="day != null and day != ''">
+				AND day = #{day}
+			</if>
+			<if test="type != null and type != ''">
+				AND type like concat(concat('%',#{type}),'%')
+			</if>
+			<if test="name != null and name != ''">
+				AND name like concat(concat('%',#{name}),'%')
+			</if>
+			<if test="scope != null and scope != ''">
+				AND scope like concat(concat('%',#{scope}),'%')
+			</if>
+
+		</where>
+
+		ORDER BY day desc
+		<!-- 数据范围过滤-->
+		${params.dataScope}
+
+	</select>
+
+    <!--根据id查询 -->
+    <select id="selectholidayById" parameterType="PubHoliday" resultMap="PubHolidayResult">
+		SELECT holiday_id,scope,to_char(to_date(day,'yyyy-MM-dd'), 'yyyy-MM-dd')  day,name,type,memo,agency_id,agency_name
+		from PUB_HOLIDAY
+		where holiday_id = #{holidayId}
+	</select>
+
+	<select id="selectholidayByIdMysql" parameterType="PubHoliday" resultMap="PubHolidayResult">
+		SELECT holiday_id,scope,day,name,type,memo,agency_id,agency_name
+		from PUB_HOLIDAY
+		where holiday_id = #{holidayId}
+	</select>
+	<!--查询所有系统休息日期 -->
+	<select id="getHolidays" resultMap="PubHolidayResult">
+		SELECT *
+		from PUB_HOLIDAY
+		where scope='1' and type='1'
+	</select>
+	<!--查询所有系统工作日期 -->
+	<select id="getWorkdays" resultMap="PubHolidayResult">
+		SELECT *
+		from PUB_HOLIDAY
+		where scope='1' and type='2'
+	</select>
+
+
+</mapper>

@@ -1,0 +1,649 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.SysNoticeMapper">
+
+    <resultMap type="SysNotice" id="SysNoticeResult">
+        <result property="amBizId"       column="am_biz_Id"       />
+        <result property="amCode"    column="am_code"    />
+        <result property="amType"     column="am_type"     />
+        <result property="addTime"  column="create_time"  />
+        <result property="checkerId"         column="checker_id"          />
+        <result property="checkerName"         column="checker_Name"          />
+        <result property="amDealType"       column="am_deal_type"       />
+        <result property="contactPhone"     column="contact_phone"     />
+        <result property="otherPhone"       column="other_phone"       />
+        <result property="createId"       column="create_id"       />
+        <result property="urgentLev"       column="urgent_lev"       />
+        <result property="secretLev"       column="secret_lev"       />
+        <result property="summry"       column="summry"       />
+        <result property="description"       column="description"       />
+        <result property="releaseDate"       column="release_date"       />
+        <result property="releaseOrg"       column="release_org"       />
+        <result property="checkerFlag"       column="checker_flag"       />
+        <result property="checkerAdvice"       column="checker_advice"       />
+        <result property="invalidationMark"       column="invalidation_mark"       />
+        <result property="checkerTime"       column="checker_time"       />
+        <result property="sms"       column="sms"       />
+        <result property="sendRange"       column="send_range"       />
+        <result property="receiveDeptId"       column="receive_dept_id"       />
+        <result property="receiveDeptName"       column="receive_dept_name"       />
+        <result property="receiveRoleId"       column="receive_role_id"       />
+        <result property="receiveRoleName"     column="receive_role_name"     />
+        <result property="receiveGroupId"         column="receive_group_id"          />
+        <result property="receiveGroupName"       column="receive_group_name"       />
+        <result property="amTitle"       column="am_title"       />
+        <result property="currentStatus"       column="current_status"       />
+        <result property="endTime"       column="end_time"       />
+        <result property="dealSchdule"     column="deal_schdule"     />
+        <result property="pName"     column="PNAME"     />
+        <result property="orgName"     column="ORGNAME"     />
+        <result property="postIds"     column="POSTID"     />
+        <result property="postName"     column="POST_NAME"     />
+
+    </resultMap>
+
+    <resultMap type="OgPerson" id="OgPersonResult">
+        <id     property="pId"              column="PID"         />
+        <result property="orgId"            column="ORGID"         />
+        <result property="pName"            column="PNAME"      />
+        <result property="sex"              column="SEX"       />
+        <result property="edu"              column="EDU"       />
+        <result property="birthday"         column="BIRTHDAY"           />
+        <result property="birthPlace"       column="BIRTHPLACE"     />
+        <result property="phone"            column="PHONE"             />
+        <result property="mobilPhone"       column="MOBIL_PHONE"          />
+        <result property="email"            column="EMAIL"        />
+        <result property="address"          column="ADDRESS"            />
+        <result property="createBy"         column="create_by"          />
+        <result property="momer"            column="MOMER"        />
+        <result property="memo"             column="MEMO"        />
+        <result property="updatetime"       column="UPDATE_TIME"      />
+        <result property="invalidationMark" column="INVALIDATION_MARK" />
+        <result property="position"         column="POSITION"       />
+        <result property="leader"           column="LEADER"     />
+        <result property="pOrder"           column="P_ORDER"       />
+        <result property="pflag"            column="P_FLAG"     />
+        <result property="orgname"          column="ORGNAME"     />
+    </resultMap>
+
+    <resultMap type="com.ruoyi.system.domain.OgPost" id="OgPostResult">
+        <id     property="postId"        column="postid"       />
+        <result property="postName"      column="post_name"     />
+        <result property="addEr"      column="adder"     />
+        <result property="addTime"    column="addtime"   />
+        <result property="moder"      column="moder"     />
+        <result property="updateTime"    column="update_time"   />
+        <result property="memo"    column="memo"   />
+        <result property="invalidationMark"    column="invalidation_mark"   />
+        <result property="serialNum"    column="serial_num"   />
+    </resultMap>
+
+    <resultMap type="OgGroup" id="SysOgGroupResult">
+        <id     property="groupId"              column="GROUPID"         />
+        <result property="grpName"              column="GRPNAME"         />
+        <result property="grpLeader"            column="GRPLEADER"      />
+        <result property="adder"                column="adder"       />
+        <result property="addTime"              column="addTime"       />
+        <result property="moder"                column="moder"           />
+        <result property="modTime"              column="modTime"     />
+        <result property="invalidationMark"     column="INVALIDATION_MARK"          />
+        <result property="memo"                 column="MEMO"        />
+        <result property="orgId"                column="ORGID"            />
+        <result property="count"                column="COUNT"          />
+        <result property="tel"                  column="TEL"        />
+        <result property="sysId"                column="SYSID"        />
+        <result property="whiteList"            column="WHITE_LIST"      />
+        <association property="ogOrg"           column="orgId" javaType="OgOrg" resultMap="OgOrgResult" />
+        <association property="ogSys"           column="sysId" javaType="OgSys" resultMap="OgSysResult" />
+        <association property="groupperson"     column="pid" javaType="OgGroupPerson" resultMap="OgGroupPersonResult" />
+    </resultMap>
+
+    <resultMap type="OgOrg" id="OgOrgResult">
+        <id     property="orgId"     column="orgId"     />
+        <result property="parentId"   column="t_o_orgId"   />
+        <result property="orgCode"  column="orgCode"   />
+        <result property="orgName"   column="orgName"   />
+        <result property="orgLv"   column="orgLv"   />
+        <result property="adder"     column="adder"      />
+        <result property="addtime"      column="addtime"       />
+        <result property="moder"      column="moder"       />
+        <result property="modtime"     column="modtime"      />
+        <result property="updatetime"    column="update_time"    />
+        <result property="invalidationMark" column="invalidation_Mark" />
+        <result property="memo"   column="memo"   />
+        <result property="branchMark" column="branch_Mark" />
+        <result property="inoutsideMark"   column="inoutside_Mark"   />
+        <result property="levelCode" column="level_Code" />
+        <result property="leaf"  column="leaf"></result>
+        <result property="type" column="type"></result>
+        <result property="sort" column="sort"></result>
+        <result property="operaternum" column="operaternum"></result>
+        <result property="khnum" column="khnum"></result>
+        <result property="parentName" column="parent_name" />
+    </resultMap>
+
+    <resultMap type="OgSys" id="OgSysResult">
+        <id     property="sysId"                column="sysId"         />
+        <result property="orgId"                column="orgId"         />
+        <result property="code"                 column="code"      />
+        <result property="caption"              column="caption"       />
+        <result property="memo"                 column="memo"       />
+        <result property="invalidationMark"     column="invalidation_Mark"           />
+        <result property="isExamination"        column="isExamination"     />
+        <result property="dept"                 column="dept"        />
+        <result property="pid"                  column="pid"            />
+        <result property="businessId"           column="businessId"          />
+        <result property="isKeySys"             column="is_Key_Sys"        />
+        <result property="sysType"              column="sysType"        />
+    </resultMap>
+
+    <resultMap type="OgGroupPerson" id="OgGroupPersonResult">
+        <id     property="pId"              column="PID"         />
+        <result property="groupId"          column="groupId"         />
+        <result property="gpId"             column="gpId"      />
+        <result property="gpOsition"        column="gpOsition"       />
+        <result property="gpOrder"          column="gp_order"     />
+    </resultMap>
+
+    <sql id="selectNoticeVo">
+        SELECT
+        T.AM_BIZ_ID AS AM_BIZ_ID,
+        T.AM_CODE AS AM_CODE,
+        T.AM_TYPE AS AM_TYPE,
+        T.CREATE_TIME AS CREATE_TIME,
+        T.CHECKER_ID AS CHECKER_ID,
+        PS.PNAME AS CHECKER_NAME,
+        T.AM_DEAL_TYPE AS AM_DEAL_TYPE,
+        T.CONTACT_PHONE AS CONTACT_PHONE,
+        T.OTHER_PHONE AS OTHER_PHONE,
+        T.CREATE_ID AS CREATE_ID,
+        T.URGENT_LEV AS URGENT_LEV,
+        T.SECRET_LEV AS SECRET_LEV,
+        T.SUMMRY AS SUMMRY,
+        T.DESCRIPTION AS DESCRIPTION,
+        T.RELEASE_DATE AS RELEASE_DATE,
+        T.RELEASE_ORG AS RELEASE_ORG,
+        T.CHECKER_FLAG AS CHECKER_FLAG,
+        T.CHECKER_ADVICE AS CHECKER_ADVICE,
+        T.INVALIDATION_MARK AS INVALIDATION_MARK,
+        T.CHECKER_TIME AS CHECKER_TIME,
+        T.SMS AS SMS,
+        T.SEND_RANGE AS SEND_RANGE,
+        T.RECEIVE_DEPT_ID AS RECEIVE_DEPT_ID,
+        T.RECEIVE_ROLE_ID AS RECEIVE_ROLE_ID,
+        T.RECEIVE_DEPT_NAME AS RECEIVE_DEPT_NAME,
+        T.RECEIVE_ROLE_NAME AS RECEIVE_ROLE_NAME,
+        T.RECEIVE_GROUP_ID AS RECEIVE_GROUP_ID,
+        T.RECEIVE_GROUP_NAME AS RECEIVE_GROUP_NAME,
+        T.AM_TITLE AS AM_TITLE,
+        T.CURRENT_STATUS AS CURRENT_STATUS,
+        T.END_TIME AS END_TIME,
+        T.DEAL_SCHDULE AS DEAL_SCHDULE,
+        P.PNAME AS PNAME,
+        O.ORGNAME AS ORGNAME
+        FROM
+        AM_BIZ_ANNOUNCEMENT T
+        LEFT JOIN OG_PERSON P ON T.CREATE_ID = P.PID
+        LEFT JOIN OG_PERSON PS ON T.CHECKER_ID = PS.PID
+        LEFT JOIN OG_ORG O ON T.RELEASE_ORG = O.ORGID
+        WHERE T.CURRENT_STATUS > '00'
+    </sql>
+
+    <sql id="selectNoticeCheckVo">
+        SELECT
+        T.AM_BIZ_ID AS AM_BIZ_ID,
+        T.AM_CODE AS AM_CODE,
+        T.AM_TYPE AS AM_TYPE,
+        T.CREATE_TIME AS CREATE_TIME,
+        T.CHECKER_ID AS CHECKER_ID,
+        PS.PNAME AS CHECKER_NAME,
+        T.AM_DEAL_TYPE AS AM_DEAL_TYPE,
+        T.CONTACT_PHONE AS CONTACT_PHONE,
+        T.OTHER_PHONE AS OTHER_PHONE,
+        T.CREATE_ID AS CREATE_ID,
+        T.URGENT_LEV AS URGENT_LEV,
+        T.SECRET_LEV AS SECRET_LEV,
+        T.SUMMRY AS SUMMRY,
+        T.DESCRIPTION AS DESCRIPTION,
+        T.RELEASE_DATE AS RELEASE_DATE,
+        T.RELEASE_ORG AS RELEASE_ORG,
+        T.CHECKER_FLAG AS CHECKER_FLAG,
+        T.CHECKER_ADVICE AS CHECKER_ADVICE,
+        T.INVALIDATION_MARK AS INVALIDATION_MARK,
+        T.CHECKER_TIME AS CHECKER_TIME,
+        T.SMS AS SMS,
+        T.SEND_RANGE AS SEND_RANGE,
+        T.RECEIVE_DEPT_ID AS RECEIVE_DEPT_ID,
+        T.RECEIVE_ROLE_ID AS RECEIVE_ROLE_ID,
+        T.RECEIVE_DEPT_NAME AS RECEIVE_DEPT_NAME,
+        T.RECEIVE_ROLE_NAME AS RECEIVE_ROLE_NAME,
+        T.RECEIVE_GROUP_ID AS RECEIVE_GROUP_ID,
+        T.RECEIVE_GROUP_NAME AS RECEIVE_GROUP_NAME,
+        T.AM_TITLE AS AM_TITLE,
+        T.CURRENT_STATUS AS CURRENT_STATUS,
+        T.END_TIME AS END_TIME,
+        T.DEAL_SCHDULE AS DEAL_SCHDULE,
+        P.PNAME AS PNAME,
+        O.ORGNAME AS ORGNAME
+        FROM
+        AM_BIZ_ANNOUNCEMENT T
+        LEFT JOIN OG_PERSON P ON T.CREATE_ID = P.PID
+        LEFT JOIN OG_PERSON PS ON T.CHECKER_ID = PS.PID
+        LEFT JOIN OG_ORG O ON T.RELEASE_ORG = O.ORGID
+        WHERE T.CURRENT_STATUS > '00'
+    </sql>
+
+    <select id="selectNoticeById" parameterType="String" resultMap="SysNoticeResult">
+        <include refid="selectNoticeVo"/>
+        and am_biz_id = #{amBizId}
+    </select>
+
+    <select id="selectNoticeMaxAmCode" parameterType="SysNotice" resultMap="SysNoticeResult">
+        <include refid="selectNoticeVo"/>
+        AND T.CREATE_TIME = (SELECT MAX(CREATE_TIME) FROM AM_BIZ_ANNOUNCEMENT)
+        AND ROWNUM = '1'
+    </select>
+
+    <select id="selectNoticeMaxAmCodeMysql" parameterType="SysNotice" resultMap="SysNoticeResult">
+        <include refid="selectNoticeVo"/>
+        AND T.CREATE_TIME = (SELECT MAX(CREATE_TIME) FROM AM_BIZ_ANNOUNCEMENT)
+        LIMIT 0,1
+    </select>
+
+    <select id="selectNoticeList" parameterType="SysNotice" resultMap="SysNoticeResult">
+        <include refid="selectNoticeVo"/>
+        <if test="amBizId != null and amBizId != ''">
+            AND T.am_biz_Id = #{amBizId}
+        </if>
+        <if test="amTitle != null and amTitle != ''">
+            AND T.am_title like concat(concat('%',#{amTitle}),'%')
+        </if>
+        <if test="amCode != null and amCode != ''">
+            AND T.am_code like concat(concat('%',#{amCode}),'%')
+        </if>
+        <if test="amType != null and amType != ''">
+            AND T.am_type = #{amType}
+        </if>
+        <if test="createId != null and createId != ''">
+            AND T.create_id like concat(concat('%',#{createId}),'%')
+        </if>
+        <if test="checkerId != null and checkerId != ''">
+            AND T.checker_id = #{checkerId}
+        </if>
+        <if test="noticeStatus != null and noticeStatus != ''">
+            AND T.current_status > #{noticeStatus}
+        </if>
+        <if test="params.currentStatus != null and params.currentStatus != ''">
+            AND T.current_status != #{params.currentStatus}
+        </if>
+        <if test="currentStatus != null and currentStatus != ''">
+            AND T.current_status = #{currentStatus}
+        </if>
+
+        <if test="receiveDeptId != null and receiveDeptId != ''">
+            AND T.receive_dept_id = #{receiveDeptId}
+        </if>
+        <if test="pName != null and pName != ''">
+            AND P.PNAME like concat(concat('%',#{pName}),'%')
+        </if>
+        <if test="orgName != null and orgName != ''">
+            AND O.ORGNAME like concat(concat('%',#{orgName}),'%')
+        </if>
+        <if test="description != null and description != ''">
+            AND T.description like concat(concat('%',#{description}),'%')
+        </if>
+        <if test="params.beginTime != null and params.beginTime != ''"><!-- 开始时间检索 -->
+            AND T.create_time &gt;= #{params.beginTime}
+        </if>
+        <if test="params.endTime != null and params.endTime != ''"><!-- 时间检索 -->
+            AND T.create_time &lt;= #{params.endTime}
+        </if>
+        <if test="params.releaseBeginTime != null and params.releaseBeginTime != ''"><!-- 发布时间开始时间检索 -->
+            AND T.RELEASE_DATE &gt;= #{params.releaseBeginTime}
+        </if>
+        <if test="params.releaseEndTime != null and params.releaseEndTime != ''"><!-- 发布时间结束时间检索 -->
+            AND T.RELEASE_DATE &lt;= #{params.releaseEndTime}
+        </if>
+        <if test="amBizIds != null and amBizIds != ''">
+            AND T.am_biz_Id in
+            <foreach collection="amBizIds" item="amBizId" open="(" separator="," close=")">
+                #{amBizId}
+            </foreach>
+        </if>
+        ORDER BY T.CREATE_TIME DESC
+    </select>
+
+    <select id="selectNoticeCheckList" parameterType="SysNotice" resultMap="SysNoticeResult">
+        <include refid="selectNoticeVo"/>
+        <if test="amTitle != null and amTitle != ''">
+            AND T.am_title like concat(concat('%',#{amTitle}),'%')
+        </if>
+        <if test="amCode != null and amCode != ''">
+            AND T.am_code like concat(concat('%',#{amCode}),'%')
+        </if>
+        <if test="amType != null and amType != ''">
+            AND T.am_type = #{amType}
+        </if>
+        <if test="createId != null and createId != ''">
+            AND T.create_id like concat(concat('%',#{createId}),'%')
+        </if>
+        <if test="checkerId != null and checkerId != ''">
+            AND T.checker_id = #{checkerId}
+        </if>
+        <if test="pName != null and pName != ''">
+            AND P.PNAME like concat(concat('%',#{pName}),'%')
+        </if>
+        <if test="orgName != null and orgName != ''">
+            AND O.ORGNAME like concat(concat('%',#{orgName}),'%')
+        </if>
+        <if test="params.beginTime != null and params.beginTime != ''"><!-- 开始时间检索 -->
+            AND T.create_time &gt;= #{params.beginTime}
+        </if>
+        <if test="params.endTime != null and params.endTime != ''"><!-- 时间检索 -->
+            AND T.create_time &lt;= #{params.endTime}
+        </if>
+        AND T.CURRENT_STATUS = '02'
+        ORDER BY CREATE_TIME DESC
+    </select>
+
+    <insert id="insertNotice" parameterType="SysNotice">
+        insert into am_biz_announcement (
+        am_biz_Id,
+        am_code,
+        <if test="amType != null and amType != '' ">am_type, </if>
+        <if test="checkerId != null and checkerId != '' ">checker_id, </if>
+        <if test="amDealType != null and amDealType != '' ">am_deal_type, </if>
+        <if test="contactPhone != null and contactPhone != '' ">contact_phone, </if>
+        <if test="otherPhone != null and otherPhone != ''">other_phone,</if>
+        <if test="createId != null and createId != ''">create_id,</if>
+        <if test="urgentLev != null and urgentLev != '' ">urgent_lev, </if>
+        <if test="secretLev != null and secretLev != '' ">secret_lev, </if>
+        <if test="summry != null and summry != '' ">summry, </if>
+        <if test="description != null and description != '' ">description, </if>
+        <if test="releaseDate != null and releaseDate != ''">release_date,</if>
+        <if test="releaseOrg != null and releaseOrg != ''">release_org,</if>
+        <if test="checkerFlag != null and checkerFlag != '' ">checker_flag, </if>
+        <if test="checkerAdvice != null and checkerAdvice != '' ">checker_advice, </if>
+        <if test="invalidationMark != null and invalidationMark != '' ">invalidation_mark, </if>
+        <if test="checkerTime != null and checkerTime != '' ">checker_time, </if>
+        <if test="sms != null and sms != ''">sms,</if>
+        <if test="sendRange != null and sendRange != ''">send_range,</if>
+        <if test="receiveDeptId != null and receiveDeptId != '' ">receive_dept_id, </if>
+        <if test="receiveDeptName != null and receiveDeptName != '' ">receive_dept_name, </if>
+        <if test="receiveRoleId != null and receiveRoleId != '' ">receive_role_id, </if>
+        <if test="receiveRoleName != null and receiveRoleName != '' ">receive_role_name, </if>
+        <if test="receiveGroupId != null and receiveGroupId != ''">receive_group_id,</if>
+        <if test="receiveGroupName != null and receiveGroupName != ''">receive_group_name,</if>
+        <if test="amTitle != null and amTitle != '' ">am_title, </if>
+        <if test="currentStatus != null and currentStatus != '' ">current_status, </if>
+        <if test="endTime != null and endTime != ''">end_time,</if>
+        <if test="dealSchdule != null and dealSchdule != ''">deal_schdule</if>
+        create_time
+        )values(
+        #{amBizId},
+        #{amCode},
+        <if test="amType != null and amType != '' ">#{amType}, </if>
+        <if test="checkerId != null and checkerId != '' ">#{checkerId}, </if>
+        <if test="amDealType != null and amDealType != '' ">#{amDealType}, </if>
+        <if test="contactPhone != null and contactPhone != '' ">#{contactPhone}, </if>
+        <if test="otherPhone != null and otherPhone != ''">#{otherPhone},</if>
+        <if test="createId != null and createId != ''">#{createId},</if>
+        <if test="urgentLev != null and urgentLev != '' ">#{urgentLev}, </if>
+        <if test="secretLev != null and secretLev != '' ">#{secretLev}, </if>
+        <if test="summry != null and summry != '' ">#{summry}, </if>
+        <if test="description != null and description != '' ">#{description}, </if>
+        <if test="releaseDate != null and releaseDate != ''">#{releaseDate},</if>
+        <if test="releaseOrg != null and releaseOrg != ''">#{releaseOrg},</if>
+        <if test="checkerFlag != null and checkerFlag != '' ">#{checkerFlag}, </if>
+        <if test="checkerAdvice != null and checkerAdvice != '' ">#{checkerAdvice}, </if>
+        <if test="invalidationMark != null and invalidationMark != '' ">#{invalidationMark}, </if>
+        <if test="checkerTime != null and checkerTime != '' ">#{checkerTime}, </if>
+        <if test="sms != null and sms != ''">#{sms},</if>
+        <if test="sendRange != null and sendRange != ''">#{sendRange},</if>
+        <if test="receiveDeptId != null and receiveDeptId != '' ">#{receiveDeptId}, </if>
+        <if test="receiveDeptName != null and receiveDeptName != '' ">#{receiveDeptName}, </if>
+        <if test="receiveRoleId != null and receiveRoleId != '' ">#{receiveRoleId}, </if>
+        <if test="receiveRoleName != null and receiveRoleName != '' ">#{receiveRoleName}, </if>
+        <if test="receiveGroupId != null and receiveGroupId != ''">#{receiveGroupId},</if>
+        <if test="receiveGroupName != null and receiveGroupName != ''">#{receiveGroupName},</if>
+        <if test="amTitle != null and amTitle != '' ">#{amTitle}, </if>
+        <if test="currentStatus != null and currentStatus != '' ">#{currentStatus}, </if>
+        <if test="endTime != null and endTime != ''">#{endTime},</if>
+        <if test="dealSchdule != null and dealSchdule != ''">#{dealSchdule}</if>
+        #{addTime}
+        )
+    </insert>
+
+    <update id="updateNotice" parameterType="SysNotice">
+        update am_biz_announcement
+        <set>
+            <if test="amType != null and amType != '' ">am_type = #{amType}, </if>
+            <if test="checkerId != null and checkerId != '' ">checker_id = #{checkerId}, </if>
+            <if test="amDealType != null and amDealType != '' ">am_deal_type = #{amDealType}, </if>
+            <if test="contactPhone != null and contactPhone != '' ">contact_phone = #{contactPhone}, </if>
+            <if test="otherPhone != null and otherPhone != ''">other_phone = #{otherPhone},</if>
+            <if test="createId != null and createId != ''">create_id = #{createId},</if>
+            <if test="urgentLev != null and urgentLev != '' ">urgent_lev = #{urgentLev}, </if>
+            <if test="secretLev != null and secretLev != '' ">secret_lev = #{secretLev}, </if>
+            <if test="summry != null and summry != '' ">summry = #{summry}, </if>
+            <if test="description != null and description != '' ">description = #{description}, </if>
+            <if test="releaseDate != null and releaseDate != ''">release_date = #{releaseDate},</if>
+            <if test="releaseOrg != null and releaseOrg != ''">release_org = #{releaseOrg},</if>
+            <if test="checkerFlag != null and checkerFlag != '' ">checker_flag = #{checkerFlag}, </if>
+            <if test="checkerAdvice != null and checkerAdvice != '' ">checker_advice = #{checkerAdvice}, </if>
+            <if test="invalidationMark != null and invalidationMark != '' ">invalidation_mark = #{invalidationMark}, </if>
+            <if test="checkerTime != null and checkerTime != '' ">checker_time = #{checkerTime}, </if>
+            <if test="sms != null and sms != ''">sms = #{sms},</if>
+            <if test="sendRange != null and sendRange != ''">send_range = #{sendRange},</if>
+            <if test="receiveRoleId != null and receiveRoleId != '' ">receive_role_id = #{receiveRoleId}, </if>
+            <if test="receiveRoleName != null and receiveRoleName != '' ">receive_role_name = #{receiveRoleName}, </if>
+            receive_dept_id =  #{receiveDeptId},
+            receive_dept_name = #{receiveDeptName},
+            receive_group_id = #{receiveGroupId},
+            receive_group_name = #{receiveGroupName},
+            <if test="amTitle != null and amTitle != '' ">am_title = #{amTitle}, </if>
+            <if test="currentStatus != null and currentStatus != '' ">current_status = #{currentStatus}, </if>
+            <if test="endTime != null and endTime != ''">end_time = #{endTime},</if>
+            <if test="dealSchdule != null and dealSchdule != ''">deal_schdule = #{dealSchdule}</if>
+        </set>
+        where am_biz_Id = #{amBizId}
+    </update>
+
+    <update id="checkNotice" parameterType="SysNotice">
+        update am_biz_announcement
+        <set>
+            <if test="amType != null and amType != '' ">am_type = #{amType}, </if>
+            <if test="checkerId != null and checkerId != '' ">checker_id = #{checkerId}, </if>
+            <if test="amDealType != null and amDealType != '' ">am_deal_type = #{amDealType}, </if>
+            <if test="contactPhone != null and contactPhone != '' ">contact_phone = #{contactPhone}, </if>
+            <if test="otherPhone != null and otherPhone != ''">other_phone = #{otherPhone},</if>
+            <if test="createId != null and createId != ''">create_id = #{createId},</if>
+            <if test="urgentLev != null and urgentLev != '' ">urgent_lev = #{urgentLev}, </if>
+            <if test="secretLev != null and secretLev != '' ">secret_lev = #{secretLev}, </if>
+            <if test="summry != null and summry != '' ">summry = #{summry}, </if>
+            <if test="description != null and description != '' ">description = #{description}, </if>
+            <if test="releaseDate != null and releaseDate != ''">release_date = #{releaseDate},</if>
+            <if test="releaseOrg != null and releaseOrg != ''">release_org = #{releaseOrg},</if>
+            <if test="checkerFlag != null and checkerFlag != '' ">checker_flag = #{checkerFlag}, </if>
+            <if test="checkerAdvice != null and checkerAdvice != '' ">checker_advice = #{checkerAdvice}, </if>
+            <if test="invalidationMark != null and invalidationMark != '' ">invalidation_mark = #{invalidationMark}, </if>
+            <if test="checkerTime != null and checkerTime != '' ">checker_time = #{checkerTime}, </if>
+            <if test="sms != null and sms != ''">sms = #{sms},</if>
+            <if test="sendRange != null and sendRange != ''">send_range = #{sendRange},</if>
+            <if test="receiveRoleId != null and receiveRoleId != '' ">receive_role_id = #{receiveRoleId}, </if>
+            <if test="receiveRoleName != null and receiveRoleName != '' ">receive_role_name = #{receiveRoleName}, </if>
+            <if test="amTitle != null and amTitle != '' ">am_title = #{amTitle}, </if>
+            <if test="currentStatus != null and currentStatus != '' ">current_status = #{currentStatus}, </if>
+            <if test="endTime != null and endTime != ''">end_time = #{endTime},</if>
+            <if test="dealSchdule != null and dealSchdule != ''">deal_schdule = #{dealSchdule}</if>
+        </set>
+        where am_biz_Id = #{amBizId}
+    </update>
+
+    <delete id="deleteNoticeByIds" parameterType="String">
+        delete from am_biz_announcement where am_biz_Id in
+        <foreach collection="array" item="amBizId" open="(" separator="," close=")">
+            #{amBizId}
+        </foreach>
+    </delete>
+
+    <select id="selectReceptionPostList" parameterType="SysNotice" resultMap="OgPostResult">
+        SELECT
+            P .POSTID AS POSTID,
+            P.POST_NAME AS POST_NAME
+        FROM
+            OG_POST P
+        LEFT JOIN OG_R_POST_ROLE O ON P .POSTID = O.POSTID
+        WHERE
+        O.RID = #{rId}
+        <if test="postName != null and postName != ''">
+            AND P.POST_NAME like concat(concat('%',#{postName}),'%')
+        </if>
+    </select>
+
+    <select id="selectReceivePersonDept" parameterType="SysNotice" resultMap="OgPersonResult">
+
+        SELECT * FROM OG_PERSON WHERE pid IN (
+          SELECT pid FROM OG_USER WHERE userid IN (
+            SELECT DISTINCT(userid) FROM OG_R_USER_POST WHERE postid  IN
+                <foreach collection="postId" item="postId" open="(" separator="," close=")">
+                    #{postId}
+                </foreach>
+          ) AND INVALIDATION_MARK = '1'
+        ) AND ORGID = #{orgId}
+    </select>
+
+    <select id="selectReceivePersonGroup" parameterType="SysNotice" resultMap="OgPersonResult">
+
+       SELECT * FROM (
+        SELECT * FROM OG_PERSON WHERE pid IN (
+	      SELECT pid FROM OG_USER WHERE userid IN (
+		    SELECT DISTINCT(userid) FROM OG_R_USER_POST WHERE postid  IN
+                <foreach collection="postId" item="postId" open="(" separator="," close=")">
+                    #{postId}
+                </foreach>
+	      ) AND INVALIDATION_MARK = '1'
+        )
+      ) personPostId
+      WHERE personPostId.pid IN (
+        SELECT DISTINCT(PID) FROM OG_GROUP_PERSON WHERE GROUPID = #{groupId}
+      )
+    </select>
+
+    <select id="selectNoticeReceiveDeptList" parameterType="OgOrg" resultMap="OgOrgResult">
+        SELECT * FROM OG_ORG o
+        WHERE o.INVALIDATION_MARK='1'
+        <if test="orgName != null and orgName != ''">
+            AND o.orgName like concat(concat('%',#{orgName}),'%')
+        </if>
+        <if test="params.orgNameList != null and params.orgNameList != ''">
+            <foreach collection="params.orgNameList" item="orgName" open="AND (" close=")" separator="OR">
+                o.orgName like concat(concat('%',#{orgName}),'%')
+            </foreach>
+        </if>
+    </select>
+
+    <select id="selectNoticeReceiveGroup" parameterType="OgGroup" resultMap="SysOgGroupResult">
+        SELECT * FROM OG_GROUP g
+        WHERE g.INVALIDATION_MARK='1'
+        <if test="grpName != null and grpName != ''">
+            AND g.grpName like concat(concat('%',#{grpName}),'%')
+        </if>
+        <if test="params.orgIds != null and params.orgIds != ''">
+            AND g.orgId  IN
+            <foreach collection="params.orgIds" item="orgId" open="(" separator="," close=")">
+                #{orgId}
+            </foreach>
+        </if>
+
+    </select>
+
+    <select id="selectPostForByUserId" parameterType="String" resultMap="OgPostResult">
+        SELECT * FROM OG_POST  WHERE POSTID IN (
+	      SELECT POSTID  FROM OG_R_USER_POST  WHERE  USERID = #{userId})
+    </select>
+
+    <select id="DeptTreeBankch" parameterType="OgOrg" resultMap="OgOrgResult">
+        SELECT * FROM OG_ORG o
+        WHERE O.INVALIDATION_MARK='1'
+        <if test="orgName != null and orgName != ''">
+            AND o.orgName like concat(concat('%',#{orgName}),'%')
+        </if>
+        <if test="type != null and type != ''">
+            AND o.type like concat(concat('%',#{type}),'%')
+        </if>
+    </select>
+
+    <select id="selectPageNoticeList" parameterType="SysNotice" resultMap="SysNoticeResult">
+        <include refid="selectNoticeVo"/>
+        <if test="amBizId != null and amBizId != ''">
+            AND T.am_biz_Id = #{amBizId}
+        </if>
+        <if test="amTitle != null and amTitle != ''">
+            AND T.am_title like concat(concat('%',#{amTitle}),'%')
+        </if>
+        <if test="amCode != null and amCode != ''">
+            AND T.am_code like concat(concat('%',#{amCode}),'%')
+        </if>
+        <if test="amType != null and amType != ''">
+            AND T.am_type = #{amType}
+        </if>
+        <if test="noticeStatus != null and noticeStatus != ''">
+            AND T.current_status > #{noticeStatus}
+        </if>
+        <if test="params.currentStatus != null and params.currentStatus != ''">
+            AND T.current_status != #{params.currentStatus}
+        </if>
+        <if test="currentStatus != null and currentStatus != ''">
+            AND T.current_status = #{currentStatus}
+        </if>
+        <if test="pName != null and pName != ''">
+            AND P.PNAME like concat(concat('%',#{pName}),'%')
+        </if>
+        <if test="orgName != null and orgName != ''">
+            AND O.ORGNAME like concat(concat('%',#{orgName}),'%')
+        </if>
+        <if test="description != null and description != ''">
+            AND T.description like concat(concat('%',#{description}),'%')
+        </if>
+        <if test="params.beginTime != null and params.beginTime != ''"><!-- 开始时间检索 -->
+            AND T.create_time &gt;= #{params.beginTime}
+        </if>
+        <if test="params.endTime != null and params.endTime != ''"><!-- 时间检索 -->
+            AND T.create_time &lt;= #{params.endTime}
+        </if>
+        <if test="params.releaseBeginTime != null and params.releaseBeginTime != ''"><!-- 发布时间开始时间检索 -->
+            AND T.RELEASE_DATE &gt;= #{params.releaseBeginTime}
+        </if>
+        <if test="params.releaseEndTime != null and params.releaseEndTime != ''"><!-- 发布时间结束时间检索 -->
+            AND T.RELEASE_DATE &lt;= #{params.releaseEndTime}
+        </if>
+        AND (
+            T.CREATE_ID IN (select PID from OG_PERSON WHERE ORGID IN
+            (SELECT ORGID FROM OG_ORG WHERE LEVEL_CODE LIKE concat(concat('%',#{params.levelCode}),'%')))
+
+            OR T.CHECKER_ID = #{params.loginId}
+
+            OR T.RECEIVE_DEPT_ID LIKE concat(concat('%',#{params.receiveDeptId}),'%')
+
+            <if test="params.receiveGroupIds != null and params.receiveGroupIds != ''">
+                OR
+                <foreach collection="params.receiveGroupIds" item="groupId" open="(" close=")" separator="OR">
+                    T.RECEIVE_GROUP_ID LIKE concat(concat('%',#{groupId}),'%')
+                </foreach>
+            </if>
+        )
+        ORDER BY T.CREATE_TIME DESC
+    </select>
+
+    <select id="selectDeptByOrgCodeRightLike" parameterType="OgOrg" resultMap="OgOrgResult">
+        SELECT * FROM OG_ORG o
+        WHERE O.INVALIDATION_MARK='1'
+        <if test="levelCode != null and levelCode != ''">
+            AND o.level_Code like concat(concat('%',#{levelCode}),'%')
+        </if>
+    </select>
+
+</mapper>

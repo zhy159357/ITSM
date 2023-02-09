@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:include="include :: header('硬件报障列表')"/>
+</head>
+<body class="gray-bg">
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-12 search-collapse">
+            <form id="formId">
+                <div class="select-list">
+                    <ul>
+                        <li>
+                            <p>姓名：</p>
+                            <input type="text" name="name"/>
+                        </li>
+                        <li>
+                            <p>手机号：</p>
+                            <input type="text" name="phoneNumber"/>
+                        </li>
+                        <li>
+                            <p>证件类型：</p>
+                            <select id="certificatesType" name="certificatesType" class="form-control"
+                                    th:with="type=${@pubParaValue.selectPubParaValueByParaName('certificates_type')}">
+                                <option th:each="value : ${type}" th:text="${value.valueDetail}" th:value="${value.value}"></option>
+                            </select>
+                        </li>
+                        <li>
+                            <p>证件编号：</p>
+                            <input type="text" name="certificatesNumber"/>
+                        </li>
+                        <li>
+                            <p>有效标识：</p>
+                            <input type="text" name="availability"/>
+                        </li>
+                        <li>
+                            <p>所属厂商：</p>
+                            <input type="text" name="vendor">
+                        </li>
+                        <li>
+                            <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i
+                                    class="fa fa-search"></i>&nbsp;搜索</a>
+                            <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i
+                                    class="fa fa-refresh"></i>&nbsp;重置</a>
+                        </li>
+                    </ul>
+                </div>
+            </form>
+        </div>
+
+        <div class="btn-group-sm" id="toolbar" role="group">
+            <a class="btn btn-success" onclick="$.operate.addTab()">
+                <i class="fa fa-plus"></i> 添加
+            </a>
+            <a class="btn btn-primary single disabled" onclick="$.operate.edit()">
+                <i class="fa fa-edit"></i> 修改
+            </a>
+            <a class="btn btn-info single disabled" onclick="detail()">
+                <i class="fa fa-search"></i> 查看
+            </a>
+            <a class="btn btn-danger single disabled" onclick="remove()">
+                <i class="fa fa-remove"></i> 删除
+            </a>
+            <a class="btn btn-info" onclick="$.table.importExcel()">
+                <i class="fa fa-upload"></i> 导入
+            </a>
+        </div>
+        <div class="col-sm-12 select-table table-striped">
+            <table id="bootstrap-table" style="table-layout: fixed"></table>
+        </div>
+    </div>
+</div>
+<th:block th:include="include :: footer"/>
+<script id="importTpl" type="text/template">
+    <form enctype="multipart/form-data" class="mt20 mb10">
+        <div class="col-xs-offset-1">
+            <input type="file" id="file" name="file"/>
+            <div class="mt10 pt5">
+                <input type="checkbox" id="updateSupport" name="updateSupport" title="如果登录账户已经存在，更新这条数据。"> 是否更新已经存在的用户数据
+                &nbsp;	<a onclick="$.table.importTemplate()" class="btn btn-default btn-xs"><i class="fa fa-file-excel-o"></i> 下载模板</a>
+            </div>
+            <font color="red" class="pull-left mt10">
+                提示：仅允许导入“xls”或“xlsx”格式文件！
+            </font>
+        </div>
+    </form>
+</script>
+<script th:inline="javascript">
+    var prefix = ctx + "event/white";
+
+    var datas = [[${@pubParaValue.selectPubParaValueByParaName('certificates_type')}]];
+
+    $(function () {
+        var options = {
+            url: prefix + "/searchList",
+            createUrl: prefix + "/add",
+            updateUrl: prefix + "/edit/{id}",
+            removeUrl: prefix + "/remove",
+            exportUrl: prefix + "/export",
+            importUrl: prefix + "/import",
+            importTemplateUrl: prefix + "/importTemplate",
+            clickToSelect: true,
+            singleSelect: true,
+            modalName: "硬件报障",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'id',
+                    title: 'ID',
+                    visible: false,
+                    width: 150
+                },
+                {
+                    field: 'name',
+                    title: '姓名',
+                    width: 150
+                },
+                {
+                    field: 'certificatesType',
+                    title: '证件类型',
+                    width: 150,
+                    formatter: function(value, row, index) {
+                        return $.table.selectPubParaValueData(datas, value);
+                    }
+                },
+                {
+                    field: 'certificatesNumber',
+                    title: '证件编号',
+                    width: 150
+                },
+                {
+                    field: 'phoneNumber',
+                    title: '手机号',
+                    width: 150
+                },
+                {
+                    field: 'availability',
+                    title: '有效性',
+                    width: 150,
+                    formatter: function(value, row, index) {
+                        return row.availability === '1' ? "有效" : "无效";
+                    }
+                },
+                {
+                    field: 'vendor',
+                    title: '所属厂商',
+                    width: 150
+                }
+            ]
+        };
+        $.table.init(options);
+
+    })
+
+    function remove() {
+        var id = $.table.selectFirstColumns()[0];
+        $.modal.confirm("确认要删除吗?", function () {
+            var url = prefix + "/remove";
+            var data = {"id": id};
+            $.operate.submit(url, "post", "json", data);
+        });
+    }
+
+    function detail() {
+        var id = $.table.selectFirstColumns();
+        var url = prefix + "/detail/" + id;
+        $.modal.openTab("厂商服务人员白名单", url);
+    }
+</script>
+</body>
+</html>

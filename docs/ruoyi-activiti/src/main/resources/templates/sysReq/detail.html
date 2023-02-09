@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('查看详情')" />
+    <th:block th:include="include :: datetimepicker-css" />
+    <th:block th:include="include :: select2-css" />
+</head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form class="form-horizontal m" id="form-sysReq-detail" th:object="${sysReq}">
+        <h4 class="form-header h4">基本信息</h4>
+            <input name="id" th:field="*{id}" type="hidden">
+            <div class="row">
+            	<div class="col-sm-6">
+		            <div class="form-group">
+		                <label class="col-sm-4 control-label is-required">系统编码</label>
+		                <div class="col-sm-8">
+		                    <input name="code" th:field="*{code}" class="form-control" type="text" readonly>
+		                </div>
+		            </div>
+		         </div>
+		         <div class="col-sm-6">
+					<div class="form-group">
+						<label class="col-sm-4 control-label is-required">系统名称</label>
+						<div class="col-sm-8">
+							<input name="name" th:field="*{name}" class="form-control" type="text" readonly>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+            	<div class="col-sm-6">
+					<div class="form-group">
+						<label class="col-sm-4 control-label">所属机构</label>
+						<div class="col-sm-8">
+							<input name="organ" th:field="*{organ}" class="form-control" type="text" readonly>
+						</div>
+					</div>
+				</div>
+                <div class="col-sm-6">
+					<div class="form-group">
+						<label class="col-sm-4 control-label">所属处室</label>
+						<div class="col-sm-8">
+							<input name="office" th:field="*{office}" class="form-control" type="text" readonly>
+						</div>
+					</div>
+				</div>
+            </div>
+            <div class="row">
+            	<div class="col-sm-6">
+					<div class="form-group">
+						<label class="col-sm-4 control-label is-required">所属部门</label>
+						<div class="col-sm-8">
+							<input name="dept" th:field="*{dept}" class="form-control" type="text" readonly>
+						</div>
+					</div>
+				</div>
+                <div class="col-sm-6">
+					<div class="form-group">
+						<label class="col-sm-4 control-label">所属负责人</label>
+						<div class="col-sm-8">
+							<input name="charge" th:field="*{charge}" class="form-control" type="text" readonly>
+						</div>
+					</div>
+				</div>
+            </div>
+            <div class="row">
+             	<div class="col-sm-6">
+					<div class="form-group">
+						<label class="col-sm-4 control-label is-required">系统分类</label>
+						<div class="col-sm-8">
+							<input name="sysclass" th:field="*{sysclass}" class="form-control" type="text" readonly>
+						</div>
+					</div>
+				</div>
+            	<div class="col-sm-6">
+					<input  id="check" th:field="*{check}" type="hidden">
+		            <div class="form-group">
+		                <label class="col-sm-4 control-label is-required">参与考核</label>
+		                <div class="col-sm-8">
+		                    <input name="check" id="checkStr" class="form-control" type="text" readonly>
+		                </div>
+		            </div>
+		        </div>
+            </div>
+            <div class="row">
+            	<div class="col-sm-6">
+					<input  id="important" th:field="*{important}" type="hidden">
+		            <div class="form-group">
+		                <label class="col-sm-4 control-label is-required">是否重要系统</label>
+		                <div class="col-sm-8">
+		                    <input name="important" id="importantStr" class="form-control" type="text" readonly>
+		                </div>
+		            </div>
+		        </div>
+            	<div class="col-sm-6">
+					<input  id="mark" th:field="*{mark}" type="hidden">
+		            <div class="form-group">
+		                <label class="col-sm-4 control-label is-required">状态</label>
+		                <div class="col-sm-8">
+		                    <input name="mark" id="markStr" class="form-control" type="text" readonly>
+		                </div>
+		            </div>
+		        </div>	
+            </div>
+            <h4 class="form-header h4">申请信息</h4>
+            <div class="row">
+            	<div class="col-sm-12">
+					<div class="form-group">
+						<label class="col-sm-2 control-label">备注</label>
+						<div class="col-sm-10">
+								<textarea th:field="*{remark}" name="remark" class="form-control" readonly></textarea>			
+						</div>
+					</div>
+				</div>
+			</div>
+            <div class="row">
+            	<div class="col-sm-6">
+					<div class="form-group">
+						<label class="col-sm-4 control-label is-required">受理处室</label>
+						<div class="col-sm-8">
+							<input name="auditDept" th:field="*{auditDept}" class="form-control" type="text" readonly>
+						</div>
+					</div>
+				</div>
+                <div class="col-sm-6">
+					<div class="form-group">
+						<label class="col-sm-4 control-label is-required">审核人</label>
+						<div class="col-sm-8">
+							<input class="form-control" name="auditor" th:field="*{auditor}" type="text" readonly>
+						</div>
+					</div>
+				</div>
+            </div>
+            <div class="row">
+            	<div class="col-sm-6">
+					<div class="form-group">
+						<label class="col-sm-4 control-label is-required">受理处室</label>
+						<div class="col-sm-8">
+							<input name="dealDept" th:field="*{dealDept}" class="form-control" type="text" readonly>
+						</div>
+					</div>
+				</div>
+            	<div class="col-sm-6">
+					<div class="form-group">
+						<label class="col-sm-4 control-label is-required">处理人</label>
+						<div class="col-sm-8">
+							<input class="form-control" name="dealer" th:field="*{dealer}" type="text" readonly>
+						</div>
+					</div>
+				</div>
+            </div>
+            <div class="row">
+            	<div class="col-sm-12">
+					<div class="form-group">
+						<label class="col-sm-2 control-label is-required">审核意见</label>
+						<div class="col-sm-10">
+							<textarea name="auditSug" th:field="*{auditSug}" class="form-control" readonly></textarea>
+						</div>
+					</div>
+				</div>
+            </div>
+            <div class="row">
+            	<div class="col-sm-12">
+					<div class="form-group">
+						<label class="col-sm-2 control-label is-required">处理意见</label>
+						<div class="col-sm-10">
+							<textarea name="dealSug" th:field="*{dealSug}" class="form-control" readonly></textarea>
+						</div>
+					</div>
+				</div>
+            </div>
+        </form>
+    </div>
+    <th:block th:include="include :: footer" />
+    <th:block th:include="include :: datetimepicker-js" />
+    <th:block th:include="include :: select2-js" />
+    <script th:src="@{/js/activiti.js}"></script>
+    <script th:inline="javascript">
+	    
+	    if($("#check").val()=="1"){
+	    	$("#checkStr").val("是");
+	    }else{
+	    	$("#checkStr").val("否");
+	    }
+	    
+	    if($("#important").val()=="1"){
+	    	$("#importantStr").val("是");
+	    }else{
+	    	$("#importantStr").val("否");
+	    }
+	    
+	    if($("#mark").val()=="1"){
+	    	$("#markStr").val("启用");
+	    }else{
+	    	$("#markStr").val("禁用");
+	    }
+	    
+    </script>
+</body>
+</html>

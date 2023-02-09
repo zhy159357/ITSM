@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('电话事件单列表')" />
+    <th:block th:include="include :: datetimepicker-css" />
+</head>
+<body class="gray-bg">
+     <div class="container-div">
+        <div class="row">
+            <div class="col-sm-12 search-collapse">
+                <form id="formId">
+                    <div class="select-list">
+                        <ul>
+                            <li>
+                                <label>范围统计：</label><select class="form-control" name="phoneState" th:with="type=${@dict.getParaType('TelBiz_Flag')}">
+                                    <option value=""></option>
+                                    <option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}" required></option>
+                                </select>
+                            </li>
+                            <li>
+                                <label>创建时间：</label><input class="form-control" type="text" style="background-color: #fff; opacity: 1;" name="createTime" id="createTime" readonly/>
+                            </li>
+                            <li>
+                                <label>至：</label><input class="form-control" type="text" style="background-color: #fff; opacity: 1;" name="startTimeBiz" id="startTimeBiz" readonly/>
+                            </li>
+                            <li>
+                                <a class="btn btn-primary btn-rounded btn-sm" id="ss" onclick="searchQuery()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                            </li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+
+            <div class="btn-group-sm" id="toolbar" role="group">
+                <a class="btn btn-warning" onclick="$.table.exportExcel()">
+                    <i class="fa fa-download"></i> 导出
+                </a>
+            </div>
+            <div class="col-sm-12 select-table table-striped">
+                <table id="bootstrap-table"></table>
+            </div>
+        </div>
+    </div>
+    <th:block th:include="include :: footer" />
+     <th:block th:include="include :: datetimepicker-js" />
+    <script th:inline="javascript">
+        var contactOrg =  [[${@dict.getParaType('TelBiz_Org')}]];
+
+        var prefix = ctx + "phone/bb";
+
+        $(function() {
+            document.onkeydown = function(e){
+                var ev = document.all ? window.event : e;
+                console.log(ev);
+                if(ev.keyCode==13) {
+                    $('#ss').trigger('click');
+                    return false;
+                } //搜索逻辑
+            }
+            var options = {
+                url: prefix + "/list",
+                exportUrl: prefix + "/export",
+                singleSelect:true,
+                clickToSelect: true,
+                modalName: "电话事件单",
+                height: $(window).height() - 100,
+                pagination:false,
+                columns: [{
+                    checkbox: true
+                },
+                {
+                    field: 'reportId',
+                    title: '报表id',
+                    visible:false,
+                },
+                {
+                    field: 'orgName',
+                    title: '来电人员机构'
+                },
+                {
+                    field: 'caption',
+                    title: '系统名称',
+                },
+                {
+                    field: 't1',
+                    title: '业务人员培训不到位',
+                },
+                {
+                    field: 't2',
+                    title: '业务人员操作有误',
+                },
+                {
+                    field: 't3',
+                    title: '系统功能不完善或不满足',
+                },
+                {
+                    field: 't4',
+                    title: '省内系统原因',
+                },
+                {
+                    field: 't5',
+                    title: '行内关联系统原因',
+                },
+                {
+                    field: 't6',
+                    title: '数据一致性问题',
+                },
+                {
+                    field: 't7',
+                    title: '信息系统原因',
+                },
+                {
+                    field: 't8',
+                    title: '系统程序BUG',
+                },
+                {
+                    field: 't9',
+                    title: '版本或者变更引起',
+                },
+                {
+                    field: 't10',
+                    title: '客户操作问题',
+                },
+                {
+                    field: 't11',
+                    title: '第三方或他行系统',
+                },
+                {
+                    field: 't12',
+                    title: '系统分析相关资讯',
+                },
+                {
+                    field: 't13',
+                    title: '其他或疑难',
+                },
+                {
+                    field: 't14',
+                    title: '基础问题咨询',
+                },
+                {
+                    field: 't15',
+                    title: '转事件单',
+                },
+                {
+                    field: 't16',
+                    title: '小计',
+                },
+                {
+                    field: 'holdContrast',
+                    title: '占比',
+                }
+                ]
+            };
+            $.table.init(options);
+
+            function formatDate(date){
+                var year = date.getFullYear();
+                var month = date.getMonth()+1;    //js从0开始取 
+                var date1 = date.getDate();
+                return year+"-"+month+"-"+date1; // +hour+"时"+minutes +"分"+second+"秒" ;
+            }
+            var date = new Date();
+            var year = date.getFullYear();
+            var month = date.getMonth();
+            var firstDay = new Date(year,month,1);
+            var lastDay = new Date(year,month+1,0);
+            /*createTime=createTime.replace(/\d+/g,function(a){return (a.length==4)?a:((a.length==2)?a:("0"+a))})
+            startTimeBiz=startTimeBiz.replace(/\d+/g,function(a){return (a.length==4)?a:((a.length==2)?a:("0"+a))})*/
+            document.getElementById('createTime').value = formatDate(firstDay);
+            document.getElementById('startTimeBiz').value = formatDate(lastDay);
+
+        });
+
+        function searchQuery() {
+            debugger;
+            var createTime = $('#createTime').val();
+            createTime=createTime.replace(/\d+/g,function(a){return (a.length==4)?a:((a.length==2)?a:("0"+a))})
+            if(createTime=='' || createTime==null){
+                $.modal.alertError("创建开始时间不能为空!");
+                return;
+            }
+            var startTimeBiz = $('#startTimeBiz').val();
+            startTimeBiz=startTimeBiz.replace(/\d+/g,function(a){return (a.length==4)?a:((a.length==2)?a:("0"+a))})
+            if(startTimeBiz=='' || startTimeBiz==null){
+                $.modal.alertError("创建结束时间不能为空!");
+                return;
+            }
+
+            /*var curDate = new Date().getTime();
+            var startDate = new Date(createTime).getTime();
+            var endDate = new Date(startTimeBiz).getTime();
+            if(startDate>curDate){
+                $.modal.alertError("创建开始时间不能大于当前时间!");
+                return;
+            }
+
+            if(endDate>curDate){
+                $.modal.alertError("创建结束时间不能大于当前时间!");
+                return;
+            }*/
+
+            if(createTime>startTimeBiz){
+                $.modal.alertError("创建开始时间不能大于创建结束时间!");
+                return;
+            }
+
+            $.table.search();
+        }
+
+        //回显机构的（字典项）
+        function selectDictLabel(datas, value) {
+            var actions = [];
+            $.each(datas, function(index, dict) {
+                if (dict.value == ('' + value)) {
+                    var listClass = $.common.equals("default", dict.listClass) || $.common.isEmpty(dict.listClass) ? "" : "badge badge-" + dict.listClass;
+                    actions.push($.common.sprintf("<span class='%s'>%s</span>", listClass, dict.valueDetail));
+                    return false;
+                }
+            });
+            return actions.join('');
+        }
+
+        $("#createTime").datetimepicker({
+            format: "yyyy-mm-dd",
+            minView: "month",
+            autoclose: true
+        });
+
+        $("#startTimeBiz").datetimepicker({
+            format: "yyyy-mm-dd",
+            minView: "month",
+            autoclose: true
+        });
+
+    </script>
+</body>
+</html>

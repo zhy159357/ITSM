@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:include="include :: header('新增事件单')"/>
+</head>
+<body class="white-bg">
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+    <form class="form-horizontal m" id="form-sheet-add">
+        <input name="ownerId" type="hidden" id="ownerId"/>
+        <input name="eventId" type="hidden" id="eventId"/>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">事件单编号：</label>
+                    <div class="col-sm-8">
+                        <input name="eventNo" id="eventNo" class="form-control" type="text" th:value="*{num}" readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">上报部门：</label>
+                    <div class="col-sm-8">
+                        <input name="reportOrg" th:value="*{currentPerson.orgname}" class="form-control" type="text" maxlength="16">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">上报人：</label>
+                    <div class="col-sm-8">
+                        <input name="reportPerson" th:value="*{currentPerson.pName}" class="form-control" type="text" maxlength="16">
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">上报电话：</label>
+                    <div class="col-sm-8">
+                        <input name="reportPhone" th:value="*{currentPerson.mobilPhone}" class="form-control" type="text" maxlength="16">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">事件标题：</label>
+                    <div class="col-sm-10">
+                        <input name="eventTitle" class="form-control" type="text" maxlength="50">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">事件详述：</label>
+                    <div class="col-sm-10">
+                        <textarea cols="3" rows="5" name="eventInfo" class="form-control" maxlength="1600"></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">客户信息：</label>
+                    <div class="col-sm-10">
+                        <textarea name="customInfo" cols="3" rows="5" class="form-control" maxlength="1600"></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">总分行事件标记：</label>
+                    <div class="col-sm-8">
+                        <!--<input name="orgFlag" class="form-control" type="text">-->
+                        <select id="orgFlag" name="orgFlag" class="form-control"
+                                th:with="pList=${@pubParaValue.selectPubParaValueByParaName('org_flag')}">
+                            <option></option>
+                            <option th:each="p:${pList}" th:text="${p.valueDetail}" th:value="${p.value}"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">中心侧/网点侧事件：</label>
+                    <div class="col-sm-8">
+                        <!--<input name="sideFlag" class="form-control" type="text">-->
+                        <select id="sideFlag" name="sideFlag" class="form-control"
+                                th:with="pList=${@pubParaValue.selectPubParaValueByParaName('side_flag')}">
+                            <option></option>
+                            <option th:each="p:${pList}" th:text="${p.valueDetail}" th:value="${p.value}"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--<div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">类别：</label>
+                    <div class="col-sm-8">
+                        &lt;!&ndash;<input name="eventCategory" class="form-control" type="text">&ndash;&gt;
+                        <select id="eventCategory" name="eventCategory" class="form-control"
+                                th:with="pList=${@pubParaValue.selectPubParaValueByParaName('event_category')}">
+                            <option></option>
+                            <option th:each="p:${pList}" th:text="${p.valueDetail}" th:value="${p.value}"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">子类：</label>
+                    <div class="col-sm-8">
+                        <input name="eventSubclass" class="form-control" type="text">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">条目：</label>
+                    <div class="col-sm-8">
+                        <input name="eventEntry" class="form-control" type="text">
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">子条目：</label>
+                    <div class="col-sm-8">
+                        <input name="eventSubentry" class="form-control" type="text">
+                    </div>
+                </div>
+            </div>
+        </div>-->
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">来源：</label>
+                    <div class="col-sm-8">
+                        <!--<input name="eventSource" class="form-control" type="text">-->
+                        <select id="eventSource" name="eventSource" class="form-control"
+                                th:with="pList=${@pubParaValue.selectPubParaValueByParaName('event_source')}">
+                            <option></option>
+                            <option th:each="p:${pList}" th:text="${p.valueDetail}" th:value="${p.value}"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">影响程度：</label>
+                    <div class="col-sm-8">
+                        <!--<input name="infLevel" class="form-control" type="text">-->
+                        <select id="infLevel" name="infLevel" class="form-control"
+                                th:with="pList=${@pubParaValue.selectPubParaValueByParaName('event_impact_degree')}" onchange="selectEventPriority()">
+                            <option></option>
+                            <option th:each="p:${pList}" th:text="${p.valueDetail}" th:value="${p.value}"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">影响范围：</label>
+                    <div class="col-sm-8">
+                        <!--<input name="infRange" class="form-control" type="text">-->
+                        <select id="infRange" name="infRange" class="form-control"
+                                th:with="pList=${@pubParaValue.selectPubParaValueByParaName('event_impact_scope')}" onchange="selectEventPriority()">
+                            <option></option>
+                            <option th:each="p:${pList}" th:text="${p.valueDetail}" th:value="${p.value}"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">优先级：</label>
+                    <div class="col-sm-8">
+                        <input id="eventPriority" name="eventPriority" class="form-control" type="text" readonly>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">目标解决日期：</label>
+                    <div class="col-sm-8">
+                        <input id="targetResolveDate" name="targetResolveDate" class="form-control" style="background-color: #ffffff" type="text" placeholder="yyyy-MM-dd" readonly>
+                    </div>
+                </div>
+            </div>
+            <!--<div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">一级：</label>
+                    <div class="col-sm-8">
+                        <select id="eventFirstType" name="eventFirstType" class="form-control m-b">
+                            <option value="">-请选择一级分类-</option>
+                        </select>
+                    </div>
+                </div>
+            </div>-->
+        </div>
+        <!--<div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">二级：</label>
+                    <div class="col-sm-8">
+                        <select id="eventSecondType" name="eventSecondType" class="form-control m-b">
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">三级：</label>
+                    <div class="col-sm-8">
+                        <select id="eventThreeType" name="eventThreeType" class="form-control m-b">
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>-->
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">是否加急：</label>
+                    <div class="col-sm-8">
+                        <select id="urgentFlag" name="urgentFlag" class="form-control"
+                                th:with="pList=${@pubParaValue.selectPubParaValueByParaName('yes_or_no')}">
+                            <option th:each="p:${pList}" th:text="${p.valueDetail}" th:value="${p.value}">
+                            </option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">是否财务类事件：</label>
+                    <div class="col-sm-8">
+                        <select id="financeFlag" name="financeFlag" class="form-control"
+                                th:with="pList=${@pubParaValue.selectPubParaValueByParaName('yes_or_no')}">
+                            <option th:each="p:${pList}" th:text="${p.valueDetail}" th:value="${p.value}">
+                            </option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <h4 class="form-header h4">上传附件</h4>
+    <div class="btn-group-sm" id="toolbar" role="group">
+        <a class="btn btn-success" type="button" onclick="upload()">
+            <i class="fa fa-upload"></i> 添加附件
+        </a>
+        <a class="btn btn-primary multiple disabled" onclick="downloadAttachment()">
+            <i class="fa fa-download"></i> 下载附件
+        </a>
+        <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()">
+            <i class="fa fa-trash"></i> 删除附件
+        </a>
+    </div>
+
+    <div class="col-sm-12 select-table table-striped">
+        <table id="file-table"></table>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-sm-offset-5 col-sm-10">
+        <button type="button" class="btn btn-sm btn-primary" onclick="submit()"><i class="fa fa-check"></i>提 交</button>&nbsp;
+        <button type="button" class="btn btn-sm btn-primary" onclick="save()"><i class="fa fa-check"></i>暂 存</button>&nbsp;
+        <button type="button" class="btn btn-sm btn-danger" onclick="closeItem()"><i class="fa fa-window-close"></i>关 闭 </button>
+    </div>
+</div>
+
+<th:block th:include="include :: footer"/>
+<th:block th:include="include :: datetimepicker-js" />
+<script th:inline="javascript">
+    var prefix = ctx + "event/sheet";
+    var prefix_attachment = ctx + "pub/attachment";
+    var prefix_typeInfo = ctx + "system/typeinfo/selectOgTypeInfoByEvent";
+    var prefix_priority = ctx + "system/dict/selectPriorityParavalue";
+
+    $(function() {
+        var options = {
+            url: prefix_attachment + "/list",
+            id: "file-table",
+            createUrl: prefix_attachment + "/add",
+            updateUrl: prefix_attachment + "/edit/{id}",
+            removeUrl: prefix_attachment + "/remove",
+            detailUrl: prefix_attachment + "/edit/{id}",
+            sortName: "fileTime",
+            sortOrder: "desc",
+            singleSelect: true,
+            clickToSelect: true,
+            queryParams:queryParams,
+            modalName: "附件列表",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field : 'atId',
+                    title : '附件ID',
+                    visible : false
+                },
+                {
+                    field : 'fileName',
+                    title : '文件名称'
+                },
+                {
+                    field : 'person.pName',
+                    title : '上传人'
+                },
+                {
+                    field : 'size',
+                    title : '文件大小'
+                },
+                {
+                    field : 'memo',
+                    title : '文件描述'
+                },
+                {
+                    field : 'fileTime',
+                    title : '上传时间',
+                    formatter: function (value, row, index) {
+                        var startTime = '';
+                        if (value != '' && value != null) {
+                            var pattern = /(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/;
+                            startTime = value.replace(pattern, '$1-$2-$3 $4:$5:$6');
+                        }
+                        return startTime;
+                    }
+                }]
+        };
+        $.table.init(options);
+
+        var str = [[${firstTypeList}]];
+        var firstTypeArray = JSON.parse(str);
+        setFirstType(firstTypeArray);
+        // 如果一级分类发生变化，则重新加载二级分类
+        $("#eventFirstType").change(function () {
+            setSecondType();
+        });
+        // 如果二级分类发生变化，则重新加载三级分类
+        $("#eventSecondType").change(function () {
+            setSThreeType();
+        });
+    });
+
+    // form表单校验
+    $("#form-sheet-add").validate({
+        rules:{
+            reportOrg:{
+                required:true
+            },
+            reportPerson:{
+                required:true
+            },
+            reportPhone:{
+                required:true
+            },
+            eventTitle:{
+                required:true
+            },
+            eventInfo:{
+                required:true
+            },
+            customInfo:{
+                required:true
+            },
+            orgFlag:{
+                required:true
+            },
+            sideFlag:{
+                required:true
+            },
+            eventCategory:{
+                required:true
+            },
+            eventSubclass:{
+                required:true
+            },
+            eventEntry:{
+                required:true
+            },
+            eventSubentry:{
+                required:true
+            },
+            eventSource:{
+                required:true
+            },
+            infLevel:{
+                required:true
+            },
+            infRange:{
+                required:true
+            },
+            eventPriority:{
+                required:true
+            },
+            targetResolveDate:{
+                required:true
+            },
+            eventFirstType:{
+                required:true
+            },
+            eventSecondType:{
+                required:true
+            },
+            eventThreeType:{
+                required:true
+            },
+            urgentFlag:{
+                required:true
+            },
+            financeFlag:{
+                required:true
+            },
+        },
+        messages:{
+            reportOrg:{
+                required:"请输入上报部门"
+            },
+            reportPerson:{
+                required:"请输入上报人"
+            },
+            reportPhone:{
+                required:"请输入上报电话"
+            },
+            eventTitle:{
+                required:"请输入事件标题"
+            },
+            eventInfo:{
+                required:"请输入事件详述"
+            },
+            customInfo:{
+                required:"请输入客户信息"
+            },
+            orgFlag:{
+                required:"请选择总分行事件标记"
+            },
+            sideFlag:{
+                required:"请选择中心测/网点测事件"
+            },
+            eventCategory:{
+                required:"请选择类别"
+            },
+            eventSubclass:{
+                required:"请选择子类"
+            },
+            eventEntry:{
+                required:"请选择子条目"
+            },
+            eventSubentry:{
+                required:"请输入子条目"
+            },
+            eventSource:{
+                required:"请选择子条目"
+            },
+            infLevel:{
+                required:"请选择影响程度"
+            },
+            infRange:{
+                required:"请选择影响范围"
+            },
+            eventPriority:{
+                required:"请输入优先级"
+            },
+            targetResolveDate:{
+                required:"请选择目标解决时间"
+            },
+            eventFirstType:{
+                required:"请选择事件单一级分类"
+            },
+            eventSecondType:{
+                required:"请选择事件单二级分类"
+            },
+            eventThreeType:{
+                required:"请选择事件单三级分类"
+            },
+            urgentFlag:{
+                required:"请选择是否加急"
+            },
+            financeFlag:{
+                required:"请选择是否财务类事件"
+            },
+        },
+        onfocusout: function(element) {
+            $(element).valid();
+        },
+        focusCleanup: true
+    });
+
+    $("#targetResolveDate").datetimepicker({
+        format: "yyyy-mm-dd",
+        minView: "month",
+        autoclose: true
+    });
+
+    // 组装事件单一级分类select下拉框
+    function setFirstType(firstArr){
+        for (var i = 0; i < firstArr.length; i++) {
+            $("#eventFirstType").append("<option value='" + firstArr[i].typeNo + "'>" + firstArr[i].typeName + "</option>");
+        }
+    };
+
+    // 组装事件单二级分类select下拉框
+    function setSecondType(){
+        var typeNo = $("#eventFirstType").val();
+        //异步查询数据
+        $.ajax({
+            type: "POST",
+            url: prefix_typeInfo,
+            data: {typeNo: typeNo},
+            dataType: "json",
+            success: function (res) {
+                var data = res.data;
+                //移除下拉框数据（二级和三级）
+                $("#eventSecondType").find("option").remove();
+                $("#eventThreeType").find("option").remove();
+                //添加下拉框数据
+                $("#eventSecondType").prepend("<option value=''>-请选择二级分类-</option>");
+                for (var i = 0; i < data.length; i++) {
+                    $("#eventSecondType").append("<option value='" + data[i].typeNo + "'>" + data[i].typeName + "</option>");
+                }
+            }
+        });
+    };
+
+    // 组装事件单三级分类select下拉框
+    function setSThreeType(){
+        var typeNo = $("#eventSecondType").val();
+        //异步查询数据
+        $.ajax({
+            type: "POST",
+            url: prefix_typeInfo,
+            data: {typeNo: typeNo},
+            dataType: "json",
+            success: function (res) {
+                var data = res.data;
+                //移除下拉框数据
+                $("#eventThreeType").find("option").remove();
+                if(data != null && data.length > 0) {
+                    //添加下拉框数据
+                    $("#eventThreeType").prepend("<option value=''>-请选择三级分类-</option>");
+                    for (var i = 0; i < data.length; i++) {
+                        $("#eventThreeType").append("<option value='" + data[i].typeNo + "'>" + data[i].typeName + "</option>");
+                    }
+                } else {
+                    $("#eventThreeType").prepend("<option value='0'>无</option>");
+                }
+            }
+        });
+    };
+
+    function selectEventPriority() {
+        var infLevel = $("#infLevel").val();
+        var infRange = $("#infRange").val();
+        // 如果影响程度和影响范围存在空值，则默认优先级为空
+        if($.common.isEmpty(infLevel) || $.common.isEmpty(infRange)) {
+            $("#eventPriority").val("");
+            return;
+        }
+        $.ajax({
+            type: "POST",
+            url: prefix_priority,
+            data: {infLevel: infLevel,infRange: infRange},
+            dataType: "json",
+            success: function (res) {
+                var priority = res.msg;
+                $("#eventPriority").val(priority);
+            }
+        });
+    }
+
+    function queryParams(params) {
+        var search = $.table.queryParams(params);
+        search.ownerId = $("#ownerId").val() == '' ? 'event_sheet_add_no_owner_id' : $("#ownerId").val();
+        return search;
+    }
+
+    // 附件上传页面
+    function upload() {
+        // 将生成的业务单号作为附件目录查找的唯一依据
+        var url = prefix + "/saveOrSubmit";
+        var data = getData('save');
+        var config = {
+            url: url,
+            type: "post",
+            dataType: "json",
+            data: data,
+            success: function (result) {
+                if (result.code == 0) {
+                    var ownerId = result.data;
+                    // 将ownerId保存到页面隐藏框
+                    $("#ownerId").val(ownerId);
+                    $("#eventId").val(ownerId);
+                    var uploadUrl = prefix_attachment + "/uploadSH/" + ownerId;
+                    $.modal.openNoBtnFileFlush("事件单附件上传", uploadUrl);
+                } else {
+                    $.operate.successCallback(result);
+                }
+            }
+        };
+        // 第一次上传附件需要保存版本业务单数据并打开附件上传页面
+        var ownerId = $("#ownerId").val();
+        if(ownerId == ''){
+            $.ajax(config);
+        }else{
+            // 不是第一次保存只需要打开附件上传页面
+            var url = prefix_attachment + "/uploadSH/" + ownerId;
+            $.modal.openNoBtnFileFlush("事件单附件上传", url);
+        }
+    }
+
+    // 附件下载
+    function downloadAttachment() {
+        var atId = $.table.selectFirstColumns()[0];
+        var ownerId = $("#ownerId").val();
+        var url = prefix_attachment + "/downloadSH/"+ownerId+"/"+atId;
+        window.location.href = url;
+    }
+
+    function submit() {
+        if ($.validate.form()) {
+            var url = prefix + "/saveOrSubmit";
+            var data = getData("submit");
+            $.operate.saveTab(url, data);
+        }
+    }
+
+    function save() {
+        var url = prefix + "/saveOrSubmit";
+        var data = getData("save");
+        $.operate.saveTab(url, data);
+    }
+
+    function getData(flag) {
+        var data = $('#form-sheet-add').serializeArray();
+        data.push({"name": "remark", "value": flag});
+        return data;
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:include="include :: header('处理数据提取单')"/>
+</head>
+<body>
+<div class="main-content">
+    <form class="form-horizontal" id="form-fetch-edit" th:object="${sjFetchSingle}">
+        <input type="hidden" th:field="*{fetchId}" name="fetchId" id="fetchId">
+        <input type="hidden"  name="businessTypeText" id="businessTypeText">
+        <input type="hidden"  name="sysNameText" id="sysNameText">
+        <input type="hidden"  th:field="*{sysId}" id="sysId">
+        <input type="hidden"  th:field="*{fetchDemandId}" id="fetchDemandId">
+        <input type="hidden"   id="groupId">
+        <input type="hidden"   id="logPerformDesc">
+        <!--当前提交标识-->
+        <input type="hidden" name="params[flag]" id="flag"/>
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-heading" style="background-color: #3c8dbc" data-toggle="collapse"
+                     data-target="#collapse1">
+                    <h4 class="panel-title">
+                        基本信息
+                    </h4>
+                </div>
+                <div id="collapse1" class="panel-collapse in">
+                    <div class="panel-body">
+                        <div class="row form-group">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label  text-right">提取单单号：</label>
+                                    <div class="col-sm-8">
+                                        <input name="fetchNo" class="form-control" type="text" readonly
+                                               th:field="*{fetchNo}" id="fetchNo">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label  text-right ">需求来源：</label>
+                                    <div class="col-sm-8">
+                                        <input name="sourceType" class="form-control" type="text" readonly
+                                               th:field="*{sourceTypeText}" id="sourceTypeText">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label  text-right">需求标题：</label>
+                                    <div class="col-sm-10">
+                                        <input name="titleName" class="form-control" type="text" id="titleName" readonly th:field="*{titleName}">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label  text-right">流程号：</label>
+                                    <div class="col-sm-8">
+                                        <input name="processid" class="form-control" type="text" id="processid"  readonly th:field="*{processid}">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label  text-right">联系部门：</label>
+                                    <div class="col-sm-8">
+                                        <input type="hidden" name="orgId" id="orgId" th:field="*{orgId}"/>
+                                        <input class="form-control" type="text" name="orgName" id="orgName" readonly th:field="*{orgName}">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label  text-right">联系人：</label>
+                                    <div class="col-sm-8">
+                                        <input name="personId" class="form-control" type="hidden" id="personId">
+                                        <input name="personName" class="form-control" type="text" id="personName" readonly onclick="selectUser(this)"  th:field="*{personName}">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label  text-right">需求单号：</label>
+                                    <div class="col-sm-8">
+                                        <input name="businessNumber" class="form-control" type="text" id="businessNumber" th:field="*{businessNumber}" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label  text-right">需求类别：</label>
+                                    <div class="col-sm-8">
+                                        <input name="businessTypeText" class="form-control" type="text" readonly
+                                               th:field="*{businessTypeText}" id="businessTypeText">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label  text-right">业务部门：</label>
+                                    <div class="col-sm-8">
+                                        <input type="hidden" name="businessOrgId" id="businessOrgId" th:field="*{businessOrgId}"/>
+                                        <input class="form-control" type="text" name="businessOrgName" id="businessOrgName"  readonly th:field="*{businessOrgName}">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label  text-right">业务联系人：</label>
+                                    <div class="col-sm-8">
+                                        <input name="bbusinessPersonId" class="form-control" type="hidden" id="bbusinessPersonId">
+                                        <input name="bbusinessPersonName" class="form-control" type="text" id="bbusinessPersonName" readonly   th:field="*{bbusinessPersonName}">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label  text-right">涉及系统：</label>
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control" th:field="*{sysName}" readonly/>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row form-group">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label  text-right ">系统机构：</label>
+                                    <div class="col-sm-8">
+                                        <input type="hidden" name="sysOrgId" id="sysOrgId"/>
+                                        <input class="form-control" type="text" name="sysOrgName" id="sysOrgName" readonly  th:field="*{sysOrgName}">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label  text-right">系统负责人：</label>
+                                    <div class="col-sm-8">
+                                        <input name="sysManagerId" class="form-control" type="hidden" id="sysManagerId" th:field="*{sysManagerId}">
+                                        <input name="sysManagerName" class="form-control" type="text" id="sysManagerName" readonly onclick="selectUser(this)"  th:field="*{sysManagerName}">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading" style="background-color: #3c8dbc" data-toggle="collapse" data-target="#collapse4">
+
+                    <h4 class="panel-title">
+                        处理信息
+                    </h4>
+                </div>
+                <div id="collapse4" class="panel-collapse in">
+
+                    <div class="panel-body">
+                        <div class="row form-group">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label  text-right " style="color: red;">处理说明：</label>
+                                    <div class="col-sm-10">
+                                        <textarea class="form-control" rows="5" id="s-LOG_performDesc"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <!-- Nav tabs -->
+                <ul class="nav nav-tabs" role="tablist">
+                    <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">操作日志</a></li>
+                    <li role="presentation"><a href="#profile" aria-controls="profile" role="tab" data-toggle="tab">附件</a></li>
+                </ul>
+
+                <!-- Tab panes -->
+                <div class="tab-content">
+                    <div role="tabpanel" class="tab-pane active" id="home">
+                        <div class="col-sm-12 select-table table-striped">
+                            <table id="history-table"></table>
+                        </div>
+                    </div>
+                    <div role="tabpanel" class="tab-pane" id="profile">
+                        <div class="btn-group-sm" id="toolbar" role="tab" style="margin: 15px 0px;">
+                            <a class="btn btn-warning multiple disabled" onclick="downloadFile()">
+                                <i class="fa fa-download"></i> 下载附件
+                            </a>
+                        </div>
+                        <div class="col-sm-12 select-table table-striped">
+                            <table id="file-table"></table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-offset-5 col-sm-10">
+                <button type="button" class="btn btn-sm btn-primary" onclick="submitHandler()" >处理反馈
+                </button>&nbsp;&nbsp;
+                <button th:if="${flag}==0" type="button" class="btn btn-sm btn-primary" onclick="dealAssign()">指派
+                </button>&nbsp;&nbsp;
+                <button type="button" class="btn btn-sm btn-danger" onclick="closeItem()"><i
+                        class="fa fa-window-close"></i>关 闭
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+<script th:src="@{/js/activiti.js}"></script>
+<th:block th:include="include :: footer"/>
+<th:block th:include="include :: summernote-js"/>
+<th:block th:include="include :: datetimepicker-js"/>
+<script th:inline="javascript">
+    var prefix_attachment = ctx + "pub/attachment";
+    $(function () {
+        puFolwHistory($("#fetchId").val());
+        var options = {
+            url: prefix_attachment + "/list",
+            id: "file-table",
+            sortName: "fileTime",
+            sortOrder: "desc",
+            singleSelect: true,
+            clickToSelect: true,
+            queryParams:queryParams,
+            modalName: "附件列表",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field : 'atId',
+                    title : '附件ID',
+                    visible : false
+                },
+                {
+                    field : 'person.pId',
+                    title : '上传人员Id',
+                    visible: false
+                },
+                {
+                    field : 'fileName',
+                    title : '文件名称'
+                },
+                {
+                    field : 'person.pName',
+                    title : '上传人'
+                },
+                {
+                    field : 'size',
+                    title : '文件大小'
+                },
+                {
+                    field : 'memo',
+                    title : '文件描述'
+                },
+                {
+                    field : 'fileTime',
+                    title : '上传时间'
+                }]
+        };
+        $.table.init(options);
+    });
+
+    function queryParams(params) {
+        var search = $.table.queryParams(params);
+        search.ownerId =  $("#fetchDemandId").val();
+        return search;
+    }
+    var prefix = ctx + "fetch/single";
+
+    /**
+     * 获取输入数值的长度
+     * @param valueStr
+     * @returns {number}
+     */
+    function getValueLen(valueStr){
+        return isEmpty(valueStr)?0:valueStr.length;
+    }
+
+    function  dealAssign() {
+
+        var id = $('#sysId').val();
+        var fetchId = $('#fetchId').val();
+        var url = prefix+'/assignGroup/'+id+"/"+fetchId;
+        $.modal.openNoColse('指派工作组',url);
+    }
+
+    /**
+     * 指派任务刷新列表
+     */
+    function assign() {;
+        //指派任务
+        var fetchId = $('#fetchId').val();
+        var groupId = $('#groupId').val();
+        var logPerformDesc  = $('#logPerformDesc').val();
+        var data = {'fetchId':fetchId,'flag':'0','groupId':groupId,'logPerformDesc':logPerformDesc};
+        $.operate.saveTab(prefix + "/dealSave",data);
+    }
+
+    /**
+     * 反馈操作
+     */
+    function submitHandler() {
+        var LOG_performDesc = $('#s-LOG_performDesc').val();
+        if(isEmpty(LOG_performDesc)){
+            $.modal.alertError('【处理说明】不能为空');
+        }else{
+            if(getValueLen(LOG_performDesc)>1000){
+                $.modal.alertError('【处理说明】最大长度不能超过1000');
+            }else{
+                var fetchId = $('#fetchId').val();
+                var data = {'fetchId':fetchId,'flag':'1','logPerformDesc':LOG_performDesc};
+                //进行处理操作
+                $.operate.saveTab(prefix + "/dealSave",data);
+            }
+        }
+
+    }
+
+
+    /**
+     * 输入空值校验
+     * @param valueStr
+     * @returns {boolean}
+     */
+    function  isEmpty(valueStr) {
+        if(valueStr=='' || valueStr==null){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    /**
+     * 获取输入数值的长度
+     * @param valueStr
+     * @returns {number}
+     */
+    function getValueLen(valueStr){
+        return isEmpty(valueStr)?0:valueStr.length;
+    }
+
+
+    /**
+     * 附件下载
+     */
+    function downloadFile() {
+        var rows = $.table.selectFirstColumns();
+        var atId = rows[0];
+        var ownerId = $("#fetchDemandId").val();
+        var url = ctx + "pub/attachment/download/" + ownerId + "/" + atId;
+        window.location.href = url;
+    }
+
+</script>
+</body>
+</html>

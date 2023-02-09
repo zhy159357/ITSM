@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('系统升级申请单列表')" />
+</head>
+<body class="gray-bg">
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-12 search-collapse">
+            <form id="upgrad-form">
+                <div class="select-list">
+                    <ul>
+                        <li>
+                            <label style="width: 80px">编码：</label>
+                            <input type="text" name="sysNumber" placeholder=""/>
+                        </li>
+                        <li>
+                            <label style="width: 80px">系统名称：</label>
+                            <input type="text" name="sysName" placeholder=""/>
+                        </li>
+                        <li>
+                            <label style="width: 80px">项目负责人：</label>
+                            <input type="text" name="itemLeader" placeholder=""/>
+                        </li>
+                        <li>
+                            <label style="width: 80px">联系方式：</label>
+                            <input type="text" name="tel" placeholder=""/>
+                        </li>
+                    </ul>
+                    <ul>
+                        <li class="select-time">
+                            <label style="width: 80px">申请日期： </label>
+                            <input style="width: 200px" type="text" class="time-input"  id="applyDate" placeholder="请选择" name="applyDate" readonly/>
+                        </li>
+                        <li class="select-time">
+                            <label style="width: 80px">开始时间：</label>
+                            <input style="width: 200px" type="text" class="time-input"  id="startTime" placeholder="请选择" name="startTime" readonly/>
+
+                        </li>
+
+                        <li class="select-time">
+                            <label style="width: 80px">完成时间： </label>
+                            <input style="width: 200px" type="text" class="time-input"  id="endTime" placeholder="请选择" name="endTime" readonly/>
+                        </li>
+                        <li>
+                            <a class="btn btn-primary btn-rounded btn-sm" id="searchBut" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                            <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-repeat"></i>&nbsp;重置</a>
+                        </li>
+                    </ul>
+                </div>
+            </form>
+        </div>
+
+        <div class="btn-group-sm" id="toolbar" role="group">
+            <a class="btn btn-success" onclick="addTab()">
+                <i class="fa fa-plus"></i> 新增
+            </a>
+            <a class="btn btn-primary single disabled" onclick="editTab()">
+                <i class="fa fa-edit"></i> 修改
+            </a>
+            <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()">
+                <i class="fa fa-trash"></i> 删除
+            </a>
+        </div>
+
+        <div class="col-sm-12 select-table table-striped">
+            <table id="bootstrap-table" style="table-layout:fixed;"></table>
+        </div>
+    </div>
+</div>
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: datetimepicker-js" />
+<script th:inline="javascript">
+
+    var prefix = ctx + "system/upgradForm";
+
+    $(function() {
+        // 回车键搜索
+        document.onkeydown = function(e){
+            var ev = document.all ? window.event : e;
+            if(ev.keyCode==13) {
+                $('#searchBut').trigger('click');
+                return false;
+            }
+        };
+        var options = {
+            url: prefix + "/list",
+            createUrl: prefix + "/add",
+            updateUrl: prefix + "/edit/{id}",
+            removeUrl: prefix + "/remove",
+            clickToSelect:true,
+            singleSelect : true,
+            modalName: "系统升级申请单",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field : 'id',
+                    visible: false,
+                    width : 300
+                },
+                {
+                    field : 'sysNumber',
+                    title : '编码',
+                    width : 200
+                },
+                {
+                    field : 'sysName',
+                    title : '应用系统名称',
+                    width : 300
+                },
+                {
+                    field : 'sysContractor',
+                    title : '应用系统承建单位',
+                    width : 150
+                },
+                {
+                    field : 'itemLeader',
+                    title : '项目负责人',
+                    width : 150
+                },
+                {
+                    field : 'tel',
+                    title : '联系方式',
+                    width : 150
+                },
+                {
+                    field : 'applyDate',
+                    title : '申请日期',
+                    width : 150,
+                    formatter: function (value, row, index) {
+                        var startTime = '';
+                        if (value != '' && value != null) {
+                            var pattern = /(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/;
+                            startTime = value.replace(pattern, '$1-$2-$3 $4:$5:$6');
+                        }
+                        return startTime;
+                    }
+                },
+                {
+                    field: 'dept',
+                    title: '业务部门',
+                    width : 150
+                },
+                {
+                    field : 'currentVersion',
+                    visible: false,
+                    title : '当前版本',
+                    width : 150
+                },
+                {
+                    field : 'upgradedVersion',
+                    visible: false,
+                    title : '升级后版本',
+                    width : 150
+                },
+                {
+                    field : 'relatedSystems',
+                    visible: false,
+                    title : '相关系统',
+                    width : 150
+                },
+                {
+                    field : 'startTime',
+                    title : '系统升级开始时间',
+                    width : 150
+                },
+                {
+                    field : 'endTime',
+                    title : '系统升级完成时间',
+                    width : 150
+                },
+                {
+                    field : 'upgradeReason',
+                    visible: false,
+                    title : '升级原因',
+                    width : 150
+                },
+                {
+                    field : 'upgradeContent',
+                    visible: false,
+                    title : '升级内容',
+                    width : 150
+                },
+                {
+                    field : 'remarks',
+                    visible: false,
+                    title : '备注',
+                    width : 150
+                },
+                {
+                    field : 'leaderSign',
+                    visible: false,
+                    title : '项目负责人签字',
+                    width : 150
+                },
+                {
+                    field : 'leaderSignTime',
+                    visible: false,
+                    title : '项目负责人签字日期',
+                    width : 150
+                },
+                {
+                    field : 'sysOpinion',
+                    visible: false,
+                    title : '相关系统意见',
+                    width : 150
+                },
+                {
+                    field : 'sysOpinionTime',
+                    visible: false,
+                    title : '相关系统意见日期',
+                    width : 150
+                },
+                {
+                    field : 'collectiveUnitOpinion',
+                    visible: false,
+                    title : '总集单位审批意见',
+                    width : 150
+                },
+                {
+                    field : 'collectiveUnitTime',
+                    visible: false,
+                    title : '总集单位审批意见日期',
+                    width : 150
+                },
+                {
+                    field : 'bureauUnitOpinion',
+                    visible: false,
+                    title : '技术局审批意见',
+                    width : 150
+                },
+                {
+                    field : 'creatTime',
+                    visible: false,
+                    title : '创建时间',
+                    width : 150
+                }
+            ]
+        };
+        $.table.init(options);
+    });
+
+    $("#datetimepicker-demo-2").datetimepicker({
+        format: "yyyy-mm-dd",
+        minView: "month",
+        autoclose: true
+    });
+
+    // 添加信息，以tab页展现
+    function addTab(id) {
+        $.modal.openTab("添加" + table.options.modalName, $.operate.addUrl(id));
+    }
+
+    /**修改 */
+    function editTab(id) {
+        table.set();
+        var rows = $.common.isEmpty(table.options.uniqueId) ? $.table.selectFirstColumns() : $.table.selectColumns(table.options.uniqueId);
+        $.ajax({
+            type: 'POST',
+            url: prefix +"/selectById",
+            data: {"id":rows[0]},
+            success: function (result) {
+                $.modal.openTab("修改" + table.options.modalName, $.operate.editUrl(id));
+            },
+            dataType: 'json'
+        });
+    }
+
+</script>
+</body>
+</html>

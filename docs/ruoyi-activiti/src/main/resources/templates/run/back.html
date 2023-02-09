@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+	<th:block th:include="include :: header('监控事件单')" />
+	<th:block th:include="include :: select2-css" />
+</head>
+<body>
+<div class="main-content">
+	<form id="deal" class="form-horizontal" >
+		<input name="eventId" type="hidden" id="eventId" th:value="${eventId}"/>
+        <h4 class="form-header h4">处理信息</h4>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">处理用时：</label>
+                    <div class="col-sm-7">
+                        <input id="allTime"class="form-control" readonly value="">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label is-required">处理描述：</label>
+                    <div class="col-sm-9">
+                        <textarea rows="6" cols="20" id="handleDescr" name="handleDescr" maxlength="500"   class="form-control" required></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+	</form>
+</div>
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: select2-js" />
+<th:block th:include="include :: datetimepicker-js" />
+<th:block th:include="include :: datetimepicker-css" />
+<script th:src="@{/js/activiti.js}"></script>
+<script th:inline="javascript">
+	var prefix = ctx + "activiti/run";
+	var eventSource=$("#eventSource").val();
+	var time=[[${timing}]];
+	var eventSource=[[${eventSource}]];
+	$(function() {
+		secondsFormat(time);
+        $("#anticipateTime").datetimepicker({
+       		    format: "yyyy-mm-dd hh:ii:ss",
+       		    autoclose: true,
+       		    minView:0,
+       		    minuteStep:1,
+       		    startDate:new Date()
+       		});
+		puFolwHistory2($("#eventId").val());
+		});
+	// 提交
+	function submitHandler() {
+        if (!$.validate.form()) {
+            return $.modal.alertWarning("参数填写不全!");
+        }else{
+            var data = $("#deal").serializeArray();
+            data.push({name:"params[reCode]",value:1});
+            $.operate.saveTab(prefix + "/deal", data,reBack);
+        }
+	}
+	function secondsFormat(){
+		var day=Math.floor(time/(24*3600));
+		var hour=Math.floor((time-day*24*3600)/3600);
+		var minute=Math.floor((time-day*24*3600-hour*3600)/60);
+		var second=time-day*24*3600-hour*3600-minute*60;
+		var reTime=day+"天"+hour+"小时"+minute+"分钟"+second+"秒";
+		time+=1;
+		$("#allTime").val(reTime);
+		window.setTimeout (secondsFormat, 1000);
+	}
+	  function reBack(result) {
+        if (result.code == web_status.SUCCESS) {
+            var parent = window.parent;
+            if (parent.table.options.type == table_type.bootstrapTable) {
+                $.modal.close();
+                parent.$.modal.msgSuccess(result.msg);
+                parent.$.table.refresh();
+            } else if (parent.table.options.type == table_type.bootstrapTreeTable) {
+                $.modal.close();
+                parent.$.modal.msgSuccess(result.msg);
+                parent.$.treeTable.refresh();
+            } else {
+                $.modal.msgReload("保存成功,正在刷新数据请稍后……", modal_status.SUCCESS);
+            }
+        } else if (result.code == web_status.WARNING) {
+            $.modal.alertWarning(result.msg)
+            return;
+        }  else {
+            $.modal.alertError(result.msg);
+            return;
+        }
+        $.modal.closeLoading();
+        parent.closeBtu();
+    }
+</script>
+</body>
+</html>

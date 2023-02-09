@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.activiti.mapper.PubBizPresmsMapper">
+    
+    <resultMap type="PubBizPresms" id="PubBizPresmsResult">
+        <result property="pubBizPresmsId"    column="pub_biz_presms_id"    />
+        <result property="smsType"    column="sms_type"    />
+        <result property="telephone"    column="telephone"    />
+        <result property="name"    column="name"    />
+        <result property="smsText"    column="sms_text"    />
+        <result property="inspectTime"    column="inspect_time"    />
+        <result property="inspectObject"    column="inspect_object"    />
+        <result property="inspectObjectId"    column="inspect_object_id"    />
+        <result property="inspectText"    column="inspect_text"    />
+        <result property="createrId"    column="creater_id"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="invalidationMark"    column="invalidation_mark"    />
+        <result property="smsState"    column="sms_state"    />
+        <result property="taskId"    column="task_id"    />
+        <result property="verificationcode"    column="verificationcode"    />
+        <result property="dealStatus"    column="deal_status"    />
+    </resultMap>
+
+    <sql id="selectPubBizPresmsVo">
+        select pub_biz_presms_id, sms_type, telephone, name, sms_text, inspect_time, inspect_object, inspect_object_id, inspect_text, creater_id, update_time, invalidation_mark, sms_state, task_id, verificationcode, deal_status from pub_biz_presms
+    </sql>
+
+    <select id="selectPubBizPresmsList" parameterType="PubBizPresms" resultMap="PubBizPresmsResult">
+        <include refid="selectPubBizPresmsVo"/>
+        <where>  
+            <if test="smsType != null  and smsType != ''"> and sms_type = #{smsType}</if>
+            <if test="telephone != null  and telephone != ''"> and telephone = #{telephone}</if>
+            <if test="name != null  and name != ''"> and name like concat(concat('%', #{name}), '%')</if>
+            <if test="smsText != null  and smsText != ''"> and sms_text = #{smsText}</if>
+            <if test="inspectTime != null  and inspectTime != ''"> and inspect_time = #{inspectTime}</if>
+            <if test="inspectObject != null  and inspectObject != ''"> and inspect_object = #{inspectObject}</if>
+            <if test="inspectObjectId != null  and inspectObjectId != ''"> and inspect_object_id = #{inspectObjectId}</if>
+            <if test="inspectText != null  and inspectText != ''"> and inspect_text = #{inspectText}</if>
+            <if test="createrId != null  and createrId != ''"> and creater_id = #{createrId}</if>
+            <if test="invalidationMark != null  and invalidationMark != ''"> and invalidation_mark = #{invalidationMark}</if>
+            <if test="smsState != null  and smsState != ''"> and sms_state = #{smsState}</if>
+            <if test="taskId != null  and taskId != ''"> and task_id = #{taskId}</if>
+            <if test="verificationcode != null  and verificationcode != ''"> and verificationcode = #{verificationcode}</if>
+            <if test="dealStatus != null  and dealStatus != ''"> and deal_status = #{dealStatus}</if>
+        </where>
+    </select>
+    
+    <select id="selectPubBizPresmsById" parameterType="String" resultMap="PubBizPresmsResult">
+        <include refid="selectPubBizPresmsVo"/>
+        where pub_biz_presms_id = #{pubBizPresmsId}
+    </select>
+        
+    <insert id="insertPubBizPresms" parameterType="PubBizPresms">
+        insert into pub_biz_presms
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="pubBizPresmsId != null  and pubBizPresmsId != ''">pub_biz_presms_id,</if>
+            <if test="smsType != null  and smsType != ''">sms_type,</if>
+            <if test="telephone != null  and telephone != ''">telephone,</if>
+            <if test="name != null  and name != ''">name,</if>
+            <if test="smsText != null  and smsText != ''">sms_text,</if>
+            <if test="inspectTime != null  and inspectTime != ''">inspect_time,</if>
+            <if test="inspectObject != null  and inspectObject != ''">inspect_object,</if>
+            <if test="inspectObjectId != null  and inspectObjectId != ''">inspect_object_id,</if>
+            <if test="inspectText != null  and inspectText != ''">inspect_text,</if>
+            <if test="createrId != null  and createrId != ''">creater_id,</if>
+            <if test="updateTime != null  and updateTime != ''">update_time,</if>
+            <if test="invalidationMark != null  and invalidationMark != ''">invalidation_mark,</if>
+            <if test="smsState != null  and smsState != ''">sms_state,</if>
+            <if test="taskId != null  and taskId != ''">task_id,</if>
+            <if test="verificationcode != null  and verificationcode != ''">verificationcode,</if>
+            <if test="dealStatus != null  and dealStatus != ''">deal_status,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="pubBizPresmsId != null  and pubBizPresmsId != ''">#{pubBizPresmsId},</if>
+            <if test="smsType != null  and smsType != ''">#{smsType},</if>
+            <if test="telephone != null  and telephone != ''">#{telephone},</if>
+            <if test="name != null  and name != ''">#{name},</if>
+            <if test="smsText != null  and smsText != ''">#{smsText},</if>
+            <if test="inspectTime != null  and inspectTime != ''">#{inspectTime},</if>
+            <if test="inspectObject != null  and inspectObject != ''">#{inspectObject},</if>
+            <if test="inspectObjectId != null  and inspectObjectId != ''">#{inspectObjectId},</if>
+            <if test="inspectText != null  and inspectText != ''">#{inspectText},</if>
+            <if test="createrId != null  and createrId != ''">#{createrId},</if>
+            <if test="updateTime != null  and updateTime != ''">#{updateTime},</if>
+            <if test="invalidationMark != null  and invalidationMark != ''">#{invalidationMark},</if>
+            <if test="smsState != null  and smsState != ''">#{smsState},</if>
+            <if test="taskId != null  and taskId != ''">#{taskId},</if>
+            <if test="verificationcode != null  and verificationcode != ''">#{verificationcode},</if>
+            <if test="dealStatus != null  and dealStatus != ''">#{dealStatus},</if>
+         </trim>
+    </insert>
+
+    <update id="updatePubBizPresms" parameterType="PubBizPresms">
+        update pub_biz_presms
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="smsType != null  and smsType != ''">sms_type = #{smsType},</if>
+            <if test="telephone != null  and telephone != ''">telephone = #{telephone},</if>
+            <if test="name != null  and name != ''">name = #{name},</if>
+            <if test="smsText != null  and smsText != ''">sms_text = #{smsText},</if>
+            <if test="inspectTime != null  and inspectTime != ''">inspect_time = #{inspectTime},</if>
+            <if test="inspectObject != null  and inspectObject != ''">inspect_object = #{inspectObject},</if>
+            <if test="inspectObjectId != null  and inspectObjectId != ''">inspect_object_id = #{inspectObjectId},</if>
+            <if test="inspectText != null  and inspectText != ''">inspect_text = #{inspectText},</if>
+            <if test="createrId != null  and createrId != ''">creater_id = #{createrId},</if>
+            <if test="updateTime != null  and updateTime != ''">update_time = #{updateTime},</if>
+            <if test="invalidationMark != null  and invalidationMark != ''">invalidation_mark = #{invalidationMark},</if>
+            <if test="smsState != null  and smsState != ''">sms_state = #{smsState},</if>
+            <if test="taskId != null  and taskId != ''">task_id = #{taskId},</if>
+            <if test="verificationcode != null  and verificationcode != ''">verificationcode = #{verificationcode},</if>
+            <if test="dealStatus != null  and dealStatus != ''">deal_status = #{dealStatus},</if>
+        </trim>
+        where pub_biz_presms_id = #{pubBizPresmsId}
+    </update>
+
+    <delete id="deletePubBizPresmsById" parameterType="String">
+        delete from pub_biz_presms where pub_biz_presms_id = #{pubBizPresmsId}
+    </delete>
+
+    <delete id="deletePubBizPresmsByIds" parameterType="String">
+        delete from pub_biz_presms where pub_biz_presms_id in 
+        <foreach item="pubBizPresmsId" collection="array" open="(" separator="," close=")">
+            #{pubBizPresmsId}
+        </foreach>
+    </delete>
+    
+</mapper>

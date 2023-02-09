@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:include="include :: header('附件管理列表')" />
+    <th:block th:include="include :: select2-css" />
+</head>
+<body class="gray-bg">
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-12 search-collapse">
+            <form id="formId">
+                <div class="select-list">
+                    <ul>
+                        <li>
+                            <p>附件ID：</p>
+                            <input type="text" name="atId"/>
+                        </li>
+                        <li>
+                            <p>上传时间起：</p>
+                            <input type="text" class="time-input" id="startTime" name="params[fileTimeStart]" readonly/>
+                        </li>
+                        <li>
+                            <p>上传时间止：</p>
+                            <input type="text" class="time-input" id="fileTime" name="fileTime" readonly/>
+                        </li>
+                        <li>
+                            <p>附件类型：</p>
+                            <select name="fileType">
+                                <option value="1">普通附件</option>
+                                <option value="2">版本包</option>
+                                <option value="3">自动化步骤</option>
+                            </select>
+                        </li>
+                        <li>
+                            <a class="btn btn-primary btn-rounded btn-sm" id="attachment" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                            <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.resetAll()"><i class="fa fa-repeat"></i>&nbsp;重置</a>
+                        </li>
+                    </ul>
+                </div>
+            </form>
+        </div>
+
+        <div class="btn-group-sm" id="toolbar" role="group">
+            <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()">
+                <i class="fa fa-remove"></i> 删除
+            </a>
+            <a class="btn btn-danger" onclick="removeList()">
+                <i class="fa fa-remove"></i> 批量删除
+            </a>
+        </div>
+        <div class="col-sm-12 select-table table-striped">
+            <table id="bootstrap-table"></table>
+        </div>
+    </div>
+</div>
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: select2-js" />
+<th:block th:include="include :: bootstrap-select-js"/>
+<th:block th:include="include :: bootstrap-select-css"/>
+<script th:src="@{/js/activiti.js}"></script>
+<script th:inline="javascript">
+    var prefix = ctx + "pub/attachment";
+
+    var datas = [[${@pubParaValue.selectPubParaValueByParaName('file_type')}]];
+
+    $(function() {
+        // 回车键搜索
+        document.onkeydown = function(e){
+            var ev = document.all ? window.event : e;
+            if(ev.keyCode==13) {
+                $('#attachment').trigger('click');
+                return false;
+            }
+        };
+
+        var options = {
+            url: prefix + "/list",
+            removeUrl: prefix + "/delete",
+            clickToSelect: true,
+            modalName: "附件列表",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field : 'atId',
+                    title : '附件ID',
+                    width : 150
+                },
+                {
+                    field : 'person.pName',
+                    title : '上传人',
+                    width : 100
+                },
+                {
+                    field : 'filePath',
+                    title : 'fastDFS路径',
+                    width : 220
+                },
+                {
+                    field : 'fileName',
+                    title : '文件名称',
+                    width : 200
+                },
+                {
+                    field : 'size',
+                    title : '文件大小',
+                    width : 100
+                },
+                {
+                    field : 'fileTime',
+                    title : '上传时间',
+                    formatter: function (value, row, index) {
+                        var startTime = '';
+                        if (value != '' && value != null) {
+                            var pattern = /(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/;
+                            startTime = value.replace(pattern, '$1-$2-$3 $4:$5:$6');
+                        }
+                        return startTime;
+                    },
+                    width : 150
+                },
+                {
+                    field : 'fileType',
+                    title : '附件类型',
+                    formatter: function(value, row, index) {
+                        return $.table.selectPubParaValueData(datas, value);
+                    },
+                    width : 150
+                },
+                {
+                    field : 'flag',
+                    title : 'fastDfs删除标识',
+                    formatter: function(value, row, index) {
+                        if(row.flag == "autoClean"){
+                            return "是";
+                        } else {
+                            return "否";
+                        }
+                    },
+                    width : 100
+                }]
+        };
+        $.table.init(options);
+    });
+
+    /**
+     * 附件批量删除
+     */
+    function removeList() {
+        var url = prefix + "/removeList";
+        $.modal.open("附件批量删除",url);
+    }
+
+</script>
+</body>
+</html>

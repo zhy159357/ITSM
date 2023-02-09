@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('查询调度请求单')" />
+    <th:block th:include="include :: datetimepicker-css" />
+    <th:block th:include="include :: select2-css"/>
+</head>
+<body class="gray-bg">
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-12 search-collapse">
+            <form id="post-form">
+                <input type="hidden" id="deptId" name="orgId">
+                <div class="row">
+                    <div class="select-list">
+                        <ul>
+                            <li>
+                                <p>事件单编号：</p>
+                                <input type="text" name="faultNo"/>
+                            </li>
+
+                            <li>
+                                <p>主题：</p>
+                                <input type="text" name="faultTitle"/>
+                            </li>
+
+                            <li>
+                                <p>调度类型：</p>
+                                <select name="faultType" class="form-control" th:with="type=${@dict.getParaType('fm_dd')}">
+                                <option value=""></option>
+                                <option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+                            </select>
+                            </li>
+
+                            <li class="select-time">
+                                <p>创建时间：</p>
+                                <input type="text"  id="createTime" placeholder="开始时间" name="createTime" readonly/>
+                                <span>-</span>
+                                <input type="text"  id="endCreateTime" placeholder="结束时间" name="endCreateTime" readonly/>
+                            </li>
+
+
+                            <li>
+                                <p>创建机构：</p>
+                                <input type="text" name="orgName"/>
+                            </li>
+
+
+                            <li class="select-time">
+                                <p>计划操作时间：</p>
+                                <input type="text"  id="planTime" placeholder="开始时间" name="planTime" readonly/>
+                                <span>-</span>
+                                <input type="text"  id="endPlanTime" placeholder="结束时间" name="endPlanTime" readonly/>
+                            </li>
+
+                            <li>
+                                <p>当前状态：</p>
+                                <select name="currentState" class="form-control" th:with="type=${@dict.getParaType('fmdd_status')}">
+                                <option value=""></option>
+                                <option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+                            </select>
+                            </li>
+
+                            <li>
+                                <p>与我相关：</p>
+                                <select name="label" class="form-control" th:with="type=${@dict.getParaType('pub_myFlag')}">
+                                    <option value=""></option>
+                                    <option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+                                </select>
+                            </li>
+
+                            <li>
+                                <a class="btn btn-primary btn-rounded btn-sm" id="FmDdSearch" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.resetAll('post-form')"><i class="fa fa-repeat"></i>&nbsp;重置</a>
+                            </li>
+
+                        </ul>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+
+        <div class="btn-group-sm" id="toolbar" role="group">
+            <a class="btn btn-info single disabled" onclick="showProcessImg()">
+                <i class="fa fa-search"></i> 查看流程
+            </a>
+            <a class="btn btn-info single disabled" onclick="$.operate.detail()" >
+                <i class="fa fa-search"></i> 查看详情
+            </a>
+            <a class="btn btn-primary" onclick="window.print()">
+                <i class="fa fa-print"></i> 打印
+            </a>
+            <a th:if="${isHasRole} eq 'true'" class="btn btn-primary multiple disabled"  onclick="parseResouse()">
+                <i class="fa fa-search-plus"></i> 转变更
+            </a>
+            <!--导出所有｜当前页按钮组合-->
+            <div class="btn-group">
+                <button data-toggle="dropdown" class="btn btn-primary btn-sm dropdown-toggle"> <i class="fa fa-cloud-upload"></i>导出<span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a onclick="$.table.exportExcel()">导出所有</a>
+                    </li>
+                    <li><a onclick="$.table.exportExcelCurrentPage()">导出当前页</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="col-sm-12 select-table table-striped">
+            <table id="bootstrap-table" style="table-layout:fixed;"></table>
+        </div>
+    </div>
+
+</div>
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: datetimepicker-js" />
+<th:block th:include="include :: select2-js"/>
+<script th:inline="javascript">
+
+    var data = [[${@dict.getParaType('fm_dd')}]];
+
+    var datas = [[${@dict.getParaType('fmdd_status')}]];
+
+    var prefix = ctx + "dispatch/query";
+
+    var prefix_parse_resouse = ctx +'system/single';
+
+    $(function() {
+        // 回车搜索
+        document.onkeydown = function(e){
+            var ev = document.all ? window.event : e;
+            if(ev.keyCode==13) {
+                $('#FmDdSearch').trigger('click');
+                return false;
+            }
+        };
+
+        var options = {
+            url: prefix + "/list",
+            createUrl: prefix + "/add",
+            detailUrl: prefix + "/detail/{id}",
+            updateUrl: prefix + "/edit/{id}",
+            removeUrl: prefix + "/remove",
+            exportUrl: prefix + "/export",
+            clickToSelect: true,
+            singleSelect: true,
+            modalName: "查询调度请求单",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field : 'fmddId',
+                    title : '主键ID',
+                    width: 300,
+                    visible: false
+                },
+                {
+                    field: 'faultNo',
+                    width: 150,
+                    title: '事件单编号',
+                },
+                {
+                    field: 'faultTitle',
+                    width: 150,
+                    title: '主题',
+                    formatter:function (value,row,index) {
+                        return $.table.tooltip(value)
+                    }
+                },
+                {
+                    field: 'faultType',
+                    width: 150,
+                    title: '调度类型',
+                    formatter: function(value, row, index) {
+                        return selectDictLabel(data, value);
+                    }
+                },
+                {
+                    field: 'currentState',
+                    title: '当前状态',
+                    width: 150,
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                        return selectDictLabel(datas, value);
+                    }
+                },
+                {
+                    field: 'createTime',
+                    width: 150,
+                    title: '创建时间',
+                    formatter: function (value, row, index) {
+                        var startTime = '';
+                        if(value!='' && value !=null){
+                            var pattern = /(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/;
+                            startTime = value.replace(pattern, '$1-$2-$3 $4:$5:$6');
+                        }
+                        return startTime;
+                    }
+                },
+                {
+                    field: 'planTime',
+                    width: 150,
+                    title: '计划操作时间',
+                    formatter: function (value, row, index) {
+                        var startTime = '';
+                        if(value!='' && value !=null){
+                            var pattern = /(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/;
+                            startTime = value.replace(pattern, '$1-$2-$3 $4:$5:$6');
+                        }
+                        return startTime;
+                    }
+                },
+                {
+                    field: 'orgName',
+                    width: 150,
+                    title: '创建机构',
+                }]
+        };
+        $.table.init(options);
+    });
+
+
+
+
+
+    /*查看调度事件详情*/
+    function detail(id){
+        var url = prefix + "/detail/" + id;
+        $.modal.openTab("调度请求单详情",url);
+    }
+
+
+    $("input[name='createTime']").datetimepicker({
+        format: "yyyy-mm-dd",
+        minView: "month",
+        autoclose: true
+    });
+
+    $("input[name='endCreateTime']").datetimepicker({
+        format: "yyyy-mm-dd",
+        minView: "month",
+        autoclose: true
+    });
+
+    $("input[name='planTime']").datetimepicker({
+        format: "yyyy-mm-dd",
+        minView: "month",
+        autoclose: true
+    });
+
+    $("input[name='endPlanTime']").datetimepicker({
+        format: "yyyy-mm-dd",
+        minView: "month",
+        autoclose: true
+    });
+
+
+
+    function selectDictLabel(datas, value) {
+        var actions = [];
+        $.each(datas, function(index, dict) {
+            if (dict.value == ('' + value)) {
+                var listClass = $.common.equals("default", dict.listClass) || $.common.isEmpty(dict.listClass) ? "" : "badge badge-" + dict.listClass;
+                actions.push($.common.sprintf("<span class='%s'>%s</span>", listClass, dict.valueDetail));
+                return false;
+            }
+        });
+        return actions.join('');
+    }
+
+    /**
+     * 转资源变更
+     */
+    function parseResouse() {
+        //获取当前调度Ids
+        var row = $("#bootstrap-table").bootstrapTable('getSelections')[0];
+        if(row.currentState!= '9'){
+            $.modal.alertError("当前选中的调度请求单不为已关闭状态,无法转变更!");
+        }else {
+            var url = prefix_parse_resouse + "/add/1/"+row.fmddId;
+            $.modal.openTab('转资源变更',url);
+        }
+
+    }
+
+    function showProcessImg() {
+        var currentState = $.table.selectColumns("currentState");
+        if(currentState == '1'){
+            $.modal.alertWarning("待提交状态的调度请求单流程未开启，不可查看！");
+            return;
+        }
+
+        var row = $("#bootstrap-table").bootstrapTable('getSelections')[0];
+        var url = ctx +'process/processImg/' + row.fmddId;
+        $.modal.open("查看流程图", url, null, null, null, true);
+    }
+
+
+</script>
+</body>
+</html>

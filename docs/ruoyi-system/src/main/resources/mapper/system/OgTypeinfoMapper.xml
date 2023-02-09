@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.OgTypeinfoMapper">
+    
+    <resultMap type="OgTypeinfo" id="OgTypeinfoResult">
+        <result property="typeinfoId"    column="typeinfo_id"    />
+        <result property="typeTypeNo"    column="type_type_no"    />
+        <result property="typeTypeName"    column="type_type_name"    />
+        <result property="typeNo"    column="type_no"    />
+        <result property="typeName"    column="type_name"    />
+        <result property="typeDescription"    column="type_description"    />
+        <result property="leaf"    column="leaf"    />
+        <result property="createUserId"    column="create_user_id"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="invalidationMark"    column="invalidation_mark"    />
+        <result property="serial"    column="serial"    />
+        <result property="typeLevel"    column="type_level"    />
+        <result property="parentId"    column="parent_id"    />
+        <result property="parentTypeName"    column="parent_type_name"    />
+    </resultMap>
+
+    <sql id="selectOgTypeinfoVo">
+        select typeinfo_id, type_type_no, type_type_name, type_no, type_name, type_description, leaf, create_user_id, update_time, invalidation_mark, serial, type_level, parent_id
+    </sql>
+
+    <select id="selectOgTypeinfoList" parameterType="OgTypeinfo" resultMap="OgTypeinfoResult">
+        <include refid="selectOgTypeinfoVo"/>
+        ,(select o.type_name from og_typeinfo o WHERE o.typeinfo_id = m.parent_id) as parent_type_name
+        from og_typeinfo m
+        <where>  
+            <if test="typeTypeNo != null  and typeTypeNo != ''"> and type_type_no = #{typeTypeNo}</if>
+            <if test="typeTypeName != null  and typeTypeName != ''"> and type_type_name like '%${typeTypeName}%'</if>
+            <if test="typeNo != null  and typeNo != ''"> and type_no like concat('%',concat(#{typeNo},'%'))</if>
+            <if test="typeName != null  and typeName != ''"> and type_name like concat('%',concat(#{typeName},'%'))</if>
+            <if test="typeDescription != null  and typeDescription != ''"> and type_description like '%${typeDescription}%'</if>
+            <if test="leaf != null  and leaf != ''"> and leaf = #{leaf}</if>
+            <if test="createUserId != null  and createUserId != ''"> and create_user_id = #{createUserId}</if>
+            <if test="invalidationMark != null  and invalidationMark != ''"> and invalidation_mark = #{invalidationMark}</if>
+            <if test="serial != null "> and serial = #{serial}</if>
+            <if test="typeLevel != null "> and type_level = #{typeLevel}</if>
+            <if test="parentId != null  and parentId != ''"> and parent_id = #{parentId}</if>
+        </where>
+    </select>
+    
+    <select id="selectOgTypeinfoById" parameterType="String" resultMap="OgTypeinfoResult">
+        <include refid="selectOgTypeinfoVo"/>
+        , m.type_name as parent_type_name
+        from og_typeinfo m
+        where typeinfo_id = #{typeinfoId,jdbcType=VARCHAR}
+    </select>
+
+
+
+    <!-- cuicc 20220719-->
+    <select id="selectOgTypeinfoById2" parameterType="String" resultMap="OgTypeinfoResult">
+SELECT
+	m.typeinfo_id,
+	m.type_type_no,
+	m.type_type_name,
+	m.type_no,
+	m.type_name,
+	m.type_description,
+	m.leaf,
+	m.create_user_id,
+	m.update_time,
+	m.invalidation_mark,
+	m.serial,
+	m.type_level,
+	m.parent_id,
+	m1.type_name AS parent_type_name
+FROM
+	og_typeinfo m
+	LEFT JOIN og_typeinfo m1 ON m.parent_id = m1.typeinfo_id
+        where m.typeinfo_id = #{typeinfoId,jdbcType=VARCHAR}
+    </select>
+
+    <select id="selectOgTypeinfoByParentId" parameterType="String" resultMap="OgTypeinfoResult">
+        <include refid="selectOgTypeinfoVo"/>
+        ,(select o.type_name from og_typeinfo o WHERE o.typeinfo_id = #{parentId}) as parent_type_name
+        from og_typeinfo m
+        where parent_id = #{parentId}
+    </select>
+
+
+
+    <select id="selectOgTypeinfoByParentId" parameterType="String" resultMap="OgTypeinfoResult">
+        <include refid="selectOgTypeinfoVo"/>
+        ,(select o.type_name from og_typeinfo o WHERE o.typeinfo_id = #{parentId}) as parent_type_name
+        from og_typeinfo m
+        where parent_id = #{parentId}
+    </select>
+
+    <insert id="insertOgTypeinfo" parameterType="OgTypeinfo">
+        <!--<selectKey keyProperty="typeinfoId" resultType="long" order="BEFORE">
+            SELECT seq_og_typeinfo.NEXTVAL as typeinfoId FROM DUAL
+        </selectKey>-->
+        insert into og_typeinfo
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="typeinfoId != null  and typeinfoId != ''">typeinfo_id,</if>
+            <if test="typeTypeNo != null  and typeTypeNo != ''">type_type_no,</if>
+            <if test="typeTypeName != null  and typeTypeName != ''">type_type_name,</if>
+            <if test="typeNo != null  and typeNo != ''">type_no,</if>
+            <if test="typeName != null  and typeName != ''">type_name,</if>
+            <if test="typeDescription != null  and typeDescription != ''">type_description,</if>
+            <if test="leaf != null  and leaf != ''">leaf,</if>
+            <if test="createUserId != null  and createUserId != ''">create_user_id,</if>
+            <if test="updateTime != null  and updateTime != ''">update_time,</if>
+            <if test="invalidationMark != null  and invalidationMark != ''">invalidation_mark,</if>
+            <if test="serial != null ">serial,</if>
+            <if test="typeLevel != null ">type_level,</if>
+            <if test="parentId != null  and parentId != ''">parent_id,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="typeinfoId != null  and typeinfoId != ''">#{typeinfoId},</if>
+            <if test="typeTypeNo != null  and typeTypeNo != ''">#{typeTypeNo},</if>
+            <if test="typeTypeName != null  and typeTypeName != ''">#{typeTypeName},</if>
+            <if test="typeNo != null  and typeNo != ''">#{typeNo},</if>
+            <if test="typeName != null  and typeName != ''">#{typeName},</if>
+            <if test="typeDescription != null  and typeDescription != ''">#{typeDescription},</if>
+            <if test="leaf != null  and leaf != ''">#{leaf},</if>
+            <if test="createUserId != null  and createUserId != ''">#{createUserId},</if>
+            <if test="updateTime != null  and updateTime != ''">#{updateTime},</if>
+            <if test="invalidationMark != null  and invalidationMark != ''">#{invalidationMark},</if>
+            <if test="serial != null ">#{serial},</if>
+            <if test="typeLevel != null ">#{typeLevel},</if>
+            <if test="parentId != null  and parentId != ''">#{parentId},</if>
+         </trim>
+    </insert>
+
+    <update id="updateOgTypeinfo" parameterType="OgTypeinfo">
+        update og_typeinfo
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="typeTypeNo != null  and typeTypeNo != ''">type_type_no = #{typeTypeNo},</if>
+            <if test="typeTypeName != null  and typeTypeName != ''">type_type_name = #{typeTypeName},</if>
+            <if test="typeNo != null  and typeNo != ''">type_no = #{typeNo},</if>
+            <if test="typeName != null  and typeName != ''">type_name = #{typeName},</if>
+            <if test="typeDescription != null  and typeDescription != ''">type_description = #{typeDescription},</if>
+            <if test="leaf != null  and leaf != ''">leaf = #{leaf},</if>
+            <if test="createUserId != null  and createUserId != ''">create_user_id = #{createUserId},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+            <if test="invalidationMark != null  and invalidationMark != ''">invalidation_mark = #{invalidationMark},</if>
+            <if test="serial != null ">serial = #{serial},</if>
+            <if test="typeLevel != null ">type_level = #{typeLevel},</if>
+            <if test="parentId != null  and parentId != ''">parent_id = #{parentId},</if>
+        </trim>
+        where typeinfo_id = #{typeinfoId}
+    </update>
+
+    <delete id="deleteOgTypeinfoById" parameterType="String">
+        delete from og_typeinfo where typeinfo_id = #{typeinfoId}
+    </delete>
+
+    <delete id="deleteOgTypeinfoByIds" parameterType="String">
+        delete from og_typeinfo where typeinfo_id in 
+        <foreach item="typeinfoId" collection="array" open="(" separator="," close=")">
+            #{typeinfoId}
+        </foreach>
+    </delete>
+
+    <select id="selectTypeinfoTree" parameterType="OgTypeinfo" resultMap="OgTypeinfoResult">
+        <include refid="selectOgTypeinfoVo"/>
+        from og_typeinfo m
+        where invalidation_mark !='0'
+    </select>
+    <select id="selectCmbizType"  resultMap="OgTypeinfoResult">
+        <include refid="selectOgTypeinfoVo"/>
+        from og_typeinfo m
+        where invalidation_mark !='0' and parent_id is null
+    </select>
+
+</mapper>

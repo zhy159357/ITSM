@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.activiti.mapper.FmBizLifeMapper">
+
+    <resultMap type="FmBizLife" id="FmBizLifeResult">
+        <result property="fmLifeId" column="fm_life_id"/>
+        <result property="sysId" column="sys_id"/>
+        <result property="deptLev" column="dept_lev"/>
+        <result property="surCount" column="sur_count"/>
+        <result property="eightNdealCount" column="eight_ndeal_count"/>
+        <result property="eightDealCount" column="eight_deal_count"/>
+        <result property="eightDealLife" column="eight_deal_life"/>
+        <result property="sixteenNdealCount" column="sixteen_ndeal_count"/>
+        <result property="sixteenDealCount" column="sixteen_deal_count"/>
+        <result property="sixteenDealLife" column="sixteen_deal_life"/>
+        <result property="ttfourNdealCount" column="ttfour_ndeal_count"/>
+        <result property="ttfourDealCount" column="ttfour_deal_count"/>
+        <result property="ttfourDealLife" column="ttfour_deal_life"/>
+        <result property="statisticalTime" column="statistical_time"/>
+        <result property="orgId" column="org_id"/>
+        <result property="flag" column="flag"/>
+        <result property="invalidationMark" column="invalidation_mark"/>
+        <result property="sysName" column="sysName"/>
+    </resultMap>
+
+    <resultMap type="OgSys" id="OgSysResult">
+        <id property="sysId" column="sysId"/>
+        <result property="orgId" column="orgId"/>
+        <result property="code" column="code"/>
+        <result property="caption" column="caption"/>
+        <result property="memo" column="memo"/>
+        <result property="invalidationMark" column="invalidation_Mark"/>
+        <result property="isExamination" column="isExamination"/>
+        <result property="dept" column="dept"/>
+        <result property="pid" column="pid"/>
+        <result property="businessId" column="businessId"/>
+        <result property="isKeySys" column="is_Key_Sys"/>
+        <result property="sysType" column="sys_Type"/>
+    </resultMap>
+
+    <resultMap type="OgOrg" id="OgOrgResult">
+        <id property="orgId" column="orgId"/>
+        <result property="parentId" column="t_o_orgId"/>
+        <result property="orgCode" column="orgCode"/>
+        <result property="orgName" column="orgName"/>
+        <result property="orgLv" column="orgLv"/>
+        <result property="adder" column="adder"/>
+        <result property="addtime" column="addtime"/>
+        <result property="moder" column="moder"/>
+        <result property="modtime" column="modtime"/>
+        <result property="updatetime" column="update_time"/>
+        <result property="invalidationMark" column="invalidation_Mark"/>
+        <result property="memo" column="memo"/>
+        <result property="branchMark" column="branch_Mark"/>
+        <result property="inoutsideMark" column="inoutside_Mark"/>
+        <result property="levelCode" column="level_Code"/>
+        <result property="leaf" column="leaf"></result>
+        <result property="type" column="type"></result>
+        <result property="sort" column="sort"></result>
+        <result property="operaternum" column="operaternum"></result>
+        <result property="khnum" column="khnum"></result>
+        <result property="parentName" column="parent_name"/>
+    </resultMap>
+
+    <sql id="selectFmBizLifeVo">
+        select f.fm_life_id,
+               f.sys_id,
+               f.dept_lev,
+               f.sur_count,
+               f.eight_ndeal_count,
+               f.eight_deal_count,
+               f.eight_deal_life,
+               f.sixteen_ndeal_count,
+               f.sixteen_deal_count,
+               f.sixteen_deal_life,
+               f.ttfour_ndeal_count,
+               f.ttfour_deal_count,
+               f.ttfour_deal_life,
+               f.statistical_time,
+               f.org_id,
+               f.flag,
+               s.caption sysName,
+               o.orgname,
+               f.invalidation_mark
+        from fm_biz_life f
+                 left join og_sys s
+                           on f.sys_id = s.sysid
+                 left join og_org o
+                           on f.org_id = o.orgid
+    </sql>
+
+    <select id="selectFmBizLifeList" parameterType="FmBizLife" resultMap="FmBizLifeResult">
+        <include refid="selectFmBizLifeVo"/>
+        <where>
+             f.invalidation_mark='1'
+        </where>
+        and f.flag='1'
+    </select>
+
+    <select id="selectFmBizLifeById" parameterType="String" resultMap="FmBizLifeResult">
+        <include refid="selectFmBizLifeVo"/>
+        where fm_life_id = #{fmLifeId}
+    </select>
+
+    <insert id="insertFmBizLife" parameterType="FmBizLife">
+        insert into fm_biz_life
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="fmLifeId != null  and fmLifeId != ''">fm_life_id,</if>
+            <if test="sysId != null  and sysId != ''">sys_id,</if>
+            <if test="deptLev != null  and deptLev != ''">dept_lev,</if>
+            <if test="surCount != null  and surCount != ''">sur_count,</if>
+            <if test="eightNdealCount != null  and eightNdealCount != ''">eight_ndeal_count,</if>
+            <if test="eightDealCount != null  and eightDealCount != ''">eight_deal_count,</if>
+            <if test="eightDealLife != null  and eightDealLife != ''">eight_deal_life,</if>
+            <if test="sixteenNdealCount != null  and sixteenNdealCount != ''">sixteen_ndeal_count,</if>
+            <if test="sixteenDealCount != null  and sixteenDealCount != ''">sixteen_deal_count,</if>
+            <if test="sixteenDealLife != null  and sixteenDealLife != ''">sixteen_deal_life,</if>
+            <if test="ttfourNdealCount != null  and ttfourNdealCount != ''">ttfour_ndeal_count,</if>
+            <if test="ttfourDealCount != null  and ttfourDealCount != ''">ttfour_deal_count,</if>
+            <if test="ttfourDealLife != null  and ttfourDealLife != ''">ttfour_deal_life,</if>
+            <if test="statisticalTime != null  and statisticalTime != ''">statistical_time,</if>
+            <if test="orgId != null  and orgId != ''">org_id,</if>
+            <if test="flag != null  and flag != ''">flag,</if>
+            <if test="invalidationMark != null  and invalidationMark != ''">invalidation_mark,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="fmLifeId != null  and fmLifeId != ''">#{fmLifeId},</if>
+            <if test="sysId != null  and sysId != ''">#{sysId},</if>
+            <if test="deptLev != null  and deptLev != ''">#{deptLev},</if>
+            <if test="surCount != null  and surCount != ''">#{surCount},</if>
+            <if test="eightNdealCount != null  and eightNdealCount != ''">#{eightNdealCount},</if>
+            <if test="eightDealCount != null  and eightDealCount != ''">#{eightDealCount},</if>
+            <if test="eightDealLife != null  and eightDealLife != ''">#{eightDealLife},</if>
+            <if test="sixteenNdealCount != null  and sixteenNdealCount != ''">#{sixteenNdealCount},</if>
+            <if test="sixteenDealCount != null  and sixteenDealCount != ''">#{sixteenDealCount},</if>
+            <if test="sixteenDealLife != null  and sixteenDealLife != ''">#{sixteenDealLife},</if>
+            <if test="ttfourNdealCount != null  and ttfourNdealCount != ''">#{ttfourNdealCount},</if>
+            <if test="ttfourDealCount != null  and ttfourDealCount != ''">#{ttfourDealCount},</if>
+            <if test="ttfourDealLife != null  and ttfourDealLife != ''">#{ttfourDealLife},</if>
+            <if test="statisticalTime != null  and statisticalTime != ''">#{statisticalTime},</if>
+            <if test="orgId != null  and orgId != ''">#{orgId},</if>
+            <if test="flag != null  and flag != ''">#{flag},</if>
+            <if test="invalidationMark != null  and invalidationMark != ''">#{invalidationMark},</if>
+        </trim>
+    </insert>
+
+    <update id="updateFmBizLife" parameterType="FmBizLife">
+        update fm_biz_life
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="sysId != null  and sysId != ''">sys_id = #{sysId},</if>
+            <if test="deptLev != null  and deptLev != ''">dept_lev = #{deptLev},</if>
+            <if test="surCount != null  and surCount != ''">sur_count = #{surCount},</if>
+            <if test="eightNdealCount != null  and eightNdealCount != ''">eight_ndeal_count = #{eightNdealCount},</if>
+            <if test="eightDealCount != null  and eightDealCount != ''">eight_deal_count = #{eightDealCount},</if>
+            <if test="eightDealLife != null  and eightDealLife != ''">eight_deal_life = #{eightDealLife},</if>
+            <if test="sixteenNdealCount != null  and sixteenNdealCount != ''">sixteen_ndeal_count =
+                #{sixteenNdealCount},
+            </if>
+            <if test="sixteenDealCount != null  and sixteenDealCount != ''">sixteen_deal_count = #{sixteenDealCount},
+            </if>
+            <if test="sixteenDealLife != null  and sixteenDealLife != ''">sixteen_deal_life = #{sixteenDealLife},</if>
+            <if test="ttfourNdealCount != null  and ttfourNdealCount != ''">ttfour_ndeal_count = #{ttfourNdealCount},
+            </if>
+            <if test="ttfourDealCount != null  and ttfourDealCount != ''">ttfour_deal_count = #{ttfourDealCount},</if>
+            <if test="ttfourDealLife != null  and ttfourDealLife != ''">ttfour_deal_life = #{ttfourDealLife},</if>
+            <if test="statisticalTime != null  and statisticalTime != ''">statistical_time = #{statisticalTime},</if>
+            <if test="orgId != null  and orgId != ''">org_id = #{orgId},</if>
+            <if test="flag != null  and flag != ''">flag = #{flag},</if>
+            <if test="invalidationMark != null  and invalidationMark != ''">invalidation_mark = #{invalidationMark},
+            </if>
+        </trim>
+        where fm_life_id = #{fmLifeId}
+    </update>
+
+    <delete id="deleteFmBizLifeById" parameterType="String">
+        delete
+        from fm_biz_life
+        where fm_life_id = #{fmLifeId}
+    </delete>
+
+    <delete id="deleteFmBizLifeByIds" parameterType="String">
+        delete from fm_biz_life where fm_life_id in
+        <foreach item="fmLifeId" collection="array" open="(" separator="," close=")">
+            #{fmLifeId}
+        </foreach>
+    </delete>
+    <!--拿到剩余数量-->
+    <select id="getSysCount" resultMap="FmBizLifeResult">
+        select s.sysid                      sys_id,
+               nvl((select count(f.fm_id)
+                    from fm_biz f
+                    where f.current_state in ('03', '04')
+                      and f.sysid = s.sysid
+                      and f.invalidation_mark = '1'
+                    group by s.caption), 0) sur_count
+        from og_sys s
+        where s.INVALIDATION_MARK = '1'
+          and s.orgid in (select o.orgid from og_org o where o.khnum is not null)
+    </select>
+    <!--拿到处理数量-->
+    <select id="getSysDealCount" parameterType="FmBizLife" resultMap="FmBizLifeResult">
+        select s.sysid                      sys_id,
+               nvl((select count(l.biz_id)
+                    from pub_flow_log l,
+                         fm_biz f,
+                         og_group g
+                    where l.biz_id = f.fm_id
+                      and f.invalidation_mark = '1'
+                      and l.performer_group_id = g.groupid
+                      and g.sysid = s.sysid
+                      and l.performer_time &lt;= #{params.eStartTime}
+                      and l.performer_time &gt;= #{params.endTime}
+
+                      and (l.perform_name = '处理' or l.perform_name = '转发' or l.perform_name = '退回省中心')
+                    group by s.caption), 0) eight_deal_count,
+
+               nvl((select count(l.biz_id)
+                    from pub_flow_log l,
+                         fm_biz f,
+                         og_group g
+                    where l.biz_id = f.fm_id
+                      and f.invalidation_mark = '1'
+                      and l.performer_group_id = g.groupid
+                      and g.sysid = s.sysid
+                      and l.performer_time &lt;= #{params.sStartTime}
+                      and l.performer_time &gt;= #{params.endTime}
+
+                      and (l.perform_name = '处理' or l.perform_name = '转发' or l.perform_name = '退回省中心')
+                    group by s.caption), 0) sixteen_deal_count,
+
+               nvl((select count(l.biz_id)
+                    from pub_flow_log l,
+                         fm_biz f,
+                         og_group g
+                    where l.biz_id = f.fm_id
+                      and f.invalidation_mark = '1'
+                      and l.performer_group_id = g.groupid
+                      and g.sysid = s.sysid
+                      and l.performer_time &lt;= #{params.tStartTime}
+                      and l.performer_time &gt;= #{params.endTime}
+                      and (l.perform_name = '处理' or l.perform_name = '转发' or l.perform_name = '退回省中心')
+                    group by s.caption), 0) ttfour_deal_count
+
+        from og_sys s,
+             og_org o
+        where s.orgid = o.orgid
+          and o.khnum is not null
+    </select>
+    <delete id="deleteAll">
+        delete
+        from fm_biz_life
+        where 1 = 1
+    </delete>
+</mapper>

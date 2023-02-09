@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+
+
+<head>
+    <th:block th:include="include :: header('转化问题单表')"/>
+    <th:block th:include="include :: select2-css"/>
+    <th:block th:include="include :: datetimepicker-css"/>
+</head>
+<body class="gray-bg">
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-12 search-collapse">
+            <form id="formId">
+                <input type="hidden" class="form-control" id="ifjjtype" name="ifjjtype" th:value="*{ifjjtype}"/>
+                <div class="select-list">
+                    <ul>
+                        <li>
+                            <p>系统：</p>
+                            <input id="systemId" name="systemId" type="hidden" class="form-control"/>
+                            <input id="applicationName" name="applicationName" type="text" class="form-control"
+                                   onclick="selectOgSysListByCondition()"/>
+                        </li>
+                        <li>
+                            <p>单号：</p>
+                            <input type="text" class="form-control" id="singelNumber" name="singelNumber"/>
+                        </li>
+                        <li>
+                            <p>考核年月：</p>
+                            <input name="datetime" id="datetime" class="form-control" placeholder="yyyy-MM" type="text"
+                                   style="background-color: #fdfdfd" readonly>
+                        </li>
+                        <li>
+                            <a class="btn btn-primary btn-rounded btn-sm" id="searchBiz" onclick="$.table.search()"><i
+                                    class="fa fa-search"></i>&nbsp;搜索</a>
+                            <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.resetAll('formId')"><i
+                                    class="fa fa-refresh"></i>&nbsp;重置</a>
+                        </li>
+                    </ul>
+                </div>
+            </form>
+        </div>
+        <div class="btn-group-sm" id="toolbar" role="group">
+            <!--<a class="btn btn-success" onclick="$.operate.addTab()">
+                <i class="fa fa-plus"></i> 新建
+            </a>-->
+            <a class="btn btn-warning" onclick="$.table.exportExcel()">
+                <i class="fa fa-download"></i> 导出
+            </a>
+        </div>
+        <div class="col-sm-12 select-table table-striped">
+            <table id="bootstrap-table"></table>
+        </div>
+    </div>
+</div>
+<th:block th:include="include :: footer"/>
+<th:block th:include="include :: select2-js"/>
+<th:block th:include="include :: datetimepicker-js"/>
+<script th:inline="javascript">
+    var prefix = ctx + "fmtoquestion";
+    $(function () {
+        // 回车键搜索
+        document.onkeydown = function (e) {
+            var ev = document.all ? window.event : e;
+            if (ev.keyCode == 13) {
+                $('#searchBiz').trigger('click');
+                return false;
+            }
+        };
+        var options = {
+            url: prefix + "/list",
+            createUrl: prefix + "/add",
+            exportUrl: prefix + "/exportList",
+            clickToSelect: true,
+            singleSelect: true,
+            pagination: false,
+            modalName: "转化问题单表",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'datetime',
+                    title: '考核年月'
+                },
+                {
+                    field: 'sysName',
+                    title: '系统'
+                },
+                {
+                    field: 'notCommitCount',
+                    title: '未提交次'
+                },
+                {
+                    field: 'notCommitReport',
+                    title: '未提交分析报告'
+                },
+                {
+                    field: 'commitQuestionCount',
+                    title: '提交问题单数量',
+                },
+                {
+                    field: 'closeStatusCount',
+                    title: '关闭状态数量',
+                },
+                {
+                    field: 'notCountType',
+                    title: '根据分类汇总未提交的',
+                }
+                ]
+        };
+        $.table.init(options);
+        var date = new Date()
+        var y = date.getFullYear();
+        var m = date.getMonth();
+        $("#datetime").val(y + "-" + (m < 10 ? "0" + m : m));
+    });
+
+    // 添加
+    function addTab(id) {
+        var url = prefix + '/add/' + id;
+        $.modal.openTab("添加", url);
+    }
+
+    $("input[id='datetime']").datetimepicker({
+        format: "yyyy-mm",
+        minView: 4,
+        startView: 3,
+        autoclose: true
+    });
+
+    // 选择应用系统（只能单选）
+    function selectOgSysListByCondition() {
+        $.modal.open("选择应用系统", prefix + "/selectOneApplication");
+    }
+
+</script>
+</body>
+</html>

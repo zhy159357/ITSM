@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.activiti.mapper.DutySubstituteMapper">
+
+    <resultMap type="DutySubstitute" id="DutySubstituteResult">
+        <result property="substituteId" column="substitute_id"    />
+        <result property="schedulingId" column="scheduling_id"    />
+        <result property="typeNo"       column="type_no"    />
+        <result property="typeName"     column="type_name"    />
+        <result property="pid"          column="pid"    />
+        <result property="pname"        column="pname"    />
+        <result property="tid"          column="tid"    />
+        <result property="tname"        column="tname"    />
+        <result property="dutyDate"     column="duty_date"    />
+        <result property="status"       column="status"    />
+        <result property="remark"       column="remark"    />
+    </resultMap>
+
+    <select id="selectSubstituteBySchedulingId" parameterType="DutySubstitute" resultMap="DutySubstituteResult">
+        select substitute_id,scheduling_id from duty_substitute
+        where  status = 0
+        <if test="pid != null and pid != ''"> and pid like concat(concat('%',#{pid}),'%')</if>
+        <if test="dutyDate != null and dutyDate != ''"> and duty_date = #{dutyDate}</if>
+        <if test="schedulingId != null and schedulingId != ''"> and scheduling_id = #{schedulingId}</if>
+    </select>
+
+    <select id="selectSubstituteById" parameterType="DutySubstitute" resultMap="DutySubstituteResult">
+        select s.substitute_id,s.scheduling_id,s.type_no,s.pid,
+        (select p.pname from og_person p where p.pid=s.pid) as pname,s.tid,
+        (select p.pname from og_person p where p.pid=s.tid) as tname,
+        (select type_name from duty_typeinfo t where t.type_no=s.type_no) as type_name,
+        s.duty_date,s.status,s.remark
+        from duty_substitute s
+        <where>
+            <if test="substituteId != null and substituteId != ''"> and s.substitute_id = #{substituteId}</if>
+        </where>
+    </select>
+
+    <select id="selectSubstituteList" parameterType="DutySubstitute" resultMap="DutySubstituteResult">
+        select s.substitute_id,s.scheduling_id,s.type_no,s.pid,
+        (select p.pname from og_person p where p.pid=s.pid) as pname,s.tid,
+        (select p.pname from og_person p where p.pid=s.tid) as tname,
+        (select type_name from duty_typeinfo t where t.type_no=s.type_no) as type_name,
+        s.duty_date,s.status,s.remark
+        from duty_substitute s
+        <where>
+            <if test="pid != null and pid != ''"> and s.pid = #{pid}</if>
+            <if test="tid != null and tid != ''"> and s.tid = #{tid}</if>
+            <if test="startTime != null and startTime != ''"> and s.duty_date &gt;= #{startTime}</if>
+            <if test="endTime != null and endTime != ''"> and s.duty_date &lt;= #{endTime}</if>
+            <if test="status != null and status != ''"> and s.status = #{status}</if>
+        </where>
+    </select>
+
+    <insert id="insertDutySubstitute" parameterType="DutySubstitute">
+        insert into duty_substitute
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="substituteId != null and substituteId != ''">substitute_id,</if>
+            <if test="schedulingId != null and schedulingId != ''">scheduling_id,</if>
+            <if test="pid != null and pid != ''">pid,</if>
+            <if test="tid != null and tid != ''">tid,</if>
+            <if test="dutyDate != null and dutyDate != ''">duty_date,</if>
+            <if test="typeNo != null and typeNo != ''">type_no,</if>
+            <if test="status != null and status != ''">status,</if>
+            <if test="remark != null and remark != ''">remark,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="substituteId != null and substituteId != ''">#{substituteId},</if>
+            <if test="schedulingId != null and schedulingId != ''">#{schedulingId},</if>
+            <if test="pid != null and pid != ''">#{pid},</if>
+            <if test="tid != null and tid != ''">#{tid},</if>
+            <if test="dutyDate != null and dutyDate != ''">#{dutyDate},</if>
+            <if test="typeNo != null and typeNo != ''">#{typeNo},</if>
+            <if test="status != null and status != ''">#{status},</if>
+            <if test="remark != null and remark != ''">#{remark},</if>
+        </trim>
+    </insert>
+
+    <update id="updateDutySubstitute" parameterType="DutySubstitute">
+        update duty_substitute set status = #{status}
+        where substitute_id = #{substituteId}
+    </update>
+
+</mapper>

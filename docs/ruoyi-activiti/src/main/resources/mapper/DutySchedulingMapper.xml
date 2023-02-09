@@ -1,0 +1,451 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.activiti.mapper.DutySchedulingMapper">
+
+    <resultMap type="DutyScheduling" id="DutySchedulingResult">
+        <result property="schedulingId" column="scheduling_id"    />
+        <result property="typeName"     column="type_name"    />
+        <result property="typeNo"       column="type_no"    />
+        <result property="typeinfoId"   column="typeinfo_id"    />
+        <result property="parentId"     column="parent_id"    />
+        <result property="pid"          column="pid"    />
+        <result property="pname"        column="pname"    />
+        <result property="mobilephone"  column="mobile_phone"    />
+        <result property="dutyDate"     column="duty_date"    />
+        <result property="timeShift"    column="time_shift"    />
+        <result property="dutyNumber"   column="duty_number"    />
+        <result property="typeinfoId"   column="typeinfo_id"    />
+        <result property="leader"       column="leader"    />
+        <result property="accountPid"   column="account_pid"    />
+        <result property="accountName"  column="account_name"    />
+    </resultMap>
+
+    <resultMap type="DutyPerson" id="DutyPersonResult">
+        <result property="pid"          column="pid"    />
+        <result property="pname"        column="pname"    />
+        <result property="mobilephone"  column="mobil_phone"    />
+        <result property="orgname"      column="orgname"    />
+        <result property="opmname"      column="opmname"    />
+    </resultMap>
+
+    <resultMap type="OgPerson" id="OgPersonResult">
+        <id     property="pId"              column="PID"         />
+        <result property="orgId"            column="ORGID"         />
+        <result property="pName"            column="PNAME"      />
+        <result property="sex"              column="SEX"       />
+        <result property="birthPlace"       column="BIRTHPLACE"     />
+        <result property="mobilPhone"       column="MOBIL_PHONE"          />
+        <result property="orgname"          column="ORGNAME"     />
+    </resultMap>
+
+    <resultMap type="DutyVersion" id="versionResult">
+        <result property="versionId" column="version_id"	/>
+    </resultMap>
+
+    <resultMap type="DutyVersion" id="versionResultVo">
+        <result property="schedulingId"       	column="scheduling_id"    />
+        <result property="dutyDate"      		column="duty_date"	/>
+        <result property="typeinfoId"       	column="typeinfo_id"    />
+        <result property="typeNo"           	column="type_no"    />
+        <result property="typeName"           	column="type_name"    />
+        <result property="pname"           	    column="pname"    />
+        <result property="pid"           	    column="pid"    />
+        <result property="typeColumns"         	column="type_columns"    />
+        <result property="parentId"    			column="parent_id"    />
+    </resultMap>
+
+    <resultMap id="OgUserResult" type="OgUser">
+        <id property="userId" column="userid"/>
+        <result property="pId" column="pid"/>
+        <result property="username" column="username"/>
+        <result property="password" column="password"/>
+        <result property="updateTime" column="update_Time"/>
+        <result property="invalidationMark" column="invalidation_Mark"/>
+        <result property="ipStart" column="ip_Start"/>
+        <result property="ipEnd" column="ip_End"/>
+        <result property="smsCode" column="sms_Code"/>
+        <result property="lastTime" column="last_Time"/>
+        <result property="lCount" column="l_Count"/>
+        <result property="pNotCount" column="p_Not_Count"/>
+        <result property="lockTime" column="lock_Time"/>
+        <result property="pname" column="pname"/>
+        <result property="custNo" column="cust_no"/>
+        <result property="mobilPhone" column="mobil_phone"/>
+        <result property="weakPwd" column="weak_Pwd"/>
+        <result property="currtTime" column="currtTime"/>
+        <result property="status" column="p_flag"/>
+        <result property="email" column="email"/>
+        <result property="orgname" column="orgname"/>
+    </resultMap>
+
+    <resultMap id="dutyLog" type="com.ruoyi.common.core.domain.entity.DutyLog">
+        <result property="id" column="ID"/>
+        <result property="userId" column="USER_ID"/>
+        <result property="userName" column="USER_NAME"/>
+        <result property="userPhone" column="USER_PHONE"/>
+        <result property="logContent" column="LOG_CONTENT"/>
+        <result property="logTime" column="LOG_TIME"/>
+        <result property="updateTime" column="UPDATE_TIME"/>
+    </resultMap>
+
+    <sql id="selectDutySchedulingVo">
+        select scheduling_id,pid,pname,type_no,typeinfo_id,mobile_phone,duty_date,leader from duty_scheduling
+    </sql>
+
+    <select id="selectDutyUserList" parameterType="String" resultMap="OgPersonResult">
+        select pe.pid,pe.pname,pe.mobil_phone,pe.birthplace,pe.sex,og.orgname
+        from OG_USER u
+        left join OG_PERSON pe on  u.pid = pe.pid
+        left join og_org og on pe.orgid = OG.orgid
+        LEFT join og_r_user_post up on u.userid = up.userid
+        LEFT JOIN og_post p on p.postid = up.postid
+        LEFT JOIN og_r_post_role pr on p.postid = pr.postid
+        where pr.rid =  #{rId}
+        <if test="pName!=null and pName!=''">
+            and pe.pname  like concat(concat('%',#{pName}),'%')
+        </if>
+        <if test="orgname!=null and orgname!=''">
+            and og.orgname like concat(concat('%',#{orgname}),'%')
+        </if>
+        <if test="mobilPhone!=null and mobilPhone!=''">
+            and pe.mobil_phone like concat(concat('%',#{mobilPhone}),'%')
+        </if>
+    </select>
+
+    <select id="selectPhoneByPid" parameterType="String" resultMap="DutySchedulingResult">
+        select listagg(pname,',') within group (order by pname) as pname,listagg(mobil_phone,',') within group (order by mobil_phone) as mobile_phone
+        from OG_PERSON where pid in
+        <foreach item="pid" collection="array" open="(" separator="," close=")">
+            #{pid}
+        </foreach>
+    </select>
+    <select id="selectPhoneByPidMysql" parameterType="String" resultMap="DutySchedulingResult">
+        select group_concat(pname separator ',') AS pname,group_concat(mobil_phone separator ',') AS mobile_phone
+        from OG_PERSON where pid in
+        <foreach item="pid" collection="array" open="(" separator="," close=")">
+            #{pid}
+        </foreach>
+    </select>
+
+    <update id="editCheckLog" parameterType="String">
+        update DUTY_LOG
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="content != null  and content != ''">LOG_CONTENT = #{content},</if>
+            <if test="updateTime != null  and updateTime != ''">UPDATE_TIME = #{updateTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteDutyLogByIds" parameterType="String">
+        delete from DUTY_LOG where ID in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="searchLogForUserId" parameterType="com.ruoyi.common.core.domain.entity.DutyLog" resultMap="dutyLog">
+        select u.ID,u.USER_ID,u.USER_NAME,u.USER_PHONE,u.LOG_CONTENT,u.LOG_TIME,u.UPDATE_TIME from DUTY_LOG u
+        <where>
+            <if test="userId != null  and userId != ''"> and u.USER_ID = #{userId}</if>
+        </where>
+        order by u.LOG_TIME
+    </select>
+
+    <insert id="addLog" parameterType="com.ruoyi.common.core.domain.entity.DutyLog" useGeneratedKeys="false">
+        insert into DUTY_LOG(ID,USER_ID,USER_NAME,USER_PHONE,LOG_CONTENT,LOG_TIME)
+        values(#{id,jdbcType=VARCHAR},#{userId,jdbcType=VARCHAR},#{userName,jdbcType=VARCHAR},#{userPhone,jdbcType=VARCHAR},#{logContent,jdbcType=VARCHAR},#{logTime,jdbcType=VARCHAR})
+    </insert>
+
+    <select id="selectDutyPersonList" parameterType="String" resultType="Integer">
+        select count(*) from duty_scheduling d
+        where d.mobile_phone = #{mobilePhone,jdbcType=VARCHAR} and d.duty_date = #{dutyDate,jdbcType=VARCHAR}
+<!--        <where>-->
+<!--            <if test="mobilePhone != null  and mobilePhone != ''"> and d.mobile_phone = #{mobilePhone}</if>-->
+<!--            <if test="dutyDate != null  and dutyDate != ''"> and d.duty_date = #{dutyDate}</if>-->
+<!--        </where>-->
+        order by d.duty_date
+    </select>
+
+    <select id="selectDutySchedulingList" parameterType="DutyScheduling" resultMap="DutySchedulingResult">
+        select d.scheduling_id,d.pid,d.pname,d.mobile_phone,d.duty_date,t.typeinfo_id,t.type_name,d.type_no as account_name,
+        (select c.type_name from duty_typeinfo c where c.typeinfo_id=t.parent_id ) as type_no
+        from duty_scheduling d left join duty_typeinfo t on t.type_no=d.type_no
+        <where>
+            <if test="pname != null  and pname != ''"> and d.pname like concat('%',concat(#{pname},'%'))</if>
+            <if test="mobilephone != null  and mobilephone != ''"> and d.mobile_phone like concat('%',concat(#{mobilephone},'%'))</if>
+            <if test="startTime != null  and startTime != ''"> and d.duty_date &gt;= #{startTime}</if>
+            <if test="endTime != null  and endTime != ''"> and d.duty_date &lt;= #{endTime}</if>
+            <if test="typeNo != null  and typeNo != ''"> and d.type_no like concat('%',concat(#{typeNo},'%'))</if>
+            <if test="dutyDate != null  and dutyDate != ''"> and d.duty_date = #{dutyDate}</if>
+        </where>
+        order by d.type_no
+    </select>
+
+    <select id="selectDutySchedulingById" parameterType="String" resultMap="DutySchedulingResult">
+        select d.typeinfo_id,d.scheduling_id,d.pid,d.pname,d.mobile_phone,d.duty_date,i.type_name as type_no,d.leader,d.account_pid,
+        (select pname from og_person o where o.pid=d.account_pid) as account_name,
+        (CASE WHEN time_shift=0 THEN '白班' WHEN time_shift=1 THEN '夜班' ELSE '夜班' END) as time_shift
+        from duty_scheduling d
+        left join duty_typeinfo i on i.typeinfo_id = d.typeinfo_id
+        where d.scheduling_id = #{schedulingId}
+    </select>
+
+    <select id="selectDutySchedulingByTypeNo" parameterType="DutyScheduling" resultMap="DutySchedulingResult">
+        select d.typeinfo_id,d.scheduling_id,d.pid,d.pname,d.mobile_phone,d.duty_date from duty_scheduling d
+        where d.type_no = #{typeNo}
+    </select>
+
+    <insert id="insertDutyScheduling" parameterType="DutyScheduling">
+        insert into duty_scheduling
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="schedulingId != null  and schedulingId != ''">scheduling_id,</if>
+            <if test="pid != null and pid != ''">pid,</if>
+            <if test="pname != null and pname != ''">pname,</if>
+            <if test="typeNo != null and typeNo != ''">type_no,</if>
+            <if test="typeinfoId != null and typeinfoId != ''">typeinfo_id,</if>
+            <if test="mobilephone != null and mobilephone != ''">mobile_phone,</if>
+            <if test="dutyDate != null and dutyDate != ''">duty_date,</if>
+            <if test="timeShift != null and timeShift != ''">time_shift,</if>
+            <if test="leader != null and leader != ''">leader,</if>
+            <if test="accountPid != null and accountPid != ''">account_pid,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="schedulingId != null  and schedulingId != ''">#{schedulingId},</if>
+            <if test="pid != null  and pid != ''">#{pid},</if>
+            <if test="pname != null  and pname != ''">#{pname},</if>
+            <if test="typeNo != null  and typeNo != ''">#{typeNo},</if>
+            <if test="typeinfoId != null  and typeinfoId != ''">#{typeinfoId},</if>
+            <if test="mobilephone != null  and mobilephone != ''">#{mobilephone},</if>
+            <if test="dutyDate != null  and dutyDate != ''">#{dutyDate},</if>
+            <if test="timeShift != null  and timeShift != ''">#{timeShift},</if>
+            <if test="leader != null  and leader != ''">#{leader},</if>
+            <if test="accountPid != null and accountPid != ''">#{accountPid},</if>
+        </trim>
+    </insert>
+
+    <update id="updateDutyScheduling" parameterType="DutyScheduling">
+        update duty_scheduling
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="pid != null  and pid != ''">pid = #{pid},</if>
+            <if test="pname != null  and pname != ''">pname = #{pname},</if>
+            <if test="typeNo != null  and typeNo != ''">type_no = #{typeNo},</if>
+            <if test="typeinfoId != null  and typeinfoId != ''">typeinfo_id = #{typeinfoId},</if>
+            <if test="mobilephone != null  and mobilephone != ''">mobile_phone = #{mobilephone},</if>
+            <if test="dutyDate != null  and dutyDate != ''">duty_date = #{dutyDate},</if>
+            <if test="leader != null  and leader != ''">leader = #{leader},</if>
+            <if test="accountPid != null and accountPid != ''">account_pid = #{accountPid},</if>
+        </trim>
+        where scheduling_id = #{schedulingId}
+    </update>
+
+    <select id="selectDutyAccountById" parameterType="DutyScheduling" resultMap="DutySchedulingResult">
+        select id,pid,account_pid,scheduling_id from duty_account
+        where scheduling_id = #{schedulingId}
+    </select>
+
+    <update id="updateDutyAccountById" parameterType="DutyScheduling">
+        update duty_account
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="pid != null  and pid != ''">pid = #{pid},</if>
+            <if test="accountPid != null  and pname != ''">account_pid = #{accountPid},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteDutySchedulingById" parameterType="String">
+        delete from duty_scheduling where scheduling_id = #{schedulingId}
+    </delete>
+
+    <select id="selectDutySchedulingByIds" parameterType="String" resultMap="DutySchedulingResult">
+        select duty_date from duty_scheduling where scheduling_id in
+        <foreach item="schedulingId" collection="array" open="(" separator="," close=")">
+            #{schedulingId}
+        </foreach>
+    </select>
+
+    <delete id="deleteDutySchedulingByIds" parameterType="String">
+        delete from duty_scheduling where scheduling_id in
+        <foreach item="schedulingId" collection="array" open="(" separator="," close=")">
+            #{schedulingId}
+        </foreach>
+    </delete>
+
+    <select id="checkTypeNoUnique" parameterType="String" resultMap="DutySchedulingResult">
+        <include refid="selectDutySchedulingVo"/>
+        where type_no = #{typeNo}
+    </select>
+
+    <select id="selectOgPersonList" parameterType="String" resultMap="DutyPersonResult">
+        select distinct concat(concat(concat(concat(og.orgname,'-'),p.pname),'-'),p.mobil_phone) as opmname,p.pid,p.pname,p.mobil_phone,og.orgname from og_person p
+        left join og_org og
+        on p.orgid = og.orgid
+        LEFT JOIN og_user u
+        on p.pid=u.pid
+        where p.pname is not null
+        and u.invalidation_mark='1' and p.invalidation_mark='1'
+        and OG.LEVEL_CODE LIKE '/000000000/010000888/%'
+    </select>
+
+    <select id="exportOgPersonList" parameterType="String" resultMap="DutyPersonResult">
+        select distinct p.pid,p.pname,p.mobil_phone,og.orgname from OG_PERSON p,OG_USER u,OG_R_USER_POST up,OG_POST op,og_org og
+        where p.PID = u.PID and u.USERID = UP.USERID and UP.POSTID = OP.POSTID and p.orgid = og.orgid
+        and p.INVALIDATION_MARK = '1' and u.INVALIDATION_MARK = '1'
+        and OP.INVALIDATION_MARK = '1'
+        and op.postid in ('0002','0010','0011')
+    </select>
+
+    <select id="selectPersonByMobilephone" parameterType="String" resultMap="DutyPersonResult">
+        select p.pid,p.pname,p.mobil_phone,og.orgname from og_person p
+        left join og_org og
+        on p.orgid = og.orgid
+        where p.pname is not null
+        and rownum = 1
+        and p.invalidation_mark = 1
+        <if test="mobilephone!=null and mobilephone!=''">
+            and p.mobil_phone = #{mobilephone}
+        </if>
+    </select>
+
+    <select id="selectTypeinfoByTypeNo" parameterType="DutyVersion" resultMap="DutySchedulingResult">
+        select type_no,duty_number from duty_version_typeinfo
+        where rownum = 1
+        <if test="versionId != null  and versionId != ''"> and version_id = #{versionId}</if>
+        <if test="typeNo != null  and typeNo != ''"> and type_no = #{typeNo}</if>
+    </select>
+
+    <select id="selectDutyNumber" parameterType="DutyVersion" resultMap="DutySchedulingResult">
+        select t.duty_number from duty_version v
+        left join duty_version_typeinfo t on v.version_id = t.version_id
+        <where>
+            rownum = 1
+            <if test="dutyDate != null  and dutyDate != ''"> and v.duty_date like concat('%',concat(#{dutyDate},'%'))</if>
+            <if test="typeinfoId != null  and typeinfoId != ''"> and t.typeinfo_id = #{typeinfoId}</if>
+        </where>
+    </select>
+    <select id="selectDutyNumberMysql" parameterType="DutyVersion" resultMap="DutySchedulingResult">
+        select t.duty_number from duty_version v
+        left join duty_version_typeinfo t on v.version_id = t.version_id
+        <where>
+            <if test="dutyDate != null  and dutyDate != ''"> and v.duty_date like concat('%',concat(#{dutyDate},'%'))</if>
+            <if test="typeinfoId != null  and typeinfoId != ''"> and t.typeinfo_id = #{typeinfoId}</if>
+        </where>
+        limit 1
+    </select>
+
+    <select id="selectVersionByDate" parameterType="String" resultMap="versionResult">
+        select version_id from duty_version
+        where duty_date like concat('%',concat(#{dutyDate},'%'))
+        and rownum = 1
+    </select>
+
+    <select id="selectScheduling" parameterType="DutyScheduling" resultMap="DutySchedulingResult">
+        <include refid="selectDutySchedulingVo"/>
+        <where>
+            and rownum = 1
+            <if test="typeinfoId != null  and typeNo != ''"> and typeinfo_id = #{typeinfoId}</if>
+            <if test="mobilephone != null  and mobilephone != ''"> and mobile_phone = #{mobilephone}</if>
+            <if test="dutyDate != null  and dutyDate != ''"> and duty_date = #{dutyDate}</if>
+        </where>
+    </select>
+    <select id="selectSchedulingMysql" parameterType="DutyScheduling" resultMap="DutySchedulingResult">
+        <include refid="selectDutySchedulingVo"/>
+        <where>
+            <if test="typeinfoId != null  and typeNo != ''"> and typeinfo_id = #{typeinfoId} </if>
+            <if test="mobilephone != null  and mobilephone != ''"> and mobile_phone = #{mobilephone} </if>
+            <if test="dutyDate != null  and dutyDate != ''"> and duty_date = #{dutyDate} </if>
+            <if test="timeShift != null  and timeShift != ''"> and time_shift = #{timeShift} </if>
+        </where>
+        limit 1
+    </select>
+
+    <delete id="deleteDutyScheduling" parameterType="DutyScheduling">
+        delete from duty_scheduling
+        <where>
+            <if test="typeinfoId != null  and typeNo != ''"> and typeinfo_id = #{typeinfoId}</if>
+            <if test="mobilephone != null  and mobilephone != ''"> and mobile_phone = #{mobilephone}</if>
+            <if test="dutyDate != null  and dutyDate != ''"> and duty_date = #{dutyDate}</if>
+        </where>
+    </delete>
+
+    <insert id="insertSchedulings" parameterType="ArrayList" useGeneratedKeys="false">
+        insert into duty_scheduling(scheduling_id,pid,pname,mobile_phone,duty_date,type_no,typeinfo_id)
+        SELECT A.* FROM (
+        <foreach collection="list" item="item" index="index" separator="UNION">
+            SELECT #{item.schedulingId,jdbcType = VARCHAR},
+            #{item.pid,jdbcType = VARCHAR},
+            #{item.pname,jdbcType = VARCHAR},
+            #{item.mobilephone,jdbcType = VARCHAR},
+            #{item.dutyDate,jdbcType = VARCHAR},
+            #{item.typeNo,jdbcType = VARCHAR},
+            #{item.typeinfoId,jdbcType = VARCHAR}
+            FROM DUAL
+        </foreach>
+        ) A
+    </insert>
+
+    <select id="selectDutyAccountList" parameterType="String" resultMap="DutySchedulingResult">
+        select account_pid from duty_account where pid in
+        <foreach collection="array" item="pid" open="(" separator="," close=")">
+            #{pid}
+        </foreach>
+    </select>
+
+    <delete id="deleteDutyAccountById" parameterType="String">
+        delete from duty_account where scheduling_id = #{schedulingId}
+    </delete>
+
+    <insert id="insertDutyAccount" parameterType="ArrayList" useGeneratedKeys="false">
+        insert into duty_account(id,pid,account_pid,scheduling_id)
+        SELECT A.* FROM (
+        <foreach collection="list" item="item" index="index" separator="UNION">
+            SELECT #{item.id,jdbcType = VARCHAR},#{item.pid,jdbcType = VARCHAR},
+            #{item.accountPid,jdbcType = VARCHAR},#{item.schedulingId,jdbcType = VARCHAR}
+            FROM DUAL
+        </foreach>
+        ) A
+    </insert>
+
+    <select id="checkDutyDateUnique" parameterType="String" resultMap="DutySchedulingResult">
+        <include refid="selectDutySchedulingVo"/>
+        where duty_date like concat(concat('%',#{dutyDate}),'%')
+    </select>
+
+    <select id="checkDutyDate" parameterType="String" resultMap="DutySchedulingResult">
+        <include refid="selectDutySchedulingVo"/>
+        where duty_date like concat(concat('%',#{dutyDate}),'%')
+    </select>
+
+    <select id="selectDutyInfoList" parameterType="DutyScheduling" resultMap="DutySchedulingResult">
+        select * from duty_scheduling
+        <where>
+            <if test="startTime != null  and startTime != ''"> and duty_date &gt;= #{startTime}</if>
+            <if test="endTime != null  and endTime != ''"> and duty_date &lt;= #{endTime}</if>
+            <if test="typeNo!=null and typeNo!=''"> and type_no = #{typeNo}</if>
+        </where>
+    </select>
+
+    <select id="selectTypeNameByTypeNo" parameterType="String" resultMap="DutySchedulingResult">
+        select typeinfo_id,type_name,parent_id from duty_typeinfo where typeinfo_id = #{typeinfoId}
+    </select>
+
+    <select id="selectOgUserByCustNo" parameterType="String" resultMap="OgUserResult">
+        select u.username,u.userid,u.pid,u.INVALIDATION_MARK,u.cust_no from og_user u
+        <where>
+            <if test="custNo!=null and custNo!=''">
+                and u.cust_no =#{custNo}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectDutyCalendar" parameterType="String"  resultMap="versionResultVo">
+        select s.scheduling_id,t.type_name,t.typeinfo_id,
+               to_char(to_date(s.duty_date,'YYYY-MM-dd'),'yyyy-fMMM-dd') as duty_date,s.pid,s.pname
+        from duty_scheduling s
+                 left join duty_typeinfo t on t.typeinfo_id = s.typeinfo_id
+        where s.pid like concat(concat('%',#{pid}),'%')
+          and s.duty_date like concat(concat('%',#{dutyDate}),'%')
+    </select>
+
+</mapper>

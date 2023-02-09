@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('替班备注列表')" />
+    <th:block th:include="include :: layout-latest-css" />
+    <th:block th:include="include :: ztree-css" />
+    <th:block th:include="include :: select2-css" />
+
+</head>
+<body class="gray-bg">
+<div class="ui-layout-center">
+    <div class="container-div">
+        <div class="row">
+            <div class="col-sm-12 search-collapse">
+                <form id="user-form">
+                    <div class="select-list">
+                        <ul>
+                            <li class="select-time">
+                                <label>值班时间： </label>
+                                <input type="text" class="time-input" id="startTime" placeholder="开始时间" name="startTime" readonly/>
+                                <span>-</span>
+                                <input type="text" class="time-input" id="endTime" placeholder="结束时间" name="endTime" readonly/>
+                            </li>
+                            <li>
+                                替班备注：<input type="text" name="remark"/>
+                            </li>
+                            <li>
+                                <a class="btn btn-primary btn-rounded btn-sm" id="searchList" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                            </li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+
+            <div class="btn-group-sm" id="toolbar" role="group">
+                <a class="btn btn-success" onclick="$.operate.add()">
+                    <i class="fa fa-plus"></i> 新增
+                </a>
+                <a class="btn btn-primary single disabled" onclick="editCheck()">
+                    <i class="fa fa-edit"></i> 修改
+                </a>
+<!--                <a class="btn btn-primary single disabled" onclick="$.operate.edit()">-->
+<!--                    <i class="fa fa-edit"></i> 修改-->
+<!--                </a>-->
+            </div>
+            <div class="col-sm-12 select-table table-striped">
+                <table id="bootstrap-table"></table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: select2-js" />
+<th:block th:include="include :: layout-latest-js" />
+<script th:inline="javascript">
+    var prefix = ctx + "duty/substituteRemark";
+
+    $(function() {
+        // 回车键搜索
+        document.onkeydown = function(e){
+            var ev = document.all ? window.event : e;
+            if(ev.keyCode==13) {
+                $('#searchList').trigger('click');
+                return false;
+            }
+        };
+        var options = {
+            url: prefix + "/list",
+            createUrl: prefix + "/add",
+            updateUrl: prefix + "/edit/{id}",
+            modalName: "人员信息",
+            clickToSelect: true,
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'substituteRemarkId',
+                    title: '替班备注id',
+                    visible: false
+                },
+                {
+                    field: 'pname',
+                    title: '值班人'
+                },
+                {
+                    field: 'dutyDate',
+                    title: '值班时间'
+                },
+                {
+                    field: 'typeName',
+                    title: '类别名称'
+                },
+                {
+                    field: 'typeNo',
+                    title: '类别编码'
+                },
+                {
+                    field: 'tname',
+                    title: '替班人'
+                },
+                {
+                    field: 'remark',
+                    title: '替班备注'
+                }]
+        };
+        $.table.init(options);
+    });
+
+    function editCheck(){
+        var rows = $("#bootstrap-table").bootstrapTable('getSelections');
+        var len = rows.length;
+        if (len == 0) {
+            $.modal.alertWarning("请选择要修改的数据");
+            return;
+        }
+        var row = rows[0];
+        $.ajax({
+            type : "POST",
+            url: prefix + "/selectCreateIdById",
+            data : {id:row.substituteRemarkId},
+            success : function(data){
+                if(data == 1){
+                    table.set();
+                    $.modal.openNoColse("修改" + table.options.modalName, prefix + "/edit/"+row.substituteRemarkId);
+                }else{
+                    $.modal.alertWarning("只有创建账号可以修改");
+                }
+            },error:function(){
+            }
+        });
+    }
+
+
+</script>
+<th:block th:include="include :: ztree-js" />
+</body>
+</html>

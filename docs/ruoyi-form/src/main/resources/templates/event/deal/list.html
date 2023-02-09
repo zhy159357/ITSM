@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:include="include :: header('事件单处理待办列表')"/>
+</head>
+<body class="gray-bg">
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-12 search-collapse">
+            <form id="formId">
+                <div class="select-list">
+                    <ul>
+                        <li>
+                            <p>事件单编号：</p>
+                            <input type="text" name="eventNo"/>
+                            <input type="hidden" name="params[description]" value="处理"/>
+                            <input type="hidden" name="params[groupFlag]" value="true"/>
+                        </li>
+                        <li>
+                            <p>上报部门：</p>
+                            <input type="text" name="reportOrg"/>
+                        </li>
+                        <li>
+                            <p>上报人：</p>
+                            <input type="text" name="reportPerson"/>
+                        </li>
+                        <li>
+                            <p>上报电话：</p>
+                            <input type="text" name="reportPhone"/>
+                        </li>
+                        <li>
+                            <p>事件标题：</p>
+                            <input type="text" name="eventTitle"/>
+                        </li>
+                        <li>
+                            <p>事件详述：</p>
+                            <input type="text" name="eventInfo"/>
+                        </li>
+                        <li>
+                            <p>客户信息：</p>
+                            <input type="text" name="customInfo"/>
+                        </li>
+                        <li>
+                            <p>总分行事件标记：</p>
+                            <input type="text" name="orgFlag"/>
+                        </li>
+                        <li>
+                            <p>中心侧/网点侧事件：</p>
+                            <input type="text" name="sideFlag"/>
+                        </li>
+                        <!--<li>
+                            <p>类别：</p>
+                            <input type="text" name="eventCategory"/>
+                        </li>
+                        <li>
+                            <p>子类：</p>
+                            <input type="text" name="eventSubclass"/>
+                        </li>
+                        <li>
+                            <p>条目：</p>
+                            <input type="text" name="eventEntry"/>
+                        </li>
+                        <li>
+                            <p>子条目：</p>
+                            <input type="text" name="eventSubentry"/>
+                        </li>
+                        <li>
+                            <p>来源：</p>
+                            <input type="text" name="eventSource"/>
+                        </li>
+                        <li>
+                            <p>影响程度：</p>
+                            <input type="text" name="infLevel"/>
+                        </li>
+                        <li>
+                            <p>影响范围：</p>
+                            <input type="text" name="infRange"/>
+                        </li>
+                        <li>
+                            <p>优先级：</p>
+                            <input type="text" name="eventPriority"/>
+                        </li>
+                        <li>
+                            <p>目标解决日期：</p>
+                            <input type="text" name="targetResolveDate"/>
+                        </li>
+                        <li>
+                            <p>一级：</p>
+                            <select name="eventFirstType" th:with="type=${@dict.getType('')}">
+                                <option value="">所有</option>
+                                <option th:each="dict : ${type}" th:text="${dict.dictLabel}"
+                                        th:value="${dict.dictValue}"></option>
+                            </select>
+                        </li>
+                        <li>
+                            <p>二级：</p>
+                            <select name="eventSecondType" th:with="type=${@dict.getType('')}">
+                                <option value="">所有</option>
+                                <option th:each="dict : ${type}" th:text="${dict.dictLabel}"
+                                        th:value="${dict.dictValue}"></option>
+                            </select>
+                        </li>
+                        <li>
+                            <p>三级：</p>
+                            <select name="eventThreeType" th:with="type=${@dict.getType('')}">
+                                <option value="">所有</option>
+                                <option th:each="dict : ${type}" th:text="${dict.dictLabel}"
+                                        th:value="${dict.dictValue}"></option>
+                            </select>
+                        </li>
+                        <li>
+                            <p>是否加急：</p>
+                            <input type="text" name="urgentFlag"/>
+                        </li>
+                        <li>
+                            <p>财务类事件：</p>
+                            <input type="text" name="financeFlag"/>
+                        </li>
+                        <li>
+                            <p>受派组：</p>
+                            <input type="text" name="assignedGroup"/>
+                        </li>
+                        <li>
+                            <p>受派人：</p>
+                            <input type="text" name="assignedPerson"/>
+                        </li>
+                        <li>
+                            <p>状态：</p>
+                            <select name="eventStatus">
+                                <option value="">所有</option>
+                            </select>
+                        </li>
+                        <li>
+                            <p>事件分类：</p>
+                            <select name="eventType" th:with="type=${@dict.getType('')}">
+                                <option value="">所有</option>
+                                <option th:each="dict : ${type}" th:text="${dict.dictLabel}"
+                                        th:value="${dict.dictValue}"></option>
+                            </select>
+                        </li>
+                        <li>
+                            <p>事件原因类型：</p>
+                            <select name="eventReasonType" th:with="type=${@dict.getType('')}">
+                                <option value="">所有</option>
+                                <option th:each="dict : ${type}" th:text="${dict.dictLabel}"
+                                        th:value="${dict.dictValue}"></option>
+                            </select>
+                        </li>
+                        <li>
+                            <p>影响面：</p>
+                            <input type="text" name="infFace"/>
+                        </li>
+                        <li>
+                            <p>二线处理部门：</p>
+                            <input type="text" name="secondDealOrg"/>
+                        </li>
+                        <li>
+                            <p>二线处理人员：</p>
+                            <input type="text" name="secondDealPerson"/>
+                        </li>
+                        <li>
+                            <p>二线解决方案：</p>
+                            <input type="text" name="solutionValidFlag"/>
+                        </li>
+                        <li>
+                            <p>数据质量问题：</p>
+                            <input type="text" name="dataQualityFlag"/>
+                        </li>
+                        <li>
+                            <p>关闭代码：</p>
+                            <input type="text" name="closeCode"/>
+                        </li>
+                        <li>
+                            <p>事件级别：</p>
+                            <input type="text" name="eventLevel"/>
+                        </li>
+                        <li>
+                            <p>关联的变更、需求号：</p>
+                            <input type="text" name="changeNo"/>
+                        </li>
+                        <li>
+                            <p>关联的问题号：</p>
+                            <input type="text" name="problemNo"/>
+                        </li>
+                        <li>
+                            <p>IT服务台分派人：</p>
+                            <input type="text" name="assignId"/>
+                        </li>-->
+                        <li>
+                            <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i
+                                    class="fa fa-search"></i>&nbsp;搜索</a>
+                            <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i
+                                    class="fa fa-refresh"></i>&nbsp;重置</a>
+                        </li>
+                    </ul>
+                </div>
+            </form>
+        </div>
+
+        <div class="btn-group-sm" id="toolbar" role="group">
+            <a class="btn btn-success single disabled" onclick="deal()">
+                <i class="fa fa-plus"></i> 处理
+            </a>
+            <a class="btn btn-info single disabled" onclick="detail()">
+                <i class="fa fa-search"></i> 查看详情
+            </a>
+            <a class="btn btn-info single disabled" onclick="selectProcess()">
+                <i class="fa fa-search"></i> 查看流程
+            </a>
+        </div>
+        <div class="col-sm-12 select-table table-striped">
+            <table id="bootstrap-table" style="table-layout: fixed"></table>
+        </div>
+    </div>
+</div>
+<th:block th:include="include :: footer"/>
+<script th:inline="javascript">
+    var prefix = ctx + "event/sheet";
+
+    var eventStatusDatas = [[${@pubParaValue.selectPubParaValueByParaName('event_status')}]];// 事件单状态
+    var orgFlagDatas = [[${@pubParaValue.selectPubParaValueByParaName('org_flag')}]];// 总分行事件标记
+    var sideFlagDatas = [[${@pubParaValue.selectPubParaValueByParaName('side_flag')}]];// 中心侧/网点侧事件
+    var eventSourceDatas = [[${@pubParaValue.selectPubParaValueByParaName('event_source')}]];// 来源
+    var impactDegreeDatas = [[${@pubParaValue.selectPubParaValueByParaName('event_impact_degree')}]];// 影响程度
+    var impactScopeDatas = [[${@pubParaValue.selectPubParaValueByParaName('event_impact_scope')}]];// 影响范围
+    var yesNoCommonDatas = [[${@pubParaValue.selectPubParaValueByParaName('yes_or_no')}]];// 是否通用
+
+    $(function () {
+        var options = {
+            url: prefix + "/eventAgencyList",
+            createUrl: prefix + "/add",
+            updateUrl: prefix + "/edit/{id}",
+            removeUrl: prefix + "/remove",
+            exportUrl: prefix + "/export",
+            clickToSelect: true,
+            singleSelect: true,
+            modalName: "事件单",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'eventId',
+                    title: '事件单id',
+                    visible: false,
+                    width : 150
+                },
+                {
+                    field: 'eventNo',
+                    title: '事件单编号',
+                    width : 150
+                },
+                {
+                    field: 'reportOrg',
+                    title: '上报部门',
+                    width : 150
+                },
+                {
+                    field: 'reportPerson',
+                    title: '上报人',
+                    width : 150
+                },
+                {
+                    field: 'reportPhone',
+                    title: '上报电话',
+                    width : 150
+                },
+                {
+                    field: 'eventTitle',
+                    title: '事件标题',
+                    width : 220,
+                    formatter: function (value, row, index) {
+                        return $.table.tooltip(value);
+                    }
+                },
+                {
+                    field: 'eventInfo',
+                    title: '事件详述',
+                    width: 220,
+                    formatter: function (value, row, index) {
+                        return $.table.tooltip(value);
+                    }
+                },
+                {
+                    field: 'customInfo',
+                    title: '客户信息',
+                    width: 220,
+                    formatter: function (value, row, index) {
+                        return $.table.tooltip(value);
+                    }
+                },
+                {
+                    field: 'orgFlag',
+                    title: '总分行事件标记',
+                    width : 150,
+                    formatter: function(value, row, index) {
+                        return $.table.selectPubParaValueData(orgFlagDatas, value);
+                    }
+                },
+                {
+                    field: 'sideFlag',
+                    title: '中心侧/网点侧事件',
+                    width : 150,
+                    formatter: function(value, row, index) {
+                        return $.table.selectPubParaValueData(sideFlagDatas, value);
+                    }
+                },
+                /*{
+                    field: 'eventCategory',
+                    title: '类别'
+                },
+                {
+                    field: 'eventSubclass',
+                    title: '子类'
+                },
+                {
+                    field: 'eventEntry',
+                    title: '条目'
+                },
+                {
+                    field: 'eventSubentry',
+                    title: '子条目'
+                },*/
+                {
+                    field: 'eventSource',
+                    title: '来源',
+                    width : 200,
+                    formatter: function(value, row, index) {
+                        return $.table.selectPubParaValueData(eventSourceDatas, value);
+                    }
+                },
+                {
+                    field: 'infLevel',
+                    title: '影响程度',
+                    width : 200,
+                    formatter: function(value, row, index) {
+                        return $.table.selectPubParaValueData(impactDegreeDatas, value);
+                    }
+                },
+                {
+                    field: 'infRange',
+                    title: '影响范围',
+                    width : 200,
+                    formatter: function(value, row, index) {
+                        return $.table.selectPubParaValueData(impactScopeDatas, value);
+                    }
+                },
+                {
+                    field: 'eventPriority',
+                    title: '优先级',
+                    width : 100,
+                },
+                {
+                    field: 'targetResolveDate',
+                    title: '目标解决日期',
+                    width : 150
+                },
+                {
+                    field: 'eventFirstTypeName',
+                    title: '一级',
+                    width : 200
+                },
+                {
+                    field: 'eventSecondTypeName',
+                    title: '二级',
+                    width : 200
+                },
+                {
+                    field: 'eventThreeTypeName',
+                    title: '三级',
+                    width : 200
+                },
+                {
+                    field: 'urgentFlag',
+                    title: '是否加急',
+                    width : 100,
+                    formatter: function(value, row, index) {
+                        return $.table.selectPubParaValueData(yesNoCommonDatas, value);
+                    }
+                },
+                {
+                    field: 'financeFlag',
+                    title: '是否财务类事件',
+                    width : 100,
+                    formatter: function(value, row, index) {
+                        return $.table.selectPubParaValueData(yesNoCommonDatas, value);
+                    }
+                },
+                {
+                    field: 'eventStatus',
+                    title: '状态',
+                    width : 120,
+                    formatter: function(value, row, index) {
+                        return $.table.selectPubParaValueData(eventStatusDatas, value);
+                    }
+                },
+                /*{
+                    field: 'assignedGroup',
+                    title: '受派组',
+                    width : 150
+                },
+                {
+                    field: 'assignedPerson',
+                    title: '受派人',
+                    width : 150
+                },
+                {
+                    field: 'eventType',
+                    title: '事件分类'
+                },
+                {
+                    field: 'eventHelperResult',
+                    title: '事件助手处理结果'
+                },
+                {
+                    field: 'eventHealResult',
+                    title: '事件自愈处理结果'
+                },
+                {
+                    field: 'eventSolution',
+                    title: '解决方案'
+                },
+                {
+                    field: 'eventReasonType',
+                    title: '事件原因类型'
+                },
+                {
+                    field: 'eventReason',
+                    title: '事件原因'
+                },
+                {
+                    field: 'infSystem',
+                    title: '受影响的系统'
+                },
+                {
+                    field: 'actualFaultSystem',
+                    title: '实际故障系统'
+                },
+                {
+                    field: 'faultKnowPoint',
+                    title: '故障知识点'
+                },
+                {
+                    field: 'finalSolutionCategory',
+                    title: '最终解决方案分类'
+                },
+                {
+                    field: 'infFace',
+                    title: '影响面'
+                },
+                {
+                    field: 'infUseFlag',
+                    title: '是否影响可用性'
+                },
+                {
+                    field: 'planStopStartTime',
+                    title: '计划外停机开始时间'
+                },
+                {
+                    field: 'planStopEndTime',
+                    title: '计划外停机结束时间'
+                },
+                {
+                    field: 'secondDealOrg',
+                    title: '二线处理部门'
+                },
+                {
+                    field: 'secondDealPerson',
+                    title: '二线处理人员'
+                },
+                {
+                    field: 'solutionValidFlag',
+                    title: '二线解决方案是否有效'
+                },
+                {
+                    field: 'dataQualityFlag',
+                    title: '是否数据质量问题'
+                },
+                {
+                    field: 'closeCode',
+                    title: '关闭代码'
+                },
+                {
+                    field: 'eventLevel',
+                    title: '事件级别'
+                },
+                {
+                    field: 'changeNo',
+                    title: '关联的变更、需求号'
+                },
+                {
+                    field: 'problemNo',
+                    title: '关联的问题号'
+                },
+                {
+                    field: 'assignId',
+                    title: 'IT服务台分派人'
+                },
+                {
+                    field: 'receiveGroupId',
+                    title: '接单'
+                },
+                {
+                    field: 'dealId',
+                    title: '处理人id'
+                },
+                {
+                    field: 'drawId',
+                    title: '领取人id'
+                },
+                {
+                    field: 'preSolutionId',
+                    title: '预解决人id'
+                },
+                {
+                    field: 'solutionId',
+                    title: '解决人id'
+                },
+                {
+                    field: 'closeId',
+                    title: '关闭人id'
+                }*/]
+        };
+        $.table.init(options);
+    });
+
+    function queryParams(params) {
+        var search = $.table.queryParams(params);
+        search.ownerId = $("#eventId").val();
+        return search;
+    }
+
+    // 事件单处理页面
+    function deal() {
+        var id = $.table.selectFirstColumns();
+        var taskId = $.table.selectColumns("params.taskId");
+        var url = prefix + "/dealPage/" + id + "/" + taskId;
+        $.modal.openTab("事件单处理", url);
+    }
+
+    // 查看详情
+    function detail() {
+        var id = $.table.selectFirstColumns();
+        var url = prefix + "/detail/" + id;
+        $.modal.openTab("事件单详情", url);
+    }
+
+    // 查看流程
+    function selectProcess() {
+        var eventStatus = $.table.selectColumns("eventStatus");
+        if (eventStatus == '1') {
+            $.modal.alertWarning("待提交状态的事件单流程未开启，不可查看！");
+            return;
+        }
+        var businessKey = $.table.selectFirstColumns();
+        var url = ctx + 'process/processImg/' + businessKey;
+        $.modal.openFull("查看流程图", url, null, null, null, true);
+    }
+</script>
+</body>
+</html>

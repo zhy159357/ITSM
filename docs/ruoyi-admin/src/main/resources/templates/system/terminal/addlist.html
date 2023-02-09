@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('新增【请填写功能名称】')" />
+</head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form id="user-form" class="form-horizontal">
+            <input type="text" style="display: none" id="treeId" name="orgId">
+            <div class="row">
+                <div class="col-sm-12 search-collapse">
+                    <div class="select-list">
+                        <ul>
+                            <li>
+                                账号名称：<input type="text" name="username"/>
+                            </li>
+                            <li>
+                                人员名称：<input type="text" name="pname"/>
+                            </li>
+                            <li>
+                                所属机构：<input type="text" name="orgname"/>
+                            </li>
+                            <li>
+                                状态：
+                                <select name="invalidationMark" th:with="type=${@dict.getParaType('sys_normal_disable')}">
+                                    <option value="">所有</option>
+                                    <option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+                                </select>
+                            </li>
+                            <li>
+                                <a class="btn btn-primary btn-rounded btn-sm" id="ss" onclick="$.table.search('user-form','bootstrap-table')"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset('user-form','bootstrap-table')"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="col-sm-12 select-table table-striped">
+                    <table id="bootstrap-table"></table>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <th:block th:include="include :: footer" />
+    <script type="text/javascript">
+
+        function submitHandler() {
+            var rows = $.table.selectFirstColumns();
+            if (rows.length == 0) {
+                $.modal.alertWarning("请至少选择一条记录");
+                return;
+            }
+            var userId = $.table.selectColumns("userId");
+            var username = $.table.selectColumns("username");
+            $.modal.close();
+            parent.$('#jobNumber').val(userId[0]);
+            parent.$('#jobNumberName').val(username[0]);
+        }
+
+        var prefix = ctx + "system/account";
+        $("#user-form").validate({
+            focusCleanup: true
+        });
+        $(function() {
+            document.onkeydown = function(e){
+                var ev = document.all ? window.event : e;
+                console.log(ev);
+                if(ev.keyCode==13) {
+                    $('#ss').trigger('click');
+                    return false;
+                } //搜索逻辑
+            }
+            var options = {
+                url: prefix + "/list",
+                modalName: "账号",
+                singleSelect:true,
+                clickToSelect:true,
+                // onClickRow:function(row,obj){
+                //     $('#jobNumber').val(row.userId);
+                //     $('#jobNumberName').val(row.username);
+                //     $(obj).siblings().removeClass("selected")
+                //     $(obj).addClass("selected");
+                //     $("#userDiv").hide();
+                // },
+                columns: [{
+                    checkbox: true
+                     },
+                    {
+                        field: 'userId',
+                        title: '账号编号',
+                        visible:false
+                    },
+                    {
+                        field: 'username',
+                        title: '账号名称',
+                        sortable: true
+                    },
+                    {
+                        field: 'pname',
+                        title: '人员名称',
+                        sortable: true
+                    },
+                    {
+                        field: 'mobilPhone',
+                        title: '电话号码',
+                        sortable: true
+                    },
+                    {
+                        field: 'orgname',
+                        title: '所属机构',
+                        sortable: true
+                    },
+                    {
+                        field: 'invalidationMark',
+                        title: '状态',
+                        align: 'center',
+                        formatter: function (value, row, index) {
+                            return value == "1"?"启用":"禁用"
+                        }
+                    }]
+            };
+            $.table.init(options);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:include="include :: header('全国中心处理事件单')"/>
+    <th:block th:include="include :: select2-css"/>
+</head>
+<body>
+<div class="main-content">
+    <form id="form-fmbiz-add" class="form-horizontal" th:object="${fmBiz}">
+        <input name="fmId" id="fmId" class="form-control" type="hidden" required th:value="*{fmId}">
+        <input name="flag" id="flag" class="form-control" type="hidden" required th:value="${flag}">
+        <input name="isOneGroup" id="isOneGroup" class="form-control" type="hidden" required th:value="${isOneGroup}">
+        <input name="isSjbg" id="isSjbg" type="hidden" required th:value="${isSjbg}">
+        <input name="isProblem" id="isProblem" class="form-control" type="hidden" required th:value="${isProblem}">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">事件标题：</label>
+                    <div class="col-sm-10">
+                        <input id="faultDecriptSummary" name="faultDecriptSummary" th:value="*{faultDecriptSummary}"
+                               type="text"
+                               class="form-control" readonly/>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">事件描述：</label>
+                    <div class="col-sm-10">
+                            <textarea rows="8" cols="20" id="faultDecriptDetail" th:text="*{faultDecriptDetail}"
+                                      name="faultDecriptDetail"
+                                      class="form-control" readonly></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">所属应用系统：</label>
+                    <div class="col-sm-8">
+                        <input id="sysid" name="sysid" type="hidden" class="form-control" th:value="*{sysid}"/>
+                        <input id="applicationName" name="applicationName" type="text" class="form-control"
+                               th:value="${sysName}" readonly/>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">所属工作组：</label>
+                    <div class="col-sm-8">
+                        <input id="groupId" name="groupId" type="hidden" class="form-control" th:value="*{groupId}"/>
+                        <input id="groupName" name="groupName" type="text" class="form-control"
+                               th:value="${groupName}" readonly/>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">事件起因：</label>
+                    <div class="col-sm-8">
+                        <select id="fmCause" name="fmCause" class="form-control"
+                                th:with="type=${@pubParaValue.selectPubParaValueByParaName('fm_cause')}"
+                                th:field="*{fmCause}" required>
+                            <option value=""></option>
+                            <option th:each="PubParaValue : ${type}" th:text="${PubParaValue.valueDetail}"
+                                    th:value="${PubParaValue.value}"
+                                    th:selected="${PubParaValue.value eq fmCause}"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label"></label>
+                    <div class="col-sm-8">
+                        <button name="params[qysm]" type="button"
+                                class="btn btn-primary" data-toggle="modal" data-target="#myModal5">起因说明：
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal inmodal fade" th:width="1200" id="myModal5" tabindex="-1" role="dialog"
+             aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal"><span
+                                aria-hidden="true">&times;</span><span class="sr-only">Close</span>
+                        </button>
+                        <h2 class="modal-title">运行管理平台及电话事件原因说明</h2>
+                        <h3>（一）、省内业务或技术原因</h3>
+                        1、业务人员培训及操作原因：主要是指由于省内业务人员培训不到位等原因导致的业务人员对系统功能不了解、不会使用、不愿意使用、操作有误等所引起的问题（不包括性能级差导致长时间无法查出结果的情况）。
+                        </br>
+                        2、省内系统原因：主要是指由省内自行维护的系统部分出现的程序、配置、机器、网路等问题引起的。
+                        <h3>(二）、系统功能不满足</h3>
+                        1、系统功能不满足：主要是指系统前台功能缺失不能支持业务或客户需要，或由于系统设计原因导致的功能存在，但性能极差，不能满足业务需要，需要通过事件单或电话咨询的；对于一些总行、省行业务查询数据，业务部门有需要，但系统没这个功能，需要电话咨询，也属此类原因。
+                        <h3>（三）、信息系统相关问题</h3>
+                        1、行内关联系统原因：主要是指已确定的行内其他关联系统原因引起的问题。
+                        </br>
+                        2、历史数据问题：主要是指本系统数据移植期间产生的问题。
+                        </br>
+                        3、信息系统原因：主要是指本系统突发故障或问题导致的。
+                        </br>
+                        4、系统程序bug：主要是指已确定的本系统程序BUG引起的问题。
+                        </br>
+                        5、版本或变更引起：主要是由于本系统版本升级或者系统变更引起的问题。
+                        <h3>（四）、客户及其他</h3>
+                        1、客户错误操作：由于客户操作有误导致的问题，常见于手机银行、网银等。
+                        </br>
+                        2、第三方或他行系统原因：主要是指由于第三方机构或他行系统故障引起的问题，包含委托方、人行系统等
+                        </br>
+                        3、数据分析相关咨询：主要是指对数据提取相关工作（包括对表结构不清楚、不知道要提取哪些表等）、报表数据指标加工规则不明确、数据提取流程不清楚等问题的咨询。
+                        </br>
+                        4、其它。前面其他原因都不能概括的，界定不明原因的其他问题，注：在电话事件单情况，仅有问题已通过电话解决，且问题原因不含在以上所列范围，方可选择“其他”。
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row" id="isType">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">一级分类：</label>
+                    <div class="col-sm-8">
+                        <select id="oneType" name="oneType" class="form-control"
+                                onchange="getFmKindTwoList()" required>
+                            <option value="" th:if="${not #strings.isEmpty(fmBiz.oneType)}"></option>
+                            <option th:each="KnowledgeTitle : ${oneTypeList}" th:text="${KnowledgeTitle.name}"
+                                    th:value="${KnowledgeTitle.id}" th:field="*{oneType}"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">二级分类：</label>
+                    <div class="col-sm-8">
+                        <select id="twoType" name="twoType" onchange="getFmKindThreeList()"
+                                class="form-control"
+                                required>
+                            <option value="" th:if="${not #strings.isEmpty(fmBiz.twoType)}"></option>
+                            <option th:each="KnowledgeTitle : ${twoTypeList}" th:text="${KnowledgeTitle.name}"
+                                    th:value="${KnowledgeTitle.id}" th:field="*{twoType}"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row" id="isKeyword">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">三级分类：</label>
+                    <div class="col-sm-8">
+                        <select id="threeType" name="threeType"
+                                onchange="getKeywordsList()"
+                                class="form-control"
+                                required>
+                            <option value="" th:if="${not #strings.isEmpty(fmBiz.threeType)}"></option>
+                            <option th:each="KnowledgeTitle : ${threeTypeList}" th:text="${KnowledgeTitle.name}"
+                                    th:value="${KnowledgeTitle.id}" th:field="*{threeType}"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+<!--            <div class="col-sm-6">-->
+<!--                <div class="form-group">-->
+<!--                    <label class="col-sm-4 control-label">关键字：</label>-->
+<!--                    <div class="col-sm-8">-->
+<!--                        <select id="keywords" name="keywords" class="form-control"-->
+<!--                        >-->
+<!--                            <option value="" th:if="${not #strings.isEmpty(fmBiz.keywords)}"></option>-->
+<!--                            <option th:each="KnowledgeTitle : ${keyWorksList}" th:text="${KnowledgeTitle.name}"-->
+<!--                                    th:value="${KnowledgeTitle.id}" th:field="*{keywords}"></option>-->
+<!--                        </select>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+        </div>
+        <div class="row">
+            <div class="col-sm-12 select-table table-striped">
+                <table id="knowledge-table"></table>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6" id="isTool">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">是否使用知识：</label>
+                    <div class="col-sm-8">
+                        <select name="params[ifTool]" id="ifTool" class="form-control" onchange="isKnow()" required>
+                            <option></option>
+                            <option value="0">否</option>
+                            <option value="1">是</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6" id="istoolName">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">知识名称：</label>
+                    <div class="col-sm-8">
+                        <select id="knowledgeId" name="knowledgeId" class="form-control noselect2 selectpicker" data-live-search="true">
+                            <option value="">--请选择--</option>
+                            <option th:each="KnowledgeContent : ${knowledgeList}" th:text="${KnowledgeContent.title}"
+                                    th:value="${KnowledgeContent.id}" th:describe="${KnowledgeContent.describes}"></option>
+                        </select>
+<!--                        <select id="knowledgeId" name="knowledgeId" class="form-control noselect2 selectpicker"-->
+<!--                                multiple data-actions-box="true" data-live-search="true"-->
+<!--                                data-none-selected-text="请选择">-->
+<!--                            <option th:each="KnowledgeContent : ${knowledgeList}" th:text="${KnowledgeContent.title}"-->
+<!--                                    th:value="${KnowledgeContent.id}"></option>-->
+<!--                        </select>-->
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6" id="isAntiF">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">是否反欺诈相关：</label>
+                    <div class="col-sm-8">
+                        <select name="isAntiFraud" id="isAntiFraud" class="form-control" required>
+                            <option value="0">否</option>
+                            <option value="1">是</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label is-required">处理描述：</label>
+                    <div class="col-sm-10">
+                        <textarea id="dealDescription" rows="5" cols="20" maxlength="1000" name="dealDescription"
+                                  class="form-control" th:text="*{dealDescription}" required></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row" id="ifDelay">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">关联问题方式：</label>
+                    <div class="col-sm-8">
+                        <select name="params[immediately]" id="immediately" class="form-control" onchange="delay()"
+                                required>
+                            <option value="0">立即关联</option>
+                            <option value="1">延迟关联</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6" id="wwww">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">关联问题单：</label>
+                    <div class="col-sm-8">
+                        <input id="issuefxId" name="params[issuefxId]" type="hidden" class="form-control"/>
+                        <input id="issuefxNo" name="params[issuefxNo]" type="text" class="form-control"
+                               onclick="openIssue()" required readonly
+                               style="background-color: #fdfdfd" value="12334"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<div class="row">
+    <div class="col-sm-offset-5 col-sm-10">
+        <button type="button" class="btn btn-sm btn-success" onclick="toAuto()"><i class="fa fa-play-circle"></i>执行脚本
+        </button>&nbsp;
+        <button type="button" class="btn btn-sm btn-primary" id="repeat" onclick="repeat()"><i class="fa fa-check"></i>转发
+        </button>&nbsp;
+        <button type="button" class="btn btn-sm btn-primary" id="yes" onclick="submit()" value="winClose"><i
+                class="fa fa-check"></i>处理并转知识库
+        </button>&nbsp;
+        <button type="button" class="btn btn-sm btn-danger" onclick="closeItem()"><i class="fa fa-remove"></i>关 闭
+        </button>
+    </div>
+</div>
+<th:block th:include="include :: footer"/>
+<th:block th:include="include :: select2-js"/>
+<th:block th:include="include :: datetimepicker-js"/>
+<th:block th:include="include :: bootstrap-select-js"/>
+<th:block th:include="include :: bootstrap-select-css"/>
+<script>
+    var prefix_version = ctx + "fmbiz";
+    $(function () {
+        var options = {
+            url: prefix_version + "/selectKnowledgeBySysId/" + $("#fmId").val(),
+            id: "knowledge-table",
+            modalName: "知识",
+            showSearch: false,
+            showRefresh: false,
+            showColumns: false,
+            showToggle: false,
+            singleSelect: true,
+            clickToSelect: true,
+            columns: [{
+                checkbox: false
+            },
+                {
+                    field: 'id',
+                    title: '知识',
+                    visible: false
+                },
+                {
+                    field: 'title',
+                    title: '匹配到的知识',
+                    formatter: aFormatter
+                },
+                {
+                    field: 'status',
+                    title: '知识当前状态',
+                    formatter: function (value, row, index) {
+                        if (value == 0) {
+                            return '草稿';
+                        } else if (value == 1) {
+                            return '待审核';
+                        } else if (value == 2) {
+                            return '已发布';
+                        } else if (value == 3) {
+                            return "<span style='color:red;'>已下线</span>";
+                        } else if (value == 4) {
+                            return '初审通过';
+                        } else if (value == 5) {
+                            return '待下线';
+                        } else if (value == 6) {
+                            return '下线初审通过';
+                        } else if (value == 7) {
+                            return '待作废';
+                        } else if (value == 8) {
+                            return '作废初审通过';
+                        } else if (value == 9) {
+                            return '已作废';
+                        }
+                    },
+                }]
+        };
+        $.table.init(options);
+    });
+
+    // 根据知识标题超链接到知识详情
+    function aFormatter(value, row, index) {
+        var url = ctx + "knowledge/business/detail/" + row.id;
+        return '<a class="btn btn-warning btn-xs" href="javascript:void(0)" onclick="selectDetail(\'' + url + '\')">' + row.title + '</a>';
+    }
+
+    function selectDetail(url) {
+        $.modal.openTab("知识详情", url);
+    }
+
+    $("#form-fmbiz-add").validate({
+        onkeyup: false,
+        rules: {},
+        messages: {},
+        focusCleanup: true
+    });
+
+    $(function () {
+        var sysid = $("#sysid").val();
+        if (sysid == 'ff8080816cb9c075016ccd3d84d03932') {//反欺诈相关显示下拉框
+            $("#isAntiF").show();
+        } else {
+            $("#isAntiF").hide();
+        }
+        //是一线工作组隐藏分类信息
+        var isOneGroup = $("#isOneGroup").val();
+        if (isOneGroup == '1') {
+            $("#isType").hide();
+            $("#isKeyword").hide();
+            $("#ifDelay").hide();
+            $("#isTool").hide();
+            $("#istoolName").hide();
+            $("#immediately").val('')
+        } else {
+            $("#repeat").hide();
+        }
+        var isSjbg = $("#isSjbg").val();
+        if (isSjbg == '1') {
+            $("#ifDelay").hide();
+            $("#immediately").val('')
+        }
+        var isProblem = $("#isProblem").val();
+        if (isProblem == '1') {
+            $("#yes").hide();
+        }
+        getGroupList(sysid);
+
+        $("#knowledgeId").change(function(){
+            $("#dealDescription").val($("#knowledgeId").find("option:selected").attr("describe"));
+        });
+
+    });
+
+    // 提交
+    function submit() {
+        if ($.validate.form()) {
+            var isTool = $("#ifTool").val();
+            if (isTool == '1') {
+                var istoolName = $("#knowledgeId").val();
+                if (istoolName == '') {
+                    $.modal.alertWarning("请选择知识。");
+                    return;
+                }
+            }
+
+            var flag = $("#flag").val();
+            var data = $("#form-fmbiz-add").serializeArray();
+            var oneTypeName = {
+                name: "oneTypeName",
+                value: $("#select2-oneType-container").html()
+            }
+            data.push(oneTypeName);
+            var twoTypeName = {
+                name:"twoTypeName",
+                value: $("#select2-twoType-container").html()
+            }
+            data.push(twoTypeName);
+            var threeTypeName = {
+                name:"threeTypeName",
+                value: $("#select2-threeType-container").html()
+            }
+            data.push(threeTypeName);
+            var keywordName = {
+                name:"keywordName",
+                value: $("#select2-keywords-container").html()
+            }
+            data.push(keywordName);
+            $.operate.saveTab(prefix_version + "/saveflowdeal", data, asd);
+
+            function asd(a) {
+                if (a.code == 0) {
+                    var tabPanel = $(window.frameElement).attr('data-panel');
+                    var tabMain = parent.$('.menuTab[data-id="' + tabPanel + '"]').attr('data-panel');
+                    parent.$('.menuTab[data-id="' + tabMain + '"]').trigger('click');
+                    parent.$('.menuTab[data-id="' + tabPanel + '"]').remove();
+                    parent.$('.menuTab[data-panel="' + tabPanel + '"]').remove();
+                    parent.$('.mainContent .RuoYi_iframe[data-id="' + tabPanel + '"]').remove();
+                    if (flag == '1') {//判断是否工作台打开
+                        parent.$('.mainContent .RuoYi_iframe[name="iframe0"]').contents().find(".list01>li:nth-child(1)>a").trigger('click');
+                    }
+                } else {
+                    return
+                }
+            }
+        }
+    };
+
+    //根据系统查询工作组
+    function getGroupList(sysid) {
+        $.ajax({
+            cache: true,
+            type: "POST",
+            url: prefix_version + "/selectOgGroupBySys",
+            data: {
+                "sysid": sysid
+            },
+            async: false,
+            error: function (request) {
+                $.modal.alertError("系统错误");
+            },
+            success: function (data) {
+                var options = "";
+                $("#groupId").html("");
+                for (var ak = 0; ak < data.rows.length; ak++) {
+                    options += "<option value='" + data.rows[ak].groupId + "'>" + data.rows[ak].grpName + "</option> \n";
+                }
+                $("#groupId").append(options);
+            }
+        });
+    }
+
+    //根据一级分类查询二级分类
+    function getFmKindTwoList() {
+        var sysid = $("#sysid").val();
+        var parentId = $("#oneType").val();
+        if (sysid && parentId) {
+            $.ajax({
+                cache: true,
+                type: "POST",
+                url: prefix_version + "/selectFmKindBySysid",
+                data: {
+                    "sysid": sysid,
+                    "category": "2",
+                    "parentId": parentId
+                },
+                async: false,
+                success: function (data) {
+                    var options = "<option value=''>请选择</option>";
+                    $("#twoType").html("");
+                    for (var ak = 0; ak < data.rows.length; ak++) {
+                        options += "<option value='" + data.rows[ak].id + "'>" + data.rows[ak].name + "</option> \n";
+                    }
+                    $("#twoType").append(options);
+                }
+            });
+        }
+        $('#twoType').val('');
+        $('#select2-twoType-container').html('');
+        $('#threeType').val('');
+        $('#select2-threeType-container').html('请选择');
+        $('#keywords').val('');
+        $('#select2-keywords-container').html('请选择');
+    }
+
+    //根据二级分类查询三级分类
+    function getFmKindThreeList() {
+        var sysid = $("#sysid").val();
+        var parentId = $("#twoType").val();
+        if (sysid && parentId) {
+            $.ajax({
+                cache: true,
+                type: "POST",
+                url: prefix_version + "/selectFmKindBySysid",
+                data: {
+                    "sysid": sysid,
+                    "category": "3",
+                    "parentId": parentId
+                },
+                async: false,
+                success: function (data) {
+                    var options = "<option value=''>请选择</option>";
+                    $("#threeType").html("");
+                    for (var ak = 0; ak < data.rows.length; ak++) {
+                        options += "<option value='" + data.rows[ak].id + "'>" + data.rows[ak].name + "</option> \n";
+                    }
+                    $("#threeType").append(options);
+                }
+            });
+        }
+        $('#threeType').val('');
+        $('#select2-threeType-container').html('');
+        $('#keywords').val('');
+        $('#select2-keywords-container').html('请选择');
+    }
+
+    //根据三级分类查询关键字
+    function getKeywordsList() {
+        var sysid = $("#sysid").val();
+        var parentId = $("#threeType").val();
+        if (sysid && parentId) {
+            $.ajax({
+                cache: true,
+                type: "POST",
+                url: prefix_version + "/selectFmKindBySysid",
+                data: {
+                    "sysid": sysid,
+                    "category": "4",
+                    "parentId": parentId
+                },
+                async: false,
+                success: function (data) {
+                    var options = "<option value=''>请选择</option>";
+                    $("#keywords").html("");
+                    for (var ak = 0; ak < data.rows.length; ak++) {
+                        options += "<option value='" + data.rows[ak].id + "'>" + data.rows[ak].name + "</option> \n";
+                    }
+                    $("#keywords").append(options);
+                }
+            });
+        }
+        $('#keywords').val('');
+        $('#select2-keywords-container').html('');
+    }
+
+    //是否使用知识
+    function isKnow() {
+        var isTool = $("#ifTool").val();
+        if (isTool == '1') {
+            $("#istoolName").show();
+            $("#knowledgeId").attr("required", "true");
+        } else {
+            $("#istoolName").hide();
+        }
+    }
+
+    /*自动化处理*/
+    function toAuto() {
+        var fmId = $("#fmId").val();
+        $.modal.openTab("脚本服务化处理", prefix_version + "/saveToAuto/" + fmId);
+    }
+
+    function delay() {
+        var immediately = $("#immediately").val();
+        if (immediately == '1') {
+            $("#wwww").hide();
+            $("#issuefxId").val('');
+            $("#issuefxNo").val('');
+            $("#issuefxId").attr("required", "false");
+        } else {
+            $("#wwww").show();
+        }
+    }
+
+    /*获取问题单*/
+    function openIssue() {
+        var sysId = $("#sysid").val();
+        $.modal.open("关联问题单", ctx + "issueList/build/listAllForEvent/" + sysId);
+    }
+
+    /*转发*/
+    function repeat() {
+        var fmId = $("#fmId").val();
+        var flag = $("#flag").val();
+        $.modal.openTab("打开转发按钮页面", prefix_version + "/saverepeat/" + fmId + "/" + flag);
+    }
+</script>
+</body>
+</html>

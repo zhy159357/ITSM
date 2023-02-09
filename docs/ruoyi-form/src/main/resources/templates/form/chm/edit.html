@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('修改硬件保障')" />
+</head>
+<body class="white-bg">
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+    <form class="form-horizontal m" id="form-chm-edit" th:object="${designBizChm}">
+        <input name="id" th:field="*{id}" type="hidden">
+        <h4 class="form-header h4">基本信息</h4>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">单号：</label>
+                    <div class="col-sm-8">
+                        <input name="extra1" th:field="*{extra1}" class="form-control" type="text" readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">标题：</label>
+                    <div class="col-sm-8">
+                        <textarea name="title" th:text="*{title}" class="form-control" type="text" readonly></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">故障类别：</label>
+                    <div class="col-sm-8">
+                        <input name="chmType" th:field="*{chmType}" class="form-control" type="text" readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">机具号：</label>
+                    <div class="col-sm-8">
+                        <input name="implementNo" th:field="*{implementNo}" class="form-control" type="text" readonly>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">目标解决日期：</label>
+                    <div class="col-sm-8">
+                        <input name="expectTime" th:field="*{expectTime}" class="form-control" type="text" readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">事件描述：</label>
+                    <div class="col-sm-8">
+                        <textarea name="faultDescription" th:text="*{faultDescription}" class="form-control" type="text" readonly></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">设备类型(一级)：</label>
+                    <div class="col-sm-8">
+                        <input name="equipmentType" th:field="*{equipmentType}" class="form-control" type="text" readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">设备类型(二级)：</label>
+                    <div class="col-sm-8">
+                        <input name="equipmentName" th:field="*{equipmentName}" class="form-control" type="text" readonly>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">设备类型(三级)：</label>
+                    <div class="col-sm-8">
+                        <input name="equipmentModel" th:field="*{equipmentModel}" class="form-control" type="text" readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">影响范围：</label>
+                    <div class="col-sm-8">
+                        <input name="scopeInfluence" th:field="*{scopeInfluence}" class="form-control" type="text" readonly>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">是否加急：</label>
+                    <div class="col-sm-8">
+                        <input name="urgent" th:value="*{urgent} eq '0'?'否':'是'" class="form-control" type="text" readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">来源：</label>
+                    <div class="col-sm-8">
+                        <input name="source" th:value="*{source} eq '1'?'移动端':'PC端'" class="form-control" type="text" readonly>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">上报人：</label>
+                    <div class="col-sm-8">
+                        <input name="contact" th:field="*{contact}" class="form-control" type="text" readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">上报部门:：</label>
+                    <div class="col-sm-8">
+                        <input name="reportDepartment" th:field="*{reportDepartment}" class="form-control" type="text" readonly>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">电话：</label>
+                    <div class="col-sm-8">
+                        <input name="contactDetails" th:field="*{contactDetails}" class="form-control" type="text" readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">状态：</label>
+                    <div class="col-sm-8">
+                        <input name="status" th:field="*{status}" class="form-control" type="text" readonly>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">创建时间：</label>
+                    <div class="col-sm-8">
+                        <input name="createdTime" th:value="${#dates.format(designBizChm.createdTime, 'yyyy-MM-dd HH:mm:ss')}" class="form-control"  readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">创建人：</label>
+                    <div class="col-sm-8">
+                        <input name="createdBy" th:field="*{createdBy}" class="form-control" type="text" readonly>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">设备标识号:：</label>
+                    <div class="col-sm-8">
+                        <input name="implementId" th:field="*{implementId}" class="form-control" type="text" readonly>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <h4 class="form-header h4">处理信息</h4>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">提交时间：</label>
+                    <div class="col-sm-8">
+                        <input name="arriveTime" th:field="*{orderTime}" class="form-control" type="text" readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">厂商受理时间：</label>
+                    <div class="col-sm-8">
+                        <input name="facturerAcceptTime" th:field="*{facturerAcceptTime}" class="form-control" type="text" readonly>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">工程师受理时间：</label>
+                    <div class="col-sm-8">
+                        <input name="engineerAcceptTime" th:field="*{engineerAcceptTime}" class="form-control" type="text" readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">工程师到场时间：</label>
+                    <div class="col-sm-8">
+                        <input name="engineerArriveTime" th:field="*{engineerArriveTime}" class="form-control" type="text" readonly>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">完成时间：</label>
+                    <div class="col-sm-8">
+                        <input name="completeTime" th:field="*{completeTime}" class="form-control" type="text" readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">厂商：</label>
+                    <div class="col-sm-8">
+                        <input name="facturer" th:field="*{facturer}" class="form-control" type="text" readonly>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">解决方式：</label>
+                    <div class="col-sm-8">
+                        <input name="solution" th:field="*{solution}" class="form-control" type="text" readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">故障类型：</label>
+                    <div class="col-sm-8">
+                        <input name="faultType" th:field="*{faultType}" class="form-control" type="text" readonly>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">设备类型(一级)：</label>
+                    <div class="col-sm-8">
+                        <input name="equipmentTypeB" th:field="*{equipmentTypeB}" class="form-control" type="text" readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">设备类型(二级)：</label>
+                    <div class="col-sm-8">
+                        <input name="equipmentNameB" th:field="*{equipmentNameB}" class="form-control" type="text" readonly>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">设备类型(三级)：</label>
+                    <div class="col-sm-8">
+                        <input name="equipmentModelB" th:field="*{equipmentModelB}" class="form-control" type="text" readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">备注：</label>
+                    <div class="col-sm-8">
+                        <textarea name="remarks" th:text="*{remarks}" class="form-control" type="text" readonly></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">电话回访：</label>
+                    <div class="col-sm-8">
+                        <input name="telephoneFollow" th:field="*{telephoneFollow}" class="form-control" type="text" readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">处理过程记录：</label>
+                    <div class="col-sm-8">
+                        <textarea name="dealNotes" th:text="*{dealNotes}" class="form-control" type="text" readonly></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">服务评价：</label>
+                    <div class="col-sm-8">
+                        <input name="serviceEvaluation" th:field="*{serviceEvaluation}" class="form-control" type="text" readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">合胜flowNo：</label>
+                    <div class="col-sm-8">
+                        <input name="flowNo" th:field="*{flowNo}" class="form-control" type="text" readonly>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">服务台处理人：</label>
+                    <div class="col-sm-8">
+                        <input name="cancleNote" th:field="*{itDealUser}" class="form-control" type="text" readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">复核时间：</label>
+                    <div class="col-sm-8">
+                        <input name="flowNo" th:field="*{fuHeTime}" class="form-control" type="text" readonly>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">当前处理人：</label>
+                    <div class="col-sm-8">
+                        <input name="cancleNote" th:field="*{currentHandlerId}" class="form-control" type="text" readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">取消原因：</label>
+                    <div class="col-sm-8">
+                        <textarea name="cancleNote" th:text="*{cancleNote}" class="form-control" type="text" readonly></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<th:block th:include="include :: footer" />
+<script type="text/javascript">
+    var prefix = ctx + "form/chm";
+    $("#form-chm-edit").validate({
+        focusCleanup: true
+    });
+</script>
+</body>
+</html>

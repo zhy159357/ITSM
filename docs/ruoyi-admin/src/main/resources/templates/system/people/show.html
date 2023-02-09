@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('系统管理用户列表')" />
+    <th:block th:include="include :: layout-latest-css" />
+    <th:block th:include="include :: ztree-css" />
+    <th:block th:include="include :: select2-css"/>
+
+</head>
+<body class="gray-bg">
+<div class="ui-layout-west">
+    <div class="box box-main">
+        <div class="box-header">
+            <div class="box-title">
+                <i class="fa icon-grid"></i> 组织机构
+            </div>
+            <div class="box-tools pull-right">
+                <button type="button" class="btn btn-box-tool" id="btnExpand" title="展开" style="display:none;"><i class="fa fa-chevron-up"></i></button>
+                <button type="button" class="btn btn-box-tool" id="btnCollapse" title="折叠"><i class="fa fa-chevron-down"></i></button>
+                <button type="button" class="btn btn-box-tool" id="btnRefresh" title="刷新部门"><i class="fa fa-refresh"></i></button>
+            </div>
+        </div>
+        <div class="ui-layout-content">
+            <div id="tree" class="ztree"></div>
+        </div>
+    </div>
+</div>
+
+<div class="ui-layout-center">
+    <div class="container-div">
+        <div class="row">
+            <div class="col-sm-12 search-collapse">
+                <form id="people-form">
+                    <input type="text" style="display: none" id="treeId" name="orgId">
+                    <input type="hidden" id="parentId" name="parentId">
+                    <input type="hidden" id="tongbuButtonFlag" th:value="*{tongbuButtonFlag}" name="parentId">
+                    <div class="select-list">
+                        <ul>
+                            <li>
+                                姓名：<input type="text" name="pName"/>
+                            </li>
+                            <li>
+                                <label>所属机构:</label><input  onclick="selectDeptTree()" th:id="treeName" type="text" readonly style="background-color: #ffffff"  class="form-control" >
+                            </li>
+                            <li>
+                                移动电话：<input type="text" name="mobilPhone"/>
+                            </li>
+                            <li>
+                                用户状态：<select name="invalidationMark" class="form-control" th:with="type=${@dict.getParaType('sys_people_status')}">
+                                <option value="">所有</option>
+                                <option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+                            </select>
+                            </li>
+                            <li>
+                                <a class="btn btn-primary btn-rounded btn-sm" id="ss" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.resetAll('people-form')"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                            </li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+
+            <div class="btn-group-sm" id="toolbar" role="group">
+                <a class="btn btn-success" onclick="$.operate.addTab()">
+                    <i class="fa fa-plus"></i> 新增
+                </a>
+                <a  class="btn btn-primary single disabled" onclick="editPerson()">
+                    <i class="fa fa-edit"></i> 修改
+                </a>
+                <a class="btn btn-primary single disabled" onclick="enable()">
+                     启用人员
+                </a>
+                <a  class="btn btn-danger single disabled" onclick="disable()">
+                     禁用人员
+                </a>
+                <a  class="btn btn-info single disabled" onclick="selectGroup()">
+                    <i class="fa fa-search"></i> 查看工作组
+                </a>
+                <!--导出所有｜当前页按钮组合-->
+                <div class="btn-group">
+                    <button data-toggle="dropdown" class="btn btn-primary btn-sm dropdown-toggle">导出<span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a class="btn btn-default" onclick="$.table.exportExcel()">导出所有</a>
+                        </li>
+                        <li><a class="btn btn-default" onclick="$.table.exportExcelCurrentPage()">导出当前页</a>
+                        </li>
+                    </ul>
+                </div>
+                <a href="javascript:void(0);"  title="同步用户账号">
+                    <input type="button" id="tongbu" class="btn btn-primary"  value="统一门户同步用户" onclick="tongbu()" />
+                </a>
+                <a href="javascript:void(0);"  title="配置参与机构">
+                    <input name="tb" type="button" id="tb" class="btn btn-primary"  value="设置参与机构" onclick="tongbupartakeID()" />
+                </a>
+            </div>
+
+            <div class="col-sm-12 select-table table-striped">
+                <table id="bootstrap-table" style="table-layout:fixed"></table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: layout-latest-js" />
+<th:block th:include="include :: ztree-js" />
+<th:block th:include="include :: select2-js"/>
+<script th:inline="javascript">
+    var prefix = ctx + "system/ogperson";
+
+
+    /* 用户管理-新增-选择部门树 */
+    function selectDeptTree() {
+        var treeId = $("#treeId").val();
+        var deptId = $.common.isEmpty(treeId) ? "310100001" : $("#treeId").val();
+        var url = prefix+ "/selectDeptTree/" + deptId;
+        var options = {
+            title: '选择部门',
+            width: "380",
+            url: url,
+            callBack: doSubmit
+        };
+        $.modal.openOptions(options);
+    }
+
+    function doSubmit(index, layero){
+        var tree = layero.find("iframe")[0].contentWindow.$._tree;
+
+        if(jQuery.isEmptyObject(tree)) {
+            layer.close(index);
+        }else{
+            var selectNode = tree.getSelectedNodes();
+            if(selectNode.length!=0){
+                $("#treeId").val(selectNode[0].id);
+                $("#treeName").val(selectNode[0].name);
+            }
+        }
+        layer.close(index);
+    }
+
+    $(function() {
+        var panehHidden = false;
+        if ($(this).width() < 769) {
+            panehHidden = true;
+        }
+        $('body').layout({ initClosed: panehHidden, west__size: 185 });
+        // 回到顶部绑定
+        if ($.fn.toTop !== undefined) {
+            var opt = {
+                win:$('.ui-layout-center'),
+                doc:$('.ui-layout-center')
+            };
+            $('#scroll-up').toTop(opt);
+        }
+        queryUserList();
+        queryDeptTree();
+
+        var tongbuButtonFlag = $("#tongbuButtonFlag").val();
+        if (tongbuButtonFlag == '0') {
+            $("#tongbu").hide();
+        }
+        document.onkeydown = function(e){
+            var ev = document.all ? window.event : e;
+            if(ev.keyCode==13) {
+                $('#ss').trigger('click');
+                return false;
+            } //搜索逻辑
+        }
+
+    });
+
+    function queryUserList() {
+        var options = {
+            url: prefix + "/listPerson",
+            createUrl: prefix + "/add",
+            updateUrl: prefix + "/edit/{id}",
+            removeUrl: prefix + "/remove",
+            exportUrl: prefix + "/export",
+            importUrl: prefix + "/importData",
+            importTemplateUrl: prefix + "/importTemplate",
+            sortName: "p.addtime",
+            sortOrder: "desc",
+            modalName: "人员",
+            singleSelect:true,
+            clickToSelect:true,
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'pId',
+                    visible: false
+                },
+                {
+                    field: 'pName',
+                    title: '姓名',
+                    width :150 ,
+                    formatter: function(value,row,index){
+                        return $.table.tooltip(value);
+                    },
+                    cellStyle: function cellStyle(value, row, index, field) {
+                        return { classes: 'text-nowrap'};
+                    }
+                },
+                {
+                    field: 'sex',
+                    title: '性别',
+                    visible:false,
+                    width : 80,
+                    formatter: function (value, row, index) {
+                        return $.table.tooltip(value=='1'?'男':'女');
+                    },
+                    cellStyle: function cellStyle(value, row, index, field) {
+                        return { classes: 'text-nowrap'};
+                    }
+                },
+                {
+                    field: 'phone',
+                    title: '办公电话',
+                    width : 150,
+                    formatter: function (value, row, index) {
+                        return $.table.tooltip(value);
+                    },
+                    cellStyle: function cellStyle(value, row, index, field) {
+                        return { classes: 'text-nowrap'};
+                    }
+                },
+                {
+                    field: 'mobilPhone',
+                    title: '移动电话',
+                    width : 150,
+                    formatter: function (value, row, index) {
+                        return $.table.tooltip(value);
+                    },
+                    cellStyle: function cellStyle(value, row, index, field) {
+                        return { classes: 'text-nowrap'};
+                    }
+                },
+                {
+                    field: 'email',
+                    title: '邮箱',
+                    width : 180,
+                    formatter: function (value, row, index) {
+                        return $.table.tooltip(value);
+                    },
+                    cellStyle: function cellStyle(value, row, index, field) {
+                        return { classes: 'text-nowrap'};
+                    }
+                },
+                {
+                    field: 'orgname',
+                    title: '所属机构',
+                    width : 150,
+                    formatter: function (value, row, index) {
+                        return $.table.tooltip(value);
+                    },
+                    cellStyle: function cellStyle(value, row, index, field) {
+                        return { classes: 'text-nowrap'};
+                    }
+                },
+                {
+                    field: 'partakeOrgName',
+                    title: '参与机构',
+                    width : 150,
+                    formatter: function (value, row, index) {
+                        return $.table.tooltip(value);
+                    },
+                    cellStyle: function cellStyle(value, row, index, field) {
+                        return { classes: 'text-nowrap'};
+                    }
+                },
+                {
+                    field: 'position',
+                    title: '职务',
+                    width : 150,
+                    formatter: function (value, row, index) {
+                        return $.table.tooltip(value);
+                    },
+                    cellStyle: function cellStyle(value, row, index, field) {
+                        return { classes: 'text-nowrap'};
+                    }
+                },
+                {
+                    field: 'leader',
+                    title: '负责人',
+                    width : 60,
+                    formatter: function (value, row, index) {
+                        return value=='0'?'否':'是'
+                    },
+                    cellStyle: function cellStyle(value, row, index, field) {
+                        return { classes: 'text-nowrap'};
+                    }
+                },
+                {
+                    field: 'pOrder',
+                    title: '顺序',
+                    width : 60,
+                    formatter: function (value, row, index) {
+                        return $.table.tooltip(value);
+                    },
+                    cellStyle: function cellStyle(value, row, index, field) {
+                        return { classes: 'text-nowrap'};
+                    }
+                },
+                {
+                    field: 'invalidationMark',
+                    title: '状态',
+                    width : 60,
+                    formatter: function (value, row, index) {
+                        return value=='1'?'启用':'禁用'
+                    },
+                    cellStyle: function cellStyle(value, row, index, field) {
+                        return { classes: 'text-nowrap'};
+                    }
+                }]
+
+        };
+        $.table.init(options);
+    }
+
+    function queryDeptTree()
+    {
+        var url = prefix +"/treeDataPerson";
+        var options = {
+            url: url,
+            expandLevel: 2,
+            onClick : zOnClick
+        };
+        $.tree.init(options);
+
+        function zOnClick(event, treeId, treeNode) {
+            $("#treeId").val(treeNode.id);
+            $("#treeName").val(treeNode.name);
+            $.table.search();
+        }
+    }
+
+    $('#btnExpand').click(function() {
+        $._tree.expandAll(true);
+        $(this).hide();
+        $('#btnCollapse').show();
+    });
+
+    $('#btnCollapse').click(function() {
+        $._tree.expandAll(false);
+        $(this).hide();
+        $('#btnExpand').show();
+    });
+
+    $('#btnRefresh').click(function() {
+        queryDeptTree();
+    });
+
+    /* 用户管理-部门 */
+    function dept() {
+        var url = ctx + "system/dept";
+        $.modal.openTab("部门管理", url);
+    }
+
+    /* 用户管理-重置密码 */
+    function resetPwd(userId) {
+        var url = prefix + '/resetPwd/' + userId;
+        $.modal.open("重置密码", url, '800', '300');
+    }
+
+    /* 用户管理-分配角色 */
+    function authRole(userId) {
+        var url = prefix + '/authRole/' + userId;
+        $.modal.openTab("用户分配角色", url);
+    }
+
+    /* 用户状态显示 */
+    function statusTools(row) {
+        if (row.status == 1) {
+            return '<i class=\"fa fa-toggle-off text-info fa-2x\" onclick="enable(\'' + row.userId + '\')"></i> ';
+        } else {
+            return '<i class=\"fa fa-toggle-on text-info fa-2x\" onclick="disable(\'' + row.userId + '\')"></i> ';
+        }
+    }
+
+
+
+    function enable(){
+        var rows = $('#' + 'bootstrap-table').bootstrapTable('getSelections');
+        if(rows[0].invalidationMark=='1'){
+            $.modal.alert('该人员已是启用状态')
+        } else {
+            var pId = rows[0].pId;
+            $.modal.confirm("确认要启用人员吗？", function() {
+                $.operate.post(prefix + "/changeStatus", { "pId": pId, "status": "1" });
+            })
+        }
+
+    }
+    /* 用户管理-停用 */
+    function disable() {
+        var rows = $('#' + 'bootstrap-table').bootstrapTable('getSelections');
+        if(rows[0].invalidationMark=='0'){
+            $.modal.alert('该人员已是禁用状态');
+        }else{
+            var pId = rows[0].pId;
+            $.modal.confirm("确认要禁用人员吗？", function() {
+                $.operate.post(prefix + "/changeStatus", { "pId": pId, "status": "0" });
+            })
+        }
+
+    }
+
+    function editPerson() {
+        var rows = $('#' + 'bootstrap-table').bootstrapTable('getSelections');
+        if(rows[0].invalidationMark=='0'){
+            $.modal.alert('该人员已是禁用状态,无法进行修改');
+        }else{
+            $.operate.editTab()
+        }
+
+    }
+
+    /* 查看工作组 */
+    function selectGroup() {
+        var rows = $('#' + 'bootstrap-table').bootstrapTable('getSelections');
+        var pId = rows[0].pId;
+        var url = prefix +"/selectGroup/" + pId;
+        $.modal.openTab("查看工作组", url);
+    }
+
+    /*同步用户账号信息*/
+    function tongbu() {
+        var counts = 60;
+        var btn = document.getElementById("tongbu");
+        btn.disabled = 'disabled';
+
+        $.ajax({
+            type:"post",
+            url: prefix + "/tongbuUser",
+            timeout: 1800000,
+            dateType:"json",
+            contentType : 'application/json',
+            data:JSON.stringify(this.queryParam),
+            success:function(result){
+                settime(btn,counts);
+                if (result.msg == "同步成功") {
+                    $.modal.alertSuccess(result.msg + '，本次同步' + result.num + '条');
+                } else {
+                    $.modal.alertWarning(result.msg);
+                }
+                $.table.refresh("bootstrap-table");
+            }
+        });
+    }
+
+    /*同步参与机构*/
+    function tongbupartakeID() {
+        var counts = 60;
+        var btn = document.getElementById("tb");
+        btn.disabled = 'disabled';
+
+        $.ajax({
+            type:"post",
+            url: prefix + "/tongbupartakeID",
+            dateType:"json",
+            contentType : 'application/json',
+            data:JSON.stringify(this.queryParam),
+            success:function(result){
+                settime(btn,counts);
+                if (result.msg == "操作成功") {
+                    $.modal.alertSuccess(result.msg + '，本次配置' + result.num + '条');
+                } else {
+                    $.modal.alertWarning(result.msg);
+                }
+                $.table.refresh("bootstrap-table");
+            }
+        });
+    }
+
+    function settime(btn,counts) {
+        var num = 0;
+        if(counts == 0){
+            btn.value = "统一门户同步用户";
+            btn.removeAttribute("disabled");
+            return;
+        }
+        btn.setAttribute("disabled", true);
+        btn.value = "等待" + counts + "s";
+        counts--;
+
+        setTimeout(function() {
+            settime(btn,counts);
+        }, 1000);
+    }
+
+</script>
+</body>
+<!-- 导入区域 -->
+<script id="importTpl" type="text/template">
+    <form enctype="multipart/form-data" class="mt20 mb10">
+        <div class="col-xs-offset-1">
+            <input type="file" id="file" name="file"/>
+            <div class="mt10 pt5">
+                <input type="checkbox" id="updateSupport" name="updateSupport" title="如果登录账户已经存在，更新这条数据。"> 是否更新已经存在的用户数据
+                &nbsp;	<a onclick="$.table.importTemplate()" class="btn btn-default btn-xs"><i class="fa fa-file-excel-o"></i> 下载模板</a>
+            </div>
+            <font color="red" class="pull-left mt10">
+                提示：仅允许导入“xls”或“xlsx”格式文件！
+            </font>
+        </div>
+    </form>
+</script>
+</html>

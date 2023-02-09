@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:include="include :: header('新建申请单')"/>
+    <th:block th:include="include :: datetimepicker-css"/>
+    <th:block th:include="include :: ztree-css"/>
+    <th:block th:include="include :: summernote-css"/>
+    <th:block th:include="include :: select2-css"/>
+</head>
+<body>
+<div class="main-content">
+    <form class="form-horizontal" id="form-fmbiz-add">
+        <input id="ownerId" name="ownerId" type="hidden"/>
+        <input id="id" name="id" type="hidden"/>
+        <h4 class="form-header h4">基本信息</h4>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">单号：</label>
+                    <div class="col-sm-8">
+                        <input class="form-control" id="no" name="no" readonly required
+                               th:value="*{num}" type="text">
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">创建机构：</label>
+                    <div class="col-sm-8">
+                        <input class="form-control" id="createOrgId" name="createOrgId" th:value="*{createOrgId}"
+                               type="hidden">
+                        <input class="form-control" id="createOrgName" name="createOrgName" readonly
+                               required th:value="*{createOrgName}" type="text"/>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">创建时间：</label>
+                    <div class="col-sm-8">
+                        <input class="form-control" id="createrTime" name="createrTime" readonly
+                               th:value="*{reportTime}"
+                               type="text">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">创建人：</label>
+                    <div class="col-sm-8">
+                        <input class="form-control" id="createrId" name="createrId" th:value="*{loginId}"
+                               type="hidden">
+                        <input class="form-control" id="createName" name="createName" readonly th:value="*{loginName}"
+                               type="text">
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">创建人电话：</label>
+                    <div class="col-sm-8">
+                        <input class="form-control" id="createPhone" maxlength="12" name="createPhone"
+                               readonly required th:value="*{contactPhone}">
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">发生时间：</label>
+                    <div class="col-sm-8">
+                        <input class="form-control" id="occurrenceTime" name="occurrenceTime" onchange="ifoccTime()"
+                               required type="text">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label is-required" style="width:11%">发生部门：</label>
+                    <div class="col-sm-10" style="width: 89%">
+                        <input class="form-control" id="occurrenceAddress" maxlength="42" name="occurrenceAddress"
+                               placeholder="如XX支行XX部门" required type="text"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">客户身份证号：</label>
+                    <div class="col-sm-8">
+                        <input class="form-control" id="customerIdcard" maxlength="18" name="customerIdcard"
+                               onchange="checkIdcard()">
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">所属应用系统：</label>
+                    <div class="col-sm-8">
+                        <input class="form-control" id="sysid" name="sysid" type="hidden"/>
+                        <input class="form-control" id="applicationName" name="applicationName"
+                               onclick="selectOgSysListByCondition()"
+                               readonly required style="background-color: #fdfdfd"
+                               type="text"/>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">客户姓名：</label>
+                    <div class="col-sm-8">
+                        <input class="form-control" id="customerName" maxlength="16" name="customerName"
+                               placeholder="没有填无" required>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">交易账号：</label>
+                    <div class="col-sm-8">
+                        <input class="form-control" id="transactionAccount" maxlength="64"
+                               name="transactionAccount">
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">当事人：</label>
+                    <div class="col-sm-8">
+                        <input class="form-control" id="faultReportName" maxlength="18" name="faultReportName"
+                               placeholder="行方人员"
+                               required>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">当事人电话：</label>
+                    <div class="col-sm-8">
+                        <input class="form-control" id="reportPhone" maxlength="32" name="reportPhone">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label is-required" style="width:11%">事件标题：</label>
+                    <div class="col-sm-10" style="width:89%">
+                        <input class="form-control" id="faultDecriptSummary" maxlength="64"
+                               name="faultDecriptSummary" required type="text"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label is-required" style="width:11%">查询理由及事件描述：</label>
+                    <div class="col-sm-10" style="width:89%">
+                            <textarea class="form-control" cols="20" id="faultDecriptDetail" maxlength="1300"
+                                      name="faultDecriptDetail" required rows="10"></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label is-required" style="width:11%">计划查询内容：</label>
+                    <div class="col-sm-10" style="width:89%">
+                            <textarea class="form-control" cols="20" id="planQueryContent" maxlength="1300"
+                                      name="planQueryContent" required rows="10"></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+    <div class="tab-content">
+        <div class="tab-pane active" id="tab-1">
+            <div class="panel-body">
+                <div class="btn-group-sm" id="toolbar1" role="group">
+                    <a class="btn btn-success" onclick="upload()" type="button">
+                        <i class="fa fa-upload"></i> 添加附件
+                    </a>
+                    <a class="btn btn-warning multiple disabled" onclick="downloadAttachment()">
+                        <i class="fa fa-download"></i> 下载附件
+                    </a>
+                    <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()">
+                        <i class="fa fa-remove"></i> 删除附件
+                    </a>
+                </div>
+                <div class="col-sm-12 select-table table-striped">
+                    <table id="file-table"></table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-offset-5 col-sm-10">
+        <button class="btn btn-sm btn-primary" onclick="submit()" type="button"><i class="fa fa-check"></i>提 交
+        </button>&nbsp;
+        <button class="btn btn-sm btn-primary" onclick="save()" type="button"><i
+                class="glyphicon glyphicon-saved"></i>暂 存
+        </button>&nbsp;
+        <button class="btn btn-sm btn-danger" onclick="closeItem()" type="button"><i class="fa fa-remove"></i>关 闭
+        </button>
+    </div>
+</div>
+<th:block th:include="include :: footer"/>
+<th:block th:include="include :: select2-js"/>
+<th:block th:include="include :: summernote-js"/>
+<th:block th:include="include :: datetimepicker-js"/>
+<script>
+    var prefix_attachment = ctx + "pub/attachment";
+    var prefix_version = ctx + "self/query";
+    var prefix_fmbiz = ctx + "fmbiz";
+    $(function () {
+        $("#occurrenceTime").datetimepicker({
+            format: "yyyy-mm-dd hh:ii:ss",
+            autoclose: true,
+            minView: 0,
+            minuteStep: 1,
+            endDate: new Date()
+        });
+        var optionsfj = {
+            url: prefix_attachment + "/list",
+            id: 'file-table',
+            createUrl: prefix_attachment + "/add",
+            updateUrl: prefix_attachment + "/edit/{id}",
+            removeUrl: prefix_attachment + "/remove",
+            detailUrl: prefix_attachment + "/edit/{id}",
+            sortName: "fileTime",
+            singleSelect: true,
+            clickToSelect: true,
+            sortOrder: "desc",
+            toolbar: "toolbar1",
+            queryParams: queryParams,
+            modalName: "附件列表",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'atId',
+                    title: '附件ID',
+                    visible: false
+                },
+                {
+                    field: 'fileName',
+                    title: '文件名称'
+                },
+                {
+                    field: 'person.pName',
+                    title: '上传人'
+                },
+                {
+                    field: 'size',
+                    title: '文件大小'
+                },
+                {
+                    field: 'memo',
+                    title: '文件描述'
+                },
+                {
+                    field: 'fileTime',
+                    title: '上传时间',
+                    formatter: function (value, row, index) {
+                        var startTime = '';
+                        if (value != '' && value != null) {
+                            var pattern = /(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/;
+                            startTime = value.replace(pattern, '$1-$2-$3 $4:$5:$6');
+                        }
+                        return startTime;
+                    }
+                }]
+        };
+        $.table.init(optionsfj);
+        var createrTime = $("#createrTime").val();
+        var pattern = /(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/;
+        createrTime = createrTime.replace(pattern, '$1-$2-$3 $4:$5:$6');
+        $("#createrTime").val(createrTime);
+    });
+
+    // 提交
+    function submit() {
+
+        var idCard = checkIdcard();
+        if (!idCard) {
+            return;
+        }
+        if ($.validate.form()) {
+            // $.modal.close();
+            var data = $("#form-fmbiz-add").serializeArray();
+            $.ajax({
+                type: "POST",
+                url: prefix_version + "/add",
+                data: data,
+                success: function (data) {
+                    var code = data.code;
+                    if (code == "500") {
+                        $.modal.alertError(data.msg);
+                        return;
+                    }
+                    // var dataP = $(window.frameElement).attr('data-panel');
+                    // parent.$('.menuTab[data-panel="' + dataP + '"]').remove();
+                    // parent.$('.mainContent.RuoYi_iframe[data-panel="' + dataP + '"]').remove();
+                    var id = data.data;
+                    $.modal.parentTab("脚本服务化处理", prefix_version + "/saveToAuto/" + id + "/2");
+                }
+            });
+        }
+    }
+
+    // 暂存
+    function save() {
+        var idCard = checkIdcard();
+        if (!idCard) {
+            return;
+        }
+        var data = $("#form-fmbiz-add").serializeArray();
+        $.operate.saveTab(prefix_version + "/save", data);
+    };
+
+
+    // 附件上传页面
+    function upload() {
+        var url1 = prefix_version + "/save";
+        var data = $("#form-fmbiz-add").serializeArray();
+        $.ajax({
+            url: url1,
+            type: "post",
+            dataType: "json",
+            data: data,
+            success: function (result) {
+                if (result.code == 0) {
+                    var ownerId = result.data;
+                    // 将ownerId保存到页面隐藏框
+                    $("#ownerId").val(ownerId);
+                    $("#id").val(ownerId);
+                    var url = prefix_attachment + "/upload/" + ownerId;
+                    $.modal.open("附件上传", url, '1100', '620');
+                } else {
+                    $.operate.successCallback(result);
+                }
+            }
+        });
+    }
+
+    // 附件下载
+    function downloadAttachment() {
+        var rows = $.table.selectFirstColumns();
+        var atId = rows[0];
+        var ownerId = $("#ownerId").val();
+        var url = prefix_attachment + "/download/" + ownerId + "/" + atId;
+        window.location.href = url;
+    }
+
+    // 选择应用系统（只能单选）
+    function selectOgSysListByCondition() {
+        $.modal.open("选择应用系统", prefix_fmbiz + "/sysGrouplist");
+    }
+
+    function queryParams(params) {
+        var search = $.table.queryParams(params);
+        search.ownerId = $("#ownerId").val() == '' ? 'version_public_add_no_owner_id' : $("#ownerId").val();
+        return search;
+    }
+
+    //判断发生时间不能大于当前时间
+    function ifoccTime() {
+        var occurTime = $("#occurrenceTime").val();
+        var date1 = new Date(occurTime.replace(/-/g, '/'));
+        var date2 = new Date();
+        if (date1 > date2) {
+            $.modal.alertError("发生时间不应大于当前时间。");
+            $("#occurTime").val("");
+        }
+    }
+
+    // 校验身份证号码
+    function checkIdcard() {
+        var customerIdcard = $("#customerIdcard").val();
+        if (customerIdcard && !idcard(customerIdcard)) {
+            $.modal.alertWarning("身份证格式不正确。");
+        } else {
+            return true;
+        }
+    }
+
+    function idcard(customerIdcard) {
+        var nd = /^[1-9]\d{7}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])\d{3}$|^[1-9]\d{5}[1-9]\d{3}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])\d{3}([0-9]|X)$/;//中国内陆地区身份证验证
+        var hk = /^((\s?[A-Za-z])|([A-Za-z]{2}))\d{6}(\([0−9aA]\)|[0-9aA])$/;//中国香港地区身份证验证
+        var mo = /^[1|5|7][0-9]{6}\([0-9Aa]\)/;//中国澳门地区身份证验证
+        var tw = /^[a-zA-Z][0-9]{9}$/; //中国台湾地区身份证验证
+        if (!nd.test(customerIdcard) && !hk.test(customerIdcard) && !mo.test(customerIdcard) && !tw.test(customerIdcard)) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    function getFmKindOneList(sysid) {
+
+    }
+
+    //根据系统查询工作组
+    function getGroupList(sysid) {
+    }
+
+</script>
+</body>
+</html>

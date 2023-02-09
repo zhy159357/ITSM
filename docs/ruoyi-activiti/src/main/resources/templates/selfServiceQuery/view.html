@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:include="include :: header('查询申请单详情')"/>
+    <th:block th:include="include :: datetimepicker-css"/>
+    <th:block th:include="include :: summernote-css"/>
+    <th:block th:include="include :: select2-css"/>
+</head>
+<body>
+<div class="main-content">
+    <form id="form-fmbiz-add" class="form-horizontal" th:object="${selfServiceQuery}">
+        <input name="id" id="id" class="form-control" type="hidden" required th:value="*{id}">
+        <h4 class="form-header h4">基本信息</h4>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">单号：</label>
+                    <div class="col-sm-8">
+                        <input name="no" id="no" class="form-control" type="text"
+                               th:value="*{no}" readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">创建机构：</label>
+                    <div class="col-sm-8">
+                        <input id="createOrgName" name="createOrgName" type="text" class="form-control"
+                               th:value="*{createOrgName}" readonly/>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">创建时间：</label>
+                    <div class="col-sm-8">
+                        <input id="createrTime" name="createrTime" class="form-control" type="text" readonly
+                               th:value="*{createrTime}">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">创建人：</label>
+                    <div class="col-sm-8">
+                        <input name="createName" id="createName" class="form-control" type="text" readonly
+                               th:value="*{createName}">
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">创建人电话：</label>
+                    <div class="col-sm-8">
+                        <input id="createPhone" name="createPhone" class="form-control" th:value="*{createPhone}"
+                               readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">发生时间：</label>
+                    <div class="col-sm-8">
+                        <input id="occurrenceTime" name="occurrenceTime" class="form-control"
+                               th:value="*{occurrenceTime}"
+                               type="text" readonly>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label" style="width:11%">发生部门：</label>
+                    <div class="col-sm-10" style="width: 89%">
+                        <input id="occurrenceAddress" name="occurrenceAddress" type="text"
+                               class="form-control" th:value="*{occurrenceAddress}" readonly/>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">客户身份证号：</label>
+                    <div class="col-sm-8">
+                        <input id="customerIdcard" name="customerIdcard" class="form-control"
+                               th:value="*{customerIdcard}"
+                               readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">所属应用系统：</label>
+                    <div class="col-sm-8">
+                        <input id="sysName" name="sysName" type="text" class="form-control"
+                               th:value="*{sysName}" readonly
+                        />
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">客户姓名：</label>
+                    <div class="col-sm-8">
+                        <input id="customerName" name="customerName" placeholder="没有填无" class="form-control"
+                               th:value="*{customerName}" readonly>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">交易账号：</label>
+                    <div class="col-sm-8">
+                        <input id="transactionAccount" name="transactionAccount" class="form-control"
+                               th:value="*{transactionAccount}" readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">当事人：</label>
+                    <div class="col-sm-8">
+                        <input id="faultReportName" name="faultReportName" placeholder="行方人员" class="form-control"
+                               th:value="*{faultReportName}"
+                               readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">当事人电话：</label>
+                    <div class="col-sm-8">
+                        <input id="reportPhone" name="reportPhone" class="form-control" th:value="*{reportPhone}"
+                               readonly>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label" style="width:11%">事件标题：</label>
+                    <div class="col-sm-10" style="width:89%">
+                        <input id="faultDecriptSummary" name="faultDecriptSummary" th:value="*{faultDecriptSummary}"
+                               type="text"
+                               class="form-control" readonly/>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label" style="width:11%">查询理由及事件描述：</label>
+                    <div class="col-sm-10" style="width:89%">
+                            <textarea rows="10" cols="20" id="faultDecriptDetail" name="faultDecriptDetail"
+                                      th:text="*{faultDecriptDetail}"
+                                      class="form-control" readonly></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label" style="width:11%">计划查询内容：</label>
+                    <div class="col-sm-10" style="width:89%">
+                            <textarea rows="10" cols="20" id="planQueryContent" name="planQueryContent"
+                                      th:text="*{planQueryContent}"
+                                      class="form-control" readonly></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="tabs-container">
+                <ul class="nav nav-tabs">
+                    <li class="active"><a data-toggle="tab" href="#tab-2" aria-expanded="false">附件列表</a>
+                    </li>
+                  <!--  <li class=""><a data-toggle="tab" href="#tab-5" aria-expanded="false">脚本执行情况</a>
+                    </li>-->
+                </ul>
+                <div class="tab-content">
+
+                    <div id="tab-2" class="tab-pane active">
+                        <div class="panel-body">
+                            <div class="btn-group-sm" id="toolbar2" role="group">
+                                <a class="btn btn-warning multiple disabled" onclick="downloadAttachment()">
+                                    <i class="fa fa-download"></i> 下载附件
+                                </a>
+                            </div>
+                            <div class="col-sm-12 select-table table-striped">
+                                <table id="file-table"></table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane" id="tab-5">
+                        <div class="panel-body">
+                            <div class="btn-group-sm" id="toolbar5" role="group">
+                                <a class="btn btn-primary single disabled" type="button" onclick="detailAuto()">
+                                    <i class="fa fa-vi"></i> 脚本执行结果详情
+                                </a>
+                            </div>
+                            <div class="col-sm-12 select-table table-striped">
+                                <table id="auto-table"></table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-offset-5 col-sm-10" th:style="center">
+        <button type="button" class="btn btn-sm btn-danger" onclick="closeItem()"><i class="fa fa-remove"></i>关 闭
+        </button>
+    </div>
+</div>
+<th:block th:include="include :: footer"/>
+<th:block th:include="include :: select2-js"/>
+<th:block th:include="include :: summernote-js"/>
+<th:block th:include="include :: datetimepicker-js"/>
+<script>
+    var prefix_attachment = ctx + "pub/attachment";
+    var prefix = ctx + "fmbiz";
+    $(function () {
+        var optionsfj = {
+            url: prefix_attachment + "/list",
+            id: 'file-table',
+            createUrl: ctx + "pub/attachment/add",
+            updateUrl: ctx + "pub/attachment/edit/{id}",
+            removeUrl: ctx + "pub/attachment/remove",
+            detailUrl: ctx + "pub/attachment/edit/{id}",
+            sortName: "fileTime",
+            sortOrder: "desc",
+            singleSelect: true,
+            clickToSelect: true,
+            toolbar: "toolbar2",
+            queryParams: queryParams,
+            modalName: "附件列表",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'atId',
+                    title: '附件ID',
+                    visible: false
+                },
+                {
+                    field: 'fileName',
+                    title: '文件名称'
+                },
+                {
+                    field: 'person.pName',
+                    title: '上传人'
+                },
+                {
+                    field: 'size',
+                    title: '文件大小'
+                },
+                {
+                    field: 'fileCiphertext',
+                    title: '文件描述'
+                },
+                {
+                    field: 'fileTime',
+                    title: '上传时间'
+                }]
+        };
+        $.table.init(optionsfj);
+        var createrTime = $("#createrTime").val();
+        var pattern = /(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/;
+        createrTime = createrTime.replace(pattern, '$1-$2-$3 $4:$5:$6');
+        $("#createrTime").val(createrTime);
+        var occurrenceTime = $("#occurrenceTime").val();
+        var pattern = /(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/;
+        occurrenceTime = occurrenceTime.replace(pattern, '$1-$2-$3 $4:$5:$6');
+        $("#occurrenceTime").val(occurrenceTime);
+    });
+    //关联脚本执行情况
+    $(function () {
+        var optionsqq = {
+            url: prefix + "/autoList/" + $("#id").val(),
+            id: "auto-table",
+            showSearch: false,
+            showRefresh: true,
+            showToggle: false,
+            showColumns: false,
+            pagination: true,
+            singleSelect: true,
+            clickToSelect: true,
+            pageSize: 5,
+            toolbar: "toolbar5",
+            modalName: "事件单脚本",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'fbsId',
+                    title: '脚本记录表',
+                    visible: false
+                },
+                {
+                    field: 'flowId',
+                    title: '关联id',
+                    visible: false
+                },
+                {
+                    field: 'scriptName',
+                    title: '脚本名称'
+                },
+                {
+                    field: 'executorName',
+                    title: '执行人'
+                },
+                {
+                    field: 'executorGroupName',
+                    title: '执行工作组'
+                },
+                {
+                    field: 'executorTime',
+                    title: '执行时间',
+                    formatter: function (value, row, index) {
+                        var startTime = '';
+                        if (value != '' && value != null) {
+                            var pattern = /(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/;
+                            startTime = value.replace(pattern, '$1-$2-$3 $4:$5:$6');
+                        }
+                        return startTime;
+                    }
+                },
+                {
+                    field: 'resultStatus',
+                    title: '执行状态'
+                }]
+        };
+        $.table.init(optionsqq);
+    });
+
+    // 附件下载
+    function downloadAttachment() {
+        var rows = $.table.selectFirstColumns();
+        var atId = rows[0];
+        var ownerId = $("#id").val();
+        var url = prefix_attachment + "/download/" + ownerId + "/" + atId;
+        window.location.href = url;
+    }
+
+    function queryParams(params) {
+        var search = $.table.queryParams(params);
+        search.ownerId = $("#id").val() == '' ? 'version_public_add_no_owner_id' : $("#id").val();
+        return search;
+    }
+
+    /*查看脚本执行情况详情*/
+    function detailAuto() {
+        var ids = $.table.selectFirstColumns();
+        var url = ctx + "system/script/detail/" + ids;
+        $.modal.openTab("脚本执行详情", url);
+    }
+</script>
+</body>
+</html>

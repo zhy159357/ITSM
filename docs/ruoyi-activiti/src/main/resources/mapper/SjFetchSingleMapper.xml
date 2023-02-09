@@ -1,0 +1,385 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.activiti.mapper.SjFetchSingleMapper">
+
+    <resultMap type="SjFetchSingle" id="SjFetchSingleResult">
+        <result property="fetchId"    column="fetch_id"    />
+        <result property="fetchNo"    column="fetch_no"    />
+        <result property="creatTime"    column="creat_time"    />
+        <result property="creatTimeText"    column="creat_time_text"    />
+        <result property="createId"    column="create_id"    />
+        <result property="sourceType"    column="source_type"    />
+        <result property="sourceTypeText"    column="source_type_text"    />
+        <result property="titleName"    column="title_name"    />
+        <result property="processid"    column="processid"    />
+        <result property="orgName"    column="org_name"    />
+        <result property="personName"    column="person_name"    />
+        <result property="businessNumber"    column="business_number"    />
+        <result property="businessType"    column="business_type"    />
+        <result property="businessTypeText"    column="business_type_text"    />
+        <result property="businessOrgName"    column="business_org_name"    />
+        <result property="businessOrgId"    column="business_org_id"    />
+        <result property="bbusinessPersonName"    column="bbusiness_person_name"    />
+        <result property="sysName"    column="sys_name"    />
+        <result property="sysId"    column="sys_id"    />
+        <result property="sysOrgName"    column="sys_org_name"    />
+        <result property="sysOrgId"    column="sys_org_id"    />
+        <result property="interfaceName"    column="interface_name"    />
+        <result property="interfacePhone"    column="interface_phone"    />
+        <result property="fileSize"    column="file_size"    />
+        <result property="fetchState"    column="fetch_state"    />
+        <result property="fetchStateText"    column="fetch_state_text"    />
+        <result property="groupId"    column="group_id"    />
+        <result property="assingId"    column="assing_id"    />
+        <result property="sysManagerId"    column="sys_manager_id"    />
+        <result property="sysManagerName"    column="sys_manager_name"    />
+        <result property="dealId"    column="deal_id"    />
+        <result property="auditBackId"    column="audit_back_id"    />
+        <result property="collectBackId"    column="collect_back_id"    />
+        <result property="fetchDemandId"    column="fetch_demand_id"    />
+        <result property="dealFlag"    column="deal_flag"    />
+    </resultMap>
+
+    <sql id="selectSjFetchSingleVo">
+        select fetch_id, fetch_no, creat_time,to_char(to_date(creat_time, 'YYYYMMDDHH24MISS'), 'YYYY-MM-DD HH24:MI:SS')   creat_time_text, source_type, source_type_text,title_name, processid, org_name, orgid,sys_org_id ,sys_org_name , person_name, business_number, business_type,business_type_text, business_org_name,business_org_id, bbusiness_person_name, sys_id, sys_name, interface_name, interface_phone, file_size, fetch_state, fetch_state_text,group_id, assing_id, sys_manager_id, sys_manager_name, deal_id, audit_back_id, collect_back_id,fetch_demand_id,deal_flag  from sj_fetch_single
+    </sql>
+
+    <sql id="selectSjFetchSingleVoMysql">
+        select fetch_id, fetch_no, creat_time,str_to_date(creat_time,'%Y%m%d%H%i%s')  creat_time_text, source_type, source_type_text,title_name, processid, org_name, orgid,sys_org_id ,sys_org_name , person_name, business_number, business_type,business_type_text, business_org_name,business_org_id, bbusiness_person_name, sys_id, sys_name, interface_name, interface_phone, file_size, fetch_state, fetch_state_text,group_id, assing_id, sys_manager_id, sys_manager_name, deal_id, audit_back_id, collect_back_id,fetch_demand_id,deal_flag  from sj_fetch_single
+    </sql>
+
+    <select id="selectSjFetchSingleList" parameterType="SjFetchSingle" resultMap="SjFetchSingleResult">
+        <include refid="selectSjFetchSingleVo"/>
+        <where>
+            <if test="fetchId != null  and fetchId != ''"> and fetch_id = #{fetchId}</if>
+            <if test="fetchNo != null  and fetchNo != ''"> and fetch_no like concat('%',concat(#{fetchNo},'%')) </if>
+            <if test="creatTime != null  and creatTime != ''"> and creat_time = #{creatTime}</if>
+            <if test="createId != null  and createId != ''"> and create_id = #{createId}</if>
+            <if test="sourceType != null  and sourceType != ''"> and source_type = #{sourceType}</if>
+            <if test="titleName != null  and titleName != ''"> and title_name like concat(concat('%', #{titleName}), '%')</if>
+            <if test="processid != null  and processid != ''"> and processid = #{processid}</if>
+            <if test="orgName != null  and orgName != ''"> and org_name like concat(concat('%', #{orgName}), '%')</if>
+            <if test="personName != null  and personName != ''"> and person_name like concat(concat('%', #{personName}), '%')</if>
+            <if test="businessNumber != null  and businessNumber != ''"> and business_number like concat('%',concat(#{businessNumber},'%'))</if>
+            <if test="businessType != null  and businessType != ''"> and business_type = #{businessType}</if>
+            <if test="businessOrgName != null  and businessOrgName != ''"> and business_org_name like concat(concat('%', #{businessOrgName}), '%')</if>
+            <if test="bbusinessPersonName != null  and bbusinessPersonName != ''"> and bbusiness_person_name like concat(concat('%', #{bbusinessPersonName}), '%')</if>
+            <if test="sysName != null  and sysName != ''"> and sys_name like concat(concat('%', #{sysName}), '%')</if>
+            <if test="interfaceName != null  and interfaceName != ''"> and interface_name like concat(concat('%', #{interfaceName}), '%')</if>
+            <if test="interfacePhone != null  and interfacePhone != ''"> and interface_phone = #{interfacePhone}</if>
+            <if test="fileSize != null "> and file_size = #{fileSize}</if>
+            <if test="fetchState != null  and fetchState != ''"> and fetch_state = #{fetchState}</if>
+            <if test="groupId != null  and groupId != ''"> and group_id = #{groupId}</if>
+            <if test="assingId != null  and assingId != ''"> and assing_id = #{assingId}</if>
+            <if test="sysManagerId != null  and sysManagerId != ''"> and sys_manager_id = #{sysManagerId}</if>
+            <if test="dealId != null  and dealId != ''"> and deal_id = #{dealId}</if>
+            <if test="auditBackId != null  and auditBackId != ''"> and audit_back_id = #{auditBackId}</if>
+            <if test="collectBackId != null  and collectBackId != ''"> and collect_back_id = #{collectBackId}</if>
+        </where>
+    </select>
+    <select id="selectSjFetchSingleListMysql" parameterType="SjFetchSingle" resultMap="SjFetchSingleResult">
+        <include refid="selectSjFetchSingleVoMysql"/>
+        <where>
+            <if test="fetchId != null  and fetchId != ''"> and fetch_id = #{fetchId}</if>
+            <if test="fetchNo != null  and fetchNo != ''"> and fetch_no like concat('%',concat(#{fetchNo},'%')) </if>
+            <if test="creatTime != null  and creatTime != ''"> and creat_time = #{creatTime}</if>
+            <if test="createId != null  and createId != ''"> and create_id = #{createId}</if>
+            <if test="sourceType != null  and sourceType != ''"> and source_type = #{sourceType}</if>
+            <if test="titleName != null  and titleName != ''"> and title_name like concat(concat('%', #{titleName}), '%')</if>
+            <if test="processid != null  and processid != ''"> and processid = #{processid}</if>
+            <if test="orgName != null  and orgName != ''"> and org_name like concat(concat('%', #{orgName}), '%')</if>
+            <if test="personName != null  and personName != ''"> and person_name like concat(concat('%', #{personName}), '%')</if>
+            <if test="businessNumber != null  and businessNumber != ''"> and business_number like concat('%',concat(#{businessNumber},'%'))</if>
+            <if test="businessType != null  and businessType != ''"> and business_type = #{businessType}</if>
+            <if test="businessOrgName != null  and businessOrgName != ''"> and business_org_name like concat(concat('%', #{businessOrgName}), '%')</if>
+            <if test="bbusinessPersonName != null  and bbusinessPersonName != ''"> and bbusiness_person_name like concat(concat('%', #{bbusinessPersonName}), '%')</if>
+            <if test="sysName != null  and sysName != ''"> and sys_name like concat(concat('%', #{sysName}), '%')</if>
+            <if test="interfaceName != null  and interfaceName != ''"> and interface_name like concat(concat('%', #{interfaceName}), '%')</if>
+            <if test="interfacePhone != null  and interfacePhone != ''"> and interface_phone = #{interfacePhone}</if>
+            <if test="fileSize != null "> and file_size = #{fileSize}</if>
+            <if test="fetchState != null  and fetchState != ''"> and fetch_state = #{fetchState}</if>
+            <if test="groupId != null  and groupId != ''"> and group_id = #{groupId}</if>
+            <if test="assingId != null  and assingId != ''"> and assing_id = #{assingId}</if>
+            <if test="sysManagerId != null  and sysManagerId != ''"> and sys_manager_id = #{sysManagerId}</if>
+            <if test="dealId != null  and dealId != ''"> and deal_id = #{dealId}</if>
+            <if test="auditBackId != null  and auditBackId != ''"> and audit_back_id = #{auditBackId}</if>
+            <if test="collectBackId != null  and collectBackId != ''"> and collect_back_id = #{collectBackId}</if>
+        </where>
+    </select>
+
+    <select id="selectListByTask" parameterType="SjFetchSingle" resultMap="SjFetchSingleResult">
+        <include refid="selectSjFetchSingleVo"></include>
+        <where>
+            <if test="ids !=null and ids!=''">
+                and fetch_id
+                <trim prefix="in (" suffix=")" suffixOverrides=",">
+                    <foreach collection="ids" item="id">
+                        #{id},
+                    </foreach>
+                </trim>
+            </if>
+            <if test="fetchNo != null  and fetchNo != ''"> and fetch_no like concat('%',concat(#{fetchNo},'%'))</if>
+            <if test="sourceType != null  and sourceType != ''"> and source_type = #{sourceType}</if>
+            <if test="titleName != null  and titleName != ''"> and title_name like concat(concat('%', #{titleName}), '%')</if>
+            <if test="orgName != null  and orgName != ''"> and org_name like concat(concat('%', #{orgName}), '%')</if>
+            <if test="personName != null  and personName != ''"> and person_name like concat(concat('%', #{personName}), '%')</if>
+            <if test="businessNumber != null  and businessNumber != ''"> and business_number like concat('%',concat(#{businessNumber},'%'))</if>
+            <if test="businessType != null  and businessType != ''"> and business_type = #{businessType}</if>
+            <if test="businessOrgName != null  and businessOrgName != ''"> and business_org_name like concat(concat('%', #{businessOrgName}), '%')</if>
+            <if test="bbusinessPersonName != null  and bbusinessPersonName != ''"> and bbusiness_person_name like concat(concat('%', #{bbusinessPersonName}), '%')</if>
+
+        </where>
+
+    </select>
+    <select id="selectListByTaskMysql" parameterType="SjFetchSingle" resultMap="SjFetchSingleResult">
+        <include refid="selectSjFetchSingleVoMysql"></include>
+        <where>
+            <if test="ids !=null and ids!=''">
+                and fetch_id
+                <trim prefix="in (" suffix=")" suffixOverrides=",">
+                    <foreach collection="ids" item="id">
+                        #{id},
+                    </foreach>
+                </trim>
+            </if>
+            <if test="fetchNo != null  and fetchNo != ''"> and fetch_no like concat('%',concat(#{fetchNo},'%'))</if>
+            <if test="sourceType != null  and sourceType != ''"> and source_type = #{sourceType}</if>
+            <if test="titleName != null  and titleName != ''"> and title_name like concat(concat('%', #{titleName}), '%')</if>
+            <if test="orgName != null  and orgName != ''"> and org_name like concat(concat('%', #{orgName}), '%')</if>
+            <if test="personName != null  and personName != ''"> and person_name like concat(concat('%', #{personName}), '%')</if>
+            <if test="businessNumber != null  and businessNumber != ''"> and business_number like concat('%',concat(#{businessNumber},'%'))</if>
+            <if test="businessType != null  and businessType != ''"> and business_type = #{businessType}</if>
+            <if test="businessOrgName != null  and businessOrgName != ''"> and business_org_name like concat(concat('%', #{businessOrgName}), '%')</if>
+            <if test="bbusinessPersonName != null  and bbusinessPersonName != ''"> and bbusiness_person_name like concat(concat('%', #{bbusinessPersonName}), '%')</if>
+
+        </where>
+
+    </select>
+    <select id="selectSjFetchSingleById" parameterType="String" resultMap="SjFetchSingleResult">
+        <include refid="selectSjFetchSingleVo"/>
+        where fetch_id = #{fetchId}
+    </select>
+
+    <select id="selectSjFetchSingleByIdMysql" parameterType="String" resultMap="SjFetchSingleResult">
+        <include refid="selectSjFetchSingleVoMysql"/>
+        where fetch_id = #{fetchId}
+    </select>
+
+    <select id="selectSjFetchSingleByProcessId" parameterType="String" resultMap="SjFetchSingleResult">
+        <include refid="selectSjFetchSingleVo"/>
+        where processid = #{processId,jdbcType=VARCHAR}
+    </select>
+
+    <select id="selectSjFetchSingleByProcessIdMysql" parameterType="String" resultMap="SjFetchSingleResult">
+        <include refid="selectSjFetchSingleVoMysql"/>
+        where processid = #{processId,jdbcType=VARCHAR}
+    </select>
+
+    <insert id="insertSjFetchSingle" parameterType="SjFetchSingle">
+        <!-- <selectKey keyProperty="fetchId" resultType="long" order="BEFORE">
+             SELECT seq_sj_fetch_single.NEXTVAL as fetchId FROM DUAL
+         </selectKey>-->
+        insert into sj_fetch_single
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="fetchId != null  and fetchId != ''">fetch_id,</if>
+            <if test="fetchNo != null  and fetchNo != ''">fetch_no,</if>
+            <if test="creatTime != null  and creatTime != ''">creat_time,</if>
+            <if test="createId != null  and createId != ''">create_id,</if>
+            <if test="sourceType != null  and sourceType != ''">source_type,</if>
+            <if test="sourceTypeText != null  and sourceTypeText != ''">source_type_text,</if>
+            <if test="titleName != null  and titleName != ''">title_name,</if>
+            <if test="processid != null  and processid != ''">processid,</if>
+            <if test="orgName != null  and orgName != ''">org_name,</if>
+            <if test="orgId != null  and orgId != ''">orgid,</if>
+            <if test="personName != null  and personName != ''">person_name,</if>
+            <if test="businessNumber != null  and businessNumber != ''">business_number,</if>
+            <if test="businessType != null  and businessType != ''">business_type,</if>
+            <if test="businessTypeText != null  and businessTypeText != ''">business_type_text,</if>
+            <if test="businessOrgName != null  and businessOrgName != ''">business_org_name,</if>
+            <if test="businessOrgId != null  and businessOrgId != ''">business_org_id,</if>
+            <if test="bbusinessPersonName != null  and bbusinessPersonName != ''">bbusiness_person_name,</if>
+            <if test="sysName != null  and sysName != ''">sys_name,</if>
+            <if test="sysId != null  and sysId != ''">sys_id,</if>
+            <if test="interfaceName != null  and interfaceName != ''">interface_name,</if>
+            <if test="interfacePhone != null  and interfacePhone != ''">interface_phone,</if>
+            <if test="fileSize != null ">file_size,</if>
+            <if test="fetchState != null  and fetchState != ''">fetch_state,</if>
+            <if test="fetchStateText != null  and fetchStateText != ''">fetch_state_text,</if>
+            <if test="groupId != null  and groupId != ''">group_id,</if>
+            <if test="assingId != null  and assingId != ''">assing_id,</if>
+            <if test="sysManagerId != null  and sysManagerId != ''">sys_manager_id,</if>
+            <if test="sysManagerName != null  and sysManagerName != ''">sys_manager_name,</if>
+            <if test="sysOrgId != null  and sysOrgId != ''"> sys_org_id,</if>
+            <if test="sysOrgName != null  and sysOrgName != ''"> sys_org_name,</if>
+            <if test="dealId != null  and dealId != ''">deal_id,</if>
+            <if test="auditBackId != null  and auditBackId != ''">audit_back_id,</if>
+            <if test="collectBackId != null  and collectBackId != ''">collect_back_id,</if>
+            <if test="fetchDemandId != null  and fetchDemandId != ''">fetch_demand_id,</if>
+            <if test="dealFlag != null  and dealFlag != ''">deal_flag,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="fetchId != null  and fetchId != ''">#{fetchId},</if>
+            <if test="fetchNo != null  and fetchNo != ''">#{fetchNo},</if>
+            <if test="creatTime != null  and creatTime != ''">#{creatTime},</if>
+            <if test="createId != null  and createId != ''">#{createId},</if>
+            <if test="sourceType != null  and sourceType != ''">#{sourceType},</if>
+            <if test="sourceTypeText != null  and sourceTypeText != ''">#{sourceTypeText},</if>
+            <if test="titleName != null  and titleName != ''">#{titleName},</if>
+            <if test="processid != null  and processid != ''">#{processid},</if>
+            <if test="orgName != null  and orgName != ''">#{orgName},</if>
+            <if test="orgId != null  and orgId != ''">#{orgId},</if>
+            <if test="personName != null  and personName != ''">#{personName},</if>
+            <if test="businessNumber != null  and businessNumber != ''">#{businessNumber},</if>
+            <if test="businessType != null  and businessType != ''">#{businessType},</if>
+            <if test="businessTypeText != null  and businessTypeText != ''">#{businessTypeText},</if>
+            <if test="businessOrgName != null  and businessOrgName != ''">#{businessOrgName},</if>
+            <if test="businessOrgId != null  and businessOrgId != ''">#{businessOrgId},</if>
+            <if test="bbusinessPersonName != null  and bbusinessPersonName != ''">#{bbusinessPersonName},</if>
+            <if test="sysName != null  and sysName != ''">#{sysName},</if>
+            <if test="sysId != null  and sysId != ''">#{sysId},</if>
+            <if test="interfaceName != null  and interfaceName != ''">#{interfaceName},</if>
+            <if test="interfacePhone != null  and interfacePhone != ''">#{interfacePhone},</if>
+            <if test="fileSize != null ">#{fileSize},</if>
+            <if test="fetchState != null  and fetchState != ''">#{fetchState},</if>
+            <if test="fetchStateText != null  and fetchStateText != ''">#{fetchStateText},</if>
+            <if test="groupId != null  and groupId != ''">#{groupId},</if>
+            <if test="assingId != null  and assingId != ''">#{assingId},</if>
+            <if test="sysManagerId != null  and sysManagerId != ''">#{sysManagerId},</if>
+            <if test="sysManagerName != null  and sysManagerName != ''">#{sysManagerName},</if>
+            <if test="sysOrgId != null  and sysOrgId != ''"> #{sysOrgId},</if>
+            <if test="sysOrgName != null  and sysOrgName != ''"> #{sysOrgName}, </if>
+            <if test="dealId != null  and dealId != ''">#{dealId},</if>
+            <if test="auditBackId != null  and auditBackId != ''">#{auditBackId},</if>
+            <if test="collectBackId != null  and collectBackId != ''">#{collectBackId},</if>
+            <if test="fetchDemandId != null  and fetchDemandId != ''">#{fetchDemandId},</if>
+            <if test="dealFlag != null  and dealFlag != ''">#{dealFlag},</if>
+        </trim>
+    </insert>
+
+    <update id="updateSjFetchSingle" parameterType="SjFetchSingle">
+        update sj_fetch_single
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="fetchNo != null  and fetchNo != ''">fetch_no = #{fetchNo},</if>
+            <if test="creatTime != null  and creatTime != ''">creat_time = #{creatTime},</if>
+            <if test="titleName != null  and titleName != ''">title_name = #{titleName},</if>
+            <if test="processid != null  and processid != ''">processid = #{processid},</if>
+            <if test="orgName != null  and orgName != ''">org_name = #{orgName},</if>
+            <if test="orgId != null  and orgId != ''">orgid = #{orgId},</if>
+            <if test="personName != null  and personName != ''">person_name = #{personName},</if>
+            <if test="businessNumber != null  and businessNumber != ''">business_number = #{businessNumber},</if>
+            <if test="businessType != null  and businessType != ''">business_type = #{businessType},</if>
+            <if test="businessTypeText != null  and businessTypeText != ''">business_type_text = #{businessTypeText},</if>
+            <if test="businessOrgName != null  and businessOrgName != ''">business_org_name = #{businessOrgName},</if>
+            <if test="businessOrgId != null  and businessOrgId != ''">business_org_id = #{businessOrgId},</if>
+            <if test="bbusinessPersonName != null  and bbusinessPersonName != ''">bbusiness_person_name = #{bbusinessPersonName},</if>
+            <if test="sysName != null  and sysName != ''">sys_name = #{sysName},</if>
+            <if test="sysId != null  and sysId != ''">sys_id = #{sysId},</if>
+            <if test="interfaceName != null  and interfaceName != ''">interface_name = #{interfaceName},</if>
+            <if test="interfacePhone != null  and interfacePhone != ''">interface_phone = #{interfacePhone},</if>
+            <if test="fileSize != null ">file_size = #{fileSize},</if>
+            <if test="fetchState != null  and fetchState != ''">fetch_state = #{fetchState},</if>
+            <if test="fetchStateText != null  and fetchStateText != ''">fetch_state_text = #{fetchStateText},</if>
+            <if test="sysOrgId != null  and sysOrgId != ''">sys_org_id = #{sysOrgId},</if>
+            <if test="sysOrgName != null  and sysOrgName != ''">sys_org_name = #{sysOrgName},</if>
+            <if test="groupId != null  and groupId != ''">group_id = #{groupId},</if>
+            <if test="assingId != null  and assingId != ''">assing_id = #{assingId},</if>
+            <if test="sysManagerId != null  and sysManagerId != ''">sys_manager_id = #{sysManagerId},</if>
+            <if test="sysManagerName != null  and sysManagerName != ''">sys_manager_name = #{sysManagerName},</if>
+            <if test="dealId != null  and dealId != ''">deal_id = #{dealId},</if>
+            <if test="auditBackId != null  and auditBackId != ''">audit_back_id = #{auditBackId},</if>
+            <if test="collectBackId != null  and collectBackId != ''">collect_back_id = #{collectBackId},</if>
+            <if test="fetchDemandId != null  and fetchDemandId != ''">fetch_demand_id = #{fetchDemandId},</if>
+            <if test="dealFlag != null  and dealFlag != ''">deal_flag = #{dealFlag},</if>
+        </trim>
+        where fetch_id = #{fetchId}
+    </update>
+    <!-- <update id="updateSjFetchSingleStatus" parameterType="SjFetchSingle">
+         update sj_fetch_single
+         <trim prefix="SET" suffixOverrides=",">
+             <choose>
+                 <when test="fetchState != null  and fetchState != ''">
+                     fetch_state = #{fetchState},
+                 </when>
+                 <otherwise>
+                     fetch_state = '',
+                 </otherwise>
+             </choose>
+             <choose>
+                 <when test="fetchStateText != null  and fetchStateText != ''">
+                     fetch_state_text = #{fetchStateText},
+                 </when>
+                 <otherwise>
+                     fetch_state_text = '',
+                 </otherwise>
+             </choose>
+             <choose>
+                 <when test="sysOrgId != null  and sysOrgId != ''">
+                     sys_org_id = #{sysOrgId},
+                 </when>
+                 <otherwise>
+                     sys_org_id = '',
+                 </otherwise>
+             </choose>
+
+             <choose>
+                 <when test="sysOrgName != null  and sysOrgName != ''">
+                     sys_org_name = #{sysOrgName},
+                 </when>
+                 <otherwise>
+                     sys_org_name = '',
+                 </otherwise>
+             </choose>
+             <choose>
+                 <when test="sysManagerId != null  and sysManagerId != ''">
+                     sys_manager_id = #{sysManagerId},
+                 </when>
+                 <otherwise>
+                     sys_manager_id = '',
+                 </otherwise>
+             </choose>
+
+             <choose>
+                 <when test="sysManagerName != null  and sysManagerName != ''">
+                     sys_manager_name = #{sysManagerName},
+                 </when>
+                 <otherwise>
+                     sys_manager_name = '',
+                 </otherwise>
+             </choose>
+             <if test="sysManagerId != null  and sysManagerId != ''"></if>
+             <if test="sysManagerName != null  and sysManagerName != ''"></if>
+         </trim>
+         where fetch_id = #{fetchId}
+     </update>-->
+
+    <update id="updateSjFetchSingleStatus" parameterType="SjFetchSingle">
+        update sj_fetch_single
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="fetchState != null  and fetchState != ''">
+                fetch_state = #{fetchState},
+            </if>
+
+            <if test="fetchStateText != null  and fetchStateText != ''">
+                fetch_state_text = #{fetchStateText},
+            </if>
+            <if test="sysOrgId != null  and sysOrgId != ''">sys_org_id = #{sysOrgId},</if>
+            <if test="sysOrgName != null  and sysOrgName != ''">sys_org_name = #{sysOrgName},</if>
+            <if test="sysManagerId != null  and sysManagerId != ''">sys_manager_id = #{sysManagerId},</if>
+            <if test="sysManagerName != null  and sysManagerName != ''">sys_manager_name = #{sysManagerName}</if>
+        </trim>
+        where fetch_id = #{fetchId}
+    </update>
+    <delete id="deleteSjFetchSingleById" parameterType="String">
+        delete from sj_fetch_single where fetch_id = #{fetchId}
+    </delete>
+
+    <delete id="deleteSjFetchSingleByIds" parameterType="String">
+        delete from sj_fetch_single where fetch_id in
+        <foreach item="fetchId" collection="array" open="(" separator="," close=")">
+            #{fetchId}
+        </foreach>
+    </delete>
+
+</mapper>

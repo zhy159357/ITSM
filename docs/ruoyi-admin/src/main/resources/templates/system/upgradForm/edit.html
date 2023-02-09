@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('修改系统升级申请单')" />
+    <th:block th:include="include :: datetimepicker-css"/>
+    <th:block th:include="include :: summernote-css"/>
+    <th:block th:include="include :: select2-css"/>
+    <link th:href="@{/css/sysUpgradForm.css}" rel="stylesheet"/> <!-- 自定css -->
+
+</head>
+<body class="white-bg">
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+    <form class="form-horizontal m" id="form-upgrad-edit" th:object="${data}">
+        <h4 class="form-header h4">系统升级申请信息</h4>
+        <input id="id" name="id" th:field="*{id}"  type="hidden">
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">编号：</label>
+                    <div class="col-sm-8">
+                        <input id="sysNumber" name="sysNumber" class="form-control" type="text" maxlength="25" th:value="*{sysNumber}" required>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">应用系统名称：</label>
+                    <div class="col-sm-8">
+                        <input id="sysName" name="sysName" class="form-control" type="text" maxlength="50" th:value="*{sysName}" required>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">应用系统承建单位：</label>
+                    <div class="col-sm-8">
+                        <input id="sysContractor" name="sysContractor" class="form-control" type="text" th:value="*{sysContractor}" maxlength="50">
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">项目负责人：</label>
+                    <div class="col-sm-8">
+                        <input id="itemLeader" name="itemLeader" class="form-control" type="text" th:value="*{itemLeader}" maxlength="15">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">联系方式：</label>
+                    <div class="col-sm-8">
+                        <input id="tel" name="tel" class="form-control" type="text" th:value="*{tel}" maxlength="20">
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label  text-right">申请日期：</label>
+                    <div class="col-sm-8">
+                        <input type="text" class="form-control" name="applyDate" placeholder="yyyy-MM-dd" th:value="*{applyDate}"
+                               id="applyDate"  readonly style="background: #ffffff;"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">业务部门：</label>
+                    <div class="col-sm-8">
+                        <input id="dept" name="dept" class="form-control" type="text" th:value="*{dept}" maxlength="30">
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">当前版本：</label>
+                    <div class="col-sm-8">
+                        <input id="currentVersion" name="currentVersion" class="form-control" type="text" th:value="*{currentVersion}" maxlength="25">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">升级后版本：</label>
+                    <div class="col-sm-8">
+                        <input id="upgradedVersion" name="upgradedVersion" class="form-control" type="text" th:value="*{upgradedVersion}" maxlength="25">
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">相关系统：</label>
+                    <div class="col-sm-8">
+                        <input id="relatedSystems" name="relatedSystems" class="form-control" type="text" th:value="*{relatedSystems}" maxlength="25">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row ">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label  text-right">系统升级开始时间：</label>
+                    <div class="col-sm-8">
+                        <input type="text" class="form-control timecss" name="startTime" placeholder="yyyy-MM-dd HH:mm" th:value="*{startTime}"
+                               id="startTime"  readonly style="background: #ffffff;"/>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label  text-right">系统升级完成时间：</label>
+                    <div class="col-sm-8">
+                        <input type="text" class="form-control timecss" name="endTime" id="endTime" placeholder="yyyy-MM-dd HH:mm" th:value="*{endTime}"
+                               readonly style="background-color: #ffffff"/>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">升级原因：</label>
+                    <div class="col-sm-8">
+                        <input id="upgradeReason" name="upgradeReason" class="form-control" type="text" th:value="*{upgradeReason}" maxlength="200">
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">升级内容：</label>
+                    <div class="col-sm-8">
+                        <input id="upgradeContent" name="upgradeContent" class="form-control" type="text" th:value="*{upgradeContent}" maxlength="200">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label" style="width:16.5%">备注：</label>
+                    <div class="col-sm-10" style="width:83.5%">
+                        <input id="remarks" name="remarks" type="text" class="form-control" th:value="*{remarks}"
+                               maxlength="100"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label  text-right">项目负责人签字：</label>
+                    <div class="col-sm-8">
+                        <input type="text" class="form-control" name="leaderSign" id="leaderSign" th:value="*{leaderSign}" maxlength="50"
+                               style="background-color: #ffffff"/>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label  text-right">责人签字日期：</label>
+                    <div class="col-sm-8">
+                        <input type="text" class="form-control timecss" name="leaderSignTime" id="leaderSignTime" placeholder="yyyy-MM-dd HH:mm" th:value="*{leaderSignTime}"
+                               readonly style="background-color: #ffffff"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">相关系统意见：</label>
+                    <div class="col-sm-8">
+                        <input id="sysOpinion" name="sysOpinion" class="form-control" type="text" th:value="*{sysOpinion}" maxlength="50"/>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label  text-right">系统意见日期：</label>
+                    <div class="col-sm-8">
+                        <input type="text" class="form-control timecss" name="sysOpinionTime" id="sysOpinionTime" placeholder="yyyy-MM-dd HH:mm" th:value="*{sysOpinionTime}"
+                               readonly style="background-color: #ffffff"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">总集单位审批意见：</label>
+                    <div class="col-sm-8">
+                        <input id="collectiveUnitOpinion" name="collectiveUnitOpinion" class="form-control" type="text" th:value="*{collectiveUnitOpinion}" maxlength="50"/>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label  text-right">审批意见日期：</label>
+                    <div class="col-sm-8">
+                        <input type="text" class="form-control timecss" name="collectiveUnitTime" id="collectiveUnitTime" placeholder="yyyy-MM-dd HH:mm" th:value="*{collectiveUnitTime}"
+                               readonly style="background-color: #ffffff"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label text-right">技术局审批意见：</label>
+                    <div class="col-sm-10">
+                          <textarea rows="5" cols="20" id="bureauUnitOpinion" name="bureauUnitOpinion"
+                                    th:utext="*{bureauUnitOpinion}" class="br_input" maxlength="250" required></textarea>
+                        <div class="input-group-btn" style="display: contents">
+                            <ul style="position: absolute;left: 16px; width:max-content!important;" class="dropdown-menu dropdown-menu-right" role="menu"> </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+    <h4 class="form-header h4">上传附件</h4>
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="tabs-container">
+                <ul class="nav nav-tabs">
+                    <li class="active"><a data-toggle="tab" href="#tab-1" aria-expanded="true"> 附件上传</a>
+                    </li>
+                </ul>
+                <div class="tab-content">
+                    <div id="tab-1" class="tab-pane active">
+                        <div class="panel-body">
+                            <div class="btn-group-sm" id="toolbar1" role="group">
+                                <a class="btn btn-success" type="button" onclick="upload()">
+                                    <i class="fa fa-upload"></i> 添加附件
+                                </a>
+                                <a class="btn btn-primary multiple disabled" onclick="downloadFile()">
+                                    <i class="fa fa-download"></i> 下载附件
+                                </a>
+                                <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()">
+                                    <i class="fa fa-remove"></i> 删除附件
+                                </a>
+                            </div>
+                            <div class="col-sm-12 select-table table-striped">
+                                <table id="file-table"></table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="row">
+                <div class="col-sm-offset-5 col-sm-10">
+                    <button type="button" class="btn btn-sm btn-primary" onclick="submitHandler(this)"><i class="fa fa-check" id="commit"></i>提 交</button>&nbsp;
+                    <button type="button" class="btn btn-sm btn-danger" onclick="closeItem()"><i class="fa fa-window-close"></i>关 闭 </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: bootstrap-suggest-js" />
+<th:block th:include="include :: bootstrap-typeahead-js" />
+<th:block th:include="include :: select2-js"/>
+<th:block th:include="include :: summernote-js"/>
+<th:block th:include="include :: datetimepicker-js"/>
+<script th:inline="javascript">
+    var prefix = ctx + "system/upgradForm";
+    var pub_attachment = ctx + "pub/attachment";
+
+    //申请日期
+    $('#applyDate').datetimepicker({
+        minView: "month",
+        format: 'yyyy-mm-dd',
+        autoclose:true
+    });
+
+    $('.timecss').datetimepicker({
+        format: 'yyyy-mm-dd hh:ii',
+        autoclose:true
+    });
+
+
+    $("#form-upgrad-edit").validate({
+        focusCleanup: true
+    });
+
+    $(function () {
+        $('.summernote').summernote({
+            placeholder: '',
+            height : 192,
+            lang : 'zh-CN',
+            followingToolbar: false,
+            callbacks: {
+                onImageUpload: function (files) {
+                    sendFile(files[0], this);
+                }
+            },
+            focus:true
+        });
+        var content = $("#description").val();
+        $('#summernote').summernote('code', content);
+    });
+
+
+    function submitHandler(elementObj) {
+        var sysNumber = $("#sysNumber").val().trim();
+        if(sysNumber==null || sysNumber==''){
+            $.modal.alertWarning("请填写编号");
+            return;
+        }
+        var sysName = $("#sysName").val().trim();
+        if(sysName==null || sysName==''){
+            $.modal.alertWarning("应用系统名称");
+            return;
+        }
+        var phone = $("#contactPhone").val();
+        var shouji=/^1[3|4|5|6|7|8|9][0-9]\d{8}$/;
+        var zuoji = /^(0\d{2,3}-)?\d{7,8}$/g;//区号3,4位,号码7,8位
+        if (phone != null && phone != "") {
+            if(!(shouji.test(phone)) && !(zuoji.test(phone))){
+                $.modal.alertWarning("请填写正确的联系电话");
+                return;
+            }
+        }
+        $.operate.saveTab(prefix + "/edit", $('#form-upgrad-edit').serialize());
+    }
+
+    $(function() {
+        var optionsfj = {
+            url: pub_attachment + "/list",
+            id:'file-table',
+            createUrl: pub_attachment + "/add",
+            updateUrl: pub_attachment + "/edit/{id}",
+            removeUrl: pub_attachment + "/remove",
+            detailUrl: pub_attachment + "/edit/{id}",
+            sortName: "fileTime",
+            sortOrder: "desc",
+            toolbar:"toolbar1",
+            singleSelect: true,
+            clickToSelect: true,
+            queryParams:queryParams,
+            modalName: "附件列表",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field : 'atId',
+                    title : '附件ID',
+                    visible : false
+                },
+                {
+                    field : 'person.pId',
+                    title : '上传人员Id',
+                    visible: false
+                },
+                {
+                    field : 'fileName',
+                    title : '文件名称'
+                },
+                {
+                    field : 'person.pName',
+                    title : '上传人'
+                },
+                {
+                    field : 'size',
+                    title : '文件大小'
+                },
+                {
+                    field: 'memo',
+                    title: '文件描述'
+                },
+                {
+                    field: 'fileTime',
+                    title: '上传时间',
+                    formatter: function (value, row, index) {
+                        var startTime = '';
+                        if (value != '' && value != null) {
+                            var pattern = /(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/;
+                            startTime = value.replace(pattern, '$1-$2-$3 $4:$5:$6');
+                        }
+                        return startTime;
+                    }
+                }]
+        };
+        $.table.init(optionsfj);
+    });
+
+    function queryParams(params) {
+        var search = $.table.queryParams(params);
+        search.ownerId = $("#id").val() == '' ? 'version_public_add_no_owner_id' : $("#id").val();
+        return search;
+    }
+
+    // 附件上传页面
+    function upload() {
+        var url = ctx + "pub/attachment/upload/" + $("#id").val();
+        $.modal.open("公告通知附件上传页面", url);
+    }
+
+    // 附件下载
+    function downloadFile() {
+        var rows = $.table.selectFirstColumns();
+        var atId = rows[0];
+        var ownerId = $("#id").val();
+        var url = ctx + "pub/attachment/download/"+ownerId+"/"+atId;
+        window.location.href = url;
+    }
+
+
+</script>
+</body>
+</html>

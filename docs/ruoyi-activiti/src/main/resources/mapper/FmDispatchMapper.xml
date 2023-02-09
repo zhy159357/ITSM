@@ -1,0 +1,467 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.activiti.mapper.FmDispatchMapper">
+
+
+	<resultMap type="com.ruoyi.common.core.domain.entity.FmDd" id="FmDdResult">
+		<id property="fmddId" column="fm_dd_id"/>
+		<result property="createorgId" column="create_org_id"/>
+		<result property="createId" column="create_id"/>
+		<result property="checkerId" column="checker_id"/>
+		<result property="faultNo" column="fault_no"/>
+		<result property="faultTitle" column="fault_title"/>
+		<result property="faultType" column="fault_type"/>
+		<result property="createTime" column="create_time"/>
+		<result property="telPhone" column="tel_phone"/>
+		<result property="otherContact" column="other_contact"/>
+		<result property="urgentLev" column="URGENT_LEV"/>
+		<result property="type" column="type"/>
+		<result property="currentState" column="current_state"/>
+		<result property="faultContent" column="fault_content"/>
+		<result property="planTime" column="plan_time"/>
+		<result property="faultContactName" column="fault_contact_name"/>
+		<result property="participatorIds" column="participator_ids"/>
+		<result property="invalidationMark" column="invalidation_mark"/>
+		<result property="orgId"                column="ORGID"            />
+		<result property="pId"                column="pid"            />
+		<result property="pName"                column="pname"            />
+		<result property="xtIds"                column="xt_ids"            />
+		<result property="createName"                column="createName"            />
+		<!--创建机构名称-->
+		<result property="orgName" column="orgName"></result>
+
+	</resultMap>
+
+	<sql id="selectDispatchVo">
+		select  d.fm_dd_id, d.create_org_id, d.create_id, d.checker_id, d.fault_no, d.fault_title, d.fault_type, d.create_time, d.tel_phone, d.other_contact,
+		d.urgent_lev, d.type, d.current_state, d.fault_content, d.plan_time, d.fault_contact_name, d.participator_ids, d.invalidation_mark
+		from fm_dd d
+	</sql>
+
+
+	<insert id="insertDispatch" parameterType="com.ruoyi.common.core.domain.entity.FmDd" >
+		insert into fm_dd
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+		<if test="fmddId != null  and fmddId != ''">fm_dd_id,</if>
+		<if test="createorgId != null  and createorgId != ''">create_org_id,</if>
+		<if test="createId != null  and createId != ''">create_id,</if>
+		<if test="checkerId != null  and checkerId != ''">checker_id,</if>
+		<if test=" faultNo != null  and faultNo != ''">FAULT_NO,</if>
+		<if test="faultTitle != null  and faultTitle != ''">fault_title,</if>
+		<if test="faultType != null  and faultType != ''">fault_type,</if>
+		<if test="createTime != null  and createTime != ''">create_time,</if>
+		<if test="telPhone != null  and telPhone != ''">tel_phone,</if>
+		<if test="otherContact != null  and otherContact != ''">other_contact,</if>
+		<if test="urgentLev != null  and urgentLev != ''">URGENT_LEV,</if>
+		<if test="type != null  and type != ''">type,</if>
+		<if test="currentState != null  and currentState != ''">current_state,</if>
+		<if test="faultContent != null  and faultContent != ''">fault_content,</if>
+		<if test="planTime != null  and planTime != ''">plan_time,</if>
+		<if test="faultContactName != null  and faultContactName != ''">fault_contact_name,</if>
+		<if test="participatorIds != null  and participatorIds != ''">participator_ids,</if>
+		<if test="invalidationMark != null  and invalidationMark != ''">invalidation_mark,</if>
+
+		</trim>
+		<trim prefix="values(" suffix=")" suffixOverrides=",">
+
+		<if test="fmddId != null  and fmddId != ''">#{fmddId},</if>
+		<if test="createorgId != null  and createorgId != ''">#{createorgId},</if>
+		<if test="createId != null  and createId != ''">#{createId},</if>
+		<if test="checkerId != null  and checkerId != ''">#{checkerId},</if>
+		<if test="faultNo != null  and faultNo != ''">#{faultNo},</if>
+		<if test="faultTitle != null  and faultTitle != ''">#{faultTitle},</if>
+		<if test="faultType != null  and faultType != ''">#{faultType},</if>
+		<if test="createTime != null  and createTime != ''">	#{createTime},</if>
+		<if test="telPhone != null  and telPhone != ''">#{telPhone},</if>
+		<if test="otherContact != null  and otherContact != ''">#{otherContact},</if>
+		<if test="urgentLev != null  and urgentLev != ''">#{urgentLev},</if>
+		<if test="type != null  and type != ''">#{type},</if>
+		<if test="currentState != null  and currentState != ''">#{currentState},</if>
+		<if test="faultContent != null  and faultContent != ''">#{faultContent},</if>
+		<if test="planTime != null  and planTime != ''">#{planTime},</if>
+		<if test="faultContactName != null  and faultContactName != ''">#{faultContactName},</if>
+		<if test="participatorIds != null  and participatorIds != ''">#{participatorIds},</if>
+		<if test="invalidationMark != null  and invalidationMark != ''">#{invalidationMark},</if>
+
+
+
+		</trim>
+
+	</insert>
+
+
+	<update id="updateDispatch">
+		update fm_dd
+		<trim prefix="SET" suffixOverrides=",">
+			<if test="createorgId != null  and createorgId != ''">create_org_id = #{createorgId},</if>
+			<if test="createId != null  and createId != ''">create_id = #{createId},</if>
+			<if test="checkerId != null  and checkerId != ''">checker_id = #{checkerId},</if>
+			<if test="faultNo != null  and faultNo != ''">fault_no = #{faultNo},</if>
+			<if test="faultTitle != null  and faultTitle != ''">fault_title = #{faultTitle},</if>
+			<if test="faultType != null  and faultType != ''">fault_type = #{faultType},</if>
+			<if test="telPhone != null  and telPhone != ''">tel_phone = #{telPhone},</if>
+			<if test="otherContact != null  and otherContact != ''">other_contact = #{otherContact},</if>
+			<if test="urgentLev != null  and urgentLev != ''">urgent_lev = #{urgentLev},</if>
+			<if test="type != null  and type != ''">type = #{type},</if>
+			<if test="currentState != null  and currentState != ''">current_state = #{currentState},</if>
+			<if test="faultContent != null  and faultContent != ''">fault_content = #{faultContent},</if>
+			<if test="planTime != null  and planTime != ''">plan_time = #{planTime},</if>
+			<if test="faultContactName != null  and faultContactName != ''">fault_contact_name = #{faultContactName},</if>
+			<if test="participatorIds != null  and participatorIds != ''">participator_ids = #{participatorIds},</if>
+			<if test="invalidationMark != null  and invalidationMark != ''">invalidation_mark = #{invalidationMark},</if>
+			<if test="xtIds != null">xt_ids = #{xtIds}</if>
+		</trim>
+		where fm_dd_id = #{fmddId}
+	</update>
+
+	<update id="updateFmDdByInvalidationMark" parameterType="java.lang.String">
+		update fm_dd
+		<trim prefix="SET" suffixOverrides=",">
+			invalidation_mark = '0'
+		</trim>
+		where fm_dd_id = #{fmddId,jdbcType=VARCHAR}
+	</update>
+
+
+	<delete id="deleteFmDdByIds" parameterType="java.lang.String">
+		delete from fm_dd where fm_dd_id in
+		<foreach collection="array" item="id" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+
+
+
+	<select id="selectDispatchList" parameterType="com.ruoyi.common.core.domain.entity.FmDd" resultMap="FmDdResult">
+
+		select  d.fm_dd_id, d.create_org_id, d.create_id, d.checker_id, d.fault_no, d.fault_title, d.fault_type,ogche.pname,
+		og.pname createName,
+
+		"TO_CHAR"("TO_DATE"(d.create_time, 'yyyymmddhh24miss'),'yyyy-mm-dd hh24:mi:ss') CREATE_TIME,
+		d.tel_phone, d.other_contact,d.urgent_lev, d.type, d.current_state, d.fault_content,
+		"TO_CHAR"("TO_DATE"(d.plan_time, 'yyyymmddhh24miss'),'yyyy-mm-dd hh24:mi:ss') plan_time,
+
+		d.fault_contact_name, d.participator_ids, d.invalidation_mark,o.orgname orgName
+		from fm_dd d
+		LEFT JOIN OG_ORG o on d.CREATE_ORG_ID = o.orgid
+		LEFT JOIN og_person og on d.create_id = og.pid
+		LEFT JOIN og_person ogche on d.checker_id = ogche.pid
+		<where>
+            <if test="createId != null  and createId != ''">AND d.create_id = #{createId}</if>
+            <if test="participatorIds != null  and participatorIds != ''">AND d.participator_ids = #{participatorIds}</if>
+			<if test="faultNo != null and faultNo != ''">
+				AND d.fault_no like concat(concat('%',#{faultNo}),'%')
+			</if>
+			<if test="faultTitle != null and faultTitle != ''">
+				AND d.fault_title like concat(concat('%',#{faultTitle}),'%')
+			</if>
+			<if test="faultType != null and faultType != ''">
+				AND d.fault_type like concat(concat('%',#{faultType}),'%')
+			</if>
+			<if test="orgName !=null and orgName !='' ">
+				and orgName like concat(concat('%',#{orgName}),'%')
+			</if>
+			<if test="currentState != null and currentState != ''">
+				AND d.current_state like concat(concat('%',#{currentState}),'%')
+			</if>
+			<if test="createTime !=null and createTime!=''">
+				and CREATE_TIME &gt;=TO_CHAR(TO_DATE( #{createTime},'YYYY-MM-DD HH24:MI:SS'), 'YYYYMMDDHH24MISS')
+			</if>
+			<if test="endCreateTime !=null and endCreateTime!=''">
+				and CREATE_TIME &lt;=TO_CHAR(TO_DATE( #{endCreateTime},'YYYY-MM-DD HH24:MI:SS')+1, 'YYYYMMDDHH24MISS')
+			</if>
+			<if test="planTime !=null and planTime!=''">
+				and plan_time &gt;=TO_CHAR(TO_DATE( #{planTime},'YYYY-MM-DD HH24:MI:SS'), 'YYYYMMDDHH24MISS')
+			</if>
+			<if test="endPlanTime !=null and endPlanTime!=''">
+				and plan_time &lt;=TO_CHAR(TO_DATE( #{endPlanTime},'YYYY-MM-DD HH24:MI:SS')+1, 'YYYYMMDDHH24MISS')
+			</if>
+
+		</where>
+		order by d.create_time desc
+
+	</select>
+	<select id="selectDispatchListMysql" parameterType="com.ruoyi.common.core.domain.entity.FmDd" resultMap="FmDdResult">
+
+		select  d.fm_dd_id, d.create_org_id, d.create_id, d.checker_id, d.fault_no, d.fault_title, d.fault_type,ogche.pname,
+		og.pname createName,
+
+		date_format(d.create_time, '%Y-%m-%d %T')AS CREATE_TIME,
+		d.tel_phone, d.other_contact,d.urgent_lev, d.type, d.current_state, d.fault_content,
+		date_format(d.plan_time, '%Y-%m-%d %T')AS plan_time,
+
+		d.fault_contact_name, d.participator_ids, d.invalidation_mark,o.orgname orgName
+		from fm_dd d
+		LEFT JOIN OG_ORG o on d.CREATE_ORG_ID = o.orgid
+		LEFT JOIN og_person og on d.create_id = og.pid
+		LEFT JOIN og_person ogche on d.checker_id = ogche.pid
+		<where>
+			<if test="createId != null  and createId != ''">AND d.create_id = #{createId}</if>
+			<if test="participatorIds != null  and participatorIds != ''">AND d.participator_ids = #{participatorIds}</if>
+			<if test="faultNo != null and faultNo != ''">
+				AND d.fault_no like concat(concat('%',#{faultNo}),'%')
+			</if>
+			<if test="faultTitle != null and faultTitle != ''">
+				AND d.fault_title like concat(concat('%',#{faultTitle}),'%')
+			</if>
+			<if test="faultType != null and faultType != ''">
+				AND d.fault_type like concat(concat('%',#{faultType}),'%')
+			</if>
+			<if test="orgName !=null and orgName !='' ">
+				and orgName like concat(concat('%',#{orgName}),'%')
+			</if>
+			<if test="currentState != null and currentState != ''">
+				AND d.current_state like concat(concat('%',#{currentState}),'%')
+			</if>
+			<if test="createTime !=null and createTime!=''">
+				and CREATE_TIME &gt;=DATE_FORMAT(#{createTime},'%Y%m%d')
+			</if>
+			<if test="endCreateTime !=null and endCreateTime!=''">
+				and CREATE_TIME &lt;=DATE_FORMAT(#{endCreateTime},'%Y%m%d')+1
+			</if>
+			<if test="planTime !=null and planTime!=''">
+				and plan_time &gt;= #{planTime}
+			</if>
+			<if test="endPlanTime !=null and endPlanTime!=''">
+				and plan_time &lt;=#{endPlanTime}+1
+			</if>
+
+		</where>
+		order by d.create_time desc
+
+	</select>
+
+	<select id="selectFmddById" parameterType="com.ruoyi.common.core.domain.entity.FmDd" resultMap="FmDdResult">
+		select  d.fm_dd_id, d.create_org_id, d.create_id, d.checker_id, d.fault_no, d.fault_title, d.fault_type,ogche.pname,
+		d.create_time,og.pname createName,
+        d.tel_phone, d.other_contact,
+		d.urgent_lev, d.type, d.current_state, d.fault_content,
+		d.plan_time,d.xt_ids,
+		d.fault_contact_name, d.participator_ids, d.invalidation_mark,o.orgname orgName
+		from fm_dd d
+		LEFT JOIN OG_ORG o on d.CREATE_ORG_ID = o.orgid
+		LEFT JOIN og_person og on d.create_id = og.pid
+		LEFT JOIN og_person ogche on d.checker_id = ogche.pid
+		<where>
+			d.fm_dd_id = #{fmddId,jdbcType=VARCHAR}
+
+
+		</where>
+		order by d.create_time desc
+
+	</select>
+
+
+	<select id="selectFmddByNo" parameterType="java.lang.String" resultMap="FmDdResult">
+		select  d.fm_dd_id, d.create_org_id, d.create_id, d.checker_id, d.fault_no, d.fault_title, d.fault_type,ogche.pname,
+		d.create_time,
+		d.tel_phone, d.other_contact,d.urgent_lev, d.type, d.current_state, d.fault_content,
+		d.plan_time,
+		d.fault_contact_name, d.participator_ids, d.invalidation_mark,o.orgname orgName
+		from fm_dd d
+		LEFT JOIN OG_ORG o on d.CREATE_ORG_ID = o.orgid
+		LEFT JOIN og_person og on d.create_id = og.pid
+		LEFT JOIN og_person ogche on d.checker_id = ogche.pid
+		where d.fault_no = #{faultNo}
+
+
+
+	</select>
+
+	<!--关于流程中的调度事件单进行过滤-->
+	<select id="selectFmDdListByTask" parameterType="com.ruoyi.common.core.domain.entity.FmDd" resultMap="FmDdResult">
+		select  d.fm_dd_id, d.create_org_id, d.create_id, d.checker_id, d.fault_no, d.fault_title, d.fault_type,ogche.pname,
+		d.create_time,
+		d.tel_phone, d.other_contact,d.urgent_lev, d.type, d.current_state, d.fault_content,
+		d.plan_time,
+		d.fault_contact_name, d.participator_ids, d.invalidation_mark,o.orgname orgName
+		from fm_dd d
+		LEFT JOIN OG_ORG o on d.CREATE_ORG_ID = o.orgid
+		LEFT JOIN og_person og on d.create_id = og.pid
+		LEFT JOIN og_person ogche on d.checker_id = ogche.pid
+		<where>
+			<if test="ids !=null and ids!=''">
+				and fm_dd_id
+				<trim prefix="in (" suffix=")" suffixOverrides=",">
+					<foreach collection="ids" item="id">
+						#{id},
+					</foreach>
+				</trim>
+			</if>
+			<if test="faultNo != null and faultNo != ''">
+				AND d.fault_no like concat(concat('%',#{faultNo}),'%')
+			</if>
+			<if test="faultTitle != null and faultTitle != ''">
+				AND d.fault_title like concat(concat('%',#{faultTitle}),'%')
+			</if>
+			<if test="faultType != null and faultType != ''">
+				AND d.fault_type like concat(concat('%',#{faultType}),'%')
+			</if>
+			<if test="currentState != null and currentState != ''">
+				AND d.current_state like concat(concat('%',#{currentState}),'%')
+			</if>
+			<if test="createTime!=null and createTime!=''">
+				and d.create_time &gt;=#{createTime}
+			</if>
+			<if test="endCreateTime!=null and endCreateTime!=''">
+				and d.create_time &lt;=#{endCreateTime}
+			</if>
+			<if test="planTime!=null and planTime!=''">
+				and d.plan_time &gt;=#{planTime}
+			</if>
+			<if test="endPlanTime!=null and endPlanTime!=''">
+				and d.plan_time &lt;=#{endPlanTime}
+			</if>
+
+		</where>
+		order by d.create_time desc
+
+
+	</select>
+
+
+	<select id="selectQueryDispatchList" resultType="com.ruoyi.common.core.domain.entity.FmDd" resultMap="FmDdResult">
+		select  d.fm_dd_id, d.create_org_id, d.create_id, d.checker_id, d.fault_no, d.fault_title, d.fault_type,ogche.pname,
+		d.create_time,
+		d.tel_phone, d.other_contact,d.urgent_lev, d.type, d.current_state, d.fault_content,
+		d.plan_time,
+		d.fault_contact_name, d.participator_ids, d.invalidation_mark,o.orgname orgName
+		from fm_dd d
+		LEFT JOIN OG_ORG o on d.CREATE_ORG_ID = o.orgid
+		LEFT JOIN og_person og on d.create_id = og.pid
+		LEFT JOIN og_person ogche on d.checker_id = ogche.pid
+		<where>
+			<if test="createId != null  and createId != ''"> and d.create_id = #{createId}</if>
+			<if test="createorgId != null  and createorgId != ''"> and d.create_org_id = #{createorgId}</if>
+			<if test="invalidationMark != null  and invalidationMark != ''"> and d.invalidation_mark = #{invalidationMark}</if>
+            <if test="participatorIds != null  and participatorIds != ''">
+                and d.participator_ids like concat(concat('%',#{participatorIds}),'%')
+            </if>
+            <if test="faultNo != null and faultNo != ''">
+				AND d.fault_no like concat(concat('%',#{faultNo}),'%')
+			</if>
+			<if test="faultTitle != null and faultTitle != ''">
+				AND d.fault_title like concat(concat('%',#{faultTitle}),'%')
+			</if>
+			<if test="faultType != null and faultType != ''">
+				AND d.fault_type like concat(concat('%',#{faultType}),'%')
+			</if>
+			<if test="orgName !=null and orgName !='' ">
+				and orgName like concat(concat('%',#{orgName}),'%')
+			</if>
+			<if test="currentState != null and currentState != ''">
+				AND d.current_state like concat(concat('%',#{currentState}),'%')
+			</if>
+			<if test="createTime !=null and createTime!=''">
+				and d.create_time &gt;=to_char(to_date(#{createTime},'yyyy-MM-dd'),'yyyyMMdd')
+			</if>
+			<if test="endCreateTime !=null and endCreateTime!=''">
+				and d.create_time &lt;=to_char(to_date(#{endCreateTime},'yyyy-MM-dd')+1,'yyyyMMdd')
+			</if>
+			<if test="planTime !=null and planTime!=''">
+				and d.plan_time &gt;=to_char(to_date(#{planTime},'yyyy-MM-dd'),'yyyyMMdd')
+			</if>
+			<if test="endPlanTime !=null and endPlanTime!=''">
+				and d.plan_time &lt;=to_char(to_date(#{endPlanTime},'yyyy-MM-dd')+1,'yyyyMMdd')
+			</if>
+		</where>
+		order by d.create_time desc
+
+	</select>
+	<select id="selectQueryDispatchListMysql" resultType="com.ruoyi.common.core.domain.entity.FmDd" resultMap="FmDdResult">
+		select  d.fm_dd_id, d.create_org_id, d.create_id, d.checker_id, d.fault_no, d.fault_title, d.fault_type,ogche.pname,
+		d.create_time,
+		d.tel_phone, d.other_contact,d.urgent_lev, d.type, d.current_state, d.fault_content,
+		d.plan_time,
+		d.fault_contact_name, d.participator_ids, d.invalidation_mark,o.orgname orgName
+		from fm_dd d
+		LEFT JOIN OG_ORG o on d.CREATE_ORG_ID = o.orgid
+		LEFT JOIN og_person og on d.create_id = og.pid
+		LEFT JOIN og_person ogche on d.checker_id = ogche.pid
+		<where>
+			<if test="createId != null  and createId != ''"> and d.create_id = #{createId}</if>
+			<if test="createorgId != null  and createorgId != ''"> and d.create_org_id = #{createorgId}</if>
+			<if test="invalidationMark != null  and invalidationMark != ''"> and d.invalidation_mark = #{invalidationMark}</if>
+			<if test="participatorIds != null  and participatorIds != ''">
+				and d.participator_ids like concat(concat('%',#{participatorIds}),'%')
+			</if>
+			<if test="faultNo != null and faultNo != ''">
+				AND d.fault_no like concat(concat('%',#{faultNo}),'%')
+			</if>
+			<if test="faultTitle != null and faultTitle != ''">
+				AND d.fault_title like concat(concat('%',#{faultTitle}),'%')
+			</if>
+			<if test="faultType != null and faultType != ''">
+				AND d.fault_type like concat(concat('%',#{faultType}),'%')
+			</if>
+			<if test="orgName !=null and orgName !='' ">
+				and orgName like concat(concat('%',#{orgName}),'%')
+			</if>
+			<if test="currentState != null and currentState != ''">
+				AND d.current_state like concat(concat('%',#{currentState}),'%')
+			</if>
+			<if test="createTime !=null and createTime!=''">
+				and d.create_time &gt;=DATE_FORMAT(#{createTime},'%Y%m%d%H%i%S')
+			</if>
+			<if test="endCreateTime !=null and endCreateTime!=''">
+				and d.create_time &lt;=DATE_FORMAT(#{endCreateTime},'%Y%m%d%H%i%S')+1000000
+			</if>
+			<if test="planTime !=null and planTime!=''">
+				and d.plan_time &gt;=DATE_FORMAT(#{planTime},'%Y%m%d%H%i%S')
+			</if>
+			<if test="endPlanTime !=null and endPlanTime!=''">
+				and d.plan_time &lt;=DATE_FORMAT(#{endPlanTime},'%Y%m%d%H%i%S')+1000000
+			</if>
+		</where>
+		order by d.create_time desc
+
+	</select>
+    <select id="checkPhoneUnique" parameterType="com.ruoyi.common.core.domain.entity.FmDd" resultMap="FmDdResult">
+		select  d.fm_dd_id, d.create_org_id, d.create_id, d.checker_id, d.fault_no, d.fault_title, d.fault_type,ogche.pname,
+		d.create_time,
+		d.tel_phone, d.other_contact,d.urgent_lev, d.type, d.current_state, d.fault_content,
+		d.plan_time,
+		d.fault_contact_name, d.participator_ids, d.invalidation_mark,o.orgname orgName
+		from fm_dd d
+		LEFT JOIN OG_ORG o on d.CREATE_ORG_ID = o.orgid
+		LEFT JOIN og_person og on d.create_id = og.pid
+		LEFT JOIN og_person ogche on d.checker_id = ogche.pid
+		<where>
+			<if test="createId != null  and createId != ''"> and d.create_id = #{createId}</if>
+			<if test="faultNo != null and faultNo != ''">
+				AND d.fault_no like concat(concat('%',#{faultNo}),'%')
+			</if>
+			<if test="faultTitle != null and faultTitle != ''">
+				AND d.fault_title like concat(concat('%',#{faultTitle}),'%')
+			</if>
+			<if test="telPhone != null and telPhone != ''">
+				AND d.tel_phone like concat(concat('%',#{telPhone}),'%')
+			</if>
+			<if test="faultType != null and faultType != ''">
+				AND d.fault_type like concat(concat('%',#{faultType}),'%')
+			</if>
+			<if test="orgName !=null and orgName !='' ">
+				and orgName like concat(concat('%',#{orgName}),'%')
+			</if>
+			<if test="currentState != null and currentState != ''">
+				AND d.current_state like concat(concat('%',#{currentState}),'%')
+			</if>
+			<if test="createTime !=null and createTime!=''">
+				and d.create_time &gt;=#{createTime}
+			</if>
+			<if test="endCreateTime !=null and endCreateTime!=''">
+				and d.create_time &lt;=#{endCreateTime}
+			</if>
+			<if test="planTime !=null and planTime!=''">
+				and d.plan_time &gt;=#{planTime}
+			</if>
+			<if test="endPlanTime !=null and endPlanTime!=''">
+				and d.plan_time &lt;=#{endPlanTime}
+			</if>
+		</where>
+	</select>
+
+
+</mapper>

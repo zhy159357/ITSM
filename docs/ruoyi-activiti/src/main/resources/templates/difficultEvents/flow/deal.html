@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:include="include :: header('处理疑难事件')"/>
+</head>
+<body>
+<div class="main-content">
+    <form class="form-horizontal" id="form-diff-add" th:object="${difficultEvents}">
+        <input name="id" th:field="*{id}" type="hidden">
+        <input name="fmId" th:field="*{fmId}" type="hidden">
+        <input name="status" th:field="*{status}" type="hidden">
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">单号：</label>
+                    <div class="col-sm-8">
+                        <input name="no" id="no" class="form-control" type="text"
+                               th:value="*{no}" readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label ">来源：</label>
+                    <div class="col-sm-8">
+                        <select name="source" id="source" class="form-control"
+                                th:with="type=${@pubParaValue.selectPubParaValueByParaName('ynsj_source')}"
+                                th:field="*{source}" disabled>
+                            <option th:each="PubParaValue : ${type}" th:text="${PubParaValue.valueDetail}"
+                                    th:value="${PubParaValue.value}" th:selected="${PubParaValue.value eq source}">>
+                            </option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">所属系统：</label>
+                    <div class="col-sm-8">
+                        <input name="sysId" id="sysId" class="form-control" type="hidden"
+                               th:value="*{sysId}" readonly>
+                        <input name="sysName" id="sysName" class="form-control" type="text"
+                               th:value="*{sysName}" readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">所属工作组：</label>
+                    <div class="col-sm-8">
+                        <input name="groupId" id="groupId" class="form-control" type="hidden"
+                               th:value="*{groupId}" readonly>
+                        <input name="groupName" id="groupName" class="form-control" type="text"
+                               th:value="*{groupName}" readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">事件标题：</label>
+                    <div class="col-sm-10">
+                        <input id="faultDecriptSummary" name="faultDecriptSummary"
+                               th:value="*{fmBiz.faultDecriptSummary}"
+                               type="text"
+                               class="form-control" readonly/>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">事件描述：</label>
+                    <div class="col-sm-10">
+                            <textarea rows="10" cols="20" id="faultDecriptDetail" th:text="*{fmBiz.faultDecriptDetail}"
+                                      name="faultDecriptDetail"
+                                      class="form-control" readonly></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label is-required">处理意见：</label>
+                    <div class="col-sm-10">
+                        <textarea id="dealDesc" rows="5" cols="20" name="dealDesc" class="form-control"
+                                  maxlength="1000" required></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<div class="row">
+    <div class="col-sm-12">
+        <div class="tabs-container">
+            <ul class="nav nav-tabs">
+                <li class="active"><a data-toggle="tab" href="#tab-1" aria-expanded="false">关联事件单</a>
+                </li>
+                <li class=""><a data-toggle="tab" href="#tab-2" aria-expanded="false">上传会议纪要</a>
+                </li>
+            </ul>
+            <div class="tab-content">
+                <div id="tab-1" class="tab-pane active">
+                    <div class="panel-body">
+                        <div class="btn-group-sm" id="toolbar1" role="group">
+                            <a class="btn btn-primary single disabled" type="button" onclick="detailFmBiz()">
+                                <i class="fa fa-vi"></i> 查看详情
+                            </a>
+                        </div>
+                        <div class="col-sm-12 select-table table-striped">
+                            <table id="fmbiz-table"></table>
+                        </div>
+                    </div>
+                </div>
+                <div id="tab-2" class="tab-pane">
+                    <div class="panel-body">
+                        <div class="btn-group-sm" id="toolbar2" role="group">
+                            <a class="btn btn-success" type="button" onclick="upload()">
+                                <i class="fa fa-upload"></i> 添加附件
+                            </a>
+                            <a class="btn btn-warning multiple disabled" onclick="downloadAttachment()">
+                                <i class="fa fa-download"></i> 下载附件
+                            </a>
+                            <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()">
+                                <i class="fa fa-remove"></i> 删除附件
+                            </a>
+                        </div>
+                        <div class="col-sm-12 select-table table-striped">
+                            <table id="file-table"></table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-offset-5 col-sm-10">
+        <button type="button" class="btn btn-sm btn-primary" onclick="deal()"><i class="fa fa-check"></i>处 理
+        </button>&nbsp;
+        <button type="button" class="btn btn-sm btn-danger" onclick="closeItem()"><i class="fa fa-remove"></i>关 闭
+        </button>&nbsp;
+    </div>
+</div>
+<th:block th:include="include :: footer"/>
+<script th:inline="javascript">
+    var prefix = ctx + "system/events";
+    var prefix_attachment = ctx + "pub/attachment";
+
+    var datas = [[${@pubParaValue.selectPubParaValueByParaName('fmStatus')}]];
+
+    $("#form-diff-add").validate({
+        focusCleanup: true
+    });
+
+    $(function () {
+        var optionsfj = {
+            url: prefix_attachment + "/list",
+            id: 'file-table',
+            removeUrl: prefix_attachment + "/remove",
+            sortName: "fileTime",
+            sortOrder: "desc",
+            singleSelect: true,
+            clickToSelect: true,
+            toolbar: "toolbar2",
+            queryParams: queryParams,
+            modalName: "附件列表",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'atId',
+                    title: '附件ID',
+                    visible: false
+                },
+                {
+                    field: 'fileName',
+                    title: '文件名称'
+                },
+                {
+                    field: 'person.pName',
+                    title: '上传人'
+                },
+                {
+                    field: 'size',
+                    title: '文件大小'
+                },
+                {
+                    field: 'memo',
+                    title: '文件描述'
+                },
+                {
+                    field: 'fileTime',
+                    title: '上传时间',
+                    formatter: function (value, row, index) {
+                        var startTime = '';
+                        if (value != '' && value != null) {
+                            var pattern = /(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/;
+                            startTime = value.replace(pattern, '$1-$2-$3 $4:$5:$6');
+                        }
+                        return startTime;
+                    }
+                }]
+        };
+        $.table.init(optionsfj);
+    });
+
+    function queryParams(params) {
+        var search = $.table.queryParams(params);
+        search.ownerId = $("#id").val() == '' ? 'version_public_add_no_owner_id' : $("#id").val();
+        return search;
+    }
+
+    $(function () {
+        var optionsdd = {
+            url: prefix + "/fmbizList/" + $("#fmId").val(),
+            id: "fmbiz-table",
+            showSearch: false,
+            showRefresh: true,
+            showToggle: false,
+            showColumns: false,
+            pagination: true,
+            singleSelect: true,
+            clickToSelect: true,
+            pageSize: 10,
+            toolbar: "toolbar1",
+            modalName: "运维事件单",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'fmId',
+                    title: '事件单ID',
+                    visible: false
+                },
+                {
+                    field: 'faultNo',
+                    title: '事件单号'
+                },
+                {
+                    field: 'createName',
+                    title: '创建人'
+                },
+                {
+                    field: 'creatTime',
+                    title: '创建时间',
+                    formatter: function (value, row, index) {
+                        var startTime = '';
+                        if (value != '' && value != null) {
+                            var pattern = /(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/;
+                            startTime = value.replace(pattern, '$1-$2-$3 $4:$5:$6');
+                        }
+                        return startTime;
+                    }
+                },
+                {
+                    field: 'faultDecriptSummary',
+                    title: '事件标题',
+                    formatter: function (value, row, index) {
+                        return $.table.tooltip(value);
+                    }
+                },
+                {
+                    field: 'ogSys.caption',
+                    title: '所属系统',
+                    formatter: function (value, row, index) {
+                        return $.table.tooltip(value);
+                    }
+                },
+                {
+                    field: 'currentState',
+                    title: '当前状态',
+                    formatter: function (value) {
+                        return selectPubParaValueData(datas, value);
+                    }
+                }]
+        };
+        $.table.init(optionsdd);
+        var createrTime = $("#createrTime").val();
+        var pattern = /(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/;
+        createrTime = createrTime.replace(pattern, '$1-$2-$3 $4:$5:$6');
+        $("#createrTime").val(createrTime);
+    });
+
+    // 回显数据字典
+    function selectPubParaValueData(datas, value) {
+        var actions = [];
+        $.each(datas, function (index, pubParaValue) {
+            if (pubParaValue.value == ('' + value)) {
+                actions.push($.common.sprintf("<span class='%s'>%s</span>", "", pubParaValue.valueDetail));
+                return false;
+            }
+        });
+        return actions.join('');
+    }
+
+    /*查看事件单详情*/
+    function detailFmBiz() {
+        var selects = $("#fmbiz-table").bootstrapTable('getSelections');
+        var ids = $.table.selectColumns("fmId");
+        if (ids.length > 1) {
+            $.modal.alertWarning("请选择一条记录");
+            return;
+        }
+        var url = ctx + "fmbiz/detail/" + ids[0];
+        $.modal.openTab("事件单详情", url);
+    }
+
+    // 附件上传页面
+    function upload() {
+        var ownerId = $("#id").val();
+        var url = prefix_attachment + "/upload/" + ownerId;
+        $.modal.open("附件上传", url, '1100', '620');
+    }
+
+    // 附件下载
+    function downloadAttachment() {
+        var rows = $.table.selectFirstColumns();
+        var atId = rows[0];
+        var ownerId = $("#id").val();
+        var url = prefix_attachment + "/download/" + ownerId + "/" + atId;
+        window.location.href = url;
+    }
+
+    //处理疑难事件
+    function deal() {
+        if ($.validate.form()) {
+            var data = $("#form-diff-add").serializeArray();
+            $.operate.saveTab(prefix + "/saveFlowDeal", data);
+        } else {
+            $.modal.alertWarning("有必填参数未填写。");
+        }
+    }
+
+    //暂存疑难事件
+    function saveDesc() {
+        var data = $("#form-diff-add").serializeArray();
+        $.operate.saveTab(prefix + "/addSave", data);
+    }
+</script>
+</body>
+</html>

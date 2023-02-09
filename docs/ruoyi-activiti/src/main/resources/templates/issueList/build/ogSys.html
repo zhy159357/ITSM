@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+	<th:block th:include="include :: header('应用系统')" />
+</head>
+<body class="gray-bg">
+<div class="container-div">
+	<div class="row">
+		<div class="col-sm-12 search-collapse">
+			<form id="account-form">
+				<div class="select-list">
+					<ul>
+						<li>
+							系统名称：<input type="text" name="caption"/>
+						</li>
+						<li>
+							所属机构：<input type="text" name="orgName"/>
+						</li>
+						<li>
+							<a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+							<a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+						</li>
+					</ul>
+				</div>
+			</form>
+		</div>
+
+		<div class="col-sm-12 select-table table-striped">
+			<table id="bootstrap-table"></table>
+		</div>
+	</div>
+</div>
+<th:block th:include="include :: footer" />
+<script th:inline="javascript">
+	var appId = [[${appId}]];
+	var url = ctx + "issueList/build/ogSysList/"+appId;
+	$(function() {
+		var options = {
+			url: url,
+			clickToSelect:true,
+			modalName: "应用系统",
+			columns: [{
+				checkbox: true,
+				formatter:function (value, row, index) {
+					if($.common.isEmpty(value)) {
+						return { checked: row.flag };
+					} else {
+						return { checked: value }
+					}
+				}
+			},
+				{
+					field: 'sysId',
+					title: '系统ID',
+					visible: false
+				},
+				{
+					field: 'code',
+					title: '系统编码'
+				},
+				{
+					field: 'caption',
+					title: '系统名称'
+				},
+				{
+					field: 'orgName',
+					title: '所属机构'
+				},
+				{
+					field: 'invalidationMark ',
+					title: '状态',
+					formatter: function (value, row, index) {
+						if(row. invalidationMark == 1){
+							return "启用";
+						}else{
+							return "停止";
+						}
+					}
+				}]
+		};
+		$.table.init(options);
+	});
+
+	function submitForm() {
+		// 获取选中行数据
+		var rows = $("#bootstrap-table").bootstrapTable('getSelections');
+		return rows;
+	}
+
+</script>
+</body>
+</html>

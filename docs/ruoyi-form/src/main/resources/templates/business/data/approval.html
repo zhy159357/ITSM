@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('动态表单业务审批')" />
+    <th:block th:include="include :: datetimepicker-css" />
+    <th:block th:include="include :: select2-css" />
+</head>
+<body>
+</div>
+<div class="main-content" id="test-form">
+
+
+</div>
+
+<div class="row">
+    <div class="col-sm-offset-5 col-sm-10">
+        <button type="button" class="btn btn-sm btn-primary" onclick="submit()"><i class="fa fa-check"></i>提 交</button>&nbsp;
+        <button type="button" class="btn btn-sm btn-primary" onclick="save()"><i class="fa fa-check"></i>暂 存</button>&nbsp;
+        <button type="button" class="btn btn-sm btn-danger" onclick="closeItem()"><i class="fa fa-window-close"></i>关 闭 </button>
+    </div>
+</div>
+<th:block th:include="include :: footer" />
+<!--<th:block th:include="include :: select2-js" />-->
+<th:block th:include="include :: datetimepicker-js" />
+<script th:inline="javascript">
+    var prefix = ctx + "business/data";
+
+    $(function() {
+        var formHtmlMap = [[${formHtmlMap}]];
+        testForm(formHtmlMap);
+    });
+
+    // 测试动态表单展示
+    function testForm(formHtmlMap) {
+        var formHtml = formHtmlMap.formHtml;
+        $("#test-form").prepend(formHtml);
+    }
+    
+    function submit() {
+        var formId = $("#formId").val();
+        var data = $("#" + formId).serializeArray();
+        var taskId = $("#taskId").val();
+        var url = "";
+        // 如果taskId为空，则是第一次启动流程，后端走submit提交方法，不为空说明是后续流程节点，走approval方法
+        if($.common.isEmpty(taskId)) {
+            url = prefix + "/submit";
+        } else {
+            url = prefix + "/approval";
+        }
+        $.operate.saveTab(url, data);
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.IdGeneratorMapper">
+
+    <resultMap type="IdGenerator" id="IdGeneratorResult">
+        <id     property="id"              column="id"         />
+        <result property="currentId"       column="current_Id"         />
+        <result property="bizType"         column="biz_Type"      />
+        <result property="currentDate"     column="cur_Date"       />
+    </resultMap>
+
+    <select id="selectIdGeneratorByType" parameterType="IdGenerator" resultMap="IdGeneratorResult">
+        select g.id,g.current_id,g.biz_type,g.cur_date
+        from Id_Generator g
+        where 1=1
+        <if test="bizType!=null and bizType!=''">
+            and g.biz_Type = #{bizType}
+        </if>
+        <if test="currentDate!=null and currentDate!=''">
+            and g.cur_date = #{currentDate}
+        </if>
+    </select>
+
+    <update id="updateGenerator" parameterType="IdGenerator">
+        update Id_Generator g
+        set g.current_Id = #{currentId},g.cur_date = #{currentDate}
+        where g.id = #{id}
+    </update>
+
+    <!--mySQL-->
+    <select id="selectIdGeneratorByTypeMysql" parameterType="IdGenerator" resultMap="IdGeneratorResult">
+        select g.id,g.current_id,g.biz_type,g.cur_date
+        from Id_Generator g
+        where 1=1
+        <if test="bizType!=null and bizType!=''">
+            and g.biz_Type = #{bizType}
+        </if>
+        order by g.id desc
+        LIMIT 1
+    </select>
+
+    <insert id="insertGenerator" parameterType="IdGenerator">
+        insert into Id_Generator(ID, CURRENT_ID, BIZ_TYPE, CUR_DATE)
+        values (#{id},#{currentId},#{bizType},#{currentDate})
+
+    </insert>
+</mapper>

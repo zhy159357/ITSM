@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.form.mapper.ItBusinessDataMapper">
+    
+    <resultMap type="ItBusinessData" id="ItBusinessDataResult">
+        <result property="businessId"    column="business_id"    />
+        <result property="businessNo"    column="business_no"    />
+        <result property="processId"    column="process_id"    />
+        <result property="formId"    column="form_id"    />
+        <result property="businessType"    column="business_type"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="createName"    column="createName"    />
+        <collection property="sourceDataList"    column="java.util.List" resultMap="ItSourceDataResult"   />
+    </resultMap>
+
+    <resultMap type="ItSourceData" id="ItSourceDataResult">
+        <result property="sourceDataId"    column="source_data_id"    />
+        <result property="businessId"    column="business_id"    />
+        <result property="labelName"    column="label_name"    />
+        <result property="dataKey"    column="data_key"    />
+        <result property="dataValue"    column="data_value"    />
+        <result property="dictKey"    column="dict_key"    />
+        <result property="isRequired"    column="is_required"    />
+        <result property="isChange"    column="is_change"    />
+        <result property="htmlType"    column="html_type"    />
+        <result property="insertTime"    column="insert_time"    />
+        <result property="remark"    column="remark"    />
+        <result property="formKey"    column="form_key"    />
+    </resultMap>
+
+    <sql id="selectItBusinessDataVo">
+        select b.business_id, b.business_no, b.process_id, b.form_id, b.business_type, b.create_by, b.create_time, b.update_by, b.update_time,
+               p.pname createName
+        from it_business_data b
+        left join og_person p on b.create_by=p.pid
+    </sql>
+
+    <sql id="selectItBusinessSourceDataVo">
+        select b.business_id, b.business_no, b.process_id, b.form_id, b.business_type, b.create_by, b.create_time, b.update_by, b.update_time,
+               s.source_data_id, s.label_name, s.data_key, s.data_value, s.dict_key, s.insert_time, s.remark, s.form_key,s.html_type,
+               p.pname createName
+        from it_business_data b
+        left join it_source_data s on b.business_id=s.business_id
+        left join og_person p on b.create_by=p.pid
+    </sql>
+
+    <select id="selectItBusinessDataList" parameterType="ItBusinessData" resultMap="ItBusinessDataResult">
+        <include refid="selectItBusinessDataVo"/>
+        <where>  
+            <if test="businessNo != null  and businessNo != ''"> and business_no = #{businessNo}</if>
+            <if test="processId != null  and processId != ''"> and process_id = #{processId}</if>
+            <if test="formId != null  and formId != ''"> and form_id = #{formId}</if>
+            <if test="businessType != null  and businessType != ''"> and business_type = #{businessType}</if>
+        </where>
+        order by b.create_time desc
+    </select>
+    
+    <select id="selectItBusinessDataById" parameterType="String" resultMap="ItBusinessDataResult">
+        <include refid="selectItBusinessSourceDataVo"/>
+        where b.business_id = #{businessId}
+        order by s.insert_time asc
+    </select>
+        
+    <insert id="insertItBusinessData" parameterType="ItBusinessData">
+        insert into it_business_data
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="businessId != null  and businessId != ''">business_id,</if>
+            <if test="businessNo != null  and businessNo != ''">business_no,</if>
+            <if test="processId != null  and processId != ''">process_id,</if>
+            <if test="formId != null  and formId != ''">form_id,</if>
+            <if test="businessType != null  and businessType != ''">business_type,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="createTime != null  and createTime != ''">create_time,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null  and updateTime != ''">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="businessId != null  and businessId != ''">#{businessId},</if>
+            <if test="businessNo != null  and businessNo != ''">#{businessNo},</if>
+            <if test="processId != null  and processId != ''">#{processId},</if>
+            <if test="formId != null  and formId != ''">#{formId},</if>
+            <if test="businessType != null  and businessType != ''">#{businessType},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateItBusinessData" parameterType="ItBusinessData">
+        update it_business_data
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="businessNo != null  and businessNo != ''">business_no = #{businessNo},</if>
+            <if test="processId != null  and processId != ''">process_id = #{processId},</if>
+            <if test="formId != null  and formId != ''">form_id = #{formId},</if>
+            <if test="businessType != null  and businessType != ''">business_type = #{businessType},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+        </trim>
+        where business_id = #{businessId}
+    </update>
+
+    <delete id="deleteItBusinessDataById" parameterType="String">
+        delete from it_business_data where business_id = #{businessId}
+    </delete>
+
+    <delete id="deleteItBusinessDataByIds" parameterType="String">
+        delete from it_business_data where business_id in 
+        <foreach item="businessId" collection="array" open="(" separator="," close=")">
+            #{businessId}
+        </foreach>
+    </delete>
+
+    <select id="selectItBusinessDataByCondition" parameterType="ItBusinessData" resultMap="ItBusinessDataResult">
+        <include refid="selectItBusinessDataVo"/>
+        <where>
+            <if test="businessId != null  and businessId != ''">
+                and b.business_id = #{businessId}
+            </if>
+            <if test="businessNo != null  and businessNo != ''">
+                and b.business_no = #{businessNo}
+            </if>
+            <if test="businessType != null  and businessType != ''">
+                and b.business_type = #{businessType}
+            </if>
+            <if test="params.createTimeStr != null  and params.createTimeStr != ''">
+                and b.create_time <![CDATA[ >= ]]> #{params.createTimeStr}
+            </if>
+        </where>
+    </select>
+    
+</mapper>

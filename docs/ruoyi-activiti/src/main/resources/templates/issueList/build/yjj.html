@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('预解决')" />
+</head>
+<body>
+<div class="main-content">
+    <form id="form-horizontal" class="form-horizontal">
+        <input id="issuefxId" name="issuefxId" th:value="${issuefxId}" hidden>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">计划处理时间：</label>
+                    <div class="col-sm-8">
+                        <input type="text" class="form-control calcTotalSecondInput" id="expectTime" name="expectTime" placeholder="yyyy-MM-dd HH:mm:ss" required readonly style="background-color: #fdfdfd">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label class="col-xs-2 control-label is-required">计划解决方案：</label>
+                    <div class="col-xs-10">
+                            <textarea name="planDesc" id="planDesc" placeholder='文本框内容不得超过500个字' maxlength='500' rows="3" class="form-control" type="text" required></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: datetimepicker-js" />
+<th:block th:include="include :: datetimepicker-css" />
+<script th:inline="javascript">
+    $(function() {
+      $("#expectTime").datetimepicker({
+          format: "yyyy-mm-dd hh:ii:ss",
+          autoclose: true,
+          minView:0,
+          minuteStep:1,
+          startDate:new Date()
+       		});
+    });
+    function submitHandler(index, layero) {
+        if(!$.validate.form()){
+            $.modal.alertWarning("参数填写不全，请继续填写！");
+            return;
+        }
+        var rows =$("#form-horizontal").serializeArray();
+        var reCode={
+            name:'params[reCode]',
+            value:'0'
+        }
+        var type={
+            name:'params[type]',
+            value:'yujiejue'
+        }
+        var comment={
+            name:'params[comment]',
+            value:$("#planDesc").val()
+        }
+        rows.push(reCode);
+        rows.push(type);
+        rows.push(comment);
+        $.operate.saveTab(ctx+"issueList/activiti/wentichuli", rows,reBack);
+    }
+    function reBack(result) {
+        if (result.code == web_status.SUCCESS) {
+            var parent = window.parent;
+            if (parent.table.options.type == table_type.bootstrapTable) {
+                $.modal.close();
+                parent.$.modal.msgSuccess(result.msg);
+                parent.$.table.refresh();
+            } else if (parent.table.options.type == table_type.bootstrapTreeTable) {
+                $.modal.close();
+                parent.$.modal.msgSuccess(result.msg);
+                parent.$.treeTable.refresh();
+            } else {
+                $.modal.msgReload("保存成功,正在刷新数据请稍后……", modal_status.SUCCESS);
+            }
+        } else if (result.code == web_status.WARNING) {
+            $.modal.alertWarning(result.msg)
+            return;
+        }  else {
+            $.modal.alertError(result.msg);
+            return;
+        }
+        $.modal.closeLoading();
+        parent.closeBtu();
+    }
+</script>
+</body>
+</html>

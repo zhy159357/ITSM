@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.form.mapper.CustomerFormMapper">
+    <insert id="insert" parameterType="com.ruoyi.form.domain.CustomerFormContent" useGeneratedKeys="true" keyProperty="id">
+        insert into customer_form_content
+        <foreach collection="customerFormContent.fields" item="value" index="key" open="(" separator="," close=")">
+            <if test="key != null and key != 'id'">
+                ${key}
+            </if>
+        </foreach>
+        values
+        <foreach collection="customerFormContent.fields" item="value" index="key" open="(" separator="," close=")">
+            <if test="key != null and key != 'id'">
+                #{value}
+            </if>
+        </foreach>
+    </insert>
+
+    <update id="updateById" parameterType="com.ruoyi.form.domain.CustomerFormContent" useGeneratedKeys="true" keyProperty="id">
+        update customer_form_content
+        set
+        <foreach collection="customerFormContent.fields" item="value" index="key" separator=",">
+            <if test="key != null and key != 'id'">
+                ${key}=#{value}
+            </if>
+        </foreach>
+        where
+        <foreach collection="customerFormContent.fields" item="value" index="key" separator=",">
+            <if test="key=='id' and key!=null ">
+                id=#{value}
+            </if>
+        </foreach>
+    </update>
+
+    <select id="selectcolumnComment" resultType="map" parameterType="String">
+        select COLUMN_NAME 'fieldName',column_comment 'fieldComment',column_type 'fieldType' from information_schema.columns
+        where table_schema='itsm' and table_name=#{_parameter};
+    </select>
+
+    <select id="selectIncidentMapByCondition" resultType="java.util.Map">
+        select
+            t.id,
+            t.extra1 as imCode,
+            t.status,
+            t.instance_id as instanceId,
+            t.event_title,
+            t.org_flag,
+            t.report_org,
+            t.report_person,
+            t.report_phone,
+            t.assigned_group,
+            t.assigned_person,
+            t.event_source,
+            t.inf_level,
+            t.event_priority,
+            t.side_flag,
+            t.finance_flag,
+            t.urgent_flag,
+            t.event_title,
+            t.event_info,
+            t.system_name,
+            t.complain_flag,
+            t.init_first_level,
+            t.init_second_level,
+            t.init_three_level,
+            t.inf_level,
+            t.target_resolve_date,
+            t.second_solve_plan,
+            t.solve_plan,
+            t.event_reason_category,
+            t.event_source_system,
+            t.relational_system,
+            t.event_category,
+            t.event_subclass,
+            t.event_entry,
+            t.event_subentry1,
+            t.event_subentry2,
+            t.final_first_level,
+            t.final_second_level,
+            t.final_three_level,
+            t.change_flag,
+            t.change_no,
+            t.inf_face,
+            t.inf_use,
+            t.inf_system,
+            t.inf_time_range,
+            t.second_deal_org,
+            t.second_deal_person,
+            t.solution_valid_flag,
+            t.close_code,
+            t.event_level,
+            t.extra1 as imCode,
+            t.extra2,
+            t.extra3,
+            t.extra4,
+            t.extra5,
+            t.created_time,
+            t.created_by,
+            t.updated_time,
+            t.updated_by
+        from ${tableName} t
+        left join it_biz_extend d
+        on t.extra1=d.biz_no
+        <where>
+            <if test="search.stratTime != null and search.stratTime != ''">
+                and t.created_time &gt;= #{search.stratTime}
+            </if>
+            <if test="search.endTime != null and search.endTime != ''">
+                and t.created_time &lt;= #{search.endTime}
+            </if>
+            <!--IM事件编号-->
+            <if test="search.imCode != null and search.imCode != ''">
+                and t.extra1 = #{search.imCode}
+            </if>
+            <!--状态-->
+           	<if test="search.imStatus != null and search.imStatus != ''">
+                and t.status in
+                <foreach collection="search.status" item="status" open="(" separator="," close=")">
+                    #{status}
+                </foreach>
+            </if>
+            <!--柜面事件编号-->
+            <if test="search.eventNo != null and search.eventNo != ''">
+                and d.extend2 = #{search.eventNo}
+            </if>
+            <!--上报人工号-->
+            <if test="search.transTeller != null and search.transTeller != ''">
+                and d.extend8 = #{search.transTeller}
+            </if>
+            <!--交易网点号-->
+            <if test="search.transInstno != null and search.transInstno != ''">
+                and d.extend7 = #{search.transInstno}
+            </if>
+        </where>
+        order by t.created_time desc
+         limit #{search.pageStart},#{search.pageSize}
+    </select>
+
+    <select id="selectIncidentCountByCondition" resultType="long">
+        select count(t.id)
+        from ${tableName} t
+        left join it_biz_extend d
+        on t.extra1=d.biz_no
+        <where>
+            <if test="search.stratTime != null and search.stratTime != ''">
+                and t.created_time &gt;= #{search.stratTime}
+            </if>
+            <if test="search.endTime != null and search.endTime != ''">
+                and t.created_time &lt;= #{search.endTime}
+            </if>
+            <!--IM事件编号-->
+            <if test="search.imCode != null and search.imCode != ''">
+                and t.extra1 = #{search.imCode}
+            </if>
+            <!--状态-->
+<!--             <if test="search.imStatus != null and search.imStatus != ''">
+                and t.status = #{search.imStatus}
+            </if> -->
+            <if test="search.imStatus != null and search.imStatus != ''">
+                and t.status in
+                <foreach collection="search.status" item="status" open="(" separator="," close=")">
+                    #{status}
+                </foreach>
+            </if>
+            <!--柜面事件编号-->
+            <if test="search.eventNo != null and search.eventNo != ''">
+                and d.extend2 = #{search.eventNo}
+            </if>
+            <!--上报人工号-->
+            <if test="search.transTeller != null and search.transTeller != ''">
+                and d.extend8 = #{search.transTeller}
+            </if>
+            <!--交易网点号-->
+            <if test="search.transNo != null and search.transNo != ''">
+                and d.extend21 = #{search.transNo}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectIncidentMapByCode" resultType="java.util.Map">
+        select
+            t.id,
+            t.status,
+            t.instance_id as instanceId,
+            t.event_title,
+            t.org_flag,
+            t.report_org,
+            t.report_person,
+            t.report_phone,
+            t.assigned_group,
+            t.assigned_person,
+            t.event_source,
+            t.inf_level,
+            t.event_priority,
+            t.side_flag,
+            t.finance_flag,
+            t.urgent_flag,
+            t.event_title,
+            t.event_info,
+            t.system_name,
+            t.complain_flag,
+            t.init_first_level,
+            t.init_second_level,
+            t.init_three_level,
+            t.inf_level,
+            t.target_resolve_date,
+            t.second_solve_plan,
+            t.solve_plan,
+            t.event_reason_category,
+            t.event_source_system,
+            t.relational_system,
+            t.event_category,
+            t.event_subclass,
+            t.event_entry,
+            t.event_subentry1,
+            t.event_subentry2,
+            t.final_first_level,
+            t.final_second_level,
+            t.final_three_level,
+            t.change_flag,
+            t.change_no,
+            t.inf_face,
+            t.inf_use,
+            t.inf_system,
+            t.inf_time_range,
+            t.second_deal_org,
+            t.second_deal_person,
+            t.solution_valid_flag,
+            t.close_code,
+            t.event_level,
+            t.extra1 as imCode
+        from ${tableName} t
+        <where>
+            and t.extra1 = #{imCode}
+        </where>
+    </select>
+
+    <update id="updateEventIncident">
+        update ${tableName}
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="params.status != null  and params.status != ''">
+                status = #{params.status},
+            </if>
+            <if test="params.eventPriority != null  and params.eventPriority != ''">
+                event_priority = #{params.eventPriority},
+            </if>
+            <if test="params.targetResolveDate != null  and params.targetResolveDate != ''">
+                target_resolve_date = #{params.targetResolveDate},
+            </if>
+            <if test="params.cleanCurrentUserFlag != null  and params.cleanCurrentUserFlag != ''">
+                extra5 = null,
+            </if>
+            <if test="params.finalFirstLevel != null  and params.finalFirstLevel != ''">
+                final_first_level = #{params.finalFirstLevel},
+            </if>
+            <if test="params.solvePlan != null  and params.solvePlan != ''">
+                solve_plan = #{params.solvePlan},
+            </if>
+        </trim>
+        where id=#{params.bizId}
+    </update>
+
+    <select id="selectChangeTasksByProcessIds" resultType="java.util.Map">
+        SELECT a.id,a.instance_id,a.extra1,a.status,(CASE b.type
+                                      WHEN '1' THEN
+                                          '普通变更'
+                                      WHEN '2' THEN
+                                          '紧急变更'
+                                      WHEN '3' THEN
+                                          '评审变更'
+                                      ELSE
+                                          ''
+            END) changeType
+        FROM `design_biz_changetask` a INNER JOIN design_biz_change b on a.changeNo=b.extra1
+        and a.approval =#{userId} and a.instance_id !=null
+
+    </select>
+</mapper>

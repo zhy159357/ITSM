@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('表单流程节点动态展示')" />
+    <th:block th:include="include :: datetimepicker-css" />
+    <th:block th:include="include :: select2-css" />
+</head>
+<body>
+</div>
+<div class="main-content" id="test-form">
+
+
+</div>
+
+<div class="row">
+    <div class="col-sm-offset-5 col-sm-10">
+        <button type="button" class="btn btn-sm btn-primary" onclick="submit()"><i class="fa fa-check"></i>提 交</button>&nbsp;
+        <!--<button type="button" class="btn btn-sm btn-primary" onclick="save()"><i class="fa fa-check"></i>暂 存</button>&nbsp;-->
+        <button type="button" class="btn btn-sm btn-danger" onclick="closeItem()"><i class="fa fa-window-close"></i>关 闭 </button>
+    </div>
+</div>
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: select2-js" />
+<th:block th:include="include :: datetimepicker-js" />
+<script th:inline="javascript">
+    var prefix = ctx + "business/data";
+
+    $(function() {
+        var formHtmlMap = [[${formHtmlMap}]];
+        showForm(formHtmlMap);
+    });
+
+    // 显示时间字段样式
+    function showDatetime(datetimeIdList) {
+        for(var i = 0; i < datetimeIdList.length; i++) {
+            $("#" + datetimeIdList[i]).datetimepicker({
+                format: "yyyy-mm-dd",
+                minView: "month",
+                autoclose: true
+            });
+        }
+    }
+
+    // 表单流程节点动态展示
+    function showForm(formHtmlMap) {
+        var formHtml = formHtmlMap.formHtml;
+        $("#test-form").prepend(formHtml);
+
+        var datetimeIdList = formHtmlMap.datetimeIdList;
+        showDatetime(datetimeIdList);
+    }
+    
+    function submit() {
+        var formId = $("#formId").val();
+        var data = $("#" + formId).serializeArray();
+        var url = prefix + "/startProcess";
+        $.operate.saveTab(url, data);
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:include="include :: header('查看疑难事件列表')"/>
+</head>
+<body class="gray-bg">
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-12 search-collapse">
+            <form id="formId">
+                <div class="select-list">
+                    <ul>
+                        <li>
+                            <p>单号：</p>
+                            <input type="text" name="no"/>
+                        </li>
+                        <li>
+                            <p>所属系统：</p>
+                            <input id="sysId" name="sysId" type="hidden" class="form-control"/>
+                            <input id="applicationName" name="applicationName" type="text" class="form-control"
+                                   onclick="selectOgSysListByCondition()"/>
+                        </li>
+                        <li class="select-time">
+                            <p>创建时间：</p>
+                            <input type="text" class="time-input" id="startCreatTime" placeholder="开始时间"
+                                   name="params[startCreatTime]" readonly/>
+                            <span>-</span>
+                            <input type="text" class="time-input" id="endCreatTime" placeholder="结束时间"
+                                   name="params[endCreatTime]" readonly/>
+                        </li>
+                        <li>
+                            <p>来源：</p>
+                            <select id="source" name="source" class="form-control"
+                                    th:with="type=${@pubParaValue.selectPubParaValueByParaName('ynsj_source')}">
+                                <option value=""></option>
+                                <option th:each="PubParaValue : ${type}" th:text="${PubParaValue.valueDetail}"
+                                        th:value="${PubParaValue.value}"></option>
+                            </select>
+                        </li>
+                        <li>
+                            <a class="btn btn-primary btn-rounded btn-sm" id="searchBut" onclick="$.table.search()"><i
+                                    class="fa fa-search"></i>&nbsp;搜索</a>
+                            <a class="btn btn-warning btn-rounded btn-sm" onclick="reset()"><i
+                                    class="fa fa-refresh"></i>&nbsp;重置</a>
+                        </li>
+                    </ul>
+                </div>
+            </form>
+        </div>
+
+        <div class="btn-group-sm" id="toolbar" role="group">
+            <a class="btn btn-primary single disabled" onclick="dealBiz()">
+                <i class="fa fa-search"></i>处 理
+            </a>
+        </div>
+        <div class="col-sm-12 select-table table-striped">
+            <table id="bootstrap-table"></table>
+        </div>
+    </div>
+</div>
+<th:block th:include="include :: footer"/>
+<script th:inline="javascript">
+    var prefix = ctx + "system/events";
+    var prefix_fmbiz = ctx + "fmbiz";
+    var sourceV = [[${@pubParaValue.selectPubParaValueByParaName('ynsj_source')}]];
+
+    $(function () {
+        // 回车键搜索
+        document.onkeydown = function (e) {
+            var ev = document.all ? window.event : e;
+            if (ev.keyCode == 13) {
+                $('#searchBut').trigger('click');
+                return false;
+            }
+        };
+        var options = {
+            url: prefix + "/dealList",
+            singleSelect: true,
+            clickToSelect: true,
+            modalName: "【待处理疑难事件】",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'id',
+                    visible: false
+                },
+                {
+                    field: 'no',
+                    title: '单号'
+                },
+                {
+                    field: 'sysName',
+                    title: '所属系统'
+                },
+                {
+                    field: 'createrTime',
+                    title: '创建时间',
+                    formatter: function (value, row, index) {
+                        var startTime = '';
+                        if (value != '' && value != null) {
+                            var pattern = /(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/;
+                            startTime = value.replace(pattern, '$1-$2-$3 $4:$5:$6');
+                        }
+                        return startTime;
+                    }
+                },
+                {
+                    field: 'source',
+                    title: '来源',
+                    formatter: function (value, row, index) {
+                        return $.table.selectPubParaValueData(sourceV, value);
+                    }
+                }]
+        };
+        $.table.init(options);
+    });
+
+    // 回显数据字典
+    function selectPubParaValueData(datas, value) {
+        var actions = [];
+        $.each(datas, function (index, pubParaValue) {
+            if (pubParaValue.value == ('' + value)) {
+                actions.push($.common.sprintf("<span class='%s'>%s</span>", "", pubParaValue.valueDetail));
+                return false;
+            }
+        });
+        return actions.join('');
+    }
+
+    // 选择应用系统（只能单选）
+    function selectOgSysListByCondition() {
+        $.modal.open("选择应用系统", prefix + "/sysGrouplist");
+    }
+
+    //根据系统查询工作组
+    function getGroupList(sysid) {
+    }
+
+    /**
+     * 处理疑难事件
+     */
+    function dealBiz() {
+        var id = $.table.selectFirstColumns();
+        var url = prefix + "/deal/" + id;
+        $.modal.openTab("处理疑难事件", url);
+    }
+
+    //** 重置 */
+    function reset() {
+        $("#groupId").html("");
+        $.form.resetAll('formId');
+    }
+</script>
+</body>
+</html>

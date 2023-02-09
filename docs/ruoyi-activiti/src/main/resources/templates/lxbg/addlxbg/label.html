@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('快捷标签')" />
+</head>
+<body class="gray-bg">
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="container-div">
+                <div class="row">
+                    <div class="col-sm-12 search-collapse">
+                        <form id="type-form">
+                            <div class="select-list">
+                                <ul>
+                                    <li>
+                                        接收范围：<input type="text" name="receiveRange" id="receiveRange"/>
+                                    </li>
+                                    <li>
+                                        <a class="btn btn-primary btn-rounded btn-sm" id="lss" onclick="labelSearch('type-form','bootstrap-table')"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                        <a class="btn btn-warning btn-rounded btn-sm" onclick="labelReset('','bootstrap-table')"><i class="fa fa-repeat"></i>&nbsp;重置</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="btn-group-sm" id="toolbar" role="group">
+                        <a class="btn btn-success" onclick="$.operate.add()">
+                            <i class="fa fa-plus"></i> 新增
+                        </a>
+                        <a class="btn btn-danger multiple disabled" onclick="removeAll()" >
+                            <i class="fa fa-remove"></i> 删除
+                        </a>
+                    </div>
+
+                    <div class="col-sm-12 select-table table-striped">
+                        <table id="bootstrap-table"></table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="container-div">
+                <div class="row">
+                    <div class="col-sm-12 search-collapse">
+                        <form id="data-form">
+                            <input type="hidden" name="amParaId" id="amParaId">
+                            <div class="select-list">
+                                <ul>
+                                    <li>
+                                        <p>接收机构：</p>
+                                        <input type="text" name="orgName" id="orgName"/>
+                                    </li>
+                                    <li>
+                                        <p>接受工作组：</p>
+                                        <input type="text" name="grpName" id="grpName"/>
+                                    </li>
+                                    <li>
+                                        <a class="btn btn-primary btn-rounded btn-sm" id="rss" onclick="$.table.search('data-form','bootstrap-table-data')"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                        <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset('data-form','bootstrap-table-data')"><i class="fa fa-repeat"></i>&nbsp;重置</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="btn-group-sm" id="data_toolbar" role="group">
+                        <a class="btn btn-success" onclick="validatePubPara()">
+                            <i class="fa fa-plus"></i> 新增
+                        </a>
+                        <a class="btn btn-danger single disabled" onclick="$.operate.removeAll()">
+                            <i class="fa fa-trash"></i> 删除
+                        </a>
+                    </div>
+
+                    <div class="col-sm-12 select-table table-striped">
+                        <table id="bootstrap-table-data"></table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<th:block th:include="include :: footer" />
+<script th:inline="javascript">
+
+
+    var prefix = ctx + "system/para";
+    var dataprefix = ctx+ "system/value"
+
+    var formtype ='0';
+
+    $(function () {
+        zss();
+        yss();
+
+        // 工作组
+        $('#receiveRange').focus(function(){
+            formtype = '1';
+        });
+        // 工作组人员
+        $('#orgName').focus(function(){
+            formtype = '2';
+        });
+        $('#grpName').focus(function(){
+            formtype = '2';
+        });
+
+    })
+
+
+
+
+    function yss() {
+        formtype = '2';
+        //右侧回车搜索
+        document.onkeydown = function(e){
+            var ev = document.all ? window.event : e;
+            console.log(ev);
+            if(ev.keyCode==13) {
+                if(formtype == '1'){
+                    $('#lss').trigger('click');
+                }
+                if(formtype == '2'){
+                    $('#rss').trigger('click');
+                }
+                return false;
+            } //搜索逻辑
+        }
+
+        var data_options = {
+            id: 'bootstrap-table-data',
+            url: dataprefix + "/list",
+            createUrl: dataprefix + "/add/{id}",
+            updateUrl: dataprefix + "/edit/{id}",
+            removeUrl: dataprefix + "/remove",
+            exportUrl: dataprefix + "/export",
+            clickToSelect: true,
+            singleSelect: true,
+            toolbar: 'data_toolbar',
+            sortOrder: "asc",
+            modalName: "数据",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'amParaValueId',
+                    title: '参数值编码',
+                    visible: false
+                },
+                {
+                    field: 'orgName',
+                    title: '接收机构'
+                },
+                {
+                    field: 'grpName',
+                    title: '接收工作组'
+                }]
+        };
+        $.table.init(data_options);
+    }
+    
+    function zss() {
+        formtype = '1';
+        //左侧回车搜索
+        document.onkeydown = function(e){
+            var ev = document.all ? window.event : e;
+            console.log(ev);
+            if(ev.keyCode==13) {
+                if(formtype == '1'){
+                    $('#lss').trigger('click');
+                }
+                if(formtype == '2'){
+                    $('#rss').trigger('click');
+                }
+                return false;
+            } //搜索逻辑
+        }
+
+        var options = {
+            url: prefix + "/list",
+            createUrl: prefix + "/labeladd",
+            updateUrl: prefix + "/edit/{id}",
+            removeUrl: prefix + "/remove",
+            singleSelect:true,
+            exportUrl: prefix + "/export",
+            clickToSelect: true,
+            toolbar:'toolbar',
+            modalName: "类型",
+            onClickRow:onChoose,
+            onCheck:onChoose,
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'amParaId',
+                    title:'参数项Id',
+                    visible:false
+                },
+                {
+                    field: 'receiveRange',
+                    title:'接收范围'
+                }]
+        };
+        $.table.init(options);
+    };
+
+    function validatePubPara() {
+        var isHasCheck = false;
+        var selects = $("#bootstrap-table").bootstrapTable('getSelections');
+        if(!$.common.isEmpty(selects)){
+
+            $.operate.add($("#amParaId").val());
+        }else{
+            $.modal.alertWarning("添加参数值必须选择参数项!");
+        }
+    }
+
+    /** 清理字典缓存 */
+    function clearCache() {
+        $.operate.get(prefix + "/clearCache");
+    }
+    function onChoose(row,obj){
+        $("#amParaId").val(row.amParaId);
+        $(obj).siblings().removeClass("selected")
+        $(obj).addClass("selected");
+        $(obj).find("input[type='radio']").prop('checked','checked')
+        $.table.search('data-form','bootstrap-table-data')
+    }
+
+
+    function labelSearch(amParaFormId,amParaValueFormId) {
+        //清空amParaId
+        $('#amParaId').val('');
+        $.table.search(amParaFormId,'bootstrap-table');
+        $.table.search(amParaValueFormId,'bootstrap-table-data');
+    }
+
+    function labelReset(amParaFormId,amParaValueFormId) {
+        //清空amParaId
+        $('#amParaId').val('');
+        $('#receiveRange').val('');
+        $.form.resetAll(amParaFormId,'bootstrap-table')
+        $.table.search(amParaValueFormId,'bootstrap-table-data');
+    }
+
+    // 删除
+    function  removeAll(id) {
+        table.set();
+        var rows = $.common.isEmpty(table.options.uniqueId) ? $.table.selectFirstColumns() : $.table.selectColumns(table.options.uniqueId);
+        var id = rows[0];
+        if ('1' == id || '2' == id) {
+            $.modal.alertError("该分组为系统默认分组不可删除");
+        } else {
+            $.modal.confirm("确认要删除该条数据吗?", function() {
+                var url = prefix+"/remove";
+                var data = { "ids": id };
+                $.operate.submit(url, "post", "json", data);
+            });
+        }
+    }
+
+
+</script>
+</body>
+</html>

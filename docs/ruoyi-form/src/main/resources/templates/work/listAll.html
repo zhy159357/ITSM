@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('环境单6')"/>
+</head>
+<body class="gray-bg">
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-12 search-collapse">
+            <form id="account-form">
+                <div class="select-list">
+                    <ul>
+                        <li>
+                            <label style="width: 80px">工单编号：</label>
+                            <input type="text" name="workNum" maxlength="20"/>
+                        </li>
+                        <li>
+                            <label style="width: 80px"> 标题：</label>
+                            <input type="text" name="title" maxlength="64"/>
+                        </li>
+<!--                        <li>-->
+<!--                            <label style="width: 80px">应用系统：</label>-->
+<!--                            <select id="appSystem" name="appSystem" class="form-control "-->
+<!--                                    th:with="issueFenleis=${@pubParaValue.selectPubParaValueByParaName('WT_FENLEI')}">-->
+<!--                                <option value="">所有</option>-->
+<!--                                <option th:each="itype : ${issueFenleis}" th:text="${itype.valueDetail}"-->
+<!--                                        th:value="${itype.value}"></option>-->
+<!--                            </select>-->
+<!--                        </li>-->
+                        <!--							<li>-->
+                        <!--								<label style="width: 80px">问题类型：</label>-->
+                        <!--								<select id="issueType" name="issueType" class="form-control" th:with="issue_type=${@pubParaValue.selectPubParaValueByParaName('WT_TYPE')}">-->
+                        <!--									<option value="">所有</option>-->
+                        <!--									<option th:each="itype : ${issue_type}" th:text="${itype.valueDetail}" th:value="${itype.value}"></option>-->
+                        <!--								</select>-->
+                        <!--							</li>-->
+                        <!--							<li id="issueOrgLi">-->
+                        <!--								<label style="width: 80px">所属机构：</label>-->
+                        <!--								<select id="issueOrg" name="issueOrg" class="form-control " >-->
+                        <!--									<option value="">所有</option>-->
+                        <!--									<option th:each="itype : ${issueOrgs}" th:text="${itype.orgName}" th:value="${itype.orgId}"></option>-->
+                        <!--								</select>-->
+                        <!--							</li>-->
+                        <li>
+                            <label style="width: 80px">项目编号：</label>
+                            <input type="text" name="projectNum" maxlength="50"/>
+                        </li>
+                        <li>
+                            <label style="width: 80px">需求编号：</label>
+                            <input type="text" name="demandNum" maxlength="50"/>
+                        </li>
+                        <!--							<li id="myFlagLi">-->
+                        <!--								<label style="width: 80px">我的标识：</label>-->
+                        <!--								<select id="myFlag" name="params[myFlag]" class="form-control" th:with="myFlag=${@pubParaValue.selectPubParaValueByParaName('pub_myFlag')}">-->
+                        <!--									<option th:each="itype : ${myFlag}" th:text="${itype.valueDetail}" th:value="${itype.value}"></option>-->
+                        <!--								</select>-->
+                        <!--							</li>-->
+
+                        <li class="select-time">
+                            <label style="width: 80px">创建时间： </label>
+                            <input style="width:90px" type="text" class="time-input" id="startTime" placeholder="开始时间"
+                                   name="params[startTime]" readonly>
+                            <span style="width:10px">-</span>
+                            <input style="width:90px" type="text" class="time-input" id="endTime" placeholder="结束时间"
+                                   name="params[endTime]" readonly>
+                        </li>
+                        <li>
+                            <a class="btn btn-primary btn-rounded btn-sm" id="searchBut" onclick="$.table.search()"><i
+                                    class="fa fa-search"></i>&nbsp;搜索</a>
+                            <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.resetAll('account-form')"><i
+                                    class="fa fa-refresh"></i>&nbsp;重置</a>
+                        </li>
+                    </ul>
+                </div>
+            </form>
+        </div>
+
+        <div class="btn-group-sm" id="toolbar" role="group">
+
+            <!--<a class="btn btn-primary single disabled" onclick="edit()">-->
+                <!--<i class="fa fa-edit"></i> 修改基础信息-->
+            <!--</a>-->
+            <!--<a class="btn btn-primary single disabled" onclick="editServer()">-->
+                <!--<i class="fa fa-edit"></i> 修改服务信息-->
+            <!--</a>-->
+            <a class="btn btn-info single disabled" onclick="detail()">
+                <i class="fa fa-search"></i> 查看详情
+            </a>
+            <a class="btn btn-info single disabled" onclick="showProcessImg()" id="showProcessImg">
+                <i class="fa fa-search"></i>查看流程
+            </a>
+            <div class="btn-group">
+                <button data-toggle="dropdown" class="btn btn-primary btn-sm dropdown-toggle">导出<span
+                        class="caret"></span>
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a onclick="$.table.exportExcel()">导出所有</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!--			<div class="btn-group-sm" id="toolbar" role="group">-->
+        <!--				<a class="btn btn-info single disabled" onclick="view()">-->
+        <!--					<i class="fa fa-search"></i>详情-->
+        <!--				</a>-->
+        <!--				<a class="btn btn-warning single disabled" onclick="showProcessImgDialog()">-->
+        <!--					<i class="fa fa-edit"></i> 查看流程图-->
+        <!--				</a>-->
+        <!--	        </div>-->
+
+        <div class="col-sm-12 select-table table-striped">
+            <table id="bootstrap-table" style="table-layout:fixed;"></table>
+        </div>
+    </div>
+</div>
+
+<th:block th:include="include :: footer"/>
+<th:block th:include="include :: select2-css"/>
+<th:block th:include="include :: select2-js"/>
+<th:block th:include="include :: bootstrap-select-js"/>
+<th:block th:include="include :: bootstrap-select-css"/>
+<th:block th:include="include :: datetimepicker-js"/>
+<th:block th:include="include :: datetimepicker-css"/>
+
+<script th:src="@{/js/activiti.js}"></script>
+<script th:inline="javascript">
+    var type = [[${type}]];
+    var issueFenlei = [[${@pubParaValue.selectPubParaValueByParaName('WT_FENLEI')}]];
+    var issueType = [[${@pubParaValue.selectPubParaValueByParaName('WT_TYPE')}]];
+    var issuesource = [[${@pubParaValue.selectPubParaValueByParaName('WT_SOUCE')}]];
+    var allstatus = [[${@pubParaValue.selectPubParaValueByParaName('issue_status')}]];
+    var prefix = ctx + "twWorkOrder";
+    $(function () {
+        // 回车键搜索
+        document.onkeydown = function (e) {
+            var ev = document.all ? window.event : e;
+            if (ev.keyCode == 13) {
+                $('#searchBut').trigger('click');
+                return false;
+            }
+        };
+        var options = {
+            url: prefix + "/listAll",
+            removeUrl: prefix + "/remove",
+            //新增页面
+            createUrl: ctx + "twWorkOrder/increase",
+            updateUrl: ctx + "twWorkOrder/edit/{id}",
+            removeUrl: ctx + "issueList/build/remove",
+            exportUrl: prefix + "/exportChange",
+            showColumns: false,
+            modalName: "环境单",
+            pagination: true,
+            clickToSelect: true,
+            pageSize: 10,
+            queryParams: queryParams,
+            singleSelect: true,
+            striped: true,
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'id',
+                    title: '主键',
+                    visible: false,
+                    width : 150
+                },
+                {
+                    field: 'workNum',
+                    title: '工单编号',
+                    width : 150
+                },
+                {
+                    field: 'title',
+                    title: '标题',
+                    width : 150,
+                    formatter: function (value, row, index) {
+                        return $.table.tooltip(value);
+                    },
+                    cellStyle: function cellStyle(value, row, index, field) {
+                        return {classes: 'text-nowrap'};
+                    }
+                },
+                {
+                    field: 'appSystem',
+                    title: '应用系统',
+                    width : 150,
+                    formatter: function (value, row, index) {
+                        return $.table.tooltip(value);
+                    },
+                    cellStyle: function cellStyle(value, row, index, field) {
+                        return {classes: 'text-nowrap'};
+                    }
+                },
+                {
+                    field: 'workType',
+                    title: '工单类型',
+                    width : 80
+                },
+                {
+                    field: 'projectNum',
+                    title: '项目编号',
+                    width : 80
+                    // formatter:function (value){
+                    // 	return selectPubParaValueData(issueFenlei,value);
+                    // }
+                },
+                {
+                    field: 'demandNum',
+                    title: '需求编号',
+                    width : 80
+                    // formatter:function (value){
+                    // 	return selectPubParaValueData(issueType,value);
+                    // }
+                },
+                {
+                    field: 'implementorPeopleName',
+                    title: '审批人',
+                    width : 80
+                    // formatter:function (value){
+                    // 	return selectPubParaValueData(issuesource,value);
+                    // }
+                },
+                {
+                    field: 'contactName',
+                    title: '接口人',
+                    width : 80
+                },
+                {
+                    field: 'createByName',
+                    title: '创建人',
+                    width : 80
+                    // formatter: function (value, row, index) {
+                    // 	return selectPubParaValueData(allstatus,value);
+                    // }
+                }, {
+                    field: 'createTime',
+                    title: '创建时间',
+                    width : 150
+                }
+                ,
+                {
+                    field: 'status',
+                    title: '状态',
+                    width : 80
+                }
+            ]
+        };
+        // if("list"==type){
+        // 		var but="\t\t\t\t<a class=\"btn btn-success\" onclick=\"$.operate.addTab()\">\n" +
+        // 			"\t                <i class=\"fa fa-plus\"></i> 新增\n" +
+        // 			"\t            </a>\n" +
+        // 			"\t            <a class=\"btn btn-primary single disabled\" onclick=\"edit()\">\n" +
+        // 			"\t\t            <i class=\"fa fa-edit\"></i> 修改\n" +
+        // 			"\t\t        </a>\n" +
+        // 			"\t\t\t\t<a class=\"btn btn-danger multiple disabled\" onclick=\"$.operate.removeAll()\">\n" +
+        // 			"\t\t\t\t\t<i class=\"fa fa-window-close\"></i> 删除\n" +
+        // 			"\t\t\t\t</a>\n";
+        //
+        // 	$("#toolbar").append(but);
+        // 	options.url=ctx + "twWorkOrder/list";
+        // }else{
+        // 	var butname="处理";
+        // 	if("fenfa"==type){
+        // 		options.singleSelect=false;
+        // 		butname="分发";
+        // 		var butAll="<a class=\"btn btn-primary multiple\" data-toggle=\"modal\" data-target=\"#myModal\">"+
+        //         "<i class=\"fa fa-check\"></i>批量分发</a>\n";
+        //         $("#toolbar").append(butAll);
+        //         $("#myFlagLi").hide();
+        // 		$("#issueOrgLi").hide();
+        // 		 $.table.init(options);
+        // 		return;
+        // 	}
+        // 	if("shenhe"==type){
+        // 		butname="审核";
+        // 	}
+        // 	if("pinggu"==type){
+        // 		butname="评估";
+        // 	}
+        // 	if("close"==type||"inside_close"==type){
+        // 		butname="关闭问题"
+        // 	}
+        // 	if("fuhe"==type){
+        // 		butname="复核"
+        // 	}
+        // 	$("#myFlagLi").hide();
+        // 	$("#issueOrgLi").hide();
+        // 	var but="<a class=\"btn btn-primary multiple disabled\" onclick=\"deal('"+butname+"')\">"+
+        //         "<i class=\"fa fa-check\"></i>"+butname+"</a>"
+        // 	$("#toolbar").append(but);
+        // }
+        $.table.init(options);
+    });
+
+    function queryParams(data) {
+        var search = $.table.queryParams(data);
+        var tt = {"type": type};
+        search.params = tt;
+        return search;
+    }
+
+
+
+    //操作
+    function deal(name) {
+        var row = $("#bootstrap-table").bootstrapTable("getSelections");
+        var typee = row[0].params.type;
+        var url = prefix + "/view?"
+        $.modal.openTab(name, url + "issuefxId=" + row[0].issuefxId + "&&type=" + typee);
+    }
+    /**
+     * 查看流程
+     */
+    function showProcessImg() {
+        var rows = $("#bootstrap-table").bootstrapTable('getSelections');
+        console.log(rows)
+        var len = rows.length;
+        if(len==0){
+            $.modal.alertWarning("请选择要查看流程的单子");
+            return;
+        }
+        var row = rows[0];
+
+        var url = ctx + 'process/processImg/' + row.workNum;
+        $.modal.openNoBtn("查看流程图", url, null, null, null, true);
+    }
+
+    function showProcessImgDialog() {
+        var row = $("#bootstrap-table").bootstrapTable("getSelections");
+        if (row[0].currentState == "0") {
+            return $.modal.alertWarning("待提交状态没有流程图！");
+        }
+        var url = ctx + 'process/processImg/' + row[0].issuefxId;
+        $.modal.openNoBtn("查看流程图", url, "", "", true);
+    }
+
+    function edit() {
+        var id = $.table.selectFirstColumns();
+        // if (eventStatus != '1') {
+        //     $.modal.alertWarning("只有待提交状态的事件单才允许编辑.");
+        //     return;
+        // }
+        var url = prefix + "/edit/" + id;
+        $.modal.openTab("修改环境单", url);
+
+    }
+
+    function detail() {
+        var id = $.table.selectFirstColumns();
+        // if (eventStatus != '1') {
+        //     $.modal.alertWarning("只有待提交状态的事件单才允许编辑.");
+        //     return;
+        // }
+        var url = prefix + "/workOrderDetail/" + id;
+        $.modal.openTab("查询环境单详情", url);
+
+    }
+    function editServer() {
+        var id = $.table.selectFirstColumns();
+        // if (eventStatus != '1') {
+        //     $.modal.alertWarning("只有待提交状态的事件单才允许编辑.");
+        //     return;
+        // }
+        var url = prefix + "/editServer/"+id;
+        $.modal.openTab("编辑服务信息", url);
+
+    }
+
+    //详情
+    function view() {
+        var url = ctx + "issueList/activiti/view?"
+
+        var row = $.table.selectFirstColumns("bootstrap-table");
+        if ("list" == type) {
+            url = ctx + "issueList/build/view/";
+            $.modal.openTab("详情", url + row[0]);
+        } else {
+            $.modal.openTab("详情", url + "issuefxId=" + row[0] + "&&type=flowview");
+        }
+    }
+
+    //提交
+    function submint() {
+        var row = $("#bootstrap-table").bootstrapTable('getSelections');
+        if (0 != row[0].currentState) {
+            return $.modal.alertWarning("只有未提交状态的问题单可以提交！");
+        }
+
+        var ar = new Array();
+        var data = {
+            name: 'issuefxId',
+            value: row[0].issuefxId
+        }
+        ar.push(data);
+        $.operate.post(ctx + "issueList/activiti/startProcess", ar);
+        $.table.refresh();
+    }
+
+    function dealAll() {
+        var row = $("#bootstrap-table").bootstrapTable("getSelections");
+
+    }
+
+    function fenfaAll() {
+        if ($.common.isEmpty($("#comment").val())) {
+            return $.modal.alertWarning("请填写批量分发意见！");
+        }
+        var rows = $.table.selectFirstColumns();
+        var ar = new Array();
+        var data = {
+            name: 'issuefxId',
+            value: rows
+        }
+        ar.push(data);
+        ar.push({"name": "params[comment]", "value": $("#comment").val()})
+        $.operate.post(ctx + "issueList/activiti/fenfaAll", ar);
+        $("#comment").val('');
+        $.table.refresh();
+    }
+</script>
+</body>
+</html>

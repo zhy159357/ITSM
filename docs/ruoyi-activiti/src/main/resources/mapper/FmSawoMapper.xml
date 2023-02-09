@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.activiti.mapper.FmSawoMapper">
+
+    <resultMap type="FmSawo" id="FmSawoResult">
+        <result property="ordId"    column="ord_id"    />
+        <result property="ordNo"    column="ord_no"    />
+        <result property="gaaName"    column="gaa_name"    />
+        <result property="gaaLev"    column="gaa_lev"    />
+        <result property="ordType"    column="ord_type"    />
+        <result property="sourceIp"    column="source_ip"    />
+        <result property="objIp"    column="obj_ip"    />
+        <result property="gaaType"    column="gaa_type"    />
+        <result property="gaaCategory"    column="gaa_category"    />
+        <result property="sysId"    column="sys_id"    />
+        <result property="belDept"    column="bel_dept"    />
+        <result property="resDept"    column="res_dept"    />
+        <result property="createrTime"    column="creater_time"    />
+        <result property="sysAdmin"    column="sys_admin"    />
+        <result property="appAdmin"    column="app_admin"    />
+        <result property="gaaDesc"    column="gaa_desc"    />
+        <result property="dealId"    column="deal_id"    />
+        <result property="dealDept"    column="deal_dept"    />
+        <result property="dealTime"    column="deal_time"    />
+        <result property="rem"    column="rem"    />
+        <result property="ordState"    column="ord_state"    />
+        <result property="n1"    column="n1"    />
+        <result property="createId"    column="create_id"    />
+        <result property="disposeResult"    column="dispose_result"    />
+        <result property="n3"    column="n3"    />
+        <result property="orderId"    column="order_id"    />
+        <result property="gaaCategoryValue"    column="gaa_category_value"    />
+        <result property="gaaTypeValue"    column="gaa_type_value"    />
+        <result property="filePast"    column="file_past"    />
+    </resultMap>
+
+    <sql id="selectFmSawoVo">
+        select
+            ord_id,
+           ord_no,
+           gaa_name,
+           gaa_lev,
+           ord_type,
+           source_ip,
+           obj_ip,
+           gaa_type,
+           gaa_category,
+           sys_id,
+           bel_dept,
+           res_dept,
+           creater_time,
+           sys_admin,
+           app_admin,
+           gaa_desc,
+           deal_id,
+           deal_dept,
+           deal_time,
+           rem,
+           ord_state,
+           n1,
+           create_id,
+           dispose_result,
+           n3,
+           order_id,
+           gaa_type_value,
+           gaa_category_value,
+           file_past
+      from fm_sawo
+    </sql>
+
+    <select id="selectFmSawoList" parameterType="FmSawo" resultMap="FmSawoResult">
+        <include refid="selectFmSawoVo"/>
+        <where>
+            <if test="ordNo != null  and ordNo != ''"> and ord_no like concat(concat('%', #{ordNo}), '%')</if>
+            <if test="gaaName != null  and gaaName != ''"> and gaa_name like concat(concat('%', #{gaaName}), '%')</if>
+            <if test="gaaLev != null  and gaaLev != ''"> and gaa_lev = #{gaaLev}</if>
+            <if test="ordType != null  and ordType != ''"> and ord_type = #{ordType}</if>
+            <if test="sourceIp != null  and sourceIp != ''"> and source_ip = #{sourceIp}</if>
+            <if test="objIp != null  and objIp != ''"> and obj_ip = #{objIp}</if>
+            <if test="gaaType != null  and gaaType != ''"> and gaa_type = #{gaaType}</if>
+            <if test="gaaCategory != null  and gaaCategory != ''"> and gaa_category = #{gaaCategory}</if>
+            <if test="sysId != null  and sysId != ''"> and sys_id = #{sysId}</if>
+            <if test="belDept != null  and belDept != ''"> and bel_dept = #{belDept}</if>
+            <if test="resDept != null  and resDept != ''"> and res_dept = #{resDept}</if>
+            <if test="createrTime != null  and createrTime != ''"> and creater_time = #{createrTime}</if>
+            <if test="sysAdmin != null  and sysAdmin != ''"> and sys_admin = #{sysAdmin}</if>
+            <if test="appAdmin != null  and appAdmin != ''"> and app_admin = #{appAdmin}</if>
+            <if test="gaaDesc != null  and gaaDesc != ''"> and gaa_desc = #{gaaDesc}</if>
+            <if test="dealId != null  and dealId != ''"> and deal_id = #{dealId}</if>
+            <if test="dealDept != null  and dealDept != ''"> and deal_dept = #{dealDept}</if>
+            <if test="dealTime != null  and dealTime != ''"> and deal_time = #{dealTime}</if>
+            <if test="rem != null  and rem != ''"> and rem = #{rem}</if>
+            <if test="ordState != null  and ordState != ''"> and ord_state = #{ordState}</if>
+            <if test="n1 != null  and n1 != ''"> and n1 = #{n1}</if>
+            <if test="createId != null  and createId != ''"> and create_id = #{createId}</if>
+            <if test="disposeResult != null  and disposeResult != ''"> and dispose_result = #{disposeResult}</if>
+            <if test="n3 != null  and n3 != ''"> and n3 = #{n3}</if>
+            <if test="orderId != null  and orderId != ''"> and order_id = #{orderId}</if>
+            <if test="gaaCategoryValue != null  and gaaCategoryValue != ''"> and gaa_category_value = #{gaaCategoryValue}</if>
+            <if test="gaaTypeValue != null  and gaaTypeValue != ''"> and gaa_type_value = #{gaaTypeValue}</if>
+            <if test="filePast != null  and filePast != ''"> and file_past = #{filePast}</if>
+        </where>
+    </select>
+
+    <select id="selectFmSawoById" parameterType="String" resultMap="FmSawoResult">
+        <include refid="selectFmSawoVo"/>
+        where ord_id = #{ordId}
+    </select>
+
+    <insert id="insertFmSawo" parameterType="FmSawo">
+        insert into fm_sawo
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="ordId != null  and ordId != ''">ord_id,</if>
+            <if test="ordNo != null  and ordNo != ''">ord_no,</if>
+            <if test="gaaName != null  and gaaName != ''">gaa_name,</if>
+            <if test="gaaLev != null  and gaaLev != ''">gaa_lev,</if>
+            <if test="ordType != null  and ordType != ''">ord_type,</if>
+            <if test="sourceIp != null  and sourceIp != ''">source_ip,</if>
+            <if test="objIp != null  and objIp != ''">obj_ip,</if>
+            <if test="gaaType != null  and gaaType != ''">gaa_type,</if>
+            <if test="gaaCategory != null  and gaaCategory != ''">gaa_category,</if>
+            <if test="sysId != null  and sysId != ''">sys_id,</if>
+            <if test="belDept != null  and belDept != ''">bel_dept,</if>
+            <if test="resDept != null  and resDept != ''">res_dept,</if>
+            <if test="createrTime != null  and createrTime != ''">creater_time,</if>
+            <if test="sysAdmin != null  and sysAdmin != ''">sys_admin,</if>
+            <if test="appAdmin != null  and appAdmin != ''">app_admin,</if>
+            <if test="gaaDesc != null  and gaaDesc != ''">gaa_desc,</if>
+            <if test="dealId != null  and dealId != ''">deal_id,</if>
+            <if test="dealDept != null  and dealDept != ''">deal_dept,</if>
+            <if test="dealTime != null  and dealTime != ''">deal_time,</if>
+            <if test="rem != null  and rem != ''">rem,</if>
+            <if test="ordState != null  and ordState != ''">ord_state,</if>
+            <if test="n1 != null  and n1 != ''">n1,</if>
+            <if test="createId != null  and createId != ''">create_id,</if>
+            <if test="disposeResult != null  and disposeResult != ''">dispose_result,</if>
+            <if test="n3 != null  and n3 != ''">n3,</if>
+            <if test="orderId != null  and orderId != ''">order_id,</if>
+            <if test="gaaCategoryValue != null  and gaaCategoryValue != ''">gaa_category_value,</if>
+            <if test="gaaTypeValue != null  and gaaTypeValue != ''">gaa_type_value,</if>
+            <if test="filePast != null  and filePast != ''">file_past,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="ordId != null  and ordId != ''">#{ordId},</if>
+            <if test="ordNo != null  and ordNo != ''">#{ordNo},</if>
+            <if test="gaaName != null  and gaaName != ''">#{gaaName},</if>
+            <if test="gaaLev != null  and gaaLev != ''">#{gaaLev},</if>
+            <if test="ordType != null  and ordType != ''">#{ordType},</if>
+            <if test="sourceIp != null  and sourceIp != ''">#{sourceIp},</if>
+            <if test="objIp != null  and objIp != ''">#{objIp},</if>
+            <if test="gaaType != null  and gaaType != ''">#{gaaType},</if>
+            <if test="gaaCategory != null  and gaaCategory != ''">#{gaaCategory},</if>
+            <if test="sysId != null  and sysId != ''">#{sysId},</if>
+            <if test="belDept != null  and belDept != ''">#{belDept},</if>
+            <if test="resDept != null  and resDept != ''">#{resDept},</if>
+            <if test="createrTime != null  and createrTime != ''">#{createrTime},</if>
+            <if test="sysAdmin != null  and sysAdmin != ''">#{sysAdmin},</if>
+            <if test="appAdmin != null  and appAdmin != ''">#{appAdmin},</if>
+            <if test="gaaDesc != null  and gaaDesc != ''">#{gaaDesc},</if>
+            <if test="dealId != null  and dealId != ''">#{dealId},</if>
+            <if test="dealDept != null  and dealDept != ''">#{dealDept},</if>
+            <if test="dealTime != null  and dealTime != ''">#{dealTime},</if>
+            <if test="rem != null  and rem != ''">#{rem},</if>
+            <if test="ordState != null  and ordState != ''">#{ordState},</if>
+            <if test="n1 != null  and n1 != ''">#{n1},</if>
+            <if test="createId != null  and createId != ''">#{createId},</if>
+            <if test="disposeResult != null  and disposeResult != ''">#{disposeResult},</if>
+            <if test="n3 != null  and n3 != ''">#{n3},</if>
+            <if test="orderId != null  and orderId != ''">#{orderId},</if>
+            <if test="gaaCategoryValue != null  and gaaCategoryValue != ''">#{gaaCategoryValue},</if>
+            <if test="gaaTypeValue != null  and gaaTypeValue != ''">#{gaaTypeValue},</if>
+            <if test="filePast != null  and filePast != ''">#{filePast},</if>
+        </trim>
+    </insert>
+
+    <update id="updateFmSawo" parameterType="FmSawo">
+        update fm_sawo
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="ordNo != null  and ordNo != ''">ord_no = #{ordNo},</if>
+            <if test="gaaName != null  and gaaName != ''">gaa_name = #{gaaName},</if>
+            <if test="gaaLev != null  and gaaLev != ''">gaa_lev = #{gaaLev},</if>
+            <if test="ordType != null  and ordType != ''">ord_type = #{ordType},</if>
+            <if test="sourceIp != null  and sourceIp != ''">source_ip = #{sourceIp},</if>
+            <if test="objIp != null  and objIp != ''">obj_ip = #{objIp},</if>
+            <if test="gaaType != null  and gaaType != ''">gaa_type = #{gaaType},</if>
+            <if test="gaaCategory != null  and gaaCategory != ''">gaa_category = #{gaaCategory},</if>
+            <if test="sysId != null  and sysId != ''">sys_id = #{sysId},</if>
+            <if test="belDept != null  and belDept != ''">bel_dept = #{belDept},</if>
+            <if test="resDept != null  and resDept != ''">res_dept = #{resDept},</if>
+            <if test="createrTime != null  and createrTime != ''">creater_time = #{createrTime},</if>
+            <if test="sysAdmin != null  and sysAdmin != ''">sys_admin = #{sysAdmin},</if>
+            <if test="appAdmin != null  and appAdmin != ''">app_admin = #{appAdmin},</if>
+            <if test="gaaDesc != null  and gaaDesc != ''">gaa_desc = #{gaaDesc},</if>
+            <if test="dealId != null  and dealId != ''">deal_id = #{dealId},</if>
+            <if test="dealDept != null  and dealDept != ''">deal_dept = #{dealDept},</if>
+            <if test="dealTime != null  and dealTime != ''">deal_time = #{dealTime},</if>
+            <if test="rem != null  and rem != ''">rem = #{rem},</if>
+            <if test="ordState != null  and ordState != ''">ord_state = #{ordState},</if>
+            <if test="n1 != null  and n1 != ''">n1 = #{n1},</if>
+            <if test="createId != null  and createId != ''">create_id = #{createId},</if>
+            <if test="disposeResult != null  and disposeResult != ''">dispose_result = #{disposeResult},</if>
+            <if test="n3 != null  and n3 != ''">n3 = #{n3},</if>
+            <if test="orderId != null  and orderId != ''">order_id = #{orderId},</if>
+            <if test="gaaCategoryValue != null  and gaaCategoryValue != ''"> gaa_category_value = #{gaaCategoryValue},</if>
+            <if test="gaaTypeValue != null  and gaaTypeValue != ''"> gaa_type_value = #{gaaTypeValue},</if>
+            <if test="filePast != null  and filePast != ''"> file_past = #{filePast},</if>
+        </trim>
+        where ord_id = #{ordId}
+    </update>
+
+    <delete id="deleteFmSawoById" parameterType="String">
+        delete from fm_sawo where ord_id = #{ordId}
+    </delete>
+
+    <delete id="deleteFmSawoByIds" parameterType="String">
+        delete from fm_sawo where ord_id in
+        <foreach item="ordId" collection="array" open="(" separator="," close=")">
+            #{ordId}
+        </foreach>
+    </delete>
+
+</mapper>

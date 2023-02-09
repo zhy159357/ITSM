@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:include="include :: header('知识管理')"/>
+    <th:block th:include="include :: select2-css" />
+    <th:block th:include="include :: ztree-css"/>
+</head>
+<body class="white-bg">
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+    <form class="form-horizontal m" id="form-content-add">
+        <input name="id" type="hidden" id="id" />
+        <input name="ownerId" type="hidden" id="ownerId"/>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label class="col-xs-2 control-label">知识标题:</label>
+                    <div class="col-sm-10">
+                        <input class="form-control" id="title" name="title" maxlength="60">
+                    </div>
+                </div>
+            </div>          
+        </div>
+        <div class="row">
+        <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">类别名称:</label>
+                    <div class="col-sm-8">
+                        <input class="form-control" th:value="*{categoryName}" readonly>
+                        <input class="form-control" type="hidden" id="categoryId" name="categoryId" th:value="*{categoryId}">
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required ">事件类型:</label>
+                    <div class="col-sm-8">
+                        <input class="form-control" th:value="业务事件单" readonly>
+                        <input class="form-control" type="hidden" name="eventType" th:value="1">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+        	<div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required ">系统名称:</label>
+                    <div class="col-sm-8">
+                        <select id="sysId" name="sysId" class="form-control m-b" onchange="selectOnetitle(this.value)" required>
+                            <option value="">请选择</option>
+                            <option th:each="type : ${sysnameList}" th:text="${type.sysName}"
+                                    th:value="${type.sysId}"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required ">一级标题:</label>
+                    <div class="col-sm-8">
+                        <select id="content" name="content" class="form-control m-b" onchange="selectSectitle(this.value)" required>
+                            <!--  <option value="">请选择</option>
+                            <option th:each="type : ${titleList1}" th:text="${type.name}"
+                                    th:value="${type.id}"></option>-->
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">二级标题:</label>
+                    <div class="col-sm-8">
+                        <select id="sectitle" name="sectitle" class="form-control m-b" onchange="selectThreetitle(this.value)" required>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6" id="threeDiv">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">三级标题:</label>
+                    <div class="col-sm-8">
+                        <select id="threetitle" name="threetitle" class="form-control m-b" required>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>       
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">标签：</label>
+                    <div class="col-sm-8">
+                        <input placeholder="请输入标签" maxlength="40" name="name" id="name" class="form-control" type="text">
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                     <label class="col-sm-4 control-label is-required">权限：</label>
+                        <div class="col-sm-8">
+                            <select name="powerId" id="powerId"  class="form-control m-b">
+                                <option th:text="全国" th:value="0"></option>
+                                <option th:text="总行" th:value="1"></option>
+                            </select>
+                    </div>
+                 </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label ">创建人:</label>
+                    <div class="col-sm-8">
+                        <input class="form-control" id="createName" name="createName" maxlength="20" th:value="${createName}"
+                               readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label ">创建时间:</label>
+                    <div class="col-sm-8">
+                        <input class="form-control" type="text" name="createTime" id="createTime" th:value="${createTime}" readonly>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div th:if="${status=='3'}">
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label is-required ">审核人:</label>
+                        <div class="col-sm-8">
+                            <select name="twoAuditorId" class="form-control m-b" required>
+                                <option value="">请选择</option>
+                                <option th:each="type : ${users}" th:text="${type.pname}"
+                                        th:value="${type.pId}"></option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div th:if="${status=='4'}">
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label is-required ">审核人:</label>
+                        <div class="col-sm-8">
+                            <select name="oneAuditorId" class="form-control m-b" required>
+                                <option value="">请选择</option>
+                                <option th:each="type : ${users}" th:text="${type.pname}"
+                                        th:value="${type.pId}"></option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">关联问题单：</label>
+                    <div class="col-sm-8">
+                        <input placeholder="请输入需关联问题单单号" maxlength="40" autocomplete="off" name="issuefxNo" id="issuefxNo" class="form-control" type="text">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label class="col-xs-2 control-label ">知识描述:</label>
+                    <div class="col-xs-10">
+                        <div id="editor"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+    <h4 class="form-header h4">上传知识附件</h4>
+    <div class="btn-group-sm" id="toolbar" role="group">
+        <a class="btn btn-success" type="button" onclick="upload()">
+            <i class="fa fa-upload"></i> 上传附件
+        </a>
+        <a class="btn btn-primary single disabled" type="button" onclick="downloadAttachment()">
+            <i class="fa fa-edit"></i> 下载附件
+        </a>
+        <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()">
+            <i class="fa fa-remove"></i> 删除附件
+        </a>
+    </div>
+    <div class="col-sm-12 select-table table-striped">
+        <table id="file-table"></table>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-offset-5 col-sm-9">
+        <button type="button" class="btn btn-sm btn-primary" onclick="save()"><i class="glyphicon glyphicon-saved"></i>暂存</button>&nbsp;
+        <button type="button" class="btn btn-sm btn-primary" onclick="submitHandler()"><i class="fa fa-check"></i>提交</button>&nbsp;
+        <button type="button" class="btn btn-sm btn-danger" onclick="closeItem()"><i class="fa fa-window-close"></i>关闭 </button>
+    </div>
+</div>
+<th:block th:include="include :: footer"/>
+<th:block th:include="include :: select2-js" />
+<script th:src="@{/ckeditor/ckeditor.js}"></script>
+<script th:src="@{/ckeditor/pasteImage.js}"></script>
+<script th:src="@{/ckeditor/pasteWord.js}"></script>
+<script th:inline="javascript">
+    var prefix = ctx + "knowledge/business";
+    var prefix_attachment = ctx + "pub/attachment";
+    var editor=CKEDITOR.replace('editor',{extraPlugins : "myplug"});//CKEDITOR4 插件初始化
+    CKPasteImage("editor");
+    CKPasteWord("editor");
+    CKAddLinks("editor");
+    CKFitHeight("editor");
+    $(function() {
+        var options = {
+            url: prefix_attachment + "/list",
+            createUrl: prefix_attachment + "/add",
+            updateUrl: prefix_attachment + "/edit/{id}",
+            removeUrl: prefix_attachment + "/remove",
+            detailUrl: prefix_attachment + "/edit/{id}",
+            sortName: "fileTime",
+            clickToSelect:true,
+            id:'file-table',
+            sortOrder: "desc",
+            singleSelect : true,
+            queryParams:queryParams,
+            modalName: "附件列表",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field : 'atId',
+                    title : '附件ID',
+                    visible : false
+                },
+                {
+                    field : 'fileName',
+                    title : '文件名称'
+                },
+                {
+                    field : 'person.pName',
+                    title : '上传人'
+                },
+                {
+                    field : 'size',
+                    title : '文件大小'
+                },
+                {
+                    field : 'memo',
+                    title : '文件描述'
+                },
+                {
+                    field : 'fileTime',
+                    title : '上传时间'
+                }]
+        };
+        $.table.init(options);
+    });
+
+    // 附件上传页面
+    function upload() {
+        var datas = $("#form-content-add").serializeArray();
+        var issuefxNo = $("#issuefxNo").val();
+        if(typeof(issuefxNo) == "undefined" || issuefxNo == null || issuefxNo === "" ){
+            var url1 = prefix + "/add";
+            var data = $("#form-content-add").serializeArray();
+            $.ajax({
+                url: url1,
+                type: "post",
+                dataType: "json",
+                data: data,
+                success: function (result) {
+                    if (result.code == 0) {
+                        var ownerId = result.data;
+                        // 将ownerId保存到页面隐藏框
+                        $("#ownerId").val(ownerId);
+                        $("#id").val(ownerId);
+                        var url = prefix_attachment + "/upknow/" + ownerId;
+                        $.modal.open("知识内容上传", url);
+                    } else {
+                        //$.modal.alertWarning("上传失败");
+                        $.operate.successCallback(result);
+                    }
+                }
+            });
+        }else {
+            $.ajax({
+                type : "POST",
+                url: prefix + "/selectIssuefxByNo",
+                data : datas,
+                success : function(data){
+                    if(data == 0){
+                        $.modal.alertWarning("没有此问题单号，请去问题单核实！");
+                    }else if(data == 2){
+                        $.modal.alertWarning("已有其它知识关联此问题单！");
+                    }else {
+                        var url1 = prefix + "/add";
+                        var data = $("#form-content-add").serializeArray();
+                        $.ajax({
+                            url: url1,
+                            type: "post",
+                            dataType: "json",
+                            data: data,
+                            success: function (result) {
+                                if (result.code == 0) {
+                                    var ownerId = result.data;
+                                    // 将ownerId保存到页面隐藏框
+                                    $("#ownerId").val(ownerId);
+                                    $("#id").val(ownerId);
+                                    var url = prefix_attachment + "/upknow/" + ownerId;
+                                    $.modal.open("知识内容上传", url);
+                                } else {
+                                    //$.modal.alertWarning("上传失败");
+                                    $.operate.successCallback(result);
+                                }
+                            }
+                        });
+                    }
+                },error:function(){
+                }
+            })
+        }
+    }
+
+    // 附件下载
+    function downloadAttachment() {
+        var rows = $.table.selectFirstColumns();
+        var atId = rows[0];
+        var ownerId = $("#ownerId").val();
+        var url = prefix_attachment + "/download/"+ownerId+"/"+atId;
+        window.location.href = url;
+    }
+
+
+    //** 关闭选项卡 */
+    function closeItem() {
+        var index = parent.layer.getFrameIndex(window.name);
+        parent.layer.close(index);//关闭当前页
+    }
+
+
+    $(function () {
+        var options = {
+            url: prefix_attachment + "/list",
+            createUrl: prefix_attachment + "/add",
+            updateUrl: prefix_attachment + "/edit/{id}",
+            removeUrl: prefix_attachment + "/remove",
+            detailUrl: prefix_attachment + "/edit/{id}",
+            sortName: "fileTime",
+            sortOrder: "desc",
+            queryParams:queryParams,
+            modalName: "附件列表",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'atId',
+                    title: '附件ID',
+                    visible: false
+                },
+                {
+                    field: 'fileName',
+                    title: '文件名称'
+                },
+                {
+                    field: 'ownerId',
+                    title: '上传人'
+                },
+                {
+                    field: 'size',
+                    title: '文件大小'
+                },
+                {
+                    field: 'memo',
+                    title: '文件描述'
+                },
+                {
+                    field: 'fileTime',
+                    title: '上传时间'
+                }]
+        };
+        $.table.init(options);
+        loadTemplate();//加载业务知识模板
+    });
+
+    function queryParams(params) {
+        var search = $.table.queryParams(params);
+        search.ownerId = $("#ownerId").val() == '' ? 'id' : $("#ownerId").val();
+        return search;
+    }
+
+    function submitHandler() {
+        if ($.validate.form()) {
+            var issuefxNo = $("#issuefxNo").val();
+            if(typeof(issuefxNo) == "undefined" || issuefxNo == null || issuefxNo === "" ){
+                //问题单号为空，不校验，直接存
+                var data = $("#form-content-add").serializeArray();
+                data.push({name:"describe",value:editor.getData()});//富文本内容单独获取
+                $.operate.save(prefix + "/add", data);
+            }else {
+                //问题单号不为空，校验
+                var datas = $("#form-content-add").serializeArray();
+                $.ajax({
+                    type : "POST",
+                    url: prefix + "/selectIssuefxByNo",
+                    data : datas,
+                    success : function(data){
+                        if(data == 0){
+                            $.modal.alertWarning("没有此问题单号，请去问题单核实！");
+                        }else if(data == 2){
+                            $.modal.alertWarning("已有其它知识关联此问题单！");
+                        }else {
+                            if ($.validate.form()) {
+                                var data = $("#form-content-add").serializeArray();
+                                data.push({name:"describe",value:editor.getData()});//富文本内容单独获取
+                                $.operate.save(prefix + "/add", data);
+                            }
+                        }
+                    },error:function(){
+                    }
+                });
+            }
+        }else {
+            $.modal.alertWarning("有必填参数未填写。");
+        }
+    }
+
+
+
+    // 存草稿
+    function save() {
+        if ($.validate.form()) {
+            var issuefxNo = $("#issuefxNo").val();
+            if(typeof(issuefxNo) == "undefined" || issuefxNo == null || issuefxNo === "" ){
+                //问题单号为空，不校验，直接存
+                var data = $("#form-content-add").serializeArray();
+                data.push({name:"describes",value:editor.getData()});//富文本内容单独获取
+                $.operate.save(prefix + "/save", data);
+            }else {
+                var datas = $("#form-content-add").serializeArray();
+                $.ajax({
+                    type : "POST",
+                    url: prefix + "/selectIssuefxByNo",
+                    data : datas,
+                    success : function(data){
+                        if(data == 0){
+                            $.modal.alertWarning("没有此问题单号，请去问题单核实！");
+                        }else if(data == 2){
+                            $.modal.alertWarning("已有其它知识关联此问题单！");
+                        }else {
+                            var data = $("#form-content-add").serializeArray();
+                            data.push({name:"describes",value:editor.getData()});//富文本内容单独获取
+                            $.operate.save(prefix + "/save", data);
+                        }
+                    },error:function(){
+                    }
+                });
+            }
+        }else {
+            $.modal.alertWarning("有必填参数未填写。");
+        }
+    };
+
+    //获取一级标题
+    function selectOnetitle(value) {
+        $("#sectitle").html("");
+        $("#threetitle").html("");
+        if(value==null || value=='' ){
+            $("#content").html("");
+        }else{
+            selectTitle("1",null,value,"content");
+        }
+    }
+
+    //获取二级标题
+    function selectSectitle(value) {
+        $("#threetitle").html("");
+        var sysname = $("#sysId").val();
+        if(value==null || value=='' || sysname==null || sysname==''){
+            $("#sectitle").html("");
+        }else{
+            selectTitle("2",value,sysname,"sectitle");
+        }
+    }
+
+    //获取三级标题
+    function selectThreetitle(value) {
+        selectTitle("3",value,$("#sysId").val(),"threetitle")
+    }
+
+    function selectTitle(category,value,sysId,id) {
+        $.ajax({
+            type : "POST",
+            url: prefix + "/selectTitle",
+            data : {category:category,parentId:value,sysId:sysId},
+            success : function(data){
+                var h1 = "<option value=\"\">请选择</option>";//一级标题
+                for(var i=0;i<data.length;i++){
+                    h1 += "<option value='"+data[i].id+"'>"+data[i].name+"</option>"
+                }
+                $("#"+id).html(h1);
+            },error:function(){
+            }
+        });
+    }
+    
+    //加载业务知识模板
+    function loadTemplate(){
+    	$.ajax({
+    		async : false,
+            type : "POST",
+            url: prefix + "/loadtemplate",
+            success : function(data){
+            	if(data!=null){
+            		editor.setData(data.describe);
+            	}	
+            },error:function(){
+            }
+        });
+    }
+</script>
+</body>
+</html>

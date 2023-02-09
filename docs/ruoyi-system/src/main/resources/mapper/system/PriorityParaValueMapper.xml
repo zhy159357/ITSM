@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.PriorityParaValueMapper">
+
+    <resultMap type="priorityParaValue" id="priorityParaValueResult">
+        <id     property="id"     column="id"   jdbcType="BIGINT"  />
+        <result property="pubParavalueIdDegree"   column="pub_paravalue_id_degree"   />
+        <result property="pubParavalueIdScope"  column="pub_paravalue_id_scope"   />
+        <result property="priority"   column="priority"   />
+        <result property="code"   column="code"   />
+    </resultMap>
+
+    <select id="findByCode" parameterType="String"
+        resultMap="priorityParaValueResult" >
+        select
+        pub_paravalue_priority.id,
+        pub_paravalue_priority.pub_paravalue_id_degree,
+        pub_paravalue_priority.pub_paravalue_id_scope,
+        pub_paravalue_priority.priority,
+        pub_paravalue_priority.code
+
+        from pub_paravalue_priority
+
+        where code = #{code}
+
+    </select>
+
+
+
+    <resultMap id="pubParaResult" type="PubPara">
+        <id property="paraId" column="PARA_ID" jdbcType="VARCHAR"></id>
+        <result property="paraName" column="PARA_NAME"></result>
+        <result property="paraExplain" column="PARA_EXPLAIN"></result>
+        <result property="state" column="STATE"></result>
+        <result property="updateFlag" column="UPDATE_FLAG"></result>
+    </resultMap>
+
+
+    <insert id="insertSave" parameterType="PriorityParavalue">
+        insert into pub_paravalue_priority
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id!=null and id!=''">id,</if>
+            <if test="pubParavalueIdDegree!=null and pubParavalueIdDegree!=''">pub_paravalue_id_degree,</if>
+            <if test="pubParavalueIdScope!=null and pubParavalueIdScope!=''">pub_paravalue_id_scope,</if>
+            <if test="priority!=null and priority!=''">priority,</if>
+            <if test="code!=null and code!=''">code</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id!=null and id!=''">#{id},</if>
+            <if test="pubParavalueIdDegree!=null and pubParavalueIdDegree!=''">#{pubParavalueIdDegree},</if>
+            <if test="pubParavalueIdScope!=null and pubParavalueIdScope!=''">#{pubParavalueIdScope},</if>
+            <if test="priority!=null and priority!=''">#{priority},</if>
+            <if test="code!=null and code!=''">#{code}</if>
+        </trim>
+    </insert>
+
+
+</mapper>

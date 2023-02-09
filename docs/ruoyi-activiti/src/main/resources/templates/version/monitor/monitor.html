@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('版本信息')" />
+</head>
+<body>
+<div class="row">
+    <input id="versionInfoId" name="versionInfoId" th:value="*{versionInfoId}" type="hidden">
+    <input id="versionInfoNo" name="versionInfoNo" th:value="*{versionInfoNo}" type="hidden">
+</div>
+<div class="row">
+    <div class="col-sm-12 select-table table-striped">
+        <table id="bootstrap-table"></table>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-sm-offset-5 col-sm-10">
+        <button type="button" class="btn btn-sm btn-primary" onclick="sendMsgToNotDownloadProvince()"><i class="fa fa-check"></i>向未下载省发送短信</button>&nbsp;
+        <button type="button" class="btn btn-sm btn-primary" onclick="sendMsgToNotCompleteProvince()"><i class="fa fa-check"></i>向未完成省发送短信</button>&nbsp;
+        <button type="button" class="btn btn-sm btn-danger" onclick="closeItem()"><i class="fa fa-window-close"></i>关闭</button>
+    </div>
+</div>
+
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: select2-js" />
+<th:block th:include="include :: datetimepicker-js" />
+<script type="text/javascript">
+    var prefix = ctx + "version/taskInfo";
+    $(function() {
+        var options = {
+            url: prefix + "/monitorTaskInfoList",
+            showSearch: false,
+            showRefresh: false,
+            showToggle: false,
+            showColumns: false,
+            clickToSelect: true,
+            singleSelect: true,
+            queryParams: queryParams,
+            modalName: "版本监控",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field : 'taskId',
+                    title : '任务序号ID',
+                    visible: false
+                },
+                {
+                    field : 'versionInfoId',
+                    title : '版本发布单ID',
+                    visible: false
+                },
+                {
+                    field : 'taskNo',
+                    title : '任务单号'
+                },
+                {
+                    field : 'vmBizInfo.versionInfoNo',
+                    title : '版本单号'
+                },
+                {
+                    field : 'taskproducetime',
+                    title : '生成时间'
+                },
+                {
+                    field : 'vmBizInfo.versionInfoName',
+                    title : '版本简称'
+                },
+                {
+                    field : 'ogOrg.orgName',
+                    title : '所属单位'
+                },
+                {
+                    field : 'taskStatus',
+                    title : '任务状态',
+                    formatter: function(value, row, index) {
+                        if(row.taskStatus == '1'){
+                            return "待下载";
+                        }else if(row.taskStatus == '2'){
+                            return "已下载";
+                        }else if(row.taskStatus == '3'){
+                            return "已完成";
+                        }
+                    }
+                }]
+        };
+        $.table.init(options);
+    });
+
+    function queryParams(params) {
+        var search = $.table.queryParams(params);
+        search.versionInfoId = $("#versionInfoId").val();
+        return search;
+    }
+
+    // 向未下载省发送短信
+    function sendMsgToNotDownloadProvince() {
+        var ownerId = $("#versionInfoId").val();
+        var versionInfoNo = $("#versionInfoNo").val();
+        // 标识向未下载省发送短信
+        var flag = "1";
+        // 短信信息
+        var msg = "版本变更单号："+versionInfoNo+"的附件未下载，请及时下载！";
+        var url = prefix + "/message?ownerId="+ownerId+"&msg="+msg+"&flag="+flag;
+        $.modal.open("向未下载省发送短信",url);
+    }
+
+    // 向未完成省发送短信
+    function sendMsgToNotCompleteProvince() {
+        var ownerId = $("#versionInfoId").val();
+        var versionInfoNo = $("#versionInfoNo").val();
+        // 标识向未完成省发送短信
+        var flag = "2";
+        // 短信信息
+        var msg = "版本变更单号："+versionInfoNo+"的任务未确认完成，请及时确认！";
+        var url = prefix + "/message?ownerId="+ownerId+"&msg="+msg+"&flag="+flag;
+        $.modal.open("向未完成省发送短信",url);
+    }
+</script>
+</body>
+</html>

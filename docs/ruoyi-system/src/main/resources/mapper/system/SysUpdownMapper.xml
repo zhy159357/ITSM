@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.SysUpdownMapper">
+
+    <resultMap type="sysUpdown" id="SysUpdownResult">
+        <result property="id_"    column="id_"    />
+        <result property="folder_"    column="folder_"    />
+        <result property="file_name_"    column="file_name_"    />
+        <result property="size_"    column="size_"    />
+        <result property="description_"    column="description_"    />
+        <result property="create_user_"    column="create_user_"    />
+        <result property="create_time_"    column="create_time_"    />
+        <result property="modify_user_"    column="modify_user_"    />
+        <result property="modify_time_"    column="modify_time_"    />
+        <result property="file_path_"    column="file_path_"    />
+        <result property="folderTest"    column="folderTest"    />
+        <result property="createName"    column="createName"    />
+        <result property="invalidation_mark"    column="invalidation_mark"    />
+        <association property="person"      column="create_user_" javaType="OgPerson" resultMap="OgPersonResult" />
+    </resultMap>
+
+    <resultMap type="OgPerson" id="OgPersonResult">
+        <id     property="pId"              column="PID"         />
+        <result property="orgId"            column="ORGID"         />
+        <result property="pName"            column="PNAME"      />
+        <result property="sex"              column="SEX"       />
+        <result property="edu"              column="EDU"       />
+        <result property="birthday"         column="BIRTHDAY"           />
+        <result property="birthPlace"       column="BIRTHPLACE"     />
+        <result property="phone"            column="PHONE"             />
+        <result property="mobilPhone"       column="MOBIL_PHONE"          />
+        <result property="email"            column="EMAIL"        />
+        <result property="address"          column="ADDRESS"            />
+        <result property="createBy"          column="create_by"          />
+        <result property="momer"            column="MOMER"        />
+        <result property="memo"             column="MEMO"        />
+        <result property="updatetime"       column="UPDATE_TIME"      />
+        <result property="invalidationMark" column="INVALIDATION_MARK" />
+        <result property="position"         column="POSITION"       />
+        <result property="leader"           column="LEADER"     />
+        <result property="pOrder"           column="P_ORDER"       />
+        <result property="pflag"            column="P_FLAG"     />
+    </resultMap>
+
+    <resultMap type="SysPubFolder" id="PubFolderResult">
+        <result property="id_" column="id_"/>
+        <result property="name_" column="name_"/>
+        <result property="path_" column="path_"/>
+        <result property="parent_" column="parent_"/>
+        <result property="description_" column="description_"/>
+        <result property="orgs_" column="orgs_"/>
+        <result property="create_user_" column="create_user_"/>
+        <result property="manager_user_" column="manager_user_"/>
+        <result property="create_time_" column="create_time_"/>
+        <result property="modify_user_" column="modify_user_"/>
+        <result property="modify_time_" column="modify_time_"/>
+        <result property="update_time_" column="update_time_"/>
+        <result property="leaf_" column="leaf_"/>
+    </resultMap>
+
+    <sql id="selectUpdownVo">
+        select a.id_,f.name_ as folder_,a.file_name_,a.size_,a.description_,p.pName as create_user_,a.create_time_,a.modify_user_,a.modify_time_,a.file_path_,a.invalidation_mark
+        from PUB_FILE_INDEX a left join og_person p on a.create_user_ = p.pid left join PUB_FOLDER_INDEX f on f.id_ = a.folder_
+	</sql>
+
+    <sql id="selectPubFolderVo">
+        select id_,name_,path_,parent_,description_,orgs_,create_user_,manager_user_,create_time_,modify_user_,modify_time_,update_time_,leaf_
+        from pub_folder_index o
+	</sql>
+
+    <select id="selectUpdownList" parameterType="SysUpdown" resultMap="SysUpdownResult">
+        SELECT
+        A .id_,
+        o.orgName AS folderTest ,
+        f.name_ AS folder_,
+        A .file_name_,
+        A .size_,
+        A .description_,
+        A .create_user_,
+        TO_DATE (
+        A .create_time_,
+        'YYYY-MM-DD hh24:mi:ss'
+        ) AS create_time_,
+        A .modify_user_,
+        A .modify_time_,
+        A .file_path_,
+        A .invalidation_mark,
+        p.PNAME as createName
+        FROM
+        PUB_FILE_INDEX A
+        LEFT JOIN og_person P ON A .create_user_ = P .pid
+        LEFT JOIN PUB_FOLDER_INDEX f ON f.id_ = A .folder_
+        LEFT JOIN OG_ORG o on p.orgid = o.orgid
+        WHERE
+        1 = 1
+        <if test="folder != null  and folder != ''">
+            and  a.folder_ = #{folder}
+        </if>
+        <if test="id_ != null  and id_ != ''">
+            and a.id_ = #{id_}
+        </if>
+        <if test="createName!=null and createName!=''">
+            and p.pName like concat(concat('%',#{createName}),'%')
+        </if>
+        <if test="file_name_ != null and file_name_ != ''">
+            and a.file_name_ like concat(concat('%',#{file_name_}),'%')
+        </if>
+        <if test="folderTest != null and folderTest != ''">
+            and o.orgname like concat(concat('%',#{folderTest}),'%')
+        </if>
+        order by a.create_time_ desc
+    </select>
+
+
+    <select id="selectUpdownMysqlList" parameterType="SysUpdown" resultMap="SysUpdownResult">
+        SELECT
+        A .id_,
+        o.orgName AS folderTest ,
+        f.name_ AS folder_,
+        A .file_name_,
+        A .size_,
+        A .description_,
+        A .create_user_,
+        DATE_FORMAT  (
+        A .create_time_,
+        '%Y-%m-%d %T'
+        ) AS create_time_,
+        A .modify_user_,
+        A .modify_time_,
+        A .file_path_,
+        A .invalidation_mark,
+        p.PNAME as createName
+        FROM
+        PUB_FILE_INDEX A
+        LEFT JOIN og_person P ON A .create_user_ = P .pid
+        LEFT JOIN PUB_FOLDER_INDEX f ON f.id_ = A .folder_
+        LEFT JOIN OG_ORG o on p.orgid = o.orgid
+        WHERE
+        1 = 1
+        <if test="folder != null  and folder != ''">
+            and  a.folder_ = #{folder}
+        </if>
+        <if test="id_ != null  and id_ != ''">
+            and a.id_ = #{id_}
+        </if>
+        <if test="createName!=null and createName!=''">
+            and p.pName like concat(concat('%',#{createName}),'%')
+        </if>
+        <if test="file_name_ != null and file_name_ != ''">
+            and a.file_name_ like concat(concat('%',#{file_name_}),'%')
+        </if>
+        <if test="folderTest != null and folderTest != ''">
+            and o.orgname like concat(concat('%',#{folderTest}),'%')
+        </if>
+        order by a.create_time_ desc
+    </select>
+    <select id="selectList" parameterType="SysUpdown" resultMap="SysUpdownResult">
+        select a.id_,a.folder_, a.file_name_,a.size_,a.description_,a.create_user_,a.create_time_,a.modify_user_,a.modify_time_,a.file_path_,a.invalidation_mark
+        from PUB_FILE_INDEX a where a.folder_ = #{folder_ }
+        order by a.create_time_ desc
+    </select>
+    <select id="selectUpdList" parameterType="SysUpdown" resultMap="SysUpdownResult">
+        select a.id_,a.folder_, a.file_name_,a.size_,a.description_,a.create_user_,a.create_time_,a.modify_user_,a.modify_time_,a.file_path_,a.invalidation_mark
+        from PUB_FILE_INDEX a  order by a.create_time_ desc
+    </select>
+
+    <select id="selectUpdownById" parameterType="String" resultMap="SysUpdownResult">
+        <include refid="selectUpdownVo"/>
+        where a.id_=#{id_}
+    </select>
+
+    <insert id="insertPubTree" parameterType="SysPubFolder" useGeneratedKeys="false" keyProperty="id_">
+        insert into PUB_FOLDER_INDEX(
+        id_,
+        <if test="parent_ != null and parent_ != ''">parent_,</if>
+        <if test="name_ != null and name_ != ''">name_,</if>
+        <if test="folder_ != null and folder_ != ''">folder_,</if>
+        <if test="description_ != null and description_ != ''">description_</if>
+        )values(
+        #{id_},
+        <if test="parent_ != null and parent_ != ''">#{parent_},</if>
+        <if test="name_ != null and name_ != ''">#{name_},</if>
+        <if test="path_ != null and path_ != ''">#{folder_},</if>
+        <if test="description_ != null and description_ != ''">#{description_}</if>
+        )
+    </insert>
+    <!--    左侧树-->
+    <select id="selectFolderTree" parameterType="SysPubFolder" resultMap="PubFolderResult">
+        <include refid="selectPubFolderVo"/>
+        where 1=1
+        <if test="parent_ != null and parent_ != ''">
+            AND o.parent_ = #{parent_}
+        </if>
+        <if test="name_ != null and name_ != ''">
+            AND o.name_ like '%${name_}%'
+        </if>
+        <if test="id_!=null and id_!=''">
+            AND o.id_ = #{id_}
+        </if>
+        order by create_time_ asc
+    </select>
+
+    <select id="selectTreeById" parameterType="SysUpdown" resultMap="SysUpdownResult">
+        <include refid="selectUpdownVo"/>
+        where t.folder_= #{id_}
+    </select>
+
+    <update id="updatePubTree" parameterType="SysPubFolder">
+        update PUB_FOLDER_INDEX
+        <set>
+            <if test="parent_ != null and parent_ != ''">name_ = #{name_},</if>
+            <if test="description_ != null and description_ != ''">description_ = #{description_}</if>
+        </set>
+        where id_ = #{id_}
+    </update>
+
+    <insert id="insertUpdown" parameterType="SysUpdown" useGeneratedKeys="false" keyProperty="id_">
+        insert into PUB_FILE_INDEX(
+        <if test="folder_ != null and folder_ != ''">folder_,</if>
+        <if test="file_name_ != null  and file_name_ != ''">file_name_,</if>
+        <if test="size_ != null  and size_ != ''">size_,</if>
+        <if test="description_ != null and description_ != '' ">description_,</if>
+        <if test="create_user_ != null and create_user_ != '' ">create_user_,</if>
+        <if test="create_time_ != null and create_time_ != ''">create_time_,</if>
+        <if test="modify_user_ != null  and modify_user_ != ''">modify_user_,</if>
+        <if test="modify_time_ != null  and modify_time_ != ''">modify_time_,</if>
+        <if test="file_path_ != null and file_path_ != ''">file_path_,</if>
+        <if test="invalidation_mark != null and invalidation_mark != ''">invalidation_mark,</if>
+        id_
+        )
+        values(
+        <if test="folder_ != null  and folder_ != ''">#{folder_},</if>
+        <if test="file_name_ != null  and file_name_ != ''">#{file_name_},</if>
+        <if test="size_ != null  and size_ != ''">#{size_},</if>
+        <if test="description_ != null and description_ != ''">#{description_},</if>
+        <if test="create_user_ != null and create_user_ != ''">#{create_user_},</if>
+        <if test="create_time_ != null and create_time_ != ''">#{create_time_},</if>
+        <if test="modify_user_ != null  and modify_user_ != ''">#{modify_user_},</if>
+        <if test="modify_time_ != null  and modify_time_ != ''">#{modify_time_},</if>
+        <if test="file_path_ != null and file_path_ != ''">#{file_path_},</if>
+        <if test="invalidation_mark != null  and invalidation_mark != ''">#{invalidation_mark},</if>
+        #{id_}
+        )
+    </insert>
+
+    <update id="updateUpdown" parameterType="SysUpdown">
+        update PUB_FILE_INDEX
+        <set>
+            <if test="file_name_ != null  and file_name_ != ''">file_name_ = #{file_name_},</if>
+            id_ = #{id_}
+        </set>
+        where id_ = #{id_}
+    </update>
+
+    <select id="selectCountById" parameterType="String" resultType="int">
+        select count (1) from PUB_FILE_INDEX
+        where 1=1
+        <if test="id_ != null and id_ != ''"> and folder_ = #{id_} </if>
+    </select>
+
+    <delete id="deleteUpdownByIds" parameterType="String">
+        delete from PUB_FILE_INDEX where id_ in
+        <foreach item="id_" collection="array" open="(" separator="," close=")">
+            #{id_}
+        </foreach>
+    </delete>
+    <delete id="deleteUpdownByTime" parameterType="String">
+        delete from PUB_FILE_INDEX where id_ = #{id_}
+    </delete>
+    <select id="selectUpdListTime" parameterType="SysUpdown" resultMap="SysUpdownResult">
+        select * from PUB_FILE_INDEX  where 1=1
+        <if test="file_name_!=null and file_name_!=''">
+            and file_name_ like concat(concat('%',#{file_name_}),'%')
+        </if>
+        <if test="create_time_!=null and create_time_!=''">
+            and create_time_ like concat(concat('%',#{create_time_}),'%')
+        </if>
+        order by create_time_ desc
+    </select>
+</mapper>

@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('修改类别')" />
+</head>
+<body class="white-bg">
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+    <form class="form-horizontal m" id="form-category-edit" th:object="${category}">
+        <input id="treeId" name="categoryParentId" type="hidden" th:value="${category.categoryParentId}"   />
+        <input id="categoryId" name="categoryId" th:type="hidden" th:value="${categoryId}">
+        <div class="form-group">
+            <label class="col-sm-3 control-label is-required">类别类型编码：</label>
+            <div class="col-sm-8">
+                <input class="form-control" type="text" name="categoryTypeCode" id="categoryTypeCode" th:field="${category.categoryTypeCode}" required>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label is-required">类别类型名称：</label>
+            <div class="col-sm-8">
+                <input class="form-control" type="text" name="categoryTypeName" id="categoryTypeName" th:field="${category.categoryTypeName}" required>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label is-required">上级类别：</label>
+            <div class="col-sm-8">
+                <div class="input-group">
+                    <input  onclick="selectCategoryTree()" th:id="treeName" type="text" placeholder="请选择上级类别" th:field="${category.parentName}" class="form-control" required>
+                    <span class="input-group-addon"><i class="fa fa-search"></i></span>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label is-required">类别编码：</label>
+            <div class="col-sm-8">
+                <input class="form-control" type="text" name="categoryCode" id="categoryCode"  th:field="${category.categoryCode}" required>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label is-required">类别名称：</label>
+            <div class="col-sm-8">
+                <input class="form-control" type="text" name="categoryName" id="categoryName" th:field = "${category.categoryName}" required>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">顺序：</label>
+            <div class="col-sm-8">
+                <input class="form-control" type="text" name="orderNum" id="orderNum" th:field="${category.orderNum}" required>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">备注：</label>
+            <div class="col-sm-8">
+                <textarea id="remark" name="remark" th:field="${category.remark}" class="form-control"></textarea>
+            </div>
+        </div>
+    </form>
+</div>
+<th:block th:include="include :: footer" />
+<script type="text/javascript">
+    var prefix = ctx + "system/category";
+
+   /* $("#form-category-edit").validate({
+        onkeyup: false,
+        rules:{
+            deptName:{
+                remote: {
+                    url: prefix + "/checkDeptNameUnique",
+                    type: "post",
+                    dataType: "json",
+                    data: {
+                        "deptId": function() {
+                            return $("#deptId").val();
+                        },
+                        "parentId": function() {
+                            return $("input[name='parentId']").val();
+                        },
+                        "deptName": function() {
+                            return $.common.trim($("#deptName").val());
+                        }
+                    },
+                    dataFilter: function(data, type) {
+                        return $.validate.unique(data);
+                    }
+                }
+            },
+            orderNum:{
+                digits:true
+            },
+            email:{
+                email:true,
+            },
+            phone:{
+                isPhone:true,
+            },
+        },
+        messages: {
+            "deptName": {
+                remote: "部门已经存在"
+            }
+        },
+        focusCleanup: true
+    });*/
+
+    function submitHandler() {
+        if ($.validate.form()) {
+            $.operate.save(prefix + "/edit", $('#form-category-edit').serialize());
+        }
+    }
+
+    function selectCategoryTree() {
+        var treeId = $("#treeId").val();
+        var categoryId = $.common.isEmpty(treeId) ? "1" : $("#treeId").val();
+        var url = ctx + "system/category/selectCategoryTree/" + categoryId;
+        var options = {
+            title: '选择类别',
+            width: "380",
+            url: url,
+            callBack: doSubmit
+        };
+        $.modal.openOptions(options);
+    }
+
+    function doSubmit(index, layero){
+        var tree = layero.find("iframe")[0].contentWindow.$._tree;
+        var body = layer.getChildFrame('body', index);
+        $("#treeId").val(body.find('#treeId').val());
+        $("#treeName").val(body.find('#treeName').val());
+        layer.close(index);
+    }
+</script>
+</body>
+</html>

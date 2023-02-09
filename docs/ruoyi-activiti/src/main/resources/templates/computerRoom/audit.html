@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('机房进出申请审核')" />
+    <th:block th:include="include :: select2-css" />
+    <style>
+        #cont-form ul li{
+            width: 300px;
+        }
+    </style>
+</head>
+<body class="gray-bg">
+<div class="ui-layout-center">
+    <div class="container-div">
+        <div class="row">
+            <div class="col-sm-12 search-collapse">
+                <form id="cont-form">
+                    <div class="select-list">
+                        <ul>
+                            <li>
+                                <p>出入编号：</p>
+                                <input  autocomplete="off" type="text" name="computerApplyNo"/>
+                            </li>
+                            <li>
+                                <p>处室机构：</p>
+                                <input name="applyOrgId" id="applyOrgId" class="form-control" type="hidden">
+                                <input id="applyOrgName" name="applyOrgName" type="text" class="form-control"
+                                       onclick="selectogOrg()"/>
+                            </li>
+                            <li class="select-time">
+                                <p>预计进入：</p>
+                                <input type="text" class="time-input" id="startCreatTime" placeholder="开始时间"
+                                       name="params[startTime]" readonly/>
+                                <span>-</span>
+                                <input type="text" class="time-input" id="endCreatTime" placeholder="结束时间"
+                                       name="params[endTime]" readonly/>
+                            </li>
+                            <li>
+                                <p>陪同人员：</p>
+                                <select  id="accompanyUserId" name="accompanyUserId" class="form-control" >
+                                    <option value="">请选择</option>
+                                    <option th:each="user : ${userlist}" th:text="${user.pname}" th:value="${user.pId}"></option>
+                                </select>
+                            </li>
+                            <li>
+                                <p>工作内容：</p>
+                                <input width="210px" type="text" name="workContent"/>
+                            </li>
+                            <li>
+                                <a class="btn btn-primary btn-rounded btn-sm" id="sou" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.resetAll('cont-form')"><i class="fa fa-repeat"></i>&nbsp;重置</a>
+                            </li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+
+            <div class="btn-group-sm" id="toolbar" role="group">
+                <a class="btn btn-primary single disabled" onclick="edit()">
+                    <i class="fa fa-edit"></i> 审核
+                </a>
+            </div>
+
+            <div class="col-sm-12 select-table table-bordered">
+                <table id="bootstrap-table"></table>
+            </div>
+        </div>
+    </div>
+</div>
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: layout-latest-js" />
+<th:block th:include="include :: select2-js" />
+<th:block th:include="include :: datetimepicker-js"/>
+<script th:inline="javascript">
+    var prefix_attachment = ctx + "pub/attachment";
+    var prefix = ctx + "computerRoom/apply";
+    var user = [[${user}]];
+    var computer_center = [[${@pubParaValue.selectPubParaValueByParaName('computer_center')}]];
+    var computer_module = [[${@pubParaValue.selectPubParaValueByParaName('computer_module')}]];
+
+
+    //===================================列表==================================
+    $(function() {
+        //搜索绑定键盘点击
+        document.onkeydown = function(e){
+            var ev = document.all ? window.event : e;
+            console.log(ev);
+            if(ev.keyCode==13) {
+                $('#sou').trigger('click');
+                return false;
+            }
+        }
+        var options = {
+            url: prefix + "/auditlist",
+            updateUrl: prefix + "/auditing/{id}",
+            modalName: "机房出入申请审核",
+            clickToSelect:true,
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'id',
+                    title: 'ID',
+                    visible: false
+                },
+                {
+                    field: 'applyUserId',
+                    title: '申请人ID',
+                    visible: false
+                },
+                {
+                    field: 'computerApplyNo',
+                    title: '机房出入编号'
+                },
+                {
+                    field: 'applyUserName',
+                    title: '申请人名称'
+                },
+                {
+                    field: 'applyOrgId',
+                    title: '申请人处室ID',
+                    visible: false
+                },
+                {
+                    field: 'applyOrgName',
+                    title: '申请人处室名称'
+                },
+                {
+                    field: 'computerCenterName',
+                    title: '机房所属中心',
+                    formatter: function (value, row, index) {
+                        return $.table.tooltip(value);
+                    }
+                },
+                {
+                    field: 'computerRoomModuleName',
+                    title: '机房模块',
+                    formatter: function (value, row, index) {
+                        return $.table.tooltip(value);
+                    }
+                },
+                {
+                    field: 'accompanyUserName',
+                    title: '陪同人员'
+                },
+                {
+                    field: 'predictInTime',
+                    title: '预计进入时间'
+                },
+                {
+                    field: 'workContent',
+                    title: '工作内容',
+                    formatter: function (value, row, index) {
+                        return $.table.tooltip(value);
+                    }
+                },
+                {
+                    field: 'workDescription',
+                    title: '具体工作描述',
+                    formatter: function (value, row, index) {
+                        return $.table.tooltip(value);
+                    }
+                },
+                {
+                    field: 'applyState',
+                    title: '状态',
+                    formatter: function (value, row, index) {
+                        if(row.applyState == -2){
+                            return "已作废";
+                        } else if(row.applyState == -1){
+                            return "暂存";
+                        } else if(row.applyState == 0){
+                            return "已申请";
+                        }else if (row.applyState == 1){
+                            return "审批通过";
+                        }else if(row.applyState == 2){
+                            return "退回";
+                        }else if(row.applyState == 3){
+                            return "已登记";
+                        }
+                    }
+                },
+                {
+                    field: 'createTimes',
+                    title: '创建时间',
+                    visible: false
+                }]
+        };
+        $.table.init(options);
+    });
+
+    function edit() {
+        var rows = $("#bootstrap-table").bootstrapTable('getSelections');
+        var len = rows.length;
+        if (len == 0) {
+            $.modal.alertWarning("请选择要审核的数据");
+            return;
+        }
+        var row = rows[0];
+        var changeStatus = row.applyState;
+        if(changeStatus=='0'){
+            table.set();
+            var url = prefix + "/auditEdit/" + row.id;
+            $.modal.openNoColse("审核", url);
+
+            // table.set();
+            // $.modal.openNoColse("审核" + table.options.modalName, $.operate.editUrl(id));
+        }else{
+            $.modal.alertWarning("已审核");
+            return;
+        }
+    };
+
+
+
+    // 选择创建机构（只能单选）
+    function selectogOrg() {
+        $.modal.open("选择创建机构", prefix + "/selectogOrg");
+    }
+    //选择陪同人员
+    function selectAccompanyUser(){
+        $.modal.open("选择陪同人员", prefix + "/selectAccompanyUser");
+    }
+
+    // 选择应用系统（只能单选）
+    function selectOgSysListByCondition() {
+        $.modal.open("选择应用系统", prefix + "/sysGrouplist");
+    }
+
+
+
+    //** 关闭选项卡 */
+    function closeItem() {
+        var index = parent.layer.getFrameIndex(window.name);
+        parent.layer.close(index);//关闭当前页
+    }
+
+
+
+</script>
+</body>
+</html>

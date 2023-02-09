@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.form.mapper.ImplRecordMapper">
+    
+    <resultMap type="ImplRecord" id="ImplRecordResult">
+        <result property="id"    column="id"    />
+        <result property="userid"    column="userid"    />
+        <result property="changeTaskNo"    column="changeTaskNo"    />
+        <result property="taskStatus"    column="taskStatus"    />
+        <result property="startTime"    column="start_time"    />
+        <result property="endTime"    column="end_time"    />
+        <result property="remarks"    column="remarks"    />
+        <result property="effectUser"    column="effect_user"    />
+        <result property="flag"    column="flag"    />
+        <result property="changeNo"    column="changeNo"    />
+        <result property="effectSystem"    column="effectSystem"    />
+        <result property="changeDesc"    column="changeDesc"    />
+        <result property="taskNo"    column="taskNo"    />
+        <result property="changeType"    column="changeType"    />
+        <result property="changeWay"    column="changeWay"    />
+        <result property="changeStartTime"    column="changeStartTime"    />
+        <result property="changeEndTime"    column="changeEndTime"    />
+        <result property="changeStatus"    column="changeStatus"    />
+        <result property="startDepartment"    column="startDepartment"    />
+        <result property="startUser"    column="startUser"    />
+        <result property="holdUser"    column="holdUser"    />
+        <result property="checkUser"    column="checkUser"    />
+        <result property="params.changeId"    column="changeId"    />
+        <result property="params.changeTaskId"    column="changeTaskId"    />
+        <result property="params.changeProcessId"    column="changeProcessId"    />
+        <result property="params.changeTaskProcessId"    column="changeTaskProcessId"    />
+    </resultMap>
+    <sql id="selectImplRecordVo">
+        select id, userid, changeTaskNo, taskStatus,start_time,end_time,remarks,effect_user,flag from impl_record
+    </sql>
+    <sql id="selectImplRecordList">
+        SELECT t1.id,t1.flag,t1.start_time,t1.effect_user,t1.end_time,t1.remarks,t2.changeNo,t2.extra1 as changeTaskNo,t2.referSys as effectSystem,t3.description as changeDesc,t2.mergeTaskNo as taskNo,t3.type as changeType,t2.deployWay as changeWay,
+               t3.planStartDate as changeStartTime,t3.planCompleteDate as changeEndTime, t3.changeStatus   as changeStatus,t3.startDept as startDepartment,t3.starter  as startUser,
+               (select t5.pname from og_person t5 where t5.pid_crc=CRC32(t4.create_by) )as holdUser,t3.id as changeId,t3.instance_id as changeProcessId ,t2.id as changeTaskId,t2.instance_id as changeTaskProcessId,
+               t2.currentProcessor as checkUser from impl_record t1
+             left join design_biz_changetask t2 on t1.changeTaskNo=t2.extra1
+             left join design_biz_change t3 on t2.changeNo=t3.extra1
+             left join sys_biz_file t4 on concat('changeTask',t2.id)=t4.ticket_id
+    </sql>
+    <select id="selectImplRecordListVo" parameterType="ImplRecord" resultMap="ImplRecordResult">
+        <include refid="selectImplRecordList"/>
+        <where>
+            t1.taskStatus ='预审中'
+            <if test="changeTaskNo != null  and changeTaskNo != ''"> and t2.extra1 like concat(concat('%', #{changeTaskNo}), '%') </if>
+            <if test="effectSystem != null  and effectSystem != ''"> and t2.referSys  like concat(concat('%', #{effectSystem}), '%') </if>
+            <if test="taskNo != null  and taskNo != ''"> and t2.mergeTaskNo like concat(concat('%', #{taskNo}), '%') </if>
+            <if test="checkUser != null  and checkUser != ''"> and t2.currentProcessor like concat(concat('%', #{checkUser}), '%') </if>
+            <if test="changeType != null  and changeType != ''"> and t3.type = #{changeType}</if>
+            <if test="changeStartTime != null  and changeStartTime != ''"> and t3.planStartDate = #{changeStartTime}</if>
+            <if test="params.startTimeStart != null  and params.startTimeStart != ''"> and t1.start_time &gt;= #{params.startTimeStart} </if>
+            <if test="params.startTimeEnd != null  and params.startTimeEnd != ''"> and t1.start_time &lt;= #{params.startTimeEnd} </if>
+            <if test="params.changeStartTimeStart != null  and params.changeStartTimeStart != ''"> and t3.planStartDate &gt;= #{params.changeStartTimeStart} </if>
+            <if test="params.changeStartTimeEnd != null  and params.changeStartTimeEnd != ''"> and t3.planStartDate &lt;= #{params.changeStartTimeEnd} </if>
+            <if test="holdUser != null  and holdUser != ''"> and t4.create_by = #{holdUser}</if>
+            <if test="effectUser != null  and effectUser != ''"> and t1.effect_user like concat(concat('%', #{effectUser}), '%') </if>
+            <if test="changeStatus != null  and changeStatus != ''"> and t3.changeStatus = #{changeStatus}</if>
+            <if test="flag eq 0 and flag != null  and flag != ''"> and t1.flag  !='1' </if>
+        </where>
+    </select>
+
+
+
+    <select id="selectImplRecordList" parameterType="ImplRecord" resultMap="ImplRecordResult">
+        <include refid="selectImplRecordVo"/>
+        <where>  
+            <if test="userid != null  and userid != ''"> and userid = #{userid}</if>
+            <if test="changeTaskNo != null  and changeTaskNo != ''"> and changeTaskNo = #{changeTaskNo}</if>
+            <if test="taskStatus != null  and taskStatus != ''"> and taskStatus = #{taskStatus}</if>
+        </where>
+    </select>
+
+    <select id="selectImplRecordListAll" parameterType="ImplRecord" resultType="java.util.Map">
+        select t1.*,t2.taskStatus as recodeStatus,t3.id as changeId,t3.instance_id as changeProcessId ,t1.id as changeTaskId,t1.instance_id as changeTaskProcessId from design_biz_changetask t1
+            LEFT JOIN impl_record t2 on t1.extra1 =t2.changeTaskNo
+            LEFT JOIN design_biz_change t3 on t1.changeNo=t3.extra1
+        <where>
+            <if test="effectUser != null  and effectUser != ''"> and t2.effect_user = #{effectUser} and t2.flag ='1' </if>
+        </where>
+        ORDER BY t1.sequence desc
+    </select>
+    <select id="selectImplRecordById" parameterType="Long" resultMap="ImplRecordResult">
+        <include refid="selectImplRecordVo"/>
+        where id = #{id}
+    </select>
+    <select id="selectImplRecordById" parameterType="Long" resultMap="ImplRecordResult">
+        <include refid="selectImplRecordVo"/>
+        where id = #{id}
+    </select>
+    <insert id="insertImplRecord" parameterType="ImplRecord">
+        insert into impl_record
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null ">id,</if>
+            <if test="userid != null  and userid != ''">userid,</if>
+            <if test="changeTaskNo != null  and changeTaskNo != ''">changeTaskNo,</if>
+            <if test="taskStatus != null  and taskStatus != ''">taskStatus,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null ">#{id},</if>
+            <if test="userid != null  and userid != ''">#{userid},</if>
+            <if test="changeTaskNo != null  and changeTaskNo != ''">#{changeTaskNo},</if>
+            <if test="taskStatus != null  and taskStatus != ''">#{taskStatus},</if>
+         </trim>
+    </insert>
+
+    <update id="updateImplRecord" parameterType="ImplRecord">
+        update impl_record
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userid != null  and userid != ''">userid = #{userid},</if>
+            <if test="changeTaskNo != null  and changeTaskNo != ''">changeTaskNo = #{changeTaskNo},</if>
+            <if test="taskStatus != null  and taskStatus != ''">taskStatus = #{taskStatus},</if>
+            <if test="startTime != null  and startTime != ''">start_time = #{startTime},</if>
+            <if test="endTime != null  and endTime != ''">end_time = #{endTime},</if>
+            <if test="remarks != null ">remarks = #{remarks},</if>
+            <if test="effectUser != null  and effectUser != ''">effect_user = #{effectUser},</if>
+            <if test="flag != null  and flag != ''">flag = #{flag},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteImplRecordById" parameterType="Long">
+        delete from impl_record where id = #{id}
+    </delete>
+
+    <delete id="deleteImplRecordByIds" parameterType="String">
+        delete from impl_record where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    <update id="issueImplRecordListVo" parameterType="String">
+        update impl_record set flag='1' where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+    <select id="selectAllEffectUser"  resultType="String">
+        select effect_user From impl_record where flag='1' GROUP BY effect_user
+    </select>
+    <update id="updateImplRecordChangeTaskNo" parameterType="ImplRecord">
+        update impl_record set taskStatus=#{taskStatus} where changeTaskNo=#{changeNo}
+    </update>
+</mapper>

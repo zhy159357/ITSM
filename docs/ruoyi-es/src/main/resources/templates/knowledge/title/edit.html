@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('修改标题')" />
+    <th:block th:include="include :: select2-css" />
+</head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form class="form-horizontal m" id="form-title-edit" th:object="${knowledgeTitle}">
+            <input name="typeinfoId" th:field="*{id}" type="hidden">
+            <div class="form-group">
+                <label class="col-sm-3 control-label is-required">标题名称：</label>
+                <div class="col-sm-8">
+                    <input name="name" th:field="*{name}" maxlength="50" class="form-control" type="text" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label is-required">事件类型：</label>
+                <div class="col-sm-8">
+                    <input class="form-control" type="text" th:value="监控事件单" readonly>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label is-required">标题分类：</label>
+                <div class="col-sm-8">
+                    <select id="category" name="category" th:field="*{category}" class="form-control m-b" onchange="selectParentTitle(value)">
+                        <option th:text="一级标题" th:value="1"></option>
+                        <option th:text="二级标题" th:value="2"></option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group" id="sys">
+                <label class="col-sm-3 control-label is-required">应用系统：</label>
+                <div class="col-sm-8">
+                    <select id="system" name="sysId" th:with="type=${@knowledgeTitleService.getOgSysAll()}" class="form-control m-b" onchange="setName()" required>
+                    	<option th:each="dict : ${type}" th:text="${dict.caption}" th:value="${dict.sysId}"></option>
+                    </select>
+                </div>
+            </div>
+        </form>
+    </div>
+    <th:block th:include="include :: footer" />
+    <th:block th:include="include :: select2-js" />
+    <script th:src="@{/js/validator.js}"></script>
+    <script type="text/javascript">
+        var prefix = ctx + "knowledge/title";
+        $("#form-title-edit").validate({
+        	onkeyup: false,
+        	rules:{
+        		name:{
+        			maxlength2:60
+        		}
+        	},
+            focusCleanup: true
+        });
+
+        function submitHandler() {
+            if ($.validate.form()) {
+            	var data = $("#form-title-edit").serializeArray();
+            	for(var i=0;i<data.length;i++){
+            		if(data[i].name=="sysId"){
+            			if("[(${knowledgeTitle.sysId})]" == data[i].value){
+            				//如果修改前后sysid一致，不传sysid做唯一性校验
+            				data.splice(i,1);
+            			}
+            		}
+            	}           	
+                $.operate.save(prefix + "/edit", data);
+            }
+        } 
+        function selectParentTitle(value){
+        	if(value=="1"){
+        		$("#sys").show();
+        		$("#name").attr("readonly","readonly");
+        		$("#name").val($("#system option:selected").text());
+        	}else{
+        		$("#sys").hide();
+        		$("#name").removeAttr("readonly","readonly");
+        		$("#name").val("");
+        	}
+        }
+        function setName(){
+        	$("#name").val($("#system option:selected").text());
+        }
+        $(function() {
+        	var category = "[(${knowledgeTitle.category})]";
+			if(category == "1"){
+				selectParentTitle(1);
+				var sysid = "[(${knowledgeTitle.sysId})]";
+				$("#system").val(sysid).select2();
+				setName();
+			}else{
+				selectParentTitle(2);
+			}
+        	
+        })
+    </script>
+</body>
+</html>

@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+	<th:block th:include="include :: header('选择审核人')" />
+</head>
+
+<body class="gray-bg">
+<div class="container-div">
+	<div class="row">
+		<div class="col-sm-12 search-collapse">
+			<form id="person-form">
+				<input type="hidden" id="groupId" name="groupId" th:value="*{groupId}">
+				<div class="select-list">
+					<ul>
+						<li>
+							组名称：<input type="text" name="pName"/>
+						</li>
+						<li>
+							<a class="btn btn-primary btn-rounded btn-sm" id="assignPerson" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+							<a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+						</li>
+					</ul>
+				</div>
+			</form>
+		</div>
+
+		<div class="col-sm-12 select-table table-striped">
+			<table id="bootstrap-table"></table>
+		</div>
+	</div>
+</div>
+<th:block th:include="include :: footer" />
+<script th:inline="javascript">
+    var prefix = ctx + "problem/sheet";
+
+    $(function() {
+        // 回车键搜索
+        document.onkeydown = function(e){
+            var ev = document.all ? window.event : e;
+            if(ev.keyCode==13) {
+                $('#assignPerson').trigger('click');
+                return false;
+            }
+        };
+
+        var options = {
+            url: prefix + "/selectAssignedPerson",
+            queryParams: queryParams,
+            modalName: "问题单审核人",
+            showSearch: false,
+            showRefresh: false,
+            showToggle: false,
+            showColumns: false,
+            clickToSelect: true,
+            singleSelect : true,
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'pId',
+                    title: '人员ID',
+                    visible: false
+                },
+                {
+                    field: 'pName',
+                    title: '姓名'
+                },
+                {
+                    field: 'sex',
+                    title: '性别',
+                    formatter: function(value, row, index) {
+                        if(row.sex == '1'){
+                            return "男";
+                        }else{
+                            return "女";
+                        }
+                    }
+                },
+                {
+                    field: 'mobilPhone',
+                    title: '手机号'
+                },
+                {
+                    field: 'orgname',
+                    title: '所属机构'
+                },
+                {
+                    field: 'mome',
+                    title: '备注'
+                }]
+        };
+        $.table.init(options);
+    });
+
+    function queryParams(params) {
+        var search = $.table.queryParams(params);
+        return search;
+    }
+
+    function submitHandler(index, layero) {
+        var rows = $.table.selectFirstColumns();
+        if (rows.length == 0) {
+            $.modal.alertWarning("请至少选择一条记录");
+            return;
+        }
+        var pNameRows = $.table.selectColumns('pName');
+        $.modal.close();
+        // 父页面的方法
+        // parent.selectUsers();
+        // 父页面的变量
+
+        // 弹框选择赋值
+        parent.$('#problemSolver').val(rows.join());
+        parent.$('#problemSolverName').val(pNameRows.join());
+
+    }
+
+</script>
+</body>
+</html>

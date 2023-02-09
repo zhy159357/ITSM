@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+	<th:block th:include="include :: header('工作组列表')" />
+	<th:block th:include="include :: layout-latest-css" />
+	<th:block th:include="include :: ztree-css" />
+</head>
+<body class="gray-bg">
+	<div class="ui-layout-center">
+		<div class="container-div">
+			<div class="row">
+				<div class="col-sm-12 search-collapse">
+					<form id="group-form">
+						<input type="hidden" id="deptId" name="orgId">
+		                <!--<input type="hidden" id="parentId" name="parentId">-->
+						<div class="select-list">
+							<ul>
+								<li>
+									工作组名称：<input type="text" name="grpName"/>
+								</li>
+								<li>
+									<a class="btn btn-primary btn-rounded btn-sm" id="ss" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+								    <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+								</li>
+							</ul>
+						</div>
+					</form>
+				</div>
+		        
+		        <div class="col-sm-12 select-table table-striped">
+				    <table id="bootstrap-table"></table>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<th:block th:include="include :: footer" />
+	<th:block th:include="include :: layout-latest-js" />
+	<th:block th:include="include :: ztree-js" />
+	<script th:inline="javascript">
+		var datas = [[${@dict.getParaType('post_type')}]];
+		var prefix = ctx + "system/work2";
+
+		$(function() {
+		    var panehHidden = false;
+		    if ($(this).width() < 769) {
+		        panehHidden = true;
+		    }
+		    $('body').layout({ initClosed: panehHidden, west__size: 185 });
+	     	// 回到顶部绑定
+	    	if ($.fn.toTop !== undefined) {
+	    		var opt = {
+	    			win:$('.ui-layout-center'),
+	    			doc:$('.ui-layout-center')
+	    		};
+	    		$('#scroll-up').toTop(opt);
+	    	}
+		    queryWorkList();
+		    /*queryDeptTree();*/
+		});
+		document.onkeydown = function(e){
+			var ev = document.all ? window.event : e;
+			console.log(ev);
+			if(ev.keyCode==13) {
+				$('#ss').trigger('click');
+				return false;
+			} //搜索逻辑
+		}
+
+		function queryWorkList() {
+		    var options = {
+		        url: prefix + "/selectGroupByUserId",
+		        createUrl: prefix + "/add",
+		        updateUrl: prefix + "/edit/{id}",
+		        removeUrl: prefix + "/remove",
+		        exportUrl: prefix + "/export",
+		        importUrl: prefix + "/importData",
+		        importTemplateUrl: prefix + "/importTemplate",
+		        modalName: "工作组",
+		        columns: [
+		        {
+		            field: 'groupId',
+		            title: '工作组ID',
+                    visible : false
+		        },
+		        {
+		            field: 'grpName',
+		            title: '工作组名称'
+		        },
+				{
+					field: 'remark',
+					title: '工作组组长名称'
+				},
+		        {
+		            field: 'groupperson.gpOsition',
+		            title: '职位',
+					formatter: function (value, row, index) {
+						return $.table.selectPubParaValueData(datas, value);
+					}
+		        },
+		        {
+		            field: 'createTime',
+		            title: '创建时间'
+		        }]
+		    };
+		    $.table.init(options);
+		}
+		
+		function queryDeptTree()
+		{
+			var url = ctx + "system/dept/treeData";
+			var options = {
+		        url: url,
+		        expandLevel: 2,
+		        onClick : zOnClick
+		    };
+			$.tree.init(options);
+			
+			function zOnClick(event, treeId, treeNode) {
+				$("#deptId").val(treeNode.id);
+				$("#parentId").val(treeNode.pId);
+				$.table.search();
+			}
+		}
+		
+		$('#btnExpand').click(function() {
+			$._tree.expandAll(true);
+		    $(this).hide();
+		    $('#btnCollapse').show();
+		});
+		
+		$('#btnCollapse').click(function() {
+			$._tree.expandAll(false);
+		    $(this).hide();
+		    $('#btnExpand').show();
+		});
+
+        /* 工作组管理-修改-选择部门树 */
+        function selectDeptTree() {
+            var deptId = $.common.isEmpty($("#treeId").val()) ? "310100001" : $("#treeId").val();
+            var url = ctx + "system/dept/selectDeptTree/" + deptId;
+            var options = {
+                title: '选择部门',
+                width: "380",
+                url: url,
+                callBack: doSubmit
+            };
+            $.modal.openOptions(options);
+        }
+
+        function doSubmit(index, layero){
+            var tree = layero.find("iframe")[0].contentWindow.$._tree;
+            var body = layer.getChildFrame('body', index);
+            $("#deptId").val(body.find('#treeId').val());
+            $("#deptName").val(body.find('#treeName').val());
+            layer.close(index);
+        }
+	</script>
+</body>
+<!-- 导入区域 -->
+<script id="importTpl" type="text/template">
+<form enctype="multipart/form-data" class="mt20 mb10">
+	<div class="col-xs-offset-1">
+		<input type="file" id="file" name="file"/>
+		<div class="mt10 pt5">
+			<input type="checkbox" id="updateSupport" name="updateSupport" title="如果登录账户已经存在，更新这条数据。"> 是否更新已经存在的用户数据
+			 &nbsp;	<a onclick="$.table.importTemplate()" class="btn btn-default btn-xs"><i class="fa fa-file-excel-o"></i> 下载模板</a>
+		</div>
+		<font color="red" class="pull-left mt10">
+			提示：仅允许导入“xls”或“xlsx”格式文件！
+		</font>
+	</div>
+</form>
+</script>
+</html>

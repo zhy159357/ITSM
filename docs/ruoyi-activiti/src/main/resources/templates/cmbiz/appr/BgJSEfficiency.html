@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+
+
+<head>
+    <th:block th:include="include :: header('变更及时效率报表')"/>
+    <th:block th:include="include :: select2-css"/>
+</head>
+<body class="gray-bg">
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-12 search-collapse">
+            <form id="formId">
+                <div class="select-list">
+                    <ul>
+                        <h4 style="color:#f00330;" align="center">默认加载最近一个月的数据，可根据实施日期筛选条件进行范围查询</h4>
+                        <li>
+                            <p>计划实施日期起：</p>
+                            <input type="text" class="time-input" id="startCreatTime" placeholder="计划实施日期起"
+                                   name="params[startCreatTime]" readonly/>
+                        </li>
+                        <li>
+                            <p>计划实施日期止：</p>
+                            <input type="text" class="time-input" id="endCreatTime" placeholder="计划实施日期止"
+                                   name="params[endCreatTime]" readonly/>
+                        </li>
+                        <li>
+                            <a class="btn btn-primary btn-rounded btn-sm" id="searchBut" onclick="$.table.search()"><i
+                                    class="fa fa-search"></i>&nbsp;搜索</a>
+                            <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i
+                                    class="fa fa-refresh"></i>&nbsp;重置</a>
+                        </li>
+                    </ul>
+                </div>
+            </form>
+        </div>
+        <div class="btn-group-sm" id="toolbar" role="group">
+            <div class="btn-group">
+                <button data-toggle="dropdown" class="btn btn-warning btn-sm glyphicon glyphicon-export">导出<span
+                        class="caret"></span>
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a onclick="$.table.exportExcel()">导出所有</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="col-sm-12 select-table table-striped">
+            <table id="bootstrap-table"></table>
+        </div>
+    </div>
+</div>
+<th:block th:include="include :: footer"/>
+<th:block th:include="include :: select2-js"/>
+<th:block th:include="include :: datetimepicker-js"/>
+<script th:inline="javascript">
+    var prefix = ctx + "system/single";
+    $(function () {
+        // 回车键搜索
+        document.onkeydown = function(e){
+            var ev = document.all ? window.event : e;
+            if(ev.keyCode==13) {
+                $('#searchBut').trigger('click');
+                return false;
+            }
+        };
+        var options = {
+            url: prefix + "/selectCmBizJs",
+            pagination: false,
+            singleSelect: true,
+            clickToSelect: true,
+            exportUrl: prefix + "/exportjs",
+            modalName: "资源变更单及时统计",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'orgname',
+                    title: '处室'
+                },
+                {
+                    field: 'cmBizBgNum',
+                    title: '变更单总数'
+                },
+                {
+                    field: 'isJSNum',
+                    title: '及时变更单总数'
+                },
+                {
+                    field: 'isNotJSNum',
+                    title: '不及时变更单总数'
+                },
+                {
+                    field: 'countEfficiency',
+                    title: '及时变更百分比'
+                }]
+        };
+        $.table.init(options);
+    });
+</script>
+</body>
+</html>

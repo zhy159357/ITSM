@@ -1,0 +1,1270 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:margin-top="http://www.w3.org/1999/xhtml">
+<head>
+    <th:block th:include="include :: header('新增7环境单')"/>
+    <th:block th:include="include :: ztree-css"/>
+    <th:block th:include="include :: footer"/>
+    <th:block th:include="include :: ztree-js"/>
+    <th:block th:include="include :: select2-css"/>
+    <th:block th:include="include :: select2-js"/>
+    <th:block th:include="include :: jquery-cxselect-js"/>
+    <th:block th:include="include :: bootstrap-fileinput-js"/>
+    <th:block th:include="include :: datetimepicker-js"/>
+    <th:block th:include="include :: datetimepicker-css"/>
+
+
+    <!--    <script type="text/javascript" th:src="@{/js/jquery-2.1.1.js}"></script>-->
+
+    <link href="../static/css/custom.css" th:href="@{/css/custom.css}" rel="stylesheet"/>
+    <style>
+        .main-container {
+            padding: 0;
+            margin: 0 auto;
+            font-family: "Lucida Grande", Verdana, Arial, "Bitstream Vera Sans", sans-serif;
+            font-size: 11px;
+        }
+
+        .youi-dialog-container {
+            height: 500px;
+            overflow-y: auto;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, 350px 350px);
+            grid-auto-flow: column;
+            grid-gap: 10px;
+            background-color: #f3f3f4;
+            padding: 10px;
+        }
+
+        .grid-container > div {
+            background-color: #0d8ddb;
+            text-align: left;
+            padding: 20px 0;
+            font-size: 30px;
+            border-radius: 8px;
+        }
+
+        .btnext {
+            background: blue;
+            color: #fff;
+            text-align: center;
+            border-radius: 10px;
+            float: left;
+            margin-right: 10px;
+            padding: 10px 10px;
+            cursor: pointer;
+        }
+
+        ul, li {
+            list-style: none;
+            margin: 0px;
+            padding: 0px;
+        }
+
+        .bar-box {
+            position: relative;
+            top: 11px;
+            left: 10px;
+        }
+
+        .bar-content {
+            position: relative;
+            z-index: 9999;
+        }
+
+        .bar-bg {
+            width: 100%;
+            height: 6px;
+            background: #ddd;
+            position: relative;
+        }
+
+        .bar-color {
+            width: 0%;
+            height: 6px;
+            background: #64bd2e;
+            position: absolute;
+            left: 0px;
+            top: 0px;
+            /* position: relative;
+            top: -32px; */
+        }
+
+        .bar-circle-ul {
+        }
+
+        .bar-circle-ul li {
+            float: left;
+        }
+
+        .bar-circle-ul li div {
+            width: 32px;
+            height: 32px;
+            text-align: center;
+            line-height: 32px;
+            display: inline-block;
+            border-radius: 50%;
+            background: #ddd;
+            color: #252525;
+            position: relative;
+        }
+
+        .bar-circle-ul li div span {
+            position: absolute;
+            top: -33px;
+            color: #7c7c7c;
+            left: -254%;
+            width: 200px;
+        }
+    </style>
+</head>
+<body class="white-bg">
+
+
+<div id="accountDiv">
+
+
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <div id="test" style="margin: 0 auto;margin-top: 10px;margin-left: 1px;height: 40px; padding: 36px 0px;">
+            <div id="luStep">
+            </div>
+        </div>
+        <form class="form-horizontal m" id="form-issue-add">
+            <input id="id" name="id" type="hidden" th:value="*{twWorkOrder.id}"/>
+            <input id="createBy" name="createBy" type="hidden" th:value="*{twWorkOrder.createBy}"/>
+            <input id="status" name="status" type="hidden" th:value="*{twWorkOrder.status}"/>
+            <input id="instanceId" name="instanceId" type="hidden" th:value="*{twWorkOrder.instanceId}"/>
+            <h4 class="form-header h4">基本信息</h4>
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label is-required">环境单号：</label>
+                        <div class="col-sm-8">
+                            <input class="form-control" type="text" name="workNum" id="workNum"
+                                   th:value="*{twWorkOrder.workNum}" readonly>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label is-required"> 标题：</label>
+                        <div class="col-sm-8">
+                            <input name="title" id="title" class="form-control" type="text" maxlength="11"
+                                   th:value="${twWorkOrder.title}" readonly required>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label is-required">应用系统：</label>
+                        <div class="col-sm-8">
+                            <select id="appSystem" name="appSystem" class="form-control"
+                                    th:with="issueFenleis=${@pubParaValue.selectPubParaValueByParaName('WT_FENLEI')}"
+                                    onchange="getFmKindOneList()" required disabled>
+                                <option th:text="${twWorkOrder.appSystem}"></option>
+                                <option th:each="itype : ${issueFenleis}" th:text="${itype.valueDetail}"
+                                        th:value="${twWorkOrder.appSystem}"
+                                        th:selected="${itype.value==issueFenlei}"></option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label is-required">工单类型：</label>
+                        <div class="col-sm-8">
+                            <input name="workType" id="workType" class="form-control" type="text" maxlength="11"
+                                   th:value="环境搭建" required readonly>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label is-required">工单状态：</label>
+                        <div class="col-sm-8">
+                            <input class="form-control" type="text" name="workState" id="workState" th:value="新建"
+                                   readonly>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label is-required">项目编号：</label>
+                        <div class="col-sm-8">
+                            <input name="projectNum" id="projectNum" class="form-control" type="text" maxlength="11"
+                                   th:value="${twWorkOrder.projectNum}" required readonly>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label is-required">需求编号：</label>
+                        <div class="col-sm-8">
+                            <input name="demandNum" id="demandNum" class="form-control" type="text" maxlength="11"
+                                   th:value="${twWorkOrder.demandNum}" required readonly>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-6">
+
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label is-required">接口人：</label>
+                        <div class="col-sm-8">
+                            <select name="contact" style="background-color: #fff; opacity: 1;" class="form-control"
+                                    th:with="type=${@iOgPersonService.selectOgPersonByDeptId('310200193')}"
+                                    th:field="*{twWorkOrder.contact}" disabled>
+                                <option value=""></option>
+                                <option th:each="paraValue : ${type}" th:text="${paraValue.pName}"
+                                        th:value="${paraValue.pId}"
+                                        th:selected="${paraValue.pId eq twWorkOrder.contact}"></option>
+                            </select>
+                        </div>
+                    </div>
+
+
+                </div>
+
+            </div>
+
+            <div class="row"></div>
+
+
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="form-group">
+                        <label class="col-xs-2 control-label">工单内容：</label>
+                        <div class="col-xs-10">
+                            <textarea name="workContent" maxlength="50000" th:text="*{twWorkOrder.workContent}"
+                                      class="form-control" rows="5" readonly></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <h4 class="form-header h4">详细信息</h4>
+            <div class="grid-container" id="grid-container"></div>
+            <br/>
+            <h4 class="form-header h4" id="taskDev">任务列表</h4>
+            <div class="row">
+                <div class="col-sm-12">
+                    <!--                    <button type="button" class="btn btn-white btn-sm" onclick="addColumn()"><i class="fa fa-plus"> 增加</i></button>-->
+                    <!--                    <button type="button" class="btn btn-white btn-sm" onclick="sub.delColumn()"><i class="fa fa-minus"> 删除</i></button>-->
+                    <div class="col-sm-12 select-table table-striped">
+                        <table id="bootstrap-table5"></table>
+                    </div>
+                </div>
+            </div>
+            <h4 class="form-header h4">处理意见</h4>
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="form-group">
+                        <label class="col-xs-2 control-label">备注：</label>
+                        <div class="col-xs-10">
+                            <textarea name="params[comment]" maxlength="50000" id="comment"
+                                      class="form-control" rows="5" required></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <h4 class="form-header h4">上传附件</h4>
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="tabs-container">
+                        <ul class="nav nav-tabs">
+                            <li class="active"><a data-toggle="tab" href="#tab-1" aria-expanded="true">流程记录</a>
+                            </li>
+                            <li class=""><a data-toggle="tab" href="#tab-2" aria-expanded="false">附件</a>
+                            </li>
+<!--                            <li class="active"><a data-toggle="tab" href="#tab-1" aria-expanded="true">修改记录</a>-->
+<!--                            </li>-->
+                            <li class=""><a data-toggle="tab" href="#tab-3" aria-expanded="true">交付清单</a>
+                            </li>
+                        </ul>
+                        <div class="tab-content">
+                            <div id="tab-1" class="tab-pane active">
+                                <div class="panel-body">
+                                    <div class="col-sm-12 select-table table-striped">
+                                        <table id="history-table"></table>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="tab-3" class="tab-pane active3">
+                                <div class="panel-body">
+                                    <div class="col-sm-12 select-table table-striped">
+                                        <h4 class="form-header h4">应用类型
+                                            <button type="button" class="btn btn-sm btn-primary" id="addservice"
+                                                    onclick="addDelivery()"><i
+                                                    class="fa fa-check"></i>新增应用服务
+                                            </button>
+                                        </h4>
+                                        <table id="history-table3"></table>
+
+                                    </div>
+                                </div>
+                                <div class="panel-body">
+                                    <div class="col-sm-12 select-table table-striped">
+                                        <h4 class="form-header h4">数据库类型
+                                            <button type="button" class="btn btn-sm btn-primary" id="adddb"
+                                                    onclick="addDb()"><i
+                                                    class="fa fa-check"></i>新增数据库
+                                            </button>
+                                        </h4>
+                                        <table id="history-table4"></table>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="tab-2" class="tab-pane">
+                                <div class="panel-body">
+                                    <div class="btn-group-sm" id="toolbar1" role="group">
+                                        <a class="btn btn-success" type="button" onclick="upload()">
+                                            <i class="fa fa-upload"></i> 添加附件
+                                        </a>
+                                        <a class="btn btn-primary multiple disabled" onclick="downloadFile()">
+                                            <i class="fa fa-download"></i> 下载附件
+                                        </a>
+                                        <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()">
+                                            <i class="fa fa-remove"></i> 删除附件
+                                        </a>
+                                    </div>
+                                    <div class="col-sm-12 select-table table-striped">
+                                        <table id="file-table"></table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-offset-5 col-sm-10">
+                    <button type="button" class="btn btn-sm btn-primary" id="check" onclick="complate(1)"><i
+                            class="fa fa-check"></i>初审通过
+                    </button>
+                    <button type="button" class="btn btn-sm btn-primary" id="checkLast" onclick="complate(2)"><i
+                            class="fa fa-check"></i>终审通过
+                    </button>
+                    <button type="button" class="btn btn-sm btn-primary" id="assign" onclick="complate(3)"><i
+                            class="fa fa-check"></i>分派
+                    </button>
+                    <button type="button" class="btn btn-sm btn-primary" id="autoExecute" onclick="executeAuto()"><i
+                            class="fa fa-check"></i>自动化执行
+                    </button>
+                    <button type="button" class="btn btn-sm btn-primary" id="execute" onclick="executeType(1)"><i
+                            class="fa fa-check"></i>执行完成
+                    </button>
+                    <button type="button" class="btn btn-sm btn-primary" id="review" onclick="repeatPass(1)"><i
+                            class="fa fa-check"></i>复 核
+                    </button>
+                    <button type="button" class="btn btn-sm btn-primary" id="isOK" onclick="repeatPass(2)"><i
+                            class="fa fa-check"></i>确认关闭
+                    </button>
+                    <button type="button" class="btn btn-sm btn-warning" id="back" onclick="pass(0)"><i
+                            class="fa fa-check"></i>退 回
+                    </button>
+                    <button type="button" class="btn btn-sm btn-danger" onclick="closeItem()"><i
+                            class="fa fa-window-close"></i>关 闭
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script th:src="@{/js/activiti.js}"></script>
+<script th:src="@{/js/issue.js}"></script>
+<script th:inline="javascript">
+    //	var userId = [[${userId}]];
+    var datas = [[${@pubParaValue.selectPubParaValueByParaName('fmStatus')}]];
+    var eventLevel = [[${@pubParaValue.selectPubParaValueByParaName('dhsj_sjdj')}]];
+    var eventType = [[${@pubParaValue.selectPubParaValueByParaName('YXSJ_TYPE')}]];
+    var eventStatus = [[${@pubParaValue.selectPubParaValueByParaName('Event_status')}]];
+    var eventSource = [[${@pubParaValue.selectPubParaValueByParaName('fmSource')}]];
+    var changeCategoryId_datas = [[${@pubParaValue.selectPubParaValueByParaName('cm_CateGory')}]];
+    var changeSingleStatus = [[${@pubParaValue.selectPubParaValueByParaName('cmsj_status')}]];
+    var eventSourceDatas = [[${@dict.getParaType('fmSource')}]];
+    var changeTypeV = [[${@pubParaValue.selectPubParaValueByParaName('change_type')}]];
+    var changeStatusV = [[${@pubParaValue.selectPubParaValueByParaName('changeSingleStatus')}]];
+    var editFlag = "";
+    //工单id
+    var workOrderId = [[${id}]];
+    var prefix = ctx + "twWorkNode";
+    var prefix_task = ctx + "twTask";
+    var prefix_order = ctx + "twWorkOrder";
+
+    data = {
+        data: ['待提交', '初审', '复审', '执行', '复核', '确认关闭', '关闭'],
+        index: 0 //0是第一步
+    }
+
+    window.onload = function () {
+        var status = $('#status').val();
+        //只有待提交可以修改基础信息
+        if (!status === '待提交') {
+
+        }
+        var arr = data['data'];
+        for (var i = 0; i < arr.length; i++) {
+            if (arr[i] === status) {
+                data['index'] = i;
+            }
+
+        }
+        initCard();
+        var dom = $('#luStep');
+        dom.stepInit(data);
+        //隐藏按钮
+        $("#checkPass").hide()
+        var status = $('#status').val();
+        if (status === '初审') {
+            $("#execute").hide();
+            $("#review").hide();
+            $("#autoExecute").hide();
+            $("#assign").hide();
+        }
+        if (status === '复审') {
+            $("#execute").hide();
+            $("#review").hide();
+            $("#autoExecute").hide();
+            $("#assign").hide();
+        }
+        if (status === '复审') {
+            //console.log("走进去了")
+            // $("#label1").val("执行人机构：")
+            // $("#label2").val("执行人：")
+            $("#label1").html("执行人机构：")
+            $("#label2").html("执行人：")
+        }
+        if (status == '执行') {
+            // $("#back").hide();
+            $("#check").hide();
+            // $("#checkMessage").hide();
+            //$("#hTitle").hide();
+            $("#review").hide();
+            $("#checkLast").hide();
+
+        }
+        if (status == '复核') {
+            // $("#back").hide();
+            $("#check").hide();
+            //$("#checkMessage").hide();
+            //  $("#hTitle").hide();
+            $("#execute").hide();
+            $("#autoExecute").hide();
+            $("#assign").hide();
+            $("#checkLast").hide();
+            $("#back").hide();
+            document.getElementById("checkMessage").style.display = "none";
+        }
+
+        if (status == '确认关闭') {
+            // $("#back").hide();
+            $("#check").hide();
+            //$("#checkMessage").hide();
+            //  $("#hTitle").hide();
+            $("#execute").hide();
+            $("#autoExecute").hide();
+            $("#assign").hide();
+            $("#checkLast").hide();
+            $("#back").hide();
+            $("#review").hide();
+            document.getElementById("checkMessage").style.display = "none";
+        }
+
+    };
+
+
+    var key = 0;
+
+    function next() { //点击下一步
+        if (key >= 5) return;
+        key++;
+        dom.toStep(key);
+    }
+
+    function btup() {
+        if (key <= 0) return;
+        key--;
+        dom.toStep(key);
+    }
+
+    function divWight() {
+        var value = $('input').val();
+        $("#test").css({width: value + 'px'})
+        dom.empty();
+        dom.stepInit(data);
+    }
+
+    //初始化卡片
+    function initCard() {
+        var obj = document.getElementById("grid-container");
+        obj.innerHTML = "";
+        //动态创建卡片
+        $.ajax({
+            type: 'GET',
+            url: prefix + "/getWorkNodeByWorkOrderId/" + workOrderId,
+            success: function (result) {
+                let arr = result.data
+                let all = "";
+                arr.forEach((item, index, arr) => {
+                    console.log(item);  // a b c d e
+                    all += " <div class=\"item1\" style='color: #f3f1ef'>" +
+                        "        <h3>节点类型：" + item.nodeType + "</h3>\n" +
+                        "        <h3>主机：" + item.hostName + "</h3>\n" +
+                        "<div class=\"item1\" >" +
+                        "<button onclick=update(\"" + item.id + "\") type='button' class=\" btn btn-sm btn-primary\">详情<span\n" + "></span>\n" + "</button>  " +
+
+                        "<button onclick=copy(\"" + item.id + "\") type='button' class=\" btn btn-sm btn-primary\">复制<span\n" + "></span>\n" + "</button>  " +
+
+                        "<button onclick=deleteCard(\"" + item.id + "\") type='button' class=\" btn btn-sm btn-primary\">删除<span\n" + "></span>\n" + "</button>  " +
+
+                        "<button onclick=addColumn(\"" + item.workOrderId + "\",\"" + item.id + "\") type='button' class=\" btn btn-sm btn-primary\">新建任务<span\n" + "></span>\n" + "</button>  " +
+
+                        "<button onclick=sub.delColumn() type='button' class=\" btn btn-sm btn-primary\">删除任务<span\n" + "></span>\n" + "</button>  " +
+
+                        "</div>" +
+
+                        "    </div>";
+                })
+                $(".grid-container").append(all);
+
+            },
+            dataType: 'json'
+        });
+    }
+
+    //修改详情
+    function update(id) {
+        var orderId = id;
+        var url = prefix + "/edit/" + orderId;
+        $.modal.openTab("修改申请单", url, '', '', initCard());
+
+    }
+
+    //复制
+    function copy(id) {
+        $.ajax({
+            type: 'GET',
+            url: prefix + "/copy/" + id,
+            success: function (result) {
+                console.log(result)
+                $.modal.alertSuccess(result.msg);
+                $(".grid-container").empty();
+                initCard();
+            },
+            dataType: 'json'
+        });
+
+    }
+
+    //删除
+    function deleteCard(id) {
+        $.ajax({
+            type: 'GET',
+            url: prefix + "/delete/" + id,
+            success: function (result) {
+                console.log(result)
+                $.modal.alertSuccess(result.msg);
+                $(".grid-container").empty();
+                initCard();
+            },
+            dataType: 'json'
+        });
+
+    }
+
+    $(function () {
+        task();
+        $("#reporttime").datetimepicker({
+            format: "yyyy-mm-dd hh:ii:ss",
+            autoclose: true,
+            minView: 0,
+            minuteStep: 1,
+            endDate: new Date()
+        });
+        $("#fenLeiOne").hide();
+        $("#fenLeiTwo").hide();
+        var workNum = $("#workNum").val();
+        puFolwHistory(workNum);
+        puFolwHistory3(workNum);
+        puFolwHistory4(workNum);
+    });
+    var type = '';
+
+    // function queryParamsHistory(params) {
+    //     var curParams = {
+    //         // 传递参数查询参数
+    //         pageSize: params.limit,
+    //         pageNum: params.offset / params.limit + 1,
+    //         searchValue: params.search,
+    //         orderByColumn: params.sort,
+    //         isAsc: params.order
+    //     };
+    //     curParams.workOrderId = workOrderId;
+    //     curParams.type = type;
+    //     return curParams;
+    // }
+
+    function puFolwHistory3(id) {
+        businessKey = id;
+        type = 1;
+        var optionshistory = {
+            url: ctx + "twPaylist/getListDb",
+            id: "history-table3",
+            showSearch: false,
+            showRefresh: false,
+            showToggle: false,
+            showColumns: false,
+            pagination: true,
+            pageSize: 5,
+            queryParams: queryParamsHistory,
+            modalName: "交付清单",
+            columns: [
+                {
+                    field: 'id',
+                    width: 10,
+                    title: '编号',
+                    visible: false
+                },
+                {
+                    field: 'hostIp',
+                    title: 'IP地址'
+                    //visible: false
+                },
+                {
+                    field: 'sysName',
+                    title: '应用系统'
+                },
+                {
+                    field: 'twType',
+                    title: '环境类型'
+                }
+                ,
+                {
+                    field: 'userInfo',
+                    title: '用户信息'
+                }
+                ,
+                {
+                    field: 'remark',
+                    title: '备注'
+                }
+
+            ]
+        };
+        $.table.init(optionshistory);
+    }
+
+    function puFolwHistory4(id) {
+        businessKey = id;
+        type = 2;
+        var optionshistory = {
+            url: ctx + "twPaylist/getListDb",
+            id: "history-table4",
+            showSearch: false,
+            showRefresh: false,
+            showToggle: false,
+            showColumns: false,
+            pagination: true,
+            pageSize: 5,
+            queryParams: queryParamsHistory,
+
+            modalName: "流程历史",
+            columns: [
+                {
+                    field: 'id',
+                    width: 10,
+                    title: '编号',
+                    visible: false
+                },
+                {
+                    field: 'hostIp',
+                    title: 'IP地址'
+                    //visible: false
+                },
+                {
+                    field: 'dbType',
+                    title: '数据库类型'
+                },
+                {
+                    field: 'twType',
+                    title: '环境类型'
+                }
+                ,
+                {
+                    field: 'dbName',
+                    title: '数据库名称'
+                }
+                ,
+                {
+                    field: 'tableSpace',
+                    title: '表空间名称'
+                }
+                ,
+                {
+                    field: 'remark',
+                    title: '备注'
+                }
+            ]
+        };
+        $.table.init(optionshistory);
+    }
+
+
+    // 选择应用系统多选
+    function selectOneApplication() {
+        $.modal.open("选择应用系统", prefix + "/selectOneApplication");
+    }
+
+    function selectDeptTreeCheckDept() {
+        var orgId = $("#orgId").val();
+        console.log("=============")
+        console.log(orgId)
+        var deptId = $.common.isEmpty(orgId) ? "310100001" : $("#orgId").val();
+        var url = ctx + "activiti/qingqiu/selectCheckDeptTree/" + deptId;
+        var options = {
+            title: '选择部门',
+            width: "380",
+            url: url,
+            callBack: doSubmitCheckDept
+        };
+        $.modal.openOptions(options);
+    }
+
+    //选择审批人
+    function selectBusinessAuditCheck(ogrId, rId, pflag) {
+        // var ogId = $("#" + ogrId + "").val();
+        // if (ogId == '') {
+        //     $.modal.alertWarning("请先选择审批部门");
+        //     return;
+        // }
+        var status = $('#status').val();
+        if (status == '待提交') {
+            rId = "0622";
+        } else if (status == '初审') {
+            rId = "0624";
+        } else if (status = '复审') {
+            rId = "0627";
+        } else if (status == '执行') {
+            rId = "0625";
+        }
+        var url = prefix_order + "/selectBusinessAuditPerson/" + "?" + "pflag=" + pflag + "&rId=" + rId;
+        $.modal.open("选择审批人", url);
+    }
+
+    // 选择应用系统多选
+    function selectWTD() {
+        $.modal.open("关联问题单", prefix + "/selectOneApplication");
+    }
+
+    /*审批机构赋值*/
+    function doSubmitCheckDept(index, layero) {
+        var tree = layero.find("iframe")[0].contentWindow.$._tree;
+        var body = layer.getChildFrame('body', index);
+        $("#implementorOrgid").val(body.find('#treeId').val());
+        $("#implementorName").val(body.find('#treeName').val());
+        $("#implementorId").val("");
+        $("#implementorPeopleName").val("");
+        layer.close(index);
+    }
+
+    function repeatPass(type) {
+        if (type === 1 || type === 2) {
+            if (!$.validate.form()) {
+                $.modal.alertWarning("参数填写不全，请继续填写");
+                return;
+            }
+        }
+        var status = $('#status').val();
+        if (type === 0 && status === '复核') {
+            if (!$.validate.form()) {
+                $.modal.alertWarning("参数填写不全，请继续填写");
+                return;
+            }
+        }
+        //saveAllSheet();
+        var data = $("#form-issue-add").serializeArray();
+
+        //判断备注说明是否填写
+        var authorText = $('#comment').val();
+        var trim_authorText = authorText.trim();
+        if (trim_authorText == '') {
+            $.modal.alertError('请输入受理意见');
+            return;
+        }
+        console.log(status);
+        $.operate.saveTab(prefix_order + "/auditPass/" + type, data);
+    }
+
+    //complate
+    function complate(type) {
+        var id = $('#id').val();
+        var url = prefix_order + "/selectAcceptor/" + id + "/" + type;
+        $.modal.openTab("选择受理人", url);
+    }
+
+    function pass(type) {
+        if (type === 1 || type === 2 || type === 3) {
+            if (!$.validate.form()) {
+                $.modal.alertWarning("参数填写不全，请继续填写");
+                return;
+            }
+        }
+        var status = $('#status').val();
+        if (type === 0 && status === '复核') {
+            if (!$.validate.form()) {
+                $.modal.alertWarning("参数填写不全，请继续填写");
+                return;
+            }
+        }
+        //saveAllSheet();
+        var data = $("#form-issue-add").serializeArray();
+
+        //判断备注说明是否填写
+        var authorText = $('#comment').val();
+        var trim_authorText = authorText.trim();
+        if (trim_authorText == '') {
+            $.modal.alertError('请输入受理意见');
+            return;
+        }
+        console.log(status);
+        $.operate.saveTab(prefix_order + "/auditPass/" + type, data);
+    }
+
+    function executeAuto() {
+        console.log(status);
+        $.operate.saveTab(prefix_order + "/execute/" + workOrderId);
+    }
+
+    function addDelivery() {
+        // if (type === 1 || type === 2) {
+        //     if (!$.validate.form()) {
+        //         $.modal.alertWarning("参数填写不全，请继续填写");
+        //         return;
+        //     }
+        // }
+        //var status = $('#status').val();
+        // if (type === 0 && status === '复核') {
+        //     if (!$.validate.form()) {
+        //         $.modal.alertWarning("参数填写不全，请继续填写");
+        //         return;
+        //     }
+        // }
+        //saveAllSheet();
+        //var data = $("#form-issue-add").serializeArray();
+
+        var url = prefix_order + "/addDelivery/" + workOrderId;
+        //$.modal.openTab("修改申请单", url);
+        $.modal.openNoBtn("新增交付清单", url);
+    }
+
+    function addDb() {
+        // if (type === 1 || type === 2) {
+        //     if (!$.validate.form()) {
+        //         $.modal.alertWarning("参数填写不全，请继续填写");
+        //         return;
+        //     }
+        // }
+        //var status = $('#status').val();
+        // if (type === 0 && status === '复核') {
+        //     if (!$.validate.form()) {
+        //         $.modal.alertWarning("参数填写不全，请继续填写");
+        //         return;
+        //     }
+        // }
+        //saveAllSheet();
+        //var data = $("#form-issue-add").serializeArray();
+
+        var url = prefix_order + "/addDb/" + workOrderId;
+        //$.modal.openTab("修改申请单", url);
+        $.modal.openNoBtn("新增交付清单", url);
+    }
+
+    function executeType(type) {
+        // if (type === 1 || type===2) {
+        //     if (!$.validate.form()) {
+        //         $.modal.alertWarning("参数填写不全，请继续填写");
+        //         return;
+        //     }
+        // }
+        //saveAllSheet();
+        var data = $("#form-issue-add").serializeArray();
+
+        //判断备注说明是否填写
+        var authorText = $('#comment').val();
+        var trim_authorText = authorText.trim();
+        if (trim_authorText == '') {
+            $.modal.alertError('请输入受理意见');
+            return;
+        }
+        console.log(status);
+        $.operate.saveTab(prefix_order + "/auditPass/" + type, data);
+    }
+
+    function getMultiusers() {
+        var url = prefix + "/multiusers/0"
+        $.modal.open("选择协同评估人", url);
+    }
+
+    /*选择技术经理*/
+    function getReviewerId() {
+        var userIds = $("#reviewerId").val();
+        if ($.common.isEmpty(userIds)) {
+            userIds = "0";
+        }
+        var url = prefix + "/reviewer/" + userIds;
+        $.modal.open("选择审核人", url);
+    }
+
+    /*选择技术经理*/
+    function getAuditId() {
+        var userIds = $("#auditId").val();
+        if ($.common.isEmpty(userIds)) {
+            userIds = "0";
+        }
+        var url = prefix + "/audit/" + userIds;
+        $.modal.open("选择技术经理", url);
+    }
+
+    var enuParam_index = 1;
+
+
+    function remove() {
+        var enuParam = document.getElementById("enuParam" + (enuParam_index - 1));
+        if (enuParam_index == 1) {
+            $.modal.alertWarning("至少保留一个！");
+        } else {
+            enuParam.parentNode.removeChild(enuParam);
+            enuParam_index--;
+        }
+
+    }
+
+
+    //转问题单直接保存
+    function saveAllSheet() {
+        var obj1 = '';
+        var obj1Type = '';
+        <!--业务事件单-->
+        if ($("#fmNo").val() != "" && $("#fmNo").val() != null) {
+            obj1 = $("#fmNo").val();
+            obj1Type = '14';
+        }
+        <!--监控事件单-->
+        if ($("#fmjkNo").val() != "" && $("#fmjkNo").val() != null) {
+            obj1 = $("#fmjkNo").val();
+            obj1Type = '13';
+        }
+        <!--数据变更单-->
+        if ($("#cmNo").val() != "" && $("#cmNo").val() != null) {
+            obj1 = $("#cmNo").val();
+            obj1Type = '16';
+        }
+        <!--隐患排查单-->
+        if ($("#csNo").val() != "" && $("#csNo").val() != null) {
+            obj1 = $("#csNo").val();
+            obj1Type = '15';
+        }
+        if (obj1 != '' && obj1Type != '') {
+            var data = new Array();
+            data.push({name: 'obj1Id', value: obj1});
+            data.push({name: 'obj2Id', value: $("#issuefxId").val()});
+            data.push({name: 'type', value: obj1Type});
+            $.operate.save(ctx + "system/relation/add", data);
+        }
+    }
+
+    function orgPer(obj, type) {
+        var options = "<option value=''>请选择</option>";
+        var orgId = obj.value;
+        if ($.common.isEmpty(orgId)) {
+            if (-1 == type) {
+                $("#reviewerId").html("");
+                $("#reviewerId").append(options);
+
+            } else if (0 == type) {
+                var id = obj.id;
+                var num = id.match(/businessOrg(\S*)/)[1];
+                $("#businessId" + num).html("");
+                $("#businessId" + num).append(options);
+            } else {
+                $("#businessId" + type).html("");
+                $("#businessId" + type).append(options);
+            }
+            return;
+        }
+
+        $.ajax({
+            cache: true,
+            type: "POST",
+            url: prefix + "/orgPer",
+            data: {
+                "orgId": orgId,
+                "type": type
+            },
+            async: false,
+            error: function (request) {
+                $.modal.alertError("系统错误");
+            },
+            success: function (data) {
+                if (-1 == type) {
+                    $("#reviewerId").html("");
+                    for (var ak = 0; ak < data.length; ak++) {
+                        options += "<option value='" + data[ak].pId + "'>" + data[ak].pName + "</option> \n";
+                    }
+                    $("#reviewerId").append(options);
+
+                } else if (0 == type) {
+                    var id = obj.id;
+                    var num = id.match(/businessOrg(\S*)/)[1];
+                    $("#businessId" + num).html("");
+                    for (var ak = 0; ak < data.length; ak++) {
+                        options += "<option value='" + data[ak].pId + "'>" + data[ak].pName + "</option> \n";
+                    }
+                    $("#businessId" + num).append(options);
+                } else {
+                    $("#businessId" + type).html("");
+                    for (var ak = 0; ak < data.length; ak++) {
+                        options += "<option value='" + data[ak].pId + "'>" + data[ak].pName + "</option> \n";
+                    }
+                    $("#businessId" + type).append(options);
+                }
+            }
+        });
+    }
+
+    function clearMultiusers() {
+        $("#multiusers").val("");
+        $("#multiusersName").val("");
+    }
+
+    //加载一级分类
+    function getFmKindOneList() {
+        var issueFenlei = $("#issueFenlei").val();
+        var parentId = 'WTD0001';
+        if ('6' == issueFenlei || '3' == issueFenlei) {
+            $("#fenLeiOne").show();
+            $("#fenLeiTwo").show();
+            if ('6' == issueFenlei) {
+                $("#tardingNameDiv").show();
+                parentId = 'WTD0002';
+            } else {
+                $("#tardingNameDiv").hide();
+                $("#tardingName").val('');
+            }
+            $.ajax({
+                cache: true,
+                type: "POST",
+                url: prefix + "/selectFmKindBySysidForWTD",
+                data: {
+                    "category": "1",
+                    "parentId": parentId
+                },
+                async: false,
+                success: function (data) {
+                    var options = "<option value=''>请选择</option>";
+                    $("#oneType").html("");
+                    for (var ak = 0; ak < data.rows.length; ak++) {
+                        options += "<option value='" + data.rows[ak].id + "'>" + data.rows[ak].name + "</option> \n";
+                    }
+                    $("#oneType").append(options);
+                }
+            });
+            $("#twoType").html("");
+            $("#twoType").append("<option value=''>请选择</option>");
+            $("#threeType").html("");
+            $("#threeType").append("<option value=''>请选择</option>");
+        } else {
+            $("#fenLeiOne").hide();
+            $("#fenLeiTwo").hide();
+            $("#oneType").html("");
+            $("#twoType").html("");
+            $("#threeType").html("");
+            $("#tardingName").val('');
+        }
+    }
+
+    //根据一级分类查询二级分类
+    function getFmKindTwoList() {
+        var parentId = $("#oneType").val();
+        if (parentId) {
+            $.ajax({
+                cache: true,
+                type: "POST",
+                url: prefix + "/selectFmKindBySysidForWTD",
+                data: {
+                    "category": "2",
+                    "parentId": parentId
+                },
+                async: false,
+                success: function (data) {
+                    var options = "<option value=''>请选择</option>";
+                    $("#twoType").html("");
+                    for (var ak = 0; ak < data.rows.length; ak++) {
+                        options += "<option value='" + data.rows[ak].id + "'>" + data.rows[ak].name + "</option> \n";
+                    }
+                    $("#twoType").append(options);
+                }
+            });
+        }
+        $("#threeType").html("");
+        $("#threeType").append("<option value=''>请选择</option>");
+    }
+
+    //根据二级分类查询三级分类
+    function getFmKindThreeList() {
+        var parentId = $("#twoType").val();
+        if (parentId) {
+            $.ajax({
+                cache: true,
+                type: "POST",
+                url: prefix + "/selectFmKindBySysidForWTD",
+                data: {
+                    "category": "3",
+                    "parentId": parentId
+                },
+                async: false,
+                success: function (data) {
+                    var options = "<option value=''>请选择</option>";
+                    $("#threeType").html("");
+                    for (var ak = 0; ak < data.rows.length; ak++) {
+                        options += "<option value='" + data.rows[ak].id + "'>" + data.rows[ak].name + "</option> \n";
+                    }
+                    $("#threeType").append(options);
+                }
+            });
+        }
+    }
+
+    //$(document).ready(function () {
+
+    $.fn.extend({
+        "stepInit": function (option) {
+            //打开下面注释，可动态加载CSS，不用href 导入
+            // var style="<style>\nul,li {\n    list-style: none;\n    margin: 0px;\n    padding: 0px;\n}\n\n.bar-box {\n    position: relative;\n    top: 11px;\n    left: 10px;\n}\n\n.bar-content {\n    position: relative;\n    z-index: 9999;\n}\n\n.bar-bg {\n    width: 100%;\n    height: 6px;\n    background: #ddd;\n    position: relative;\n}\n\n.bar-color {\n    width: 0%;\n    height: 6px;\n    background: #64bd2e;\n    position: absolute;\n    left: 0px;\n    top: 0px;\n    /* position: relative;\n    top: -32px; */\n}\n\n.bar-circle-ul {}\n\n.bar-circle-ul li {\n    float: left;\n}\n\n.bar-circle-ul li div {\n    width: 32px;\n    height: 32px;\n    text-align: center;\n    line-height: 32px;\n    display: inline-block;\n    border-radius: 50%;\n    background: #ddd;\n    color: #252525;\n    position: relative;\n}\n\n.bar-circle-ul li div span {\n    position: absolute;\n    top: -33px;\n    color: #ddd;\n    left: -254%;\n    width: 200px;\n}</style>"
+            // $('body').append(style);
+            var arr = option.data;
+            var stepNum = arr.length;
+            var stepIndex = option.index; //当前步骤
+            //添加最外面的div结构
+            var content = "<div class=\"bar-content\">\n<ul class=\"bar-circle-ul\">\n</ul>\n</div>\n\n<div class=\"bar-box\">\n<div class=\"bar-bg\">\n<div class=\"bar-color\">\n</div>\n</div>\n</div>"
+            $(this).append(content);
+            //js动态处理外面div百分比宽度
+            var perc = 100 / stepNum; //100除以当前步骤总和
+            $(this).attr({'style': 'margin-right:' + '-' + perc + '%'})
+            //生成用于循环li的数据
+            var arrObj = []
+            for (var i = 0; i < arr.length; i++) {
+                var obj = {};
+                obj.index = i + 1;
+                obj.text = arr[i];
+                arrObj.push(obj)
+            }
+            var liDow = '';
+            //根据数据 动态生成li结构
+            arrObj.forEach(function (v, k) {
+                liDow += "<li><div class='li-div'>" + v.index + "<span class='li-span'>" + v.text + "</span></div></li>";
+            })
+            $('.bar-circle-ul').append(liDow);
+            //js动态处理li 百分比宽度
+            $(".bar-circle-ul li").attr({'style': ' width:' + perc + '%'})
+            var stepWidth = $(this)[0].clientWidth;
+            //动态计算bar-box的宽度
+            var barW = Math.floor(stepWidth * (100 - perc) / 100);
+            $(".bar-box").attr({'style': ' width:' + barW + 'px'})
+            var piceW = Math.floor(barW / (stepNum - 1));
+            $(this)[0].piceW = piceW; //存进度宽度到原生dom
+            $(this).toStep(stepIndex);
+        },
+        "toStep": function (stepIndex) {
+            //进度动画开始
+            var piceW = $(this)[0].piceW;
+            //$(".bar-color").attr({'style':' width:'+piceW*stepIndex+'px'}) //这个是没动画的
+            $(".bar-color").animate({width: piceW * stepIndex + 'px'}, 100);
+            //改变已走步骤 圆点和文字 的颜色
+            $('.bar-circle-ul li').each(function (k, v) {
+                var liDiv = $(v).find('.li-div');
+                var liSpan = $(v).find('.li-span');
+                liDiv.css({background: '#ddd', color: '#252525'});  //重置所有的颜色
+                liSpan.css({color: '#7c7c7c'});
+                if (k <= stepIndex) {
+                    liDiv.css({background: '#64bd2e', color: '#fff'}); //圆点颜色
+                    liSpan.css({color: '#252525'}); //字体颜色
+                }
+
+            })
+        }
+    })
+
+    //})
+    function task() {
+        var workOrderId = $("#id").val();
+        var options = {
+            url: prefix_task + "/getListTask/" + workOrderId,
+            updateUrl: prefix_task + "/edit/{id}",
+            showRefresh: false,
+            showSearch: false,
+            showToggle: false,
+            showColumns: false,
+            singleSelect: true,
+            clickToSelect: true,
+            id: 'bootstrap-table5',
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'index',
+                    align: 'center',
+                    title: "序号",
+                    formatter: function (value, row, index) {
+                        var columnIndex = $.common.sprintf("<input type='hidden' name='index' value='%s'>", $.table.serialNumber(index));
+                        return columnIndex + $.table.serialNumber(index);
+                    }
+                },
+                {
+                    field: 'taskName',
+                    align: 'center',
+                    title: '任务名称'
+                },
+                {
+                    field: 'workNodeId',
+                    align: 'center',
+                    title: '节点类型'
+                }, {
+                    title: '操作',
+                    align: 'center',
+                    formatter: function (value, row, index) {
+                        var actions = [];
+                        actions.push('<a class="btn btn-success btn-xs " href="javascript:void(0)" onclick="$.operate.edit(\'' + row.id + '\')"><i class="fa fa-edit"></i>编辑</a> ');
+                        actions.push('<a class="btn btn-danger btn-xs " href="javascript:void(0)" onclick="taskRun(\'' + row.id + '\')"><i class="fa fa-tasks"></i>执行任务</a>');
+                        return actions.join('');
+                    }
+                }
+            ]
+        };
+        $.table.init(options);
+    }
+
+
+    function addColumn(workOrderId, id) {
+        var url = prefix + "/editWorkDialog/" + workOrderId + "/" + id;
+        //$.modal.openTab("修改申请单", url);
+        $.modal.open("选择表单", url, '', '');
+    }
+
+
+</script>
+</body>
+</html>

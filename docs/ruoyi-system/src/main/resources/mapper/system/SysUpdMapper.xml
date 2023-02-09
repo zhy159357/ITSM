@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.SysUpdMapper">
+
+    <resultMap type="OgPerson" id="OgPersonResult">
+        <id     property="pId"              column="PID"         />
+        <result property="orgId"            column="ORGID"         />
+        <result property="pName"            column="PNAME"      />
+        <result property="sex"              column="SEX"       />
+        <result property="edu"              column="EDU"       />
+        <result property="birthday"         column="BIRTHDAY"           />
+        <result property="birthPlace"       column="BIRTHPLACE"     />
+        <result property="phone"            column="PHONE"             />
+        <result property="mobilPhone"       column="MOBIL_PHONE"          />
+        <result property="email"            column="EMAIL"        />
+        <result property="address"          column="ADDRESS"            />
+        <result property="createBy"         column="create_by"          />
+        <result property="momer"            column="MOMER"        />
+        <result property="memo"             column="MEMO"        />
+        <result property="updatetime"       column="UPDATE_TIME"      />
+        <result property="invalidationMark" column="INVALIDATION_MARK" />
+        <result property="position"         column="POSITION"       />
+        <result property="leader"           column="LEADER"     />
+        <result property="pOrder"           column="P_ORDER"       />
+        <result property="pflag"            column="P_FLAG"     />
+        <result property="orgname"          column="ORGNAME"     />
+    </resultMap>
+
+    <resultMap type="SysPubFolder" id="PubResult">
+        <result property="id_" column="id_"/>
+        <result property="name_" column="name_"/>
+        <result property="path_" column="path_"/>
+        <result property="parent_" column="parent_"/>
+        <result property="description_" column="description_"/>
+        <result property="orgs_" column="orgs_"/>
+        <result property="create_user_" column="create_user_"/>
+        <result property="manager_user_" column="manager_user_"/>
+        <result property="create_time_" column="create_time_"/>
+        <result property="modify_user_" column="modify_user_"/>
+        <result property="modify_time_" column="modify_time_"/>
+        <result property="update_time_" column="update_time_"/>
+        <result property="leaf_" column="leaf_"/>
+    </resultMap>
+
+    <sql id="selectPubFolderVo">
+		select  id_,name_,path_,parent_,description_,orgs_,create_user_,manager_user_,create_time_,modify_user_,modify_time_,update_time_,leaf_
+          from PUB_FOLDER_INDEX o
+	</sql>
+
+    <select id="selectUpdById" parameterType="String" resultMap="PubResult">
+        select  id_,name_,path_,parent_,description_,orgs_,create_user_,manager_user_,create_time_,modify_user_,modify_time_,update_time_,leaf_
+        from PUB_FOLDER_INDEX o
+        where id_ = #{id_}
+    </select>
+    <select id="selectOrgById" resultType="String"  >
+        select orgname  from og_org where  orgId = #{orgId}
+    </select>
+
+    <insert id="insertTree" parameterType="SysPubFolder" useGeneratedKeys="false" keyProperty="id_">
+        insert into PUB_FOLDER_INDEX(
+        create_user_,
+        <if test="parent_ != null and parent_ != ''">parent_,</if>
+        <if test="path_ != null and path_ != ''">path_,</if>
+        <if test="name_ != null and name_ != ''">name_,</if>
+        <if test="orgs_ != null and orgs_ != ''">orgs_,</if>
+        <if test="description_ != null and description_ != ''">description_,</if>
+        <if test="create_time_ != null and create_time_ != ''">create_time_,</if>
+        id_
+        )values(
+        #{create_user_},
+        <if test="parent_ != null and parent_ != ''">#{parent_},</if>
+        <if test="path_ != null and path_ != ''">#{path_},</if>
+        <if test="name_ != null and name_ != ''">#{name_},</if>
+        <if test="orgs_ != null and orgs_ != ''">#{orgs_},</if>
+        <if test="description_ != null and description_ != ''">#{description_},</if>
+        <if test="create_time_ != null and create_time_ != ''">#{create_time_},</if>
+        #{id_}
+        )
+    </insert>
+
+    <update id="updateUpd" parameterType="SysPubFolder">
+        update PUB_FOLDER_INDEX
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name_ != null and name_ != ''">name_ = #{name_},</if>
+            <if test="path_ != null and path_ != ''">path_ = #{path_},</if>
+            <if test="orgs_ != null and orgs_ != ''">orgs_ = #{orgs_},</if>
+            <if test="description_ != null and description_ != ''">description_ = #{description_},</if>
+            <if test="update_time_ != null and update_time_ != ''">update_time_ = #{update_time_}</if>
+
+        </trim>
+        where id_ = #{id_}
+    </update>
+
+    <delete id="deleteUpd" parameterType="String">
+        delete from PUB_FOLDER_INDEX where id_ = #{id_}
+    </delete>
+
+    <select id="selectSelfTreeById" parameterType="SysPubFolder" resultType="int">
+        select count(1) from PUB_FOLDER_INDEX a  where a.id_ = #{id_}  and a.create_user_=#{create_user_}
+    </select>
+
+    <select id="selectUpdLeafById" parameterType="String"  resultType="int">
+        select count(1) from PUB_FOLDER_INDEX  where parent_ = #{id_}
+    </select>
+    <select id="selectParent" parameterType="String"  resultType="String">
+        select parent_ from PUB_FOLDER_INDEX  where id_ = #{selecttreeId}
+    </select>
+    <select id="selectParentName" parameterType="String" resultType="String">
+        select name_ from PUB_FOLDER_INDEX  where id_ = #{par}
+    </select>
+
+
+    <select id="selectUpdownById" parameterType="SysPubFolder" resultMap="PubResult">
+          select  a.id_,a.name_,a.path_,a.parent_,a.description_,a.orgs_,a.create_user_,a.manager_user_,a.create_time_,a.modify_user_,a.modify_time_,a.update_time_,a.leaf_
+        from PUB_FOLDER_INDEX a LEFT JOIN PUB_FILE_INDEX b on a.ID_ = b.folder_
+        where b.folder_ = #{id_}
+    </select>
+</mapper>

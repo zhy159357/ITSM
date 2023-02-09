@@ -1,0 +1,25 @@
+# 数据源配置
+spring:
+    # redis 配置
+    redis:
+        # Redis开关/默认关闭
+        enabled: true
+#        cluster:
+#            nodes: 10.239.214.98:27379,10.239.214.99:27379,10.239.214.100:27379
+        # 密码
+        password: Hello123@
+        # 连接超时时间
+        timeout: 10s
+        lettuce:
+            pool:
+                # 连接池中的最小空闲连接
+                min-idle: 10
+                # 连接池中的最大空闲连接
+                max-idle: 100
+                # 连接池的最大数据库连接数
+                max-active: 100
+                # #连接池最大阻塞等待时间（使用负值表示没有限制）
+                max-wait: -1ms
+        sentinel:
+            master: redisitsm1
+            nodes: 10.239.214.98:27379,10.239.214.99:27379,10.239.214.100:27379

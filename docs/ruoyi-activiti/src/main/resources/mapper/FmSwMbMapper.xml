@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.activiti.mapper.FmSwMbMapper">
+
+    <resultMap type="FmSwMb" id="FmSwMbResult">
+        <id property="swmdId" column="SWMB_ID"></id>
+        <result property="createId" column="CREATE_ID"></result>
+        <result property="createTime" column="CREATE_TIME"></result>
+        <result property="createTimeText" column="CREATE_TIME_TEXT"></result>
+        <result property="fileStoreId" column="FILE_STORE_ID"></result>
+        <result property="swmbTitle" column="SWMB_TITLE"></result>
+        <result property="memo" column="MEMO"></result>
+        <result property="createOrgId" column="CREATE_ORG_ID"></result>
+        <result property="faultKind" column="FAULT_KIND"></result>
+        <result property="dealOrgId" column="DEAL_ORG_ID"></result>
+        <result property="content" column="CONTENT"></result>
+        <result property="dealPId" column="DEAL_P_ID"></result>
+        <result property="pname" column="pname"></result>
+        <result property="createorg" column="createorg"></result>
+        <result property="dealorg" column="dealorg"></result>
+        <result property="processStatus" column="PROCESS_STATUS"></result>
+    </resultMap>
+
+    <!--根据选项的机构Id查找对应的模板信息-->
+    <select id="selectById" parameterType="String" resultMap="FmSwMbResult">
+       select * from
+        (
+            select mb.deal_org_id,mb.swmb_id,mb.swmb_title,mb.fault_kind,mb.memo,mb.create_time,org2.orgname dealorg,mb.deal_p_id,mb.content,mb.process_status
+            from FM_SWMB mb
+            left join OG_ORG org2
+            on mb.deal_org_id = org2.orgid
+        ) t
+        where t.swmb_id = #{swmdId}
+    </select>
+
+    <select id="selectFmSwMbByDealOrgIdAndFaultKind" parameterType="FmSwMb" resultMap="FmSwMbResult">
+        select swmb_id from FM_SWMB
+        <where>
+            <if test="dealOrgId!=null and dealOrgId!=''">
+                and deal_org_id = #{dealOrgId}
+            </if>
+            <if test="faultKind!=null and faultKind!=''">
+                and fault_kind = #{faultKind}
+            </if>
+        </where>
+    </select>
+    <select id="selectFmSwMbList" resultMap="FmSwMbResult" parameterType="FmSwMb">
+            select * from
+            (
+            select create_id,org1.level_code, mb.swmb_id,mb.swmb_title,mb.deal_org_id,mb.fault_kind,mb.memo,mb.create_time,"TO_CHAR"("TO_DATE"(mb.create_time, 'yyyymmddhh24miss'),'yyyy-mm-dd hh24:mi:ss') create_time_text,op.pname,org1.orgname createorg,org2.orgname dealorg
+            from FM_SWMB mb
+            left join OG_PERSON op
+            on mb.create_id = op.pid
+            left join OG_ORG org1
+            on mb.create_org_id = org1.orgid
+            left join OG_ORG org2
+            on mb.deal_org_id = org2.orgid
+            )
+            <where>
+                <if test="swmdId!=null and swmdId!=''">
+                    swmb_id = #{swmdId}
+                </if>
+                <if test="swmbTitle!=null and swmbTitle!=''">
+                    and swmb_title like concat('%',concat(#{swmbTitle},'%'))
+                </if>
+                <if test="faultKind!=null and faultKind!=''">
+                    and fault_kind like concat('%',concat(#{faultKind},'%'))
+                </if>
+                <if test="pname!=null and pname!=''">
+                    and pname like concat('%',concat(#{pname},'%'))
+                </if>
+                <if test="createorg!=null and createorg!=''">
+                    and createorg like concat('%',concat(#{createorg},'%'))
+                </if>
+                <if test="dealorg!=null and dealorg!=''">
+                    and dealorg like concat('%',concat(#{dealorg},'%'))
+                </if>
+
+                <if test="startCreateTime != null and startCreateTime != ''"><!-- 开始时间检索 -->
+                    and create_time &gt;= #{startCreateTime}
+                </if>
+                <if test="endCreateTime != null and endCreateTime != ''"><!-- 结束时间检索 -->
+                    and create_time &lt;=#{endCreateTime}
+                </if>
+
+                <if test="dealOrgId!=null and dealOrgId!=''">
+                    and deal_org_id = #{dealOrgId}
+                </if>
+
+                <if test="levelCode!=null and levelCode!=''">
+                    and level_code  like  concat(#{levelCode},'%')
+                </if>
+            </where>
+
+    </select>
+    <select id="selectFmSwMbListMysql" resultMap="FmSwMbResult" parameterType="FmSwMb">
+                select * from
+                (
+                select create_id,org1.level_code, mb.swmb_id,mb.swmb_title,mb.deal_org_id,mb.fault_kind,mb.memo,mb.create_time,date_format(mb.create_time, '%y%m%d') create_time_text,op.pname,org1.orgname createorg,org2.orgname dealorg
+                from FM_SWMB mb
+                left join OG_PERSON op
+                on mb.create_id = op.pid
+                left join OG_ORG org1
+                on mb.create_org_id = org1.orgid
+                left join OG_ORG org2
+                on mb.deal_org_id = org2.orgid
+                ) t
+                <where>
+                    <if test="swmdId!=null and swmdId!=''">
+                        t.swmb_id = #{swmdId}
+                    </if>
+                    <if test="swmbTitle!=null and swmbTitle!=''">
+                        and t.swmb_title like concat('%',concat(#{swmbTitle},'%'))
+                    </if>
+                    <if test="faultKind!=null and faultKind!=''">
+                        and t.fault_kind like concat('%',concat(#{faultKind},'%'))
+                    </if>
+                    <if test="pname!=null and pname!=''">
+                        and t.pname like concat('%',concat(#{pname},'%'))
+                    </if>
+                    <if test="createorg!=null and createorg!=''">
+                        and t.createorg like concat('%',concat(#{createorg},'%'))
+                    </if>
+                    <if test="dealorg!=null and dealorg!=''">
+                        and t.dealorg like concat('%',concat(#{dealorg},'%'))
+                    </if>
+
+                    <if test="startCreateTime != null and startCreateTime != ''"><!-- 开始时间检索 -->
+                        and t.create_time &gt;= #{startCreateTime}
+                    </if>
+                    <if test="endCreateTime != null and endCreateTime != ''"><!-- 结束时间检索 -->
+                        and t.create_time &lt;=#{endCreateTime}
+                    </if>
+
+                    <if test="dealOrgId!=null and dealOrgId!=''">
+                        and t.deal_org_id = #{dealOrgId}
+                    </if>
+
+                    <if test="levelCode!=null and levelCode!=''">
+                        and t.level_code  like  concat(#{levelCode},'%')
+                    </if>
+                </where>
+    </select>
+    <select id="selectFmSwMbByDealOrgId" parameterType="FmSwMb" resultMap="FmSwMbResult">
+        select swmb_id,deal_org_id,fault_kind from FM_SWMB
+        where deal_org_id = #{dealOrgId}
+    </select>
+    <insert id="insertFmSwMb" parameterType="FmSwMb">
+        insert into fm_swmb
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="swmdId!=null and swmdId!=''">
+                SWMB_ID,
+            </if>
+            <if test="createId!=null and createId!=''">
+                CREATE_ID,
+            </if>
+            <if test="createTime!=null and createTime!=''">
+                CREATE_TIME,
+            </if>
+            <if test="fileStoreId!=null and fileStoreId!=''">
+                FILE_STORE_ID,
+            </if>
+            <if test="swmbTitle!=null and swmbTitle!=''">
+                SWMB_TITLE,
+            </if>
+            <if test="memo!=null and memo!=''">
+                MEMO,
+            </if>
+            <if test="createOrgId!=null and createOrgId!=''">
+                CREATE_ORG_ID,
+            </if>
+            <if test="faultKind!=null and faultKind!=''">
+                FAULT_KIND,
+            </if>
+            <if test="dealOrgId!=null and dealOrgId!=''">
+                DEAL_ORG_ID,
+            </if>
+            <if test="content!=null and content!=''">
+                CONTENT,
+            </if>
+            <if test="dealPId!=null and dealPId!=''">
+                DEAL_P_ID,
+            </if>
+            <if test="processStatus!=null and processStatus!=''">
+                PROCESS_STATUS,
+            </if>
+        </trim>
+        <trim prefix="values(" suffix=")" suffixOverrides=",">
+            <if test="swmdId!=null and swmdId!=''">
+                #{swmdId},
+            </if>
+            <if test="createId!=null and createId!=''">
+                #{createId},
+            </if>
+            <if test="createTime!=null and createTime!=''">
+                #{createTime},
+            </if>
+            <if test="fileStoreId!=null and fileStoreId!=''">
+                #{fileStoreId},
+            </if>
+            <if test="swmbTitle!=null and swmbTitle!=''">
+                #{swmbTitle},
+            </if>
+            <if test="memo!=null and memo!=''">
+                #{memo},
+            </if>
+            <if test="createOrgId!=null and createOrgId!=''">
+                #{createOrgId},
+            </if>
+            <if test="faultKind!=null and faultKind!=''">
+                #{faultKind},
+            </if>
+            <if test="dealOrgId!=null and dealOrgId!=''">
+                #{dealOrgId},
+            </if>
+            <if test="content!=null and content!=''">
+                #{content},
+            </if>
+            <if test="dealPId!=null and dealPId!=''">
+                #{dealPId},
+            </if>
+            <if test="processStatus!=null and processStatus!=''">
+                #{processStatus},
+            </if>
+        </trim>
+    </insert>
+
+    <delete id="deleteFmSwMbByIds" parameterType="String">
+        delete from fm_swmb where swmb_id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+    <update id="updateFmSwMb" parameterType="FmSwMb">
+        update fm_swmb
+        <trim suffixOverrides=",">
+            <set>
+                <if test="dealOrgId!=null and dealOrgId!=''">
+                    DEAL_ORG_ID = #{dealOrgId},
+                </if>
+                <if test="dealPId!=null and dealPId!=''">
+                    DEAL_P_ID = #{dealPId},
+                </if>
+                <if test="faultKind!=null and faultKind!=''">
+                    FAULT_KIND =  #{faultKind},
+                </if>
+                <if test="swmbTitle!=null and swmbTitle!=''">
+                    SWMB_TITLE = #{swmbTitle},
+                </if>
+                 <if test="memo!=null and memo!=''">
+                     MEMO = #{memo},
+                </if>
+                <if test="content!=null and content!=''">
+                    CONTENT = #{content},
+                </if>
+                <if test="fileStoreId!=null and fileStoreId!=''">
+                    FILE_STORE_ID = #{fileStoreId},
+                </if>
+                <if test="fileStoreId==null or fileStoreId!=''">
+                    FILE_STORE_ID = '',
+                </if>
+                <if test="processStatus!=null and processStatus!=''">
+                    PROCESS_STATUS = #{processStatus},
+                </if>
+            </set>
+        </trim>
+        <where>
+            <if test="swmdId!=null and swmdId!=''">
+                swmb_id = #{swmdId}
+            </if>
+        </where>
+    </update>
+</mapper>

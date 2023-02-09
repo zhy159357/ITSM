@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:include="include :: header('自动化启动列表')"/>
+</head>
+<body class="gray-bg">
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="container-div">
+                <div class="row">
+                    <div class="col-sm-12 search-collapse">
+                        <form id="file-form">
+                            <input type="hidden" id="versionInfoId" name="versionInfoId" th:value="*{versionInfoId}">
+                            <input type="hidden" id="taskId" name="taskId" th:value="*{taskId}">
+                            <div class="select-list">
+                                <ul>
+                                    <li>
+                                        模版名称：<input type="text" name="fileName"/>
+                                    </li>
+                                    <li>
+                                        <a class="btn btn-primary btn-rounded btn-sm" id="searchBut"
+                                           onclick="$.table.search('file-form','bootstrap-file')"><i
+                                                class="fa fa-search"></i>&nbsp;搜索</a>
+                                        <a class="btn btn-warning btn-rounded btn-sm"
+                                           onclick="$.form.reset('','bootstrap-table-file')"><i
+                                                class="fa fa-repeat"></i>&nbsp;重置</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="btn-group-sm" id="toolbar1" role="group">
+                        <a class="btn btn-success single disabled" onclick="startAgent()">
+                            <i class="fa fa-default"></i> 启动
+                        </a>
+                        <a class="btn btn-info single disabled" onclick="selectResultMsg()">
+                            <i class="fa fa-search"></i> 查询结果
+                        </a>
+                    </div>
+
+                    <div class="col-sm-12 select-table table-striped">
+                        <table id="bootstrap-file"></table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-6">
+            <div class="container-div">
+                <div class="row">
+                    <div class="col-sm-12 search-collapse">
+                        <form id="result-form">
+                            <input type="hidden" name="atId" id="atId">
+                        </form>
+                    </div>
+
+                    <div class="col-sm-12 select-table table-striped">
+                        <table id="bootstrap-result"></table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<th:block th:include="include :: footer"/>
+<script th:inline="javascript">
+    var prefix = ctx + "version/taskInfo";
+    var prefix_attachment = ctx + "pub/attachment";
+    var datas = [[${@pubParaValue.selectPubParaValueByParaName('file_type')}]];
+    var datas1 = [[${@pubParaValue.selectPubParaValueByParaName('automate_status')}]];
+    $(function () {
+        var options = {
+            url: prefix_attachment + "/list",
+            id: "bootstrap-file",
+            toolbar:"toolbar1",
+            showSearch: false,
+            showRefresh: false,
+            showToggle: false,
+            showColumns: false,
+            sortName: "fileTime",
+            sortOrder: "desc",
+            singleSelect: true,
+            clickToSelect: true,
+            queryParams: queryParams,
+            modalName: "附件列表",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'atId',
+                    title: '附件ID',
+                    visible: false
+                },
+                {
+                    field: 'ownerId',
+                    title: '单号ID',
+                    visible: false
+                },
+                {
+                    field: 'fileName',
+                    title: '模版名称'
+                },
+                {
+                    field: 'person.pName',
+                    title: '上传人'
+                },
+                {
+                    field: 'fileTime',
+                    title: '上传时间',
+                    formatter: function (value, row, index) {
+                        var startTime = '';
+                        if (value != '' && value != null) {
+                            var pattern = /(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/;
+                            startTime = value.replace(pattern, '$1-$2-$3 $4:$5:$6');
+                        }
+                        return startTime;
+                    }
+                },
+                {
+                    field: 'fileType',
+                    title: '附件类型',
+                    formatter: function (value, row, index) {
+                        return $.table.selectPubParaValueData(datas, value);
+                    }
+                },
+                {
+                    field: 'automateStatus',
+                    title: '自动化状态',
+                    formatter: function (value, row, index) {
+                        return $.table.selectPubParaValueData(datas1, value);
+                    }
+                }]
+        };
+        $.table.init(options);
+
+        var options1 = {
+            url: prefix + "/selectResultMsg",
+            id: 'bootstrap-result',
+            showSearch: false,
+            showRefresh: false,
+            showToggle: false,
+            showColumns: false,
+            queryParams: queryParamsResultMsg,
+            modalName: "自动化执行结果",
+            columns: [
+                {
+                    field: 'startTime',
+                    title: '开始时间'
+                },
+                {
+                    field: 'endTime',
+                    title: '结束时间'
+                },
+                {
+                    field: 'status',
+                    title: '状态'
+                },
+                {
+                    field: 'resultMsg',
+                    title: '执行结果描述'
+                }]
+        };
+        $.table.init(options1);
+    });
+
+    // 查询条件为版本单ID
+    function queryParams(params) {
+        var search = $.table.queryParams(params);
+        search.ownerId = $("#versionInfoId").val();
+        search.fileType = "3";
+        search.atId = "";
+        return search;
+    }
+
+    // 自动化结果查询
+    function queryParamsResultMsg(params) {
+        var search = $.table.queryParams(params);
+        search.atId = $("#atId").val();
+        return search;
+    }
+
+    // 启动自动化
+    function startAgent() {
+        var automateStatus = $.table.selectColumns("automateStatus");
+        // 如果自动化启动成功，则不能重复启动
+        if(automateStatus == "3"){
+            $.modal.alertWarning("自动化已经启动成功，不能重复启动自动化！");
+            return;
+        }
+        var atId = $.table.selectFirstColumns()[0];
+        var taskId = $("#taskId").val();
+        var data = {"atId": atId,"taskId":taskId};
+        $.modal.loading("正在启动自动化，请稍后...");
+        $.post(prefix + "/startAgent", data, function (result) {
+            $.table.refresh("bootstrap-file");
+            if (result.code == 0) {
+                $.modal.alertSuccess(result.msg);
+            } else {
+                $.modal.alertError(result.msg);
+            }
+            $.modal.closeLoading();
+        });
+    }
+
+    // 查看自动化执行结果
+    function selectResultMsg(atId) {
+        var atId = $.table.selectFirstColumns()[0];
+        $("#atId").val(atId);
+        $.table.search('result-form', 'bootstrap-result');
+        $.table.refresh("bootstrap-file");
+    }
+
+    // 关闭自动化页面刷新外表列表
+    window.onunload = function (e) {
+        var src = ctx + "version/taskInfo";
+        var tab = window.top.$("iframe[src='"+src+"']");
+        eg:tab.contents().find("#versionTaskInfoList").click();
+    }
+
+</script>
+</body>
+</html>

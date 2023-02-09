@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+
+
+<head>
+    <th:block th:include="include :: header('日常巡检记录单')"/>
+    <th:block th:include="include :: select2-css"/>
+</head>
+<body class="gray-bg">
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-12 search-collapse">
+            <form id="formId">
+                <div class="select-list">
+                    <ul>
+                        <li>
+                            <p>系统名称：</p>
+                            <input type="text" name="sysName"/>
+                        </li>
+                        <li>
+                            <p>运维单位：</p>
+                            <input type="text" name="sysCompany"/>
+                        </li>
+                        <li>
+                            <p>巡检人员：</p>
+                            <input type="text" name="inspectors"/>
+                        </li>
+                        <li>
+                            <p>系统负责人：</p>
+                            <input type="text" name="sysManager"/>
+                        </li>
+                        <li>
+                            <a class="btn btn-primary btn-rounded btn-sm" id="searchBut" onclick="$.table.search()"><i
+                                    class="fa fa-search"></i>&nbsp;搜索</a>
+                            <a class="btn btn-warning btn-rounded btn-sm" onclick="reset()"><i
+                                    class="fa fa-refresh"></i>&nbsp;重置</a>
+                        </li>
+                    </ul>
+                </div>
+            </form>
+        </div>
+        <div class="btn-group-sm" id="toolbar" role="group">
+            <a class="btn btn-success" onclick="$.operate.addTab()">
+                <i class="fa fa-plus"></i> 新建
+            </a>
+            <a class="btn btn-primary single disabled" onclick="edit('')">
+                <i class="fa fa-edit"></i> 修改
+            </a>
+            <a class="btn btn-danger multiple disabled" onclick="deleteData('')">
+                <i class="fa fa-trash"></i> 删除
+            </a>
+            <a class="btn btn-primary single disabled" onclick="detail()">
+                <i class="fa fa-search"></i>查看详情
+            </a>
+        </div>
+        <div class="col-sm-12 select-table table-striped">
+            <table id="bootstrap-table" style="table-layout:fixed;"></table>
+        </div>
+    </div>
+</div>
+<th:block th:include="include :: footer"/>
+<th:block th:include="include :: select2-js"/>
+<th:block th:include="include :: datetimepicker-js"/>
+<script th:src="@{/js/activiti.js}"></script>
+<script th:inline="javascript">
+    var prefix = ctx + "report/forms";
+    $(function () {
+        // 回车键搜索
+        document.onkeydown = function (e) {
+            var ev = document.all ? window.event : e;
+            if (ev.keyCode == 13) {
+                $('#searchBut').trigger('click');
+                return false;
+            }
+        };
+        var options = {
+            url: prefix + "/inspectionList",
+            createUrl: prefix + "/add",
+            clickToSelect: true,
+            singleSelect: true,
+            sortName: "startTime",
+            sortOrder: "desc",
+            modalName: "日常巡检记录单",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'id',
+                    title: '主键ID',
+                    visible: false
+                },
+                {
+                    field: 'sysName',
+                    width: 150,
+                    title: '系统名称'
+                },
+                {
+                    field: 'sysCompany',
+                    width: 150,
+                    title: '运维单位'
+                },
+                {
+                    field: 'inspectors',
+                    width: 150,
+                    title: '巡检人员'
+                },
+                {
+                    field: 'contact',
+                    width: 150,
+                    title: '联系方式'
+                },
+                {
+                    field: 'sysManager',
+                    width: 150,
+                    title: '系统负责人'
+                },
+                {
+                    field: 'lastDate',
+                    width: 150,
+                    title: '最后更新日期'
+                },
+                {
+                    field: 'startTime',
+                    width: 150,
+                    title: '开始时间'
+                },
+                {
+                    field: 'endTime',
+                    width: 150,
+                    title: '结束时间'
+                }
+                ]
+        };
+        $.table.init(options);
+    });
+
+    //删除
+    function deleteData(id) {
+        if (id == '') {
+            id = $.table.selectColumns("id")[0];
+        }
+        let url = prefix + "/delete";
+        $.modal.confirm("确认要删除吗?", function () {
+            var data = {"id": id};
+            $.operate.submit(url, "post", "json", data);
+        });
+
+    }
+
+    //修改
+    function edit(id) {
+        if (id == '') {
+            id = $.table.selectFirstColumns();
+        }
+        let url = prefix + "/edit/" + id;
+        $.modal.openTab("修改巡检记录单", url);
+    }
+
+    /*查看详情*/
+    function detail() {
+        var id = $.table.selectFirstColumns();
+        var url = prefix + "/detail/" + id;
+        $.modal.openTab("修改巡检记录单", url);
+    }
+
+    //** 重置 */
+    function reset() {
+        $("#groupId").html("");
+        $.form.resetAll('formId');
+    }
+</script>
+</body>
+</html>

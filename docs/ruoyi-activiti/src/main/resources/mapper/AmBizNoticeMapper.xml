@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.activiti.mapper.AmBizNoticeMapper">
+
+    <resultMap type="AmBizNotice" id="AmBizNoticeResult">
+        <result property="amBizId"    column="am_biz_id"    />
+        <result property="amCode"    column="am_code"    />
+        <result property="addTime"    column="create_time"    />
+        <result property="checkerId"    column="checker_id"    />
+        <result property="createId"    column="create_id"    />
+        <result property="description"    column="description"    />
+        <result property="releaseDate"    column="release_date"    />
+        <result property="releaseOrg"    column="release_org"    />
+        <result property="checkerFlag"    column="checker_flag"    />
+        <result property="checkerAdvice"    column="checker_advice"    />
+        <result property="invalidationMark"    column="invalidation_mark"    />
+        <result property="checkerTime"    column="checker_time"    />
+        <result property="sendRange"    column="send_range"    />
+        <result property="amTitle"    column="am_title"    />
+        <result property="currentStatus"    column="current_status"    />
+        <result property="isTop"         column="is_top"          />
+        <result property="topTimeFlag"         column="top_time_flag"          />
+        <result property="topTime"         column="top_time"          />
+        <result property="checkerName"         column="checker_Name"          />
+        <result property="pName"     column="PNAME"     />
+        <result property="orgName"     column="ORGNAME"     />
+        <result property="amOffline"     column="am_offline"     />
+        <result property="amOfflineTime"     column="am_offline_time"     />
+    </resultMap>
+
+    <sql id="selectAmBizNoticeVo">
+        SELECT
+        T.AM_BIZ_ID AS AM_BIZ_ID,
+        T.AM_CODE AS AM_CODE,
+        T.CREATE_TIME AS CREATE_TIME,
+        T.CHECKER_ID AS CHECKER_ID,
+        PS.PNAME AS CHECKER_NAME,
+        T.CREATE_ID AS CREATE_ID,
+        T.DESCRIPTION AS DESCRIPTION,
+        T.RELEASE_DATE AS RELEASE_DATE,
+        T.RELEASE_ORG AS RELEASE_ORG,
+        T.CHECKER_FLAG AS CHECKER_FLAG,
+        T.CHECKER_ADVICE AS CHECKER_ADVICE,
+        T.INVALIDATION_MARK AS INVALIDATION_MARK,
+        T.CHECKER_TIME AS CHECKER_TIME,
+        T.SEND_RANGE AS SEND_RANGE,
+        T.AM_TITLE AS AM_TITLE,
+        T.CURRENT_STATUS AS CURRENT_STATUS,
+        T.IS_TOP AS IS_TOP,
+        T.TOP_TIME_FLAG AS TOP_TIME_FLAG,
+        T.TOP_TIME AS TOP_TIME,
+        P.PNAME AS PNAME,
+        O.ORGNAME AS ORGNAME,
+        T.AM_OFFLINE AS AM_OFFLINE,
+        T.AM_OFFLINE_TIME AS AM_OFFLINE_TIME
+        FROM
+        AM_BIZ_NOTICE T
+        LEFT JOIN OG_PERSON P ON T.CREATE_ID = P.PID
+        LEFT JOIN OG_PERSON PS ON T.CHECKER_ID = PS.PID
+        LEFT JOIN OG_ORG O ON T.RELEASE_ORG = O.ORGID
+        WHERE T.INVALIDATION_MARK = '1'
+    </sql>
+
+    <select id="selectAmBizNoticeList" parameterType="AmBizNotice" resultMap="AmBizNoticeResult">
+        <include refid="selectAmBizNoticeVo"/>
+        <if test="amBizId != null  and amBizId != ''"> and T.am_biz_id = #{amBizId}</if>
+        <if test="amCode != null  and amCode != ''">
+            and T.am_code like concat(concat('%',#{amCode}),'%')
+        </if>
+        <if test="checkerId != null  and checkerId != ''"> and T.checker_id = #{checkerId}</if>
+        <if test="createId != null  and createId != ''"> and T.create_id = #{createId}</if>
+        <if test="description != null  and description != ''"> and T.description = #{description}</if>
+        <if test="releaseDate != null  and releaseDate != ''"> and T.release_date = #{releaseDate}</if>
+        <if test="releaseOrg != null  and releaseOrg != ''"> and T.release_org = #{releaseOrg}</if>
+        <if test="checkerFlag != null  and checkerFlag != ''"> and T.checker_flag = #{checkerFlag}</if>
+        <if test="checkerAdvice != null  and checkerAdvice != ''"> and T.checker_advice = #{checkerAdvice}</if>
+        <if test="invalidationMark != null  and invalidationMark != ''"> and T.invalidation_mark = #{invalidationMark}</if>
+        <if test="checkerTime != null  and checkerTime != ''"> and T.checker_time = #{checkerTime}</if>
+        <if test="sendRange != null  and sendRange != ''"> and T.send_range = #{sendRange}</if>
+        <if test="amTitle != null  and amTitle != ''">
+            and T.am_title like concat(concat('%',#{amTitle}),'%')
+        </if>
+        <if test="currentStatus != null  and currentStatus != ''"> and T.current_status = #{currentStatus}</if>
+        <if test="isTop != null  and isTop != ''"> and T.is_top = #{isTop}</if>
+        <if test="topTimeFlag != null  and topTimeFlag != ''"> and T.top_time_flag = #{topTimeFlag}</if>
+        <if test="topTime != null  and topTime != ''"> and T.top_time = #{topTime}</if>
+        <if test="pName != null and pName != ''">
+            AND P.pname like concat(concat('%',#{pName}),'%')
+        </if>
+        <if test="checkerName != null and checkerName != ''">
+            AND PS.pname like concat(concat('%',#{checkerName}),'%')
+        </if>
+        <if test="orgName != null and orgName != ''">
+            AND O.ORGNAME like concat(concat('%',#{orgName}),'%')
+        </if>
+        <if test="params.beginTime != null and params.beginTime != ''">
+            AND T.CREATE_TIME &gt;= #{params.beginTime}
+        </if>
+        <if test="params.endTime != null and params.endTime != ''">
+            AND T.CREATE_TIME &lt;= #{params.endTime}
+        </if>
+        <if test="sendRanges != null and sendRanges != ''">
+            AND T.SEND_RANGE in
+            <foreach collection="sendRanges" item="sendRange" open="(" separator="," close=")">
+                #{sendRange}
+            </foreach>
+        </if>
+        <if test="tag != null and tag != ''">
+            AND to_char(sysdate,'yyyymmddhh24miss') &lt;= T.AM_OFFLINE_TIME
+        </if>
+        ORDER BY T.IS_TOP DESC, T.CREATE_TIME DESC
+    </select>
+
+    <select id="selectAmBizNoticeListMysql" parameterType="AmBizNotice" resultMap="AmBizNoticeResult">
+        <include refid="selectAmBizNoticeVo"/>
+        <if test="amBizId != null  and amBizId != ''"> and T.am_biz_id = #{amBizId}</if>
+        <if test="amCode != null  and amCode != ''">
+            and T.am_code like concat(concat('%',#{amCode}),'%')
+        </if>
+        <if test="checkerId != null  and checkerId != ''"> and T.checker_id = #{checkerId}</if>
+        <if test="createId != null  and createId != ''"> and T.create_id = #{createId}</if>
+        <if test="description != null  and description != ''"> and T.description = #{description}</if>
+        <if test="releaseDate != null  and releaseDate != ''"> and T.release_date = #{releaseDate}</if>
+        <if test="releaseOrg != null  and releaseOrg != ''"> and T.release_org = #{releaseOrg}</if>
+        <if test="checkerFlag != null  and checkerFlag != ''"> and T.checker_flag = #{checkerFlag}</if>
+        <if test="checkerAdvice != null  and checkerAdvice != ''"> and T.checker_advice = #{checkerAdvice}</if>
+        <if test="invalidationMark != null  and invalidationMark != ''"> and T.invalidation_mark = #{invalidationMark}</if>
+        <if test="checkerTime != null  and checkerTime != ''"> and T.checker_time = #{checkerTime}</if>
+        <if test="sendRange != null  and sendRange != ''"> and T.send_range = #{sendRange}</if>
+        <if test="amTitle != null  and amTitle != ''">
+            and T.am_title like concat(concat('%',#{amTitle}),'%')
+        </if>
+        <if test="currentStatus != null  and currentStatus != ''"> and T.current_status = #{currentStatus}</if>
+        <if test="isTop != null  and isTop != ''"> and T.is_top = #{isTop}</if>
+        <if test="topTimeFlag != null  and topTimeFlag != ''"> and T.top_time_flag = #{topTimeFlag}</if>
+        <if test="topTime != null  and topTime != ''"> and T.top_time = #{topTime}</if>
+        <if test="pName != null and pName != ''">
+            AND P.pname like concat(concat('%',#{pName}),'%')
+        </if>
+        <if test="checkerName != null and checkerName != ''">
+            AND PS.pname like concat(concat('%',#{checkerName}),'%')
+        </if>
+        <if test="orgName != null and orgName != ''">
+            AND O.ORGNAME like concat(concat('%',#{orgName}),'%')
+        </if>
+        <if test="params.beginTime != null and params.beginTime != ''">
+            AND T.CREATE_TIME &gt;= #{params.beginTime}
+        </if>
+        <if test="params.endTime != null and params.endTime != ''">
+            AND T.CREATE_TIME &lt;= #{params.endTime}
+        </if>
+        <if test="sendRanges != null and sendRanges != ''">
+            AND T.SEND_RANGE in
+            <foreach collection="sendRanges" item="sendRange" open="(" separator="," close=")">
+                #{sendRange}
+            </foreach>
+        </if>
+        <if test="tag != null and tag != ''">
+            AND now() &lt;= T.AM_OFFLINE_TIME
+        </if>
+        ORDER BY T.IS_TOP DESC, T.CREATE_TIME DESC
+    </select>
+
+    <select id="selectAmBizNoticeById" parameterType="String" resultMap="AmBizNoticeResult">
+        <include refid="selectAmBizNoticeVo"/>
+        AND am_biz_id = #{amBizId}
+    </select>
+
+    <insert id="insertAmBizNotice" parameterType="AmBizNotice">
+        insert into am_biz_notice
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="amBizId != null  and amBizId != ''">am_biz_id,</if>
+            <if test="amCode != null  and amCode != ''">am_code,</if>
+            <if test="addTime != null  and addTime != ''">create_time,</if>
+            <if test="checkerId != null  and checkerId != ''">checker_id,</if>
+            <if test="createId != null  and createId != ''">create_id,</if>
+            <if test="description != null  and description != ''">description,</if>
+            <if test="releaseDate != null  and releaseDate != ''">release_date,</if>
+            <if test="releaseOrg != null  and releaseOrg != ''">release_org,</if>
+            <if test="checkerFlag != null  and checkerFlag != ''">checker_flag,</if>
+            <if test="checkerAdvice != null  and checkerAdvice != ''">checker_advice,</if>
+            <if test="invalidationMark != null  and invalidationMark != ''">invalidation_mark,</if>
+            <if test="checkerTime != null  and checkerTime != ''">checker_time,</if>
+            <if test="sendRange != null  and sendRange != ''">send_range,</if>
+            <if test="amTitle != null  and amTitle != ''">am_title,</if>
+            <if test="currentStatus != null  and currentStatus != ''">current_status,</if>
+            <if test="isTop != null  and isTop != ''">is_top,</if>
+            <if test="topTimeFlag != null  and topTimeFlag != ''">top_time_flag,</if>
+            <if test="topTime != null  and topTime != ''">top_time,</if>
+            <if test="amOffline != null  and amOffline != ''">am_offline,</if>
+            <if test="amOfflineTime != null  and amOfflineTime != ''">am_offline_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="amBizId != null  and amBizId != ''">#{amBizId},</if>
+            <if test="amCode != null  and amCode != ''">#{amCode},</if>
+            <if test="addTime != null  and addTime != ''">#{addTime},</if>
+            <if test="checkerId != null  and checkerId != ''">#{checkerId},</if>
+            <if test="createId != null  and createId != ''">#{createId},</if>
+            <if test="description != null  and description != ''">#{description},</if>
+            <if test="releaseDate != null  and releaseDate != ''">#{releaseDate},</if>
+            <if test="releaseOrg != null  and releaseOrg != ''">#{releaseOrg},</if>
+            <if test="checkerFlag != null  and checkerFlag != ''">#{checkerFlag},</if>
+            <if test="checkerAdvice != null  and checkerAdvice != ''">#{checkerAdvice},</if>
+            <if test="invalidationMark != null  and invalidationMark != ''">#{invalidationMark},</if>
+            <if test="checkerTime != null  and checkerTime != ''">#{checkerTime},</if>
+            <if test="sendRange != null  and sendRange != ''">#{sendRange},</if>
+            <if test="amTitle != null  and amTitle != ''">#{amTitle},</if>
+            <if test="currentStatus != null  and currentStatus != ''">#{currentStatus},</if>
+            <if test="isTop != null  and isTop != ''">#{isTop},</if>
+            <if test="topTimeFlag != null  and topTimeFlag != ''">#{topTimeFlag},</if>
+            <if test="topTime != null  and topTime != ''">#{topTime},</if>
+            <if test="amOffline != null  and amOffline != ''">#{amOffline},</if>
+            <if test="amOfflineTime != null  and amOfflineTime != ''">#{amOfflineTime},</if>
+        </trim>
+    </insert>
+
+    <update id="updateAmBizNotice" parameterType="AmBizNotice">
+        update am_biz_notice
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="amCode != null  and amCode != ''">am_code = #{amCode},</if>
+            <if test="addTime != null  and addTime != ''">create_time = #{addTime},</if>
+            <if test="checkerId != null  and checkerId != ''">checker_id = #{checkerId},</if>
+            <if test="createId != null  and createId != ''">create_id = #{createId},</if>
+            <if test="description != null  and description != ''">description = #{description},</if>
+            <if test="releaseDate != null  and releaseDate != ''">release_date = #{releaseDate},</if>
+            <if test="releaseOrg != null  and releaseOrg != ''">release_org = #{releaseOrg},</if>
+            <if test="checkerFlag != null  and checkerFlag != ''">checker_flag = #{checkerFlag},</if>
+            <if test="checkerAdvice != null  and checkerAdvice != ''">checker_advice = #{checkerAdvice},</if>
+            <if test="invalidationMark != null  and invalidationMark != ''">invalidation_mark = #{invalidationMark},</if>
+            <if test="checkerTime != null  and checkerTime != ''">checker_time = #{checkerTime},</if>
+            <if test="sendRange != null  and sendRange != ''">send_range = #{sendRange},</if>
+            <if test="amTitle != null  and amTitle != ''">am_title = #{amTitle},</if>
+            <if test="currentStatus != null  and currentStatus != ''">current_status = #{currentStatus},</if>
+            <if test="isTop != null  and isTop != ''">is_top = #{isTop},</if>
+            <if test="topTimeFlag != null  and topTimeFlag != ''">top_time_flag = #{topTimeFlag},</if>
+            <if test="topTime != null  and topTime != ''">top_time = #{topTime},</if>
+            <if test="amOffline != null  and amOffline != ''">am_offline = #{amOffline},</if>
+            <if test="amOfflineTime != null  and amOfflineTime != ''">am_offline_time = #{amOfflineTime},</if>
+        </trim>
+        where am_biz_id = #{amBizId}
+    </update>
+
+    <delete id="deleteAmBizNoticeById" parameterType="String">
+        delete from am_biz_notice where am_biz_id = #{amBizId}
+    </delete>
+
+    <delete id="deleteAmBizNoticeByIds" parameterType="String">
+        delete from am_biz_notice where am_biz_id in
+        <foreach item="amBizId" collection="array" open="(" separator="," close=")">
+            #{amBizId}
+        </foreach>
+    </delete>
+
+</mapper>

@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <!--安全审核页面-->
+    <th:block th:include="include :: header('版本信息')" />
+    <th:block th:include="include :: select2-css" />
+</head>
+<body>
+<div class="main-content">
+    <form id="form-security-approval" class="form-horizontal" th:object="${vmBizInfo}">
+        <input name="params[taskId]" type="hidden" id="taskId" th:value="*{params.taskId}"/>
+        <input name="versionInfoId" type="hidden" id="versionInfoId" th:value="*{versionInfoId}"/>
+        <h4 class="form-header h4">版本信息</h4>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">版本编号：</label>
+                    <div class="col-sm-8">
+                        <input name="versionInfoNo" id="versionInfoNo" class="form-control" type="text" required th:value="*{versionInfoNo}" readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">所属应用系统：</label>
+                    <div class="col-sm-8">
+                        <input id="sysId" name="sysId" type="hidden" class="form-control" />
+                        <input id="applicationName" name="applicationName" type="text" class="form-control" th:value="*{ogSys.caption}" readonly/>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">版本类型：</label>
+                    <div class="col-sm-8">
+                        <!--<input id="versionType" name="versionType" class="form-control" type="hidden" th:value="*{versionType}" readonly>-->
+                        <input id="versionTypeName" name="versionTypeName" class="form-control" th:value="*{versionTypeName}" readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">下发中心：</label>
+                    <div class="col-sm-8">
+                        <!--<input id="agencyCenter" name="agencyCenter" class="form-control" type="hidden">-->
+                        <input id="agencyCenterName" name="agencyCenterName" class="form-control" th:value="*{agencyCenterName}" readonly>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">下发技术局：</label>
+                    <div class="col-sm-8">
+                        <!--<input id="issuedUnit" name="issuedUnit" class="form-control" type="hidden">-->
+                        <textarea rows="6" cols="10" id="issuedUnitName" name="issuedUnitName" class="form-control" th:text="*{issuedUnitName}" readonly></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">下发分行：</label>
+                    <div class="col-sm-8">
+                        <!--<input id="issuedBranch" name="issuedBranch" class="form-control" type="hidden">-->
+                        <textarea rows="6" cols="10" id="issuedBranchName" name="issuedBranchName" class="form-control" th:text="*{issuedBranchName}" readonly></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">涉及外围系统：</label>
+                    <div class="col-sm-10">
+                        <!--<input id="sys_Id" name="sys_Id" type="hidden" class="form-control"/>-->
+                        <input id="sysName" name="sysName" type="text" class="form-control" th:value="*{sysName}" readonly/>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">版本发布标题：</label>
+                    <div class="col-sm-10">
+                        <input id="versionInfoName" name="versionInfoName" class="form-control" type="text" th:value="*{versionInfoName}" readonly>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">升级内容摘要：</label>
+                    <div class="col-sm-10">
+                        <input id="versionName" name="versionName" class="form-control" type="text" th:value="*{versionName}" readonly>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">业务需求内容：</label>
+                    <div class="col-sm-10">
+                        <textarea rows="10" cols="20" id="businessRequirementText" name="businessRequirementText" class="form-control" th:text="*{businessRequirementText}" readonly></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">功能描述：</label>
+                    <div class="col-sm-10">
+                        <textarea rows="6" cols="20" id="versionDescription" name="versionDescription" class="form-control" th:text="*{versionDescription}" readonly></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">涉及模块/服务：</label>
+                    <div class="col-sm-10">
+                        <textarea rows="4" cols="20" id="issuedNo" name="issuedNo" class="form-control" th:text="*{issuedNo}" readonly></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">测试要点：</label>
+                    <div class="col-sm-10">
+                        <textarea rows="6" cols="20" id="businessValidationText" name="businessValidationText" class="form-control" th:text="*{businessValidationText}" readonly></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">业务测试人员：</label>
+                    <div class="col-sm-8">
+                        <input id="questionId" name="questionId" placeholder="没有填无" class="form-control" type="text" th:value="*{questionId}" readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">技术测试人员：</label>
+                    <div class="col-sm-8">
+                        <input id="drafterId" name="drafterId" placeholder="没有填无" class="form-control" type="text" th:value="*{drafterId}" readonly>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">涉及更新的库：</label>
+                    <div class="col-sm-10">
+                        <textarea rows="10" cols="20" id="acceptOrganization" name="acceptOrganization" class="form-control" th:text="*{acceptOrganization}" readonly></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">涉及更新的服务：</label>
+                    <div class="col-sm-10">
+                        <textarea rows="10" cols="20" id="createunits" name="createunits" class="form-control" th:text="*{createunits}" readonly></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">涉及重启的服务：</label>
+                    <div class="col-sm-10">
+                        <textarea rows="10" cols="20" id="copyRequiteUnit" name="copyRequiteUnit" class="form-control" th:text="*{copyRequiteUnit}" readonly></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">涉及变更的内容：</label>
+                    <div class="col-sm-10">
+                        <textarea rows="10" cols="20" id="noticeText" name="noticeText" class="form-control" th:text="*{noticeText}" readonly></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">是否通报办公室：</label>
+                    <div class="col-sm-8">
+                        <select id="ifReportOffice" name="ifReportOffice" class="form-control" th:value="*{ifReportOffice}" disabled>
+                            <option th:selected="*{ifReportOffice == '1'}" value="1">是</option>
+                            <option th:selected="*{ifReportOffice == '2'}" value="2">否</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">是否报备银保监会：</label>
+                    <div class="col-sm-8">
+                        <select id="ifReportCbrc" name="ifReportCbrc" class="form-control" th:value="*{ifReportCbrc}" disabled>
+                            <option th:selected="*{ifReportCbrc == '1'}" value="1">是</option>
+                            <option th:selected="*{ifReportCbrc == '2'}" value="2">否</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">是否通报客服中心：</label>
+                    <div class="col-sm-8">
+                        <select id="ifReportCallCenter" name="ifReportCallCenter" class="form-control" th:field="*{ifReportCallCenter}" disabled>
+                            <option th:selected="*{ifReportCallCenter == '1'}" value="1">是</option>
+                            <option th:selected="*{ifReportCallCenter == '2'}" value="2">否</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">是否需停业升级：</label>
+                    <div class="col-sm-8">
+                        <select id="ifStopBusiness" name="ifStopBusiness" class="form-control" th:value="*{ifStopBusiness}" disabled>
+                            <option th:selected="*{ifStopBusiness == '1'}" value="1">是</option>
+                            <option th:selected="*{ifStopBusiness == '2'}" value="2">否</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">开始升级时间：</label>
+                    <div class="col-sm-8">
+                        <input id="startUpgradeTime" name="startUpgradeTime" class="form-control" type="text" placeholder="yyyy-MM-dd HH:mm:ss" th:value="*{startUpgradeTime}" readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">完成升级时间：</label>
+                    <div class="col-sm-8">
+                        <input id="endUpgradeTime" name="endUpgradeTime" class="form-control" type="text" placeholder="yyyy-MM-dd HH:mm:ss" th:value="*{endUpgradeTime}" readonly>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">升级支持人员：</label>
+                    <div class="col-sm-8">
+                        <input id="technicalSupportId" name="technicalSupportId" class="form-control" type="text" th:value="*{technicalSupportId}" readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">升级支持电话：</label>
+                    <div class="col-sm-8">
+                        <input id="technicalSupportPhone" name="technicalSupportPhone" class="form-control" type="text" th:value="*{technicalSupportPhone}" readonly>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <h4 class="form-header h4">审核信息</h4>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label is-required">安全审核意见：</label>
+                    <div class="col-sm-10">
+                        <textarea rows="6" cols="10" id="authorText" name="params[comment]" class="form-control" maxlength="100" required></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<div class="row">
+    <div class="col-sm-12">
+        <div class="tabs-container">
+            <ul class="nav nav-tabs">
+                <li class="active"><a data-toggle="tab" href="#tab-1" aria-expanded="true">流程记录</a>
+                </li>
+                <li class=""><a data-toggle="tab" href="#tab-2" aria-expanded="false">附件</a>
+                </li>
+            </ul>
+            <div class="tab-content">
+                <div id="tab-1" class="tab-pane active">
+                    <div class="panel-body">
+                        <div class="btn-group-sm" id="toolbar1" role="group">
+                        </div>
+                        <div class="col-sm-12 select-table table-striped">
+                            <table id="history-table"></table>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="tab-2" class="tab-pane">
+                    <div class="panel-body">
+                        <div class="btn-group-sm" id="toolbar2" role="group">
+                            <a class="btn btn-primary multiple disabled" onclick="taskDownload()">
+                                <i class="fa fa-download"></i> 下载附件
+                            </a>
+                        </div>
+                        <div class="col-sm-12 select-table table-striped">
+                            <table id="file-table"></table>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-sm-offset-5 col-sm-10">
+        <button type="button" class="btn btn-sm btn-primary" onclick="pass('1')"><i class="fa fa-check"></i>通 过</button>&nbsp;
+        <button type="button" class="btn btn-sm btn-danger" onclick="pass('0')"><i class="fa fa-reply-all"></i>不 通 过</button>&nbsp;
+        <button type="button" class="btn btn-sm btn-danger" onclick="closeItem()"><i class="fa fa-window-close"></i>关 闭</button>
+    </div>
+</div>
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: select2-js" />
+<th:block th:include="include :: datetimepicker-js" />
+<script th:src="@{/js/activiti.js}"></script>
+<script th:inline="javascript">
+    var prefix = ctx + "version/public";
+    var prefix_attachment = ctx + "pub/attachment";
+    var datas = [[${@pubParaValue.selectPubParaValueByParaName('file_type')}]];
+
+    // 流程记录
+    $(function() {
+        puFolwHistory($("#versionInfoId").val());
+    });
+
+    // 附件列表
+    $(function() {
+        var options_file = {
+            url: prefix_attachment + "/list",
+            id: "file-table",
+            toolbar:"toolbar2",
+            showSearch: false,
+            showRefresh: false,
+            showToggle: false,
+            showColumns: false,
+            sortName: "fileTime",
+            sortOrder: "desc",
+            singleSelect : true,
+            clickToSelect: true,
+            queryParams:queryParamsFile,
+            modalName: "附件列表",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field : 'atId',
+                    title : '附件ID',
+                    visible : false
+                },
+                {
+                    field : 'fileName',
+                    title : '文件名称'
+                },
+                {
+                    field : 'person.pName',
+                    title : '上传人'
+                },
+                {
+                    field : 'size',
+                    title : '文件大小'
+                },
+                {
+                    field : 'memo',
+                    title : '文件描述'
+                },
+                {
+                    field : 'fileTime',
+                    title : '上传时间',
+                    formatter: function (value, row, index) {
+                        var startTime = '';
+                        if (value != '' && value != null) {
+                            var pattern = /(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/;
+                            startTime = value.replace(pattern, '$1-$2-$3 $4:$5:$6');
+                        }
+                        return startTime;
+                    }
+                },
+                {
+                    field : 'fileType',
+                    title : '附件类型',
+                    formatter: function(value, row, index) {
+                        return $.table.selectPubParaValueData(datas, value);
+                    }
+                }]
+        };
+        $.table.init(options_file);
+    });
+
+    function queryParamsFile(params) {
+        var search = $.table.queryParams(params);
+        search.ownerId = $("#versionInfoId").val();
+        return search;
+    }
+
+    $("#form-security-approval").validate({
+        onkeyup: false,
+        rules:{
+            "params[comment]" : true
+        },
+        messages: {
+            "params[comment]" : "安全审核意见不可为空"
+        },
+        focusCleanup: true
+    });
+
+    // 附件下载
+    function taskDownload() {
+        // 判断版本未审批完成之前所有人只能下载普通附件
+        var fileType = $.table.selectColumns("fileType");
+        if(fileType != "1"){
+            $.modal.alert("流程运行中 只允许下载普通附件！");
+            return;
+        }
+        var rows = $.table.selectFirstColumns();
+        var atId = rows[0];
+        var ownerId = $("#versionInfoId").val();
+        var url = prefix_attachment + "/download/"+ownerId+"/"+atId;
+        window.location.href = url;
+    }
+
+    /*通过*/
+    function pass(flag) {
+        if ($.validate.form()) {
+            var data = $("#form-security-approval").serializeArray();
+            data.push({"name": "passFlag", "value": flag});
+            $.operate.saveTab(prefix + "/securityApprovalPass", data);
+        }
+    }
+
+</script>
+</body>
+</html>

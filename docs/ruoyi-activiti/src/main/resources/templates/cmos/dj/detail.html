@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+	<th:block th:include="include :: header('操作系统恢复登记')" />
+</head>
+<body class="white-bg">
+	<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+		<form class="form-horizontal m" id="form-line-edit" th:object="${cmOsRecoveryRegister}" >
+			<input id="recoveryRegisterId" type="hidden" name="recoveryRegisterId" th:value="*{recoveryRegisterId}">
+			<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+				<div class="panel-group">
+					<div class="panel panel-default">
+						<div class="panel-heading" style="green-color: #3c8dbc" data-toggle="collapse" data-target="#collapse1">
+							<h4 class="panel-title" >
+								操作系统恢复登记
+							</h4>
+						</div>
+						<div id="collapse1" class="panel-collapse in">
+							<div class="panel-body">
+								<div class="row">
+									<div class="col-sm-6">
+										<div class="form-group">
+											<label class="col-sm-4 control-label is-required">所属中心名称：</label>
+											<div class="col-sm-8 ">
+												<select class="form-control" id="centreName" th:field="*{centreName}" name="centreName" th:with="type=${@dict.getParaType('Line_Center')}" readonly disabled>
+													<option value=""></option>
+													<option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+												</select>
+											</div>
+										</div>
+									</div>
+									<div class="col-sm-6">
+										<div class="form-group">
+											<label class="col-sm-4 control-label is-required">业务系统名称：</label>
+											<div class="col-sm-8"><!--id="sysId"-->
+												<input id="sysId" name="sysId" type="hidden" class="form-control" />
+												<input id="sysName" type="text" th:field="*{sysName}" name="sysName" class="form-control" onclick="selectOneApplication()" readonly disabled/>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-sm-6">
+										<div class="form-group">
+											<label class="col-sm-4 control-label is-required">主机名：</label>
+											<div class="col-sm-8">
+												<input id="hostName" name="hostName" th:field="*{hostName}" type="text" class="form-control" maxlength="20" readonly disabled>
+											</div>
+										</div>
+									</div>
+									<div class="col-sm-6">
+										<div class="form-group">
+											<label class="col-sm-4 control-label is-required">磁带介质备份日期：</label>
+											<div class="col-sm-8">
+												<input id="backupDate" name="backupDate" th:field="*{backupDate}" type="text" placeholder="yyyy-MM-dd" class="form-control" readonly disabled>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-sm-6">
+										<div class="form-group" >
+											<label class="col-sm-4 control-label is-required">恢复开始时间：</label>
+											<div class="col-sm-8">
+												<input id="recoveryStartTime" name="recoveryStartTime" th:field="*{recoveryStartTime}" type="text" placeholder="yyyy-MM-dd HH:mm:ss" class="form-control" readonly disabled>
+											</div>
+										</div>
+									</div>
+									<div class="col-sm-6">
+										<div class="form-group">
+											<label class="col-sm-4 control-label is-required">恢复结束时间：</label>
+											<div class="col-sm-8">
+												<input id="recoveryEndTime" name="recoveryEndTime" th:field="*{recoveryEndTime}" type="text" placeholder="yyyy-MM-dd HH:mm:ss" class="form-control" readonly disabled>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-sm-6">
+										<div class="form-group">
+											<label class="col-sm-4 control-label is-required">恢复耗时（分钟）：</label>
+											<div class="col-sm-8">
+												<input id="recoveryTime" name="recoveryTime" th:field="*{recoveryTime}" class="form-control" type="text" readonly required>
+											</div>
+										</div>
+									</div>
+									<div class="col-sm-6">
+										<div class="form-group">
+											<label class="col-sm-4 control-label is-required">备份有效性验证结果：</label>
+											<div class="col-sm-8">
+												<select class="form-control" id="verificationResult" th:field="*{verificationResult}" name="verificationResult" th:with="type=${@dict.getParaType('fmSw_dealRes')}" readonly disabled>
+													<option value=""></option>
+													<option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}" ></option>
+												</select>
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-sm-6">
+										<div class="form-group">
+											<label class="col-sm-4 control-label is-required">操作系统类型：</label>
+											<div class="col-sm-8">
+												<select class="form-control" id="type" name="type" th:field="*{type}" th:with="type=${@dict.getParaType('cmos_type')}" readonly disabled>
+													<option value=""></option>
+													<option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+												</select>
+											</div>
+										</div>
+									</div>
+								</div>
+								<h4 class="form-header h4">下一步操作信息</h4>
+								<div class="row">
+									<div class="col-sm-6">
+										<div class="form-group">
+											<label class="col-sm-4 control-label text-right is-required">审批机构：</label>
+											<div class="col-sm-8">
+												<input name="orgName" id="orgName" th:field="*{orgName}" class="form-control" onclick="selectDept()" type="text" readonly disabled>
+												<input name="orgId" id="orgId" th:value="${orgId}" type="hidden" >
+											</div>
+										</div>
+									</div>
+									<div class="col-sm-6">
+										<div class="form-group">
+											<label class="col-sm-4 control-label text-right is-required">审批人：</label>
+											<div class="col-sm-8">
+												<select class="form-control" id="pId" name="pId" readonly disabled>
+													<option value="" th:if="${not #strings.isEmpty(cmOsRecoveryRegister.pId)}"></option>
+													<option th:each="OgPerson : ${pidList}" th:text="${OgPerson.pName}"
+															th:value="${OgPerson.pId}" th:field="*{pId}"></option>
+												</select>
+											</div>
+										</div>
+									</div>
+								</div>
+
+								<h4 class="form-header h4">备注</h4>
+								<div class="col-sm-12">
+									<div class="form-group">
+										<label class="col-sm-2 control-label">备注：</label>
+										<div class="col-sm-10">
+                                                <textarea rows="6" cols="20" id="remark" th:field="*{remark}"
+														  name="remark" maxlength="200" class="form-control" readonly disabled></textarea>
+										</div>
+									</div>
+								</div>
+
+								<h4 class="form-header h4">审核意见</h4>
+								<div class="col-sm-12">
+									<div class="form-group">
+										<label class="col-sm-2 control-label">审核意见：</label>
+										<div class="col-sm-10">
+                                                <textarea rows="6" cols="20" id="somment" th:field="*{somment}"
+														  name="somment" maxlength="200" class="form-control" readonly disabled></textarea>
+										</div>
+									</div>
+								</div>
+
+							</div>
+						</div>
+						<div class="panel panel-default">
+							<div class="panel-body">
+								<!-- Nav tabs -->
+								<ul class="nav nav-tabs" role="tablist">
+									<li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">附件</a></li>
+								</ul>
+
+								<!-- Tab panes -->
+								<div class="tab-content">
+									<div role="tabpanel" class="tab-pane active" id="home">
+										<div class="btn-group-sm" id="toolbar" role="tab" style="margin: 15px 0px;">
+											<a class="btn btn-warning multiple disabled" onclick="downloadFile()">
+												<i class="fa fa-download"></i> 下载附件
+											</a>
+										</div>
+										<div class="col-sm-12 select-table table-striped">
+											<table id="file-table"></table>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</form>
+	</div>
+	<div class="row">
+		<div class="col-sm-offset-5 col-sm-10">
+			<button type="button" class="btn btn-sm btn-danger" onclick="closeItem()"><i class="fa fa-remove"></i>关 闭</button>
+		</div>
+	</div>
+	<th:block th:include="include :: footer" />
+	<th:block th:include="include :: datetimepicker-js" />
+	<script type="text/javascript">
+
+		var prefix = ctx + "cmos/dj";
+
+		var prefix_attachment = ctx + "pub/attachment";
+
+		var prefix_two = ctx + "trans/sw"
+
+		$(function () {
+			var options = {
+				url: prefix_attachment + "/list",
+				id: "file-table",
+				createUrl: prefix_attachment + "/add",
+				updateUrl: prefix_attachment + "/edit/{id}",
+				removeUrl: prefix_attachment + "/remove",
+				detailUrl: prefix_attachment + "/edit/{id}",
+				sortName: "fileTime",
+				sortOrder: "desc",
+				singleSelect: true,
+				clickToSelect: true,
+				queryParams:queryParams,
+				modalName: "附件列表",
+				columns: [{
+					checkbox: true
+				},
+					{
+						field : 'atId',
+						title : '附件ID',
+						visible : false
+					},
+					{
+						field : 'person.pId',
+						title : '上传人员Id',
+						visible: false
+					},
+					{
+						field : 'fileName',
+						title : '文件名称'
+					},
+					{
+						field : 'person.pName',
+						title : '上传人'
+					},
+					{
+						field : 'size',
+						title : '文件大小'
+					},
+					{
+						field : 'memo',
+						title : '文件描述'
+					},
+					{
+						field : 'fileTime',
+						title : '上传时间'
+					}]
+			};
+			$.table.init(options);
+		});
+
+		function queryParams(params) {
+			debugger;
+			var search = $.table.queryParams(params);
+			search.ownerId =  $("#recoveryRegisterId").val();
+			return search;
+		}
+
+		// 附件下载
+		function downloadFile() {
+			var rows = $.table.selectFirstColumns();
+			var atId = rows[0];
+			var ownerId = $("#recoveryRegisterId").val();
+			var url = prefix_attachment+"/download/"+ownerId+"/"+atId;
+			window.location.href = url;
+		}
+
+		/* 选择审批机构树 */
+		function selectDept() {
+			var orgId = $("#orgId").val();
+			var deptId = $.common.isEmpty(orgId) ? "310100001" : $("#orgId").val();
+			var url = ctx + "activiti/qingqiu/selectCheckDeptTreeForCmbizSingle/" + deptId;
+			var options = {
+				title: '选择部门',
+				width: "380",
+				url: url,
+				callBack: doSubmitOne
+			};
+			$.modal.openOptions(options);
+		}
+
+		function doSubmitOne(index, layero) {
+			var tree = layero.find("iframe")[0].contentWindow.$._tree;
+			var body = layer.getChildFrame('body', index);
+			$("#orgId").val(body.find('#treeId').val());
+			$("#orgName").val(body.find('#treeName').val());
+			getchangeManager(body.find('#treeId').val());
+			layer.close(index);
+		}
+
+		//获取审批人
+		function getchangeManager(changeOrg) {
+			$.ajax({
+				cache: true,
+				type: "POST",
+				url: prefix_p + "/selectPersonByOrgIdOrOrgLvAndRole",
+				data: {
+					"orgId": changeOrg,
+					"rId": "666667",
+					"pflag": "1",
+					"params[isselect]": "1"
+				},
+				async: false,
+				error: function (request) {
+					$.modal.alertError("系统错误");
+				},
+				success: function (data) {
+					var options = "<option value='" + "" + "'>" + "" + "</option> \n";
+					$("#pId").html("");
+					for (var ak = 0; ak < data.rows.length; ak++) {
+						options += "<option value='" + data.rows[ak].pId + "'>" + data.rows[ak].pName + "</option> \n";
+					}
+					$("#pId").append(options);
+				}
+			});
+		}
+
+		//字符串yyyyMMddHHmmss转yyyy-MM-dd HH:mm:ss
+		$(function () {
+			var backupDate = $("#backupDate").val();
+			var pattern = /^(\d{4})(\d{2})(\d{2})$/;
+			backupDate = backupDate.replace(pattern, '$1-$2-$3');
+			$("#backupDate").val(backupDate);
+
+			var recoveryStartTime = $("#recoveryStartTime").val();
+			var pattern = /(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/;
+			recoveryStartTime = recoveryStartTime.replace(pattern, '$1-$2-$3 $4:$5:$6');
+			$("#recoveryStartTime").val(recoveryStartTime);
+
+			var recoveryEndTime = $("#recoveryEndTime").val();
+			var pattern = /(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/;
+			recoveryEndTime = recoveryEndTime.replace(pattern, '$1-$2-$3 $4:$5:$6');
+			$("#recoveryEndTime").val(recoveryEndTime);
+
+		});
+
+	</script>
+</body>
+</html>

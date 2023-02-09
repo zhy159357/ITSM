@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('账号选择岗位')" />
+</head>
+
+<body class="gray-bg">
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-12 search-collapse">
+            <form id="post-form">
+                <div class="select-list">
+                    <ul>
+                        <li>
+                            岗位名称：<input type="text" name="postName" id="postName"/>
+                        </li>
+                        <li>
+                            <a class="btn btn-primary btn-rounded btn-sm" id="ss" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                            <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-repeat"></i>&nbsp;重置</a>
+                        </li>
+                    </ul>
+                </div>
+            </form>
+        </div>
+
+        <div class="col-sm-12 select-table table-striped">
+            <table id="bootstrap-table"></table>
+        </div>
+    </div>
+</div>
+<th:block th:include="include :: footer" />
+<script th:inline="javascript">
+    var prefix = ctx + "system/post";
+
+    $(function() {
+        //获取焦点
+        $('#postName').focus();
+        document.onkeydown = function(e){
+            var ev = document.all ? window.event : e;
+            if(ev.keyCode==13) {
+                $('#ss').trigger('click');
+                return false;
+            } //搜索逻辑
+        }
+        var options = {
+            url: prefix + "/postSelectList",
+            clickToSelect: true,
+            modalName: "岗位",
+            queryParams: queryParams,
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'postId',
+                    title: '岗位代码',
+                    visible:false
+                },
+                {
+                    field: 'postName',
+                    title: '岗位名称'
+                },
+                {
+                    field: 'memo',
+                    title: '备注'
+                },
+                {
+                    field: 'serialNum',
+                    title: '顺序',
+                    visible: false
+                }]
+        };
+        $.table.init(options);
+    });
+
+    function queryParams(params) {
+        var search = $.table.queryParams(params);
+        search.userId = parent.$('#userId').val();
+        return search;
+    }
+
+    function submitHandler () {
+        //判断是是否有人员选中
+        var rows = $("#bootstrap-table").bootstrapTable('getSelections');
+        if(rows.length==0){
+            //请先选择岗位信息
+            $.modal.alertError('请先选择岗位信息 ')
+            return;
+        }
+
+        //当前账户目前有的岗位信息
+        var data = {};
+        var userId = parent.$('#userId').val();
+        data.userId = userId;
+
+        $.post(prefix+'/selectListPostByUserId',data,function (result) {
+            var isHas = false;
+            $(result.data).each(function (index,item) {
+                $(rows).each(function (index1,item1) {
+                    if(item.postId==item1.postId){
+                        isHas = true;
+                    }
+                })
+            })
+            if(isHas){
+                $.modal.alertError('请确定该用户没有分配过选择的岗位 ')
+                return;
+            }
+
+            var allIds = $.common.isEmpty(table.options.uniqueId) ? $.table.selectFirstColumns() : $.table.selectColumns(table.options.uniqueId);
+            var data1 = { "userId":userId,"ids": allIds.join() };
+            //保存岗位信息
+            $.post(prefix+"/batch",data1,function (result) {
+                $.modal.close();
+                if(result.code==0){
+                    $.modal.msgSuccess('岗位添加成功 ')
+                    parent.$('#post-search').trigger('click')
+                }else{
+                    $.modal.alertError('岗位添加失败 ');
+                    return;
+                }
+            });
+        });
+    }
+
+
+</script>
+</body>
+</html>

@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:include="include :: header('修改信息制度')"/>
+</head>
+<body class="white-bg">
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+    <form class="form-horizontal m" id="form-info-edit">
+        <input id="regime_info_id" name="regime_info_id" type="hidden" th:value="${regime_info_id}"/>
+        <div class="row">
+            <div class="col-sm-11">
+                <div class="form-group">
+                    <label class="col-xs-2 control-label">制度摘要:</label>
+                    <div class="col-xs-10">
+                        <input class="form-control" type="text" name="regime_digest" id="regime_digest" maxlength="20">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-11">
+                <div class="form-group">
+                    <label class="col-xs-2 control-label is-required">审核人:</label>
+                    <div class="col-sm-10">
+                        <select id="checker" name="checker" class="form-control" required>
+                            <option th:each="user : ${checkerList}" th:text="${user.pName}"
+                                    th:value="${user.pId}"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<div class="row">
+    <div class="col-sm-offset-5 col-sm-10">
+        <button type="button" class="btn btn-sm btn-primary" onclick="submitHandler()"><i class="fa fa-check"></i>提交</button>&nbsp;
+        <button type="button" class="btn btn-sm btn-primary" onclick="reset()"><i class="fa fa-check"></i>重置</button>&nbsp;
+        <button type="button" class="btn btn-sm btn-danger" onclick="closeItem()"><i class="fa fa-window-close"></i>关闭 </button>
+    </div>
+</div>
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: ztree-js" />
+<script type="text/javascript">
+
+    //** 关闭选项卡 */
+    function closeItem() {
+
+        var index = parent.layer.getFrameIndex(window.name);
+        parent.layer.close(index);//关闭当前页
+    }
+    //** 重置 */
+    function reset() {
+        $("#regime_digest").val('');
+        $("#checker option").removeAttr("selected");
+    }
+
+    $("#form-info-edit").validate({
+        onkeyup: false,
+        rules: {
+            sysname: {
+                remote: {
+                    url: ctx + "system/info/checkInfoNameUnique",
+                    type: "post",
+                    dataType: "json",
+                    data: {
+                        "id": function () {
+                            return $("#id").val();
+                        },
+                        "ip": function () {
+                            return $.common.trim($("#ip").val());
+                        }
+                    },
+                    dataFilter: function (data, type) {
+                        return $.validate.unique(data);
+                    }
+                }
+            },
+            appsort: {
+                digits: true
+            },
+        },
+        messages: {
+            "roleName": {
+                remote: "话机绑定名称已经存在"
+            }
+        },
+        focusCleanup: true
+    });
+
+    $('input').on('ifChanged', function (obj) {
+        var type = $(this).val();
+        var checked = obj.currentTarget.checked;
+        if (type == 1) {
+            if (checked) {
+                $._tree.expandAll(true);
+            } else {
+                $._tree.expandAll(false);
+            }
+        } else if (type == "2") {
+            if (checked) {
+                $._tree.checkAllNodes(true);
+            } else {
+                $._tree.checkAllNodes(false);
+            }
+        } else if (type == "3") {
+            if (checked) {
+                $._tree.setting.check.chkboxType = {"Y": "ps", "N": "ps"};
+            } else {
+                $._tree.setting.check.chkboxType = {"Y": "", "N": ""};
+            }
+        }
+    })
+
+    var prefix = ctx + "system/info";
+    function submitHandler() {
+        var data = $("#form-info-edit").serializeArray();
+        if ($.validate.form()) {
+            $.operate.save(prefix + "/remove", data);
+        }
+    }
+</script>
+</body>
+</html>

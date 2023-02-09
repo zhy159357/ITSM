@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<th:block th:include="include :: header('应用管理系统列表')" />
+	<th:block th:include="include :: select2-css" />
+
+</head>
+<style>
+	#tb{
+		font-size: 11px;
+	}
+</style>
+<body class="gray-bg">
+	<div class="container-div">
+		<form id="role-form">
+		<div class="row">
+			<div class="col-sm-12 search-collapse">
+					<div class="select-list">
+						<ul>
+							<input type="hidden" id="deptId" name="orgId">
+							<li>
+								<label>系统名称：</label>
+								<input type="text" name="caption"/>
+							</li>
+							<li>
+								<label>系统编码：</label>
+								<input type="text" name="code"/>
+							</li>
+							<li>
+								<label>所属处室：</label>
+								<select name="dept"  th:with="type=${@pubParaValue.selectPubParaValueByParaName('Fm_dept')}">
+									<option value=""></option>
+									<option th:each="paraValue : ${type}" th:text="${paraValue.valueDetail}" th:value="${paraValue.value}"></option>
+								</select>
+							</li>
+							<li>
+								<label>所属机构：</label>
+								<input id="deptName" readonly type="text" onclick="selectDeptTree()" name="orgName"/>
+							</li>
+							<li>
+								<label>参与考核：</label>
+								<select name="isExamination" id="isExamination">
+									<option value="">所有</option>
+									<option value="1">是</option>
+									<option value="0">否</option>
+								</select>
+							</li>
+							<li>
+								<label>状态：</label>
+								<select name="invalidationMark" id="invalidationMark">
+									<option value="">所有</option>
+									<option value="1">启用</option>
+									<option value="0">停止</option>
+								</select>
+							</li>
+							<li>
+								<label>系统类别：</label>
+								<select id="sysType" name="sysType" th:with="type=${@pubParaValue.selectPubParaValueByParaName('SYS_TYPE')}">
+                                    <option value="">所有</option>
+                                    <option th:each="paraValue : ${type}" th:text="${paraValue.valueDetail}" th:value="${paraValue.value}"></option>
+                                </select>
+							</li>
+							<li>
+								<label>是否重要系统：</label>
+								<select name="isKeySys" id="isKeySys">
+									<option value="">所有</option>
+									<option value="1">是</option>
+									<option value="0">否</option>
+								</select>
+							</li>
+							<li>
+								<a class="btn btn-primary btn-rounded btn-sm" id="applicationSearch" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+							    <a class="btn btn-warning btn-rounded btn-sm" id="applicationsx" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+							</li>
+						</ul>
+					</div>
+			</div>
+		</div>
+		</form>
+			<div class="btn-group-sm" id="toolbar" role="group">
+				<a class="btn btn-success" onclick="$.operate.addTab()">
+	                <i class="fa fa-plus"></i> 新增
+	            </a>
+	            <a class="btn btn-primary single disabled" onclick="$.operate.editTab()">
+		            <i class="fa fa-edit"></i> 修改
+		        </a>
+
+				<a href="javascript:void(0);"  title="同步">
+					<input name="tb" type="button" id="tb" class="btn btn-primary"  value="同步" onclick="tongbu()" />
+				</a>
+
+				<!--<a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()" shiro:hasPermission="system:application:remove">
+		            <i class="fa fa-remove"></i> 删除
+		        </a>-->
+	        </div>
+	        
+	        <div class="col-sm-12 select-table table-striped">
+			    <table id="bootstrap-table" style="table-layout:fixed;"></table>
+			</div>
+		</div>
+	<th:block th:include="include :: footer" />
+	<th:block th:include="include :: select2-js" />
+	<script th:inline="javascript">
+
+		var prefix = ctx + "system/application";
+		var datas = [[${@pubParaValue.selectPubParaValueByParaName('Fm_dept')}]];
+
+		var data = [[${@pubParaValue.selectPubParaValueByParaName('og_sys_stage')}]];
+
+		var typeDatas = [[${@pubParaValue.selectPubParaValueByParaName('SYS_TYPE')}]];
+
+		$(function() {
+            // 回车键搜索
+            document.onkeydown = function(e){
+                var ev = document.all ? window.event : e;
+                if(ev.keyCode==13) {
+                    $('#applicationSearch').trigger('click');
+                    return false;
+                }
+            };
+
+		    var options = {
+		        url: prefix + "/list",
+		        createUrl: prefix + "/add",
+		        updateUrl: prefix + "/edit/{id}",
+		        removeUrl: prefix + "/remove",
+		        exportUrl: prefix + "/export",
+                clickToSelect: true,
+                singleSelect:true,
+                queryParams: queryParams,
+		        modalName: "应用系统",
+		        columns: [{
+		            checkbox: true
+		        },
+				{
+					field: 'sysId',
+					title: '应用系统Id',
+                    width:300,
+                    visible : false
+				},
+		        {
+		            field: 'code',
+		            title: '系统编码',
+                    width: 200,
+		        },
+		        {
+		            field: 'caption',
+		            title: '系统名称',
+                    width: 300,
+                    formatter: function (value, row, index) {
+                        return $.table.tooltip(value);
+                    },
+		        },
+		        {
+		            field: 'ogOrg.orgName',
+		            title: '所属机构',
+                    width: 230,
+                    formatter: function (value, row, index) {
+                        return $.table.tooltip(value);
+                    },
+		        },
+		        {
+		            field: 'dept',
+		            title: '所属处室',
+                    width: 200,
+					formatter:function (value, row, index) {
+						return $.table.selectPubParaValueData(datas, value);
+					},
+		        },
+		        {
+		            field: 'ogOrg.orgCode',//因orgname与结构重名，顾调整其他字段进行替代
+		            title: '所属业务部门',
+                    width: 200,
+                    formatter: function (value, row, index) {
+                        return $.table.tooltip(value);
+                    },
+		        },
+				{
+					field: 'ogPerson.pName',
+					title: '系统负责人',
+                    width: 200,
+                    formatter: function (value, row, index) {
+                        return $.table.tooltip(value);
+                    },
+				},
+				{
+					field: 'sysType',
+					title: '系统类别',
+                    width: 200,
+                    formatter:function (value, row, index) {
+                		return $.table.selectPubParaValueData(typeDatas, value);
+            		}
+				},
+				{
+					field: 'isKeySys',
+					title: '重要系统',
+                    width: 200,
+                    formatter: function (value, row, index) {
+                        if(row.isKeySys == 1){
+                            return "是";
+                        }else{
+                            return "否";
+                        }
+                    }
+				},
+				{
+					field: 'isOutChannel',
+					title: '外联渠道',
+                    width: 200,
+
+                    formatter: function (value, row, index) {
+						if(row.isOutChannel == 1){
+							return "是";
+						}else{
+							return "否";
+						}
+					}
+				},
+				{
+                    field: 'invalidationMark ',
+                    title: '状态',
+                    width: 200,
+
+                    formatter: function (value, row, index) {
+                        if(row. invalidationMark == 1){
+                            return "启用";
+						}else{
+                            return "停止";
+						}
+					}
+
+				},
+                {
+                    field: 'upgradeTime',
+                    title: '基线',
+                    width: 200,
+
+                    formatter: function (value, row, index) {
+                        return $.table.tooltip(value);
+                    },
+				},
+				{
+                    field: 'systemStage',
+                    title: '所处阶段',
+                    width: 250,
+                    formatter:function (value, row, index) {
+                        return $.table.selectPubParaValueData(data, value);
+                    },
+                }
+		        ]
+		    };
+		    $.table.init(options);
+		});
+
+        /* 选择部门树 */
+        function selectDeptTree() {
+            var deptId = $.common.isEmpty($("#treeId").val()) ? "310100001" : $("#treeId").val();
+            var url = ctx + "system/dept/selectDeptTree/" + deptId;
+            var options = {
+                title: '选择部门',
+                width: "380",
+                url: url,
+                callBack: doSubmit
+            };
+            $.modal.openOptions(options);
+        }
+
+        function doSubmit(index, layero){
+            var tree = layero.find("iframe")[0].contentWindow.$._tree;
+            var body = layer.getChildFrame('body', index);
+            $("#deptId").val(body.find('#treeId').val());
+            $("#deptName").val(body.find('#treeName').val());
+            layer.close(index);
+        }
+
+        /*同步*/
+        function tongbu() {
+            var counts = 60;
+            var btn = document.getElementById("tb");
+            btn.disabled = 'disabled';
+
+            $.ajax({
+                type:"post",
+                url: ctx + "system/application/tongbu",
+                dateType:"json",
+                contentType : 'application/json',
+                data:JSON.stringify(this.queryParam),
+                success:function(result){
+                    settime(btn,counts);
+					if (result.msg == "同步成功") {
+						$.modal.alertSuccess(result.msg + '，本次同步' + result.num + '条');
+					} else {
+						$.modal.alertWarning(result.msg);
+					}
+                    $.table.refresh("bootstrap-table");
+                }
+            });
+        }
+
+        function queryParams(params) {
+            var search = $.table.queryParams(params);
+            search.remark = "applicationList";
+            return search;
+        }
+
+        function settime(btn,counts) {
+            var num = 0;
+            if(counts == 0){
+                btn.value = "同步";
+                btn.removeAttribute("disabled");
+                return;
+            }
+            btn.setAttribute("disabled", true);
+            btn.value = "等待" + counts + "s";
+            counts--;
+
+            setTimeout(function() {
+                settime(btn,counts);
+            }, 1000);
+        }
+	</script>
+</body>
+</html>

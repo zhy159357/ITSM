@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <!--审核页面-->
+    <th:block th:include="include :: header('审核信息')" />
+    <th:block th:include="include :: select2-css" />
+    <th:block th:include="include :: datetimepicker-css" />
+</head>
+<body>
+<div class="main-content">
+    <form id="form-emerg-add" class="form-horizontal" th:object="${OgEmerg}">
+        <input name="orgId" type="hidden" id="treeId"/>
+        <input name="id" type="hidden" id="idOne" th:value="*{id}"/>
+        <h4 class="form-header h4">事件信息</h4>
+
+        <div id="collapse1" class="panel-collapse in">
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label is-required">事件单号：</label>
+                            <div class="col-sm-8">
+                                <input class="form-control" type="text" name="emergId" id="emergId" th:field="*{emergId}" readonly>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">事件来源：</label>
+                            <div class="col-sm-8">
+                                <select class="form-control" th:field="*{emergLy}" name="emergLy" th:with="type=${@dict.getParaType('em_sjd_source')}" id="emergLy" readonly disabled>
+                                    <option value=""></option>
+                                    <option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">应急开始时间：</label>
+                            <div class="col-sm-8">
+                                <input id="startTime" name="startTime" class="form-control" type="text" placeholder="yyyy-MM-dd HH:mm:ss" th:value="*{startTime}" required="required" readonly>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">应急结束时间：</label>
+                            <div class="col-sm-8">
+                                <input id="endTime" name="endTime" class="form-control" type="text" placeholder="yyyy-MM-dd HH:mm:ss" th:value="*{endTime}" required="required" readonly>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label is-required">故障时长：</label>
+                            <div class="col-sm-8">
+                                <input name="emergFault" id="emergFault" class="form-control" th:field="*{emergFault}" type="text" required="required" readonly>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">事件等级：</label>
+                            <div class="col-sm-8">
+                                <select class="form-control" th:field="*{emergGrade}" name="emergGrade" th:with="type=${@dict.getParaType('dhsj_sjdj')}" readonly disabled>
+                                    <option value=""></option>
+                                    <option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">事件类别：</label>
+                            <div class="col-sm-8">
+                                <select class="form-control" th:field="*{emergSort}" name="emergSort" th:with="type=${@dict.getParaType('fm_fmKindType')}" readonly disabled>
+                                    <option value=""></option>
+                                    <option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">发生时间：</label>
+                            <div class="col-sm-8">
+                                <input id="occurTime" name="occurTime" class="form-control" type="text" placeholder="yyyy-MM-dd HH:mm:ss" th:value="*{occurTime}" required="required" readonly>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">所属系统：</label>
+                            <div class="col-sm-8">
+                                <input id="emergSystem" name="emergSystem" type="hidden" class="form-control" readonly disabled/>
+                                <input id="applicationName" th:value="*{emergSystem}" name="emergSystem" type="text" class="form-control" onclick="selectOneApplication()" readonly disabled/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">系统类别：</label>
+                            <div class="col-sm-8">
+                                <select class="form-control" th:field="*{systemRank}" th:value="*{systemRank}" name="systemRank" readonly disabled>
+                                    <option th:value="0"></option>
+                                    <option th:value="1">A</option>
+                                    <option th:value="2">B</option>
+                                    <option th:value="3">C</option>
+                                    <option th:value="4">D</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">启动应急系统：</label>
+                            <div class="col-sm-8">
+                                <input id="startSystem" name="startSystem" type="hidden" class="form-control" readonly disabled/>
+                                <input id="sysName" th:value="*{startSystem}" name="startSystem" type="text" class="form-control" onclick="selectApplication()" readonly disabled/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">联系电话：</label>
+                            <div class="col-sm-8">
+                                <input id="emergPhone" onclick="isPoneAvailable()" th:field="*{emergPhone}" name="emergPhone" type="text" class="form-control" required="required" readonly>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">所属工作组：</label>
+                            <div class="col-sm-8">
+                                <select id="emergWork" name="emergWork" th:field="*{emergWork}" class="form-control" onchange="getPerson()" readonly disabled>
+                                    <option value=""></option>
+                                    <option th:field="*{emergWork}" th:each="item : ${groups}" th:text="${item.grpName}" th:value="${item.groupId}"></option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">处理人：</label>
+                            <div class="col-sm-8">
+                                <select id="emergHandler" name="emergHandler" class="form-control" th:with="type=${@application.selectOgPersonList(null)}" readonly disabled>
+                                    <option th:field="*{emergHandler}" th:each="app : ${type}" th:text="${app.pName}" th:value="${app.pId}"></option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <h4 class="form-header h4">应急标题：</h4>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">应急标题：</label>
+                            <div class="col-sm-10">
+                                <textarea rows="6" cols="20" id="emergTitle" th:field="*{emergTitle}" name="emergTitle" class="form-control" required="required" readonly></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <h4 class="form-header h4">现象和影响业务的描述</h4>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">现象和影响业务的描述：</label>
+                            <div class="col-sm-10">
+                                <textarea rows="6" cols="20" th:field="*{emergMemo}" id="emergMemo" name="emergMemo" class="form-control" required="required" readonly></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <h4 class="form-header h4">上传版本程序及操作手册等附件</h4>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="tabs-container">
+                    <ul class="nav nav-tabs">
+                        <li class="active"><a data-toggle="tab" href="#tab-1" aria-expanded="true"> 附件上传</a>
+                        </li>
+                    </ul>
+                    <!-- Tab panes -->
+                    <div class="tab-content">
+                        <div role="tabpanel" class="tab-pane active" id="home">
+                            <div class="btn-group-sm" id="toolbar" role="tab" style="margin: 15px 0px;">
+                                <a class="btn btn-warning multiple disabled" onclick="downloadFile()">
+                                    <i class="fa fa-download"></i> 下载附件
+                                </a>
+                            </div>
+                            <div class="col-sm-12 select-table table-striped">
+                                <table id="file-table"></table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--<h4 class="form-header h4">审核人：</h4>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">审核人：</label>
+                    <div class="col-sm-8">
+                        <select id="personemergId" name="personemergId" class="form-control" th:with="type=${@application.selectOgPersonList(null)}">
+                            <option th:field="*{personemergId}" th:each="app : ${type}" th:text="${app.pName}" th:value="${app.pId}" required></option>&lt;!&ndash; th:field="*{xtId}"&ndash;&gt;
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>-->
+
+    </form>
+</div>
+
+<div class="row">
+    <div class="col-sm-offset-5 col-sm-10">
+        <button type="button" class="btn btn-sm btn-primary" onclick="pass()"><i class="fa fa-check"></i>通 过</button>&nbsp;
+        <button type="button" class="btn btn-sm btn-warning" onclick="notPass()"><i class="fa fa-remove"></i>不 通 过</button>&nbsp;
+        <button type="button" class="btn btn-sm btn-danger" onclick="closeItem()"><i class="fa fa-reply-all"></i>关 闭</button>
+    </div>
+</div>
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: select2-js" />
+<th:block th:include="include :: datetimepicker-js" />
+<script>
+    var prefix = ctx + "emerg/sh";
+    var prefix_version = ctx + "version/public";
+    var prefix_attachment = ctx + "pub/attachment";
+
+    var prefix_bg = ctx + "bg/sjbg";
+
+    $(function () {
+
+        var options = {
+            url: prefix_attachment + "/list",
+            id: "file-table",
+            createUrl: prefix_attachment + "/add",
+            updateUrl: prefix_attachment + "/edit/{id}",
+            removeUrl: prefix_attachment + "/remove",
+            detailUrl: prefix_attachment + "/edit/{id}",
+            sortName: "fileTime",
+            sortOrder: "desc",
+            singleSelect: true,
+            clickToSelect: true,
+            queryParams:queryParams,
+            modalName: "附件列表",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field : 'atId',
+                    title : '附件ID',
+                    visible : false
+                },
+                {
+                    field : 'person.pId',
+                    title : '上传人员Id',
+                    visible: false
+                },
+                {
+                    field : 'fileName',
+                    title : '文件名称'
+                },
+                {
+                    field : 'person.pName',
+                    title : '上传人'
+                },
+                {
+                    field : 'size',
+                    title : '文件大小'
+                },
+                {
+                    field : 'memo',
+                    title : '文件描述'
+                },
+                {
+                    field : 'fileTime',
+                    title : '上传时间'
+                }]
+        };
+        $.table.init(options);
+
+    });
+
+    //参数查询
+    function queryParams(params) {
+        var search = $.table.queryParams(params);
+        search.ownerId =  $("#idOne").val();
+        return search;
+    }
+
+    // 附件上传页面
+    function upload() {
+        var url = "/pub/attachment/upload/" + $("#idOne").val();
+        $.modal.open("问题单附件上传", url);
+    }
+    // 附件下载
+    function downloadFile() {
+        var rows = $.table.selectFirstColumns();
+        var atId = rows[0];
+        var ownerId = $("#idOne").val();
+        var url = ctx + "pub/attachment/download/"+ownerId+"/"+atId;
+        window.location.href = url;
+    }
+    //附件删除
+    function remove() {
+        var row = $('#file-table').bootstrapTable('getSelections')[0]
+        //获取当前登陆人员的id
+        $.get(prefix_bg+'/selectOgUserByUserId',function (result) {
+            if(result.data.pId==row.person.pId){
+                $.operate.removeAll();
+            }else{
+                $.modal.alertError('不能删除非本人上传附件!!!');
+            }
+        });
+    }
+
+    //应急标题
+    //监听事件   描述的长度
+    $('#emergTitle').bind('input propertychange',function(){ //添加监听input值的改变事件
+        var tvalmum;
+        //统计input输入字段的长度
+        tvalnum = $(this).val().length;
+        //如果大于8个字直接进行字符串截取
+        if(tvalnum>255){
+            var tval = $(this).val();
+            tval = tval.substring(0,255);
+            $(this).val(tval);
+            alert('长度超过限制！只能输入255个字。。');
+        }
+    });
+
+    //现象和影响业务的描述
+    //监听事件   描述的长度
+    $('#emergMemo').bind('input propertychange',function(){ //添加监听input值的改变事件
+        var tvalmum;
+        //统计input输入字段的长度
+        tvalnum = $(this).val().length;
+        //如果大于8个字直接进行字符串截取
+        if(tvalnum>255){
+            var tval = $(this).val();
+            tval = tval.substring(0,255);
+            $(this).val(tval);
+            alert('长度超过限制！只能输入255个字。。');
+        }
+    });
+
+    $("#form-emerg-add").validate({
+        onkeyup: false,
+        rules:{
+        },
+        messages: {
+        },
+        focusCleanup: true
+    });
+
+    //根据选择组获取人员信息
+    function getPerson() {
+        var val = $('#emergWork').val();
+        var prefix_work = ctx+'system/work/groupPerson/personListByGroupId';
+        var data = {
+            'groupId' :val
+        }
+        $.post(prefix_work,data,function (result) {
+            $('#emergHandler').html('');
+            var str = '';
+            str += "<option value = ''></option>";
+            $.each(result.data,function (index,item) {
+                console.log(item);
+                str += "<option value='"+item.person.pId+"'>"+item.person.pName+"</option>";
+            });
+
+            $('#emergHandler').html(str);
+        })
+
+    }
+
+    //通过完进入处理按钮
+    function pass() {
+       /*var data = $("#form-emerg-add").serializeArray();
+       debugger;
+       console.info(data);
+       data.push({"name":"emergMark","value": 3 });*/
+
+        var idOne = $('#idOne').val();
+        var data = {'id':idOne,'emergMark':3}
+        confirm("确定点击同意按钮！！！！"); //在页面上弹出确认对话框
+       $.operate.saveTab(prefix + "/emergApprove", data);
+    }
+    // 不通过 开始退回还是原来的状态
+    function notPass() {
+        if ($.validate.form()) {
+            // var versionType = selectVersionType();
+            //var data = $("#form-emerg-add").serializeArray();
+            //data.push({"name":"emergMark","value": 2 });
+            var idOne = $('#idOne').val();
+            var data = {'id':idOne,'emergMark':2}
+            confirm("确定点击不同意按钮！！！！"); //在页面上弹出确认对话框
+            $.operate.saveTab(prefix + "/emergApprove", data);
+        }
+    };
+
+    // 选择应用系统（只能单选）
+    function selectOneApplication() {
+        $.modal.open("选择应用系统", prefix_version + "/selectOneApplication");
+    }
+
+    // 选择外围系统(可以多选)
+    function selectApplication() {
+        $.modal.open("选择应用系统", prefix_version + "/selectApplication");
+    }
+
+
+</script>
+</body>
+</html>

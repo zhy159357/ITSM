@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.form.mapper.ChmBasedataMapper">
+    
+    <resultMap type="ChmBasedata" id="ChmBasedataResult">
+        <result property="address"    column="address"    />
+        <result property="custId"    column="cust_id"    />
+        <result property="parentId"    column="parent_id"    />
+        <result property="orgName"    column="org_name"    />
+        <result property="id"    column="id"    />
+    </resultMap>
+
+    <sql id="selectChmBasedataVo">
+        select address, cust_id, parent_id, org_name, id  from chm_basedata
+    </sql>
+
+    <select id="selectChmBasedataList" parameterType="ChmBasedata" resultMap="ChmBasedataResult">
+        <include refid="selectChmBasedataVo"/>
+        <where>  
+            <if test="address != null  and address != ''"> and address = #{address}</if>
+            <if test="custId != null "> and cust_id = #{custId}</if>
+            <if test="parentId != null "> and parent_id = #{parentId}</if>
+            <if test="orgName != null  and orgName != ''"> and org_name like concat(concat('%', #{orgName}), '%')</if>
+        </where>
+    </select>
+    
+    <select id="selectChmBasedataById" parameterType="Long" resultMap="ChmBasedataResult">
+        <include refid="selectChmBasedataVo"/>
+        where id = #{id}
+    </select>
+    <select id="selectChmBasedataByName" parameterType="String" resultMap="ChmBasedataResult">
+        <include refid="selectChmBasedataVo"/>
+        where org_Name = #{orgName}
+    </select>
+    <insert id="insertChmBasedata" parameterType="ChmBasedata">
+        <selectKey keyProperty="id" resultType="long" order="BEFORE">
+            SELECT seq_chm_basedata.NEXTVAL as id FROM DUAL
+        </selectKey>
+        insert into chm_basedata
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="address != null  and address != ''">address,</if>
+            <if test="custId != null ">cust_id,</if>
+            <if test="parentId != null ">parent_id,</if>
+            <if test="orgName != null  and orgName != ''">org_name,</if>
+            <if test="id != null ">id,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="address != null  and address != ''">#{address},</if>
+            <if test="custId != null ">#{custId},</if>
+            <if test="parentId != null ">#{parentId},</if>
+            <if test="orgName != null  and orgName != ''">#{orgName},</if>
+            <if test="id != null ">#{id},</if>
+         </trim>
+    </insert>
+
+    <update id="updateChmBasedata" parameterType="ChmBasedata">
+        update chm_basedata
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="address != null  and address != ''">address = #{address},</if>
+            <if test="custId != null ">cust_id = #{custId},</if>
+            <if test="parentId != null ">parent_id = #{parentId},</if>
+            <if test="orgName != null  and orgName != ''">org_name = #{orgName},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteChmBasedataById" parameterType="Long">
+        delete from chm_basedata where id = #{id}
+    </delete>
+
+    <delete id="deleteChmBasedataByIds" parameterType="String">
+        delete from chm_basedata where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

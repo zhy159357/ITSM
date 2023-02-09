@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:include="include :: header('变更管理额度配置')"/>
+    <th:block th:include="include :: layout-latest-css" />
+    <th:block th:include="include :: ztree-css" />
+</head>
+<body class="gray-bg">
+<!--    <div class="ui-layout-west">-->
+<!--        <div class="box box-main">-->
+<!--            <div class="box-header">-->
+<!--                <div class="box-title">-->
+<!--                    <i class="fa icon-grid"></i> 组织机构-->
+<!--                </div>-->
+<!--                <div class="box-tools pull-right">-->
+<!--                    <button type="button" class="btn btn-box-tool" id="btnExpand" title="展开" style="display:none;"><i class="fa fa-chevron-up"></i></button>-->
+<!--                    <button type="button" class="btn btn-box-tool" id="btnCollapse" title="折叠"><i class="fa fa-chevron-down"></i></button>-->
+<!--                    <button type="button" class="btn btn-box-tool" id="btnRefresh" title="刷新部门"><i class="fa fa-refresh"></i></button>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--            <div class="ui-layout-content">-->
+<!--                <div id="tree" class="ztree"></div>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
+
+    <div class="ui-layout-center">
+        <div class="container-div">
+            <div class="row">
+                <div class="col-sm-12 search-collapse">
+                    <form id="dept-form">
+                        <!--<input type="hidden" id="treeId" name="parentId" value="310100001">-->
+                        <input type="hidden" id="deptId" name="deptId">
+                        <input type="hidden" id="parentId" name="parentId">
+                        <input type="hidden" id="orgId" name="orgId">
+                        <div class="select-list">
+                            <ul>
+                                <li>
+                                    机构名称：<input type="text" name="orgName"/>
+                                </li>
+<!--                                <li>-->
+
+<!--                                    上级机构: <input type="text" onclick="selectDeptTree()" id="treeName" name="parentName" readonly="true"/>-->
+<!--                                </li>-->
+                                <li>
+                                    <a class="btn btn-primary btn-rounded btn-sm" id="orgSearch" onclick="$.table.search()"><i
+                                            class="fa fa-search"></i>&nbsp;搜索</a>
+                                    <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i
+                                            class="fa fa-refresh"></i>&nbsp;重置</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="btn-group-sm" id="toolbar" role="group">
+                    <a class="btn btn-success" onclick="addDept()">
+                        <i class="fa fa-plus"></i> 新增
+                    </a>
+                    <a class="btn btn-primary single disabled" onclick="edit()">
+                        <i class="fa fa-edit"></i> 修改
+                    </a>
+                    <a class="btn btn-success" onclick="replace()">
+                        <i class="fa fa-edit"></i> 修改重置日期
+                    </a>
+                </div>
+                <div class="col-sm-12 select-table table-striped">
+                    <table id="bootstrap-table"></table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: layout-latest-js" />
+<th:block th:include="include :: ztree-js" />
+<script th:inline="javascript">
+    var prefix = ctx + "system/dept";
+    var prefix_change = ctx + "changeDept";
+    var branchDatas = [[${@pubParaValue.selectPubParaValueByParaName('branchMark')}]];
+    var isHeadOffice = [[${@pubParaValue.selectPubParaValueByParaName('isHeadOffice')}]];
+    var inoutsideDatas = [[${@pubParaValue.selectPubParaValueByParaName('inoutsideMark')}]];
+
+    $(function () {
+        // 回车键搜索
+        document.onkeydown = function (e) {
+            var ev = document.all ? window.event : e;
+            if (ev.keyCode == 13) {
+                $('#orgSearch').trigger('click');
+                return false;
+            }
+        };
+
+        var panehHidden = false;
+        if ($(this).width() < 769) {
+            panehHidden = true;
+        }
+        $('body').layout({initClosed: panehHidden, west__size: 185});
+        // 回到顶部绑定
+        if ($.fn.toTop !== undefined) {
+            var opt = {
+                win: $('.ui-layout-center'),
+                doc: $('.ui-layout-center')
+            };
+            $('#scroll-up').toTop(opt);
+        }
+
+        queryDeptList();
+        //queryDeptTreeInit();
+    });
+
+    function queryDeptList() {
+        var options = {
+            url: prefix_change + "/listDept",
+            createUrl: prefix_change + "/add/{id}",
+            updateUrl: prefix_change + "/edit/{id}",
+            removeUrl: prefix_change + "/remove/{id}",
+            clickToSelect: true,
+            singleSelect: true,
+            pageNumber: 1,//起始的页面
+            sidePagination:'client',//服务器分页
+            pagination:true,//是否分页
+            pageSize:10,//每页显示的数据量
+            pageList:[10,20,40],//每页可显示的条数
+            showRefresh:true,//在页面显示刷新按钮
+            queryParams: queryParams,
+            modalName: "配置",
+            columns: [{
+                field: 'selectItem',
+                radio: true
+            },
+                {
+                    field: 'orgName',
+                    title: '机构名称',
+                    align: "left"
+                },
+
+                {
+                    field: 'initSize',
+                    title: '默认额度',
+                    align: "left"
+                },
+                {
+                    field: 'overSize',
+                    title: '剩余额度',
+                    align: "left"
+                },
+                {
+                    field: 'replaceTime',
+                    title: '重置日期（月/日）',
+                    align: "left"
+                },
+                {
+                    field: 'status',
+                    title: '状态',
+                    align: "left",
+                    formatter: function (value, row, index) {
+                        if (row.status == 1) {
+                            return "启用";
+                        } else {
+                            return "停止";
+                        }
+                    }
+                },{
+                    field: 'remarks',
+                    title: '备注',
+                    align: "left"
+                },]
+        };
+        $.table.init(options);
+    }
+    function queryParams(params) {
+        var search = $.table.queryParams(params);
+        var parentName = $("#parentName").val();
+        if(parentName == ""){
+            search.parentId = "";
+        }
+        search.pageSize = params.limit;
+        search.pageNum = params.offset / params.limit +1;
+        return search;
+    }
+
+    function addDept() {
+
+        var parentId = $('#deptId').val();
+        if (parentId == "") {
+            parentId = "310100001";
+        }
+        $.operate.add(parentId);
+    }
+
+    function edit() {
+        var deptId = $.table.selectColumns("orgId");
+        var url = prefix_change + "/edit/" + deptId;
+        $.modal.open("修改机构",url);
+    }
+
+    function replace() {
+        //var deptId = $.table.selectColumns("orgId");
+        var url = prefix_change + "/replace";
+        $.modal.openNoColse("重置时间",url,$(window).width() * 0.4, $(window).height() * 0.4);
+    }
+
+
+    /*部门管理-新增-选择父部门树*/
+    function selectDeptTree() {
+        var options = {
+            title: '部门选择',
+            width: "380",
+            url: prefix + "/selectDeptTreeAll",
+            callBack: doSubmit
+        };
+        $.modal.openOptions(options);
+    }
+
+    function doSubmit(index, layero) {
+        var body = layer.getChildFrame('body', index);
+        $("#parentId").val(body.find('#treeId').val());
+        $("#treeName").val(body.find('#treeName').val());
+        layer.close(index);
+    }
+
+    function queryDeptTreeInit()
+    {
+        var url = ctx + "system/dept/selectAllTreeDept";
+        var options = {
+            url: url,
+            expandLevel: 1,
+            onClick : zOnClick
+        };
+        $.tree.init(options);
+
+        function zOnClick(event, treeId, treeNode) {
+            $("#deptId").val(treeNode.id);
+            $("#parentId").val(treeNode.id);
+            $("#treeName").val(treeNode.name);
+            $.table.search();
+        }
+    }
+
+    $('#btnExpand').click(function() {
+        $._tree.expandAll(true);
+        $(this).hide();
+        $('#btnCollapse').show();
+    });
+
+    $('#btnCollapse').click(function() {
+        $._tree.expandAll(false);
+        $(this).hide();
+        $('#btnExpand').show();
+    });
+
+    $('#btnRefresh').click(function() {
+        queryDeptTreeInit();
+    });
+
+
+</script>
+</body>
+</html>

@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:include="include :: header('【更新版本记录】列表')" />
+    <th:block th:include="include :: datetimepicker-css" />
+</head>
+<body class="gray-bg">
+     <div class="container-div">
+        <div class="row">
+            <div class="col-sm-12 search-collapse">
+                <form id="formId">
+                    <div class="select-list">
+                        <ul>
+                            <li>
+                                <p>版本号：</p>
+                                <input type="text" name="versionNo" id="versionNo"/>
+                            </li>
+                            <li>
+                                <p>版本内容：</p>
+                                <input type="text" name="versionContent" id="versionContent"/>
+                            </li>
+                            <li>
+                                <p>系统名称：</p>
+                                <input type="text" name="sysName" id="sysName"/>
+                            </li>
+                            <li>
+                                <p>部署时间：</p>
+                                <input id="deploymentTime" name="deploymentTime" type="text" style="background-color: #fff; opacity: 1;">
+                            </li>
+                            <li>
+                                <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                            </li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+
+            <div class="btn-group-sm" id="toolbar" role="group">
+                <a class="btn btn-success" onclick="$.operate.addTab()">
+                    <i class="fa fa-plus"></i> 添加
+                </a>
+                <a class="btn btn-primary single disabled" onclick="$.operate.editTab()">
+                    <i class="fa fa-edit"></i> 修改
+                </a>
+                <a class="btn btn-info single disabled" onclick="detailTab()">
+                    <i class="fa fa-search"></i> 详情
+                </a>
+                <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()">
+                    <i class="fa fa-trash"></i> 删除草稿
+                </a>
+            </div>
+            <div class="col-sm-12 select-table table-striped">
+                <table id="bootstrap-table"></table>
+            </div>
+        </div>
+    </div>
+    <th:block th:include="include :: footer" />
+     <th:block th:include="include :: datetimepicker-js" />
+    <script th:inline="javascript">
+
+        var versionShow =  [[${@dict.getParaType('Line_Isno')}]];
+
+        var prefix = ctx + "sion/newly";
+
+        $(function() {
+            var options = {
+                url: prefix + "/list",
+                createUrl: prefix + "/add",
+                updateUrl: prefix + "/edit/{id}",
+                removeUrl: prefix + "/remove",
+                exportUrl: prefix + "/export",
+                sortName: "deploymentTime",
+                sortOrder: "desc",
+                singleSelect:true,
+                clickToSelect: true,
+                modalName: "【版本更新记录】",
+                columns: [{
+                    checkbox: true
+                },
+                    {
+                        field : 'dvId',
+                        title : '版本id',
+                        visible: false
+                    },
+                {
+                    field : 'versionNo',
+                    title : '版本号'
+                },
+                {
+                    field : 'sysName',
+                    title : '系统名称'
+                },
+                {
+                    field : 'versionShow',
+                    title : '是否展示',
+                    formatter: function (value,row,index) {
+                        return selectDictLabel(versionShow, value);
+                    },
+                    cellStyle: function cellStyle(value, row, index, field) {
+                        return { classes: 'text-nowrap'};
+                    }
+                },
+                {
+                    field : 'deploymentTime',
+                    title : '部署时间',
+                    formatter: function (value, row, index) {
+                        var startTime = '';
+                        if(value!='' && value !=null){
+                            var pattern = /(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/;
+                            startTime = value.replace(pattern, '$1-$2-$3 $4:$5:$6');
+                        }
+                        return startTime;
+                    }
+                },
+                {
+                    field : 'createrId',
+                    title : '创建人'
+                }
+                ]
+            };
+            $.table.init(options);
+        });
+
+        $("#deploymentTime").datetimepicker({
+            format: "yyyy-mm-dd",
+            minView: "month",
+            autoclose: true
+        });
+
+        //字符串yyyyMMddHHmmss转yyyy-MM-dd HH:mm:ss
+        $(function () {
+            var backupDate = $("#deploymentTime").val();
+            var pattern = /(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/;
+            backupDate = backupDate.replace(pattern, '$1-$2-$3 $4:$5:$6');
+            $("#deploymentTime").val(backupDate);
+        });
+
+        // 查看详情
+        function detailTab() {
+            var dvId = $.table.selectFirstColumns();
+            var url = prefix + '/detail/' + dvId;
+            $.modal.openTab("查看详情", url);
+        }
+
+        //事件来源（字典项）
+        function selectDictLabel(datas, value) {
+            var actions = [];
+            $.each(datas, function(index, dict) {
+                if (dict.value == ('' + value)) {
+                    var listClass = $.common.equals("default", dict.listClass) || $.common.isEmpty(dict.listClass) ? "" : "badge badge-" + dict.listClass;
+                    actions.push($.common.sprintf("<span class='%s'>%s</span>", listClass, dict.valueDetail));
+                    return false;
+                }
+            });
+            return actions.join('');
+        }
+
+    </script>
+</body>
+</html>

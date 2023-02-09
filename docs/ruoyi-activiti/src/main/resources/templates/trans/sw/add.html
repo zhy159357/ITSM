@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('新增事务事件单')" />
+    <th:block th:include="include :: summernote-css" />
+    <th:block th:include="include :: select2-css" />
+    <style>
+
+        .form-control[disabled], fieldset[disabled] .form-control {
+             cursor: pointer;
+        }
+
+        .form-control[disabled], .form-control[readonly], fieldset[disabled] .form-control {
+             background-color: #ffffff;
+             opacity: 1;
+        }
+
+        .select2-container--bootstrap.select2-container--disabled .select2-selection
+        , .select2-container--bootstrap.select2-container--disabled .select2-selection--multiple .select2-selection__choice {
+            cursor: pointer;
+            background-color: #ffffff;
+            opacity: 1;
+        }
+
+
+        #faultNo{
+            background-color: #eee;
+            opacity: 1
+        }
+
+    </style>
+
+</head>
+<body>
+    <div class="main-content">
+        <form class="form-horizontal" id="form-sw-add">
+            <input name="createOrgId" type="hidden" id="treeId" th:value="*{createOrgId}"/>
+            <input name="dealOrgId" type="hidden" id="dealOrgId"/>
+            <input name="label" type="hidden" id="flag"/>
+            <input name="ownerId" type="hidden" id="ownerId"/>
+            <input name="fmSwId" type="hidden" id="fmSwId"/>
+            <input name="processStatus" type="hidden" id="processStatus"/>
+            <!--当前事务事件单的状态-->
+            <input name="currentState" id="currentState" type="hidden"/>
+            <div class="panel-group">
+                <div class="panel panel-default">
+                    <div class="panel-heading" style="background-color: #3c8dbc" data-toggle="collapse" data-target="#collapse1">
+
+                        <h4 class="panel-title" >
+                            事件属性
+                        </h4>
+                    </div>
+                    <div id="collapse1" class="panel-collapse in">
+                        <div class="panel-body">
+                            <div class="row form-group">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="col-sm-4 control-label  text-right">事件单编号：</label>
+                                        <div class="col-sm-8">
+                                            <input name="faultNo" class="form-control" type="text" readonly th:value="*{num}" id="faultNo">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="col-sm-4 control-label  text-right is-required">申请处室：</label>
+                                        <div class="col-sm-8">
+                                            <input  onclick="selectDeptTree()" th:id="treeName" th:value="*{treeName}" class="form-control" type="text"  readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row form-group">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="col-sm-4 control-label  text-right is-required">受理处室：</label>
+                                        <div class="col-sm-8">
+                                            <input  id="dealOrgName" onclick="selectDeptTree2()" class="form-control" type="text"  name="dealOrgName"  readonly >
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="col-sm-4 control-label  text-right is-required">请求事项：</label>
+                                        <div class="col-sm-8">
+                                            <div onclick="isSelect()">
+                                                <select name="faultKind" id="faultKind" class="form-control"  disabled>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="process1" >
+                                <div class="row form-group">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label  text-right ">审核人：</label>
+                                            <div class="col-sm-8">
+                                                <div onclick="isSelectChecker()">
+                                                    <select name="checkedId" id="checkedId" class="form-control"  disabled="disabled">
+                                                       <!-- <option value=""></option>
+                                                        <option th:each="checker :${checkList}" th:value="${checker.pId}" th:text="${checker.pName}"></option>-->
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label  text-right ">授权人：</label>
+                                            <div class="col-sm-8">
+                                                <div onclick="isSelectAuthor()">
+                                                    <select name="authId" id="authId" class="form-control"  disabled="disabled">
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row ">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label  text-right is-required">处理人：</label>
+                                            <div class="col-sm-8">
+                                                <div onclick="isSelect()">
+                                                    <select name="dealerId" id="dealerId" class="form-control" disabled readonly>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6"></div>
+                                </div>
+                            </div>
+                            <div id="process2" style="display:none;">
+                                <div class="row form-group">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label text-right ">审核人2：</label>
+                                            <div class="col-sm-8">
+                                                <div onclick="isSelectChecker()">
+                                                    <select name="checkerTwoId" id="checkerTwoId" class="form-control" disabled="disabled">
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label text-right ">审核人3：</label>
+                                            <div class="col-sm-8">
+                                                <div onclick="isSelectAuthor()">
+                                                    <select name="checkerThreeId" id="checkerThreeId" class="form-control" disabled="disabled">
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row ">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label text-right">审核人4：</label>
+                                            <div class="col-sm-8">
+                                                <div onclick="isSelect()">
+                                                    <select name="checkerFourId" id="checkerFourId" class="form-control" disabled="disabled">
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label text-right is-required">处理人5：</label>
+                                            <div class="col-sm-8">
+                                                <div onclick="isSelect()">
+                                                    <select name="dealerFiveId" id="dealerFiveId" class="form-control" disabled readonly>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel panel-default">
+                    <div class="panel-heading" style="background-color: #3c8dbc" data-toggle="collapse" data-target="#collapse2">
+
+                        <h4 class="panel-title" >
+                            事件信息
+                        </h4>
+                    </div>
+                    <div id="collapse2" class="panel-collapse in">
+
+                        <div class="panel-body">
+                            <div class="row form-group">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label  text-right is-required">事件标题：</label>
+                                        <div class="col-sm-10">
+                                            <input name="faultTitle" id="faultTitle" class="form-control" type="text" required >
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label  text-right is-required">事件内容：</label>
+                                        <div class="col-sm-10">
+                                            <div class="summernote" required id="summernote"></div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <!-- Nav tabs -->
+                        <ul class="nav nav-tabs" role="tablist">
+                            <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">附件</a></li>
+                        </ul>
+
+                        <!-- Tab panes -->
+                        <div class="tab-content">
+                            <div role="tabpanel" class="tab-pane active" id="home">
+                                <div class="btn-group-sm" id="toolbar" role="tab" style="margin: 15px 0px;">
+                                    <a class="btn btn-success" type="button" onclick="upload()">
+                                        <i class="fa fa-upload"></i> 添加附件
+                                    </a>
+                                    <a class="btn btn-warning multiple disabled" onclick="downloadFile()">
+                                        <i class="fa fa-download"></i> 下载附件
+                                    </a>
+                                    <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAllCurrentUser();">
+                                        <i class="fa fa-trash"></i> 删除附件
+                                    </a>
+                                </div>
+                                <div class="col-sm-12 select-table table-striped">
+                                    <table id="file-table"></table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-offset-5 col-sm-10">
+                    <button type="button" class="btn btn-sm btn-primary" onclick="submitHandler(this)" id="commit"><i class="fa fa-check"></i>提交</button>&nbsp;
+                    <button type="button" class="btn btn-sm btn-primary" onclick="submitHandler(this)" id="temporary"><i class="fa fa-check"></i>暂存</button>
+                    <button type="button" class="btn btn-sm btn-danger" onclick="closeItem()"><i class="fa fa-window-close"></i>关 闭 </button>
+                </div>
+            </div>
+        </form>
+
+</div>
+    <th:block th:include="include :: footer" />
+    <th:block th:include="include :: summernote-js" />
+    <th:block th:include="include :: select2-js" />
+    <script th:inline="javascript">
+        var prefix = ctx + "trans/sw"
+        var prefix_show = ctx + "system/peo";
+        var prefix_mb_show = ctx +"transmb/mb";
+        var prefix_attachment = ctx + "pub/attachment";
+        var pId = [[${pId}]];
+        $(function () {
+            var options = {
+                url: prefix_attachment + "/list",
+                id: "file-table",
+                createUrl: prefix_attachment + "/add",
+                updateUrl: prefix_attachment + "/edit/{id}",
+                removeUrl: prefix_attachment + "/remove",
+                detailUrl: prefix_attachment + "/edit/{id}",
+                sortName: "fileTime",
+                sortOrder: "desc",
+                singleSelect: true,
+                clickToSelect: true,
+                queryParams:queryParams,
+                modalName: "附件列表",
+                columns: [{
+                    checkbox: true
+                },
+                    {
+                        field : 'atId',
+                        title : '附件ID',
+                        visible : false
+                    },
+                    {
+                        field : 'person.pId',
+                        title : '上传人员Id',
+                        visible: false
+                    },
+                    {
+                        field : 'fileName',
+                        title : '文件名称'
+                    },
+                    {
+                        field : 'person.pName',
+                        title : '上传人'
+                    },
+                    {
+                        field : 'size',
+                        title : '文件大小'
+                    },
+                    {
+                        field : 'memo',
+                        title : '文件描述'
+                    },
+                    {
+                        field : 'fileTime',
+                        title : '上传时间'
+                    }]
+            };
+            $.table.init(options);
+        });
+
+        function queryParams(params) {
+            var search = $.table.queryParams(params);
+            search.ownerId = $("#ownerId").val() == '' ? 'version_public_add_no_owner_id' : $("#ownerId").val();
+            return search;
+        }
+        function selectDeptTree() {
+            var treeId = $("#treeId").val();
+            var deptId = $.common.isEmpty(treeId) ? "310100001" : $("#treeId").val();
+            var url = ctx + "system/dept/selectDeptTree/" + deptId;
+            var options = {
+                title: '选择部门',
+                width: "380",
+                url: url,
+                callBack: doSubmit
+            };
+            $.modal.openOptions(options);
+        }
+
+        function doSubmit(index, layero){
+
+            var tree = layero.find("iframe")[0].contentWindow.$._tree;
+            if(jQuery.isEmptyObject(tree)) {
+                layer.close(index);
+            }else{
+                var selectNode = tree.getSelectedNodes();
+                if(selectNode.length!=0){
+                    $("#treeId").val(selectNode[0].id);
+                    $("#treeName").val(selectNode[0].name);
+                    $("#checkedId").removeAttr("disabled");
+                    //发去ajax请求
+                    $.ajax({
+                        type: 'POST',
+                        url: prefix_show+"/levelcode",
+                        data: {"nodeId":selectNode[0].id,"rId":"0101"},
+                        success: function (result) {
+                            var opts = "<option value=''></option>";
+                            $.each(result.data, function (index, item){
+                                opts += "<option value='"+item.pId+"'>"+item.pName+"</option>";
+                            })
+                            $("#checkedId").html(opts);
+                        },
+                        dataType: 'json'
+                    });
+                }
+            }
+            layer.close(index);
+
+
+
+        }
+
+
+        /* 选择审批部门树 */
+        function selectDeptTree2() {
+            var dealOrgId = $("#dealOrgId").val();
+            var deptId = $.common.isEmpty(dealOrgId) ? "310100001" : $("#dealOrgId").val();
+            var url = ctx + "trans/sw/selectDeptTree/" + deptId;
+            var options = {
+                title: '选择部门',
+                width: "380",
+                url: url,
+                callBack: doSubmit1
+            };
+            $.modal.openOptions(options);
+        }
+
+        /*审批机构赋值*/
+        function doSubmit1(index, layero){
+            var tree = layero.find("iframe")[0].contentWindow.$._tree;
+            if(jQuery.isEmptyObject(tree)) {
+                layer.close(index);
+            }else{
+                var selectNode = tree.getSelectedNodes();
+                if(selectNode.length!=0){
+                    $("#dealOrgId").val(selectNode[0].id);
+                    $("#dealOrgName").val(selectNode[0].name);
+                    $("#faultKind").removeAttr("disabled");
+                    //移除授权人和受理人
+                    $("#authId").removeAttr("disabled");
+                    $("#dealerId").removeAttr("disabled");
+                    //事件标题
+                    $('#faultTitle').val('');
+                    //事件内容
+                    $('#summernote').summernote('code','');
+                    $('#faultDescription').val('');
+                    //移除审核人2/3/4/5和处理人
+                    $("#checkerTwoId").removeAttr("disabled");
+                    $("#checkerThreeId").removeAttr("disabled");
+                    $("#checkerFourId").removeAttr("disabled");
+                    $("#dealerFiveId").removeAttr("disabled");
+                    //获取当前选择的机构Id //获取授权人 处理人 和模板信息
+                    //发去ajax请求
+                    $.ajax({
+                        type: 'POST',
+                        url: prefix_mb_show+"/levelcodeAndMbInfo",
+                        data: {"nodeId":selectNode[0].id,"rId":"0102,0103"},
+                        success: function (result) {
+                            var author_opts = "<option value=''></option>";
+                            $.each(result.data[0], function (index, item){
+                                author_opts += "<option value='"+item.pId+"'>"+item.pName+"</option>";
+                            })
+                            $("#authId").html(author_opts);
+                            $("#checkerTwoId").html(author_opts);
+                            $("#checkerThreeId").html(author_opts);
+                            $("#checkerFourId").html(author_opts);
+
+                            var deal_opts = "<option value=''></option>";
+                           $.each(result.data[1], function (index, item){
+                               deal_opts += "<option value='"+item.pId+"'>"+item.pName+"</option>";
+                           })
+                           $("#dealerId").html(deal_opts);
+                           $("#dealerFiveId").html(deal_opts);
+
+                           var swmb_opts = "<option value=''></option>";
+                           $.each(result.data[2], function (index, item){
+                               swmb_opts += "<option value='"+item.swmdId+"'>"+item.faultKind+"</option>";
+                           })
+                           $("#faultKind").html(swmb_opts);
+                           //动态添加事件
+
+                            $("#faultKind").bind("change", function(){
+                                if($(this).val()!=''){
+                                    var mbId  = $(this).val();
+                                    var fmId = $("#faultNo").val();
+                                    $.post(prefix_mb_show+"/selectMbInfoById",{mbId:mbId,fmId:fmId},function(mbResult){
+                                        $("#faultTitle").val(mbResult.fmSwMb.swmbTitle);
+                                        $('#summernote').summernote('code',mbResult.fmSwMb.content);
+                                        var options = $("#dealerId").find("option");
+                                        $("#dealerId").html('');
+                                        //$("#dealerFiveId").html(''); 北分注释
+                                        var addSelect = "";
+                                        $.each(options,function (index,item) {
+                                            if(item.value==mbResult.fmSwMb.dealPId){
+                                                addSelect += "<option  selected value='"+item.value+"'>"+item.text+"</option>";
+                                            }else{
+                                                addSelect += "<option value='"+item.value+"'>"+item.text+"</option>";
+                                            }
+                                        })
+                                        $("#dealerId").html(addSelect);
+                                        //$("#dealerFiveId").html(addSelect); 北分注释
+                                        //刷新附件列表信息
+                                        $("#file-table").bootstrapTable('refresh');
+                                        $("#processStatus").val("1"); //北分delete
+                                        //北分注释
+                                        // if(mbResult.fmSwMb.processStatus=='1'){
+                                        //     $("#processStatus").val("1");
+                                        //     $("#process2").attr("style","display:none;");
+                                        //     $("#process1").attr("style","display:block;");
+                                        // }else{
+                                        //     $("#processStatus").val("2");
+                                        //     $("#process1").attr("style","display:none;");
+                                        //     $("#process2").attr("style","display:block;");
+                                        // }
+                                    });
+                                }else{
+                                    $('#faultTitle').val('');
+                                    $('#summernote').summernote('code','');
+                                    var options = $("#dealerId").find("option");
+                                    $("#dealerId").html('');
+                                    //$("#dealerFiveId").html(''); 北分注释
+                                    var addSelect = "";
+                                    $.each(options,function (index,item) {
+                                        addSelect += "<option value='"+item.value+"'>"+item.text+"</option>";
+                                    })
+                                    $("#dealerId").html(addSelect);
+                                    //$("#dealerFiveId").html(addSelect); 北分注释
+                                    $('#faultDescription').val('');
+                                }
+
+                            })
+                        },
+                        dataType: 'json'
+                    });
+
+
+                }
+            }
+            layer.close(index);
+
+        }
+
+        $('.summernote').summernote({
+            placeholder: '请输入事务事件内容',
+            height : 192,
+            lang : 'zh-CN',
+            followingToolbar: false,
+            callbacks: {
+                onImageUpload: function (files) {
+                    sendFile(files[0], this);
+                }
+            }
+        });
+
+        $("#form-sw-add").validate({
+            focusCleanup: true
+        });
+
+        function  isSelect() {
+            //获取受理机构是否选中
+            var dealId = $("#dealOrgId").val();
+            if(dealId==''){
+                $.modal.alertError("请先选择【受理处室】 ")
+            }
+        }
+
+        function  isSelectChecker() {
+            //获取受理机构是否选中
+            var treeId = $("#treeId").val();
+            if(treeId=='') {
+                $.modal.alertError("请先选择【申请处室】 ")
+            }
+        }
+
+        function  isSelectAuthor() {
+            //获取受理机构是否选中
+            var dealId = $("#dealOrgId").val();
+            if(dealId=='') {
+                $.modal.alertError("请先选择【受理处室】 ")
+            }
+
+        }
+
+        function submitHandler(elementObj) {
+
+            //判断当前点击的是暂存还是提交 暂存为待提交 提交为待审核
+            if($(elementObj).attr("id")=='temporary'){
+                var errorInfo = '';
+                $("#currentState").val('01');
+                $('#flag').val('temporary')
+                var data = {};//构造提交的数据
+                data.fmSwId = $('#fmSwId').val();
+                data.faultNo = $('#faultNo').val();//事件单编号
+                data.createOrgId = $('#treeId').val();//申请处室
+                data.dealOrgId = $('#dealOrgId').val();//受理处室
+                data.faultKind = $('#faultKind').val();//请求事项
+                data.checkedId = $('#checkedId').val();//审核人
+                data.authId = $('#authId').val();//授权人
+                data.dealerId = $('#dealerId').val();//处理人
+                data.faultTitle = $('#faultTitle').val();//事件标题
+                data.checkerTwoId = $('#checkerTwoId').val();//审核人2
+                data.checkerThreeId = $('#checkerThreeId').val();//审核人3
+                data.checkerFourId = $('#checkerFourId').val();//审核人4
+                data.dealerFiveId = $('#dealerFiveId').val();//处理人
+                data.processStatus = $('#processStatus').val();//绑定流程
+                if($('#summernote').summernote('isEmpty')){
+                    data.faultDescription = '';
+                }else{
+                    data.faultDescription = $('#summernote').summernote('code');
+                }
+
+                var faultTitle = $('#faultTitle').val();
+                //事件标题长度校验
+                if(getValueLen(faultTitle)>50){
+                    errorInfo += '【事件标题】最大长度不能超过50';
+                }
+
+                if(isEmpty(errorInfo)){
+                    data.currentState = '01';
+                    data.label = 'temporary';
+                    $.operate.saveTab(prefix + "/add", data);
+                }else{
+                    $.modal.alertError(errorInfo);
+                }
+
+
+            }else{
+                var errorInfo = '';
+                var processStatus=$("#processStatus").val();
+                if(processStatus=='1'){
+                    var treeId = $('#treeId').val();
+                    if(isEmpty(treeId)){
+                        errorInfo += '【申请处室】不能为空 ';
+                    }
+
+                    var dealOrgName = $('#dealOrgName').val();
+                    if(isEmpty(dealOrgName)){
+                        errorInfo += '【受理处室】不能为空 ';
+                    }
+
+                    var faultKind = $('#faultKind').val();
+                    if(isEmpty(faultKind)){
+                        errorInfo += '【请求事项】不能为空 ';
+                    }
+
+                    //验证审核人
+                    var checkedId = $('#checkedId').val();
+                    if(!isEmpty(checkedId)){
+                        if(pId == checkedId){
+                            errorInfo += '【审核人】不能是当前登陆人 ';
+                        }
+                    }
+                    //验证审核人
+                    var authId = $('#authId').val();
+                    if(!isEmpty(authId)){
+                        if(pId == authId){
+                            errorInfo += '【授权人】不能是当前登陆人 ';
+                        }
+                    }
+                    var dealerId = $('#dealerId').val();
+                    if(isEmpty(dealerId)){
+                        errorInfo += '【处理人】不能为空 ';
+                    }else{
+                        if(pId == dealerId){
+                            errorInfo += '【处理人】不能是当前登陆人 ';
+                        }
+                    }
+
+                    var faultTitle = $('#faultTitle').val();
+                    if(isEmpty(faultTitle)){
+                        errorInfo += '【事件标题】不能为空 ';
+                    }else{
+                        //事件标题长度校验
+                        if(getValueLen(faultTitle)>50){
+                            errorInfo += '【事件标题】最大长度不能超过50';
+                        }
+                    }
+
+                    var code = $('#summernote').summernote('code');
+                    if($('#summernote').summernote('isEmpty')){
+                        errorInfo += '【事件内容】不能为空 ';
+                    }
+                }else{
+                    var treeId = $('#treeId').val();
+                    if(isEmpty(treeId)){
+                        errorInfo += '【申请处室】不能为空 ';
+                    }
+
+                    var dealOrgName = $('#dealOrgName').val();
+                    if(isEmpty(dealOrgName)){
+                        errorInfo += '【受理处室】不能为空 ';
+                    }
+
+                    var faultKind = $('#faultKind').val();
+                    if(isEmpty(faultKind)){
+                        errorInfo += '【请求事项】不能为空 ';
+                    }
+
+                    //验证审核人2
+                    var checkerTwoId = $('#checkerTwoId').val();
+                    if(!isEmpty(checkerTwoId)){
+                        if(pId == checkerTwoId){
+                            errorInfo += '【审核人2】不能是当前登陆人 ';
+                        }
+                    }
+                    //验证审核人3
+                    var checkerThreeId = $('#checkerThreeId').val();
+                    if(!isEmpty(checkerThreeId)){
+                        if(pId == checkerThreeId){
+                            errorInfo += '【审核人3】不能是当前登陆人 ';
+                        }
+                    }
+                    //验证审核人4
+                    var checkerFourId = $('#checkerFourId').val();
+                    if(!isEmpty(checkerFourId)){
+                        if(pId == checkerFourId){
+                            errorInfo += '【审核人4】不能是当前登陆人 ';
+                        }
+                    }
+                    var dealerFiveId = $('#dealerFiveId').val();
+                    if(isEmpty(dealerFiveId)){
+                        errorInfo += '【处理人】不能为空 ';
+                    }else{
+                        if(pId == dealerFiveId){
+                            errorInfo += '【处理人】不能是当前登陆人 ';
+                        }
+                    }
+                    if(checkerTwoId!='' && checkerThreeId!='' && checkerFourId==''){
+                        errorInfo += '请选择【审核人3】和【审核人4】 ';
+                    }else if(checkerTwoId!='' && checkerFourId!='' && checkerThreeId==''){
+                        errorInfo += '请选择【审核人3】和【审核人4】 ';
+                    }else if(checkerTwoId!='' && checkerThreeId=='' && checkerFourId==''){
+                        errorInfo += '请选择【审核人4】 ';
+                    }else if(checkerThreeId!='' && checkerTwoId=='' && checkerFourId==''){
+                        errorInfo += '请选择【审核人4】 ';
+                    }
+                    var faultTitle = $('#faultTitle').val();
+                    if(isEmpty(faultTitle)){
+                        errorInfo += '【事件标题】不能为空 ';
+                    }else{
+                        //事件标题长度校验
+                        if(getValueLen(faultTitle)>50){
+                            errorInfo += '【事件标题】最大长度不能超过50';
+                        }
+                    }
+
+                    var code = $('#summernote').summernote('code');
+                    if($('#summernote').summernote('isEmpty')){
+                        errorInfo += '【事件内容】不能为空 ';
+                    }
+                }
+
+
+
+                if(isEmpty(errorInfo)){
+                    var data = {};//构造提交的数据
+                    data.fmSwId = $('#fmSwId').val();
+                    data.faultNo = $('#faultNo').val();//事件单编号
+                    data.createOrgId = $('#treeId').val();//申请处室
+                    data.dealOrgId = $('#dealOrgId').val();//受理处室
+                    data.faultKind = $('#faultKind').val();//请求事项
+                    data.checkedId = $('#checkedId').val();//审核人
+                    data.authId = $('#authId').val();//授权人
+                    data.dealerId = $('#dealerId').val();//处理人
+                    data.faultTitle = $('#faultTitle').val();//事件标题
+                    data.faultDescription = code;
+                    data.checkerTwoId = $('#checkerTwoId').val();//审核人2
+                    data.checkerThreeId = $('#checkerThreeId').val();//审核人3
+                    data.checkerFourId = $('#checkerFourId').val();//审核人4
+                    data.dealerFiveId = $('#dealerFiveId').val();//处理人2
+                    data.processStatus = $('#processStatus').val();//绑定流程
+                    var processStatus=$('#processStatus').val();
+                    if(processStatus=='1'){
+                        if($('#checkedId').val()!=''){
+                            data.currentState = '02';
+                        }else{
+                            if($('#authId').val()!=''){
+                                data.currentState = '03';
+                            }else{
+                                data.currentState = '04';
+                            }
+                        }
+                    }else{
+                        if($('#checkerTwoId').val()!=''){
+                            data.currentState = '11';
+                        }else if($('#checkerThreeId').val()!=''){
+                            data.currentState = '12';
+                        }else if($('#checkerFourId').val()!=''){
+                            data.currentState = '13';
+                        }else if($('#dealerFiveId').val()!=''){
+                            data.currentState = '14';
+                        }
+                    }
+                    $('#flag').val('commit')
+                    data.label = 'commit';
+                    $.operate.saveTab(prefix + "/add", data);
+                }else{
+                    $.modal.alertError(errorInfo)
+                }
+            }
+
+
+        }
+
+        // 附件上传页面
+        function upload() {
+            var url1 = prefix + "/fileSave";
+            var data = $("#form-sw-add").serializeArray();
+            var temp = {name:"faultDescription",value:""};
+            if($('#summernote').summernote('isEmpty')){
+                temp.value = '';
+            }else{
+                temp.value = $('#summernote').summernote('code');
+            }
+            data.push(temp);
+            $.ajax({
+                url: url1,
+                type: "post",
+                dataType: "json",
+                data: data,
+                success: function (result) {
+                    if (result.code == 0) {
+                        var ownerId = result.data;
+                        // 将ownerId保存到页面隐藏框
+                        $("#ownerId").val(ownerId);
+                        $("#fmSwId").val(ownerId);
+                        var url = prefix_attachment + "/upload/" + ownerId;
+                        $.modal.open("事务事件单附件上传", url);
+                    } else {
+                        $.operate.successCallback(result);
+                    }
+                }
+            });
+        }
+
+        // 附件下载
+        function downloadFile() {
+            var rows = $.table.selectFirstColumns();
+            var atId = rows[0];
+            var ownerId = $("#ownerId").val();
+            var url = prefix_attachment+"/download/"+ownerId+"/"+atId;
+            window.location.href = url;
+        }
+
+
+        /**
+         * 输入空值校验
+         * @param valueStr
+         * @returns {boolean}
+         */
+        function  isEmpty(valueStr) {
+            if(valueStr=='' || valueStr==null){
+                return true;
+            }else{
+                return false;
+            }
+        }
+
+
+        /**
+         * 获取输入数值的长度
+         * @param valueStr
+         * @returns {number}
+         */
+        function getValueLen(valueStr){
+            return isEmpty(valueStr)?0:valueStr.length;
+        }
+
+    </script>
+</body>
+</html>

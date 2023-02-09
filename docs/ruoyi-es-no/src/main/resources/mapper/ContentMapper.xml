@@ -1,0 +1,656 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ruoyi.es.mapper.KnowledgeContentMapper">
+
+    <resultMap type="com.ruoyi.es.domain.KnowledgeContent" id="ContentResult">
+        <result property="id" column="id"/>
+        <result property="title" column="title"/>
+        <result property="describes" column="describes"/>
+        <result property="content" column="content"/>
+        <result property="sectitle" column="sectitle"/>
+        <result property="threetitle" column="threetitle"/>
+        <result property="eventType" column="event_type"/>
+        <result property="sysId" column="sys_id"/>
+        <result property="systemName" column="system_name"/>
+        <result property="categoryId" column="category_id"/>
+        <result property="categoryName" column="category_name"/>
+        <result property="createName" column="create_name"/>
+        <result property="createId" column="create_id"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateName" column="update_name"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="status" column="status"/>
+        <result property="oneAuditorId" column="one_auditor"/>
+        <result property="twoAuditorId" column="two_auditor"/>
+        <result property="atId" column="at_id"/>
+        <result property="powerId" column="power_id"/>
+        <result property="name" column="name"/>
+        <result property="filename" column="filename"/>
+        <result property="contentId" column="content_id"/>
+        <result property="sectitleId" column="sectitle_id"/>
+        <result property="issuefxNo" column="ISSUEFX_NO"/>
+    </resultMap>
+
+    <resultMap type="KnowledgeCategory" id="KnowledgeCategoryResult">
+        <result property="categoryId"   column="category_id"    />
+        <result property="createBy"     column="create_by"    />
+        <result property="createDate"   column="create_date"    />
+        <result property="updateBy"     column="update_by"    />
+        <result property="updateDate"   column="update_date"    />
+        <result property="categoryName" column="category_name"    />
+        <result property="parentId"     column="parent_id"    />
+        <result property="parentName"   column="parent_name"    />
+        <result property="remark"       column="remark"    />
+        <result property="status"       column="status"    />
+    </resultMap>
+    
+    <resultMap type="com.ruoyi.es.domain.KnowledgeAlarmExample" id="AlarmResult">
+        <result property="id" column="id"/>
+        <result property="title" column="title"/>
+        <result property="contentId" column="content_id"/>
+        <result property="content" column="content"/>
+        <result property="sectitleId" column="sectitle_id"/>
+        <result property="sectitle" column="sectitle"/>
+        <result property="name" column="name"/>
+    </resultMap>
+
+    <sql id="selectContentVo">
+        select  k.name,k.id,k.title,k.describes,k.content,c.category_name as category_name,
+        (select pname from og_person p where p.pid = k.create_id) as create_name,
+        to_date(k.create_time,'YYYY-MM-DD hh24:mi:ss') as create_time,k.status,k.at_id,k.power_id,k.filename
+        from knowledge_content k left join knowledge_category c on c.category_id = k.category_id
+        where 1 = 1
+    </sql>
+
+    <select id="ContentList" parameterType="KnowledgeContent" resultMap="ContentResult">
+        select k.event_type,k.id,k.title,k.describes,
+        (select name from KNOWLEDGE_TITIL tt where tt.id = k.sys_id) as system_name,
+        (select name from KNOWLEDGE_TITIL tt where tt.id = k.content) as content, k.content as content_id,
+        c.category_name as category_id,k.create_id,ou.pname as create_name,
+        (select name from KNOWLEDGE_TITIL tt where tt.id = k.sectitle) as sectitle, k.sectitle as sectitle_id,
+        (select name from KNOWLEDGE_TITIL tt where tt.id = k.threetitle) as threetitle,
+        to_date(k.create_time,'YYYY-MM-DD hh24:mi:ss') as create_time,k.status ,k.at_id,k.power_id,k.filename,k.name
+        from knowledge_content k left join knowledge_category c on c.category_id = k.category_id
+        left join OG_PERSON ou on k.create_id = ou.pid where 1=1
+        <if test="categoryId!=null and categoryId!=''">
+            and k.category_id like concat(concat('%',#{categoryId}),'%')
+        </if>
+        <if test="title!=null and title!=''">
+            and k.title like concat(concat('%',#{title}),'%')
+        </if>
+        <if test="status != null and status != ''">
+            and k.status = #{status}
+        </if>
+        <if test="name != null and name != ''">
+            and k.name like concat(concat('%',#{name}),'%')
+        </if>
+        <if test="eventType != null and eventType != ''">
+            and k.event_type = #{eventType}
+        </if>
+        <if test="content != null and content != ''">
+            and k.content = #{content}
+        </if>
+        <if test="sectitle != null and sectitle != ''">
+            and k.sectitle = #{sectitle}
+        </if>
+        <if test="threetitle != null and threetitle != ''">
+            and k.threetitle = #{threetitle}
+        </if>
+        <if test="sysId != null and sysId != ''">
+            and k.sys_id = #{sysId}
+        </if>
+        <if test="createId != null and createId != ''">
+            and k.create_id = #{createId}
+        </if>
+        <if test="oneAuditorId != null and oneAuditorId != ''">
+            and k.one_auditor = #{oneAuditorId}
+        </if>
+        <if test="twoAuditorId != null and twoAuditorId != ''">
+            and k.two_auditor = #{twoAuditorId}
+        </if>
+        <if test="params!= null and params.containsKey('loginUser')">
+	        <if test="params.loginUser != null and params.loginUser != ''">
+	            and (k.content in ( select id from knowledge_titil kt left join og_sys os on kt.sys_id=os.sysid
+	            where kt.event_type = 0 and kt.category=1 and os.orgid=
+	            (select orgid from og_person where pid=#{params.loginUser}))
+	            or k.content is null)
+	        </if>
+        </if>
+        order by create_time desc
+    </select>
+
+    <select id="ContentListMysql" parameterType="KnowledgeContent" resultMap="ContentResult">
+        select k.event_type,k.id,k.title,k.describes,
+        (select name from KNOWLEDGE_TITIL tt where tt.id = k.sys_id) as system_name,
+        (select name from KNOWLEDGE_TITIL tt where tt.id = k.content) as content, k.content as content_id,
+        c.category_name as category_id,k.create_id,ou.pname as create_name,
+        (select name from KNOWLEDGE_TITIL tt where tt.id = k.sectitle) as sectitle, k.sectitle as sectitle_id,
+        (select name from KNOWLEDGE_TITIL tt where tt.id = k.threetitle) as threetitle,
+        str_to_date(k.create_time,'YYYY-MM-DD hh24:mi:ss') as create_time,k.status ,k.at_id,k.power_id,k.filename,k.name
+        from knowledge_content k left join knowledge_category c on c.category_id = k.category_id
+        left join OG_PERSON ou on k.create_id = ou.pid where 1=1
+        <if test="categoryId!=null and categoryId!=''">
+            and k.category_id like concat(concat('%',#{categoryId}),'%')
+        </if>
+        <if test="title!=null and title!=''">
+            and k.title like concat(concat('%',#{title}),'%')
+        </if>
+        <if test="status != null and status != ''">
+            and k.status = #{status}
+        </if>
+        <if test="name != null and name != ''">
+            and k.name like concat(concat('%',#{name}),'%')
+        </if>
+        <if test="eventType != null and eventType != ''">
+            and k.event_type = #{eventType}
+        </if>
+        <if test="content != null and content != ''">
+            and k.content = #{content}
+        </if>
+        <if test="sectitle != null and sectitle != ''">
+            and k.sectitle = #{sectitle}
+        </if>
+        <if test="threetitle != null and threetitle != ''">
+            and k.threetitle = #{threetitle}
+        </if>
+        <if test="sysId != null and sysId != ''">
+            and k.sys_id = #{sysId}
+        </if>
+        <if test="createId != null and createId != ''">
+            and k.create_id = #{createId}
+        </if>
+        <if test="oneAuditorId != null and oneAuditorId != ''">
+            and k.one_auditor = #{oneAuditorId}
+        </if>
+        <if test="twoAuditorId != null and twoAuditorId != ''">
+            and k.two_auditor = #{twoAuditorId}
+        </if>
+        <if test="params!= null and params.containsKey('loginUser')">
+            <if test="params.loginUser != null and params.loginUser != ''">
+                and (k.content in ( select id from knowledge_titil kt left join og_sys os on kt.sys_id=os.sysid
+                where kt.event_type = 0 and kt.category=1 and os.orgid=
+                (select orgid from og_person where pid=#{params.loginUser}))
+                or k.content is null)
+            </if>
+        </if>
+        order by create_time desc
+    </select>
+
+    <select id="ContentListAud" parameterType="KnowledgeContent" resultMap="ContentResult">
+        select k.event_type,k.id,k.title,k.describes,
+        (select name from  KNOWLEDGE_TITIL tt where tt.id = k.content) as content, k.content as content_id,
+        c.category_name as category_id,k.create_id,ou.pname as create_name,
+        (select name from KNOWLEDGE_TITIL tt where tt.id = k.sys_id) as system_name,
+        (select name from  KNOWLEDGE_TITIL tt where tt.id = k.sectitle) as sectitle, k.sectitle as sectitle_id,
+        (select name from  KNOWLEDGE_TITIL tt where tt.id = k.threetitle) as threetitle,
+        to_date(k.create_time,'YYYY-MM-DD hh24:mi:ss') as create_time,k.status,k.at_id,k.power_id,k.filename,k.name
+        from knowledge_content k left join knowledge_category c on c.category_id = k.category_id
+        left join OG_PERSON ou on k.create_id = ou.pid
+        where  k.status >0
+        <if test="categoryId!=null and categoryId!=''">
+            and k.category_id like concat(concat('%',#{categoryId}),'%')
+        </if>
+        <if test="title!=null and title!=''">
+            and k.title like concat(concat('%',#{title}),'%')
+        </if>
+        <if test="status != null and status != ''">
+            and k.status = #{status}
+        </if>
+        <if test="name != null and name != ''">
+            and k.name like concat(concat('%',#{name}),'%')
+        </if>
+        <if test="eventType != null and eventType != ''">
+            and k.event_type = #{eventType}
+        </if>
+        <if test="oneAuditorId != null and oneAuditorId != ''">
+                and k.status in ('4','6','8')
+                and k.one_auditor = #{oneAuditorId}
+        </if>
+        <if test="twoAuditorId != null and twoAuditorId != ''">
+            and k.status in ('1','5','7')
+            and k.two_auditor = #{twoAuditorId}
+        </if>
+        order by create_time desc
+    </select>
+
+    <select id="selectContentByIds" parameterType="list" resultMap="ContentResult">
+        <include refid="selectContentVo"/>
+        and k.status = 2
+        <if test="list !=null and list!=''">
+            and k.id
+            <trim prefix="in (" suffix=")" suffixOverrides=",">
+                <foreach collection="list" item="id">
+                    #{id},
+                </foreach>
+            </trim>
+        </if>
+    </select>
+
+    <insert id="insertContent" parameterType="KnowledgeContent" useGeneratedKeys="false" keyProperty="id">
+        insert into knowledge_content(
+        id,
+        <if test="title != null and title != ''">title,</if>
+        <if test="describes != null and describes != ''">describes,</if>
+        <if test="content != null and content != ''">content,</if>
+        <if test="createId != null and createId != ''">create_id,</if>
+        <if test="categoryId != null and categoryId != ''">category_id,</if>
+        <if test="filename != null and filename != ''">filename,</if>
+        <if test="sectitle != null and sectitle != ''">sectitle,</if>
+        <if test="status != null and status != ''">status,</if>
+        <if test="name != null and name != ''">name,</if>
+        <if test="powerId != null and powerId != ''">power_id,</if>
+        <if test="eventType != null and eventType != ''">event_type,</if>
+        <if test="threetitle != null and threetitle != ''">threetitle,</if>
+        <if test="sysId != null and sysId != ''">sys_id,</if>
+        <if test="oneAuditorId != null and oneAuditorId != ''">one_auditor,</if>
+        <if test="twoAuditorId != null and twoAuditorId != ''">two_auditor,</if>
+        create_time
+        )values(
+        #{id},
+        <if test="title != null and title != ''">#{title},</if>
+        <if test="describes != null and describes != ''">#{describes},</if>
+        <if test="content != null and content != ''">#{content},</if>
+        <if test="createId != null and createId != ''"> #{createId},</if>
+        <if test="categoryId != null and categoryId != ''"> #{categoryId},</if>
+        <if test="filename != null and filename != ''">#{filename},</if>
+        <if test="sectitle != null and sectitle != ''">#{sectitle},</if>
+        <if test="status != null and status != ''">#{status},</if>
+        <if test="name != null and name != ''">#{name},</if>
+        <if test="powerId != null and powerId != ''">#{powerId},</if>
+        <if test="eventType != null and eventType != ''">#{eventType},</if>
+        <if test="threetitle != null and threetitle != ''">#{threetitle},</if>
+        <if test="sysId != null and sysId != ''">#{sysId},</if>
+        <if test="oneAuditorId != null and oneAuditorId != ''">#{oneAuditorId},</if>
+        <if test="twoAuditorId != null and twoAuditorId != ''">#{twoAuditorId},</if>
+        #{createTime}
+        )
+    </insert>
+    <update id="updateCont" parameterType="KnowledgeContent">
+        update knowledge_content
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="title != null and title != ''">title = #{title},</if>
+            <if test="describes != null and describes != ''">describes = #{describes},</if>
+            <if test="content != null ">content = #{content},</if>
+            <if test="categoryId != null and categoryId != ''">category_id = #{categoryId},</if>
+            <if test="filename != null and filename != ''">filename = #{filename},</if>
+            <if test="sectitle != null ">sectitle = #{sectitle},</if>
+            <if test="name != null">name = #{name},</if>
+            <if test="powerId != null and powerId != ''">power_id = #{powerId},</if>
+            <if test="eventType != null and eventType != ''">event_type = #{eventType},</if>
+            <if test="threetitle != null ">threetitle = #{threetitle},</if>
+            <if test="sysId != null ">sys_id = #{sysId},</if>
+            <if test="status != null and status != ''">status = #{status},</if>
+            <if test="createId != null and createId != ''">create_id = #{createId},</if>
+            <if test="oneAuditorId != null and oneAuditorId != ''">one_auditor = #{oneAuditorId},</if>
+            <if test="twoAuditorId != null and twoAuditorId != ''">two_auditor = #{twoAuditorId},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <update id="updatedescribesCont" parameterType="KnowledgeContent">
+        update knowledge_content set describes = #{describes}
+        where id = #{id}
+    </update>
+
+    <update id="updateConcatdescribesCont" parameterType="KnowledgeContent">
+        update knowledge_content set describes = concat(describes,#{describes})
+        where id = #{id}
+    </update>
+
+    <select id="selectContById" parameterType="String" resultMap="ContentResult">
+        select k.one_auditor,k.two_auditor,k.create_id,k.event_type,c.category_id,k.id,k.title,k.describes,k.content,c.category_name as category_name,
+        (select pname from og_person p where p.pid = k.create_id) as create_name,k.name,k.power_id,k.sys_id,
+        (select caption from og_sys tt where tt.sysid = k.sys_id) as systemName,
+        to_date(k.create_time,'YYYY-MM-DD hh24:mi:ss') as create_time,k.sectitle,k.threetitle,k.status,k.at_id,k.filename,ki.ISSUEFX_NO
+        from knowledge_content k left join knowledge_category c on c.category_id = k.category_id
+        LEFT JOIN KNOWLEDGE_TO_ISSUEFX ki ON  ki.knowledge_id = k.id
+        where  id=#{id}
+    </select>
+    <select id="selectContMySqlById" parameterType="String" resultMap="ContentResult">
+        select k.one_auditor,k.two_auditor,k.create_id,k.event_type,c.category_id,k.id,k.title,k.describes,k.content,c.category_name as category_name,
+        (select pname from og_person p where p.pid = k.create_id) as create_name,k.name,k.power_id,k.sys_id,
+        (select caption from og_sys tt where tt.sysid = k.sys_id) as systemName,
+        k.create_time,k.sectitle,k.threetitle,k.status,k.at_id,k.filename,ki.ISSUEFX_NO
+        from knowledge_content k left join knowledge_category c on c.category_id = k.category_id
+        LEFT JOIN KNOWLEDGE_TO_ISSUEFX ki ON  ki.knowledge_id = k.id
+        where  id=#{id}
+    </select>
+
+    <select id="SearchStatus" parameterType="String" resultMap="ContentResult">
+        select *  from knowledge_content where id=#{id}
+    </select>
+
+    <delete id="deleteContByIds" parameterType="KnowledgeContent">
+        delete  from knowledge_content  where id in
+        <foreach collection="array" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <update id="offlineContByIds" parameterType="KnowledgeContent">
+        update knowledge_content set status ='3' where id in
+        <foreach collection="array" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+
+    <update id="auditContent" parameterType="KnowledgeContent">
+        update knowledge_content
+        <set>
+            <if test="title != null and title != ''">title = #{title},</if>
+            <if test="describes != null and describes != ''">describes = #{describes},</if>
+            <if test="content != null and content != ''">content = #{content},</if>
+            <if test="categoryId != null and categoryId != ''">category_id = #{categoryId},</if>
+            <if test="filename != null and filename != ''">filename = #{filename},</if>
+            <if test="status != null and status != ''">status = #{status},</if>
+            <if test="oneAuditorId != null">one_auditor = #{oneAuditorId},</if>
+            <if test="twoAuditorId != null">two_auditor = #{twoAuditorId},</if>
+            <if test="reason != null and reason != ''">reason = #{reason}</if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <select id="selectCategoryTree" parameterType="KnowledgeCategory" resultMap="KnowledgeCategoryResult">
+        select category_id, (select pname from og_person p where p.pid=create_by) as create_by,
+        create_date, (select pname from og_person p where p.pid=update_by) as update_by, update_date,
+        category_name, parent_id, remark, status from knowledge_category
+        where 1=1
+        <if test="parentId != null and parentId != ''">
+            AND parent_id = #{parentId}
+        </if>
+        <if test="categoryName != null and categoryName != ''">
+            AND category_name like '%${categoryName}%'
+        </if>
+        <if test="categoryId!=null and categoryId!=''">
+            AND category_id = #{categoryId}
+        </if>
+        <if test="eventType!=null and eventType!=''">
+            AND event_type = #{eventType}
+        </if>
+        order by category_id
+    </select>
+
+    <select id="selectCateById" parameterType="String" resultMap="KnowledgeCategoryResult">
+        select category_id, (select pname from og_person p where p.pid=create_by) as create_by,
+        create_date, (select pname from og_person p where p.pid=update_by) as update_by, update_date,
+        category_name, parent_id, remark, status from knowledge_category
+        where category_id = #{categoryId}
+    </select>
+
+    <insert id="insertContTree" parameterType="KnowledgeCategory" useGeneratedKeys="false" keyProperty="categoryId">
+        insert into knowledge_category(
+        create_by,
+        <if test="parentId != null and parentId != ''">parent_id,</if>
+        <if test="categoryName != null and categoryName != ''">category_name,</if>
+        event_type,
+        category_id
+        )values(
+        #{createBy},
+        <if test="parentId != null and parentId != ''">#{parentId},</if>
+        <if test="categoryName != null and categoryName != ''">#{categoryName},</if>
+        #{eventType},
+        #{categoryId}
+        )
+    </insert>
+    <select id="selectParentName" parameterType="String" resultType="String">
+        select category_name from knowledge_category  where category_id = #{par}
+    </select>
+
+    <update id="saveContTree" parameterType="KnowledgeCategory">
+        update knowledge_category
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="categoryName != null  and categoryName != ''">category_name = #{categoryName},</if>
+        </trim>
+        where category_id = #{categoryId}
+    </update>
+
+    <delete id="deleteCont" parameterType="String">
+        delete from knowledge_category where category_id = #{categoryId} or parent_id = #{categoryId}
+    </delete>
+
+    <select id="CountContentList" parameterType="String" resultMap="ContentResult">
+        SELECT * FROM knowledge_content where category_id  in( SELECT category_id FROM knowledge_category
+        where  1=1
+        START WITH category_id = #{categoryId}
+        CONNECT BY PRIOR category_id = parent_id )
+    </select>
+
+    <select id="selectContentMySqlList" parameterType="String" resultMap="ContentResult">
+        SELECT * FROM knowledge_content
+        <where>
+            <if test="categoryIds !=null and categoryIds!=''">
+                category_id
+                <trim prefix="in (" suffix=")" suffixOverrides=",">
+                    <foreach collection="categoryIds" item="categoryId">
+                        #{categoryId},
+                    </foreach>
+                </trim>
+            </if>
+        </where>
+    </select>
+
+    <select id="selectContentByIdsParams"  resultMap="ContentResult">
+    	select k.id,k.title,kt2.name as content,c.category_name as category_id,k.create_id,ou.pname as createId,kt.name as sectitle,
+        to_date(k.create_time,'YYYY-MM-DD hh24:mi:ss') as create_time,k.status,
+        k.content as content_id, k.sectitle as sectitle_id,
+        k.at_id, k.power_id, k.filename, k.name, k.event_type, kt3.name as threetitle, kt4.name as system_name
+        from knowledge_content k left join knowledge_category c on c.category_id = k.category_id
+        left join OG_PERSON ou on k.create_id = ou.pid
+        left join KNOWLEDGE_TITIL kt on kt.id = k.sectitle
+        left join KNOWLEDGE_TITIL kt2 on kt2.id = k.content
+        left join KNOWLEDGE_TITIL kt3 on kt3.id = k.threetitle
+        left join KNOWLEDGE_TITIL kt4 on kt4.sys_id = k.sys_id and kt4.category=0
+		<where>
+			<if test="ids !=null and ids!=''">
+	            and k.id
+	            <trim prefix="in (" suffix=")" suffixOverrides=",">
+	                <foreach collection="ids" item="id">
+	                    #{id},
+	                </foreach>
+	            </trim>
+	        </if>
+	        <if test="params.eventType !=null and params.eventType!=''">and k.event_type=#{params.eventType}</if>
+	        <if test="params.sysId !=null and params.sysId!=''">and k.sys_id=#{params.sysId}</if>
+	        <if test="params.content !=null and params.content!=''">and k.content=#{params.content}</if>
+	        <if test="params.sectitle !=null and params.sectitle!=''">and k.sectitle=#{params.sectitle}</if>
+	        <if test="params.threetitle !=null and params.threetitle!=''">and k.threetitle=#{params.threetitle}</if>
+	        and k.status = 2
+		</where>
+		order by create_time desc
+    </select>
+    <select id="selectContentByIdsParamsMySql"  resultMap="ContentResult">
+    	select k.id,k.title,kt2.name as content,c.category_name as category_id,k.create_id,ou.pname as createId,kt.name as sectitle,
+        str_to_date(k.create_time,'YYYY-MM-DD hh24:mi:ss') as create_time,k.status,
+        k.content as content_id, k.sectitle as sectitle_id,
+        k.at_id, k.power_id, k.filename, k.name, k.event_type, kt3.name as threetitle, kt4.name as system_name
+        from knowledge_content k left join knowledge_category c on c.category_id = k.category_id
+        left join OG_PERSON ou on k.create_id = ou.pid
+        left join KNOWLEDGE_TITIL kt on kt.id = k.sectitle
+        left join KNOWLEDGE_TITIL kt2 on kt2.id = k.content
+        left join KNOWLEDGE_TITIL kt3 on kt3.id = k.threetitle
+        left join KNOWLEDGE_TITIL kt4 on kt4.sys_id = k.sys_id and kt4.category=0
+		<where>
+			<if test="ids !=null and ids!=''">
+	            and k.id
+	            <trim prefix="in (" suffix=")" suffixOverrides=",">
+	                <foreach collection="ids" item="id">
+	                    #{id},
+	                </foreach>
+	            </trim>
+	        </if>
+	        <if test="params.eventType !=null and params.eventType!=''">and k.event_type=#{params.eventType}</if>
+	        <if test="params.sysId !=null and params.sysId!=''">and k.sys_id=#{params.sysId}</if>
+	        <if test="params.content !=null and params.content!=''">and k.content=#{params.content}</if>
+	        <if test="params.sectitle !=null and params.sectitle!=''">and k.sectitle=#{params.sectitle}</if>
+	        <if test="params.threetitle !=null and params.threetitle!=''">and k.threetitle=#{params.threetitle}</if>
+	        and k.status = 2
+		</where>
+		order by create_time desc
+    </select>
+
+    <select id="selectAlarm" parameterType="KnowledgeAlarmExample"  resultMap="AlarmResult">
+        select kae.id, kae.title, kae.name, kae.content, kae.sectitle,
+        kt1.id as content_id, kt2.id as sectitle_id
+        from knowledge_alarm_example kae
+        left join knowledge_titil kt1 on kt1.sys_id in (select sysid from og_sys os where os.caption=kae.content and rownum&lt;=1)
+          and kt1.category = '1' and kt1.event_type = '0'
+        left join knowledge_titil kt2 on kt2.name = kae.sectitle and kt2.category = '2' and kt2.event_type = '0'
+        <where>
+        	<if test="title!=null and title!=''">and kae.title like concat(concat('%',#{title}),'%')</if>
+        	<if test="content!=null and content!=''">and kae.content like concat(concat('%',#{content}),'%')</if>
+        	<if test="sectitle!=null and sectitle!=''">and kae.sectitle like concat(concat('%',#{sectitle}),'%')</if>
+        	<if test="name!=null and name!=''">and kae.name like concat(concat('%',#{name}),'%')</if>
+        </where>
+    </select>
+
+    <select id="selectAlarmExport" parameterType="KnowledgeContent"  resultMap="ContentResult">
+        select distinct k.id,k.title, k.name,ke.content_id,ke.sectitle_id
+            from knowledge_content k,
+            (select kae.id,kae.title,kt1.id as content_id, kt2.id as sectitle_id
+            from knowledge_alarm_example kae
+            left join knowledge_titil kt1 on kt1.name = kae.content and kt1.category = '1'
+            left join knowledge_titil kt2 on kt2.name = kae.sectitle and kt2.category = '2') ke
+        where k.content=ke.content_id and k.sectitle=ke.sectitle_id
+    </select>
+    
+    <select id="selectAlarmCount" resultType="int">
+    	select count(0) from knowledge_alarm_example
+    </select>
+    
+    <select id="monitoringSearchtList"  resultMap="ContentResult">
+        select k.event_type,k.id,k.title,
+        k.describes,(select name from KNOWLEDGE_TITIL tt where tt.id = k.sys_id) as system_name,
+        (select name from KNOWLEDGE_TITIL tt where tt.id = k.content) as content, k.content as content_id,
+        c.category_name as category_id,ou.pname as create_name,
+        (select name from KNOWLEDGE_TITIL tt where tt.id = k.sectitle) as sectitle, k.sectitle as sectitle_id,
+        (select name from KNOWLEDGE_TITIL tt where tt.id = k.threetitle) as threetitle,
+        to_date(k.create_time,'YYYY-MM-DD hh24:mi:ss') as create_time,k.status ,k.at_id,k.power_id,k.filename,k.name
+        from knowledge_content k left join knowledge_category c on c.category_id = k.category_id
+        left join OG_PERSON ou on k.create_id = ou.pid where 1=1
+        <if test="knowledgeContent.categoryId!=null and knowledgeContent.categoryId!=''">
+            and k.category_id like concat(concat('%',#{knowledgeContent.categoryId}),'%')
+        </if>
+        <if test="knowledgeContent.title!=null and knowledgeContent.title!=''">
+            and k.title like concat(concat('%',#{knowledgeContent.title}),'%')
+        </if>
+        <if test="knowledgeContent.name != null and knowledgeContent.name != ''">
+            and k.name like concat(concat('%',#{knowledgeContent.name}),'%')
+        </if>
+        <if test="knowledgeContent.eventType != null and knowledgeContent.eventType != ''">
+            and k.event_type = #{knowledgeContent.eventType}
+        </if>
+        <if test="knowledgeContent.createId != null and knowledgeContent.createId != ''">
+            and (k.create_id = #{knowledgeContent.createId} or k.one_auditor = #{knowledgeContent.createId} or k.two_auditor = #{knowledgeContent.createId})
+        </if>
+        <if test="knowledgeContent.twoAuditorId != null and knowledgeContent.twoAuditorId != ''">
+            and k.two_auditor = #{knowledgeContent.twoAuditorId}
+        </if>
+        <if test="knowledgeContent.oneAuditorId != null and knowledgeContent.oneAuditorId != ''">
+            and k.one_auditor = #{knowledgeContent.oneAuditorId}
+        </if>
+	    <if test="knowledgeContent.status != null and knowledgeContent.status != ''">
+                <choose>
+                    <when test="knowledgeContent.status == 0">
+                        and k.create_id = #{knowledgeContent.createId}
+                    </when>
+                    <otherwise>
+                        <if test="knowledgeContent.twoAuditorId!=null and knowledgeContent.twoAuditorId!=''">
+                            and k.two_auditor = #{knowledgeContent.twoAuditorId}
+                        </if>
+                        <if test="knowledgeContent.oneAuditorId!=null and knowledgeContent.oneAuditorId!=''">
+                            and k.one_auditor = #{knowledgeContent.oneAuditorId}
+                        </if>
+                        <choose>
+                            <when test="status != null and status.size() > 0">
+                                and k.status
+                                <trim prefix="in (" suffix=")" suffixOverrides=",">
+                                    <foreach collection="status" item="sta">
+                                        #{sta},
+                                    </foreach>
+                                </trim>
+                            </when>
+                            <otherwise>
+                                and k.status = '-1'
+                            </otherwise>
+                        </choose>
+                    </otherwise>
+                </choose>
+            </if>
+        order by create_time desc
+    </select>
+
+    <delete id="deleteAlarmData" parameterType="String">
+        delete from knowledge_alarm_example
+    </delete>
+
+    <insert id="insertAlarmData" parameterType="ArrayList" useGeneratedKeys="false">
+        insert into knowledge_alarm_example(id,content,sectitle,name)
+        SELECT A.* FROM (
+        <foreach collection="list" item="item" index="index" separator="UNION">
+            SELECT #{item.id,jdbcType = VARCHAR},
+            #{item.content,jdbcType = VARCHAR},
+            #{item.sectitle,jdbcType = VARCHAR},
+            #{item.name,jdbcType = VARCHAR}
+            FROM DUAL
+        </foreach>
+        ) A
+    </insert>
+
+    <insert id="importAlarmKnowledge" parameterType="ArrayList" useGeneratedKeys="false">
+        insert into knowledge_alarm_example(id,content,sectitle,name)
+        SELECT A.* FROM (
+        <foreach collection="list" item="item" index="index" separator="UNION">
+            SELECT #{item.id,jdbcType = VARCHAR},
+            #{item.content,jdbcType = VARCHAR},
+            #{item.sectitle,jdbcType = VARCHAR},
+            #{item.name,jdbcType = VARCHAR}
+            FROM DUAL
+        </foreach>
+        ) A
+    </insert>
+
+    <select id="selectIssuefxByNo" resultType="com.ruoyi.es.domain.ImBizIssuefxs">
+        select issuefx_id as issuefxId, issuefx_no as issuefxNo from IM_BIZ_ISSUEFX where  ISSUEFX_NO = #{issuefxNo} and INVALIDATION_MARK = 0
+    </select>
+    <select id="findKnowledgeToIssuefx" resultType="java.lang.Integer">
+        SELECT COUNT(1) FROM KNOWLEDGE_TO_ISSUEFX WHERE ISSUEFX_NO = #{issuefxNo}
+    </select>
+    <select id="findKnowledgeToIssuefxById" resultType="java.lang.Integer">
+        SELECT COUNT(1) FROM KNOWLEDGE_TO_ISSUEFX WHERE KNOWLEDGE_ID = #{id}
+    </select>
+    <select id="selectKnowledgeToIssuefx" resultType="com.ruoyi.es.domain.KnowledgeContent">
+        select KNOWLEDGE_ID as id,ISSUEFX_NO as issuefxNo FROM KNOWLEDGE_TO_ISSUEFX where ISSUEFX_NO = #{issuefxNo} and KNOWLEDGE_ID = #{id}
+    </select>
+    <insert id="insertKnowledgeToIssuefx">
+        insert into KNOWLEDGE_TO_ISSUEFX
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null and id != ''">KNOWLEDGE_ID,</if>
+            <if test="issuefxNo != null and issuefxNo != ''">ISSUEFX_NO,</if>
+            <if test="issuefxId != null and issuefxId != ''">ISSUEFX_ID,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null and id != ''">#{id},</if>
+            <if test="issuefxNo != null and issuefxNo != ''">#{issuefxNo},</if>
+            <if test="issuefxId != null and issuefxId != ''">#{issuefxId},</if>
+        </trim>
+    </insert>
+    <update id="updateKnowledgeToIssuefx">
+        update KNOWLEDGE_TO_ISSUEFX
+        set
+            ISSUEFX_NO = #{issuefxNo},
+            ISSUEFX_ID = #{issuefxId}
+        where
+            KNOWLEDGE_ID = #{id}
+    </update>
+
+    <select id="selectBusinessCreateIdById" resultType="java.lang.String">
+        select CREATE_ID as createId from  KNOWLEDGE_CONTENT where id = #{id}
+    </select>
+    <select id="selectIssuefxIdForKnowledgeId" resultType="com.ruoyi.es.domain.KnowledgeContent">
+        select KNOWLEDGE_ID as id,ISSUEFX_NO as issuefxNo,ISSUEFX_ID as issuefxId FROM KNOWLEDGE_TO_ISSUEFX where  KNOWLEDGE_ID = #{id}
+    </select>
+
+    <delete id="deleteKnowledgeToIssuefxById">
+        delete from KNOWLEDGE_TO_ISSUEFX where KNOWLEDGE_ID = #{id}
+    </delete>
+</mapper>

@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+	<th:block th:include="include :: header('字典类型列表')" />
+</head>
+<body class="gray-bg">
+<div class="container-div">
+	<div class="row">
+		<div class="col-sm-6">
+			<div class="container-div">
+				<div class="row">
+					<div class="col-sm-12 search-collapse">
+						<form id="type-form">
+							<div class="select-list">
+								<ul>
+									<li>
+										参数项代码：<input type="text" name="paraName"/><!--字典名称：<input type="text" name="dictName"/>-->
+									</li>
+									<li>
+										参数项名称：<input type="text" name="paraExplain"/><!--字典类型：<input type="text" name="dictType"/>-->
+									</li>
+									<li>
+										<a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search('type-form','bootstrap-table')"><i class="fa fa-search"></i>&nbsp;搜索</a>
+										<a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset('','bootstrap-table')"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+									</li>
+								</ul>
+							</div>
+						</form>
+					</div>
+
+					<div class="btn-group-sm" id="toolbar" role="group">
+						<a class="btn btn-success" onclick="$.operate.add()">
+							<i class="fa fa-plus"></i> 新增
+						</a>
+						<a class="btn btn-primary single disabled" onclick="$.operate.edit()" >
+							<i class="fa fa-edit"></i> 修改
+						</a>
+						<!--<a class="btn btn-danger" onclick="clearCache()" shiro:hasPermission="system:dict:remove">
+							<i class="fa fa-refresh"></i> 清理缓存
+						</a>-->
+					</div>
+
+					<div class="col-sm-12 select-table table-striped">
+						<table id="bootstrap-table"></table>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="col-sm-6">
+			<div class="container-div">
+				<div class="row">
+					<div class="col-sm-12 search-collapse">
+						<form id="data-form">
+							<input type="hidden" name="paraId" id="paraId">
+							<div class="select-list">
+								<ul>
+									<li>
+										参数值代码：<input type="text" name="value"/><!--字典名称：<input type="text" name="dictName"/>-->
+									</li>
+									<li>
+										参数值名称：<input type="text" name="valueDetail"/><!--字典类型：<input type="text" name="dictType"/>-->
+									</li>
+									<li>
+										<a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search('data-form','bootstrap-table-data')"><i class="fa fa-search"></i>&nbsp;搜索</a>
+										<a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset('data-form','bootstrap-table-data')"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+									</li>
+								</ul>
+							</div>
+						</form>
+					</div>
+
+					<div class="btn-group-sm" id="data_toolbar" role="group">
+						<a class="btn btn-success" onclick="validatePubPara()" shiro:hasPermission="system:dict:add">
+							<i class="fa fa-plus"></i> 新增
+						</a>
+						<a class="btn btn-primary single disabled" onclick="$.operate.edit()" shiro:hasPermission="system:dict:edit">
+							<i class="fa fa-edit"></i> 修改
+						</a>
+						<a class="btn btn-danger single disabled" onclick="$.operate.removeAll()" shiro:hasPermission="system:dict:remove">
+							<i class="fa fa-refresh"></i> 删除
+						</a>
+					</div>
+
+					<div class="col-sm-12 select-table table-striped">
+						<table id="bootstrap-table-data"></table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<th:block th:include="include :: footer" />
+<script th:inline="javascript">
+
+
+	var editFlag = [[${@permission.hasPermi('system:dict:edit')}]];
+	var listFlag = [[${@permission.hasPermi('system:dict:list')}]];
+	var removeFlag = [[${@permission.hasPermi('system:dict:remove')}]];
+	var datas = [[${@dict.getParaType('para.show.state')}]];
+	var prefix = ctx + "system/dict";
+	var dataprefix = ctx+ "system/dict/data"
+
+
+	$(function() {
+
+		var data_options = {
+			id:'bootstrap-table-data',
+			url: dataprefix + "/list",
+			createUrl: dataprefix + "/add/{id}",
+			updateUrl: dataprefix + "/edit/{id}",
+			removeUrl: dataprefix + "/remove",
+			exportUrl: dataprefix + "/export",
+			toolbar: 'data_toolbar',
+			sortName: "serail",
+			sortOrder: "asc",
+			modalName: "数据",
+			columns: [{
+				checkbox: true
+			},
+				{
+					field: 'paraValueId',
+					title: '参数值编码',
+					visible:false
+				},
+				{
+					field: 'value',
+					title: '参数值代码'
+				},
+				{
+					field: 'valueDetail',
+					title: '参数值名称'
+				},
+				{
+					field: 'paraExplain',
+					title: '所属参数项'
+				},
+				{
+					field: 'serail',
+					title: '顺序'
+				}]
+		};
+		$.table.init(data_options);
+		var options = {
+			url: prefix + "/list",
+			createUrl: prefix + "/add",
+			updateUrl: prefix + "/edit/{id}",
+			removeUrl: prefix + "/remove",
+			exportUrl: prefix + "/export",
+			toolbar:'toolbar',
+			/*sortName: "dictId",
+			sortOrder: "asc",*/
+			modalName: "类型",
+			onClickRow:function(row,obj){
+				$("#paraId").val(row.paraId);
+				$(obj).siblings().removeClass("selected")
+				$(obj).addClass("selected");
+				$(obj).find("input[type='radio']").prop('checked','checked')
+				$.table.search('data-form','bootstrap-table-data')
+			},
+			columns: [{
+				radio: true
+			},
+				{
+					field: 'paraId',
+					title:'参数项Id',
+					visible:false
+				},
+				{
+					field: 'paraName',
+					title:'参数项代码'
+				},
+				{
+					field: 'paraExplain',
+					title: '参数项名称'
+				},
+				{
+					field: 'state',
+					title: '状态',
+					align: 'center',
+					formatter: function(value, row, index) {
+						return value=='1'?'启用':'禁用';
+					}
+				}]
+		};
+		$.table.init(options);
+
+
+
+
+
+	});
+
+	function validatePubPara() {
+		var isHasCheck = false;
+		$("#bootstrap-table").find("tr>td").find("input[type='checkbox']").each(function (index,obj) {
+			if($(obj).prop('checked')){
+				isHasCheck = true;
+
+			}
+		})
+		if(isHasCheck){
+
+			$.operate.add($("#paraId").val());
+		}else{
+			$.modal.alert("添加参数值必须选择参数项!");
+		}
+	}
+
+	/** 清理字典缓存 */
+	function clearCache() {
+		$.operate.get(prefix + "/clearCache");
+	}
+</script>
+</body>
+</html>

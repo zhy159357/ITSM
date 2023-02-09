@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.es.mapper.KnowledgeCollectionMapper">
+
+    <resultMap type="com.ruoyi.es.domain.KnowledgeCollect" id="CollectResult">
+        <result property="kcid" column="kcid"/>
+        <result property="id" column="id"/>
+        <result property="createId" column="create_id"/>
+  		<result property="contentId" column="content_id"/>
+        <result property="status" column="status"/>
+
+        <association property="knowledgeContent" javaType="com.ruoyi.es.domain.KnowledgeContent" > 
+	        <result property="title" column="title"/>
+	        <result property="describes" column="describes"/>
+	        <result property="eventType" column="event_type"/>
+	        <result property="content" column="content"/>
+	        <result property="sectitle" column="sectitle"/>
+	        <result property="threetitle" column="threetitle"/>
+	        <result property="systemName" column="system_name"/>
+	        <result property="categoryId" column="category_id"/>
+	        <result property="categoryName" column="category_name"/>
+	        <result property="createId" column="author_id"/>
+	        <result property="createName" column="author_name"/>
+	        <result property="createTime" column="create_time"/>
+            <result property="name" column="name"/>
+            <result property="contentId" column="content_id"/>
+        	<result property="sectitleId" column="sectitle_id"/>
+    	</association>
+    
+    </resultMap>
+
+    <sql id="selectKnowledgeCollectionVo">
+        select k.name,kc.id as kcid,k.id,k.title,k.describes,k.event_type,(select pname from og_person p where p.pid=kc.create_id) as author_name,
+        to_date(kc.create_time,'YYYY-MM-DD hh24:mi:ss') as create_time,
+        (select name from knowledge_titil t where t.id=k.content) as content, k.content as content_id, 
+		(select name from knowledge_titil t where t.id=k.sectitle) as sectitle, k.sectitle as sectitle_id, 
+		(select name from knowledge_titil t where t.id=k.threetitle) as threetitle,
+		(select name from knowledge_titil t where t.sys_id=k.sys_id and t.category='0') as system_name
+        from knowledge_collect kc left join knowledge_content k on k.id=kc.content_id
+    </sql>
+
+    <select id="selectKnowledgeCollectionList" parameterType="KnowledgeCollect" resultMap="CollectResult">
+        <include refid="selectKnowledgeCollectionVo"/>
+        where k.id is not null
+        <if test="createId != null and createId != ''"> and kc.create_id = #{createId}</if>
+        <if test="status != null and status != ''"> and kc.status = #{status}</if>
+        <if test="knowledgeContent.title != null and knowledgeContent.title != ''"> and k.title like concat('%',concat(#{knowledgeContent.title},'%'))</if>
+    	<if test="knowledgeContent.eventType != null and knowledgeContent.eventType != ''"> and k.event_type = #{knowledgeContent.eventType}</if>
+    </select>
+    <select id="selectKnowledgeCollectionMysqlList" parameterType="KnowledgeCollect" resultMap="CollectResult">
+        select k.name,kc.id as kcid,k.id,k.title,k.describes,k.event_type,(select pname from og_person p where p.pid=kc.create_id) as author_name,kc.create_time,
+        (select name from knowledge_titil t where t.id=k.content) as content, k.content as content_id,
+        (select name from knowledge_titil t where t.id=k.sectitle) as sectitle, k.sectitle as sectitle_id,
+        (select name from knowledge_titil t where t.id=k.threetitle) as threetitle,
+        (select name from knowledge_titil t where t.sys_id=k.sys_id and t.category='0') as system_name
+        from knowledge_collect kc left join knowledge_content k on k.id=kc.content_id
+        where k.id is not null
+        <if test="createId != null and createId != ''"> and kc.create_id = #{createId}</if>
+        <if test="status != null and status != ''"> and kc.status = #{status}</if>
+        <if test="knowledgeContent.title != null and knowledgeContent.title != ''"> and k.title like concat('%',concat(#{knowledgeContent.title},'%'))</if>
+    	<if test="knowledgeContent.eventType != null and knowledgeContent.eventType != ''"> and k.event_type = #{knowledgeContent.eventType}</if>
+    </select>
+
+    <delete id="deleteKnowledgeCollectionByIds" parameterType="String">
+        delete from knowledge_collect where status = 0 and id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+	<insert id="insertKnowledgeCollection" parameterType="KnowledgeCollect">
+        insert into knowledge_collect
+        <trim prefix="(" suffix=")" suffixOverrides=",">  
+            id,
+            <if test="createId != null and createId != ''">create_id,</if>
+            <if test="contentId != null and contentId != ''">content_id,</if>
+            <if test="status != null and status != ''">status,</if>
+            <if test="createTime != null and createTime != ''">create_time,</if>
+ 		</trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            #{id},
+            <if test="createId != null  and createId != ''">#{createId},</if>
+            <if test="contentId != null  and contentId != ''">#{contentId},</if>
+			<if test="status != null  and status != ''">#{status},</if>
+            <if test="createTime != null and createTime != ''">#{createTime},</if>
+		</trim>
+    </insert>
+
+    <select id="isCollected" parameterType="String" resultType="int">
+        select count(id) from knowledge_collect k
+        where k.status = 0 and k.content_id = #{contentId} and k.create_id = #{createId}
+    </select>
+</mapper>

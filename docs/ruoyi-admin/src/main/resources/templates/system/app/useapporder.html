@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+	<th:block th:include="include :: header('应用系统列表1')" />
+	<th:block th:include="include :: bootstrap-editable-css" />
+</head>
+<body class="gray-bg">
+	<div class="container-div">
+		<div class="row">
+			<div class="col-sm-12 search-collapse">
+				<form id="role-edit-form">
+					<div class="select-list">
+						<ul>
+							<li>
+								系统名称：<input type="text" name="sysname"/>
+							</li>
+							<li>
+								系统状态：<select name="status" th:with="type=${@dict.getParaType('sys_normal_disable')}">
+									<option value="">所有</option>
+									<option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+								</select>
+							</li>
+							<li>
+								<a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+							    <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+							</li>
+						</ul>
+					</div>
+				</form>
+			</div>
+	        <div class="col-sm-12 select-table table-striped">
+			    <table id="bootstrap-edit-table"></table>
+			</div>
+		</div>
+	</div>
+	<th:block th:include="include :: footer" />
+	<th:block th:include="include :: bootstrap-table-editable-js" />
+	<script th:inline="javascript">
+		var prefix = ctx + "system/app";
+		$(function() {
+		    var options = {
+		    	id:'bootstrap-edit-table',
+		        url: prefix + "/orderlist",
+				showSearch: false,
+				showRefresh: false,
+				showToggle: false,
+				showColumns: false,
+				showPageGo: true,
+				onEditableSave: onEditableSave,
+		        columns: [{
+		            checkbox: true
+		        },
+		        {
+		            field: 'id',
+		            title: '系统编号'
+		        },
+				{
+					field: 'syscode',
+					title: '系统简称',
+					sortable: true
+				},
+		        {
+		            field: 'sysname',
+		            title: '系统名称',
+		            sortable: true
+		        },
+		        {
+		            field: 'sysurl',
+		            title: '系统url',
+		            sortable: true
+		        },
+		        {
+		            field: 'sysorder',
+		            title: '显示顺序',
+					editable: true
+		        },
+				{
+					title: '系统状态',
+					align: 'center',
+					formatter: function (value, row, index) {
+						if (row.status == 1) {
+							return '<i class="fa text-info">停用</i> ';
+						} else {
+							return '<i class="fa text-info">启用</i> ';
+						}
+					}
+				}]
+		    };
+		    $.table.init(options);
+		});
+
+		function onEditableSave (field, row, rowIndex, oldValue, $el) {
+			var id=row.id;
+			var value=row[field];
+			 $.modal.confirm("确认要修改系统排序值吗？", function() {
+			 	$.operate.post(prefix + "/changeSysOrder", { "id": id, "value": value });
+			 })
+		}
+	</script>
+</body>
+</html>

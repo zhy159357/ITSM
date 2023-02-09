@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:include="include :: header('接手')"/>
+    <th:block th:include="include :: select2-css"/>
+</head>
+<body>
+<div class="main-content">
+    <form id="form-version-add" class="form-horizontal">
+        <input name="deptId" type="hidden" id="deptId" th:value="*{deptId}"/>
+        <div class="row">
+            <div class="form-group">
+            <div class="col-sm-12" style="text-align: center">
+                <h3><p>&nbsp;变更单额度重置配置</p></h3>
+            </div>
+        </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <div class="form-group" style="text-align: center">
+                        <label class="col-sm-12 control-label" style="color: red"></label>
+                        <div class="col-sm-8 text-center" id="selects" style="text-align: left">
+<!--                            onclick="selectDate()"-->
+                            <label class="col-sm-4 control-label is-required">日期：</label> <input id="reportTime" name="reportTime" onkeyup="this.value=this.value.replace(/\D/g,'')" th:type="text"/>
+                                </label>
+                            <label >(请选择重置日期：范围是1～28) </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-offset-5 col-sm-10 text-center">
+                <button type="button" class="btn btn-sm btn-primary" onclick="deal()"><i class="fa fa-check"></i>提交</button>&nbsp;
+                <button type="button" class="btn btn-sm btn-danger" onclick="closeHtml()"><i class="fa fa-window-close"></i>关 闭
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: select2-css" />
+<th:block th:include="include :: select2-js" />
+<th:block th:include="include :: datetimepicker-js" />
+<th:block th:include="include :: datetimepicker-css" />
+<th:block th:include="include :: jquery-cxselect-js" />
+<script>
+    var prefix_change = ctx + "changeDept";
+
+    // $(function () {
+    //     $("#reportTime").datetimepicker({
+    //         format: "dd",
+    //         autoclose: true,
+    //         minView:4,
+    //         minuteStep:1,
+    //         viewSelect:day,
+    //         endDate:new Date()
+    //     });
+    // });
+
+    // $("#form-business-approvalList").validate({
+    //     onkeyup: false,
+    //     rules: {
+    //         "params[comment]": true
+    //     },
+    //     messages: {
+    //         "params[comment]": "业务领导审批意见必填不可为空"
+    //     },
+    //     focusCleanup: true
+    // });
+
+    function tableResh() {
+        $.table.search();
+    }
+
+    /*获取日期*/
+    function selectDate() {
+        $.ajax({
+            type: "post",
+            url: prefix_change + "/selectDate",
+            data: "",
+            success: function (data) {
+                if(data.flag == false){
+                    return $.modal.alertError("请配置参数！。");
+                }
+            }
+        });
+    }
+
+    /*通过*/
+    function deal() {
+        var reportTime = $("#reportTime").val();
+        if ($.validate.form()) {
+            $.operate.save(prefix_change + "/submit", {
+                'reportTime': reportTime
+            });
+        }
+    }
+
+    function closeHtml() {
+        $.modal.close();
+    }
+
+</script>
+</body>
+</html>

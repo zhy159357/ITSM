@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ruoyi.es.mapper.KnowledgeCommentMapper">
+	 <resultMap type="com.ruoyi.es.domain.KnowledgeComment" id="CommentResult">
+        <result property="id" column="id"/>
+        <result property="title" column="title"/>
+        <result property="createId" column="create_id"/>
+        <result property="createName" column="create_name"/>
+        <result property="contentId" column="content_id"/>
+        <result property="createTime" column="create_time"/>
+        <result property="remark" column="remark"/>
+        <result property="status" column="status"/>
+        <result property="replyId" column="reply_id"/>
+    </resultMap>
+
+	<sql id="selectCommentVo">
+        select km.id, km.create_id, op.pname as create_name, km.content_id, kc.title, km.create_time, 
+        km.remark, km.status, km.reply_id from knowledge_comment km
+		left join knowledge_content kc on kc.id=km.content_id
+		left join og_person op on op.pid=km.create_id
+    </sql>
+    
+    <select id="selectCommentByContentId" parameterType="String" resultMap="CommentResult">
+        <include refid="selectCommentVo"/>
+        <where>
+	        <if test="contentid !=null and contentid!=''">
+	            and km.content_id = #{contentId} and km.reply_id is null
+	        </if>
+        </where>
+        order by km.create_time desc
+    </select>
+    
+    <select id="selectCommentByReplyId" parameterType="String" resultMap="CommentResult">
+        <include refid="selectCommentVo"/>
+        <where>
+	        <if test="replyid !=null and replyid!=''">
+	            and km.reply_id = #{replyId}
+	        </if>
+        </where>
+        order by km.create_time asc
+    </select>
+    
+    <insert id="insertKnowledgeComment" parameterType="KnowledgeComment">
+        insert into knowledge_comment(  
+            id,
+            <if test="createId != null  and createId != ''">create_id,</if>
+            <if test="contentId != null  and contentId != ''">content_id,</if>
+            <if test="remark!= null  and remark != ''">remark,</if>
+            <if test="status != null  and status != ''">status,</if>
+            <if test="replyId != null  and replyId != ''">reply_id,</if>
+            create_time 
+ 			)values(
+            #{id},
+            <if test="createId != null  and createId != ''">#{createId},</if>
+            <if test="contentId != null  and contentId != ''">#{contentId},</if>
+            <if test="remark != null  and remark != ''">#{remark},</if>
+            <if test="status != null  and status != ''">#{status},</if>
+            <if test="replyId != null  and replyId != ''">#{replyId},</if>
+			#{createTime}
+			)
+
+    </insert>
+    
+    <select id="selectCommentCountByContentId" parameterType="String" resultType="long">
+    	select count(id) from knowledge_comment where content_id =#{contentId}
+	    <if test="status !=null and status!=''">
+	        and status = #{status}
+	    </if>
+    </select>
+</mapper>

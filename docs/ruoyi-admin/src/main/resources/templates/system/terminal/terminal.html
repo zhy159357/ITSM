@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('话机绑定列表')" />
+</head>
+<body class="gray-bg">
+     <div class="container-div">
+        <div class="row">
+            <div class="col-sm-12 search-collapse">
+                <form id="formId">
+                    <div class="select-list">
+                        <ul>
+                            <li>
+                                话机IP：
+                                <input type="text" name="telip"/>
+                            </li>
+                            <li>
+                               电话银行工号：
+                                <input type="text" name="serviceIp"/>
+                            </li>
+                            <li>
+                                工号：
+                                <input type="text" name="jobNumber"/>
+                            </li>
+                            <li>
+                                分机号：
+                                <input type="text" name="extno"/>
+                            </li>
+                            <li>
+                                <a class="btn btn-primary btn-rounded btn-sm" id="ss" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-repeat"></i>&nbsp;重置</a>
+                            </li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+
+            <div class="btn-group-sm" id="toolbar" role="group">
+                <a class="btn btn-success" onclick="$.operate.add()">
+                    <i class="fa fa-plus"></i> 添加
+                </a>
+                <a class="btn btn-primary single disabled" onclick="edit()">
+                    <i class="fa fa-edit"></i> 话机绑定
+                </a>
+                <a class="btn btn-primary single disabled" onclick="editjnz()">
+                    <i class="fa fa-edit"></i> 技能组绑定
+                </a>
+                <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()">
+                    <i class="fa fa-trash"></i> 删除
+                </a>
+                <a class="btn btn-info single disabled" onclick="$.operate.detailshow()">
+                    <i class="fa fa-search"></i> 详情
+                </a>
+                <div class="btn-group">
+                    <button data-toggle="dropdown" class="btn btn-primary btn-sm dropdown-toggle">导出<span
+                            class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a onclick="$.table.exportExcel()">导出所有</a>
+                        </li>
+                        <li><a onclick="$.table.exportExcelCurrentPage()">导出当前页</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-sm-12 select-table table-striped">
+                <table id="bootstrap-table"></table>
+            </div>
+        </div>
+    </div>
+    <th:block th:include="include :: footer" />
+    <script th:inline="javascript">
+
+        var ifskillno =  [[${@dict.getParaType('Line_Isno')}]];
+
+        var prefix = ctx + "system/terminal";
+
+        $(function() {
+            document.onkeydown = function(e){
+                var ev = document.all ? window.event : e;
+                console.log(ev);
+                if(ev.keyCode==13) {
+                    $('#ss').trigger('click');
+                    return false;
+                } //搜索逻辑
+            }
+            var options = {
+                url: prefix + "/list",
+                createUrl: prefix + "/add",
+                updateUrl: prefix + "/edit/{id}",
+                updateUrl: prefix + "/edittwo{id}",
+                detailUrl: prefix + "/detail/{id}",
+                removeUrl: prefix + "/remove",
+                exportUrl: prefix + "/export",
+                singleSelect:true,
+                clickToSelect:true,
+                modalName: "话机绑定",
+                columns: [{
+                    checkbox: true
+                },{
+                    field: 'id',
+                    title: 'ID',
+                    visible:false,
+                    sortable: true
+                },
+                {
+                    field : 'telip', 
+                    title : '话机IP'
+                },
+                {
+                    field : 'serviceIp', 
+                    title : '电话银行工号'
+                },
+                {
+                    field : 'ogUser.username',
+                    title : '工号'
+                },
+                {
+                    field : 'ogPerson.pName',
+                    title : '创建人'
+                },
+                {
+                    field : 'extno', 
+                    title : '分机号'
+                },
+                    {
+                        field : 'skillsGroupName',
+                        title : '技能组'
+                    },
+                    {
+                        field : 'ifskillno',
+                        title : '添加默认技能组',
+                        formatter: function (value,row,index) {
+                            return selectDictLabel(ifskillno, value);
+                        },
+                    }]
+            };
+            $.table.init(options);
+        });
+
+        // 修改
+        function editjnz(){
+            var id = $.table.selectFirstColumns();
+            var url = prefix + "/edittwo/" + id;
+            $.modal.openTab("修改",url);
+        }
+
+        // 修改
+        function edit(){
+            var id = $.table.selectFirstColumns();
+            var url = prefix + "/edit/" + id;
+            $.modal.openTab("修改",url);
+        }
+
+        //事件来源（字典项）
+        function selectDictLabel(datas, value) {
+            var actions = [];
+            $.each(datas, function(index, dict) {
+                if (dict.value == ('' + value)) {
+                    var listClass = $.common.equals("default", dict.listClass) || $.common.isEmpty(dict.listClass) ? "" : "badge badge-" + dict.listClass;
+                    actions.push($.common.sprintf("<span class='%s'>%s</span>", listClass, dict.valueDetail));
+                    return false;
+                }
+            });
+            return actions.join('');
+        }
+    </script>
+</body>
+</html>

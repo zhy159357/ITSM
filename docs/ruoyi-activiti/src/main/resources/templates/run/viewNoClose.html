@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('监控事件单新增')" />
+    <th:block th:include="include :: select2-css" />
+</head>
+<body>
+<div class="main-content">
+    <form id="form-evenrt-run" class="form-horizontal" th:object="${eventRun}">
+        <input name="eventId" type="hidden" id="eventId" th:value="*{eventId}"/>
+        <h4 class="form-header h4">基本信息</h4>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">事件单号：</label>
+                    <div class="col-sm-8">
+                        <input name="eventNo" id="eventNo" class="form-control" type="text" th:value="*{eventNo}" readonly required>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">事件来源：</label>
+                    <div class="col-sm-8">
+                        <select id="eventSource" name="eventSource" class="form-control" th:with="type=${@pubParaValue.selectPubParaValueByParaName('fmSource')}" th:field="*{eventSource}" disabled>
+                            <option value=""></option>
+                            <option th:each="paraValue : ${type}" th:text="${paraValue.valueDetail}" th:value="${paraValue.value}"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">事件标题：</label>
+                    <div class="col-sm-8">
+                        <input id="eventTitle" name="eventTitle" class="form-control" type="text" maxlength="80" th:value="*{eventTitle}" readonly required>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">事件类型：</label>
+                    <div class="col-sm-8">
+                        <select id="eventType" name="eventType" class="form-control" th:with="eventType=${@pubParaValue.selectPubParaValueByParaName('YXSJ_TYPE')}" th:field="*{eventType}" disabled>
+                            <option value=""></option>
+                            <option th:each="paraValue : ${eventType}" th:text="${paraValue.valueDetail}" th:value="${paraValue.value}"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">发生时间：</label>
+                    <div class="col-sm-8">
+                        <input id="reportTime" name="reportTime" class="form-control" th:value="*{reportTime}" readonly
+                               type="text" required>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">事件等级：</label>
+                    <div class="col-sm-8">
+                        <select id="eventLevel" name="eventLevel" class="form-control" th:with="eventLevel=${@pubParaValue.selectPubParaValueByParaName('dhsj_sjdj')}" th:field="*{eventLevel}" disabled>
+                            <option value=""></option>
+                            <option th:each="paraValue : ${eventLevel}" th:text="${paraValue.valueDetail}" th:value="${paraValue.value}"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label ">所属系统：</label>
+                    <div class="col-sm-8">
+                        <input id="appSystemCode" name="appSystemCode"  th:value="*{appSystemCode}" hidden >
+                        <input id="appSystemName" name="appSystemName" type="text"   class="form-control"   th:value="*{appSystemName}" readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">所属中心：</label>
+                    <div class="col-sm-8">
+                        <select id="affiliatedCenter" name="affiliatedCenter" class="form-control" th:with="center=${@pubParaValue.selectPubParaValueByParaName('YXSJ_CENTER')}" th:field="*{affiliatedCenter}" disabled>
+                            <option value=""></option>
+                            <option th:each="paraValue : ${center}" th:text="${paraValue.valueDetail}" th:value="${paraValue.value}"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">处理人：</label>
+                    <div class="col-sm-8">
+                        <input id="handlePerson" name="handlePerson"  class="form-control" th:value="*{handlePerson}" readonly>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div th:if="${eventRun.closeTime !=null and eventRun.closeTime !=''}" class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">告警关闭时间：</label>
+                    <div class="col-sm-7">
+                        <input id="closeTime" name="closeTime"  class="form-control" th:value="*{closeTime}" readonly>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label is-required">详细描述：</label>
+                    <div class="col-sm-9">
+                        <textarea rows="6" cols="20" id="eventDescr" name="eventDescr" maxlength="500" th:text="*{eventDescr}" class="form-control" readonly></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+    <h4 class="form-header h4">上传版本程序及操作手册等附件</h4>
+    <div class="tab-content">
+
+        <div class="tabs-container">
+            <ul class="nav nav-tabs">
+                <li class="active"><a data-toggle="tab" href="#tab-1" aria-expanded="true">流程记录</a>
+                </li>
+                <li class=""><a data-toggle="tab" href="#tab-2" aria-expanded="false"> 附件上传</a>
+                </li>
+            </ul>
+            <div class="tab-content">
+                <div id="tab-1" class="tab-pane active">
+                    <div class="panel-body">
+                        <div class="col-sm-12 select-table table-striped">
+                            <table id="history-table"></table>
+                        </div>
+
+                    </div>
+                </div>
+                <div id="tab-2" class="tab-pane ">
+                    <div class="panel-body">
+                        <div class="btn-group-sm" id="toolbar2" role="group">
+                            <a class="btn btn-primary multiple disabled" onclick="downloadFile()">
+                                <i class="fa fa-edit"></i> 下载附件
+                            </a>
+                            <!--<a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()">
+                                <i class="fa fa-remove"></i> 删除附件
+                            </a>-->
+                        </div>
+                        <div class="col-sm-12 select-table table-striped">
+                            <table id="file-table"></table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: select2-js" />
+<th:block th:include="include :: datetimepicker-js" />
+<th:block th:include="include :: datetimepicker-css" />
+<script th:src="@{/js/activiti.js}"></script>
+<script th:inline="javascript">
+    // var prefix_attachment = ctx + "pub/attachment";
+    var prefix = ctx + "activiti/run";
+
+
+    $(function() {
+        puFolwHistory($("#eventId").val());
+        var optionsfj = {
+            url: ctx+"pub/attachment/list",
+            id:'file-table',
+            createUrl: ctx+"pub/attachment/add",
+            updateUrl: ctx+"pub/attachment/download/{id}",
+            removeUrl: ctx+"pub/attachment/remove",
+            sortName: "fileTime",
+            sortOrder: "desc",
+            toolbar:"toolbar2",
+            queryParams:queryParams,
+            modalName: "附件列表",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field : 'atId',
+                    title : '附件ID',
+                    visible : false
+                },
+                {
+                    field : 'fileName',
+                    title : '文件名称'
+                },
+                {
+                    field : 'person.pName',
+                    title : '上传人'
+                },
+                {
+                    field : 'size',
+                    title : '文件大小'
+                },
+                {
+                    field : 'memo',
+                    title : '文件描述'
+                },
+                {
+                    field : 'fileTime',
+                    title : '上传时间'
+                }]
+        };
+        $.table.init(optionsfj);
+    });
+
+
+
+    function queryParams(params) {
+        var search = $.table.queryParams(params);
+        search.ownerId = $("#eventId").val();
+        return search;
+    }
+
+
+    // 附件下载
+    function downloadFile() {
+        var rows = $.table.selectFirstColumns();
+        var atId = rows[0];
+        var ownerId = $("#eventId").val();
+        var url = ctx + "pub/attachment/download/"+ownerId+"/"+atId;
+        window.location.href = url;
+    }
+
+</script>
+</body>
+</html>

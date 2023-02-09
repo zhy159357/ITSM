@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:include="include :: header('删除信息制度')"/>
+    <th:block th:include="include :: select2-css" />
+    <th:block th:include="include :: datetimepicker-css" />
+    <th:block th:include="include :: summernote-css" />
+</head>
+<body class="white-bg">
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+    <form class="form-horizontal m" id="form-info-remove" th:object="${info}">
+        <input id="regime_info_id" name="regime_info_id" type="hidden" th:value="${regime_info_id}"/>
+        <input id="mark" name="mark" type="hidden" th:value="${mark}"/>
+        <div class="row">
+            <div class="col-sm-11">
+                <div class="form-group">
+                    <label class="col-xs-2 control-label">制度摘要:</label>
+                    <div class="col-xs-10">
+                        <input class="form-control" type="text" name="regime_digest" id="regime_digest" th:value="${regime_digest}" maxlength="20">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-11">
+                <div class="form-group">
+                    <label class="col-xs-2 control-label is-required">审核人:</label>
+                    <div class="col-sm-10">
+                        <select id="checker" name="checker" class="form-control" th:field="*{checker}" required>
+                            <option value=""></option>
+                            <option th:each="user : ${checkerList}" th:text="${user.pName}" th:value="${user.pId}"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<div class="row">
+    <div class="col-sm-offset-5 col-sm-10">
+        <button type="button" class="btn btn-sm btn-primary" onclick="submitHandler()"><i class="fa fa-check"></i>提交</button>&nbsp;
+        <button type="button" class="btn btn-sm btn-primary" onclick="reset()"><i class="fa fa-check"></i>重置</button>&nbsp;
+        <button type="button" class="btn btn-sm btn-danger" onclick="closeItem()"><i class="fa fa-window-close"></i>关闭 </button>
+    </div>
+</div>
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: ztree-js" />
+<th:block th:include="include :: summernote-js" />
+<th:block th:include="include :: datetimepicker-js" />
+<th:block th:include="include :: select2-js" />
+<script type="text/javascript">
+
+    var prefix = ctx + "system/info";
+
+    function submitHandler() {
+        var data = $("#form-info-remove").serializeArray();
+
+        $.operate.save(prefix + "/remove", data);
+
+    }
+
+    //** 关闭选项卡 */
+    function closeItem() {
+
+        var index = parent.layer.getFrameIndex(window.name);
+        parent.layer.close(index);//关闭当前页
+    }
+    //** 重置 */
+    function reset() {
+        $("#regime_digest").val('');
+        $("#checker option").removeAttr("selected");
+    }
+
+</script>
+</body>
+</html>

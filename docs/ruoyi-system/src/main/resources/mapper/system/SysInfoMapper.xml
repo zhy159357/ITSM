@@ -1,0 +1,525 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.SysInfoMapper">
+
+    <resultMap type="OgPerson" id="OgPersonResult">
+        <result property="pId" column="pId"/>
+        <result property="pName" column="PNAME"/>
+    </resultMap>
+
+    <resultMap type="sysInfo" id="SysInfoResult">
+        <result property="regime_info_id" column="regime_info_id"/>
+        <result property="regime_title" column="regime_title"/>
+        <result property="regime_digest" column="regime_digest"/>
+        <result property="commit_id" column="commit_id"/>
+        <result property="commit_time" column="commit_time"/>
+        <result property="orgid" column="orgid"/>
+        <result property="regime_info_type" column="regime_info_type"/>
+        <result property="step_up_operation_id" column="step_up_operation_id"/>
+        <result property="step_up_operation_time" column="step_up_operation_time"/>
+        <result property="print_time" column="print_time"/>
+        <result property="commit_dept" column="commit_dept"/>
+        <result property="num" column="num"/>
+        <result property="mark" column="mark"/>
+        <result property="type_one" column="type_one"/>
+        <result property="type_two" column="type_two"/>
+        <result property="sytem_four" column="sytem_four"/>
+        <result property="classify" column="classify"/>
+        <result property="delete_reason" column="delete_reason"/>
+        <result property="key_word" column="key_word"/>
+        <result property="is_delete" column="is_delete"/>
+        <result property="current_state" column="current_state"/>
+        <result property="checker" column="checker"/>
+        <result property="folder_" column="folder_"/>
+        <result property="delete_time" column="delete_time"/>
+    </resultMap>
+
+    <resultMap type="SysFolder" id="FolderResult">
+        <result property="id_" column="id_"/>
+        <result property="name_" column="name_"/>
+        <result property="path_" column="path_"/>
+        <result property="parent_" column="parent_"/>
+        <result property="description_" column="description_"/>
+        <result property="create_user_" column="create_user_"/>
+        <result property="create_time_" column="create_time_"/>
+        <result property="modify_user_" column="modify_user_"/>
+        <result property="modify_time_" column="modify_time_"/>
+        <result property="update_time_" column="update_time_"/>
+        <result property="leaf_" column="leaf_"/>
+    </resultMap>
+
+    <sql id="selectInfoVo">
+        SELECT
+            t.REGIME_INFO_ID,
+            t.REGIME_TITLE,
+            t.REGIME_DIGEST,
+            t.COMMIT_ID,
+            t.COMMIT_TIME,
+            t.ORGID,
+            t.REGIME_INFO_TYPE,
+            t.STEP_UP_OPERATION_ID,
+            t.STEP_UP_OPERATION_TIME,
+            t.PRINT_TIME,
+            t.COMMIT_DEPT,
+            t.NUM,
+            t.MARK,
+            t.TYPE_ONE,
+            t.TYPE_TWO,
+            t.SYTEM_FOUR,
+            t.CLASSIFY,
+            t.DELETE_REASON,
+            t.KEY_WORD,
+            t.IS_DELETE,
+            t.CURRENT_STATE,
+            t.CHECKER,
+            r.name_ AS FOLDER_,
+            t.DELETE_TIME,
+            og.pname createName
+        FROM
+            REGIME_INFO T
+        LEFT JOIN REG_FOLDER_INDEX r ON r.id_ = T .folder_
+        LEFT JOIN og_person og on T.COMMIT_ID = og.pid
+	</sql>
+    <sql id="selectFolderVo">
+		select  id_,name_,path_,parent_,description_,create_user_,create_time_,modify_user_,modify_time_,update_time_,leaf_
+          from REG_FOLDER_INDEX o
+	</sql>
+
+    <select id="selectInfoList" parameterType="SysInfo" resultMap="SysInfoResult">
+        SELECT
+        REGIME_INFO_ID,
+        REGIME_TITLE,
+        REGIME_DIGEST,
+        OU.pname COMMIT_ID,
+        IS_DELETE,
+        regime_info_type,
+        TO_DATE (
+        commit_time,
+        'YYYY-MM-DD hh24:mi:ss'
+        ) AS commit_time,
+        (
+        SELECT
+        NAME_
+        FROM
+        reg_folder_index fo
+        WHERE
+        fo.id_ = T .folder_
+        ) AS parent_name,
+        folder_,
+        checker,
+        CURRENT_STATE,
+        delete_reason
+        FROM
+        REGIME_INFO T
+        LEFT JOIN OG_PERSON ou ON T .commit_id = ou.pid
+        LEFT JOIN REG_FOLDER_INDEX r ON r.id_ = T .folder_
+        WHERE
+        is_delete = 0
+        <if test="folder_!=null and folder_!=''">
+            and t.folder_ = #{folder_}
+        </if>
+        <if test="regime_title != null and regime_title != ''">
+            and regime_title like concat(concat('%',#{regime_title}),'%')
+        </if>
+        <if test="regime_digest != null and regime_digest != ''">
+            and regime_digest like concat(concat('%',#{regime_digest}),'%')
+        </if>
+        <if test="key_word != null and key_word != ''">
+            and key_word like concat(concat('%',#{key_word}),'%')
+        </if>
+        <if test="commit_id != null and commit_id != ''">
+            and OU.pname like concat(concat('%',#{commit_id}),'%')
+        </if>
+        <if test="step_up_operation_time != null and step_up_operation_time != ''">
+            and step_up_operation_time like concat(concat('%',#{step_up_operation_time}),'%')
+        </if>
+        <if test="delete_time != null and delete_time != ''">
+            and delete_time like concat(concat('%',#{delete_time}),'%')
+        </if>
+        <if test="delete_reason != null and delete_reason != ''">
+            and t.delete_reason = #{delete_reason}
+        </if>
+        <if test="current_state != null and current_state != ''">
+            and current_state like concat(concat('%',#{current_state}),'%')
+        </if>
+        <if test="params.startTime != null and params.startTime != ''"><!-- 创建时间起始检索 -->
+            and commit_time  >=TO_DATE(TO_DATE( #{params.startTime},'YYYY-MM-DD HH24:MI:SS'), 'YYYYMMDDHH24MISS')
+        </if>
+        <if test="params.endTime != null and params.endTime != ''"><!-- 创建时间起始检索 -->
+            and commit_time &lt;=TO_DATE(TO_DATE( #{params.endTime},'YYYY-MM-DD HH24:MI:SS')+1, 'YYYYMMDDHH24MISS')
+        </if>
+        order by commit_time desc
+    </select>
+
+    <select id="selectInfoMysqlList" parameterType="SysInfo" resultMap="SysInfoResult">
+        SELECT
+        REGIME_INFO_ID,
+        REGIME_TITLE,
+        REGIME_DIGEST,
+        OU.pname COMMIT_ID,
+        IS_DELETE,
+        regime_info_type,
+        DATE_FORMAT (
+        commit_time,
+        '%Y-%m-%d %T'
+        ) commit_time,
+        (
+        SELECT
+        NAME_
+        FROM
+        reg_folder_index fo
+        WHERE
+        fo.id_ = T .folder_
+        ) AS parent_name,
+        folder_,
+        checker,
+        CURRENT_STATE,
+        delete_reason
+        FROM
+        REGIME_INFO T
+        LEFT JOIN OG_PERSON ou ON T .commit_id = ou.pid
+        LEFT JOIN REG_FOLDER_INDEX r ON r.id_ = T .folder_
+        WHERE
+        is_delete = 0
+        <if test="folder_!=null and folder_!=''">
+            and t.folder_ = #{folder_}
+        </if>
+        <if test="regime_title != null and regime_title != ''">
+            and regime_title like concat(concat('%',#{regime_title}),'%')
+        </if>
+        <if test="regime_digest != null and regime_digest != ''">
+            and regime_digest like concat(concat('%',#{regime_digest}),'%')
+        </if>
+        <if test="key_word != null and key_word != ''">
+            and key_word like concat(concat('%',#{key_word}),'%')
+        </if>
+        <if test="commit_id != null and commit_id != ''">
+            and OU.pname like concat(concat('%',#{commit_id}),'%')
+        </if>
+        <if test="step_up_operation_time != null and step_up_operation_time != ''">
+            and step_up_operation_time like concat(concat('%',#{step_up_operation_time}),'%')
+        </if>
+        <if test="delete_time != null and delete_time != ''">
+            and delete_time like concat(concat('%',#{delete_time}),'%')
+        </if>
+        <if test="delete_reason != null and delete_reason != ''">
+            and t.delete_reason = #{delete_reason}
+        </if>
+        <if test="current_state != null and current_state != ''">
+            and current_state like concat(concat('%',#{current_state}),'%')
+        </if>
+        <if test="params.startTime != null and params.startTime != ''"><!-- 创建时间起始检索 -->
+            and date_format(commit_time ,'%Y-%m-%d') &gt;=DATE_FORMAT(#{params.startTime},'%Y-%m-%d')
+        </if>
+        <if test="params.endTime != null and params.endTime != ''"><!-- 创建时间起始检索 -->
+            and date_format(commit_time,'%Y-%m-%d' ) &lt;=DATE_FORMAT(#{params.endTime },'%Y-%m-%d')
+        </if>
+        order by commit_time desc
+    </select>
+
+    <select id="selectIFList" parameterType="SysInfo" resultMap="SysInfoResult">
+        select REGIME_INFO_ID,REGIME_TITLE,REGIME_DIGEST,OU.USERNAME COMMIT_ID,IS_DELETE,
+        (select NAME_ from reg_folder_index fo where fo.id_ = t.folder_) as parent_name,
+        CASE CURRENT_STATE WHEN ('0')  THEN '正式' ELSE '试行' END as CURRENT_STATE
+        from REGIME_INFO t  left join OG_USER ou on t.commit_id = ou.userid
+        left join REG_FOLDER_INDEX r on r.id_ = t.folder_
+        where is_delete = 0  and t.folder_ = #{folder_}
+    </select>
+
+    <select id="selectInfoById" parameterType="String" resultMap="SysInfoResult">
+        <include refid="selectInfoVo"/>
+        where t.IS_DELETE = 0
+        and t.regime_info_id=#{regime_info_id}
+    </select>
+
+    <select id="selectState" parameterType="String" resultMap="SysInfoResult">
+        select REGIME_INFO_ID,REGIME_TITLE,REGIME_DIGEST,COMMIT_ID,COMMIT_TIME,ORGID,REGIME_INFO_TYPE,CURRENT_STATE，
+        STEP_UP_OPERATION_ID,STEP_UP_OPERATION_TIME,PRINT_TIME,COMMIT_DEPT,NUM,MARK,TYPE_ONE,TYPE_TWO,
+        SYTEM_FOUR,CLASSIFY,DELETE_REASON,KEY_WORD,IS_DELETE,CURRENT_STATE,CHECKER,r.name_ as FOLDER_,DELETE_TIME
+        from REGIME_INFO t left join REG_FOLDER_INDEX r on r.id_ = t.folder_
+        where IS_DELETE = 0
+        and regime_info_id=#{regime_info_id}
+    </select>
+
+    <select id="checkInfoNameUnique" parameterType="String" resultMap="SysInfoResult">
+        <include refid="selectInfoVo"/>f
+        where t.IS_DELETE = 0
+        and t.regime_info_id=#{regime_info_id}
+    </select>
+
+    <delete id="deleteInfoById" parameterType="String">
+ 		delete from REGIME_INFO where regime_info_id = #{regime_info_id}
+ 	</delete>
+
+    <delete id="deleteInfoByIds" parameterType="SysInfo">
+        delete from REGIME_INFO where regime_info_id in
+        <foreach collection="array" item="regime_info_id" open="(" separator="," close=")">
+            #{regime_info_id}
+        </foreach>
+    </delete>
+
+    <select id="selectCheckerList" parameterType="OgPerson" resultMap="OgPersonResult">
+		select distinct p.pId,p.pname  from  OG_PERSON p
+		left join REGIME_INFO r on p.pid = r.checker
+		where p.pname is not null
+        and p.pname like '数据中心%'
+	</select>
+
+    <select id="selectInfoByNo" parameterType="String" resultMap="SysInfoResult">
+        <include refid="selectInfoVo"/>
+        where t.regime_title = #{regime_title}
+    </select>
+
+    <update id="updateInfo">
+        update REGIME_INFO
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="commit_id != null and commit_id != ''">commit_id = #{commit_id},</if>
+            <if test="commit_time != null and commit_time != ''">commit_time = #{commit_time},</if>
+            <if test="regime_title != null and regime_title != ''" >regime_title =#{regime_title},</if>
+            <if test="key_word != null and key_word != ''">key_word = #{key_word},</if>
+            <if test="print_time != null and print_time != ''">print_time = #{print_time},</if>
+            <if test="checker != null and checker != ''">checker= #{checker},</if>
+            <if test="regime_digest != null and regime_digest != ''">regime_digest= #{regime_digest},</if>
+            <if test="type_one != null and type_one != ''">type_one = #{type_one},</if>
+            <if test="type_two != null and type_two != ''">type_two = #{type_two},</if>
+            <if test="regime_info_type != null and regime_info_type != ''">regime_info_type = #{regime_info_type},</if>
+            <if test="folder_ != null and folder_ != ''">folder_=#{folder_},</if>
+            <if test="sytem_four != null and sytem_four != ''">sytem_four = #{sytem_four},</if>
+            <if test="classify != null and classify != ''">classify = #{classify},</if>
+            <if test="current_state != null and current_state != ''">current_state = #{current_state},</if>
+            <if test="mark != null and mark != ''">mark= #{mark},</if>
+            <if test="num != null and num != ''">num =#{num},</if>
+            <if test="delete_reason != null and delete_reason != ''">delete_reason =#{delete_reason},</if>
+            <if test="is_delete != null and is_delete != ''">is_delete= #{is_delete},</if>
+            <if test="delete_time != null and delete_time != ''">delete_time= #{delete_time}</if>
+        </trim>
+        where regime_info_id = #{regime_info_id}
+    </update>
+
+    <update id="deleteInfo" parameterType="SysInfo">
+        update REGIME_INFO
+        <set>
+            regime_info_id = #{regime_info_id},
+            <if test="checker != null and checker != ''">checker = #{checker},</if>
+            <if test="regime_digest != null and regime_digest != ''">regime_digest = #{regime_digest},</if>
+            IS_DELETE = 1
+        </set>
+        where regime_info_id = #{regime_info_id}
+    </update>
+
+    <insert id="insertInfo" parameterType="SysInfo" useGeneratedKeys="false" keyProperty="regime_info_id">
+    insert into REGIME_INFO
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+        <if test="regime_info_id != null and regime_info_id != ''">regime_info_id,</if>
+        <if test="commit_id != null and commit_id != ''">commit_id,</if>
+        <if test="commit_time != null and commit_time != ''">commit_time,</if>
+        <if test="regime_title != null and regime_title != ''">regime_title,</if>
+        <if test="key_word != null and key_word != ''">key_word,</if>
+        <if test="print_time != null and print_time != ''">print_time,</if>
+        <if test="checker != null and checker != ''">checker,</if>
+        <if test="regime_digest != null and regime_digest != ''">regime_digest,</if>
+        <if test="type_one != null and type_one != ''">type_one,</if>
+        <if test="type_two != null and type_two != ''">type_two,</if>
+        <if test="regime_info_type != null and regime_info_type != ''">regime_info_type,</if>
+        <if test="folder_ != null and folder_ != ''">folder_,</if>
+        <if test="sytem_four != null and sytem_four != ''">sytem_four,</if>
+        <if test="classify != null and classify != ''">classify,</if>
+        <if test="current_state != null and current_state != ''">current_state,</if>
+        <if test="mark != null and mark != ''">mark,</if>
+        <if test="num != null and num != ''">num,</if>
+        <if test="is_delete != null and is_delete != ''">is_delete</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+        <if test="regime_info_id != null and regime_info_id != ''">#{regime_info_id},</if>
+        <if test="commit_id != null and commit_id != ''">#{commit_id},</if>
+        <if test="commit_time != null and commit_time != ''">#{commit_time},</if>
+        <if test="regime_title != null and regime_title != ''">#{regime_title},</if>
+        <if test="key_word != null and key_word != ''">#{key_word},</if>
+        <if test="print_time != null and print_time != ''">#{print_time},</if>
+        <if test="checker != null and checker != ''"> #{checker},</if>
+        <if test="regime_digest != null and regime_digest != ''">#{regime_digest},</if>
+        <if test="type_one != null and type_one != ''">#{type_one},</if>
+        <if test="type_two != null and type_two != ''">#{type_two},</if>
+        <if test="regime_info_type != null and regime_info_type != ''">#{regime_info_type},</if>
+        <if test="folder_ != null and folder_ != ''"> #{folder_},</if>
+        <if test="sytem_four != null and sytem_four != ''">#{sytem_four},</if>
+        <if test="classify != null and classify != ''">#{classify},</if>
+        <if test="current_state != null and current_state != ''">#{current_state},</if>
+        <if test="mark != null and mark != ''">#{mark},</if>
+        <if test="num != null and num != ''">#{num},</if>
+        <if test="is_delete != null and is_delete != ''">#{is_delete},</if>
+        </trim>
+    </insert>
+    <select id="selectFolderList" parameterType="SysFolder" resultMap="FolderResult">
+        <include refid="selectFolderVo"/>
+        where 1=1
+        <if test="parent_ != null and parent_ != ''">
+            AND o.parent_ = #{parent_}
+        </if>
+        <if test="name_ != null and name_ != ''">
+            AND o.name_ like '%${name_}%'
+        </if>
+        <if test="id_!=null and id_!=''">
+            AND o.id_ = #{id_}
+        </if>
+        order by o.id_
+    </select>
+
+    <select id="selectTreeById" parameterType="SysFolder" resultMap="FolderResult">
+        <include refid="selectFolderVo"/>
+        where o.id_= #{selecttreeId}
+    </select>
+    <select id="selectTreeNameById" parameterType="String" resultMap="SysInfoResult">
+        select name_ from REG_FOLDER_INDEX where id_= #{selecttreeId}
+    </select>
+
+
+    <update id="updateTree" parameterType="SysFolder">
+        update REG_FOLDER_INDEX
+        <set>
+            <if test="parent_ != null and parent_ != ''">name_ = #{name_},</if>
+            <if test="description_ != null and description_ != ''">description_ = #{description_}</if>
+        </set>
+         where id_ = #{id_}
+    </update>
+
+
+    <select id="selectAuditList" parameterType="SysInfo" resultMap="SysInfoResult">
+        SELECT
+        REGIME_INFO_ID,
+        REGIME_TITLE,
+        REGIME_DIGEST,
+        OU.pname COMMIT_ID,
+        IS_DELETE,
+        regime_info_type,
+        TO_DATE (
+        commit_time,
+        'YYYY-MM-DD hh24:mi:ss'
+        ) AS commit_time,
+        (
+        SELECT
+        NAME_
+        FROM
+        reg_folder_index fo
+        WHERE
+        fo.id_ = T .folder_
+        ) AS parent_name,
+        folder_,
+        checker,
+        CURRENT_STATE,
+        delete_reason
+        FROM
+        REGIME_INFO T
+        LEFT JOIN OG_PERSON ou ON T .commit_id = ou.pid
+        LEFT JOIN REG_FOLDER_INDEX r ON r.id_ = T .folder_
+        WHERE
+        is_delete = 0
+        and current_state in ('7','8','9')
+        <if test="folder_!=null and folder_!=''">
+            and t.folder_ = #{folder_}
+        </if>
+        <if test="regime_title != null and regime_title != ''">
+            and regime_title like concat(concat('%',#{regime_title}),'%')
+        </if>
+        <if test="regime_digest != null and regime_digest != ''">
+            and regime_digest like concat(concat('%',#{regime_digest}),'%')
+        </if>
+        <if test="key_word != null and key_word != ''">
+            and key_word like concat(concat('%',#{key_word}),'%')
+        </if>
+        <if test="commit_id != null and commit_id != ''">
+            and OU.pname like concat(concat('%',#{commit_id}),'%')
+        </if>
+        <if test="step_up_operation_time != null and step_up_operation_time != ''">
+            and step_up_operation_time like concat(concat('%',#{step_up_operation_time}),'%')
+        </if>
+        <if test="delete_time != null and delete_time != ''">
+            and delete_time like concat(concat('%',#{delete_time}),'%')
+        </if>
+        <if test="delete_reason != null and delete_reason != ''">
+            and t.delete_reason = #{delete_reason}
+        </if>
+        <if test="current_state != null and current_state != ''">
+            and current_state =#{current_state}
+        </if>
+        <if test="params.startTime != null and params.startTime != ''"><!-- 创建时间起始检索 -->
+            and commit_time  >=TO_CHAR(TO_DATE( #{params.startTime},'YYYY-MM-DD HH24:MI:SS'), 'YYYYMMDDHH24MISS')
+        </if>
+        <if test="params.endTime != null and params.endTime != ''"><!-- 创建时间起始检索 -->
+            and commit_time &lt;=TO_CHAR(TO_DATE( #{params.endTime},'YYYY-MM-DD HH24:MI:SS')+1, 'YYYYMMDDHH24MISS')
+        </if>
+        order by commit_time desc
+    </select>
+
+
+
+    <select id="selectAuditMysqlList" parameterType="SysInfo" resultMap="SysInfoResult">
+        SELECT
+        REGIME_INFO_ID,
+        REGIME_TITLE,
+        REGIME_DIGEST,
+        OU.pname COMMIT_ID,
+        IS_DELETE,
+        regime_info_type,
+        DATE_FORMAT (
+        commit_time,
+        '%Y-%m-%d %T'
+        ) commit_time,
+        (
+        SELECT
+        NAME_
+        FROM
+        reg_folder_index fo
+        WHERE
+        fo.id_ = T .folder_
+        ) AS parent_name,
+        folder_,
+        checker,
+        CURRENT_STATE,
+        delete_reason
+        FROM
+        REGIME_INFO T
+        LEFT JOIN OG_PERSON ou ON T .commit_id = ou.pid
+        LEFT JOIN REG_FOLDER_INDEX r ON r.id_ = T .folder_
+        WHERE
+        is_delete = 0
+        and current_state in ('7','8','9')
+        <if test="folder_!=null and folder_!=''">
+            and t.folder_ = #{folder_}
+        </if>
+        <if test="regime_title != null and regime_title != ''">
+            and regime_title like concat(concat('%',#{regime_title}),'%')
+        </if>
+        <if test="regime_digest != null and regime_digest != ''">
+            and regime_digest like concat(concat('%',#{regime_digest}),'%')
+        </if>
+        <if test="key_word != null and key_word != ''">
+            and key_word like concat(concat('%',#{key_word}),'%')
+        </if>
+        <if test="commit_id != null and commit_id != ''">
+            and OU.pname like concat(concat('%',#{commit_id}),'%')
+        </if>
+        <if test="step_up_operation_time != null and step_up_operation_time != ''">
+            and step_up_operation_time like concat(concat('%',#{step_up_operation_time}),'%')
+        </if>
+        <if test="delete_time != null and delete_time != ''">
+            and delete_time like concat(concat('%',#{delete_time}),'%')
+        </if>
+        <if test="delete_reason != null and delete_reason != ''">
+            and t.delete_reason = #{delete_reason}
+        </if>
+        <if test="current_state != null and current_state != ''">
+            and current_state =#{current_state}
+        </if>
+        <if test="params.startTime != null and params.startTime != ''"><!-- 创建时间起始检索 -->
+            and date_format(commit_time ,'%Y-%m-%d') &gt;=DATE_FORMAT(#{params.startTime},'%Y-%m-%d')
+        </if>
+        <if test="params.endTime != null and params.endTime != ''"><!-- 创建时间起始检索 -->
+            and date_format(commit_time,'%Y-%m-%d' ) &lt;=DATE_FORMAT(#{params.endTime },'%Y-%m-%d')
+        </if>
+        order by commit_time desc
+    </select>
+
+</mapper>

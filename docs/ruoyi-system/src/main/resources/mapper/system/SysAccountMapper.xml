@@ -1,0 +1,221 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.SysAccountMapper">
+
+	<resultMap type="SysAccount" id="SysAccountReslut">
+		<result property="id"      column="id"     />
+		<result property="accountName"      column="account_name"     />
+		<result property="ipStart"      column="ip_start"     />
+		<result property="ipEnd"      column="ip_end"     />
+		<result property="userName"      column="user_name"     />
+		<result property="userId"      column="user_id"     />
+		<result property="email"         column="email"           />
+		<result property="phonenumber"   column="phonenumber"     />
+		<result property="deptName"    column="dept_name"     />
+		<result property="postId"    column="post_id"     />
+		<result property="postCode"    column="post_code"     />
+		<result property="postName"    column="post_name"     />
+		<result property="createTime"    column="create_time"     />
+	</resultMap>
+
+	<select id="selectUserList" parameterType="SysAccount" resultMap="SysAccountReslut">
+		select * from(
+			<if test="userId != null and userId != ''">
+				select u.user_id, u.login_name, u.user_name, u.email, u.phonenumber, u.create_time, d.dept_name
+				from sys_user u left join sys_dept d on u.dept_id = d.dept_id
+				where u.del_flag = '0' and u.status = 0 and user_id = #{userId} union all
+			</if>
+			select u.user_id, u.login_name, u.user_name, u.email, u.phonenumber, u.create_time, d.dept_name
+			from sys_user u
+			left join sys_dept d on u.dept_id = d.dept_id
+			where u.del_flag = '0' and u.status = 0
+			and u.user_id not in (select user_id from sys_user_account)
+		) u
+		<where>
+			<if test="userName != null and userName != ''">
+				AND u.user_name like concat(concat('%',#{userName}),'%')
+			</if>
+			<if test="phonenumber != null and phonenumber != ''">
+				AND u.phonenumber like concat(concat('%',#{phonenumber}),'%')
+			</if>
+		</where>
+	</select>
+
+
+	<select id="selectUserAccountByUserId" parameterType="SysAccount" resultMap="SysAccountReslut">
+		select user_id from sys_user_account where user_id = #{userId}
+	</select>
+
+	<sql id="selectAccountVo">
+        select a.id,a.account_name,a.ip_start,a.ip_end,a.status,u.user_name,u.user_id,u.email,u.phonenumber,d.dept_name
+        from sys_account a
+		left join sys_user_account ua on ua.account_id = a.id
+		left join sys_user u on ua.user_id = u.user_id
+    	left join sys_dept d on u.dept_id=d.dept_id
+    </sql>
+	
+	<select id="selectAccountList" parameterType="SysAccount" resultMap="SysAccountReslut">
+	    <include refid="selectAccountVo"/>
+		<where>
+			<if test="accountName != null and accountName != ''">
+				AND a.account_name like concat(concat('%', #{accountName}), '%')
+			</if>
+			<if test="userName != null and userName != ''">
+				AND u.user_name like concat(concat('%', #{userName}), '%')
+			</if>
+			<if test="deptName != null and deptName != ''">
+				AND d.dept_name like concat(concat('%', #{deptName}), '%')
+			</if>
+ 			<if test="status != null">
+				AND a.status = #{status}
+			</if>
+		</where>
+	</select>
+	
+	<select id="selectAccountAll" resultMap="SysAccountReslut">
+		<include refid="selectAccountVo"/>
+	</select>
+	
+	<select id="selectAccountsById" parameterType="Long" resultMap="SysAccountReslut">
+		SELECT p.account_name, u.user_name
+		FROM sys_user u
+			 LEFT JOIN sys_user_account up ON u.user_id = up.user_id
+			 LEFT JOIN sys_account p ON up.account_id = p.id
+		WHERE up.user_id = #{userId}
+	</select>
+	
+	<select id="selectAccountById" parameterType="Long" resultMap="SysAccountReslut">
+		<include refid="selectAccountVo" />
+		where a.id = #{accountId}
+	</select>
+
+	<select id="checkAccountNameUnique" parameterType="String" resultMap="SysAccountReslut">
+		<include refid="selectAccountVo"/>
+		 where account_name=#{accountName}
+	</select>
+
+	<select id="countUserAccountById" parameterType="Long" resultType="int">
+		select count(1) from sys_user_account where account_id=#{accountId}
+	</select>
+	
+ 	<delete id="deleteAccountByIds" parameterType="Long">
+ 		delete from sys_account where id in
+ 		<foreach collection="array" item="accountId" open="(" separator="," close=")">
+ 			#{accountId}
+        </foreach> 
+ 	</delete>
+
+	<delete id="deleteUserAccountByIds" parameterType="Long">
+		delete from sys_user_account where account_id in
+		<foreach collection="array" item="accountId" open="(" separator="," close=")">
+			#{accountId}
+		</foreach>
+	</delete>
+ 	
+ 	<update id="updateUserAccount" parameterType="SysAccount">
+		update sys_user_account
+		<set>
+			<if test="userId != null and userId != ''">user_id = #{userId}</if>
+		</set>
+		where account_id = #{id}
+	</update>
+
+ 	<update id="updateAccount" parameterType="SysAccount">
+		update sys_account
+		<set>
+			id = #{id},
+			<if test="ipStart != null and ipStart != ''">ip_start = #{ipStart} ,</if>
+			<if test="ipEnd != null and ipEnd != ''">ip_end = #{ipEnd},</if>
+			<if test="status != null">status = #{status}</if>
+		</set>
+		where id = #{id}
+	</update>
+
+ 	<insert id="insertAccount" parameterType="SysAccount">
+		<selectKey keyProperty="id" resultType="long" order="BEFORE">
+			select seq_sys_account.nextval FROM dual
+		</selectKey>
+ 		insert into sys_account(
+ 			id,status,
+ 			<if test="accountName != null and accountName != ''">account_name</if>
+ 		)values(
+			#{id},0,
+ 			<if test="accountName != null and accountName != ''">#{accountName}</if>
+ 		)
+	</insert>
+
+ 	<insert id="insertUserAccount" parameterType="SysAccount" useGeneratedKeys="false" keyProperty="accountId">
+ 		insert into sys_user_account(
+ 			id,
+ 			<if test="accountName != null and accountName != ''">account_id,</if>
+			<if test="userId != null and userId != ''">user_id</if>
+ 		)values(
+			seq_sys_user_account.nextval,
+ 			<if test="accountName != null and accountName != ''">#{id},</if>
+			<if test="userId != null and userId != ''">#{userId}</if>
+ 		)
+	</insert>
+
+	<update id="changeStatus" parameterType="SysAccount">
+		update sys_account set status = #{status} where id = #{id}
+	</update>
+
+	<sql id="selectPostVo">
+        select post_id, post_code, post_name, post_sort, status, create_by, create_time, remark
+		from sys_post
+    </sql>
+
+	<select id="selectPostList" parameterType="SysAccount" resultMap="SysAccountReslut">
+		<include refid="selectPostVo"/>
+		<where>
+			<if test="postCode != null and postCode != ''">
+				AND post_code like concat(concat('%', #{postCode}), '%')
+			</if>
+			<if test="status != null and status != ''">
+				AND status = #{status}
+			</if>
+			<if test="postName != null and postName != ''">
+				AND post_name like concat(concat('%', #{postName}), '%')
+			</if>
+		</where>
+	</select>
+
+
+	<insert id="insertAccountPost" parameterType="ArrayList" useGeneratedKeys="false">
+		<selectKey keyProperty="id" order="BEFORE" resultType="int">
+			SELECT seq_sys_post_account.NEXTVAL FROM DUAL
+		</selectKey>
+		INSERT INTO sys_post_account(id,account_id,post_id) SELECT seq_sys_post_account.NEXTVAL,
+		A.* FROM (
+		<foreach collection="list" item="item" index="index" separator="UNION">
+			SELECT #{item.id} ,#{item.postId} FROM DUAL
+		</foreach>
+		) A
+	</insert>
+
+	<delete id="deleteAccountPostByAccountId" parameterType="Long">
+ 		delete from sys_post_account where account_id = #{accountId}
+ 	</delete>
+
+	<select id="selectAccountsByAccountId" parameterType="Long" resultMap="SysAccountReslut">
+		select p.post_id,p.post_code,p.post_name from sys_post p
+		left join sys_post_account pa on pa.post_id=p.post_id
+		where p.status = 0 and pa.account_id=#{id}
+	</select>
+
+	<select id="selectUserAccountById" parameterType="string" resultType="string">
+	    /*select u.login_name from sys_user u
+	    left join sys_user_account ua on ua.user_id = u.user_id
+	    left join sys_account a on ua.account_id=a.id
+	    where a.account_name = #{accountName}*/
+
+	    select u.username
+	    from OG_USER u
+		where u.username = #{accountName}
+
+
+	</select>
+
+</mapper> 

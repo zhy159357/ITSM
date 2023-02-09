@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+	<th:block th:include="include :: header('选择数据中心人员')" />
+</head>
+<body class="gray-bg">
+<div class="container-div">
+	<div class="row">
+		<div class="col-sm-12 search-collapse">
+			<form id="account-form">
+				<div class="select-list">
+					<ul>
+						<li>
+							人员名称：<input type="text" name="pName"/>
+						</li>
+						<li>
+							所属机构：<input type="text" name="orgname"/>
+						</li>
+						<li>
+							<a class="btn btn-primary btn-rounded btn-sm" id="searchBut" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+							<a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+						</li>
+					</ul>
+				</div>
+			</form>
+		</div>
+
+		<div class="col-sm-12 select-table table-striped">
+			<table id="bootstrap-table"></table>
+		</div>
+	</div>
+</div>
+<th:block th:include="include :: footer" />
+<script th:inline="javascript">
+	var url = ctx + "issueList/build/dataCenterUser";
+	$(function() {
+		// 回车键搜索
+		document.onkeydown = function(e){
+			var ev = document.all ? window.event : e;
+			if(ev.keyCode==13) {
+				$('#searchBut').trigger('click');
+				return false;
+			}
+		};
+		var options = {
+			url: url,
+			clickToSelect:true,
+			modalName: "选择数据中心人员",
+			singleSelect : true, // 单选checkbox
+			columns: [{
+				checkbox: true,
+				formatter:function (value, row, index) {
+					if($.common.isEmpty(value)) {
+						return { checked: row.flag };
+					} else {
+						return { checked: value }
+					}
+				}
+			},
+				{
+					field: 'pId',
+					title: '人员ID',
+					visible: false
+				},
+				{
+					field: 'pName',
+					title: '人员名称'
+				},
+				{
+					field: 'orgname',
+					title: '所属机构'
+				},
+				{
+					field: 'position',
+					title: '岗位'
+				},
+				{
+					field: 'mobilPhone',
+					title: '移动电话'
+				},
+				{
+					field: 'pflag',
+					title: '状态',
+					formatter: function (value, row, index) {
+						return value=='1'?'启用':'禁用'
+					}
+				}]
+		};
+		$.table.init(options);
+	});
+
+	function submitHandler() {
+		// 获取选中行数据
+		var rows = $.table.selectFirstColumns();
+		if (rows.length == 0) {
+			$.modal.alertWarning("请至少选择一条记录");
+			return;
+		}
+		var sysNameRows = $.table.selectColumns('pName');
+		$.modal.close();
+		// 外围系统选择赋值
+		parent.$('#dataCenterUserId').val('');
+		parent.$('#dataCenterUserId').val(rows.join());
+		parent.$('#dataCenterUser').val('');
+		parent.$('#dataCenterUser').val(sysNameRows.join());
+	}
+	function submitForm() {
+		// 获取选中行数据
+		var rows = $("#bootstrap-table").bootstrapTable('getSelections');
+		return rows;
+	}
+</script>
+</body>
+</html>

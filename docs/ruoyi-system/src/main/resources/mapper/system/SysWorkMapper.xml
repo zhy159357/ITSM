@@ -1,0 +1,672 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.SysWorkMapper">
+
+    <resultMap type="OgGroup" id="SysOgGroupResult">
+        <id property="groupId" column="GROUPID"/>
+        <result property="grpName" column="GRPNAME"/>
+        <result property="grpLeader" column="GRPLEADER"/>
+        <result property="adder" column="adder"/>
+        <result property="addTime" column="addTime"/>
+        <result property="moder" column="moder"/>
+        <result property="modTime" column="modTime"/>
+        <result property="invalidationMark" column="INVALIDATION_MARK"/>
+        <result property="memo" column="MEMO"/>
+        <result property="orgId" column="ORGID"/>
+        <result property="count" column="COUNT"/>
+        <result property="tel" column="TEL"/>
+        <result property="sysId" column="SYSID"/>
+        <result property="whiteList" column="WHITE_LIST"/>
+        <result property="groupType" column="group_type"/>
+        <result property="userid" column="userid"/>
+        <result property="sName" column="sName"/>
+        <association property="ogOrg" column="orgId" javaType="OgOrg" resultMap="OgOrgResult"/>
+        <association property="ogSys" column="sysId" javaType="OgSys" resultMap="OgSysResult"/>
+        <association property="groupperson" column="pid" javaType="OgGroupPerson" resultMap="OgGroupPersonResult"/>
+    </resultMap>
+
+    <resultMap type="OgGroupPerson" id="SysOgGroupPersonResult">
+        <id property="pid" column="pid"/>
+        <result property="groupId" column="groupId"/>
+        <result property="gpId" column="gpId"/>
+        <result property="gpOsition" column="gpOsition"/>
+        <result property="gpOrder" column="gp_Order"/>
+        <result property="createBy" column="CREATE_BY"/>
+        <result property="createTime" column="CREATE_TIME"/>
+        <result property="updateBy" column="UPDATE_BY"/>
+        <result property="updateTime" column="UPDATE_TIME"/>
+        <association property="person" column="pid" javaType="OgPerson" resultMap="OgPersonResult"/>
+        <association property="ogOrg" column="orgId" javaType="OgOrg" resultMap="OgOrgResult"/>
+    </resultMap>
+
+    <resultMap type="OgGroupPerson" id="OgGroupPersonResult">
+        <id property="pid" column="PID"/>
+        <result property="pname" column="pname"/>
+        <result property="groupId" column="groupId"/>
+        <result property="gpId" column="gpId"/>
+        <result property="gpOsition" column="gpOsition"/>
+        <result property="gpOrder" column="gp_order"/>
+    </resultMap>
+    <resultMap type="OgPerson" id="OgPersonResult">
+        <id property="pId" column="PID"/>
+        <result property="orgId" column="ORGID"/>
+        <result property="pName" column="PNAME"/>
+        <result property="sex" column="SEX"/>
+        <result property="edu" column="EDU"/>
+        <result property="birthday" column="BIRTHDAY"/>
+        <result property="nativePlace" column="NATIVE_PLACE"/>
+        <result property="phone" column="PHONE"/>
+        <result property="mobilPhone" column="mobil_phone"/>
+        <result property="email" column="EMALL"/>
+        <result property="address" column="ADDRESS"/>
+        <result property="createBy" column="create_by"/>
+        <result property="momer" column="MOMER"/>
+        <result property="mome" column="MOME"/>
+        <result property="updatetime" column="UPDATE_TIME"/>
+        <result property="invalidationMark" column="INVALIDATION_MARK"/>
+        <result property="position" column="POSITION"/>
+        <result property="leader" column="LEADER"/>
+        <result property="pOrder" column="P_ORDER"/>
+        <result property="pflag" column="P_FLAG"/>
+        <result property="orgname" column="orgname"/>
+        <result property="username" column="username"/>
+    </resultMap>
+
+    <resultMap type="OgOrg" id="OgOrgResult">
+        <id property="orgId" column="orgId"/>
+        <result property="parentId" column="t_o_orgid"/>
+        <result property="orgCode" column="orgcode"/>
+        <result property="orgName" column="orgName"/>
+        <result property="orgLv" column="orgLv"/>
+        <result property="adder" column="adder"/>
+        <result property="addtime" column="addtime"/>
+        <result property="moder" column="moder"/>
+        <result property="modtime" column="modtime"/>
+        <result property="updatetime" column="updatetime"/>
+        <result property="invalidationMark" column="invalidationMark"/>
+        <result property="memo" column="memo"/>
+        <result property="branchMark" column="branchMark"/>
+        <result property="inoutsideMark" column="inoutsideMark"/>
+        <result property="levelCode" column="levelCode"/>
+        <result property="leaf" column="leaf"/>
+        <result property="type" column="type"/>
+        <result property="sort" column="sort"/>
+        <result property="operaternum" column="operaternum"/>
+        <result property="khnum" column="khnum"/>
+    </resultMap>
+
+    <resultMap type="OgSys" id="OgSysResult">
+        <id property="sysId" column="sysId"/>
+        <result property="orgId" column="orgId"/>
+        <result property="code" column="code"/>
+        <result property="caption" column="caption"/>
+        <result property="memo" column="memo"/>
+        <result property="invalidationMark" column="invalidation_Mark"/>
+        <result property="isExamination" column="isExamination"/>
+        <result property="dept" column="dept"/>
+        <result property="pid" column="pid"/>
+        <result property="businessId" column="businessId"/>
+        <result property="isKeySys" column="is_Key_Sys"/>
+        <result property="sysType" column="sysType"/>
+    </resultMap>
+
+    <sql id="selectOgGroupVo">
+        SELECT
+            o.groupid,
+            o.grpname,
+            o.grpleader,
+            o.invalidation_mark,
+            o.memo,
+            o.orgid,
+            o.addtime AS addTime,
+            o.COUNT,
+            o.tel,
+            o.sysid,
+            o.white_list,
+            o.group_type,
+            D.t_o_orgid,
+            D.orgname,
+            D.orgcode,
+            D.LEVEL_CODE,
+            s.caption sName,
+            s.sys_type as sysType
+        FROM
+            OG_GROUP o
+        LEFT JOIN og_org D ON o.orgid = D .orgid
+        LEFT JOIN OG_SYS s on s.sysid = o.SYSID
+    </sql>
+    <sql id="selectGroup">
+         SELECT
+            o.groupid,
+            o.grpname,
+            o.grpleader,
+            o.invalidation_mark,
+            o.memo,
+            o.orgid,
+            o.addtime AS addTime,
+            o. COUNT,
+            o.tel,
+            o.sysid,
+            o.white_list,
+            o.group_type,
+            D .t_o_orgid,
+            D .orgname,
+            D .orgcode,
+            D .LEVEL_CODE,
+            "多个系统" as caption
+        FROM
+            OG_GROUP o
+        LEFT JOIN og_org D ON o.orgid = D .orgid
+    </sql>
+    <sql id="selectOgGroupPersonVo">
+        select distinct o.groupid,o.pid,o.gpId,o.gpOsition,o.GP_ORDER,
+               p.orgid, p.pname , p.sex, p.phone, p.mobil_phone, u.username,
+               d.t_o_orgid,d.orgname
+        from og_group_person o
+                 left join og_person p on o.pid=p.pid
+                 left join og_user u on p.pid=u.pid
+                 left join og_org d on p.orgid=d.orgid
+    </sql>
+    <select id="selectOgGroupListAll" parameterType="OgGroup" resultMap="SysOgGroupResult">
+        <include refid="selectGroup"/>
+        <where>
+            <if test="sysId !=null and sysId !=''">
+                AND o.sysId like concat(concat('%', #{sysId}), '%')
+            </if>
+            <if test="groupType !=null and groupType !=''">
+                and o.group_type =#{groupType}
+            </if>
+
+        </where>
+
+    </select>
+    <select id="selectOgGroupList" parameterType="OgGroup" resultMap="SysOgGroupResult">
+        <include refid="selectOgGroupVo"/>
+        where o.INVALIDATION_MARK = '1'
+        <if test="sysId != null and sysId != ''">
+            AND o.sysid like concat(concat('%', #{sysId}), '%')
+        </if>
+        <if test="grpName != null and grpName != ''">
+            AND o.grpname like concat(concat('%', #{grpName}), '%')
+        </if>
+        <if test="orgId != null and orgId != ''">
+            AND o.orgId = #{orgId}
+        </if>
+        <if test="groupType != null and groupType != ''">
+            AND o.group_type = #{groupType}
+        </if>
+        <if test="levelCode!=null and levelCode!=''">
+            and d.LEVEL_CODE like concat(concat('%', #{levelCode}), '%')
+        </if>
+        <if test="memo != null and memo != ''">
+           AND o.memo = #{memo}
+        </if>
+
+    </select>
+    <select id="selectOgGroupListSysIdIn" parameterType="OgGroup" resultMap="SysOgGroupResult">
+        <include refid="selectOgGroupVo"/>
+        where o.INVALIDATION_MARK = '1'
+        <if test="params.sysid != null  and params.sysid != ''"> and o.sysid
+            <trim prefix="in (" suffix=")" suffixOverrides=",">
+                <foreach collection="params.sysid" item="id">
+                    #{id},
+                </foreach>
+            </trim>
+
+        </if>
+        <if test="grpName != null and grpName != ''">
+            AND o.grpname like concat(concat('%', #{grpName}), '%')
+        </if>
+        <if test="orgId != null and orgId != ''">
+            AND o.orgId = #{orgId}
+        </if>
+        <if test="groupType != null and groupType != ''">
+            AND o.group_type = #{groupType}
+        </if>
+        <if test="levelCode!=null and levelCode!=''">
+            and d.LEVEL_CODE like concat(concat('%', #{levelCode}), '%')
+        </if>
+
+    </select>
+    <!--查询工作组 机构向下 selectOgGroupAllList-->
+    <select id="selectOgGroupAllList" parameterType="OgGroup" resultMap="SysOgGroupResult">
+        <include refid="selectOgGroupVo"/>
+        where o.INVALIDATION_MARK = '1'
+        <if test="sysId != null and sysId != ''">
+            AND o.sysid like concat(concat('%', #{sysId}), '%')
+        </if>
+        <if test="grpName != null and grpName != ''">
+            AND o.grpname like concat(concat('%', #{grpName}), '%')
+        </if>
+        <if test="orgId != null and orgId != ''">
+            AND (o.orgId = #{orgId} or o.orgId in (
+            select orgid from og_org
+            where level_code
+            like '%'||(select orgcode from og_org o where o.orgid =#{orgId}) ||'%' and invalidation_mark ='1'))
+        </if>
+        <if test="groupType != null and groupType != ''">
+            AND o.group_type = #{groupType}
+        </if>
+        <if test="sName != null and sName != ''">
+            AND s.caption like concat(concat('%', #{sName}), '%')
+        </if>
+        <if test="levelCode!=null and levelCode!=''">
+            and d.LEVEL_CODE like concat(concat('%', #{levelCode}), '%')
+        </if>
+
+    </select>
+    <!--sysId-->
+    <select id="selectGroupBySysId" parameterType="String" resultMap="SysOgGroupResult">
+        <include refid="selectOgGroupVo"/>
+        where 1=1
+        <if test="sysId != null and sysId != ''">
+            AND o.sysid = #{sysId}
+        </if>
+    </select>
+
+    <select id="selectOgGroupById" parameterType="String" resultMap="SysOgGroupResult">
+        <include refid="selectOgGroupVo"/>
+        where o.INVALIDATION_MARK = '1'
+        <if test="groupId != null and groupId != ''">
+            AND o.groupId = #{groupId}
+        </if>
+        <if test="groupId == null or groupId == ''">
+            AND o.groupId = ''
+        </if>
+    </select>
+
+    <select id="selectGroupByUserId" parameterType="String" resultMap="SysOgGroupResult">
+        select g.groupid,g.grpname,g.addtime,g.grpleader,g.invalidation_mark,o.gposition,g.group_type
+        from og_group g
+        left join og_group_person o on g.groupid=o.groupid
+        left join og_person p on o.pid=p.pid
+        where 1=1
+        <if test="userId != null and userId != ''">
+            AND p.pid = #{userId}
+        </if>
+    </select>
+
+    <select id="selectGroupByGposition" parameterType="Map" resultMap="SysOgGroupResult">
+        select
+        g.groupid,g.grpname,g.addtime,g.grpleader,g.memo,g.invalidation_mark,o.gposition,d.t_o_orgid,d.orgname,d.orgcode,s.code,s.caption,s.dept
+        from og_group g
+        left join og_group_person o on g.groupid=o.groupid
+        left join og_person p on o.pid=p.pid
+        left join og_org d on g.orgid=d.orgid
+        left join og_sys s on g.sysid=s.sysid
+        <where>
+        <if test="userId != null and userId != ''">
+            AND p.pid = #{userId}
+        </if>
+        <if test="grpName != null and grpName != ''">
+            AND g.grpname like concat(concat('%', #{grpName}), '%')
+        </if>
+        <!--默认查询当前登录人为组长-->
+        <if test="gpOsition != null and gpOsition != ''">
+            AND o.gposition = #{gpOsition}
+        </if>
+        <if test="invalidationMark != null and invalidationMark != ''">
+            AND g.invalidation_mark = #{invalidationMark}
+        </if>
+        </where>
+    </select>
+
+    <select id="selectOgGroupByGrpName" parameterType="string" resultMap="SysOgGroupResult">
+        select
+          g.groupid,g.grpname,g.addtime,g.grpleader,g.memo,g.invalidation_mark
+        from og_group g
+        where g.grpname=#{grpName}
+    </select>
+
+    <select id="selectProblemGroupByGposition" parameterType="Map" resultMap="SysOgGroupResult">
+        select
+        g.groupid,g.grpname,g.addtime,g.grpleader,g.memo,g.invalidation_mark,o.gposition,p1.pname,o.pid,d.t_o_orgid,d.orgname,d.orgcode,s.code,s.caption,s.dept
+        from og_group g
+        left join og_group_person o on g.groupid=o.groupid and o.gposition='1'
+        left join og_person p1 on o.pid=p1.pid
+        left join og_person p on o.pid=p.pid
+        left join og_org d on g.orgid=d.orgid
+        left join og_sys s on g.sysid=s.sysid
+        <where>
+            <if test="userId != null and userId != ''">
+                AND p.pid = #{userId}
+            </if>
+            <if test="grpName != null and grpName != ''">
+                AND g.grpname like concat(concat('%', #{grpName}), '%')
+            </if>
+            <!--默认查询当前登录人为组长-->
+            <if test="gpOsition != null and gpOsition != ''">
+                AND o.gposition = #{gpOsition}
+            </if>
+            <if test="invalidationMark != null and invalidationMark != ''">
+                AND g.invalidation_mark = #{invalidationMark}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectGroupByGpositionTwo" parameterType="OgGroup" resultMap="SysOgGroupResult">
+        select
+        g.groupid,g.grpname,g.addtime,g.grpleader,g.memo,g.invalidation_mark,o.gposition,d.t_o_orgid,d.orgname,d.orgcode,s.code,s.caption,s.dept
+        from og_group g
+        left join og_group_person o on g.groupid=o.groupid
+        left join og_person p on o.pid=p.pid
+        left join og_org d on g.orgid=d.orgid
+        left join og_sys s on g.sysid=s.sysid
+        where 1=1
+        <if test="userId != null and userId != ''">
+            AND p.pid = #{userId}
+        </if>
+        <if test="grpName != null and grpName != ''">
+            AND g.grpname like concat(concat('%', #{grpName}), '%')
+        </if>
+        <!--默认查询当前登录人为组长-->
+    </select>
+
+    <select id="checkGroupNameUnique" parameterType="String" resultType="int">
+        select count(1) from OG_GROUP where grpname=#{groupName}
+    </select>
+
+    <delete id="deleteOgGroupByIds" parameterType="Long">
+        delete from og_group where groupid in
+        <foreach collection="array" item="groupId" open="(" separator="," close=")">
+            #{groupId}
+        </foreach>
+    </delete>
+
+    <update id="updateOgGroup" parameterType="OgGroup">
+        update Og_Group
+        <set>
+            <if test="grpName != null and grpName != ''">grpName = #{grpName},</if>
+            <if test="grpLeader != null and grpLeader != ''">grpLeader = #{grpLeader},</if>
+            <if test="invalidationMark != null">invalidation_Mark = #{invalidationMark},</if>
+            <!-- memo备注消息有可能为空，故而不需要判空 -->
+            memo = #{memo,jdbcType=VARCHAR},
+            <if test="orgId != null and orgId != ''">orgId = #{orgId},</if>
+            <if test="count != null and count != ''">count = #{count},</if>
+            <if test="tel != null and tel != ''">tel = #{tel},</if>
+            <if test="sysId != null and sysId != ''">sysId = #{sysId},</if>
+            <if test="whiteList != null and whiteList != ''">white_List = #{whiteList},</if>
+            <if test="groupType != null and groupType != ''">group_type = #{groupType},</if>
+            <if test="updateBy != null and updateBy != ''">moder = #{updateBy},</if>
+            update_time = sysdate
+        </set>
+        where groupid = #{groupId}
+    </update>
+
+    <update id="updateOgGroupMysql" parameterType="OgGroup">
+        update Og_Group
+        <set>
+            <if test="grpName != null and grpName != ''">grpName = #{grpName},</if>
+            <if test="grpLeader != null and grpLeader != ''">grpLeader = #{grpLeader},</if>
+            <if test="invalidationMark != null">invalidation_Mark = #{invalidationMark},</if>
+            <!-- memo备注消息有可能为空，故而不需要判空 -->
+            memo = #{memo,jdbcType=VARCHAR},
+            <if test="orgId != null and orgId != ''">orgId = #{orgId},</if>
+            <if test="count != null and count != ''">count = #{count},</if>
+            <if test="tel != null and tel != ''">tel = #{tel},</if>
+            <if test="sysId != null and sysId != ''">sysId = #{sysId},</if>
+            <if test="whiteList != null and whiteList != ''">white_List = #{whiteList},</if>
+            <if test="groupType != null and groupType != ''">group_type = #{groupType},</if>
+            <if test="updateBy != null and updateBy != ''">moder = #{updateBy},</if>
+            update_time = now()
+        </set>
+        where groupid = #{groupId}
+    </update>
+
+    <insert id="insertOgGroup" parameterType="OgGroup" useGeneratedKeys="false" keyProperty="groupId">
+        insert into Og_Group(
+        GROUPID,
+        <if test="grpName != null and grpName != ''">grpName,</if>
+        <if test="grpLeader != null and grpLeader != ''">grpLeader,</if>
+        <if test="invalidationMark != null and invalidationMark != ''">invalidation_mark,</if>
+        <if test="memo != null and memo != ''">memo,</if>
+        <if test="orgId != null and orgId != ''">orgId,</if>
+        <if test="count != null and count != ''">count,</if>
+        <if test="tel != null and tel != ''">tel,</if>
+        <if test="sysId != null and sysId != ''">sysId,</if>
+        <if test="whiteList != null and whiteList != ''">white_List,</if>
+        <if test="groupType != null and groupType != ''">group_type,</if>
+        addtime
+        )values(
+        #{groupId},
+        <if test="grpName != null and grpName != ''">#{grpName},</if>
+        <if test="grpLeader != null and grpLeader != ''">#{grpLeader},</if>
+        <if test="invalidationMark != null and invalidationMark != ''">#{invalidationMark},</if>
+        <if test="memo != null and memo != ''">#{memo},</if>
+        <if test="orgId != null and orgId != ''">#{orgId},</if>
+        <if test="count != null and count != ''">#{count},</if>
+        <if test="tel != null and tel != ''">#{tel},</if>
+        <if test="sysId != null and sysId != ''">#{sysId},</if>
+        <if test="whiteList != null and whiteList != ''">#{whiteList},</if>
+        <if test="groupType != null and groupType != ''">#{groupType},</if>
+        sysdate
+        )
+    </insert>
+
+    <insert id="insertOgGroupMysql" parameterType="OgGroup" useGeneratedKeys="false" keyProperty="groupId">
+        insert into Og_Group(
+        GROUPID,
+        <if test="grpName != null and grpName != ''">grpName,</if>
+        <if test="grpLeader != null and grpLeader != ''">grpLeader,</if>
+        <if test="invalidationMark != null and invalidationMark != ''">invalidation_mark,</if>
+        <if test="memo != null and memo != ''">memo,</if>
+        <if test="orgId != null and orgId != ''">orgId,</if>
+        <if test="count != null and count != ''">count,</if>
+        <if test="tel != null and tel != ''">tel,</if>
+        <if test="sysId != null and sysId != ''">sysId,</if>
+        <if test="whiteList != null and whiteList != ''">white_List,</if>
+        <if test="groupType != null and groupType != ''">group_type,</if>
+        addtime
+        )values(
+        #{groupId},
+        <if test="grpName != null and grpName != ''">#{grpName},</if>
+        <if test="grpLeader != null and grpLeader != ''">#{grpLeader},</if>
+        <if test="invalidationMark != null and invalidationMark != ''">#{invalidationMark},</if>
+        <if test="memo != null and memo != ''">#{memo},</if>
+        <if test="orgId != null and orgId != ''">#{orgId},</if>
+        <if test="count != null and count != ''">#{count},</if>
+        <if test="tel != null and tel != ''">#{tel},</if>
+        <if test="sysId != null and sysId != ''">#{sysId},</if>
+        <if test="whiteList != null and whiteList != ''">#{whiteList},</if>
+        <if test="groupType != null and groupType != ''">#{groupType},</if>
+        now()
+        )
+    </insert>
+
+
+    <select id="selectOgGroupPersonList" parameterType="OgGroupPerson" resultMap="SysOgGroupPersonResult">
+        <include refid="selectOgGroupPersonVo"/>
+        where 1=1
+        <if test="groupId != null  and groupId!=''">
+            and o.groupId = #{groupId,jdbcType=VARCHAR}
+        </if>
+
+        <if test="person != null and person.pName != null and person.pName!=''">
+            AND p.pname like concat(concat('%', #{person.pName}), '%')
+        </if>
+        <if test="orgId != null and orgId != ''">
+            AND d.orgid = #{orgId}
+        </if>
+        <!--<if test="groupId != null and groupId != ''">
+            AND o.groupId = #{groupId,jdbcType=VARCHAR}
+        </if>-->
+    </select>
+
+    <insert id="insertOgGroupPerson" parameterType="OgGroupPerson">
+        insert into og_group_person(gpid, groupid,pid,gposition,gp_order) values
+            (#{gpId},#{groupId},#{pid},#{gpOsition},#{gpOrder})
+    </insert>
+
+    <select id="selectOgGroupPersonById" parameterType="String" resultMap="SysOgGroupPersonResult">
+        <include refid="selectOgGroupPersonVo"/>
+        where 1=1
+        <if test="gpId != null and gpId != ''">
+            AND o.gpId = #{gpId}
+        </if>
+    </select>
+    <select id="selectGroupIdByPersonList" parameterType="String" resultMap="SysOgGroupPersonResult">
+        <include refid="selectOgGroupPersonVo"/>
+        where 1=1
+        <if test="groupid != null and groupid != ''">
+            AND o.groupid = #{groupId}
+        </if>
+    </select>
+
+    <update id="updateOgGroupPerson" parameterType="OgGroupPerson">
+        update Og_Group_person
+        <set>
+            <if test="gpOsition != null and gpOsition != ''">gpOsition = #{gpOsition},</if>
+            <if test="gpOrder != null and gpOrder != ''">gp_Order = #{gpOrder}</if>
+        </set>
+        where gpId = #{gpId}
+    </update>
+
+    <delete id="deleteOgGroupPersonByIds" parameterType="String">
+        delete from Og_Group_person where gpid in
+        <foreach collection="array" item="gpId" open="(" separator="," close=")">
+            #{gpId}
+        </foreach>
+    </delete>
+
+    <select id="selectUserList" parameterType="OgPerson" resultMap="OgPersonResult">
+        select p.pid,
+        p.pname,
+        p.sex,
+        p.mobil_phone,
+        p.phone,
+        p.position,
+        p.leader,
+        p.p_order,
+        p.p_flag,
+        p.email,
+        p.memo,
+        d.orgName
+        from og_person p
+        left join og_org d on p.orgid = d.orgid
+        left join og_user u on p.pid = u.pid
+        <where>
+            and p.pid not in
+            (select g.pid from og_group_person g where g.groupid = #{groupId})
+            and u.invalidation_mark = '1' and p.invalidation_mark = '1'
+            <if test="pName != null and pName != ''">
+                AND p.pname like concat(concat('%', #{pName}), '%')
+            </if>
+            <if test="mobilPhone != null and mobilPhone != ''">
+                AND p.mobil_phone = #{mobilPhone}
+            </if>
+        </where>
+
+    </select>
+
+    <select id="selectOgPersonByGroupName" parameterType="String" resultMap="OgPersonResult">
+        select op.pid,op.pname,op.sex,op.mobil_phone,op.phone,op.position,op.leader,op.p_order,op.p_flag,op.email,op.memo
+        from og_person op
+                 left join og_group_person gp
+                           on op.pid = gp.pid
+                 left join og_group gr
+                           on gp.groupid = gr.groupid
+        where
+            gr.grpname = #{groupName}
+    </select>
+    <select id="getOgProviceGroups" parameterType="String" resultMap="SysOgGroupResult">
+        select *
+        from og_group g
+        where INVALIDATION_MARK='1' and g.ORGID in (select o.orgid from og_org o where o.level_code like concat(concat('%', #{code}), '%') )
+    </select>
+    <select id="selectOgGroupBySys" parameterType="String" resultMap="SysOgGroupResult">
+        select *
+        from og_group g
+        where INVALIDATION_MARK='1' and g.sysid like concat(concat('%', #{sysId}), '%')
+    </select>
+    <select id="selectGroupByPerson" parameterType="String" resultMap="OgPersonResult">
+        select op.pid,op.pname,op.sex,op.mobil_phone,op.phone,op.position,op.leader,op.p_order,op.p_flag,op.email,op.memo
+        from og_person op
+                 left join og_group_person gp on op.pid = gp.pid
+                 left join og_group gr on gp.groupid = gr.groupid
+                 left join og_user ou on ou.pid=op.pid
+        where op.INVALIDATION_MARK='1' and ou.INVALIDATION_MARK='1' and gr.groupid = #{groupId}
+    </select>
+    <select id="selectOgGroupByFmbiz" parameterType="OgGroup" resultMap="SysOgGroupResult">
+        select g.*,s.caption
+        from og_group g
+        left join og_sys s on g.sysId=s.sysId
+        left join knowledge_titil k on k.sys_id=s.sysid
+        where g.INVALIDATION_MARK='1' and g.orgid in (select o.orgid from og_org o where o.level_code like
+        '%010000888%') and g.group_type='2' and k.event_type='1' and k.category='1' and g.sysId is not null
+        <if test="sysId != null and sysId != ''">
+            AND g.sysid in (select s.sysid from og_sys s where s.caption like concat(concat('%', #{sysId}), '%'))
+        </if>
+        <if test="grpName != null and grpName != ''">
+            AND g.grpName like concat(concat('%', #{grpName}), '%')
+        </if>
+    </select>
+
+    <select id="selectOgPersonById" parameterType="String" resultMap="OgPersonResult">
+        SELECT  * from og_group_person p
+        WHERE p.pid = #{pId}
+    </select>
+
+    <select id="selectOgPersonByIdTwo" parameterType="String" resultMap="OgGroupPersonResult">
+        <include refid="selectOgGroupPersonVo"/>
+        WHERE p.pid = #{pId}
+    </select>
+
+
+    <select id="selectLxbgGroupByPerson" parameterType="String" resultMap="OgPersonResult">
+      SELECT
+            op.pid,
+            op.pname,
+            op.sex,
+            op.mobil_phone,
+            op.phone,
+            op.position,
+            op.leader,
+            op.p_order,
+            op.p_flag,
+            op.email,
+            op.memo
+        FROM
+            og_person op,
+            og_group_person gp,
+            og_group gr,
+            og_user ou,
+            OG_ROLE r
+        WHERE
+            op.pid = gp.pid
+        AND gp.groupid = gr.groupid
+        AND ou.pid = op.pid
+        AND r.rid = '8300'
+        AND ou.INVALIDATION_MARK = '1'
+        AND gr.groupid = #{groupId}
+    </select>
+    <select id="selectLoginGroups" parameterType="String" resultMap="SysOgGroupResult">
+        select g.groupid,g.grpname,g.addtime,g.grpleader,g.invalidation_mark,o.gposition,g.sysid
+        from og_group g
+        left join og_group_person o on g.groupid=o.groupid
+        left join og_person p on o.pid=p.pid
+        where g.INVALIDATION_MARK ='1'
+        and g.SYSID is not null
+        and o.GPOSITION = '1'
+        <if test="userId != null and userId != ''">
+            AND p.pid = #{userId}
+        </if>
+    </select>
+
+
+    <select id="selectOgGroupPersonListByGroupName" parameterType="java.lang.String" resultMap="SysOgGroupPersonResult">
+        <include refid="selectOgGroupPersonVo"/>
+        where 1=1
+        and o.groupId = (SELECT groupid FROM og_group WHERE grpname =#{groupName})
+<!--        <if test="person != null and person.pName != null and person.pName!=''">-->
+<!--            AND p.pname like concat(concat('%', #{person.pName}), '%')-->
+<!--        </if>-->
+<!--        <if test="orgId != null and orgId != ''">-->
+<!--            AND d.orgid = #{orgId}-->
+<!--        </if>-->
+        <!--<if test="groupId != null and groupId != ''">
+            AND o.groupId = #{groupId,jdbcType=VARCHAR}
+        </if>-->
+    </select>
+</mapper>

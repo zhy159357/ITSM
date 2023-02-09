@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('牵头部门列表')" />
+    <th:block th:include="include :: datetimepicker-css" />
+    <th:block th:include="include :: select2-css" />
+
+</head>
+<body class="gray-bg">
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-12 search-collapse">
+            <form id="holiday-form">
+
+                <div class="select-list">
+                    <ul>
+
+                        <li>
+                            牵头部门名称：<input type="text" name="orgName"/>
+                        </li>
+
+
+                        <li>
+                            <a class="btn btn-primary btn-rounded btn-sm" id="holidaySearch" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;查询</a>
+                            <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-repeat"></i>&nbsp;重置</a>
+                        </li>
+                    </ul>
+                </div>
+            </form>
+        </div>
+
+        <div class="btn-group-sm" id="toolbar" holiday="group">
+            <a class="btn btn-success" onclick="configLp()" >
+                <i class="fa fa-plus"></i> 维护
+            </a>
+
+            <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()">
+                <i class="fa fa-trash"></i> 删除
+            </a>
+        </div>
+
+        <div class="col-sm-12 select-table table-striped">
+            <table id="bootstrap-table"></table>
+        </div>
+    </div>
+</div>
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: datetimepicker-js" />
+<th:block th:include="include :: select2-js" />
+
+<script th:inline="javascript">
+
+    var prefix = ctx + "system/leadingdepartment";
+
+    $(function() {
+        // 回车键搜索
+        document.onkeydown = function(e){
+            var ev = document.all ? window.event : e;
+            if(ev.keyCode==13) {
+                $('#holidaySearch').trigger('click');
+                return false;
+            }
+        };
+
+        var options = {
+            url: prefix + "/list",
+            createUrl: prefix + "/add",
+            updateUrl: prefix + "/edit/{id}",
+            removeUrl: prefix + "/remove",
+            exportUrl: prefix + "/export",
+            clickToSelect: true,
+            modalName: "牵头部门",
+            columns: [{
+                checkbox: true
+            },
+
+                {
+                    field: 'porgName',
+                    title: '牵头部门父类名称',
+                },
+                {
+                    field: 'orgName',
+                    title: '牵头部门名称',
+                }
+                ,
+                {
+                    field: 'orgId',
+                    title: '牵头部门编号',
+                },
+                {
+                    title: '操作',
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                        var actions = [];
+                        actions.push('<a class="btn btn-danger btn-xs" href="javascript:void(0)" onclick="remove(\'' + row.rid + '\')"><i class="fa fa-trash"></i>删除</a> ');
+                        return actions.join('');
+                    }
+                }
+            ]
+        };
+        $.table.init(options);
+    });
+
+
+    /** 配置牵头部门 */
+    function configLp() {
+        var url = prefix + '/configLeadingdepartment';
+        $.modal.open("配置牵头部门", url);
+    }
+
+
+</script>
+</body>
+</html>

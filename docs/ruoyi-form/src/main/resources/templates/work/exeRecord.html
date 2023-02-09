@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('环境单4')"/>
+</head>
+<body class="gray-bg">
+<div class="container-div">
+    <div class="row">
+<!--        <div class="col-sm-12 search-collapse"></div>-->
+
+<!--        <div class="btn-group-sm" id="toolbar" role="group">-->
+<!--            <a class="btn btn-success" onclick="$.operate.addTab()">-->
+<!--                <i class="fa fa-plus"></i> 添加-->
+<!--            </a>-->
+<!--            <a class="btn btn-primary single disabled" onclick="update()">-->
+<!--                <i class="fa fa-edit"></i> 修改-->
+<!--            </a>-->
+<!--            <a class="btn btn-primary single disabled" onclick="edit()">-->
+<!--                <i class="fa fa-edit"></i> 修改基础信息-->
+<!--            </a>-->
+<!--            <a class="btn btn-primary single disabled" onclick="editServer()">-->
+<!--                <i class="fa fa-edit"></i> 修改服务信息-->
+<!--            </a>-->
+<!--            <a class="btn btn-danger multiple disabled" onclick="cancle()">-->
+<!--                <i class="fa fa-trash"></i> 作废-->
+<!--            </a>-->
+<!--            <a class="btn btn-danger multiple disabled" onclick="removeAll()">-->
+<!--                <i class="fa fa-remove"></i> 删除-->
+<!--            </a>-->
+<!--            <a class="btn btn-info single disabled" onclick="detail()">-->
+<!--                <i class="fa fa-search"></i> 查看详情-->
+<!--            </a>-->
+<!--            <a class="btn btn-info single disabled" onclick="showProcessImg()" id="showProcessImg">-->
+<!--                <i class="fa fa-search"></i>查看流程-->
+<!--            </a>-->
+<!--            <a id="startcmbiz" class="btn btn-primary single disabled" th:unless="${cntxtag}" onclick="startCmbiz()">-->
+<!--                <i class="fa fa-default"></i> 生成综合变更-->
+<!--            </a>-->
+<!--            <div class="btn-group">-->
+<!--                <button data-toggle="dropdown" class="btn btn-primary btn-sm dropdown-toggle">导出<span-->
+<!--                        class="caret"></span>-->
+<!--                </button>-->
+<!--                <ul class="dropdown-menu">-->
+<!--                    <li><a onclick="$.table.exportExcel()">导出所有</a>-->
+<!--                    </li>-->
+<!--                </ul>-->
+<!--            </div>-->
+<!--        </div>-->
+
+        <!--			<div class="btn-group-sm" id="toolbar" role="group">-->
+        <!--				<a class="btn btn-info single disabled" onclick="view()">-->
+        <!--					<i class="fa fa-search"></i>详情-->
+        <!--				</a>-->
+        <!--				<a class="btn btn-warning single disabled" onclick="showProcessImgDialog()">-->
+        <!--					<i class="fa fa-edit"></i> 查看流程图-->
+        <!--				</a>-->
+        <!--	        </div>-->
+
+        <div class="col-sm-12 select-table table-striped">
+            <table id="bootstrap-table" style="table-layout:fixed;"></table>
+        </div>
+    </div>
+</div>
+
+<th:block th:include="include :: footer"/>
+<th:block th:include="include :: select2-css"/>
+<th:block th:include="include :: select2-js"/>
+<th:block th:include="include :: bootstrap-select-js"/>
+<th:block th:include="include :: bootstrap-select-css"/>
+<th:block th:include="include :: datetimepicker-js"/>
+<th:block th:include="include :: datetimepicker-css"/>
+
+<script th:src="@{/js/activiti.js}"></script>
+<script th:inline="javascript">
+    //工单order id
+    var orderId = [[${id}]];
+    var prefix = ctx + "twWorkOrder";
+    $(function () {
+        // 回车键搜索
+        document.onkeydown = function (e) {
+            var ev = document.all ? window.event : e;
+            if (ev.keyCode == 13) {
+                $('#searchBut').trigger('click');
+                return false;
+            }
+        };
+        var options = {
+            url: prefix + "/recordList/"+orderId,
+            removeUrl: prefix + "/remove",
+            //新增页面
+            createUrl: ctx + "twWorkOrder/increase",
+            updateUrl: ctx + "twWorkOrder/edit/{id}",
+            removeUrl: ctx + "issueList/build/remove",
+            showColumns: false,
+            modalName: "问题单",
+            pagination: true,
+            clickToSelect: true,
+            pageSize: 10,
+            //queryParams: queryParams,
+            singleSelect: true,
+            striped: true,
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'id',
+                    title: '主键',
+                    visible: false
+                },
+                {
+                    field: 'auditorUser',
+                    title: '审核人',
+                },
+                {
+                    field: 'execStrategy',
+                    title: '执行策略'
+                },
+                {
+                    field: 'performUser',
+                    title: '执行人'
+
+                },
+                {
+                    field: 'startTime',
+                    title: '开始时间',
+                },
+                {
+                    field: 'endTime',
+                    title: '结束时间',
+                    // formatter:function (value){
+                    // 	return selectPubParaValueData(issueFenlei,value);
+                    // }
+                },
+                {
+                    field: 'runTime',
+                    title: '运行时长',
+                    // formatter:function (value){
+                    // 	return selectPubParaValueData(issueType,value);
+                    // }
+                },
+                {
+                    field: 'startUser',
+                    title: '发起人',
+                    // formatter:function (value){
+                    // 	return selectPubParaValueData(issuesource,value);
+                    // }
+                },
+                {
+                    field: 'status',
+                    title: '运行状态',
+                },
+                {
+                    field: 'taskId',
+                    title: '任务ID',
+                    // formatter: function (value, row, index) {
+                    // 	return selectPubParaValueData(allstatus,value);
+                    // }
+                }, {
+                    field: 'taskName',
+                    title: '任务名称',
+                }
+                , {
+                    field: 'butterflyVersion',
+                    title: '单号',
+                }
+                , {
+                    field: 'ibusname',
+                    title: '分类名',
+                }
+            ]
+        };
+        $.table.init(options);
+    });
+
+    function queryParams(data) {
+        var search = $.table.queryParams(data);
+        var tt = {"type": type};
+        search.params = tt;
+        return search;
+    }
+
+
+
+    //操作
+    function deal(name) {
+        var row = $("#bootstrap-table").bootstrapTable("getSelections");
+        var typee = row[0].params.type;
+        var url = prefix + "/view?"
+        $.modal.openTab(name, url + "issuefxId=" + row[0].issuefxId + "&&type=" + typee);
+    }
+
+    function showProcessImgDialog() {
+        var row = $("#bootstrap-table").bootstrapTable("getSelections");
+        if (row[0].currentState == "0") {
+            return $.modal.alertWarning("待提交状态没有流程图！");
+        }
+        var url = ctx + 'process/processImg/' + row[0].issuefxId;
+        $.modal.openNoBtn("查看流程图", url, "", "", true);
+    }
+
+    function edit() {
+        var id = $.table.selectFirstColumns();
+        // if (eventStatus != '1') {
+        //     $.modal.alertWarning("只有待提交状态的事件单才允许编辑.");
+        //     return;
+        // }
+        var url = prefix + "/edit/" + id;
+        $.modal.openTab("修改申请单", url);
+
+    }
+    function update() {
+        var id = $.table.selectFirstColumns();
+        // if (eventStatus != '1') {
+        //     $.modal.alertWarning("只有待提交状态的事件单才允许编辑.");
+        //     return;
+        // }
+        var url = prefix + "/editWorkOrder/" + id;
+        $.modal.openTab("修改申请单", url);
+
+    }
+    function editServer() {
+        var id = $.table.selectFirstColumns();
+        // if (eventStatus != '1') {
+        //     $.modal.alertWarning("只有待提交状态的事件单才允许编辑.");
+        //     return;
+        // }
+        var url = prefix + "/editServer/"+id;
+        $.modal.openTab("编辑服务信息", url);
+
+    }
+
+    //详情
+    function view() {
+        var url = ctx + "issueList/activiti/view?"
+
+        var row = $.table.selectFirstColumns("bootstrap-table");
+        if ("list" == type) {
+            url = ctx + "issueList/build/view/";
+            $.modal.openTab("详情", url + row[0]);
+        } else {
+            $.modal.openTab("详情", url + "issuefxId=" + row[0] + "&&type=flowview");
+        }
+    }
+
+    //提交
+    function submint() {
+        var row = $("#bootstrap-table").bootstrapTable('getSelections');
+        if (0 != row[0].currentState) {
+            return $.modal.alertWarning("只有未提交状态的问题单可以提交！");
+        }
+
+        var ar = new Array();
+        var data = {
+            name: 'issuefxId',
+            value: row[0].issuefxId
+        }
+        ar.push(data);
+        $.operate.post(ctx + "issueList/activiti/startProcess", ar);
+        $.table.refresh();
+    }
+
+    function dealAll() {
+        var row = $("#bootstrap-table").bootstrapTable("getSelections");
+
+    }
+
+    function fenfaAll() {
+        if ($.common.isEmpty($("#comment").val())) {
+            return $.modal.alertWarning("请填写批量分发意见！");
+        }
+        var rows = $.table.selectFirstColumns();
+        var ar = new Array();
+        var data = {
+            name: 'issuefxId',
+            value: rows
+        }
+        ar.push(data);
+        ar.push({"name": "params[comment]", "value": $("#comment").val()})
+        $.operate.post(ctx + "issueList/activiti/fenfaAll", ar);
+        $("#comment").val('');
+        $.table.refresh();
+    }
+</script>
+</body>
+</html>

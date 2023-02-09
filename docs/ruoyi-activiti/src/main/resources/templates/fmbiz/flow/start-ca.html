@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:include="include :: header('新建事件单')"/>
+    <th:block th:include="include :: datetimepicker-css"/>
+    <th:block th:include="include :: ztree-css"/>
+    <th:block th:include="include :: summernote-css"/>
+    <th:block th:include="include :: select2-css"/>
+    <link th:href="@{/css/fmbizMaint.css}" rel="stylesheet"/> <!-- 自定css -->
+</head>
+<body>
+<div class="main-content">
+    <form id="form-fmbiz-add" class="form-horizontal">
+        <input name="ownerId" type="hidden" id="ownerId"/>
+        <input name="fmId" type="hidden" id="fmId"/>
+        <input name="params[telId]" type="hidden" id="telId" th:value="*{telId}"/>
+        <input name="cId" id="cId" class="form-control" type="hidden" required th:value="*{cId}">
+        <h4 class="form-header h4">基本信息</h4>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">事件单号：</label>
+                    <div class="col-sm-8">
+                        <input name="faultNo" id="faultNo" class="form-control" type="text" readonly
+                               th:value="*{num}" required>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">事件单来源：</label>
+                    <div class="col-sm-8">
+                        <select id="fmSource" name="fmSource" class="form-control"
+                                th:with="type=${@pubParaValue.selectPubParaValueByParaName('fmSource')}"
+                                disabled>
+                            <option value=""></option>
+                            <option th:each="PubParaValue : ${type}" th:text="${PubParaValue.valueDetail}"
+                                    th:value="${PubParaValue.value}"
+                                    th:selected="${PubParaValue.value eq faultSource}">
+                            </option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">发生时间：</label>
+                    <div class="col-sm-8">
+                        <input type="text" class="form-control" placeholder="yyyy-MM-dd HH:mm:ss" id="occurTime"
+                               name="occurTime" onchange="ifoccTime()" required readonly
+                               style="background-color: #fdfdfd"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">填报人：</label>
+                    <div class="col-sm-8">
+                        <input name="faultContactName" id="faultContactName" class="form-control" type="text"
+                               th:value="*{loginName}" maxlength="18" required>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">填报人电话：</label>
+                    <div class="col-sm-8">
+                        <input id="contactPhone" name="contactPhone" class="form-control" th:value="*{contactPhone}"
+                               maxlength="12" required>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">当事人：</label>
+                    <div class="col-sm-8">
+                        <input id="faultReportName" name="faultReportName" class="form-control" maxlength="18"
+                               required>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">事件类型：</label>
+                    <div class="col-sm-8">
+                        <select id="recordType" name="recordType" class="form-control" onchange="checkType()"
+                                th:with="type=${@pubParaValue.selectPubParaValueByParaName('fm_record_type')}">
+                            <option th:each="PubParaValue : ${type}" th:text="${PubParaValue.valueDetail}"
+                                    th:value="${PubParaValue.value}"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-8">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label is-required">发生部门：</label>
+                    <div class="col-sm-10">
+                        <input id="contactAddress" name="contactAddress" placeholder="如XX支行XX部门" type="text"
+                               class="form-control" maxlength="42" required/>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">所属应用系统：</label>
+                    <div class="col-sm-8">
+                        <input id="sysid" name="sysid" type="hidden" class="form-control"/>
+                        <input id="applicationName" name="applicationName" type="text" class="form-control"
+                               th:value="*{applicationName}"
+                               onclick="selectOgSysListByCondition()" required readonly
+                               style="background-color: #fdfdfd"/>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">一级分类：</label>
+                    <div class="col-sm-8">
+                        <select id="oneType" name="oneType" class="form-control" onchange="getFmKindTwoList()" required>
+                            <option value="">请选择</option>
+                            <option th:each="KnowledgeTitle : ${fmkindList}" th:text="${KnowledgeTitle.name}"
+                                    th:value="${KnowledgeTitle.id}"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">二级分类：</label>
+                    <div class="col-sm-8">
+                        <select id="twoType" name="twoType" onchange="getFmKindThreeList()" class="form-control"
+                                required>
+                            <option value="">请选择</option>
+                            <option th:each="KnowledgeTitle : ${fmkindList}" th:text="${KnowledgeTitle.name}"
+                                    th:value="${KnowledgeTitle.id}"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">三级分类：</label>
+                    <div class="col-sm-8">
+                        <select id="threeType" name="threeType" onchange="getKeywordsList()" class="form-control"
+                                required>
+                            <option value="">请选择</option>
+                            <option th:each="KnowledgeTitle : ${fmkindList}" th:text="${KnowledgeTitle.name}"
+                                    th:value="${KnowledgeTitle.id}"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">客户姓名：</label>
+                    <div class="col-sm-8">
+                        <input id="customerName" name="customerName" placeholder="没有填无" class="form-control" onchange="checkCustInfo()"
+                               maxlength="16" required>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">客户电话：</label>
+                    <div class="col-sm-8">
+                        <input name="cPhone" id="cPhone" class="form-control" onchange="checkCustInfo()"
+                               maxlength="11" required>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="input-group" style="display:-webkit-box">
+                    <label class="col-sm-2 control-label is-required" style="width:10%">事件标题：</label>
+                    <div class="col-sm-10" style="position: relative;padding: 0px;width: auto">
+                        <input type="text" class="zdy_input zdy_height"  id="faultDecriptSummary" name="faultDecriptSummary" maxlength="42" required>
+                        <div class="input-group-btn" style="display: contents">
+                            <ul style="position: absolute;left: 16px; width:max-content!important;" class="dropdown-menu dropdown-menu-right" role="menu" > </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="input-group" style="display:-webkit-box">
+                    <label class="col-sm-2 control-label is-required" style="width:10%">事件描述：</label>
+                    <div class="col-sm-10" style="position: relative;padding: 0px;width: auto">
+                        <textarea rows="10" cols="20" id="faultDecriptDetail" name="faultDecriptDetail"
+                                  th:utext="*{faultDecriptDetail}" class="zdy_input" maxlength="1300" required></textarea>
+                        <div class="input-group-btn" style="display: contents">
+                            <ul style="position: absolute;left: 16px; width:max-content!important;" class="dropdown-menu dropdown-menu-right" role="menu"> </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+    <div class="tab-content">
+        <div id="tab-1" class="tab-pane active">
+            <div class="panel-body">
+                <div class="btn-group-sm" id="toolbar1" role="group">
+                    <a class="btn btn-success" type="button" onclick="upload()">
+                        <i class="fa fa-upload"></i> 添加附件
+                    </a>
+                    <a class="btn btn-warning multiple disabled" onclick="downloadAttachment()">
+                        <i class="fa fa-download"></i> 下载附件
+                    </a>
+                    <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()">
+                        <i class="fa fa-remove"></i> 删除附件
+                    </a>
+                </div>
+                <div class="col-sm-12 select-table table-striped">
+                    <table id="file-table"></table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-offset-5 col-sm-10">
+        <button type="button" id="tj1"class="btn btn-sm btn-primary" onclick="submit()"><i class="fa fa-check"></i>提 交
+        </button>&nbsp;
+        <button type="button" id="zc" class="btn btn-sm btn-primary" onclick="save()"><i
+                class="glyphicon glyphicon-saved"></i>暂 存
+        </button>&nbsp;
+        <button type="button" id="tj2" style="display:none;" class="btn btn-sm btn-primary" onclick="save()"> <!--咨询单显示 -->
+            <i class="glyphicon glyphicon-saved"></i>提 交
+        </button>&nbsp;
+        <button type="button" class="btn btn-sm btn-danger" onclick="closeItem()"><i class="fa fa-remove"></i>关 闭
+        </button>
+    </div>
+</div>
+<th:block th:include="include :: footer"/>
+<th:block th:include="include :: bootstrap-suggest-js" />
+<th:block th:include="include :: bootstrap-typeahead-js" />
+<th:block th:include="include :: select2-js"/>
+<th:block th:include="include :: summernote-js"/>
+<th:block th:include="include :: datetimepicker-js"/>
+
+<script th:src="@{/js/fmbizMaint.js}"></script>
+<script>
+    var prefix_attachment = ctx + "pub/attachment";
+    var prefix_version = ctx + "fmbiz";
+    var prefix_cust = ctx + "cust"; //客户信息
+    $(function () {
+        $("#occurTime").datetimepicker({
+            format: "yyyy-mm-dd hh:ii:ss",
+            autoclose: true,
+            minView:0,
+            minuteStep:1,
+            endDate:new Date()
+        });
+        var optionsfj = {
+            url: prefix_attachment + "/list",
+            id: 'file-table',
+            createUrl: prefix_attachment + "/add",
+            updateUrl: prefix_attachment + "/edit/{id}",
+            removeUrl: prefix_attachment + "/remove",
+            detailUrl: prefix_attachment + "/edit/{id}",
+            sortName: "fileTime",
+            singleSelect: true,
+            clickToSelect: true,
+            sortOrder: "desc",
+            toolbar: "toolbar1",
+            queryParams: queryParams,
+            modalName: "附件列表",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'atId',
+                    title: '附件ID',
+                    visible: false
+                },
+                {
+                    field: 'fileName',
+                    title: '文件名称'
+                },
+                {
+                    field: 'person.pName',
+                    title: '上传人'
+                },
+                {
+                    field: 'size',
+                    title: '文件大小'
+                },
+                {
+                    field: 'memo',
+                    title: '文件描述'
+                },
+                {
+                    field: 'fileTime',
+                    title: '上传时间',
+                    formatter: function (value, row, index) {
+                        var startTime = '';
+                        if (value != '' && value != null) {
+                            var pattern = /(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/;
+                            startTime = value.replace(pattern, '$1-$2-$3 $4:$5:$6');
+                        }
+                        return startTime;
+                    }
+                }]
+        };
+        $.table.init(optionsfj);
+        var reportTime = $("#reportTime").val();
+        var pattern = /(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/;
+        reportTime = reportTime.replace(pattern, '$1-$2-$3 $4:$5:$6');
+        $("#reportTime").val(reportTime);
+
+    });
+
+    $("#form-fmbiz-add").validate({
+        onkeyup: false,
+        rules: {
+            "sysid": true,
+            "oneType": true,
+            "twoType": true,
+            "threeType": true,
+            "occurTime": true,
+            "contactAddress": true,
+            "customerName": true,
+            "contactPhone": true,
+            "faultDecriptDetail": true,
+            "faultDecriptSummary": true,
+            "faultReportName": true,
+            "cPhone": true,
+        },
+        messages: {
+            "sysid": true,
+            "oneType": true,
+            "twoType": true,
+            "threeType": true,
+            "occurTime": true,
+            "contactAddress": true,
+            "customerName": true,
+            "contactPhone": true,
+            "faultDecriptDetail": true,
+            "faultDecriptSummary": true,
+            "faultReportName": true,
+            "cPhone": true,
+
+            "sysid": "所属系统不可为空",
+            "oneType": "一级分类不能为空",
+            "twoType": "二级分类不能为空",
+            "threeType": "三级分类不能为空",
+            "occurTime": "发生时间不能为空",
+            "contactAddress": "发生部门不能为空",
+            "customerName": "客户姓名不能为空",
+            "contactPhone": "填报人电话不能为空",
+            "faultDecriptDetail": "事件描述不能为空",
+            "faultDecriptSummary": "事件标题不能为空",
+            "faultReportName": "当事人不能为空",
+            "cPhone": "客户电话不能为空",
+        },
+        focusCleanup: true
+    })
+    ;
+
+    // 提交
+    function submit() {
+        var idCard = checkIdcard();
+        if (!idCard) {
+            return;
+        }
+        if ($.validate.form()) {
+            var data = $("#form-fmbiz-add").serializeArray();
+            var fmSource = {
+                name: 'faultSource',
+                value: $("#fmSource").val()
+            }
+            data.push(fmSource);
+            $.operate.saveTab(prefix_version + "/saveflowdata", data);
+        } else {
+            $.modal.alertWarning("有必填参数未填写。");
+        }
+    }
+
+    // 暂存
+    function save() {
+        var idCard = checkIdcard();
+        if (!idCard) {
+            return;
+        }
+        var data = $("#form-fmbiz-add").serializeArray();
+        $.operate.saveTab(prefix_version + "/save", data);
+    }
+
+
+    // 附件上传页面
+    function upload() {
+        var url1 = prefix_version + "/save";
+        var data = $("#form-fmbiz-add").serializeArray();
+        $.ajax({
+            url: url1,
+            type: "post",
+            dataType: "json",
+            data: data,
+            success: function (result) {
+                if (result.code == 0) {
+                    var ownerId = result.data;
+                    // 将ownerId保存到页面隐藏框
+                    $("#ownerId").val(ownerId);
+                    $("#fmId").val(ownerId);
+                    var url = prefix_attachment + "/upload/" + ownerId;
+                    $.modal.open("附件上传", url,'1100','620');
+                } else {
+                    //$.modal.alertWarning("上传失败！！！！！！");
+                    $.operate.successCallback(result);
+                }
+            }
+        });
+    }
+
+    // 附件下载
+    function downloadAttachment() {
+        var rows = $.table.selectFirstColumns();
+        var atId = rows[0];
+        var ownerId = $("#ownerId").val();
+        var url = prefix_attachment + "/download/" + ownerId + "/" + atId;
+        window.location.href = url;
+    }
+
+    // 选择应用系统（只能单选）
+    function selectOgSysListByCondition() {
+        $.modal.open("选择应用系统", prefix_version + "/sysGrouplist");
+    }
+
+    // 选择创建机构（只能单选）
+    function selectogOrg() {
+        $.modal.open("选择创建机构", prefix_version + "/selectogOrg");
+    }
+
+    function queryParams(params) {
+        var search = $.table.queryParams(params);
+        search.ownerId = $("#ownerId").val() == '' ? 'version_public_add_no_owner_id' : $("#ownerId").val();
+        return search;
+    }
+
+    //判断发生时间不能大于当前时间
+    function ifoccTime() {
+        var occurTime = $("#occurTime").val();
+        var date1 = new Date(occurTime.replace(/-/g, '/'));
+        var date2 = new Date();
+        if (date1 > date2) {
+            $.modal.alertError("发生时间不应大于当前时间。");
+            $("#occurTime").val("");
+        }
+    }
+
+    // 校验身份证号码
+    function checkIdcard() {
+        var customerIdcard = $("#customerIdcard").val();
+        if (customerIdcard && !idcard(customerIdcard)) {
+            $.modal.alertWarning("身份证格式不正确。");
+        } else {
+            return true;
+        }
+    }
+
+    function idcard(customerIdcard) {
+        var nd = /^[1-9]\d{7}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])\d{3}$|^[1-9]\d{5}[1-9]\d{3}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])\d{3}([0-9]|X)$/;//中国内陆地区身份证验证
+        var hk = /^((\s?[A-Za-z])|([A-Za-z]{2}))\d{6}(\([0−9aA]\)|[0-9aA])$/;//中国香港地区身份证验证
+        var mo = /^[1|5|7][0-9]{6}\([0-9Aa]\)/;//中国澳门地区身份证验证
+        var tw = /^[a-zA-Z][0-9]{9}$/; //中国台湾地区身份证验证
+        if (!nd.test(customerIdcard) && !hk.test(customerIdcard) && !mo.test(customerIdcard) && !tw.test(customerIdcard)) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    //加载一级分类
+    function getFmKindOneList(sysid) {
+        $.ajax({
+            cache: true,
+            type: "POST",
+            url: prefix_version + "/selectFmKindBySysid",
+            data: {
+                "sysid": sysid,
+                "category": "1",
+                "parentId": ""
+            },
+            async: false,
+            success: function (data) {
+                var options = "<option value=''>请选择</option>";
+                $("#oneType").html("");
+                for (var ak = 0; ak < data.rows.length; ak++) {
+                    options += "<option value='" + data.rows[ak].id + "'>" + data.rows[ak].name + "</option> \n";
+                }
+                $("#oneType").append(options);
+            }
+        });
+        $("#twoType").html("");
+        $("#twoType").append("<option value=''>请选择</option>");
+        $("#threeType").html("");
+        $("#threeType").append("<option value=''>请选择</option>");
+        $("#keywords").html("");
+        $("#keywords").append("<option value=''>请选择</option>");
+    }
+
+    //根据一级分类查询二级分类
+    function getFmKindTwoList() {
+        var sysid = $("#sysid").val();
+        var parentId = $("#oneType").val();
+        if (sysid && parentId) {
+            $.ajax({
+                cache: true,
+                type: "POST",
+                url: prefix_version + "/selectFmKindBySysid",
+                data: {
+                    "sysid": sysid,
+                    "category": "2",
+                    "parentId": parentId
+                },
+                async: false,
+                success: function (data) {
+                    var options = "<option value=''>请选择</option>";
+                    $("#twoType").html("");
+                    for (var ak = 0; ak < data.rows.length; ak++) {
+                        options += "<option value='" + data.rows[ak].id + "'>" + data.rows[ak].name + "</option> \n";
+                    }
+                    $("#twoType").append(options);
+                }
+            });
+        }
+        $("#threeType").html("");
+        $("#threeType").append("<option value=''>请选择</option>");
+        $("#keywords").html("");
+        $("#keywords").append("<option value=''>请选择</option>");
+    }
+
+    //根据二级分类查询三级分类
+    function getFmKindThreeList() {
+        var sysid = $("#sysid").val();
+        var parentId = $("#twoType").val();
+        if (sysid && parentId) {
+            $.ajax({
+                cache: true,
+                type: "POST",
+                url: prefix_version + "/selectFmKindBySysid",
+                data: {
+                    "sysid": sysid,
+                    "category": "3",
+                    "parentId": parentId
+                },
+                async: false,
+                success: function (data) {
+                    var options = "<option value=''>请选择</option>";
+                    $("#threeType").html("");
+                    for (var ak = 0; ak < data.rows.length; ak++) {
+                        options += "<option value='" + data.rows[ak].id + "'>" + data.rows[ak].name + "</option> \n";
+                    }
+                    $("#threeType").append(options);
+                }
+            });
+        }
+        $("#keywords").html("");
+        $("#keywords").append("<option value=''>请选择</option>");
+    }
+
+    //根据三级分类查询关键字
+    function getKeywordsList() {
+        var sysid = $("#sysid").val();
+        var parentId = $("#threeType").val();
+        if (sysid && parentId) {
+            $.ajax({
+                cache: true,
+                type: "POST",
+                url: prefix_version + "/selectFmKindBySysid",
+                data: {
+                    "sysid": sysid,
+                    "category": "4",
+                    "parentId": parentId
+                },
+                async: false,
+                success: function (data) {
+                    var options = "<option value=''>请选择</option>";
+                    $("#keywords").html("");
+                    for (var ak = 0; ak < data.rows.length; ak++) {
+                        options += "<option value='" + data.rows[ak].id + "'>" + data.rows[ak].name + "</option> \n";
+                    }
+                    $("#keywords").append(options);
+                }
+            });
+        }
+    }
+
+    //根据系统查询工作组
+    function getGroupList(sysid) {
+    }
+
+</script>
+</body>
+</html>

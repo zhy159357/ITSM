@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:include="include :: header('业务部门修改数据问题单')"/>
+    <th:block th:include="include :: select2-css"/>
+    <th:block th:include="include :: summernote-css"/>
+    <th:block th:include="include :: datetimepicker-css"/>
+
+</head>
+
+<body class="white-bg">
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+    <form class="form-horizontal m" id="form-dataq-edit" th:object="${imBizDataq}">
+        <input th:type="hidden" id="imId" th:field="*{imId}"/>
+        <input th:field="*{currentState}" id="currentState" th:type="hidden"/>
+        <input th:field="*{technicalId}" id="technicalId" th:type="hidden"/>
+        <input id="taskId" name="params[taskId]" th:value="${taskId}" type="hidden"/>
+        <input type="hidden" id="wtflag" name="wtflag">
+        <div class="panel panel-default">
+            <div class="panel-heading" style="background-color: #3c8dbc" data-toggle="collapse" data-target="#demo">
+                <h4 class="panel-title">
+                    基本信息
+                </h4>
+            </div>
+            <div id="demo" class="in">
+                <div class="row form-group">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label is-required">数据问题单号：</label>
+                            <div class="col-sm-8">
+                                <input class="form-control" id="imNo" type="text" th:field="*{imNo}" readonly>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label is-required">系统重要级别:</label>
+                            <div class="col-sm-8">
+                                <select class="form-control" name="sysLv" id="sysLv"
+                                        th:with="type=${@dict.getParaType('CS_LEVEL')}">
+                                    <option value=""></option>
+                                    <option th:each="dict : ${type}" th:text="${dict.valueDetail}"
+                                            th:value="${dict.value}" th:field="*{sysLv}"></option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="row form-group">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label is-required">问题起因:</label>
+                            <div class="col-sm-8">
+                                <select class="form-control" name="probleCause" id="probleCause" required
+                                        th:with="type=${@dict.getParaType('SJChangReason')}">
+                                    <option value=""></option>
+                                    <option th:each="dict : ${type}" th:text="${dict.valueDetail}"
+                                            th:value="${dict.value}" th:field="*{probleCause}"></option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label is-required">问题发生时间：</label>
+                            <div class="col-sm-8">
+                                <div class="input-group date">
+                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                    <input name="problemDiscoveryTime" style="background-color: #fff; opacity: 1;"
+                                           th:field="*{problemDiscoveryTime}" id="problemDiscoveryTime" class="form-control calcTotalSecondInput"
+                                           readonly type="text" required>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row form-group">
+
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label is-required" style="width:12.5%">涉及系统：</label>
+                            <div class="col-sm-8" style="width:83.5%">
+                                <input type="hidden" class="form-control" name="sysId" id="sysId" th:field="*{sysId}"/>
+                                <input type="text" class="form-control" name="sysName" id="sysName"
+                                       onclick="selectAppSys()" style="background-color: #ffffff;" readonly
+                                       th:field="*{sysName}" required/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel panel-default">
+            <div class="panel-heading" style="background-color: #3c8dbc" data-toggle="collapse" data-target="#demo4">
+                <h4 class="panel-title">
+                    详细信息
+                </h4>
+            </div>
+            <div id="demo4" class="in">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label  text-right is-required"
+                                   style="width:12.5%">问题标题：</label>
+                            <div class="col-sm-10" style="width:83.5%">
+                                <input class="form-control" type="text" name="probleTitle" id="probleTitle"
+                                       maxlength="64" th:field="*{probleTitle}" required>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label is-required" style="width:12.5%">问题描述：</label>
+                            <div class="col-sm-10" style="width:83.5%">
+                                <textarea id="probleDesc" name="probleDesc" rows="10" cols="20"
+                                          class="form-control" th:field="*{probleDesc}" maxlength="2000"
+                                          required></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label is-required" style="width:12.5%">问题影响：</label>
+                            <div class="col-sm-10" style="width:83.5%">
+                                <textarea id="probleImpact" name="probleImpact" rows="10" cols="20"
+                                          class="form-control" maxlength="2000" th:field="*{probleImpact}"
+                                          required></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="panel panel-default">
+            <div class="panel-heading" style="background-color: #3c8dbc" data-toggle="collapse" data-target="#demo3">
+
+                <h4 class="panel-title">
+                    数据变更单审批方案（多个业务部门审核选择多个业务部门）
+                </h4>
+            </div>
+            <div id="demo3" class="panel-collapse in">
+
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label is-required" style="width:12.5%">应急预案：</label>
+                            <div class="col-sm-10" style="width:83.5%">
+                                <textarea id="emergencyPlan" name="emergencyPlan" rows="10" cols="20"
+                                          class="form-control" maxlength="2000" th:field="*{emergencyPlan}"
+                                          required></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row" id="enuParam0">
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label is-required">业务部门：</label>
+                            <div class="col-sm-8">
+                                <select id="businessOrg0" name="businessDept" class="form-control" th:with="businessOrgs=${@pubParaValue.selectPubParaValueByParaName('vm_dept')}" th:field="*{businessDept}" onchange="resetBusiness('0')">
+                                    <option value=""></option>
+                                    <option th:each="org : ${businessOrgs}" th:selected="${businessOrg eq org.valueDetail}" th:text="${org.valueDetail}" th:value="${org.valueDetail}"></option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label is-required">经办人：</label>
+                            <div class="col-sm-8">
+                                <input id="businessAuditId0" name="businessId" class="form-control" type="hidden"  >
+                                <input id="businessAuditName0" name="businessAuditName" class="form-control"
+                                       style="background-color: #ffffff" onclick="selectBusinessAudit('0')" readonly
+                                       required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label ">部门领导：</label>
+                            <div class="col-sm-8">
+                                <input id="businessApprovalId0" name="businessAppid" class="form-control" type="hidden" >
+                                <input id="businessApprovalName0" name="businessApprovalName" class="form-control"
+                                       style="background-color: #ffffff" onclick="selectBusinessApproval('0')" readonly>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label  text-right ">分管行长：</label>
+                            <div class="col-sm-8">
+                                <input id="chargeLeadership0" maxlength="16" class="form-control" type="text" name="chargeLeadership">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row" id="businessChange">
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label"></label>
+                            <div class="col-sm-8">
+                                <a onclick="addRowsh()" class="btn btn-success"><i class="fa fa-plus"></i> 增加业务审核</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label"></label>
+                            <div class="col-sm-8">
+                                <a onclick="removesh()" class="btn btn-danger"><i class="fa fa-remove"></i> 删除最后一行</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel panel-default">
+            <div class="panel-heading" style="background-color: #3c8dbc" data-toggle="collapse" data-target="#demo7">
+                <h4 class="panel-title">
+                    数据问题单审批环节选择
+                </h4>
+            </div>
+            <div id="demo7" class="panel-collapse in">
+                <div class="row form-group">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label is-required" style="width:12.5%">评估人：</label>
+                            <div class="col-sm-8" style="width:83.5%">
+                                <input name="assessorId" th:value="*{assessorId}" id="assessorId"  class="form-control" type="hidden">
+                                <input id="assessorName"  th:value="*{assessorName}" onclick="selectBusinessPg()"style="background-color: #ffffff" class="form-control" type="text" readonly="readonly" required>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label is-required">是否业务：</label>
+                            <div class="col-sm-8">
+                                <select th:name="isState" id="isState" class="form-control m-b"
+                                        th:with="type=${@pubParaValue.selectPubParaValueByParaName('isWrite')}"
+                                        onchange="isChangeBut(this.value)" required>
+                                    <option value=""></option>
+                                    <option th:each="paraValue : ${type}" th:text="${paraValue.valueDetail}"
+                                            th:value="${paraValue.value}" th:field="*{isState}"></option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="panel panel-default" id="ywfa" hidden>
+            <div class="panel-heading" style="background-color: #3c8dbc" data-toggle="collapse" data-target="#demo5">
+                <h4 class="panel-title">
+                    业务方案
+                </h4>
+            </div>
+            <div id="demo5" class="panel-collapse in">
+
+                <div class="row" id="ywzg">
+                    <div class="col-sm-12">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label is-required" style="width:12.5%">业务整改方案：</label>
+                            <div class="col-sm-10" style="width:83.5%">
+                                <textarea id="businessRectificationPlan" name="businessRectificationPlan" rows="10"
+                                          cols="20"
+                                          class="form-control" maxlength="2000" required></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row" id="wyjj">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label is-required">业务计划解决时间：</label>
+                            <div class="col-sm-8">
+                                <div class="input-group date">
+                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                    <input name="businessPlanTime" style="background-color: #fff; opacity: 1;" id="businessPlanTime"
+                                           class="form-control calcTotalSecondInput" readonly type="text" required>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+
+
+    </form>
+
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="tabs-container">
+                <ul class="nav nav-tabs">
+                    <li class="active"><a data-toggle="tab" href="#tab-1" aria-expanded="true"> 附件上传</a>
+                    </li>
+                </ul>
+                <div class="tab-content">
+                    <div id="tab-1" class="tab-pane active">
+                        <div class="panel-body">
+                            <div class="btn-group-sm" id="toolbar1" role="group">
+                                <a class="btn btn-success" type="button" onclick="upload()">
+                                    <i class="fa fa-upload"></i> 添加附件
+                                </a>
+                                <a class="btn btn-primary multiple disabled" onclick="downloadFile()">
+                                    <i class="fa fa-download"></i> 下载附件
+                                </a>
+                                <a class="btn btn-danger multiple disabled" onclick="remove()">
+                                    <i class="fa fa-trash"></i> 删除附件
+                                </a>
+                            </div>
+                            <div class="col-sm-12 select-table table-striped">
+                                <table id="file-table"></table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div class="row">
+    <div class="col-sm-offset-5 col-sm-10">
+        <button type="button" class="btn btn-sm btn-primary" onclick="submitHandler(this)" id="commit"><i class="fa fa-check"></i>提 交</button>&nbsp;
+        <button type="button" class="btn  btn-sm btn-danger" onclick="submitHandler(this)" id="cancellation"><i class="fa fa-remove"></i>作 废</button>
+        <button type="button" class="btn btn-sm btn-danger" onclick="closeItem()"><i class="fa fa-window-close"></i>关 闭 </button>
+    </div>
+</div>
+<th:block th:include="include :: footer"/>
+<th:block th:include="include :: summernote-js"/>
+<th:block th:include="include :: select2-js"/>
+<th:block th:include="include :: datetimepicker-js"/>
+<script th:inline="javascript">
+
+    var prefix = ctx + "system/dataq"
+
+    var prefix_attachment = ctx + "pub/attachment";
+
+    var isState=[[${imBizDataq.isState}]];
+
+    var isJS=[[${imBizDataq.ifJs}]];
+
+    $(function () {
+
+        isChangeBut(isState);
+
+        isChangejs(isJS);
+
+        var options = {
+            url: prefix_attachment + "/list",
+            id: "file-table",
+            createUrl: prefix_attachment + "/add",
+            updateUrl: prefix_attachment + "/edit/{id}",
+            removeUrl: prefix_attachment + "/remove",
+            detailUrl: prefix_attachment + "/edit/{id}",
+            sortName: "fileTime",
+            sortOrder: "desc",
+            singleSelect: true,
+            toolbar: "toolbar1",
+            clickToSelect: true,
+            queryParams: queryParams,
+            modalName: "附件列表",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'atId',
+                    title: '附件ID',
+                    visible: false
+                },
+                {
+                    field: 'person.pId',
+                    title: '上传人员Id',
+                    visible: false
+                },
+                {
+                    field: 'fileName',
+                    title: '文件名称'
+                },
+                {
+                    field: 'person.pName',
+                    title: '上传人'
+                },
+                {
+                    field: 'size',
+                    title: '文件大小'
+                },
+                {
+                    field: 'memo',
+                    title: '文件描述'
+                },
+                {
+                    field: 'fileTime',
+                    title: '上传时间'
+                }]
+        };
+        $.table.init(options);
+
+        var businessList = [[${businessList}]];
+        // 显示动态框
+        showBusiness(businessList);
+
+    });
+
+    //附件
+    function queryParams(params) {
+        var search = $.table.queryParams(params);
+        search.ownerId = $("#imId").val() == '' ? 'version_public_add_no_owner_id' : $("#imId").val();
+        return search;
+    }
+
+
+    // 附件上传页面
+    function upload() {
+        var url = ctx + "pub/attachment/upload/" + $("#imId").val();
+        $.modal.open("问题单附件上传", url);
+    }
+
+    // 附件下载
+    function downloadFile() {
+        var rows = $.table.selectFirstColumns();
+        var atId = rows[0];
+        var ownerId = $("#imId").val();
+        var url = ctx + "pub/attachment/download/" + ownerId + "/" + atId;
+        window.location.href = url;
+    }
+
+    function remove() {
+        var row = $('#file-table').bootstrapTable('getSelections')[0]
+        //获取当前登陆人员的id
+        $.get(prefix + '/selectOgUserByUserId', function (result) {
+            if (result.data.pId == row.person.pId) {
+                $.operate.removeAll();
+            } else {
+                $.modal.alertError('不能删除非本人上传附件!');
+            }
+        });
+    }
+
+
+    var enuParam_index = 1;
+
+
+    // 增加一行审核部门
+    function addRowsh() {
+        var v1 = $("#businessOrg" + (enuParam_index - 1)).val();
+        var v2 = $("#businessAuditName" + (enuParam_index - 1)).val();
+        var v3 = $("#businessApprovalName" + (enuParam_index - 1)).val();
+        var v4 = $("#chargeLeadership" + (enuParam_index - 1)).val();
+        if (v1 == '' || v2 == '') {
+            $.modal.alertWarning("请将当前行填写完整或者删除之后才允许新增一行！");
+            return;
+        }
+
+        var options = "<option value=''></option>";
+        var businessOrgs = [[${@pubParaValue.selectPubParaValueByParaName('vm_dept')}]];
+        for (var ak = 0; ak < businessOrgs.length; ak++) {
+            options += "<option value='" + businessOrgs[ak].valueDetail + "'>" + businessOrgs[ak].valueDetail + "</option>";
+        }
+        var enuParam = "<div class=\"row\" id='enuParam" + enuParam_index + "'>\n" +
+
+            "\t\t\t\t\t<div class=\"col-sm-6\">\n" +
+            "\t\t\t\t\t\t<div class=\"form-group\">\n" +
+            "\t\t\t\t\t\t\t<label class=\"col-sm-3 control-label \">业务部门" + enuParam_index + "：</label>\n" +
+            "\t\t\t\t\t\t\t<div class=\"col-sm-8\">\n" +
+            "\t\t\t\t\t\t\t\t<select id=\"businessOrg" + enuParam_index + "\" name=\"businessDept\" class=\"form-control\" onchange=resetBusiness(" + enuParam_index + ")>\n" +
+            options +
+            "\t\t\t\t\t\t\t\t</select>\n" +
+            "\t\t\t\t\t\t\t</div>\n" +
+            "\t\t\t\t\t\t</div>\n" +
+            "\t\t\t\t\t</div>\n" +
+
+            "\t\t\t\t\t<div class=\"col-sm-6\">\n" +
+            "\t\t\t\t\t\t<div class=\"form-group\">\n" +
+            "\t\t\t\t\t\t\t<label class=\"col-sm-3 control-label \">经办人" + enuParam_index + "：</label>\n" +
+            "\t\t\t\t\t\t\t<div class=\"col-sm-8\">\n" +
+            "\t\t\t\t\t\t\t\t<input id=\"businessAuditId" + enuParam_index + "\" name=\"businessId\" class=\"form-control\" type='hidden'>\n" +
+            "\t\t\t\t\t\t\t\t<input id=\"businessAuditName" + enuParam_index + "\" name=\"businessAuditName\" class=\"form-control\" style=\"background-color: #ffffff\" onclick=\"selectBusinessAudit(" + enuParam_index + ")\" readonly>\n" +
+            "\t\t\t\t\t\t\t</div>\n" +
+            "\t\t\t\t\t\t</div>\n" +
+            "\t\t\t\t\t</div>\n" +
+
+            "\t\t\t\t\t<div class=\"col-sm-6\">\n" +
+            "\t\t\t\t\t\t<div class=\"form-group\">\n" +
+            "\t\t\t\t\t\t\t<label class=\"col-sm-3 control-label\">部门领导" + enuParam_index + "：</label>\n" +
+            "\t\t\t\t\t\t\t<div class=\"col-sm-8\">\n" +
+            "\t\t\t\t\t\t\t\t<input id=\"businessApprovalId" + enuParam_index + "\" name=\"businessAppid\" class=\"form-control\" type='hidden'>\n" +
+            "\t\t\t\t\t\t\t\t<input id=\"businessApprovalName" + enuParam_index + "\" name=\"businessApprovalName\" class=\"form-control\" style=\"background-color: #ffffff\" onclick=\"selectBusinessApproval(" + enuParam_index + ")\" readonly>\n" +
+            "\t\t\t\t\t\t\t</div>\n" +
+            "\t\t\t\t\t\t</div>\n" +
+            "\t\t\t\t\t</div>\n" +
+
+            "\t\t\t\t\t<div class=\"col-sm-6\">\n" +
+            "\t\t\t\t\t\t<div class=\"form-group\">\n" +
+            "\t\t\t\t\t\t\t<label class=\"col-sm-3 control-label\">分管行长" + enuParam_index + "：</label>\n" +
+            "\t\t\t\t\t\t\t<div class=\"col-sm-8\">\n" +
+            "\t\t\t\t\t\t\t\t<input id=\"chargeLeadership" + enuParam_index + "\" name=\"chargeLeadership\" maxlength='16' class=\"form-control\" type='text'>\n" +
+            "\t\t\t\t\t\t\t</div>\n" +
+            "\t\t\t\t\t\t</div>\n" +
+            "\t\t\t\t\t</div>\n" +
+
+            "\t\t\t\t</div>";
+        console.log(enuParam);
+        $("#enuParam" + (enuParam_index - 1)).after(enuParam);
+        enuParam_index++;
+    };
+
+
+    // 删除一行审核部门
+    function removesh() {
+        var enuParam = document.getElementById("enuParam" + (enuParam_index - 1));
+        if (enuParam_index <= 1) {
+            $.modal.alertWarning("至少保留一行业务审批选择框！");
+        } else {
+            enuParam.parentNode.removeChild(enuParam);
+            enuParam_index--;
+        }
+    }
+
+
+    $("#form-dataq-add").validate({
+        focusCleanup: true
+    });
+
+    // 保存选项卡信息
+    function saveTabWt(url, data, callback) {
+        var config = {
+            url: url,
+            type: "post",
+            dataType: "json",
+            data: data,
+            beforeSend: function () {
+                $.modal.loading("正在处理中，请稍后...");
+            },
+            success: function (result) {
+                var num = $("#num").val();
+                parent.$('#xzimNo').val(num);
+                $.modal.close();
+            }
+
+        };
+        $.ajax(config)
+    }
+
+
+    /**
+     * 应用系统
+     */
+    function selectAppSys() {
+        var prefix = ctx + "system/dataq";
+        var url = prefix + '/application';
+        $.modal.open('系统选择', url)
+    }
+
+    //日期格式
+    $("#problemDiscoveryTime").datetimepicker({
+        format: "yyyy-mm-dd hh:ii:ss",
+        autoclose: true,
+        minView:0,
+        minuteStep:1,
+        endDate:new Date()
+    });
+
+    //日期格式
+    $("input[name='businessPlanTime']").datetimepicker({
+        autoclose: true,
+        format: "yyyy-mm-dd hh:ii:ss",
+        minView: 0,
+        minuteStep: 1,
+        startDate: new Date()
+    });
+
+    //日期格式
+    $("input[name='technicalPlanTime']").datetimepicker({
+        autoclose: true,
+        format: "yyyy-mm-dd hh:ii:ss",
+        minView: 0,
+        minuteStep: 1,
+        Date: new Date()
+    });
+
+    //日期格式
+    $("input[name='observationTime']").datetimepicker({
+        autoclose: true,
+        format: "yyyy-mm-dd hh:ii:ss",
+        minView: 0,
+        minuteStep: 1,
+        Date: new Date()
+    });
+
+
+    // 部门下拉选改变时清除后边的业务审核｜业务领导审核
+    function resetBusiness(num) {
+        $("#businessAuditId" + num).val("");
+        $("#businessAuditName" + num).val("");
+        $("#businessApprovalId" + num).val("");
+        $("#businessApprovalName" + num).val("");
+    }
+
+
+    // 选择业务经办人
+    function selectBusinessAudit(num) {
+        var orgName = $("#businessOrg" + num).val();
+        if (orgName == '') {
+            $.modal.alertWarning("请先选择所属业务部门");
+            return;
+        }
+        var rId = "2302";
+        var url = prefix + "/selectBusinessAudit" + "?" + "orgName=" + encodeURI(encodeURI(orgName)) + "&rId=" + rId + "&num=" + num;
+        $.modal.open("选择业务审核人", url);
+    }
+
+    // 业务领导审核人
+    function selectBusinessApproval(num) {
+        var orgName = $("#businessOrg" + num).val();
+        if (orgName == '') {
+            $.modal.alertWarning("请先选择所属业务部门");
+            return;
+        }
+        var rId = "2303";
+        var url = prefix + "/selectBusinessAudit" + "?" + "orgName=" + encodeURI(encodeURI(orgName)) + "&rId=" + rId + "&num=" + num;
+        $.modal.open("业务领导审核人", url);
+    }
+
+
+    // 评估人
+    function selectBusinessPg() {
+        var rId = "6664";
+        var url = prefix + "/selectBusinessAudit"+"?"+ "&rId=" + rId;
+        $.modal.open("选择评估人", url);
+    }
+
+
+    function isChangeBut(value) {
+        if("0"==value){
+            $("#ywfa").hide();
+            $("#ifJs").val('1');
+        }
+        if("1"==value){
+            $("#ywfa").show();
+            $("#ifJs").val('');
+        }
+    }
+
+    function isChangejs(value) {
+        if("0"==value){
+            $("#jsaudit").hide();
+            $("#jsaudit").val('');
+
+        }
+        if("1"==value){
+            $("#jsaudit").show();
+            $("#jsaudit").val('');
+        }
+    }
+
+
+    // 业务条线是否完整性标识
+    var flag = true;
+
+
+    // 选择技术审核人
+    function technologyAudit() {
+        var rId = "2304";
+        var url = prefix + "/selectBusinessAudit" + "?" + "pflag=1" + "&rId=" + rId;
+        $.modal.open("选择技术审核人", url);
+    }
+
+
+    // 显示动态框
+    function showBusiness(businessList) {
+        // 如果业务部门集合为空，则不做任何操作
+        if(businessList == null || businessList.length == 0){
+
+            return;
+        }
+        // 默认给第一个框赋值
+        // $("#businessOrg0").val(businessList[0].businessOrgName);
+        $("#businessAuditId0").val(businessList[0].businessAuditId);
+        $("#businessAuditName0").val(businessList[0].businessAuditName);
+        $("#businessApprovalId0").val(businessList[0].businessApprovalId);
+        $("#businessApprovalName0").val(businessList[0].businessApprovalName);
+        $("#chargeLeadership0").val(businessList[0].chargeLeadership);
+        var options = "<option value=''></option>";
+        var businessOrgs = [[${@pubParaValue.selectPubParaValueByParaName('vm_dept')}]];
+        for(var ak=0;ak<businessOrgs.length;ak++){
+            options +=
+                "<option value='"+businessOrgs[ak].valueDetail+"'>"+businessOrgs[ak].valueDetail+"</option>";
+        }
+        // 当业务部门大于1个时，需要动态增加并赋值
+        if(businessList.length>1){
+            for(var i=1;i<businessList.length;i++){
+                var business = businessList[i];
+                var businessOrgName = business.businessOrgName;
+                var businessAuditName = business.businessAuditName;
+                var businessApprovalName = business.businessApprovalName;
+                var businessAuditId = business.businessAuditId;
+                var businessApprovalId = business.businessApprovalId;
+                var chargeLeadership = business.chargeLeadership;
+                console.log(business);
+                var enuParam =  "<div class=\"row\" id='enuParam"+i+"'>\n" +
+
+                    "\t\t\t\t\t<div class=\"col-sm-6\">\n" +
+                    "\t\t\t\t\t\t<div class=\"form-group\">\n" +
+                    "\t\t\t\t\t\t\t<label class=\"col-sm-3 control-label \">业务部门" + enuParam_index + "：</label>\n" +
+                    "\t\t\t\t\t\t\t<div class=\"col-sm-8\">\n" +
+                    "\t\t\t\t\t\t\t\t<select id=\"businessOrg" + enuParam_index + "\" name=\"businessDept\" class=\"form-control\" onchange=resetBusiness(" + enuParam_index + ")>\n" +
+                    options +
+                    "\t\t\t\t\t\t\t\t</select>\n" +
+                    "\t\t\t\t\t\t\t</div>\n" +
+                    "\t\t\t\t\t\t</div>\n" +
+                    "\t\t\t\t\t</div>\n" +
+
+                    "\t\t\t\t\t<div class=\"col-sm-6\">\n" +
+                    "\t\t\t\t\t\t<div class=\"form-group\">\n" +
+                    "\t\t\t\t\t\t\t<label class=\"col-sm-3 control-label \">经办人" + enuParam_index + "：</label>\n" +
+                    "\t\t\t\t\t\t\t<div class=\"col-sm-8\">\n" +
+                    "\t\t\t\t\t\t\t\t<input id=\"businessAuditId" + enuParam_index + "\" name=\"businessId\" class=\"form-control\" type='hidden'>\n" +
+                    "\t\t\t\t\t\t\t\t<input id=\"businessAuditName" + enuParam_index + "\" name=\"businessAuditName\" class=\"form-control\" style=\"background-color: #ffffff\" onclick=\"selectBusinessAudit(" + enuParam_index + ")\" readonly>\n" +
+                    "\t\t\t\t\t\t\t</div>\n" +
+                    "\t\t\t\t\t\t</div>\n" +
+                    "\t\t\t\t\t</div>\n" +
+
+                    "\t\t\t\t\t<div class=\"col-sm-6\">\n" +
+                    "\t\t\t\t\t\t<div class=\"form-group\">\n" +
+                    "\t\t\t\t\t\t\t<label class=\"col-sm-3 control-label\">部门领导" + enuParam_index + "：</label>\n" +
+                    "\t\t\t\t\t\t\t<div class=\"col-sm-8\">\n" +
+                    "\t\t\t\t\t\t\t\t<input id=\"businessApprovalId" + enuParam_index + "\" name=\"businessAppid\" class=\"form-control\" type='hidden'>\n" +
+                    "\t\t\t\t\t\t\t\t<input id=\"businessApprovalName" + enuParam_index + "\" name=\"businessApprovalName\" class=\"form-control\" style=\"background-color: #ffffff\" onclick=\"selectBusinessApproval(" + enuParam_index + ")\" readonly>\n" +
+                    "\t\t\t\t\t\t\t</div>\n" +
+                    "\t\t\t\t\t\t</div>\n" +
+                    "\t\t\t\t\t</div>\n" +
+
+                    "\t\t\t\t\t<div class=\"col-sm-6\">\n" +
+                    "\t\t\t\t\t\t<div class=\"form-group\">\n" +
+                    "\t\t\t\t\t\t\t<label class=\"col-sm-3 control-label\">分管行长" + enuParam_index + "：</label>\n" +
+                    "\t\t\t\t\t\t\t<div class=\"col-sm-8\">\n" +
+                    "\t\t\t\t\t\t\t\t<input id=\"chargeLeadership" + enuParam_index + "\" name=\"chargeLeadership\" maxlength='16' class=\"form-control\" type='text'>\n" +
+                    "\t\t\t\t\t\t\t</div>\n" +
+                    "\t\t\t\t\t\t</div>\n" +
+                    "\t\t\t\t\t</div>\n" +
+
+                    "\t\t\t\t</div>";
+                $("#enuParam" + (i - 1)).after(enuParam);
+                $("#businessOrg"+i).val(businessOrgName);
+                $("#businessAuditId"+i).val(businessAuditId);
+                $("#businessAuditName"+i).val(businessAuditName);
+                $("#businessApprovalId"+i).val(businessApprovalId);
+                $("#businessApprovalName"+i).val(businessApprovalName);
+                $("#chargeLeadership"+i).val(chargeLeadership);
+                enuParam_index = i+1;
+            }
+        }
+    }
+
+    function submitHandler(elementObj) {
+        //判断当前点击的是作废还是提交 提交为待审核
+        if($(elementObj).attr("id")=='cancellation'){
+            //作废
+            $('#wtflag').val('temporary')
+            $.operate.saveTab(prefix + "/saveOrCancellation", $('#form-dataq-edit').serialize());
+        }else {
+            //提交
+            var errorInfo = '';
+            //系统重要级别
+            var sysLv = $('#sysLv').val();
+            if(isEmpty(sysLv)){
+                errorInfo += '【系统重要级别】不能为空 ';
+            }
+            //问题起因
+            var probleCause = $('#probleCause').val();
+            if(isEmpty(probleCause)){
+                errorInfo += '【问题起因】不能为空 ';
+            }
+            //问题发生时间
+            var problemDiscoveryTime = $('#problemDiscoveryTime').val();
+            if(isEmpty(problemDiscoveryTime)){
+                errorInfo += '【问题发生时间】不能为空 ';
+            }
+            //涉及系统
+            var sysId = $('#sysId').val();
+            if(isEmpty(sysId)){
+                errorInfo += '【涉及系统】不能为空 ';
+            }
+            //问题标题
+            var probleTitle = $('#probleTitle').val();
+            if(isEmpty(probleTitle)){
+                errorInfo += '【问题标题】不能为空 ';
+            }
+            //问题描述
+            var probleDesc = $('#probleDesc').val();
+            if(isEmpty(probleDesc)){
+                errorInfo += '【问题描述】不能为空 ';
+            }
+            //问题影响
+            var probleImpact = $('#probleImpact').val();
+            if(isEmpty(probleImpact)){
+                errorInfo += '【问题影响】不能为空 ';
+            }
+            //应急预案
+            var emergencyPlan = $('#emergencyPlan').val();
+            if(isEmpty(emergencyPlan)){
+                errorInfo += '【应急预案】不能为空 ';
+            }
+            //业务部门
+            var businessOrg0 = $('#businessOrg0').val();
+            if(isEmpty(businessOrg0)){
+                errorInfo += '【业务部门】不能为空 ';
+            }
+            //经办人
+            var businessAuditId0 = $('#businessAuditId0').val();
+            if(isEmpty(businessAuditId0)){
+                errorInfo += '【经办人】不能为空 ';
+            }
+            //应急预案
+            var emergencyPlan = $('#emergencyPlan').val();
+            if(isEmpty(emergencyPlan)){
+                errorInfo += '【应急预案】不能为空 ';
+            }
+            //评估人
+            var assessorId = $('#assessorId').val();
+            if(isEmpty(assessorId)){
+                errorInfo += '【评估人】不能为空 ';
+            }
+            //是否业务
+            var isState = $('#isState').val();
+            var businessRectificationPlan = $('#businessRectificationPlan').val();
+            var businessPlanTime = $('#businessPlanTime').val();
+            if(isEmpty(isState)){
+                errorInfo += '【是否业务】不能为空 ';
+            }else {
+                if(isState == '1'){
+                    if(isEmpty(businessRectificationPlan)){
+                        errorInfo += '【业务整改方案】不能为空 ';
+                    }
+                    if(isEmpty(businessPlanTime)){
+                        errorInfo += '【业务计划解决时间】不能为空 ';
+                    }
+                }
+            }
+
+            if(isEmpty(errorInfo) ) {
+                $('#wtflag').val('commit')
+                $.operate.saveTab(prefix + "/saveOrCancellation", $('#form-dataq-edit').serialize());
+            }else{
+                $.modal.alertError(errorInfo);
+            }
+        }
+    }
+
+    /**
+     * 输入空值校验
+     * @param valueStr
+     * @returns {boolean}
+     */
+    function  isEmpty(valueStr) {
+        if(valueStr=='' || valueStr==null){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+
+</script>
+</body>
+</html>

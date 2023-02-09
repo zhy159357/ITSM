@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('采购计划实施')" />
+    <th:block th:include="include :: datetimepicker-css" />
+    <th:block th:include="include :: select2-css" />
+</head>
+<body class="gray-bg">
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-12 search-collapse">
+            <form id="formId">
+                <div class="select-list">
+                    <ul>
+                        <li>
+                            <p>单号：</p>
+                            <input type="text" name="purchaseNo"/>
+                        </li>
+                        <li>
+                            <p>项目名称：</p>
+                            <input type="text" name="projectName"/>
+                        </li>
+                        <li>
+                            <p>创建时间起：</p>
+                            <input type="text" class="time-input" name="params[createTimeStart]"/>
+                        </li>
+                        <li>
+                            <p>创建时间止：</p>
+                            <input type="text" class="time-input" name="params[createTimeEnd]"/>
+                        </li>
+                        <li>
+                            <a class="btn btn-primary btn-rounded btn-sm" id="demandList" onclick="$.table.search()"><i
+                                    class="fa fa-search"></i>&nbsp;搜索</a>
+                            <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i
+                                    class="fa fa-refresh"></i>&nbsp;重置</a>
+                        </li>
+                    </ul>
+                </div>
+            </form>
+        </div>
+
+        <div class="btn-group-sm" id="toolbar" role="group">
+            <a class="btn btn-primary single disabled" onclick="practice()" >
+                <i class="fa fa-edit"></i> 实施
+            </a>
+            <a class="btn btn-primary single disabled" onclick="currentProgress()" >
+                <i class="fa fa-check"></i> 当前进度
+            </a>
+            <a class="btn btn-warning single disabled" onclick="detail()" >
+                <i class="fa fa-search"></i> 详情
+            </a>
+        </div>
+        <div class="col-sm-12 select-table table-striped">
+            <table id="bootstrap-table"></table>
+        </div>
+    </div>
+</div>
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: datetimepicker-js" />
+<th:block th:include="include :: select2-js" />
+<th:block th:include="include :: bootstrap-select-js"/>
+<th:block th:include="include :: bootstrap-select-css"/>
+<script th:inline="javascript">
+    var prefix = ctx + "purchase/change";
+
+    var purchaseProjectTypeDatas = [[${@pubParaValue.selectPubParaValueByParaName('purchase_project_type')}]];// 采购项目类别
+    var purchaseModeDatas = [[${@pubParaValue.selectPubParaValueByParaName('purchase_mode')}]];// 采购方式
+    var purchasePlanStatusDatas = [[${@pubParaValue.selectPubParaValueByParaName('purchase_plan_status')}]];// 采购计划状态
+    var capitalImplSituationDatas = [[${@pubParaValue.selectPubParaValueByParaName('capital_impl_situation')}]];// 资金落实情况
+
+    $(function() {
+        // 回车键搜索
+        document.onkeydown = function(e){
+            var ev = document.all ? window.event : e;
+            if(ev.keyCode==13) {
+                $('#demandList').trigger('click');
+                return false;
+            }
+        };
+
+        var options = {
+            url: prefix + "/list",
+            createUrl: prefix + "/add",
+            updateUrl: prefix + "/edit/{id}",
+            removeUrl: prefix + "/remove",
+            exportUrl: prefix + "/export",
+            clickToSelect: true,
+            singleSelect: true,
+            queryParams: queryParams,
+            modalName: "采购计划",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'purchaseId',
+                    title: '主键ID',
+                    visible: false
+                },
+                {
+                    field: 'changeId',
+                    title: '采购计划ID',
+                    visible: false
+                },
+                {
+                    field: 'purchaseNo',
+                    title: '单号'
+                },
+                {
+                    field: 'purchaseProjectType',
+                    title: '采购项目类别',
+                    formatter: function (value, row, index) {
+                        return $.table.selectPubParaValueData(purchaseProjectTypeDatas, value);
+                    }
+                },
+                {
+                    field: 'projectName',
+                    title: '项目名称'
+                },
+                {
+                    field: 'purchaseMode',
+                    title: '采购方式',
+                    formatter: function (value, row, index) {
+                        return $.table.selectPubParaValueData(purchaseModeDatas, value);
+                    }
+                },
+                {
+                    field: 'purchasePlanStatus',
+                    title: '采购计划状态',
+                    formatter: function (value, row, index) {
+                        return $.table.selectPubParaValueData(purchasePlanStatusDatas, value);
+                    }
+                },
+                {
+                    field: 'purchaseEffectivePeriod',
+                    title: '采购有效期'
+                },
+                {
+                    field: 'projectTotalAmount',
+                    title: '项目总金额（万元）'
+                },
+                {
+                    field: 'payTotalAmount',
+                    title: '支出金额（万元）'
+                },
+                {
+                    field: 'capitalImplSituation',
+                    title: '资金落实情况',
+                    formatter: function (value, row, index) {
+                        return $.table.selectPubParaValueData(capitalImplSituationDatas, value);
+                    }
+                },
+                {
+                    field: 'formalSubmitTime',
+                    title: '正式提交采购申请时间'
+                },
+                {
+                    field: 'estimateContractSignTime',
+                    title: '预计合同签订时间'
+                },
+                {
+                    field: 'purchaseOppositePerson',
+                    title: '采购部对接人'
+                },
+                /*{
+                    field : 'currentProgress',
+                    title : '当前进度',
+                    formatter: function(value, row, index) {
+                        return $.table.selectPubParaValueData(currentProgressDatas, value);
+                    }
+                },
+                {
+                    field : 'riskWarning',
+                    title : '风险提示',
+                    formatter: function(value, row, index) {
+                        return $.table.selectPubParaValueData(riskWarningDatas, value);
+                    }
+                },
+                {
+                    field : 'memo',
+                    title : '备注'
+                },*/
+                {
+                    field: 'purchaseStatus',
+                    title: '审批状态',
+                    visible: false
+                },
+                {
+                    field: 'createTime',
+                    title: '创建时间'
+                }]
+        };
+        $.table.init(options);
+    });
+
+    // 采购计划实施
+    function practice() {
+        var purchaseStatus = $.table.selectColumns("purchaseStatus");
+        if(purchaseStatus != "01") {
+            $.modal.alertWarning("当前采购计划实施数据已提交到管理员审核，不可重复操作！");
+            return;
+        }
+        var id = $.table.selectFirstColumns();
+        var url = prefix + "/purchasePractice/" + id;
+        $.modal.openTab("采购实施信息填写", url);
+    }
+
+    // 采购计划实施维护当前进度
+    function currentProgress() {
+        var id = $.table.selectFirstColumns();
+        var url = prefix + "/purchaseCurrentProgress/" + id;
+        $.modal.open("实施阶段当前进度维护", url);
+    }
+
+    function detail() {
+        var id = $.table.selectColumns("purchaseId");
+        var url = prefix + "/practiceDetail/" + id;
+        $.modal.openTab("查看详情",url);
+    }
+
+    function queryParams(params) {
+        var search = $.table.queryParams(params);
+        search.remark = "practice";
+        //search.purchaseStatus = "01";
+        return search;
+    }
+</script>
+</body>
+</html>

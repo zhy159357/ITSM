@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.form.mapper.RiskAssessmentMapper">
+
+    <resultMap type="RiskAssessment" id="RiskAssessmentResult">
+        <result property="riskLevel" column="riskLevel"/>
+        <result property="formId" column="formId"/>
+        <result property="infSysCount" column="infSysCount"/>
+        <result property="infFuncInterruptType" column="infFuncInterruptType"/>
+        <result property="changeType" column="changeType"/>
+        <result property="changePlanTime" column="changePlanTime"/>
+        <result property="changeImplTime" column="changeImplTime"/>
+        <result property="backTime" column="backTime"/>
+        <result property="backPlanFlag" column="backPlanFlag"/>
+        <result property="referDeptCount" column="referDeptCount"/>
+        <result property="softwareChangeType" column="softwareChangeType"/>
+        <result property="appChangeType" column="appChangeType"/>
+        <result property="referSys" column="referSys"/>
+        <result property="currentLevel" column="currentLevel"/>
+    </resultMap>
+
+    <sql id="selectRiskAssessmentVo">
+        select riskLevel, formId, infSysCount, infFuncInterruptType, changeType, changePlanTime, changeImplTime,
+         backTime, backPlanFlag, referDeptCount, softwareChangeType, appChangeType,currentLevel, referSys from design_biz_risk_assessment
+    </sql>
+
+    <select id="selectRiskAssessmentList" parameterType="RiskAssessment" resultMap="RiskAssessmentResult">
+        <include refid="selectRiskAssessmentVo"/>
+        <where>
+            <if test="riskLevel != null ">and riskLevel = #{riskLevel}</if>
+            <if test="formId != null  and formId != ''">and formId = #{formId}</if>
+            <if test="infSysCount != null  and infSysCount != ''">and infSysCount = #{infSysCount}</if>
+            <if test="infFuncInterruptType != null  and infFuncInterruptType != ''">and infFuncInterruptType =
+                #{infFuncInterruptType}
+            </if>
+            <if test="changeType != null  and changeType != ''">and changeType = #{changeType}</if>
+            <if test="changePlanTime != null  and changePlanTime != ''">and changePlanTime = #{changePlanTime}</if>
+            <if test="changeImplTime != null  and changeImplTime != ''">and changeImplTime = #{changeImplTime}</if>
+            <if test="backTime != null  and backTime != ''">and backTime = #{backTime}</if>
+            <if test="backPlanFlag != null  and backPlanFlag != ''">and backPlanFlag = #{backPlanFlag}</if>
+            <if test="referDeptCount != null  and referDeptCount != ''">and referDeptCount = #{referDeptCount}</if>
+            <if test="softwareChangeType != null  and softwareChangeType != ''">and softwareChangeType =
+                #{softwareChangeType}
+            </if>
+            <if test="appChangeType != null  and appChangeType != ''">and appChangeType = #{appChangeType}</if>
+            <if test="referSys != null ">and referSys = #{referSys}</if>
+            <if test="currentLevel != null  and currentLevel != ''">and currentLevel = #{currentLevel}</if>
+        </where>
+    </select>
+
+    <select id="selectRiskAssessmentById" parameterType="String" resultMap="RiskAssessmentResult">
+        <include refid="selectRiskAssessmentVo"/>
+        where formId = #{formId}
+    </select>
+
+    <insert id="insertRiskAssessment" parameterType="RiskAssessment">
+        insert into design_biz_risk_assessment
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="riskLevel != null ">riskLevel,</if>
+            <if test="formId != null  and formId != ''">formId,</if>
+            <if test="infSysCount != null  and infSysCount != ''">infSysCount,</if>
+            <if test="infFuncInterruptType != null  and infFuncInterruptType != ''">infFuncInterruptType,</if>
+            <if test="changeType != null  and changeType != ''">changeType,</if>
+            <if test="changePlanTime != null  and changePlanTime != ''">changePlanTime,</if>
+            <if test="changeImplTime != null  and changeImplTime != ''">changeImplTime,</if>
+            <if test="backTime != null  and backTime != ''">backTime,</if>
+            <if test="backPlanFlag != null  and backPlanFlag != ''">backPlanFlag,</if>
+            <if test="referDeptCount != null  and referDeptCount != ''">referDeptCount,</if>
+            <if test="softwareChangeType != null  and softwareChangeType != ''">softwareChangeType,</if>
+            <if test="appChangeType != null  and appChangeType != ''">appChangeType,</if>
+            <if test="referSys != null ">referSys,</if>
+            <if test="currentLevel != null  and currentLevel != ''">currentLevel,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="riskLevel != null ">#{riskLevel},</if>
+            <if test="formId != null  and formId != ''">#{formId},</if>
+            <if test="infSysCount != null  and infSysCount != ''">#{infSysCount},</if>
+            <if test="infFuncInterruptType != null  and infFuncInterruptType != ''">#{infFuncInterruptType},</if>
+            <if test="changeType != null  and changeType != ''">#{changeType},</if>
+            <if test="changePlanTime != null  and changePlanTime != ''">#{changePlanTime},</if>
+            <if test="changeImplTime != null  and changeImplTime != ''">#{changeImplTime},</if>
+            <if test="backTime != null  and backTime != ''">#{backTime},</if>
+            <if test="backPlanFlag != null  and backPlanFlag != ''">#{backPlanFlag},</if>
+            <if test="referDeptCount != null  and referDeptCount != ''">#{referDeptCount},</if>
+            <if test="softwareChangeType != null  and softwareChangeType != ''">#{softwareChangeType},</if>
+            <if test="appChangeType != null  and appChangeType != ''">#{appChangeType},</if>
+            <if test="referSys != null ">#{referSys},</if>
+            <if test="currentLevel != null  and currentLevel != ''">#{currentLevel},</if>
+        </trim>
+    </insert>
+
+    <update id="updateRiskAssessment" parameterType="RiskAssessment">
+        update design_biz_risk_assessment
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="riskLevel != null ">riskLevel = #{riskLevel},</if>
+            <if test="infSysCount != null  and infSysCount != ''">infSysCount = #{infSysCount},</if>
+            <if test="infFuncInterruptType != null  and infFuncInterruptType != ''">infFuncInterruptType =
+                #{infFuncInterruptType},
+            </if>
+            <if test="changeType != null  and changeType != ''">changeType = #{changeType},</if>
+            <if test="changePlanTime != null  and changePlanTime != ''">changePlanTime = #{changePlanTime},</if>
+            <if test="changeImplTime != null  and changeImplTime != ''">changeImplTime = #{changeImplTime},</if>
+            <if test="backTime != null  and backTime != ''">backTime = #{backTime},</if>
+            <if test="backPlanFlag != null  and backPlanFlag != ''">backPlanFlag = #{backPlanFlag},</if>
+            <if test="referDeptCount != null  and referDeptCount != ''">referDeptCount = #{referDeptCount},</if>
+            <if test="softwareChangeType != null  and softwareChangeType != ''">softwareChangeType =
+                #{softwareChangeType},
+            </if>
+            <if test="appChangeType != null  and appChangeType != ''">appChangeType = #{appChangeType},</if>
+            <if test="referSys != null ">referSys = #{referSys},</if>
+            <if test="currentLevel != null  and currentLevel != ''">currentLevel=#{currentLevel},</if>
+        </trim>
+        where formId = #{formId}
+    </update>
+
+    <delete id="deleteRiskAssessmentById" parameterType="String">
+        delete from design_biz_risk_assessment where formId = #{formId}
+    </delete>
+
+    <delete id="deleteRiskAssessmentByIds" parameterType="String">
+        delete from design_biz_risk_assessment where formId in
+        <foreach item="formId" collection="array" open="(" separator="," close=")">
+            #{formId}
+        </foreach>
+    </delete>
+
+</mapper>

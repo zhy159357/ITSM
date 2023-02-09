@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<th:block th:include="include :: header('字典类型列表')" />
+</head>
+<body class="gray-bg">
+<div class="container-div">
+	<div class="row">
+		<div class="col-sm-6">
+			<div class="container-div">
+				<div class="row">
+					<div class="col-sm-12 search-collapse">
+						<form id="type-form">
+							<div class="select-list">
+								<ul>
+									<li>
+										参数项代码：<input type="text" id="paraNameTwo" name="paraName"/><!--字典名称：<input type="text" name="dictName"/>-->
+									</li>
+									<li>
+										参数项名称：<input type="text" id="paraExplainTwo" name="paraExplain"/><!--字典类型：<input type="text" name="dictType"/>-->
+									</li>
+									<li>
+										<a class="btn btn-primary btn-rounded btn-sm" id="ss" onclick="$.table.search('type-form','bootstrap-table')"><i class="fa fa-search"></i>&nbsp;搜索</a>
+										<a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset('','bootstrap-table')"><i class="fa fa-repeat"></i>&nbsp;重置</a>
+									</li>
+								</ul>
+							</div>
+						</form>
+					</div>
+
+					<div class="btn-group-sm" id="toolbar" role="group">
+						<a class="btn btn-success" onclick="$.operate.add()">
+							<i class="fa fa-plus"></i> 新增
+						</a>
+						<a class="btn btn-primary single disabled" onclick="$.operate.edit()" >
+							<i class="fa fa-edit"></i> 修改
+						</a>
+
+			                <!--jf  2020.6.15-->
+						<a class="btn btn-info" onclick="$.table.importExcel()">
+							<i class="fa fa-upload"></i> 导入
+						</a>
+
+					</div>
+
+					<div class="col-sm-12 select-table table-striped">
+						<table id="bootstrap-table"></table>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="col-sm-6">
+			<div class="container-div">
+				<div class="row">
+					<div class="col-sm-12 search-collapse">
+						<form id="data-form">
+							<input type="hidden" name="paraId" id="paraId">
+							<div class="select-list">
+								<ul>
+									<li>
+										参数值代码：<input type="text" id="valueTwo" name="value"/>
+									</li>
+									<li>
+										参数值名称：<input type="text" id="valueDetailTwo" name="valueDetail"/>
+									</li>
+									<li>
+										<a class="btn btn-primary btn-rounded btn-sm" id="sss" onclick="$.table.search('data-form','bootstrap-table-data')"><i class="fa fa-search"></i>&nbsp;搜索</a>
+										<a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset('data-form','bootstrap-table-data')"><i class="fa fa-repeat"></i>&nbsp;重置</a>
+									</li>
+								</ul>
+							</div>
+						</form>
+					</div>
+
+					<div class="btn-group-sm" id="data_toolbar" role="group">
+						<a class="btn btn-success" onclick="validatePubPara()" >
+							<i class="fa fa-plus"></i> 新增
+						</a>
+						<a class="btn btn-primary single disabled" onclick="$.operate.edit()" >
+							<i class="fa fa-edit"></i> 修改
+						</a>
+						<a class="btn btn-danger single disabled" onclick="$.operate.removeAll()" >
+							<i class="fa fa-trash"></i> 删除
+						</a>
+					</div>
+
+					<div class="col-sm-12 select-table table-striped">
+						<table id="bootstrap-table-data"></table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<th:block th:include="include :: footer" />
+<script th:inline="javascript">
+
+
+	var editFlag = [[${@permission.hasPermi('system:dict:edit')}]];
+	var listFlag = [[${@permission.hasPermi('system:dict:list')}]];
+	var removeFlag = [[${@permission.hasPermi('system:dict:remove')}]];
+	var datas = [[${@dict.getParaType('paraState')}]];
+	var prefix = ctx + "system/dict";
+	var dataprefix = ctx+ "system/dict/data"
+
+	var formtype ='0';
+
+	$(function () {
+		Onefirst();
+		Twofirst();
+
+		$('#paraNameTwo').focus(function(){
+			formtype = '2';
+		});
+		$('#paraExplainTwo').focus(function(){
+			formtype = '2';
+		});
+		$('#valueTwo').focus(function(){
+			formtype = '1';
+		});
+		$('#valueDetailTwo').focus(function(){
+			formtype = '1';
+		});
+
+	})
+
+	function Onefirst(){
+		formtype = '2';
+		//回车搜索
+		document.onkeydown = function(e){
+			var ev = document.all ? window.event : e;
+			console.log(ev);
+			if(ev.keyCode==13) {
+				if(formtype == '1'){
+					$('#sss').trigger('click');
+				}
+				if(formtype == '2'){
+					$('#ss').trigger('click');
+				}
+				return false;
+			} //搜索逻辑
+		}
+		var data_options = {
+			id:'bootstrap-table-data',
+			url: dataprefix + "/list",
+			createUrl: dataprefix + "/add/{id}",
+			updateUrl: dataprefix + "/edit/{id}",
+			// @author jf -- 2022.6.15
+			importUrl: prefix + "/importData",
+
+			removeUrl: dataprefix + "/remove",
+			exportUrl: dataprefix + "/export",
+
+			toolbar: 'data_toolbar',
+			sortName: "serail",
+			sortOrder: "asc",
+			clickToSelect:true,
+			singleSelect:true,
+			modalName: "数据",
+			columns: [{
+				checkbox: true
+			},
+				{
+					field: 'paraValueId',
+					title: '参数值编码',
+					visible:false
+				},
+				{
+					field: 'value',
+					title: '参数值代码'
+				},
+				{
+					field: 'valueDetail',
+					title: '参数值名称'
+				},
+				{
+					field: 'paraExplain',
+					title: '所属参数项'
+				},
+				{
+					field: 'serail',
+					title: '顺序'
+				}]
+		};
+		$.table.init(data_options);
+
+
+	}
+
+	function Twofirst(){
+		formtype = '2';
+		//回车搜索
+		document.onkeydown = function(e){
+			var ev = document.all ? window.event : e;
+			console.log(ev);
+			if(ev.keyCode==13) {
+				if(formtype == '1'){
+					$('#sss').trigger('click');
+				}
+				if(formtype == '2'){
+					$('#ss').trigger('click');
+				}
+				return false;
+			} //搜索逻辑
+		}
+		var options = {
+			url: prefix + "/list",
+			createUrl: prefix + "/add",
+			updateUrl: prefix + "/edit/{id}",
+			removeUrl: prefix + "/remove",
+			exportUrl: prefix + "/export",
+			importUrl: prefix + "/importData",
+
+
+			toolbar:'toolbar',
+			/*sortName: "dictId",
+			sortOrder: "asc",*/
+			clickToSelect:true,
+			singleSelect:true,
+			modalName: "类型",
+			onCheck: function(row){
+				$("#paraId").val(row.paraId);
+				$.table.search('data-form','bootstrap-table-data')
+
+			},
+			onUncheck: function(){
+				$("#paraId").val('');
+				$.table.search('data-form','bootstrap-table-data')
+			},
+			columns: [{
+				checkbox: true
+			},
+				{
+					field: 'paraId',
+					title:'参数项Id',
+					visible:false
+				},
+				{
+					field: 'paraName',
+					title:'参数项代码'
+				},
+				{
+					field: 'paraExplain',
+					title: '参数项名称'
+				},
+				{
+					field: 'state',
+					title: '状态',
+					align: 'center',
+					formatter: function(value, row, index) {
+						return value==1?'启用':'禁用';
+					}
+				},
+				{
+					field: 'enable',
+					title: '自定义表单配置',
+					align: 'center',
+					formatter: function(value, row, index) {
+						return value==1?'是':'否';
+					}
+				}]
+		};
+		$.table.init(options);
+	}
+
+
+	function validatePubPara() {
+		var isHasCheck = false;
+		$("#bootstrap-table").find("tr>td").find("input[type='checkbox']").each(function (index,obj) {
+			if($(obj).prop('checked')){
+				isHasCheck = true;
+
+			}
+		})
+		if(isHasCheck){
+			$.operate.add($("#paraId").val());
+		}else{
+			$.modal.alert("添加参数值必须选择参数项!");
+		}
+	}
+
+	/** 清理字典缓存 */
+	function clearCache() {
+		$.operate.get(prefix + "/clearCache");
+	}
+</script>
+<!--@author jf 2022.6.15-->
+<!-- 导入区域 -->
+<script id="importTpl" type="text/template">
+	<form enctype="multipart/form-data" class="mt20 mb10">
+		<div class="col-xs-offset-1">
+			<input type="file" id="file" name="file"/>
+			<font color="red" class="pull-left mt10">
+				提示：仅允许导入“xls”或“xlsx”格式文件！
+			</font>
+		</div>
+	</form>
+</script>
+</body>
+</html>

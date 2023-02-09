@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:margin-top="http://www.w3.org/1999/xhtml">
+<head>
+    <th:block th:include="include :: header('新增3环境单')"/>
+    <th:block th:include="include :: ztree-css"/>
+    <th:block th:include="include :: footer"/>
+    <th:block th:include="include :: ztree-js"/>
+    <th:block th:include="include :: select2-css"/>
+    <th:block th:include="include :: select2-js"/>
+    <th:block th:include="include :: jquery-cxselect-js"/>
+    <th:block th:include="include :: bootstrap-fileinput-js"/>
+    <th:block th:include="include :: datetimepicker-js"/>
+    <th:block th:include="include :: datetimepicker-css"/>
+
+
+</head>
+<body class="white-bg">
+<div id="accountDiv">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form class="form-horizontal m" id="form-issue-add">
+            <input id="issuefxId" name="issuefxId" type="hidden" th:value="${issuefxId}"/>
+            <h4 class="form-header h4">基本信息</h4>
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label is-required">环境单号：</label>
+                        <div class="col-sm-8">
+                            <input class="form-control" type="text" name="workNum" id="workNum" th:value="*{issuefxNo}"
+                                   readonly>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label is-required"> 标题：</label>
+                        <div class="col-sm-8">
+                            <input name="title" id="title" class="form-control" type="text" maxlength="11"
+                                   th:value="${createrPhone}" required>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label is-required">所属应用系统：</label>
+                        <div class="col-sm-8">
+                            <input id="sysid" name="sysid" type="hidden" class="form-control"/>
+                            <input id="applicationName" name="appSystem" type="text" class="form-control"
+                                   th:value="*{appSystem}"
+                                   onclick="selectOgSysListByCondition()" required readonly
+                                   style="background-color: #fdfdfd"/>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!--                <div class="col-sm-6">-->
+                <!--                    <div class="form-group">-->
+                <!--                        <label class="col-sm-4 control-label is-required">应用系统：</label>-->
+                <!--                        <div class="col-sm-8">-->
+                <!--                            <select id="appSystem" name="appSystem" class="form-control"-->
+                <!--                                    th:with="issueFenleis=${@pubParaValue.selectPubParaValueByParaName('WT_FENLEI')}"-->
+                <!--                                    onchange="getFmKindOneList()" required>-->
+                <!--                                <option value="">请选择</option>-->
+                <!--                                <option th:each="itype : ${issueFenleis}" th:text="${itype.valueDetail}"-->
+                <!--                                        th:value="${itype.value}" th:selected="${itype.value==issueFenlei}"></option>-->
+                <!--                            </select>-->
+                <!--                        </div>-->
+                <!--                    </div>-->
+                <!--                </div>-->
+
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label is-required">工单类型：</label>
+                        <div class="col-sm-8">
+                            <input name="workType" id="workType" class="form-control" type="text" maxlength="11"
+                                   th:value="环境搭建" required readonly>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label is-required">工单状态：</label>
+                        <div class="col-sm-8">
+                            <input class="form-control" type="text" name="workState" id="workState" th:value="新建"
+                                   readonly>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label is-required">项目编号：</label>
+                        <div class="col-sm-8">
+                            <input name="projectNum" id="projectNum" class="form-control" type="text" maxlength="11"
+                                   th:value="${createrPhone}" required>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label is-required">需求编号：</label>
+                        <div class="col-sm-8">
+                            <input name="demandNum" id="demandNum" class="form-control" type="text" maxlength="11"
+                                   th:value="${createrPhone}" required>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label is-required">接口人：</label>
+                        <div class="col-sm-8">
+<!--                            <select id="contact" name="contact" class="form-control"-->
+<!--                                    th:with="issueFenleis=${@pubParaValue.selectPubParaValueByParaName('WT_FENLEI')}"-->
+<!--                                    onchange="getFmKindOneList()" required>-->
+<!--                                <option value="">请选择</option>-->
+<!--                                <option th:each="itype : ${issueFenleis}" th:text="${itype.valueDetail}"-->
+<!--                                        th:value="${itype.value}" th:selected="${itype.value==issueFenlei}"></option>-->
+<!--                            </select>-->
+                            <select name="contact" id="contact" class="form-control" th:with="type=${@iOgPersonService.selectOgPersonByDeptId('310200193')}" required>
+                                <option value=""></option>
+                                <option th:each="paraValue : ${type}" th:text="${paraValue.pName}" th:value="${paraValue.pId}"></option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!--                <div class="col-sm-6">-->
+                <!--                    <div class="form-group">-->
+                <!--                        <label class="col-sm-4 control-label is-required">审批人：</label>-->
+                <!--                        <div class="col-sm-8">-->
+                <!--                            <select id="approver" name="approver" class="form-control"-->
+                <!--                                    th:with="issueFenleis=${@pubParaValue.selectPubParaValueByParaName('WT_FENLEI')}"-->
+                <!--                                    onchange="getFmKindOneList()" required>-->
+                <!--                                <option value="">请选择</option>-->
+                <!--                                <option th:each="itype : ${issueFenleis}" th:text="${itype.valueDetail}"-->
+                <!--                                        th:value="${itype.value}" th:selected="${itype.value==issueFenlei}"></option>-->
+                <!--                            </select>-->
+                <!--                        </div>-->
+                <!--                    </div>-->
+                <!--                </div>-->
+
+            </div>
+
+
+
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="form-group">
+                        <label class="col-xs-2 control-label">工单内容：</label>
+                        <div class="col-xs-10">
+                            <textarea name="workContent" maxlength="512" th:text="*{dealDescription}"
+                                      class="form-control" rows="5"></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="row">
+                <div class="col-sm-offset-5 col-sm-10">
+                    <button type="button" class="btn btn-sm btn-primary" onclick="submitHandler(1)"><i
+                            class="fa fa-check"></i>保 存
+                    </button>&nbsp;
+                    <button type="button" class="btn btn-sm btn-danger" onclick="closeItem()"><i
+                            class="fa fa-window-close"></i>关 闭
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<script th:src="@{/js/activiti.js}"></script>
+<script th:src="@{/js/issue.js}"></script>
+<script th:inline="javascript">
+    //	var userId = [[${userId}]];
+    var datas = [[${@pubParaValue.selectPubParaValueByParaName('fmStatus')}]];
+    var eventLevel = [[${@pubParaValue.selectPubParaValueByParaName('dhsj_sjdj')}]];
+    var eventType = [[${@pubParaValue.selectPubParaValueByParaName('YXSJ_TYPE')}]];
+    var eventStatus = [[${@pubParaValue.selectPubParaValueByParaName('Event_status')}]];
+    var eventSource = [[${@pubParaValue.selectPubParaValueByParaName('fmSource')}]];
+    var changeCategoryId_datas = [[${@pubParaValue.selectPubParaValueByParaName('cm_CateGory')}]];
+    var changeSingleStatus = [[${@pubParaValue.selectPubParaValueByParaName('cmsj_status')}]];
+    var eventSourceDatas = [[${@dict.getParaType('fmSource')}]];
+    var changeTypeV = [[${@pubParaValue.selectPubParaValueByParaName('change_type')}]];
+    var changeStatusV = [[${@pubParaValue.selectPubParaValueByParaName('changeSingleStatus')}]];
+    var editFlag = "";
+    var prefix = ctx + "twWorkOrder";
+    var prefix_single = ctx + "system/single";
+    var prefix_version = ctx + "fmbiz";
+    $(function () {
+        $("#reporttime").datetimepicker({
+            format: "yyyy-mm-dd hh:ii:ss",
+            autoclose: true,
+            minView: 0,
+            minuteStep: 1,
+            endDate: new Date()
+        });
+        $("#fenLeiOne").hide();
+        $("#fenLeiTwo").hide();
+    });
+    /*	$(".isInside").bind("click", function (e) {
+            $(e.target).closest("li").next().find(".checkpf").prop("checked", "checked");
+        })*/
+    $("input[name='isInside']").on("click", function () {
+        clearMultiusers();
+        var value = $(this).val();
+        if ("0" == value) {
+            $("#putUnitDiv").val('');
+            $("#putUnitDiv").hide();
+            $("#multiusersName").removeAttr("required");
+            $("#pingguLabel").removeClass("is-required");
+            var businessOrgIds = document.getElementsByName('businessOrg');
+            console.log(businessOrgIds);
+            for (var i = 0; i < businessOrgIds.length + 1; i++) {
+                //业务部门
+                $("#businessOrg" + i).attr("required", "true");
+                $("#busDept" + i).addClass("is-required");
+                $("#businessId" + i).attr("required", "true");
+                $("#busUser" + i).addClass("is-required");
+            }
+            //技术经理
+            $("#auditName").attr("required", "true");
+            $("#audit").addClass("is-required");
+        }
+        if ("1" == value) {
+            $("#putUnitDiv").show();
+            $("#multiusersName").attr("required", "true");
+            $("#pingguLabel").addClass("is-required");
+            var businessOrgIds = document.getElementsByName('businessOrg');
+            console.log(businessOrgIds);
+            for (var i = 0; i < businessOrgIds.length + 1; i++) {
+                //业务部门
+                $("#businessOrg" + i).removeAttr("required");
+                $("#busDept" + i).removeClass("is-required");
+                $("#businessId" + i).removeAttr("required");
+                $("#busUser" + i).removeClass("is-required");
+            }
+            //技术经理
+            $("#auditName").removeAttr("required", "true");
+            $("#audit").removeClass("is-required");
+        }
+    })
+
+    // 选择应用系统多选
+    function selectOneApplication() {
+        $.modal.open("选择应用系统", prefix_single + "/selectOneApplication");
+    }
+
+    // 选择应用系统（只能单选）
+    function selectOgSysListByCondition() {
+        $.modal.open("选择应用系统", prefix + "/sysGrouplist");
+    }
+    //根据系统查询工作组
+    function getGroupList(sysid) {
+    }
+    // 选择应用系统多选
+    function selectWTD() {
+        $.modal.open("关联问题单", prefix + "/selectOneApplication");
+    }
+
+
+
+    function changeleve(value) {
+        if (value == "99") {
+            $("#seriousLev").attr("style", "");
+            $("#seriousLev").attr("readonly", false);
+        } else if (value == "10" || value == "11" || value == "12") {
+            $("#seriousLev").val("2");
+            $("#seriousLev").attr("style", "pointer-events:none");
+            $("#seriousLev").attr("readonly", true);
+        } else {
+            $("#seriousLev").val("3");
+            $("#seriousLev").attr("style", "pointer-events:none");
+            $("#seriousLev").attr("readonly", true);
+        }
+    }
+
+    function submitHandler(type) {
+        if (!$.validate.form()) {
+            $.modal.alertWarning("参数填写不全，请继续填写");
+            return;
+        }
+        //saveAllSheet();
+        $('#status').val(type);
+        var data = $("#form-issue-add").serializeArray();
+        console.log(data);
+        $.operate.saveTab(prefix + "/addSave", data);
+        // if (0 == type) {
+        // 	$.operate.saveTab(prefix + "/add", data);
+        // } else {
+        // 	if(!$.validate.form()) {
+        // 		$.modal.alertWarning("参数填写不全，请继续填写！");
+        // 		return;
+        // 	}
+        // 	$.operate.saveTab(ctx+"issueList/activiti/startProcess", data);
+        // }
+    }
+
+    function getMultiusers() {
+        var url = prefix + "/multiusers/0"
+        $.modal.open("选择协同评估人", url);
+    }
+
+    /*选择技术经理*/
+    function getReviewerId() {
+        var userIds = $("#reviewerId").val();
+        if ($.common.isEmpty(userIds)) {
+            userIds = "0";
+        }
+        var url = prefix + "/reviewer/" + userIds;
+        $.modal.open("选择审核人", url);
+    }
+
+    /*选择技术经理*/
+    function getAuditId() {
+        var userIds = $("#auditId").val();
+        if ($.common.isEmpty(userIds)) {
+            userIds = "0";
+        }
+        var url = prefix + "/audit/" + userIds;
+        $.modal.open("选择技术经理", url);
+    }
+
+    var enuParam_index = 1;
+
+
+    function remove() {
+        var enuParam = document.getElementById("enuParam" + (enuParam_index - 1));
+        if (enuParam_index == 1) {
+            $.modal.alertWarning("至少保留一个！");
+        } else {
+            enuParam.parentNode.removeChild(enuParam);
+            enuParam_index--;
+        }
+
+    }
+
+
+    //转问题单直接保存
+    function saveAllSheet() {
+        var obj1 = '';
+        var obj1Type = '';
+        <!--业务事件单-->
+        if ($("#fmNo").val() != "" && $("#fmNo").val() != null) {
+            obj1 = $("#fmNo").val();
+            obj1Type = '14';
+        }
+        <!--监控事件单-->
+        if ($("#fmjkNo").val() != "" && $("#fmjkNo").val() != null) {
+            obj1 = $("#fmjkNo").val();
+            obj1Type = '13';
+        }
+        <!--数据变更单-->
+        if ($("#cmNo").val() != "" && $("#cmNo").val() != null) {
+            obj1 = $("#cmNo").val();
+            obj1Type = '16';
+        }
+        <!--隐患排查单-->
+        if ($("#csNo").val() != "" && $("#csNo").val() != null) {
+            obj1 = $("#csNo").val();
+            obj1Type = '15';
+        }
+        if (obj1 != '' && obj1Type != '') {
+            var data = new Array();
+            data.push({name: 'obj1Id', value: obj1});
+            data.push({name: 'obj2Id', value: $("#issuefxId").val()});
+            data.push({name: 'type', value: obj1Type});
+            $.operate.save(ctx + "system/relation/add", data);
+        }
+    }
+
+    function orgPer(obj, type) {
+        var options = "<option value=''>请选择</option>";
+        var orgId = obj.value;
+        if ($.common.isEmpty(orgId)) {
+            if (-1 == type) {
+                $("#reviewerId").html("");
+                $("#reviewerId").append(options);
+
+            } else if (0 == type) {
+                var id = obj.id;
+                var num = id.match(/businessOrg(\S*)/)[1];
+                $("#businessId" + num).html("");
+                $("#businessId" + num).append(options);
+            } else {
+                $("#businessId" + type).html("");
+                $("#businessId" + type).append(options);
+            }
+            return;
+        }
+
+        $.ajax({
+            cache: true,
+            type: "POST",
+            url: prefix + "/orgPer",
+            data: {
+                "orgId": orgId,
+                "type": type
+            },
+            async: false,
+            error: function (request) {
+                $.modal.alertError("系统错误");
+            },
+            success: function (data) {
+                if (-1 == type) {
+                    $("#reviewerId").html("");
+                    for (var ak = 0; ak < data.length; ak++) {
+                        options += "<option value='" + data[ak].pId + "'>" + data[ak].pName + "</option> \n";
+                    }
+                    $("#reviewerId").append(options);
+
+                } else if (0 == type) {
+                    var id = obj.id;
+                    var num = id.match(/businessOrg(\S*)/)[1];
+                    $("#businessId" + num).html("");
+                    for (var ak = 0; ak < data.length; ak++) {
+                        options += "<option value='" + data[ak].pId + "'>" + data[ak].pName + "</option> \n";
+                    }
+                    $("#businessId" + num).append(options);
+                } else {
+                    $("#businessId" + type).html("");
+                    for (var ak = 0; ak < data.length; ak++) {
+                        options += "<option value='" + data[ak].pId + "'>" + data[ak].pName + "</option> \n";
+                    }
+                    $("#businessId" + type).append(options);
+                }
+            }
+        });
+    }
+
+    function clearMultiusers() {
+        $("#multiusers").val("");
+        $("#multiusersName").val("");
+    }
+
+    //加载一级分类
+    function getFmKindOneList() {
+        var issueFenlei = $("#issueFenlei").val();
+        var parentId = 'WTD0001';
+        if ('6' == issueFenlei || '3' == issueFenlei) {
+            $("#fenLeiOne").show();
+            $("#fenLeiTwo").show();
+            if ('6' == issueFenlei) {
+                $("#tardingNameDiv").show();
+                parentId = 'WTD0002';
+            } else {
+                $("#tardingNameDiv").hide();
+                $("#tardingName").val('');
+            }
+            $.ajax({
+                cache: true,
+                type: "POST",
+                url: prefix + "/selectFmKindBySysidForWTD",
+                data: {
+                    "category": "1",
+                    "parentId": parentId
+                },
+                async: false,
+                success: function (data) {
+                    var options = "<option value=''>请选择</option>";
+                    $("#oneType").html("");
+                    for (var ak = 0; ak < data.rows.length; ak++) {
+                        options += "<option value='" + data.rows[ak].id + "'>" + data.rows[ak].name + "</option> \n";
+                    }
+                    $("#oneType").append(options);
+                }
+            });
+            $("#twoType").html("");
+            $("#twoType").append("<option value=''>请选择</option>");
+            $("#threeType").html("");
+            $("#threeType").append("<option value=''>请选择</option>");
+        } else {
+            $("#fenLeiOne").hide();
+            $("#fenLeiTwo").hide();
+            $("#oneType").html("");
+            $("#twoType").html("");
+            $("#threeType").html("");
+            $("#tardingName").val('');
+        }
+    }
+
+    //根据一级分类查询二级分类
+    function getFmKindTwoList() {
+        var parentId = $("#oneType").val();
+        if (parentId) {
+            $.ajax({
+                cache: true,
+                type: "POST",
+                url: prefix + "/selectFmKindBySysidForWTD",
+                data: {
+                    "category": "2",
+                    "parentId": parentId
+                },
+                async: false,
+                success: function (data) {
+                    var options = "<option value=''>请选择</option>";
+                    $("#twoType").html("");
+                    for (var ak = 0; ak < data.rows.length; ak++) {
+                        options += "<option value='" + data.rows[ak].id + "'>" + data.rows[ak].name + "</option> \n";
+                    }
+                    $("#twoType").append(options);
+                }
+            });
+        }
+        $("#threeType").html("");
+        $("#threeType").append("<option value=''>请选择</option>");
+    }
+
+    //根据二级分类查询三级分类
+    function getFmKindThreeList() {
+        var parentId = $("#twoType").val();
+        if (parentId) {
+            $.ajax({
+                cache: true,
+                type: "POST",
+                url: prefix + "/selectFmKindBySysidForWTD",
+                data: {
+                    "category": "3",
+                    "parentId": parentId
+                },
+                async: false,
+                success: function (data) {
+                    var options = "<option value=''>请选择</option>";
+                    $("#threeType").html("");
+                    for (var ak = 0; ak < data.rows.length; ak++) {
+                        options += "<option value='" + data.rows[ak].id + "'>" + data.rows[ak].name + "</option> \n";
+                    }
+                    $("#threeType").append(options);
+                }
+            });
+        }
+    }
+</script>
+</body>
+</html>

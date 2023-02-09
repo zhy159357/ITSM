@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.SysBindMapper">
+
+    <resultMap type="sysBind" id="SysBindResult">
+        <id property="id" column="id"/>
+        <result property="ip" column="ip"/>
+        <result property="telbankid" column="telbankid"/>
+        <result property="extensnum" column="extensnum"/>
+        <result property="jobnum" column="jobnum"/>
+        <result property="creater" column="creater"/>
+        <result property="datetime" column="datetime"/>
+        <result property="status" column="status"/>
+        <result property="del_flag" column="del_flag"/>
+    </resultMap>
+
+    <sql id="selectBindVo">
+		SELECT ID, IP, TELBANKID, EXTENSNUM, JOBNUM, CREATER,DATETIME,STATUS,DEL_FLAG FROM SYS_USER_BIND
+	</sql>
+
+    <select id="selectBindList" parameterType="SysBind" resultMap="SysBindResult">
+        <include refid="selectBindVo"/>
+        where del_flag = 0
+        <if test="ip != null and ip != ''">
+            and ip like concat(concat('%',#{ip}),'%')
+        </if>
+        <if test="telbankid != null and telbankid != ''">
+            and telbankid like concat(concat('%',#{telbankid}),'%')
+        </if>
+        <if test="extensnum != null and extensnum != ''">
+            and extensnum like concat(concat('%',#{extensnum}),'%')
+        </if>
+        <if test="jobnum != null and jobnum != ''">
+            and jobnum like concat(concat('%',#{jobnum}),'%')
+        </if>
+    </select>
+
+    <select id="selectById" parameterType="Long" resultMap="SysBindResult">
+        <include refid="selectBindVo"/>
+        where del_flag = 0
+        and id = #{id}
+    </select>
+
+    <select id="checkBindNameUnique" parameterType="String" resultMap="SysBindResult">
+        <include refid="selectBindVo"/>
+        where del_flag = 0
+        and ip=#{ip}
+    </select>
+
+    <delete id="deleteBindById" parameterType="Long">
+ 		delete from SYS_USER_BIND where id = #{id}
+ 	</delete>
+
+    <delete id="deleteBindByIds" parameterType="Long">
+        delete SYS_USER_BIND set del_flag = 1 where id in
+        <foreach collection="array" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <update id="updateBind" parameterType="SysBind">
+        update SYS_USER_BIND
+        <set>
+            <if test="ip != null and ip != ''">ip = #{ip},</if>
+            <if test="telbankid != null and telbankid != ''">telbankid = #{telbankid},</if>
+            <if test="extensnum != null and extensnum != ''">extensnum = #{extensnum},</if>
+            <if test="jobnum != null and jobnum != ''">jobnum = #{jobnum},</if>
+            creater = #{creater},
+            datetime = sysdate
+        </set>
+        where id = #{id}
+    </update>
+
+    <insert id="insertBind" parameterType="com.ruoyi.common.core.domain.entity.SysBind" useGeneratedKeys="false"
+            keyProperty="id">
+        insert into SYS_USER_BIND(
+        id,
+        <if test="ip != null and ip != ''">ip,</if>
+        <if test="telbankid != null and telbankid != ''">telbankid,</if>
+        <if test="extensnum != null and extensnum != ''">extensnum,</if>
+        <if test="jobnum != null and jobnum != ''">jobnum,</if>
+        creater ,datetime,del_flag
+        )values(
+        seq_SYS_USER_BIND.nextval,
+        <if test="ip != null and ip != ''">#{ip},</if>
+        <if test="telbankid != null and telbankid != ''">#{telbankid},</if>
+        <if test="extensnum != null and extensnum != ''">#{extensnum},</if>
+        <if test="jobnum != null and jobnum != ''">#{jobnum},</if>
+        #{creater},sysdate,0
+        )
+    </insert>
+
+</mapper>

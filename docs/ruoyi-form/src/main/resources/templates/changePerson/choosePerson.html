@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('选择协同评估人')"/>
+</head>
+<body class="gray-bg">
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-12 search-collapse">
+            <form id="account-form">
+                <div class="select-list">
+                    <ul>
+                        <input type="hidden" name="type" th:value="${type}">
+                        <li>
+                            姓名：<input type="text" name="pname"/>
+                        </li>
+                        <li>
+                            所属机构：<input type="text" name="orgname">
+                        </li>
+                        <li>
+                            <a class="btn btn-primary btn-rounded btn-sm" id="searchBut" onclick="$.table.search()"><i
+                                    class="fa fa-search"></i>&nbsp;搜索</a>
+                            <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i
+                                    class="fa fa-refresh"></i>&nbsp;重置</a>
+                        </li>
+                    </ul>
+                </div>
+            </form>
+        </div>
+
+        <div class="col-sm-12 select-table table-striped">
+            <table id="bootstrap-table"></table>
+        </div>
+    </div>
+</div>
+<th:block th:include="include :: footer"/>
+<script th:inline="javascript">
+    var putUnitDiv = [[${putUnitDiv}]];
+    var type = [[${type}]];
+    var url = ctx + "changePerson/selectMultiusers";
+    $(function () {
+        // 回车键搜索
+        document.onkeydown = function (e) {
+            var ev = document.all ? window.event : e;
+            if (ev.keyCode == 13) {
+                $('#searchBut').trigger('click');
+                return false;
+            }
+        };
+        var options = {
+            url: url,
+            singleSelect: true,
+            clickToSelect: true,
+            sortable: false,
+            modalName: "评估人",
+            columns: [{
+                field: 'state',
+                checkbox: true
+            },
+                {
+                    field: 'pId',
+                    title: '人员ID',
+                    visible: false
+                },
+                {
+                    field: 'pname',
+                    title: '姓名'
+                },
+                {
+                    field: 'sex',
+                    title: '性别',
+                    formatter: function (value, row, index) {
+                        if (value == '2') {
+                            return '未知';
+                        }
+                        return value == '1' ? '男' : '女';
+                    }
+                },
+                {
+                    field: 'mobilPhone',
+                    title: '联系方式'
+                },
+                {
+                    field: 'orgname',
+                    title: '所属机构'
+                }]
+        };
+        if ("1" == putUnitDiv) {
+            //选择运行值班
+            options.singleSelect = true;
+            options.rememberSelected = false;
+        }
+        $.table.init(options);
+    });
+
+    function submitHandler() {
+        var userName = $.table.selectColumns('pname');
+        var userId = $.table.selectColumns('pId');
+        if(type == "1"){
+            parent.$("#deptPersonName").val(userName);
+            parent.$("#deptPerson").val(userId);
+            parent.$("#userId").val(userId);
+        }else if(type == "2"){
+            parent.$("#deptLeaderPersonName").val(userName);
+            parent.$("#deptLeaderPerson").val(userId);
+        }else{
+            parent.$("#userAccount").val(userName);
+            parent.$("#userId").val(userId);
+        }
+        $.modal.close();
+    }
+</script>
+</body>
+</html>

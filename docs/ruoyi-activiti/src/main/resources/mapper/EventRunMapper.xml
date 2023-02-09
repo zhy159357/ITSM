@@ -1,0 +1,863 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.activiti.mapper.EventRunMapper">
+
+    <resultMap type="EventRun" id="EventRunResult">
+        <result property="eventId"    column="event_id"    />
+        <result property="eventTitle"    column="event_title"    />
+        <result property="eventNo"    column="event_no"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="closeTime"    column="close_time"    />
+        <result property="eventDescr"    column="event_descr"    />
+        <result property="appSystemCode"    column="app_system_code"    />
+        <result property="appSystemName"    column="app_system_name"    />
+        <result property="reportSource"    column="report_source"    />
+        <result property="eventSource"    column="event_source"    />
+        <result property="eventLevel"    column="event_level"    />
+        <result property="eventType"    column="event_type"    />
+        <result property="reportTime"    column="report_time"    />
+        <result property="affiliatedCenter"    column="affiliated_center"    />
+        <result property="handleRoles"    column="handle_roles"    />
+        <result property="sysAttendant"    column="sys_attendant"    />
+        <result property="webAttendant"    column="web_attendant"    />
+        <result property="appAttendant"    column="app_attendant"    />
+        <result property="handlePerson"    column="handle_person"    />
+        <result property="handleTime"    column="handle_time"    />
+        <result property="reportReason"    column="report_reason"    />
+        <result property="handleDescr"    column="handle_descr"    />
+        <result property="createId"    column="create_id"    />
+        <result property="requestClob"    column="request_clob"   jdbcType="CLOB" javaType = "java.lang.String" />
+        <result property="status"    column="status"    />
+        <result property="anticipateTime"    column="anticipate_time"    />
+        <result property="chargePerson"    column="charge_person"    />
+        <result property="supplementExplain"    column="supplement_explain"    />
+        <result property="dutyAccount"    column="duty_account"    />
+        <result property="params.description" column="description"/>
+        <result property="params.taskName" column="taskName"/>
+        <result property="params.taskId" column="taskId"/>
+        <result property="params.taskCreateTime" column="taskCreateTime"/>
+    </resultMap>
+
+    <sql id="selectEventRunVo">
+        select distinct event_id,
+        event_title,
+        event_no,
+        to_date(create_time,'YYYY-MM-DD hh24:mi:ss') as create_time,
+        to_date(close_time,'YYYY-MM-DD hh24:mi:ss') as close_time,
+        event_descr,
+        app_system_code,
+        app_system_name,
+        report_source,
+        event_source,
+        event_level,
+        event_type,
+        to_date(report_time,'YYYY-MM-DD hh24:mi:ss') as report_time,
+        affiliated_center,
+        handle_roles,
+        sys_attendant,
+        web_attendant,
+        app_attendant,
+        handle_person,
+        handle_time,
+        report_reason,
+        handle_descr,
+        create_id,
+        status,
+        anticipate_time,
+        charge_person,
+        supplement_explain,
+        duty_account,
+        request_clob
+        from event_run
+    </sql>
+
+    <sql id="selectEventRunVo2">
+        select distinct event_id,
+            event_title,
+            event_no,
+            DATE_FORMAT(create_time,'%Y-%m-%d %H:%i:%s') as create_time,
+            DATE_FORMAT(close_time,'%Y-%m-%d %H:%i:%s') as close_time,
+            event_descr,
+            app_system_code,
+            app_system_name,
+            report_source,
+            event_source,
+            event_level,
+            event_type,
+            DATE_FORMAT(report_time,'%Y-%m-%d %H:%i:%s') as report_time,
+            affiliated_center,
+            handle_roles,
+            sys_attendant,
+            web_attendant,
+            app_attendant,
+            handle_person,
+            handle_time,
+            report_reason,
+            handle_descr,
+            create_id,
+            status,
+            anticipate_time,
+            charge_person,
+            supplement_explain,
+            duty_account,
+            request_clob
+        from event_run
+    </sql>
+
+    <sql id="actEventList">
+        select
+        ru.event_id,
+        ru.event_title,
+        ru.event_no,
+        to_date(ru.create_time,'YYYY-MM-DD hh24:mi:ss') as create_time,
+        to_date(ru.close_time,'YYYY-MM-DD hh24:mi:ss') as close_time,
+        ru.event_descr,
+        ru.app_system_code,
+        ru.app_system_name,
+        ru.report_source,
+        ru.event_source,
+        ru.event_level,
+        ru.event_type,
+        to_date(ru.report_time,'YYYY-MM-DD hh24:mi:ss') as report_time,
+        ru.affiliated_center,
+        ru.handle_roles,
+        ru.sys_attendant,
+        ru.web_attendant,
+        ru.app_attendant,
+        ru.handle_person,
+        ru.handle_time,
+        ru.report_reason,
+        ru.handle_descr,
+        ru.create_id,
+        ru.status,
+        ru.anticipate_time,
+        ru.charge_person,
+        ru.supplement_explain,
+        ru.duty_account,
+        res.DESCRIPTION_ as description,
+        res.name_ as taskName,
+        res.id_ as taskId,
+        to_char(res.create_time_,'YYYY-MM-DD hh24:mi:ss') as taskCreateTime
+        from event_run ru
+        left join act_ru_execution ex on ex.business_key_=ru.event_id
+        left join   act_ru_task res on  ex.proc_inst_id_=res.proc_inst_id_
+        left join act_ru_identitylink i on i.task_id_ = res.id_
+        inner join act_re_procdef d on res.proc_def_id_ =d.id_
+    </sql>
+
+    <sql id="actEventList2">
+        select
+        ru.event_id,
+        ru.event_title,
+        ru.event_no,
+        DATE_FORMAT(ru.create_time,'%Y-%m-%d %H:%i:%s') AS create_time,
+        DATE_FORMAT(ru.close_time,'%Y-%m-%d %H:%i:%s') AS close_time,
+        ru.event_descr,
+        ru.app_system_code,
+        ru.app_system_name,
+        ru.report_source,
+        ru.event_source,
+        ru.event_level,
+        ru.event_type,
+        DATE_FORMAT(ru.report_time,'%Y-%m-%d %H:%i:%s') AS report_time,
+        ru.affiliated_center,
+        ru.handle_roles,
+        ru.sys_attendant,
+        ru.web_attendant,
+        ru.app_attendant,
+        ru.handle_person,
+        ru.handle_time,
+        ru.report_reason,
+        ru.handle_descr,
+        ru.create_id,
+        ru.status,
+        ru.anticipate_time,
+        ru.charge_person,
+        ru.supplement_explain,
+        ru.duty_account,
+        res.DESCRIPTION_ as description,
+        res.name_ as taskName,
+        res.id_ as taskId,
+        DATE_FORMAT(res.create_time_,'%Y-%m-%d %H:%i:%s') AS taskCreateTime
+        from event_run ru
+        left join act_ru_execution ex on ex.business_key_=ru.event_id
+        left join   act_ru_task res on  ex.proc_inst_id_=res.proc_inst_id_
+        left join act_ru_identitylink i on i.task_id_ = res.id_
+        inner join act_re_procdef d on res.proc_def_id_ =d.id_
+    </sql>
+    <select id="selectActEventRunList" parameterType="EventRun" resultMap="EventRunResult">
+        <include refid="actEventList"/>
+        <where>
+            <if test="params.userId !=null and params.userId !=''"> and i.user_id_ = #{params.userId}
+                and i.type_='candidate'  and d.key_='FmYx' and ru.event_id is not null
+            </if>
+            <if test="eventId != null  and eventId != ''"> and ru.event_id =#{eventId}</if>
+            <if test="createId != null  and createId != ''"> and ru.create_id =#{createId}</if>
+            <if test="handlePerson != null  and handlePerson != ''"> ru.and handle_person =#{handlePerson}</if>
+            <if test="eventTitle != null  and eventTitle != ''"> and ru.event_title like concat(concat('%', #{eventTitle}), '%')</if>
+            <if test="eventNo != null  and eventNo != ''"> and ru.event_no like concat(concat('%', #{eventNo}), '%')</if>
+            <if test="params.beginCreateTime != null and params.beginCreateTime != ''">
+                and ru.create_time >=TO_CHAR(TO_DATE( #{params.beginCreateTime},'YYYY-MM-DD HH24:MI:SS'), 'YYYYMMDDHH24MISS')
+            </if>
+            <if test="params.endCreateTime != null and params.endCreateTime != ''">
+                and ru.create_time &lt;=TO_CHAR(TO_DATE( #{params.endCreateTime},'YYYY-MM-DD HH24:MI:SS')+1, 'YYYYMMDDHH24MISS')
+            </if>
+            <if test="params.beginCloseTime != null and params.beginCloseTime != ''">
+                and ru.close_time >=TO_CHAR(TO_DATE( #{params.beginCloseTime},'YYYY-MM-DD HH24:MI:SS'), 'YYYYMMDDHH24MISS')
+            </if>
+            <if test="params.endCloseTime != null and params.endCloseTime != ''">
+                and ru.close_time &lt;=TO_CHAR(TO_DATE( #{params.endCloseTime},'YYYY-MM-DD HH24:MI:SS')+1, 'YYYYMMDDHH24MISS')
+            </if>
+            <if test="eventLevel != null  and eventLevel != ''"> and ru.event_level = #{eventLevel}</if>
+            <if test="eventType != null  and eventType != ''"> and ru.event_type = #{eventType}</if>
+
+            <if test="params.status != null  and params.status != ''"> and ru.status
+                <trim prefix="in (" suffix=")" suffixOverrides=",">
+                    <foreach collection="params.status" item="state">
+                        #{state},
+                    </foreach>
+                </trim>
+
+            </if>
+            <if test="params.appSystemName != null  and params.appSystemName != ''"> and app_system_name
+                <trim prefix="in (" suffix=")" suffixOverrides=",">
+                    <foreach collection="params.appSystemName" item="appSystemName">
+                        #{appSystemName},
+                    </foreach>
+                </trim>
+
+            </if>
+            order by ru.create_time desc
+        </where>
+
+    </select>
+
+
+    <select id="selectActEventRunListMysql" parameterType="EventRun" resultMap="EventRunResult">
+        <include refid="actEventList2"/>
+        <where>
+            <if test="params.userId !=null and params.userId !=''"> and i.user_id_ = #{params.userId}
+                and i.type_='candidate'  and d.key_='FmYx' and ru.event_id is not null
+            </if>
+            <if test="eventId != null  and eventId != ''"> and ru.event_id =#{eventId}</if>
+            <if test="createId != null  and createId != ''"> and ru.create_id =#{createId}</if>
+            <if test="handlePerson != null  and handlePerson != ''"> ru.and handle_person =#{handlePerson}</if>
+            <if test="eventTitle != null  and eventTitle != ''"> and ru.event_title like concat(concat('%', #{eventTitle}), '%')</if>
+            <if test="eventNo != null  and eventNo != ''"> and ru.event_no like concat(concat('%', #{eventNo}), '%')</if>
+            <if test="params.beginCreateTime != null and params.beginCreateTime != ''">
+
+                and ru.create_time >= DATE_FORMAT(#{params.beginCreateTime},'%Y%m%d%H%i%s')
+            </if>
+            <if test="params.endCreateTime != null and params.endCreateTime != ''">
+                and ru.create_time &lt;= DATE_FORMAT(#{params.endCreateTime},'%Y%m%d%H%i%s')
+            </if>
+            <if test="params.beginCloseTime != null and params.beginCloseTime != ''">
+                and ru.close_time >=  DATE_FORMAT(#{params.beginCloseTime},'%Y%m%d%H%i%s')
+            </if>
+            <if test="params.endCloseTime != null and params.endCloseTime != ''">
+                and ru.close_time &lt;= DATE_FORMAT(str_to_date(DATE_ADD(#{params.endCloseTime},INTERVAL 1 DAY),'%Y-%m-%d %H:%i:%s'), '%Y%m%d%H%i%s')
+
+            </if>
+            <if test="eventLevel != null  and eventLevel != ''"> and ru.event_level = #{eventLevel}</if>
+            <if test="eventType != null  and eventType != ''"> and ru.event_type = #{eventType}</if>
+
+            <if test="params.status != null  and params.status != ''"> and ru.status
+                <trim prefix="in (" suffix=")" suffixOverrides=",">
+                    <foreach collection="params.status" item="state">
+                        #{state},
+                    </foreach>
+                </trim>
+
+            </if>
+            <if test="params.appSystemName != null  and params.appSystemName != ''"> and app_system_name
+                <trim prefix="in (" suffix=")" suffixOverrides=",">
+                    <foreach collection="params.appSystemName" item="appSystemName">
+                        #{appSystemName},
+                    </foreach>
+                </trim>
+
+            </if>
+            order by ru.create_time desc
+        </where>
+
+    </select>
+
+    <select id="selectEventRunList" parameterType="EventRun" resultMap="EventRunResult">
+        <include refid="selectEventRunVo"/>
+        <where>
+            1=1
+            <if test="eventId != null  and eventId != ''"> and event_id =#{eventId}</if>
+            <if test="createId != null  and createId != ''"> and create_id =#{createId}</if>
+            <if test="handlePerson != null  and handlePerson != ''"> and handle_person =#{handlePerson}</if>
+            <if test="eventTitle != null  and eventTitle != ''"> and event_title like concat(concat('%', #{eventTitle}), '%')</if>
+            <if test="eventNo != null  and eventNo != ''"> and event_no like concat(concat('%', #{eventNo}), '%')</if>
+            <if test="params.beginCreateTime != null and params.beginCreateTime != ''">
+                and create_time >=TO_CHAR(TO_DATE( #{params.beginCreateTime},'YYYY-MM-DD HH24:MI:SS'), 'YYYYMMDDHH24MISS')
+            </if>
+            <if test="params.endCreateTime != null and params.endCreateTime != ''">
+              and create_time &lt;=TO_CHAR(TO_DATE( #{params.endCreateTime},'YYYY-MM-DD HH24:MI:SS')+1, 'YYYYMMDDHH24MISS')
+            </if>
+            <if test="params.beginCloseTime != null and params.beginCloseTime != ''">
+                and close_time >=TO_CHAR(TO_DATE( #{params.beginCloseTime},'YYYY-MM-DD HH24:MI:SS'), 'YYYYMMDDHH24MISS')
+            </if>
+           <if test="params.endCloseTime != null and params.endCloseTime != ''">
+               and close_time &lt;=TO_CHAR(TO_DATE( #{params.endCloseTime},'YYYY-MM-DD HH24:MI:SS')+1, 'YYYYMMDDHH24MISS')
+            </if>
+            <if test="eventLevel != null  and eventLevel != ''"> and event_level = #{eventLevel}</if>
+            <if test="eventType != null  and eventType != ''"> and event_type = #{eventType}</if>
+            <if test="params.status != null  and params.status != ''"> and status
+                <trim prefix="in (" suffix=")" suffixOverrides=",">
+                    <foreach collection="params.status" item="state">
+                        #{state},
+                    </foreach>
+                </trim>
+
+             </if>
+            <if test="params.appSystemName != null  and params.appSystemName != ''"> and app_system_name
+                <trim prefix="in (" suffix=")" suffixOverrides=",">
+                    <foreach collection="params.appSystemName" item="appSystemName">
+                        #{appSystemName},
+                    </foreach>
+                </trim>
+
+            </if>
+            order by create_time desc
+        </where>
+
+    </select>
+
+    <select id="selectEventRunListMysql" parameterType="EventRun" resultMap="EventRunResult">
+        <include refid="selectEventRunVo2"/>
+        <where>
+            1=1
+            <if test="eventId != null  and eventId != ''"> and event_id =#{eventId}</if>
+            <if test="createId != null  and createId != ''"> and create_id =#{createId}</if>
+            <if test="handlePerson != null  and handlePerson != ''"> and handle_person =#{handlePerson}</if>
+            <if test="eventTitle != null  and eventTitle != ''"> and event_title like concat(concat('%', #{eventTitle}), '%')</if>
+            <if test="eventNo != null  and eventNo != ''"> and event_no like concat(concat('%', #{eventNo}), '%')</if>
+            <if test="params.beginCreateTime != null and params.beginCreateTime != ''">
+                and create_time >= DATE_FORMAT(#{params.beginCreateTime},'%Y%m%d%H%i%s')
+            </if>
+            <if test="params.endCreateTime != null and params.endCreateTime != ''">
+                and create_time &lt;= DATE_FORMAT(str_to_date(DATE_ADD(#{params.endCreateTime},INTERVAL 1 DAY),'%Y-%m-%d %H:%i:%s'), '%Y%m%d%H%i%s')
+            </if>
+            <if test="params.beginCloseTime != null and params.beginCloseTime != ''">
+                and close_time >= DATE_FORMAT(#{params.beginCloseTime},'%Y%m%d%H%i%s')
+            </if>
+            <if test="params.endCloseTime != null and params.endCloseTime != ''">
+                and close_time &lt;= DATE_FORMAT(str_to_date(DATE_ADD(#{params.endCloseTime},INTERVAL 1 DAY),'%Y-%m-%d %H:%i:%s'), '%Y%m%d%H%i%s')
+            </if>
+            <if test="eventLevel != null  and eventLevel != ''"> and event_level = #{eventLevel}</if>
+            <if test="eventType != null  and eventType != ''"> and event_type = #{eventType}</if>
+            <if test="params.status != null  and params.status != ''"> and status
+                <trim prefix="in (" suffix=")" suffixOverrides=",">
+                    <foreach collection="params.status" item="state">
+                        #{state},
+                    </foreach>
+                </trim>
+
+            </if>
+            <if test="params.appSystemName != null  and params.appSystemName != ''"> and app_system_name
+                <trim prefix="in (" suffix=")" suffixOverrides=",">
+                    <foreach collection="params.appSystemName" item="appSystemName">
+                        #{appSystemName},
+                    </foreach>
+                </trim>
+
+            </if>
+            order by create_time desc
+        </where>
+
+    </select>
+
+    <sql id="selectMydealEventRun">
+        select distinct * from (
+        select ev.event_id,
+        ev.event_title,
+        ev.event_no,
+        to_date(ev.create_time,'YYYY-MM-DD hh24:mi:ss') as create_time,
+        to_date(ev.close_time,'YYYY-MM-DD hh24:mi:ss') as close_time,
+        ev.event_descr,
+        ev.app_system_code,
+        ev.app_system_name,
+        ev.report_source,
+        ev.event_source,
+        ev.event_level,
+        ev.event_type,
+        to_date(ev.report_time,'YYYY-MM-DD hh24:mi:ss') as report_time,
+        ev.affiliated_center,
+        ev.handle_roles,
+        ev.sys_attendant,
+        ev.web_attendant,
+        ev.app_attendant,
+        ev.handle_person,
+        ev.handle_time,
+        ev.report_reason,
+        ev.handle_descr,
+        ev.create_id,
+        ev.status,
+        ev.anticipate_time,
+        ev.charge_person,
+        ev.supplement_explain,
+        ev.duty_account
+        from event_run ev
+        left join pub_flow_log pl
+        on ev.event_id =pl.biz_id
+    </sql>
+
+    <sql id="selectMydealEventRun2">
+        select distinct * from (
+        select ev.event_id,
+        ev.event_title,
+        ev.event_no,
+        DATE_FORMAT(ev.create_time,'%Y-%m-%d %H:%i:%s') as create_time,
+        DATE_FORMAT(ev.close_time,'%Y-%m-%d %H:%i:%s') as close_time,
+        ev.event_descr,
+        ev.app_system_code,
+        ev.app_system_name,
+        ev.report_source,
+        ev.event_source,
+        ev.event_level,
+        ev.event_type,
+        DATE_FORMAT(ev.report_time,'%Y-%m-%d %H:%i:%s') as report_time,
+        ev.affiliated_center,
+        ev.handle_roles,
+        ev.sys_attendant,
+        ev.web_attendant,
+        ev.app_attendant,
+        ev.handle_person,
+        ev.handle_time,
+        ev.report_reason,
+        ev.handle_descr,
+        ev.create_id,
+        ev.status,
+        ev.anticipate_time,
+        ev.charge_person,
+        ev.supplement_explain,
+        ev.duty_account
+        from event_run ev
+        left join pub_flow_log pl
+        on ev.event_id =pl.biz_id
+    </sql>
+
+    <select id="selectMydealEventRunList" parameterType="EventRun" resultMap="EventRunResult">
+        <include refid="selectMydealEventRun"/>
+        <where>
+            1=1
+            <if test="params.dealId !=null and params.dealId !='' ">
+                and pl.performer_id =#{params.dealId }
+            </if>
+            <if test="eventId != null  and eventId != ''"> and ev.event_id =#{eventId}</if>
+            <if test="createId != null  and createId != ''"> and ev.create_id =#{createId}</if>
+            <if test="handlePerson != null  and handlePerson != ''"> and ev.handle_person =#{handlePerson}</if>
+            <if test="eventTitle != null  and eventTitle != ''"> and ev.event_title like concat(concat('%', #{eventTitle}), '%')</if>
+            <if test="eventNo != null  and eventNo != ''"> and ev.event_no like concat(concat('%', #{eventNo}), '%')</if>
+            <if test="params.beginCreateTime != null and params.beginCreateTime != ''">
+                and ev.create_time >=TO_CHAR(TO_DATE( #{params.beginCreateTime},'YYYY-MM-DD HH24:MI:SS'), 'YYYYMMDDHH24MISS')
+            </if>
+            <if test="params.endCreateTime != null and params.endCreateTime != ''">
+                and ev.create_time &lt;=TO_CHAR(TO_DATE( #{params.endCreateTime},'YYYY-MM-DD HH24:MI:SS')+1, 'YYYYMMDDHH24MISS')
+            </if>
+            <if test="params.beginCloseTime != null and params.beginCloseTime != ''">
+                and ev.close_time >=TO_CHAR(TO_DATE( #{params.beginCloseTime},'YYYY-MM-DD HH24:MI:SS'), 'YYYYMMDDHH24MISS')
+            </if>
+            <if test="params.endCloseTime != null and params.endCloseTime != ''">
+                and ev.close_time &lt;=TO_CHAR(TO_DATE( #{params.endCloseTime},'YYYY-MM-DD HH24:MI:SS')+1, 'YYYYMMDDHH24MISS')
+            </if>
+            <if test="eventLevel != null  and eventLevel != ''"> and ev.event_level = #{eventLevel}</if>
+            <if test="eventType != null  and eventType != ''"> and ev.event_type = #{eventType}</if>
+            <if test="params.status != null  and params.status != ''"> and ev.status
+                <trim prefix="in (" suffix=")" suffixOverrides=",">
+                    <foreach collection="params.status" item="state">
+                        #{state},
+                    </foreach>
+                </trim>
+
+            </if>
+            <if test="params.appSystemName != null  and params.appSystemName != ''"> and app_system_name
+                <trim prefix="in (" suffix=")" suffixOverrides=",">
+                    <foreach collection="params.appSystemName" item="appSystemName">
+                        #{appSystemName},
+                    </foreach>
+                </trim>
+            </if>
+            )order by create_time desc
+        </where>
+    </select>
+
+    <select id="selectMydealEventRunListMysql" parameterType="EventRun" resultMap="EventRunResult">
+        <include refid="selectMydealEventRun2"/>
+        <where>
+            1=1
+            <if test="params.dealId !=null and params.dealId !='' ">
+                and pl.performer_id =#{params.dealId }
+            </if>
+            <if test="eventId != null  and eventId != ''"> and ev.event_id =#{eventId}</if>
+            <if test="createId != null  and createId != ''"> and ev.create_id =#{createId}</if>
+            <if test="handlePerson != null  and handlePerson != ''"> and ev.handle_person =#{handlePerson}</if>
+            <if test="eventTitle != null  and eventTitle != ''"> and ev.event_title like concat(concat('%', #{eventTitle}), '%')</if>
+            <if test="eventNo != null  and eventNo != ''"> and ev.event_no like concat(concat('%', #{eventNo}), '%')</if>
+            <if test="params.beginCreateTime != null and params.beginCreateTime != ''">
+                and ev.create_time >= DATE_FORMAT(#{params.beginCreateTime},'%Y%m%d%H%i%s')
+            </if>
+            <if test="params.endCreateTime != null and params.endCreateTime != ''">
+                and ev.create_time &lt;= DATE_FORMAT(str_to_date(DATE_ADD(#{params.endCreateTime},INTERVAL 1 DAY),'%Y-%m-%d %H:%i:%s'), '%Y%m%d%H%i%s')
+            </if>
+            <if test="params.beginCloseTime != null and params.beginCloseTime != ''">
+                and ev.close_time >= DATE_FORMAT(#{params.beginCloseTime},'%Y%m%d%H%i%s')
+            </if>
+            <if test="params.endCloseTime != null and params.endCloseTime != ''">
+                and ev.close_time &lt;= DATE_FORMAT(str_to_date(DATE_ADD(#{params.endCloseTime},INTERVAL 1 DAY),'%Y-%m-%d %H:%i:%s'), '%Y%m%d%H%i%s')
+            </if>
+            <if test="eventLevel != null  and eventLevel != ''"> and ev.event_level = #{eventLevel}</if>
+            <if test="eventType != null  and eventType != ''"> and ev.event_type = #{eventType}</if>
+            <if test="params.status != null  and params.status != ''"> and ev.status
+                <trim prefix="in (" suffix=")" suffixOverrides=",">
+                    <foreach collection="params.status" item="state">
+                        #{state},
+                    </foreach>
+                </trim>
+
+            </if>
+            <if test="params.appSystemName != null  and params.appSystemName != ''"> and app_system_name
+                <trim prefix="in (" suffix=")" suffixOverrides=",">
+                    <foreach collection="params.appSystemName" item="appSystemName">
+                        #{appSystemName},
+                    </foreach>
+                </trim>
+            </if>
+            )order by create_time desc
+        </where>
+    </select>
+
+    <select id="selectEventRunById" parameterType="String" resultMap="EventRunResult">
+        <include refid="selectEventRunVo"/>
+        where event_id = #{eventId}
+    </select>
+
+    <select id="selectEventRunByIdMysql" parameterType="String" resultMap="EventRunResult">
+        <include refid="selectEventRunVo2"/>
+        where event_id = #{eventId}
+    </select>
+
+
+    <select id="selectEventRunByNo" parameterType="String" resultMap="EventRunResult">
+        <include refid="selectEventRunVo"/>
+        where event_no = #{eventNo}
+    </select>
+
+    <select id="selectEventRunByNoMysql" parameterType="String" resultMap="EventRunResult">
+        <include refid="selectEventRunVo2"/>
+        where event_no = #{eventNo}
+    </select>
+
+    <insert id="insertEventRun" parameterType="EventRun">
+        insert into event_run
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="eventId != null  and eventId != ''">event_id,</if>
+            <if test="eventTitle != null  and eventTitle != ''">event_title,</if>
+            <if test="eventNo != null  and eventNo != ''">event_no,</if>
+            <if test="createTime != null  and createTime != ''">create_time,</if>
+            <if test="closeTime != null  and closeTime != ''">close_time,</if>
+            <if test="eventDescr != null  and eventDescr != ''">event_descr,</if>
+            <if test="appSystemCode != null  and appSystemCode != ''">app_system_code,</if>
+            <if test="appSystemName != null  and appSystemName != ''">app_system_name,</if>
+            <if test="reportSource != null  and reportSource != ''">report_source,</if>
+            <if test="eventSource != null  and eventSource != ''">event_source,</if>
+            <if test="eventLevel != null  and eventLevel != ''">event_level,</if>
+            <if test="eventType != null  and eventType != ''">event_type,</if>
+            <if test="reportTime != null  and reportTime != ''">report_time,</if>
+            <if test="affiliatedCenter != null  and affiliatedCenter != ''">affiliated_center,</if>
+            <if test="handleRoles != null  and handleRoles != ''">handle_roles,</if>
+            <if test="sysAttendant != null  and sysAttendant != ''">sys_attendant,</if>
+            <if test="webAttendant != null  and webAttendant != ''">web_attendant,</if>
+            <if test="appAttendant != null  and appAttendant != ''">app_attendant,</if>
+            <if test="handlePerson != null  and handlePerson != ''">handle_person,</if>
+            <if test="handleTime != null  and handleTime != ''">handle_time,</if>
+            <if test="reportReason != null  and reportReason != ''">report_reason,</if>
+            <if test="handleDescr != null  and handleDescr != ''">handle_descr,</if>
+            <if test="createId != null  and createId != ''">create_id,</if>
+            <if test="requestClob!= null  and requestClob != ''">request_clob,</if>
+            <if test="status!= null  and status != ''">status,</if>
+            <if test="anticipateTime!= null  and anticipateTime != ''">anticipate_time,</if>
+            <if test="chargePerson!= null  and chargePerson != ''">charge_person,</if>
+            <if test="supplementExplain!= null  and supplementExplain != ''">supplement_explain,</if>
+            <if test="dutyAccount!= null  and dutyAccount != ''">duty_account,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="eventId != null  and eventId != ''">#{eventId},</if>
+            <if test="eventTitle != null  and eventTitle != ''">#{eventTitle},</if>
+            <if test="eventNo != null  and eventNo != ''">#{eventNo},</if>
+            <if test="createTime != null  and createTime != ''">#{createTime},</if>
+            <if test="closeTime != null  and closeTime != ''">#{closeTime},</if>
+            <if test="eventDescr != null  and eventDescr != ''">#{eventDescr},</if>
+            <if test="appSystemCode != null  and appSystemCode != ''">#{appSystemCode},</if>
+            <if test="appSystemName != null  and appSystemName != ''">#{appSystemName},</if>
+            <if test="reportSource != null  and reportSource != ''">#{reportSource},</if>
+            <if test="eventSource != null  and eventSource != ''">#{eventSource},</if>
+            <if test="eventLevel != null  and eventLevel != ''">#{eventLevel},</if>
+            <if test="eventType != null  and eventType != ''">#{eventType},</if>
+            <if test="reportTime != null  and reportTime != ''">#{reportTime},</if>
+            <if test="affiliatedCenter != null  and affiliatedCenter != ''">#{affiliatedCenter},</if>
+            <if test="handleRoles != null  and handleRoles != ''">#{handleRoles},</if>
+            <if test="sysAttendant != null  and sysAttendant != ''">#{sysAttendant},</if>
+            <if test="webAttendant != null  and webAttendant != ''">#{webAttendant},</if>
+            <if test="appAttendant != null  and appAttendant != ''">#{appAttendant},</if>
+            <if test="handlePerson != null  and handlePerson != ''">#{handlePerson},</if>
+            <if test="handleTime != null  and handleTime != ''">#{handleTime},</if>
+            <if test="reportReason != null  and reportReason != ''">#{reportReason},</if>
+            <if test="handleDescr != null  and handleDescr != ''">#{handleDescr},</if>
+            <if test="createId != null  and createId != ''">#{createId},</if>
+            <if test="requestClob != null  and requestClob != ''">#{requestClob,jdbcType=CLOB},</if>
+            <if test="status != null  and status != ''">#{status},</if>
+            <if test="anticipateTime!= null  and anticipateTime != ''">#{anticipateTime},</if>
+            <if test="chargePerson!= null  and chargePerson != ''">#{chargePerson},</if>
+            <if test="supplementExplain!= null  and supplementExplain != ''">#{supplementExplain},</if>
+            <if test="dutyAccount!= null  and dutyAccount != ''">#{dutyAccount},</if>
+        </trim>
+    </insert>
+
+    <update id="updateEventRun" parameterType="EventRun">
+        update event_run
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="eventTitle != null  and eventTitle != ''">event_title = #{eventTitle},</if>
+            <if test="eventNo != null  and eventNo != ''">event_no = #{eventNo},</if>
+            <if test="createTime != null  and createTime != ''">create_time = TO_CHAR(TO_DATE( #{createTime},'YYYY-MM-DD HH24:MI:SS'), 'YYYYMMDDHH24MISS'),</if>
+            <if test="closeTime != null  and closeTime != ''">close_time = #{closeTime},</if>
+            <if test="eventDescr != null  and eventDescr != ''">event_descr = #{eventDescr},</if>
+            <if test="appSystemCode != null  and appSystemCode != ''">app_system_code = #{appSystemCode},</if>
+            <if test="appSystemName != null  and appSystemName != ''">app_system_name = #{appSystemName},</if>
+            <if test="reportSource != null  and reportSource != ''">report_source = #{reportSource},</if>
+            <if test="eventSource != null  and eventSource != ''">event_source = #{eventSource},</if>
+            <if test="eventLevel != null  and eventLevel != ''">event_level = #{eventLevel},</if>
+            <if test="eventType != null  and eventType != ''">event_type = #{eventType},</if>
+            <if test="reportTime != null  and reportTime != ''">report_time = #{reportTime},</if>
+            <if test="affiliatedCenter != null  and affiliatedCenter != ''">affiliated_center = #{affiliatedCenter},</if>
+            <if test="handleRoles != null  and handleRoles != ''">handle_roles = #{handleRoles},</if>
+            <if test="sysAttendant != null  and sysAttendant != ''">sys_attendant = #{sysAttendant},</if>
+            <if test="webAttendant != null  and webAttendant != ''">web_attendant = #{webAttendant},</if>
+            <if test="appAttendant != null  and appAttendant != ''">app_attendant = #{appAttendant},</if>
+            <if test="handlePerson != null and handlePerson!=''" >handle_person = #{handlePerson},</if>
+            <if test="handleTime != null  and handleTime != ''">handle_time = #{handleTime},</if>
+            <if test="reportReason != null  and reportReason != ''">report_reason = #{reportReason},</if>
+            <if test="handleDescr != null  and handleDescr != ''">handle_descr = #{handleDescr},</if>
+            <if test="createId != null  and createId != ''">create_id = #{createId},</if>
+            <if test="requestClob != null  and requestClob != ''">request_clob = #{requestClob,jdbcType=CLOB},</if>
+            <if test="status != null  and status != ''">status = #{status},</if>
+            <if test="anticipateTime!= null  and anticipateTime != ''">anticipate_time=#{anticipateTime},</if>
+            <if test="chargePerson!= null  and chargePerson != ''">charge_person=#{chargePerson},</if>
+            <if test="supplementExplain!= null  and supplementExplain != ''">supplement_explain=#{supplementExplain},</if>
+            <if test="dutyAccount!= null  and dutyAccount != ''">duty_account=#{dutyAccount},</if>
+        </trim>
+        where event_id = #{eventId}
+    </update>
+
+    <update id="updateEventRunMysql" parameterType="EventRun">
+        update event_run
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="eventTitle != null  and eventTitle != ''">event_title = #{eventTitle},</if>
+            <if test="eventNo != null  and eventNo != ''">event_no = #{eventNo},</if>
+            <if test="createTime != null  and createTime != ''">create_time = DATE_FORMAT(#{createTime},'%Y%m%d%H%i%s'), </if>
+            <if test="closeTime != null  and closeTime != ''">close_time = #{closeTime},</if>
+            <if test="eventDescr != null  and eventDescr != ''">event_descr = #{eventDescr},</if>
+            <if test="appSystemCode != null  and appSystemCode != ''">app_system_code = #{appSystemCode},</if>
+            <if test="appSystemName != null  and appSystemName != ''">app_system_name = #{appSystemName},</if>
+            <if test="reportSource != null  and reportSource != ''">report_source = #{reportSource},</if>
+            <if test="eventSource != null  and eventSource != ''">event_source = #{eventSource},</if>
+            <if test="eventLevel != null  and eventLevel != ''">event_level = #{eventLevel},</if>
+            <if test="eventType != null  and eventType != ''">event_type = #{eventType},</if>
+            <if test="reportTime != null  and reportTime != ''">report_time = #{reportTime},</if>
+            <if test="affiliatedCenter != null  and affiliatedCenter != ''">affiliated_center = #{affiliatedCenter},</if>
+            <if test="handleRoles != null  and handleRoles != ''">handle_roles = #{handleRoles},</if>
+            <if test="sysAttendant != null  and sysAttendant != ''">sys_attendant = #{sysAttendant},</if>
+            <if test="webAttendant != null  and webAttendant != ''">web_attendant = #{webAttendant},</if>
+            <if test="appAttendant != null  and appAttendant != ''">app_attendant = #{appAttendant},</if>
+            <if test="handlePerson != null and handlePerson!=''" >handle_person = #{handlePerson},</if>
+            <if test="handleTime != null  and handleTime != ''">handle_time = #{handleTime},</if>
+            <if test="reportReason != null  and reportReason != ''">report_reason = #{reportReason},</if>
+            <if test="handleDescr != null  and handleDescr != ''">handle_descr = #{handleDescr},</if>
+            <if test="createId != null  and createId != ''">create_id = #{createId},</if>
+            <if test="requestClob != null  and requestClob != ''">request_clob = #{requestClob,jdbcType=CLOB},</if>
+            <if test="status != null  and status != ''">status = #{status},</if>
+            <if test="anticipateTime!= null  and anticipateTime != ''">anticipate_time=#{anticipateTime},</if>
+            <if test="chargePerson!= null  and chargePerson != ''">charge_person=#{chargePerson},</if>
+            <if test="supplementExplain!= null  and supplementExplain != ''">supplement_explain=#{supplementExplain},</if>
+            <if test="dutyAccount!= null  and dutyAccount != ''">duty_account=#{dutyAccount},</if>
+        </trim>
+        where event_id = #{eventId}
+    </update>
+
+
+    <update id="updateFmYxByInvalidationMark" parameterType="java.lang.String">
+        update event_run
+        <trim prefix="SET" suffixOverrides=",">
+
+        </trim>
+    </update>
+    <!--耗时查询-->
+    <select id="selectByTiming" parameterType="EventRun" resultMap="EventRunResult">
+        select r.event_id,
+        r.event_title,
+        r.event_no,
+        to_date(r.create_time,'YYYY-MM-DD hh24:mi:ss') as create_time,
+        to_date(r.close_time,'YYYY-MM-DD hh24:mi:ss') as close_time,
+        r.event_descr,
+        r.app_system_code,
+        r.app_system_name,
+        r.report_source,
+        r.event_source,
+        r.event_level,
+        r.event_type,
+        to_date(r.report_time,'YYYY-MM-DD hh24:mi:ss') as report_time,
+        r.affiliated_center,
+        r.handle_roles,
+        r.sys_attendant,
+        r.web_attendant,
+        r.app_attendant,
+        r.handle_person,
+        r.handle_time,
+        r.report_reason,
+        r.handle_descr,
+        r.create_id,
+        r.status,
+        r.anticipate_time,
+        r.charge_person,
+        r.supplement_explain,
+        r.duty_account
+        from event_run r
+        left join pub_flow_log f
+        on r.event_id = f.biz_id
+        <where>
+            f.log_type='FmYx'
+            <if test="params.userTask!='' and params.userTask!=null">
+               and f.task_name =#{params.userTask}
+            </if>
+            <if test="eventId !='' and eventId !=null">
+                and r.event_id =#{eventId}
+            </if>
+            <if test="params.case1!='' and params.case1!=null">
+                and TO_NUMBER(f.sys_residence_time)  >= TO_NUMBER(#{params.case1})
+            </if>
+            <if test="params.case2!=null and params.case2!=''">
+                and TO_NUMBER(f.sys_residence_time) &lt;=TO_NUMBER(#{params.case2})
+            </if>
+            <if test="eventTitle != null  and eventTitle != ''"> and r.event_title like concat(concat('%', #{eventTitle}), '%')</if>
+            <if test="eventNo != null  and eventNo != ''"> and r.event_no like concat(concat('%', #{eventNo}), '%')</if>
+            <if test="params.beginCreateTime != null and params.beginCreateTime != ''">
+                and r.create_time >=TO_CHAR(TO_DATE( #{params.beginCreateTime},'YYYY-MM-DD HH24:MI:SS'), 'YYYYMMDDHH24MISS')
+            </if>
+            <if test="params.endCreateTime != null and params.endCreateTime != ''">
+                and r.create_time &lt;=TO_CHAR(TO_DATE( #{params.endCreateTime},'YYYY-MM-DD HH24:MI:SS')+1, 'YYYYMMDDHH24MISS')
+            </if>
+            <if test="params.beginCloseTime != null and params.beginCloseTime != ''">
+                and r.close_time >=TO_CHAR(TO_DATE( #{params.beginCloseTime},'YYYY-MM-DD HH24:MI:SS'), 'YYYYMMDDHH24MISS')
+            </if>
+            <if test="params.endCloseTime != null and params.endCloseTime != ''">
+                and r.close_time &lt;=TO_CHAR(TO_DATE( #{params.endCloseTime},'YYYY-MM-DD HH24:MI:SS')+1, 'YYYYMMDDHH24MISS')
+            </if>
+            <if test="appSystemName != null  and appSystemName != ''"> and r.app_system_name like concat(concat('%', #{appSystemName}), '%')</if>
+            <if test="eventLevel != null  and eventLevel != ''"> and r.event_level = #{eventLevel}</if>
+            <if test="eventType != null  and eventType != ''"> and r.event_type = #{eventType}</if>
+
+            <if test="status != null  and status != ''"> and r.status
+                <trim prefix="in (" suffix=")" suffixOverrides=",">
+                    <foreach collection="params.status" item="state">
+                        #{state},
+                    </foreach>
+                </trim>
+            </if>
+            order by r.create_time desc
+        </where>
+
+    </select>
+
+    <select id="selectByTimingMysql" parameterType="EventRun" resultMap="EventRunResult">
+        select r.event_id,
+        r.event_title,
+        r.event_no,
+        DATE_FORMAT(r.create_time,'%Y-%m-%d %H:%i:%s') as create_time,
+        DATE_FORMAT(r.close_time,'%Y-%m-%d %H:%i:%s') as close_time,
+        r.event_descr,
+        r.app_system_code,
+        r.app_system_name,
+        r.report_source,
+        r.event_source,
+        r.event_level,
+        r.event_type,
+        DATE_FORMAT(r.report_time,'%Y-%m-%d %H:%i:%s') as report_time,
+        r.affiliated_center,
+        r.handle_roles,
+        r.sys_attendant,
+        r.web_attendant,
+        r.app_attendant,
+        r.handle_person,
+        r.handle_time,
+        r.report_reason,
+        r.handle_descr,
+        r.create_id,
+        r.status,
+        r.anticipate_time,
+        r.charge_person,
+        r.supplement_explain,
+        r.duty_account
+        from event_run r
+        left join pub_flow_log f
+        on r.event_id = f.biz_id
+        <where>
+            f.log_type='FmYx'
+            <if test="params.userTask!='' and params.userTask!=null">
+                and f.task_name =#{params.userTask}
+            </if>
+            <if test="eventId !='' and eventId !=null">
+                and r.event_id =#{eventId}
+            </if>
+            <if test="params.case1!='' and params.case1!=null">
+                and TO_NUMBER(f.sys_residence_time)  >= TO_NUMBER(#{params.case1})
+            </if>
+            <if test="params.case2!=null and params.case2!=''">
+                and TO_NUMBER(f.sys_residence_time) &lt;=TO_NUMBER(#{params.case2})
+            </if>
+            <if test="eventTitle != null  and eventTitle != ''"> and r.event_title like concat(concat('%', #{eventTitle}), '%')</if>
+            <if test="eventNo != null  and eventNo != ''"> and r.event_no like concat(concat('%', #{eventNo}), '%')</if>
+            <if test="params.beginCreateTime != null and params.beginCreateTime != ''">
+                and r.create_time >= DATE_FORMAT(#{params.beginCreateTime},'%Y%m%d%H%i%s')
+            </if>
+            <if test="params.endCreateTime != null and params.endCreateTime != ''">
+                and r.create_time &lt;= DATE_FORMAT(str_to_date(DATE_ADD(#{params.endCreateTime},INTERVAL 1 DAY),'%Y-%m-%d %H:%i:%s'), '%Y%m%d%H%i%s')
+            </if>
+            <if test="params.beginCloseTime != null and params.beginCloseTime != ''">
+                and r.close_time >= DATE_FORMAT(#{params.beginCloseTime},'%Y%m%d%H%i%s')
+            </if>
+            <if test="params.endCloseTime != null and params.endCloseTime != ''">
+                and r.close_time &lt;= DATE_FORMAT(str_to_date(DATE_ADD(#{params.endCloseTime},INTERVAL 1 DAY),'%Y-%m-%d %H:%i:%s'), '%Y%m%d%H%i%s')
+            </if>
+            <if test="appSystemName != null  and appSystemName != ''"> and r.app_system_name like concat(concat('%', #{appSystemName}), '%')</if>
+            <if test="eventLevel != null  and eventLevel != ''"> and r.event_level = #{eventLevel}</if>
+            <if test="eventType != null  and eventType != ''"> and r.event_type = #{eventType}</if>
+
+            <if test="status != null  and status != ''"> and r.status
+                <trim prefix="in (" suffix=")" suffixOverrides=",">
+                    <foreach collection="params.status" item="state">
+                        #{state},
+                    </foreach>
+                </trim>
+            </if>
+            order by r.create_time desc
+        </where>
+
+    </select>
+
+    <delete id="deleteEventRunById" parameterType="String">
+        delete from event_run where event_id = #{eventId}
+    </delete>
+
+    <delete id="deleteEventRunByIds" parameterType="String">
+        delete from event_run where event_id in
+        <foreach item="eventId" collection="array" open="(" separator="," close=")">
+            #{eventId}
+        </foreach>
+    </delete>
+
+</mapper>

@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.SysAppMapper">
+
+    <resultMap type="SysApp" id="SysAppResult">
+        <id property="id" column="id"/>
+        <result property="sysname" column="sysname"/>
+        <result property="sysurl" column="sysurl"/>
+        <result property="syscode" column="syscode"/>
+        <result property="sysorder" column="sysorder"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="param" column="param"/>
+        <result property="param" column="param"/>
+        <result property="param" column="param"/>
+        <result property="delFlag" column="del_flag"/>
+
+    </resultMap>
+
+    <sql id="selectAppContactVo">
+        select id, sysname, sysorder, sysurl, syscode, create_time, param
+        from system_app
+    </sql>
+
+    <sql id="selectAppVo">
+        select id, sysname, sysorder, sysurl, syscode, create_time, param
+        from system_app
+    </sql>
+
+    <select id="selectAppList" parameterType="SysApp" resultMap="SysAppResult">
+        <include refid="selectAppContactVo"/>
+        where del_flag = '0'
+        <if test="sysname != null and sysname != ''">
+            AND sysname like concat(concat('%',#{sysname}),'%')
+        </if>
+        <if test="params.beginTime != null and params.beginTime != ''"><!-- 开始时间检索 -->
+            AND to_char(create_time,'yyyy-MM-dd') >= #{params.beginTime}
+        </if>
+        <if test="params.endTime != null and params.endTime != ''"><!-- 结束时间检索 -->
+            AND to_char(create_time,'yyyy-MM-dd') &lt;= #{params.endTime}
+        </if>
+        <!-- 数据范围过滤 -->
+    </select>
+
+    <select id="selectAppsByUserId" parameterType="String" resultMap="SysAppResult">
+        select * from (select distinct a.id, a.sysname, (case when au.sysorder is null then a.sysorder else au.sysorder end) as sysorder, a.sysurl,  a.syscode,  u.username
+        from system_app a  left join system_app_user au    on au.iappid = a.id  left join og_user u    on u.userid = au.iuserid
+        WHERE a.del_flag = '0' and u.userid = #{userid}) aa order by aa.sysorder
+
+    </select>
+
+    <select id="selectById" parameterType="String" resultMap="SysAppResult">
+        <include refid="selectAppVo"/>
+        where del_flag = '0' and id = #{id}
+    </select>
+
+    <select id="checkAppNameUnique" parameterType="String" resultMap="SysAppResult">
+        <include refid="selectAppVo"/>
+        where sysname=#{sysname}
+    </select>
+
+    <delete id="deleteAppById" parameterType="String">
+        delete
+        from system_app
+        where id = #{id}
+    </delete>
+
+    <delete id="deleteAppByIds" parameterType="String">
+        update system_app set del_flag = '1' where id in
+        <foreach collection="array" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <update id="updateApp" parameterType="SysApp">
+        update system_app
+        <set>
+            <if test="sysname != null and sysname != ''">sysname = #{sysname},</if>
+            <if test="sysorder != null and sysorder != ''">sysorder = #{sysorder},</if>
+            <if test="sysurl != null and sysurl != ''">sysurl = #{sysurl},</if>
+            <if test="param != null">param = #{param},</if>
+            <if test="syscode != null and syscode != ''">syscode = #{syscode},</if>
+            update_time = sysdate
+        </set>
+        where id = #{id}
+    </update>
+
+    <insert id="insertApp" parameterType="com.ruoyi.common.core.domain.entity.SysApp" useGeneratedKeys="false"
+            keyProperty="id">
+        insert into system_app(
+        id,
+        <if test="sysname != null and sysname != ''">sysname,</if>
+        <if test="sysorder != null and sysorder != ''">sysorder,</if>
+        <if test="sysurl != null and sysurl != ''">sysurl,</if>
+        <if test="param != null">param,</if>
+        <if test="syscode != null">syscode,</if>
+        del_flag,
+        status,
+        create_time
+        )values(
+        #{id},
+        <if test="sysname != null and sysname != ''">#{sysname},</if>
+        <if test="sysorder != null and sysorder != ''">#{sysorder},</if>
+        <if test="sysurl != null and sysurl != ''">#{sysurl},</if>
+        <if test="param != null">#{param},</if>
+        <if test="syscode != null">#{syscode},</if>
+        0,
+        1,
+        sysdate
+        )
+    </insert>
+
+    <resultMap type="OgRole" id="OgRoleResult">
+        <id property="rid" column="rid"/>
+        <result property="rName" column="rName"/>
+    </resultMap>
+    <select id="selectAppRoleLList" parameterType="SysApp" resultMap="OgRoleResult">
+        select distinct r.rid, r.rname
+        from og_role r
+        where INVALIDATION_MARK = 1
+          and r.rid not in (select iroleid from SYSTEM_APP_ROLE where iappid = #{appid})
+        <if test="rolename != null and rolename != ''">
+            AND rname like concat(concat('%',#{rolename}),'%')
+        </if>
+    </select>
+    <select id="selectAppRoleRList" parameterType="SysApp" resultMap="OgRoleResult">
+        select distinct r.rid, r.rname
+        from og_role r,
+             SYSTEM_APP_ROLE A
+        WHERE R.RID = A.IROLEID
+          and r.INVALIDATION_MARK = 1
+          AND A.IAPPID = #{appid}
+        <if test="rolename != null and rolename != ''">
+            AND rname like concat(concat('%',#{rolename}),'%')
+        </if>
+    </select>
+
+    <delete id="deleteAppRoleByIds" parameterType="Map">
+        delete from SYSTEM_APP_ROLE where IAPPID= #{sysid} and IROLEID in
+        <foreach item="item" index="index" collection="list" open="(" close=")" separator=",">
+           #{item}
+        </foreach>
+    </delete>
+
+    <insert id="insertSysRole" parameterType="java.util.List" useGeneratedKeys="false">
+        INSERT ALL
+        <foreach item="item" index="index" collection="list">
+            into SYSTEM_APP_ROLE (IAPPID,IROLEID)
+            VALUES
+            (#{item.appid},#{item.roleid})
+        </foreach>
+        select 1 from dual
+    </insert>
+    <select id="selectAppOrderList" parameterType="SysApp" resultMap="SysAppResult">
+        select * from (select distinct a.id, a.sysname, (case when au.sysorder is null then a.sysorder else au.sysorder end) as sysorder, a.sysurl,  a.syscode,  u.username
+        from system_app a  left join system_app_user au    on au.iappid = a.id  left join og_user u    on u.userid = au.iuserid
+        WHERE a.del_flag = '0' and u.userid = #{userid}
+        <if test="sysname != null and sysname != ''">
+            AND sysname like concat(concat('%',#{sysname}),'%')
+        </if>
+        ) aa order by aa.sysorder
+        <!-- 数据范围过滤 -->
+    </select>
+
+    <select id="selectSysOrder" parameterType="Map" resultType="String">
+        select id from SYSTEM_APP_USER where IAPPID=#{sysid} and IUSERID=#{userid}
+    </select>
+    <insert id="insertSysOrder" parameterType="Map">
+        insert into SYSTEM_APP_USER (id,IAPPID,IUSERID,SYSORDER) values(#{id},#{sysid},#{userid},#{order})
+    </insert>
+    <update id="updateSysOrder" parameterType="Map">
+        update SYSTEM_APP_USER set SYSORDER=#{order} where id=#{id}
+    </update>
+</mapper>

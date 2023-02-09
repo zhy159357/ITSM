@@ -1,0 +1,93 @@
+<html>
+<head>
+
+</head>
+<body>
+
+</body>
+<table>
+    <tr>
+        <td><h3>各自页面各自加载实现</h3></td>
+    </tr>
+    <tr>
+        <td>
+            伸缩功能改进法
+            在指定的html模版内的script元素内 添加下列代码 可实现效果
+            window.onload=function(){
+            var lbh=$('.search-collapse').innerHeight();
+            var height=45;//45 是动态值，单行所属高度，如果想两行，那就45*2
+            $("[name$='showSearch']").off('click').on('click', function () {
+            if($('.search-collapse').innerHeight()==height){$(".search-collapse").css('overflow','hidden').animate({height:lbh+"px"})}else{$(".search-collapse").css('overflow','hidden').animate({height:height+"px"})}
+            });
+            };
+        </td>
+    </tr>
+    <tr>
+        <td><h3>表格增加横向滚动条</h3></td>
+    </tr>
+    <tr>
+        <td>
+            增加 style="table-layout:fixed;"
+            不需要滚动条的可以不加
+            <table id="bootstrap-table" style="table-layout:fixed;"></table>
+            下面columns内，每列增加width
+            $(function() {
+            var options = {
+            url: prefix + "/userlist",
+            createUrl: prefix + "/add",
+            sortName: "f.creatTime",
+            sortOrder: "desc",
+            clickToSelect: true,
+            singleSelect:true,
+            modalName: "业务事件单",
+            columns: [{
+            checkbox: true
+            },
+            {
+            field : 'fmId',
+            width:200,
+            title : '主键ID',
+            visible: false
+            },
+            {
+            field : 'faultNo',
+            width:500,
+            title : '事件编号'
+            },
+            {
+            field : 'faultDecriptSummary',
+            width:200,
+            title : '事件标题'
+            },
+            {
+            field : 'ogSys.caption',
+            width:200,
+            title : '所属系统'
+            },
+            {
+            field : 'createGroupName',
+            width:500,
+            title : '所属工作组'
+            }]
+            };
+            $.table.init(options);
+            });
+        </td>
+        <td>表格列增加提示</td>
+        <td>
+            {
+            field : 'createGroupName',
+            width:500,
+            title : '所属工作组',
+            formatter: function(value, row, index) {
+                var span = document.createElement("span");
+                span.setAttribute("title", value);
+                span.innerHTML = value;
+                return span.outerHTML;
+                }
+            }
+
+        </td>
+    </tr>
+</table>
+</html>

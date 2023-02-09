@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+	<th:block th:include="include :: header('上传下载目录树查看详情')" />
+	<th:block th:include="include :: summernote-css" />
+	<th:block th:include="include :: ztree-css" />
+</head>
+<body class="gray-bg">
+<div class="container-div">
+	<div class="row">
+		<div class="col-sm-12 search-collapse">
+
+		<form class="form-horizontal m" id="form-tree-edit" th:object="${upd}">
+		<input name="orgs_" class="form-control" type="hidden" id="performDeptId" th:value="${orgs_}"/>
+		<input name="orgs_" class="form-control" type="hidden" id="perDeptId" th:value="${upd.orgs_}"/>
+				<input class="form-control" id="id_" name="id_" th:value="${id_}" type="hidden" required readonly>
+				<div class="form-group">
+					<label class="col-sm-3 control-label">上级：</label>
+					<div class="col-sm-8">
+						<input class="form-control" id="path_" name="path_"  th:value="${parent_}" maxlength="20"  disabled>
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-3 control-label" >名称：</label>
+					<div class="col-sm-8">
+						<input class="form-control" type="text" name="name1_" id="name1_" th:field="*{name_}" maxlength="20" disabled>
+					</div>
+				</div>
+				<div class="row form-group" id="orgs_">
+				</div>
+
+				<div class="form-group">
+					<label class="col-sm-3 control-label">描述：</label>
+					<div class="col-sm-8">
+						<textarea name="description_" id="description_" disabled class="form-control" th:field="*{description_}" th:maxlength="200"
+								  rows="5" >
+						</textarea>
+					</div>
+				</div>
+	</form>
+	</div>
+	</div>
+</div>
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: summernote-js" />
+<th:block th:include="include :: ztree-js" />
+<script th:inline="javascript">
+
+    var prefix = ctx + "system/upDtree";
+
+
+    $(function () {
+        $('.summernote').summernote({
+            placeholder: '',
+            height : 192,
+            lang : 'zh-CN',
+            followingToolbar: false,
+            callbacks: {
+                onImageUpload: function (files) {
+                    sendFile(files[0], this);
+                }
+            },
+            focus:true
+        });
+        changRange("1");
+    });
+
+
+    function changRange(type) {
+        var div1=
+            "                            <div class=\"col-sm-12\">\n" +
+            "                                <div class=\"form-group\">\n" +
+            "                                    <label class=\"col-xs-3 control-label \">机构名称：</label>\n" +
+            "                                    <div class=\"col-xs-8\">\n" +
+            "                                        <input id=\"multiusers\" name=\"params[orgId]\" type=\"hidden\" value=\"\"/>\n" +
+            "                                        <textarea rows=\"5\" cols=\"20\" class=\"form-control\" type=\"text\" name=\"params[orgname]\" id=\"multiusersName\"  disabled></textarea>\n" +
+            "                                    </div>\n" +
+            "                                </div>\n" +
+            "                            </div>";
+        if("1"==type){
+            $("#orgs_").append(div1);
+            $("#multiusers").val($("#perDeptId").val());
+            $("#multiusersName").val($("#performDeptId").val());
+        }
+
+    }
+
+
+    function getMultiusers() {
+
+        $.modal.open("选择机构页面", prefix + "/deptym");
+
+    }
+
+	/* 用户管理-新增-选择部门树 */
+    function selectDeptTree() {
+        var orgs_ = $("#orgs_").val();
+        var deptId = $.common.isEmpty(orgs_) ? "310100001" : $("#orgs_").val();
+        var url = ctx + "system/dept/selectDeptTree/" + deptId;
+        var options = {
+            title: '选择部门',
+            width: "380",
+            url: url,
+            callBack: doSubmit
+        };
+        $.modal.openOptions(options);
+    }
+
+    // function doSubmit(index, layero){
+    //     var tree = layero.find("iframe")[0].contentWindow.$._tree;
+    //
+    //     if(jQuery.isEmptyObject(tree)) {
+    //         layer.close(index);
+    //     }else{
+    //         var selectNode = tree.getSelectedNodes();
+    //         if(selectNode.length!=0){
+    //             $("#orgs_").val(selectNode[0].id);
+    //             $("#treeName").val(selectNode[0].name);
+    //         }
+    //     }
+    //     layer.close(index);
+    // }
+
+	 //** 提交 */
+    function submitHandler() {
+		if ($.validate.form()) {
+            edit();
+        }
+    }
+
+    function edit() {
+        var path_ = $("input[name='path_']").val();
+        var name_ = $("input[id='name1_']").val();
+        var  orgs_= $("#multiusers").val();
+        var description_ = $("textarea[name='description_']").val();
+        var id_ = $("input[name='id_']").val();
+        $.ajax({
+            cache: true,
+            type: "POST",
+            url: ctx + "system/upDtree/upd",
+            data: {
+                "name_": name_,
+                "path_": path_,
+                "orgs_": orgs_,
+                "description_": description_,
+                "id_": id_
+            },
+            async: false,
+            error: function (request) {
+                $.modal.alertError("系统错误");
+            },
+            success: function (data) {
+            	$.operate.saveSuccess(data);
+            }
+        });
+    }
+
+    //** 重置 */
+    function reset() {
+        $("#name1_").val('');
+        $("#multiusersName").val('');
+        $("#description_").val('');
+    }
+    //** 关闭选项卡 */
+    function closeItem() {
+        var index = parent.layer.getFrameIndex(window.name);
+        parent.layer.close(index);//关闭当前页
+    }
+
+</script>
+</body>
+</html>

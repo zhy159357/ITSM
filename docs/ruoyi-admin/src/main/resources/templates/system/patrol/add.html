@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:include="include :: header('舆情监测系统巡检新增')"/>
+    <th:block th:include="include :: select2-css"/>
+    <th:block th:include="include :: summernote-css"/>
+    <th:block th:include="include :: datetimepicker-css"/>
+</head>
+<body>
+<div class="main-content">
+    <form id="form-line-add" class="form-horizontal">
+        <input id="patrolId" type="hidden" name="patrolId" th:value="${patrolId}">
+        <input name="ownerId" type="hidden" id="ownerId"/>
+        <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+            <div class="panel-group">
+                <div class="panel panel-default">
+                    <div class="panel-heading" style="green-color: #3c8dbc" data-toggle="collapse"
+                         data-target="#collapse1">
+                        <h4 class="panel-title">
+                            日常巡检记录单
+                        </h4>
+                    </div>
+                    <div id="collapse1" class="panel-collapse in">
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label class="col-sm-4 control-label">应用系统名称版本：</label>
+                                        <div class="col-sm-8 ">
+                                            <input id="patrolName" name="patrolName" type="text" class="form-control"
+                                                   maxlength="20" required>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label class="col-sm-4 control-label">应用系统运维单位：</label>
+                                        <div class="col-sm-8">
+                                            <input class="form-control" id="sysId" name="sysId" type="hidden"/>
+                                            <input class="form-control" id="patrolDepartname" name="patrolDepartname"
+                                                   onclick="selectOneApplication()"
+                                                   readonly required style="background-color: #fdfdfd"
+                                                   type="text"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label class="col-sm-4 control-label">巡查人员：</label>
+                                        <div class="col-sm-8">
+                                            <input id="createName" name="createName" type="text" class="form-control"
+                                                   maxlength="20" required>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label class="col-sm-4 control-label">联系方式：</label>
+                                        <div class="col-sm-8">
+                                            <input id="telePhone" name="telePhone" type="text" class="form-control"
+                                                   maxlength="20" required>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label class="col-sm-4 control-label">系统负责人：</label>
+                                        <div class="col-sm-8">
+                                            <input id="leaderName" name="leaderName" type="text" class="form-control"
+                                                   maxlength="20" required>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label class="col-sm-4 control-label">巡检项最后更新日期：</label>
+                                        <div class="col-sm-8">
+                                            <input id="endUpTime" name="endUpTime" type="text"
+                                                   style="background-color: #fff; opacity: 1;"
+                                                   placeholder="yyyy-MM-dd HH:mm:ss" class="form-control" readonly
+                                                   required>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label class="col-sm-4 control-label">开始时间：</label>
+                                        <div class="col-sm-8">
+                                            <input id="startTime" name="startTime" onchange="jisuan()" type="text"
+                                                   style="background-color: #fff; opacity: 1;"
+                                                   placeholder="yyyy-MM-dd HH:mm:ss" class="form-control" readonly
+                                                   required>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label class="col-sm-4 control-label">结束时间：</label>
+                                        <div class="col-sm-8">
+                                            <input id="endTime" name="endTime" type="text"
+                                                   style="background-color: #fff; opacity: 1;"
+                                                   placeholder="yyyy-MM-dd HH:mm:ss" class="form-control" readonly
+                                                   required>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <h4 class="form-header h4">巡查内容</h4>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label class="col-sm-4 control-label">网闸数据同步巡查结果：</label>
+                                        <div class="col-sm-8">
+                                            <select class="form-control" id="syncData" name="syncData"
+                                                    th:with="type=${@dict.getParaType('patrol_yn')}" required>
+                                                <option value=""></option>
+                                                <option th:each="dict : ${type}" th:text="${dict.valueDetail}"
+                                                        th:value="${dict.value}"></option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label class="col-sm-4 control-label">系统服务器状态巡查结果：</label>
+                                        <div class="col-sm-8">
+                                            <select class="form-control" id="sysServerData" name="sysServerData"
+                                                    th:with="type=${@dict.getParaType('patrol_yn')}" required>
+                                                <option value=""></option>
+                                                <option th:each="dict : ${type}" th:text="${dict.valueDetail}"
+                                                        th:value="${dict.value}"></option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label class="col-sm-4 control-label">说明：</label>
+                                        <div class="col-sm-8">
+                                            网闸内外MySQL数据是否一致
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label class="col-sm-4 control-label">说明：</label>
+                                        <div class="col-sm-8">
+                                            所有服务器是否运行正常
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label class="col-sm-4 control-label">首页展示巡查结果：</label>
+                                        <div class="col-sm-8">
+                                            <select class="form-control" id="pageData" name="pageData"
+                                                    th:with="type=${@dict.getParaType('patrol_yn')}" required>
+                                                <option value=""></option>
+                                                <option th:each="dict : ${type}" th:text="${dict.valueDetail}"
+                                                        th:value="${dict.value}"></option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label class="col-sm-4 control-label">门户热搜词展示巡查结果：</label>
+                                        <div class="col-sm-8">
+                                            <select class="form-control" id="hotSearchData" name="hotSearchData"
+                                                    th:with="type=${@dict.getParaType('patrol_yn')}" required>
+                                                <option value=""></option>
+                                                <option th:each="dict : ${type}" th:text="${dict.valueDetail}"
+                                                        th:value="${dict.value}"></option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label class="col-sm-4 control-label">说明：</label>
+                                        <div class="col-sm-8">
+                                            各个板块显示是否正常
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label class="col-sm-4 control-label">说明：</label>
+                                        <div class="col-sm-8">
+                                            热搜词是否符合当前热点
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label class="col-sm-4 control-label">突发预警展示巡查结果：</label>
+                                        <div class="col-sm-8">
+                                            <select class="form-control" id="emergencyData" name="emergencyData"
+                                                    th:with="type=${@dict.getParaType('patrol_yn')}" required>
+                                                <option value=""></option>
+                                                <option th:each="dict : ${type}" th:text="${dict.valueDetail}"
+                                                        th:value="${dict.value}"></option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label class="col-sm-4 control-label">热点话题展示巡查结果：</label>
+                                        <div class="col-sm-8">
+                                            <select class="form-control" id="hotTopicData" name="hotTopicData"
+                                                    th:with="type=${@dict.getParaType('patrol_yn')}" required>
+                                                <option value=""></option>
+                                                <option th:each="dict : ${type}" th:text="${dict.valueDetail}"
+                                                        th:value="${dict.value}"></option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label class="col-sm-4 control-label">说明：</label>
+                                        <div class="col-sm-8">
+                                            数据是否实时
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label class="col-sm-4 control-label">说明：</label>
+                                        <div class="col-sm-8">
+                                            热点话题是否符合当前热点
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label class="col-sm-4 control-label">热点文章展示巡查结果：</label>
+                                        <div class="col-sm-8">
+                                            <select class="form-control" id="hotEssayData" name="hotEssayData"
+                                                    th:with="type=${@dict.getParaType('patrol_yn')}" required>
+                                                <option value=""></option>
+                                                <option th:each="dict : ${type}" th:text="${dict.valueDetail}"
+                                                        th:value="${dict.value}"></option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label class="col-sm-4 control-label">内容监测展示巡查结果：</label>
+                                        <div class="col-sm-8">
+                                            <select class="form-control" id="contentData" name="contentData"
+                                                    th:with="type=${@dict.getParaType('patrol_yn')}" required>
+                                                <option value=""></option>
+                                                <option th:each="dict : ${type}" th:text="${dict.valueDetail}"
+                                                        th:value="${dict.value}"></option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label class="col-sm-4 control-label">说明：</label>
+                                        <div class="col-sm-8">
+                                            热点文章是否符合当前热点
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label class="col-sm-4 control-label">说明：</label>
+                                        <div class="col-sm-8">
+                                            内容监测数据是否实时
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label class="col-sm-4 control-label">专题分析展示巡查结果：</label>
+                                        <div class="col-sm-8">
+                                            <select class="form-control" id="specialData" name="specialData"
+                                                    th:with="type=${@dict.getParaType('patrol_yn')}" required>
+                                                <option value=""></option>
+                                                <option th:each="dict : ${type}" th:text="${dict.valueDetail}"
+                                                        th:value="${dict.value}"></option>
+                                            </select>
+                                        </div>
+                                    </div>                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label class="col-sm-4 control-label">信息检索展示巡查结果：</label>
+                                        <div class="col-sm-8">
+                                            <select class="form-control" id="informationData" name="informationData"
+                                                    th:with="type=${@dict.getParaType('patrol_yn')}" required>
+                                                <option value=""></option>
+                                                <option th:each="dict : ${type}" th:text="${dict.valueDetail}"
+                                                        th:value="${dict.value}"></option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label class="col-sm-4 control-label">说明：</label>
+                                        <div class="col-sm-8">
+                                            专题数据是否符合当前专题项
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label class="col-sm-4 control-label">说明：</label>
+                                        <div class="col-sm-8">
+                                            是否显示实时数据
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <h4 class="form-header h4">备注</h4>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">备注：</label>
+                                    <div class="col-sm-10">
+                                                <textarea rows="6" cols="20" id="remark"
+                                                          name="remark" maxlength="150" class="form-control"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--<div class="panel panel-default">
+            <div class="panel-body">
+                <ul class="nav nav-tabs" role="tablist">
+                    <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab"
+                                                              data-toggle="tab">附件</a></li>
+                </ul>
+
+                <div class="tab-content">
+                    <div role="tabpanel" class="tab-pane active" id="home">
+                        <div class="btn-group-sm" id="toolbar" role="tab" style="margin: 15px 0px;">
+                            <a class="btn btn-success" type="button" onclick="upload()">
+                                <i class="fa fa-upload"></i> 添加附件
+                            </a>
+                            <a class="btn btn-warning multiple disabled" onclick="downloadFile()">
+                                <i class="fa fa-download"></i> 下载附件
+                            </a>
+                            <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()">
+                                <i class="fa fa-trash"></i> 删除附件
+                            </a>
+                        </div>
+                        <div class="col-sm-12 select-table table-striped">
+                            <table id="file-table"></table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>-->
+    </form>
+</div>
+<div class="row">
+    <div class="col-sm-offset-5 col-sm-10">
+        <!--<button type="button" class="btn btn-sm btn-primary" onclick="submit()"><i class="fa fa-check"></i>提 交</button>-->
+        <button type="button" class="btn btn-sm btn-primary" onclick="save()"><i class="fa fa-check"></i>提 交</button>&nbsp;
+        <button type="button" class="btn btn-sm btn-danger" onclick="closeItem()"><i class="fa fa-reply-all"></i>关 闭
+        </button>
+    </div>
+</div>
+<th:block th:include="include :: footer"/>
+<th:block th:include="include :: select2-js"/>
+<th:block th:include="include :: summernote-js"/>
+<th:block th:include="include :: datetimepicker-js"/>
+<script>
+    var prefix = ctx + "patrol/monitoring";
+    var prefix_attachment = ctx + "pub/attachment";
+
+    $(function () {
+        var options = {
+            url: prefix_attachment + "/list",
+            id: "file-table",
+            createUrl: prefix_attachment + "/add",
+            updateUrl: prefix_attachment + "/edit/{id}",
+            removeUrl: prefix_attachment + "/remove",
+            detailUrl: prefix_attachment + "/edit/{id}",
+            sortName: "fileTime",
+            sortOrder: "desc",
+            singleSelect: true,
+            clickToSelect: true,
+            queryParams: queryParams,
+            modalName: "附件列表",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'atId',
+                    title: '附件ID',
+                    visible: false
+                },
+                {
+                    field: 'person.pId',
+                    title: '上传人员Id',
+                    visible: false
+                },
+                {
+                    field: 'fileName',
+                    title: '文件名称'
+                },
+                {
+                    field: 'person.pName',
+                    title: '上传人'
+                },
+                {
+                    field: 'size',
+                    title: '文件大小'
+                },
+                {
+                    field: 'memo',
+                    title: '文件描述'
+                },
+                {
+                    field: 'fileTime',
+                    title: '上传时间'
+                }]
+        };
+        $.table.init(options);
+    });
+
+    function queryParams(params) {
+        var search = $.table.queryParams(params);
+        search.ownerId = $("#patrolId").val();
+        return search;
+    }
+
+    // 附件上传页面
+    function upload() {
+        var url = ctx + "pub/attachment/upload/" + $("#recoveryRegisterId").val();
+        $.modal.open("附件上传", url);
+    }
+
+    // 附件下载
+    function downloadFile() {
+        var rows = $.table.selectFirstColumns();
+        var atId = rows[0];
+        var ownerId = $("#recoveryRegisterId").val();
+        var url = ctx + "pub/attachment/download/" + ownerId + "/" + atId;
+        window.location.href = url;
+    }
+
+    function doSubmitOne(index, layero) {
+        var tree = layero.find("iframe")[0].contentWindow.$._tree;
+        var body = layer.getChildFrame('body', index);
+        $("#orgId").val(body.find('#treeId').val());
+        $("#orgName").val(body.find('#treeName').val());
+        getchangeManager(body.find('#treeId').val());
+        layer.close(index);
+    }
+
+    //判断它是否输入的数字
+    function search() {
+        var telePhone = $('#telePhone').val();
+
+        var vv = document.getElementById('telePhone').value;
+        var re = /(^[1-9]\d*$)/;
+        if (!re.test(vv)) {
+            alert("请输入数字");
+            $('#dataSize').val(null);
+            return false;
+        }
+    }
+
+    $("#startTime").datetimepicker({
+        format: "yyyy-mm-dd hh:ii:ss",
+        autoclose: true,
+        minView: 0,
+        minuteStep: 1
+    });
+    $("#endUpTime").datetimepicker({
+        format: "yyyy-mm-dd hh:ii:ss",
+        autoclose: true,
+        minView: 0,
+        minuteStep: 1
+    });
+    $("#endTime").datetimepicker({
+        format: "yyyy-mm-dd hh:ii:ss",
+        autoclose: true,
+        minView: 0,
+        minuteStep: 1
+    }).on('changeDate', function (elapsedTime) { //changeDate ev
+
+        var startTime = $('#startTime').val();
+        var endTime = $('#endTime').val();
+
+        if (startTime >= endTime) {
+            alert("结束时间不能小于开始时间哟");
+            $('#endTime').val(null);
+            return false;
+        }
+        ;
+
+    });
+
+    //新增  2 已提交
+    function submit() {
+        if ($.validate.form()) {
+            var data = $("#form-line-add").serializeArray();
+            //改变状态
+            data.push({"name": "lineStart", "value": 3});
+            $.operate.saveTab(prefix + "/add", data);
+        }
+    }
+
+    // 暂存
+    function save() {
+        var data = $("#form-line-add").serialize();
+        //改变状态
+        //data.push({"name":"lineStart","value": 1 });
+        $.operate.saveTab(prefix + "/add", data);
+    };
+
+    // 选择应用系统（只能单选）
+    function selectOneApplication() {
+        $.modal.open("选择应用系统", prefix + "/selectOneApplication");
+    }
+
+</script>
+</body>
+</html>

@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('新增事务事件单模板')" />
+    <th:block th:include="include :: summernote-css" />
+</head>
+<body>
+<div class="main-content">
+    <div class="panel panel-default">
+        <div class="panel-heading" style="background-color: #3c8dbc" data-toggle="collapse" data-target="#collapse1">
+
+            <h4 class="panel-title" >
+                事务事件单模板
+            </h4>
+        </div>
+        <div id="collapse1" class="panel-collapse in">
+            <div class="panel-body">
+                <form id="form-swmb-add" class="form-horizontal">
+                    <input type="hidden" name="swmdId" id="swmdId" th:value="${swmdId}"/>
+                    <input type="hidden" name="fileStoreId" id="fileStoreId"/>
+                    <input name="dealOrgId" type="hidden" id="treeId" />
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label is-required">受理处室：</label>
+                                <div class="col-sm-8">
+                                    <input  onclick="selectDeptTree()" th:id="treeName" type="text"  class="form-control" readonly style="background-color: #ffffff">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label is-required">默认受理人：</label>
+                                <div class="col-sm-8">
+                                    <select th:name="dealPId" th:id="dealPid" class="form-control">
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label is-required">请求事项：</label>
+                                <div class="col-sm-8">
+                                    <input   id="faultKind" name="faultKind" type="text" maxlength="125" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label is-required">模板标题：</label>
+                                <div class="col-sm-8">
+                                    <input   th:id="swmbTitle" name="swmbTitle" type="text" maxlength="125" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label is-required">模板说明：</label>
+                                <div class="col-sm-8">
+                                    <input id="memo" name="memo" maxlength="125" class="form-control" type="text">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <!--<div class="form-group">-->
+                            <!--    <label class="col-sm-4 control-label is-required">绑定流程：</label>-->
+                            <!--    <div class="col-sm-8">-->
+                            <!--        <select id="processStatus" name="processStatus" class="form-control">-->
+                            <!--            <option></option>-->
+                            <!--            <option value="1">三步流程</option>-->
+                            <!--            <option value="2">五步流程</option>-->
+                            <!--        </select>-->
+                            <!--    </div>-->
+                            <!--</div>-->
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label is-required">模板内容：</label>
+                                <div class="col-sm-10">
+                                    <input id="content" name="content" type="hidden">
+                                    <div class="summernote" id="summernote" ></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <!-- Nav tabs -->
+            <ul class="nav nav-tabs" role="tablist">
+                <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">附件</a></li>
+            </ul>
+
+            <!-- Tab panes -->
+            <div class="tab-content">
+                <div role="tabpanel" class="tab-pane active" id="home">
+                    <div class="btn-group-sm" id="toolbar" role="tab" style="margin: 15px 0px;">
+                        <a class="btn btn-success" type="button" onclick="upload()">
+                            <i class="fa fa-upload"></i> 添加附件
+                        </a>
+                        <a class="btn btn-warning multiple disabled" onclick="downloadFile()">
+                            <i class="fa fa-download"></i> 下载附件
+                        </a>
+                        <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAllCurrentUser();">
+                            <i class="fa fa-remove"></i> 删除附件
+                        </a>
+                    </div>
+                    <div class="col-sm-12 select-table table-striped">
+                        <table id="file-table"></table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-offset-5 col-sm-10">
+            <button type="button" class="btn btn-sm btn-primary" onclick="submitHandler()" ><i class="fa fa-check"></i>保存</button>&nbsp;
+            <button type="button" class="btn btn-sm btn-danger" onclick="closeItem()"><i class="fa fa-window-close"></i>关 闭 </button>
+        </div>
+    </div>
+
+</div>
+
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: summernote-js" />
+<script type="text/javascript">
+    var prefix_show = ctx + "system/peo";
+    var prefix_attachment = ctx + "pub/attachment";
+
+    /* 用户管理-新增-选择部门树 */
+    function selectDeptTree() {
+        var treeId = $("#treeId").val();
+        var deptId = $.common.isEmpty(treeId) ? "310100001" : $("#treeId").val();
+        var url = ctx + "system/dept/selectDeptTree/" + deptId;
+        var options = {
+            title: '选择部门',
+            width: "380",
+            url: url,
+            callBack: doSubmit
+        };
+        $.modal.openOptions(options);
+    }
+
+    function doSubmit(index, layero){
+        var tree = layero.find("iframe")[0].contentWindow.$._tree;
+
+        if(jQuery.isEmptyObject(tree)) {
+            layer.close(index);
+        }else{
+            var selectNode = tree.getSelectedNodes();
+            if(selectNode.length!=0){
+                $("#treeId").val(selectNode[0].id);
+                $("#treeName").val(selectNode[0].name);
+
+                //发去ajax请求
+                $.ajax({
+                    type: 'POST',
+                    url: prefix_show+"/levelcode",
+                    data: {"nodeId":selectNode[0].id,"rId":"0103"},
+                    success: function (result) {
+                        var opts = "<option value=''></option>";
+                        $.each(result.data, function (index, item){
+                            opts += "<option value='"+item.pId+"'>"+item.pName+"</option>";
+                        })
+                        $("#dealPid").html(opts);
+                    },
+                    dataType: 'json'
+                });
+            }
+        }
+        layer.close(index);
+
+
+
+    }
+
+    $(function () {
+        $('.summernote').summernote({
+            placeholder: '请输入事务事件内容',
+            height : 192,
+            lang : 'zh-CN',
+            followingToolbar: false,
+            callbacks: {
+                onImageUpload: function (files) {
+                    sendFile(files[0], this);
+                }
+            },
+            focus:true
+        });
+        var options = {
+            url: prefix_attachment + "/list",
+            id: "file-table",
+            createUrl: prefix_attachment + "/add",
+            updateUrl: prefix_attachment + "/edit/{id}",
+            removeUrl: prefix_attachment + "/remove",
+            detailUrl: prefix_attachment + "/edit/{id}",
+            sortName: "fileTime",
+            sortOrder: "desc",
+            singleSelect: true,
+            clickToSelect: true,
+            queryParams:queryParams,
+            modalName: "附件列表",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field : 'atId',
+                    title : '附件ID',
+                    visible : false
+                },
+                {
+                    field : 'person.pId',
+                    title : '上传人员Id',
+                    visible: false
+                },
+                {
+                    field : 'fileName',
+                    title : '文件名称'
+                },
+                {
+                    field : 'person.pName',
+                    title : '上传人'
+                },
+                {
+                    field : 'size',
+                    title : '文件大小'
+                },
+                {
+                    field : 'memo',
+                    title : '文件描述'
+                },
+                {
+                    field : 'fileTime',
+                    title : '上传时间'
+                }]
+        };
+        $.table.init(options);
+    });
+    function queryParams(params) {
+        var search = $.table.queryParams(params);
+        search.ownerId =  $("#swmdId").val();
+        return search;
+    }
+
+    var prefix = ctx + "transmb/mb";
+
+    $("#form-notice-add").validate({
+        focusCleanup: true
+    });
+
+
+
+    function submitHandler() {
+        var errorInfo = '';
+        //受理处室
+        var dealOrgId = $('#treeName').val();
+        if(isEmpty(dealOrgId)){
+            errorInfo += '【受理处室】不能为空 ';
+        }
+        //默认受理人
+        var dealPid = $('#dealPid').val();
+        if(isEmpty(dealPid)){
+            errorInfo += '【默认受理人】不能为空 ';
+        }
+        //请求事项
+        var faultKind = $('#faultKind').val().trim();
+        if(isEmpty(faultKind)){
+            errorInfo += '【请求事项】不能为空 ';
+        }else{
+            //模板标题长度校验
+            if(getValueLen(faultKind)>125){
+                errorInfo += '【请求事项】最大长度不能超过125';
+            }
+        }
+        //模板标题
+        var swmbTitle = $('#swmbTitle').val().trim();
+        if(isEmpty(swmbTitle)){
+            errorInfo += '【模板标题】不能为空 ';
+        }else{
+            //模板标题长度校验
+            if(getValueLen(swmbTitle)>125){
+                errorInfo += '【模板标题】最大长度不能超过125';
+            }
+
+        }
+        //模板说明
+        var memo = $('#memo').val().trim();
+        if(isEmpty(memo)){
+            errorInfo += '【模板说明】不能为空 ';
+        }else{
+            //模板说明长度校验
+            if(getValueLen(swmbTitle)>125){
+                errorInfo += '【模板说明】最大长度不能超过125';
+            }
+        }
+        //绑定流程
+        // var processStatus = $('#processStatus').val();
+        // if(isEmpty(processStatus)){
+        //     errorInfo += '【绑定流程】不能为空 ';
+        // }
+        var content = $('.summernote').summernote('code');
+        //模板内容
+        if($('#summernote').summernote('isEmpty')){
+            errorInfo += '【模板内容】不能为空 ';
+        }else{
+            $('#content').val(content);
+        }
+
+        if(isEmpty(errorInfo)){
+            //该受理处室对应的请求事项已经存在模板  根据请求事项和受理处室进行查询
+            var url = prefix+"/selectMbByDealOrgIdAndFaultKind";
+            var data = {
+                "faultKind":faultKind,
+                "dealOrgId":$('#treeId').val()
+            };
+            $.post(url,data,function (result) {
+                if(result==1){ //模板存在
+                    $.modal.alertError('该受理处室对应的请求事项已经存在模板 ')
+                    return;
+                }else{
+                    //判断是否进行了附件上传
+                    var dataRow = $('#file-table').bootstrapTable('getData');
+                    var len = dataRow.length;
+                    var fileStoreId= '';
+                    if(len>0){
+                        $.each(dataRow,function (index,item) {
+                            fileStoreId += item.atId;
+                            fileStoreId += ',';
+                        })
+                        fileStoreId = fileStoreId.substring(0,fileStoreId.length-1)
+                        $('#fileStoreId').val(fileStoreId);
+                    }
+                    $.operate.saveTab(prefix + "/add", $('#form-swmb-add').serialize());
+                }
+            });
+        }else{
+            $.modal.alertError(errorInfo)
+        }
+
+
+    }
+
+    // 附件上传页面
+    function upload() {
+        //受理处室
+        var dealOrgId = $('#treeName').val();
+        if(dealOrgId==''){
+            $.modal.alertError('请选择受理处室 ')
+            return;
+        }
+        //默认受理人
+        var dealPid = $('#dealPid').val();
+        if(dealPid==''){
+            $.modal.alertError('请选择默认受理人 ')
+            return;
+        }
+        //请求事项
+        var faultKind = $('#faultKind').val().trim();
+        if(faultKind==''){
+            $.modal.alertError('请输入请求事项 ')
+            return;
+        }
+        //模板标题
+        var swmbTitle = $('#swmbTitle').val().trim();
+        if(swmbTitle==''){
+            $.modal.alertError('请输入模板标题 ')
+            return;
+        }
+        //模板说明
+        var memo = $('#memo').val().trim();
+        if(memo==''){
+            $.modal.alertError('请输入模板说明 ')
+            return;
+        }
+        //模板内容
+        if($('#summernote').summernote('isEmpty')){
+            $.modal.alertError('模板内容不能为空 ')
+            return;
+        }
+        //该受理处室对应的请求事项已经存在模板  根据请求事项和受理处室进行查询
+        var url = prefix+"/selectMbByDealOrgIdAndFaultKind";
+        var data = {
+            "faultKind":faultKind,
+            "dealOrgId":$('#treeId').val()
+        };
+        $.post(url,data,function (result) {
+            if(result==1){ //模板存在
+                $.modal.alertError('该受理处室对应的请求事项已经存在模板 ')
+                return;
+            }else{
+                var url = prefix_attachment+"/upload/" + $('#swmdId').val();
+                $.modal.open("问题单附件上传", url);
+            }
+        });
+
+    }
+
+    // 附件下载
+    function downloadFile() {
+        var rows = $('#file-table').bootstrapTable('getSelections');
+        if(rows.length==0){
+            $.modal.alertError('请选择要下载的附件 ')
+            return;
+        }
+        var atId = rows[0].atId;
+        var ownerId = $("#swmdId").val();
+        var url = prefix_attachment +"/download/"+ownerId+"/"+atId;
+        window.location.href = url;
+    }
+
+
+
+    /**
+     * 输入空值校验
+     * @param valueStr
+     * @returns {boolean}
+     */
+    function  isEmpty(valueStr) {
+        if(valueStr=='' || valueStr==null){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+
+    /**
+     * 获取输入数值的长度
+     * @param valueStr
+     * @returns {number}
+     */
+    function getValueLen(valueStr){
+        return isEmpty(valueStr)?0:valueStr.length;
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.form.mapper.ButtonActionMapper">
+  <resultMap id="BaseResultMap" type="com.ruoyi.form.domain.ButtonAction">
+    <!--@mbg.generated-->
+    <!--@Table button_action-->
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="desc" jdbcType="VARCHAR" property="desc" />
+    <result column="fully_qualified_name" jdbcType="VARCHAR" property="fullyQualifiedName" />
+    <result column="bean_name" jdbcType="VARCHAR" property="beanName" />
+    <result column="method_name" jdbcType="VARCHAR" property="methodName" />
+    <result column="param_value" jdbcType="VARCHAR" property="paramValue" />
+    <result column="activity_node_id" jdbcType="VARCHAR" property="activityNodeId" />
+    <result column="template_id" jdbcType="BIGINT" property="templateId" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated-->
+    id, `desc`, bean_name,fully_qualified_name, method_name, param_value, activity_node_id, template_id
+  </sql>
+
+  <select id="getObj" resultType="map">
+    select a.*,b.json from button_action a inner join approve_template b on a.template_id=b.id where a.activity_node_id=#{sid}
+  </select>
+</mapper>

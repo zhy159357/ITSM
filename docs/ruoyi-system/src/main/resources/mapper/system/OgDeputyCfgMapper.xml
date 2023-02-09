@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.OgDeputyCfgMapper">
+    
+    <resultMap type="OgDeputyCfg" id="OgDeputyCfgResult">
+        <result property="updatedTime"    column="updated_time"    />
+        <result property="updatedBy"    column="updated_by"    />
+        <result property="createdTime"    column="created_time"    />
+        <result property="createdBy"    column="created_by"    />
+        <result property="endTime"    column="end_time"    />
+        <result property="startTime"    column="start_time"    />
+        <result property="status"    column="status"    />
+        <result property="secondary"    column="secondary"    />
+        <result property="director"    column="director"    />
+        <result property="cfgType"    column="cfg_type"    />
+        <result property="id"    column="id"    />
+        <result property="directorId"    column="directorId"    />
+        <result property="secondaryId"    column="secondaryId"    />
+    </resultMap>
+
+    <sql id="selectOgDeputyCfgVo">
+        select a.updated_time, updated_by, a.created_time, created_by, DATE_FORMAT(a.START_time,'%Y-%m-%d %T') as start_time,DATE_FORMAT(a.end_time,'%Y-%m-%d %T') as end_time, a.status,a.secondary as secondaryId, b.pname as secondary,a.director as directorId, c.pname as director, a.cfg_type, a.id
+        from og_deputy_cfg a left join og_person b on CRC32(a.secondary)=b.pid_crc left join og_person c on CRC32(a.director)=c.pid_crc 
+    </sql>
+
+    <select id="selectOgDeputyCfgList" parameterType="OgDeputyCfg" resultMap="OgDeputyCfgResult">
+        <include refid="selectOgDeputyCfgVo"/>
+        <where>  
+            <if test="updatedTime != null "> and updated_time = #{updatedTime}</if>
+            <if test="updatedBy != null  and updatedBy != ''"> and updated_by = #{updatedBy}</if>
+            <if test="createdTime != null "> and created_time = #{createdTime}</if>
+            <if test="createdBy != null  and createdBy != ''"> and created_by = #{createdBy}</if>
+            <if test="endTime != null "> and END_time = #{endTime}</if>
+            <if test="startTime != null "> and START_time = #{startTime}</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+            <if test="secondary != null  and secondary != ''"> and secondary = #{secondary}</if>
+            <if test="director != null  and director != ''"> and director = #{director}</if>
+            <if test="cfgType != null "> and cfg_type = #{cfgType}</if>
+            <if test="id != null "> and id = #{id}</if>
+        </where>
+    </select>
+        <select id="isOgDeputyCfgList" parameterType="OgDeputyCfg" resultMap="OgDeputyCfgResult">
+        <include refid="selectOgDeputyCfgVo"/>
+        <where>  
+            <if test="endTime != null "> and END_time  &lt; #{endTime}</if>
+            <if test="startTime != null "> and START_time  &gt; #{startTime}</if>
+            <if test="secondary != null  and secondary != ''"> and secondary = #{secondary}</if>
+            <if test="director != null  and director != ''"> and director = #{director}</if>
+            <if test="cfgType != null "> and cfg_type = #{cfgType}</if>
+            <if test="id != null "> and id = #{id}</if>
+        </where>
+    </select>
+    <select id="selectOgDeputyCfgById" parameterType="Long" resultMap="OgDeputyCfgResult">
+        select a.updated_time, updated_by, a.created_time, created_by, DATE_FORMAT(a.END_time,'%Y-%m-%d %T')  as END_time, DATE_FORMAT(a.START_time,'%Y-%m-%d %T') as START_time, a.status,a.secondary, b.pname as secondaryName,a.director, c.pname as directorName, a.cfg_type, a.id 
+        from og_deputy_cfg a left join og_person b on CRC32(a.secondary)=b.pid_crc left join og_person c on CRC32(a.director)=c.pid_crc 
+        where id = #{id}
+    </select>
+        
+    <insert id="insertOgDeputyCfg" parameterType="OgDeputyCfg">
+        insert into og_deputy_cfg
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            created_time,
+            <if test="createdBy != null  and createdBy != ''">created_by,</if>
+            <if test="endTime != null ">END_time,</if>
+            <if test="startTime != null ">START_time,</if>
+            <if test="status != null  and status != ''">status,</if>
+            <if test="secondary != null  and secondary != ''">secondary,</if>
+            <if test="director != null  and director != ''">director,</if>
+            <if test="cfgType != null ">cfg_type,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+        	now(),
+            <if test="createdBy != null  and createdBy != ''">#{createdBy},</if>
+            <if test="endTime != null ">#{endTime},</if>
+            <if test="startTime != null ">#{startTime},</if>
+            <if test="status != null  and status != ''">#{status},</if>
+            <if test="secondary != null  and secondary != ''">#{secondary},</if>
+            <if test="director != null  and director != ''">#{director},</if>
+            <if test="cfgType != null ">#{cfgType},</if>
+         </trim>
+    </insert>
+
+    <update id="updateOgDeputyCfg" parameterType="OgDeputyCfg">
+        update og_deputy_cfg
+        <trim prefix="SET" suffixOverrides=",">
+            updated_time =now(),
+            <if test="updatedBy != null  and updatedBy != ''">updated_by = #{updatedBy},</if>
+            <if test="endTime != null ">END_time = #{endTime},</if>
+            <if test="startTime != null ">START_time = #{startTime},</if>
+            <if test="status != null  and status != ''">status = #{status},</if>
+            <if test="secondary != null  and secondary != ''">secondary = #{secondary},</if>
+            <if test="director != null  and director != ''">director = #{director},</if>
+            <if test="cfgType != null ">cfg_type = #{cfgType},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteOgDeputyCfgById" parameterType="Long">
+        delete from og_deputy_cfg where id = #{id}
+    </delete>
+
+    <delete id="deleteOgDeputyCfgByIds" parameterType="String">
+        delete from og_deputy_cfg where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

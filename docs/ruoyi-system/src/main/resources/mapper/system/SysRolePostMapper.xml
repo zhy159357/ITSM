@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.SysRolePostMapper">
+	<resultMap type="OgRolePost" id="OgRolePostResult">
+		<result property="postId"     column="postId"      />
+		<result property="rid"     column="rid"      />
+	</resultMap>
+
+
+
+	<insert id="batchPostRole">
+		insert into og_r_post_role(postid,rid) values
+		<foreach item="item" index="index" collection="list" separator="," open="(" close=")">
+			#{item.postId},#{item.rid}
+		</foreach>
+	</insert>
+
+
+
+
+
+	<insert id="insertAuthRoles" >
+		insert into og_r_post_role(postid, rid) values
+		(#{postId},#{rid})
+	</insert>
+
+
+
+</mapper>

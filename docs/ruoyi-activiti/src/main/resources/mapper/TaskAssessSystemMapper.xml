@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.activiti.mapper.TaskAssessSystemMapper">
+    
+    <resultMap type="TaskAssessSystem" id="TaskAssessSystemResult">
+        <result property="manyidu"    column="manyidu"    />
+        <result property="taskType"    column="task_type"    />
+        <result property="id"    column="id"    />
+        <result property="userName"    column="user_name"    />
+        <result property="userId"    column="user_id"    />
+        <result property="sysName"    column="sys_name"    />
+        <result property="sysId"    column="sys_id"    />
+        <result property="qianDao"    column="qian_dao"    />
+        <result property="end"    column="end"    />
+        <result property="unEnd"    column="un_end"    />
+        <result property="timeOut"    column="time_out"    />
+    </resultMap>
+
+    <sql id="selectTaskAssessSystemVo">
+        select manyidu, task_type, id, user_name, user_id, sys_name, sys_id, qian_dao, end, un_end, time_out from task_assess_system
+    </sql>
+
+    <select id="selectTaskAssessSystemList" parameterType="TaskAssessSystem" resultMap="TaskAssessSystemResult">
+        SELECT
+            t1.pname AS user_name,
+            t1.userid AS user_id,
+            t1.orgname AS sys_name,
+            t2.COMEPLETE AS END,
+            t3.qiandao AS qian_dao,
+            '运维事件单' AS task_type,
+            t4.unend AS un_end,
+            t5.timeout AS time_out,
+            t6.re as manyidu
+        FROM
+            (
+            SELECT
+                op.PNAME,
+                up.USERID,
+                og.orgname
+            FROM
+                og_person op
+                LEFT JOIN og_r_user_post up ON op.PID = up.USERID
+                LEFT JOIN og_post p ON p.postid = up.postid
+                LEFT JOIN og_org og ON op.orgid = og.orgid
+            WHERE
+                p.postid = '0002'
+               <if test="userName != null  and userName != ''"> and op.PNAME like concat(concat('%', #{userName}), '%')</if>
+               <if test="sysName != null  and sysName != ''"> and og.orgname like concat(concat('%', #{sysName}), '%')</if>
+            ) t1
+            LEFT JOIN (
+            SELECT
+                count( * ) AS comeplete,
+                t.performer_id
+            FROM
+                PUB_FLOW_LOG t
+            WHERE
+                t.log_type = 'FmBiz'
+                AND t.performer_id IS NOT NULL
+            GROUP BY
+                t.performer_id
+            ) t2 ON t1.userid = t2.PERFORMER_ID
+            LEFT JOIN ( SELECT count( * ) AS qiandao, iw.user_id FROM itsm_work_status_log iw WHERE iw.WORK_STATUS = '1' GROUP BY iw.USER_ID ) t3 ON t1.userid = t3.user_id
+            LEFT JOIN ( SELECT count( * ) AS unend, DEALER_ID FROM fm_biz WHERE CURRENT_STATE IN ( '03', '04', '08', '11' ) GROUP BY DEALER_ID ) t4 ON t1.USERID = t4.DEALER_ID
+            LEFT JOIN ( SELECT count( * ) AS timeout, fb.DEALER_ID FROM fm_biz fb WHERE fb.TYPEINFO_ID = 'a' GROUP BY fb.DEALER_ID ) t5 ON t1.userid = t5.DEALER_ID
+            LEFT JOIN ( SELECT count( * ) AS re, fb.DEALER_ID FROM fm_biz fb WHERE fb.EVALUATE_RESULT = '3' GROUP BY fb.DEALER_ID ) t6 ON t1.userid = t6.DEALER_ID
+    </select>
+    
+    <select id="selectTaskAssessSystemById" parameterType="String" resultMap="TaskAssessSystemResult">
+        <include refid="selectTaskAssessSystemVo"/>
+        where manyidu = #{manyidu}
+    </select>
+        
+    <insert id="insertTaskAssessSystem" parameterType="TaskAssessSystem">
+        insert into task_assess_system
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="manyidu != null  and manyidu != ''">manyidu,</if>
+            <if test="taskType != null  and taskType != ''">task_type,</if>
+            <if test="id != null  and id != ''">id,</if>
+            <if test="userName != null  and userName != ''">user_name,</if>
+            <if test="userId != null  and userId != ''">user_id,</if>
+            <if test="sysName != null  and sysName != ''">sys_name,</if>
+            <if test="sysId != null  and sysId != ''">sys_id,</if>
+            <if test="qianDao != null  and qianDao != ''">qian_dao,</if>
+            <if test="end != null  and end != ''">end,</if>
+            <if test="unEnd != null  and unEnd != ''">un_end,</if>
+            <if test="timeOut != null  and timeOut != ''">time_out,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="manyidu != null  and manyidu != ''">#{manyidu},</if>
+            <if test="taskType != null  and taskType != ''">#{taskType},</if>
+            <if test="id != null  and id != ''">#{id},</if>
+            <if test="userName != null  and userName != ''">#{userName},</if>
+            <if test="userId != null  and userId != ''">#{userId},</if>
+            <if test="sysName != null  and sysName != ''">#{sysName},</if>
+            <if test="sysId != null  and sysId != ''">#{sysId},</if>
+            <if test="qianDao != null  and qianDao != ''">#{qianDao},</if>
+            <if test="end != null  and end != ''">#{end},</if>
+            <if test="unEnd != null  and unEnd != ''">#{unEnd},</if>
+            <if test="timeOut != null  and timeOut != ''">#{timeOut},</if>
+         </trim>
+    </insert>
+
+    <update id="updateTaskAssessSystem" parameterType="TaskAssessSystem">
+        update task_assess_system
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="taskType != null  and taskType != ''">task_type = #{taskType},</if>
+            <if test="id != null  and id != ''">id = #{id},</if>
+            <if test="userName != null  and userName != ''">user_name = #{userName},</if>
+            <if test="userId != null  and userId != ''">user_id = #{userId},</if>
+            <if test="sysName != null  and sysName != ''">sys_name = #{sysName},</if>
+            <if test="sysId != null  and sysId != ''">sys_id = #{sysId},</if>
+            <if test="qianDao != null  and qianDao != ''">qian_dao = #{qianDao},</if>
+            <if test="end != null  and end != ''">end = #{end},</if>
+            <if test="unEnd != null  and unEnd != ''">un_end = #{unEnd},</if>
+            <if test="timeOut != null  and timeOut != ''">time_out = #{timeOut},</if>
+        </trim>
+        where manyidu = #{manyidu}
+    </update>
+
+    <delete id="deleteTaskAssessSystemById" parameterType="String">
+        delete from task_assess_system where manyidu = #{manyidu}
+    </delete>
+
+    <delete id="deleteTaskAssessSystemByIds" parameterType="String">
+        delete from task_assess_system where manyidu in 
+        <foreach item="manyidu" collection="array" open="(" separator="," close=")">
+            #{manyidu}
+        </foreach>
+    </delete>
+    
+</mapper>

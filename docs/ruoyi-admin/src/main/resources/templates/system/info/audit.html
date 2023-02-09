@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('信息制度审核列表')" />
+    <th:block th:include="include :: layout-latest-css" />
+    <th:block th:include="include :: ztree-css" />
+    <th:block th:include="include :: datetimepicker-css" />
+    <th:block th:include="include :: select2-css"/>
+</head>
+<body class="gray-bg">
+<div class="ui-layout-west">
+    <div class="box box-main">
+        <div class="box-header">
+            <div class="box-title">
+                <i class="fa icon-grid"></i> 制度目录
+            </div>
+            <div class="box-tools pull-right">
+                <button type="button" class="btn btn-box-tool" id="btnExpand" title="展开" style="display:none;"><i class="fa fa-chevron-up"></i></button>
+                <button type="button" class="btn btn-box-tool" id="btnCollapse" title="折叠"><i class="fa fa-chevron-down"></i></button>
+                <button type="button" class="btn btn-box-tool" id="btnRefresh" title="刷新列表"><i class="fa fa-refresh"></i></button>
+            </div>
+        </div>
+        <div class="ui-layout-content">
+            <div id="tree" class="ztree"></div>
+        </div>
+    </div>
+</div>
+<div class="ui-layout-center">
+    <div class="container-div">
+        <div class="row">
+            <div class="col-sm-12 search-collapse">
+                <form id="role-form">
+                    <input type="text" style="display: none" id="treeId" name="folder_">
+                    <div class="select-list">
+                        <ul>
+                            <li>
+                                <label style="width: 80px">制度标题：</label><input type="text" name="regime_title" id="regime_title" maxlength="20"/>
+                            </li>
+                            <li>
+                                <label style="width: 80px">制度摘要：</label><input type="text" name="regime_digest" id="regime_digest" maxlength="20"/>
+                            </li>
+                            <li>
+                                <label style="width: 80px">关键字：</label><input type="text" name="key_word" id="key_word" maxlength="20"/>
+                            </li>
+                            <li>
+                                <label style="width: 80px">提交人：</label><input type="text" name="commit_id" id="commit_id" maxlength="20"/>
+                            </li>
+                            <li>
+                                <label style="width: 80px">创建时间： </label>
+                                <input style="width:90px" type="text"  readonly id="startTime" placeholder="开始时间" name="params[startTime]">
+                                <span style="width:10px">-</span>
+                                <input style="width:90px" type="text"  readonly id="endTime" placeholder="结束时间" name="params[endTime]">
+                            </li>
+                            <li>
+                                <label style="width: 80px">废止原因：</label>
+                                <select name="delete_reason" id="delete_reason" th:with="type=${@pubParaValue.selectPubParaValueByParaName('delteReason')}">
+                                    <option value=""></option>
+                                    <option th:each="paraValue : ${type}" th:text="${paraValue.valueDetail}" th:value="${paraValue.value}"></option>
+                                </select>
+                            </li>
+                            <li>
+                                <a class="btn btn-primary btn-rounded btn-sm"id="ss" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                <a class="btn btn-warning btn-rounded btn-sm" onclick="updReset('role-form')"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                            </li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+
+            <div class="btn-group-sm" id="toolbar" role="group">
+                <a class="btn btn-primary single disabled" onclick="audit()">
+                    <i class="fa fa-edit"></i> 审核
+                </a>
+            </div>
+
+            <div class="col-sm-12 select-table table-striped">
+                <table id="bootstrap-table"></table>
+            </div>
+        </div>
+    </div>
+</div>
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: layout-latest-js" />
+<th:block th:include="include :: ztree-js" />
+<th:block th:include="include :: datetimepicker-js" />
+<th:block th:include="include :: select2-js"/>
+<script th:inline="javascript">
+    var prefix = ctx + "system/info";
+
+
+    var data = [[${@pubParaValue.selectPubParaValueByParaName('reg_state')}]];
+
+    var datas = [[${@pubParaValue.selectPubParaValueByParaName('delteReason')}]];
+
+
+    var selecttreeName="";
+    var selecttreeId="-1";
+
+    document.onkeydown = function(e){
+        var ev = document.all ? window.event : e;
+        if(ev.keyCode==13) {
+            $('#ss').trigger('click');
+            return false;
+        } //搜索逻辑
+    }
+
+    function audit(id) {
+        table.set();
+        $.modal.openNoColse( table.options.modalName, $.operate.editUrl(id));
+    };
+
+
+    //左侧树编辑
+    $('#btnRefresh').click(function() {
+        queryDeptTree();
+    });
+    //  左侧树新建
+    function addTree(){
+        if(selecttreeId=="-1"){
+            $.modal.alertWarning("请先选择叶子节点");
+        }else{
+        var url = ctx + "system/ztreeAdd?treeName="+selecttreeName+"&id="+selecttreeId;
+        $.modal.openNoColse("制度目录管理",url);
+        queryDeptTree();
+        }
+    };
+
+    //左侧树编辑
+    function editTree(){
+        if(selecttreeId=="-1"){
+            $.modal.alertWarning("请先选择叶子节点");
+        }else{
+        var url = ctx + "system/ztree?treeName="+selecttreeName+"&id="+selecttreeId;
+        $.modal.openNoColse("制度目录管理",url);
+        queryDeptTree();
+        }
+    };
+    //左侧树节点删除
+    function removeTree() {
+        if(selecttreeId=="-1"){
+                $.modal.alertWarning("请先节点在进行删除操作");
+        }else{
+            $.ajax({
+                cache: false,
+                type: "post",
+                url: ctx + "system/ztree/treeDelete",
+                data: {
+                    "ids_": selecttreeId
+                },
+                async: false,
+                error: function (request) {
+                    $.modal.alertError("系统错误");
+                },
+                success: function (data) {
+                   queryDeptTree();
+                }
+            });
+        }
+
+    }
+
+
+    /* 新增选择树 */
+    function selectDeptTree() {
+        var treeId = $("#treeId").val();
+        var deptId = $.common.isEmpty(treeId) ? "100" : $("#treeId").val();
+        var url = ctx + "system/info/selectFolderTree/" + deptId;
+        var options = {
+            title: '选择部门',
+            width: "380",
+            url: url,
+            callBack: doSubmit
+        };
+        $.modal.openOptions(options);
+    }
+    function doSubmit(index, layero){
+        var tree = layero.find("iframe")[0].contentWindow.$._tree;
+
+        if(jQuery.isEmptyObject(tree)) {
+            layer.close(index);
+        }else{
+            var selectNode = tree.getSelectedNodes();
+            if(selectNode.length!=0){
+                $("#treeId").val(selectNode[0].id);
+                $("#treeName").val(selectNode[0].name);
+            }
+        }
+        layer.close(index);
+    }
+
+    $(function() {
+        var panehHidden = false;
+        if ($(this).width() < 800) {
+            panehHidden = true;
+        }
+        $('body').layout({ initClosed: panehHidden, west__size: 185 });
+        // 回到顶部绑定
+        if ($.fn.toTop !== undefined) {
+            var opt = {
+                win:$('.ui-layout-center'),
+                doc:$('.ui-layout-center')
+            };
+            $('#scroll-up').toTop(opt);
+        }
+        queryInfoList();
+        queryDeptTree();
+    });
+
+
+    function queryDeptTree()
+    {
+        var url = ctx + "system/info/treeData";
+        var options = {
+            url: url,
+            expandLevel: 2,
+            onClick : zOnClick
+        };
+        $.tree.init(options);
+
+        function zOnClick(event, treeId, treeNode) {
+            $("#treeId").val(treeNode.id);
+            selecttreeId = treeNode.id;
+            selecttreeName = treeNode.name;
+            $("#treeName").val(treeNode.name);
+            $.table.search();
+        }
+    }
+    function queryInfoList() {
+        var options = {
+            url: prefix + "/auditlist",
+            updateUrl: prefix + "/auditing/{id}",
+            modalName: "审核信息制度",
+            firstLoad: false,
+            clickToSelect:true,
+            singleSelect:true,
+            columns: [{
+                checkbox: true
+                },
+                {
+                    field: 'regime_info_id',
+                    title: 'id',
+                    visible:false
+                },
+                {
+                    field: 'regime_title',
+                    title: '制度标题',
+                },
+                {
+                    field: 'regime_digest',
+                    title: '制度摘要',
+		        	formatter: function (value, row, index) {
+		        		return $.table.tooltip(value);
+		        	}
+                },
+                {
+                    field: 'commit_time',
+                    title: '提交时间'
+                },
+                {
+                    field: 'commit_id',
+                    title: '提交人',
+                },
+                {
+                    field: 'current_state',
+                    title: '状态',
+                    formatter: function(value, row, index) {
+                        return selectDictLabel(data, value);
+                    }
+                }
+            ]
+        };
+        $.table.init(options);
+    };
+
+    function selectDictLabel(datas, value) {
+        var actions = [];
+        $.each(datas, function(index, dict) {
+            if (dict.value == ('' + value)) {
+                var listClass = $.common.equals("default", dict.listClass) || $.common.isEmpty(dict.listClass) ? "" : "badge badge-" + dict.listClass;
+                actions.push($.common.sprintf("<span class='%s'>%s</span>", listClass, dict.valueDetail));
+                return false;
+            }
+        });
+        return actions.join('');
+    }
+
+    function updReset(filetable) {
+        if($("#treeId").val() == null || $("#treeId").val() == ''){
+            $("#treeId").val('-2')
+            return
+        }
+        //清空id
+        $('#regime_title').val('');
+        $('#regime_digest').val('');
+        $('#key_word').val('');
+        $('#commit_id').val('');
+        $('#startTime').val('');
+        $('#endTime').val('');
+        $('#delete_reason').val('');
+        $.table.search(filetable,'bootstrap-table');
+    }
+
+    $("#startTime").datetimepicker({
+        format: "yyyy-mm-dd",
+        minView: "month",
+        autoclose: true
+    });
+
+    $("#endTime").datetimepicker({
+        format: "yyyy-mm-dd",
+        minView: "month",
+        autoclose: true
+    });
+</script>
+</body>
+</html>

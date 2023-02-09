@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.SysBizFileMapper">
+	<resultMap type="com.ruoyi.system.domain.SysBizFile" id="SysBizFileResult">
+		<id property="id" column="id"        />
+		<result property="ticketId"       column="ticket_id"      />
+		<result property="originFileName"     column="origin_file_name"    />
+		<result property="fileName"       column="file_name"      />
+		<result property="location"       column="location"      />
+		<result property="url"            column="url"            />
+		<result property="contentType"         column="content_type"         />
+		<result property="hashcode"       column="hashcode"      />
+		<result property="length"        column="length"        />
+		<result property="createBy"       column="create_by"      />
+		<result property="createTime"     column="create_time"    />
+		<result property="updateTime"     column="update_time"    />
+		<result property="updateBy"       column="update_by"      />
+		<result property="status"         column="status"         />
+	</resultMap>
+
+	<sql id="SELECT_SYS_BIZ_FILE">
+        <!-- select id, ticket_id, origin_file_name, file_name, location, url, content_type, hashcode, length, create_by, update_by, create_time, update_time, status from sys_biz_file -->
+    	select s.id, s.ticket_id, s.origin_file_name, s.file_name, s.location, s.url, s.content_type, s.hashcode, s.length, o.pname as create_by, s.update_by, s.create_time, s.update_time, s.status from sys_biz_file s left join og_person o on s.create_by=o.pid
+
+    </sql>
+
+
+	<select id="list" parameterType="com.ruoyi.system.domain.SysBizFile" resultMap="SysBizFileResult">
+		<include refid="SELECT_SYS_BIZ_FILE"/>
+	<where>
+			<if test="ticketId != null and ticketId != ''">
+				AND s.ticket_id = #{ticketId}
+			</if>
+			<if test="originFileName != null and originFileName != ''">
+				AND s.origin_file_name = #{originFileName}
+			</if>
+			<if test="fileName != null and fileName != ''">
+				AND s.file_name = #{fileName}
+			</if>
+			<if test="createBy != null and createBy != ''">
+				AND s.create_by = #{createBy}
+			</if>
+			<if test="updateBy != null and updateBy != ''">
+				AND s.update_by = #{updateBy}
+			</if>
+			<if test="id != null and id != ''">
+				AND s.id = #{id}
+			</if>
+		</where>
+		order by s.create_time desc
+	</select>
+
+	<select id="get" parameterType="Long" resultMap="SysBizFileResult">
+		<include refid="SELECT_SYS_BIZ_FILE"/> where  s.id = #{id}
+	</select>
+    <delete id="deleteByBizId" parameterType="string">
+		delete from sys_biz_file where ticket_id = #{bizId}
+	</delete>
+
+    <insert id="insert" parameterType="com.ruoyi.system.domain.SysBizFile" useGeneratedKeys="true" keyProperty="id">
+		insert into sys_biz_file
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="ticketId != null and ticketId != ''">ticket_id,</if>
+			<if test="originFileName != null and originFileName != ''">origin_file_name,</if>
+			<if test="fileName != null and fileName != ''">file_name,</if>
+			<if test="location != null and location != ''">location,</if>
+			<if test="url != null and url != ''">url,</if>
+			<if test="contentType != null and contentType != ''">content_type,</if>
+			<if test="hashcode != null and hashcode != ''">hashcode,</if>
+			<if test="length != null">length,</if>
+			<if test="createTime != null">create_time,</if>
+			<if test="updateTime != null">update_time,</if>
+			<if test="createBy != null and createBy != ''">create_by,</if>
+			<if test="updateBy != null and updateBy != ''">update_by,</if>
+			<if test="status != null">status,</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="ticketId != null and ticketId != ''">#{ticketId},</if>
+			<if test="originFileName != null and originFileName != ''">#{originFileName},</if>
+			<if test="fileName != null and fileName != ''">#{fileName},</if>
+			<if test="location != null and location != ''">#{location},</if>
+			<if test="url != null and url != ''">#{url},</if>
+			<if test="contentType != null and contentType != ''">#{contentType},</if>
+			<if test="hashcode != null and hashcode != ''">#{hashcode},</if>
+			<if test="length != null">#{length},</if>
+			<if test="createTime !=null">#{createTime},</if>
+			<if test="updateTime != null">#{updateTime},</if>
+			<if test="createBy != null and createBy != ''">#{createBy},</if>
+			<if test="updateBy != null and updateBy != ''">#{updateBy},</if>
+			<if test="status != null">#{status},</if>
+		</trim>
+	</insert>
+
+	<update id="update" parameterType="com.ruoyi.system.domain.SysBizFile">
+		update sys_biz_file
+		<trim prefix="SET" suffixOverrides=",">
+			<if test="ticketId != null and ticketId != ''">ticket_id = #{ticketId},</if>
+			<if test="originFileName != null and originFileName != ''">origin_file_name = #{originFileName},</if>
+			<if test="fileName != null and fileName != ''">file_name = #{fileName},</if>
+		    <if test="location != null and location != ''">location = #{location},</if>
+			<if test="url != null">url = #{url},</if>
+			<if test="contentType != null and contentType != ''">content_type = #{contentType},</if>
+			<if test="hashcode != null and hashcode != ''">hashcode = #{hashcode},</if>
+			<if test="length != null">`length` = #{length},</if>
+			<if test="createTime !=null">createTime = #{createTime},</if>
+			<if test="updateTime !=null">updateTime = #{updateTime},</if>
+			<if test="createBy != null and createBy != ''">create_by = #{createBy},</if>
+			<if test="updateBy != null and updateBy != ''">update_by = #{updateBy},</if>
+			<if test="status != null">status = #{status},</if>
+		</trim>
+		where id = #{id}
+	</update>
+
+	<delete id="delete" parameterType="Long">
+		delete from sys_biz_file where id in
+		<foreach item="id" collection="array" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+	</delete>
+</mapper>

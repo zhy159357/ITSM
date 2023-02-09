@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.activiti.mapper.FmbizAndIssueMapper">
+
+    <resultMap type="FmbizAndIssue" id="FmbizAndIssueResult">
+        <result property="fmId" column="fm_id"/>
+        <result property="state" column="state_"/>
+        <result property="issuefxId" column="issuefx_id"/>
+        <result property="groupId" column="group_id"/>
+        <result property="operationId" column="operation_id"/>
+        <result property="operationTime" column="operation_time"/>
+        <result property="id" column="id_"/>
+        <result property="ccount" column="ccount"/>
+    </resultMap>
+
+    <sql id="selectFmbizAndIssueVo">
+        select fm_id, state_, issuefx_id, group_id, operation_id, operation_time, id_ from fmbiz_and_issue
+    </sql>
+
+    <select id="selectFmbizAndIssueList" parameterType="FmbizAndIssue" resultMap="FmbizAndIssueResult">
+        <include refid="selectFmbizAndIssueVo"/>
+        <where>
+            <if test="fmId != null  and fmId != ''">and fm_id = #{fmId}</if>
+            <if test="state != null  and state != ''">and state_ = #{state}</if>
+            <if test="issuefxId != null  and issuefxId != ''">and issuefx_id = #{issuefxId}</if>
+            <if test="groupId != null  and groupId != ''">and group_id = #{groupId}</if>
+            <if test="operationId != null  and operationId != ''">and operation_id = #{operationId}</if>
+            <if test="operationTime != null  and operationTime != ''">and operation_time = #{operationTime}</if>
+        </where>
+    </select>
+
+    <select id="selectFmbizAndIssueById" parameterType="String" resultMap="FmbizAndIssueResult">
+        <include refid="selectFmbizAndIssueVo"/>
+        where id_ = #{id}
+    </select>
+
+    <insert id="insertFmbizAndIssue" parameterType="FmbizAndIssue">
+        insert into fmbiz_and_issue
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="fmId != null  and fmId != ''">fm_id,</if>
+            <if test="state != null  and state != ''">state_,</if>
+            <if test="issuefxId != null  and issuefxId != ''">issuefx_id,</if>
+            <if test="groupId != null  and groupId != ''">group_id,</if>
+            <if test="operationId != null  and operationId != ''">operation_id,</if>
+            <if test="operationTime != null  and operationTime != ''">operation_time,</if>
+            <if test="id != null  and id != ''">id_,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="fmId != null  and fmId != ''">#{fmId},</if>
+            <if test="state != null  and state != ''">#{state},</if>
+            <if test="issuefxId != null  and issuefxId != ''">#{issuefxId},</if>
+            <if test="groupId != null  and groupId != ''">#{groupId},</if>
+            <if test="operationId != null  and operationId != ''">#{operationId},</if>
+            <if test="operationTime != null  and operationTime != ''">#{operationTime},</if>
+            <if test="id != null  and id != ''">#{id},</if>
+        </trim>
+    </insert>
+
+    <update id="updateFmbizAndIssue" parameterType="FmbizAndIssue">
+        update fmbiz_and_issue
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="fmId != null  and fmId != ''">fm_id = #{fmId},</if>
+            <if test="state != null  and state != ''">state_ = #{state},</if>
+            <if test="issuefxId != null  and issuefxId != ''">issuefx_id = #{issuefxId},</if>
+            <if test="groupId != null  and groupId != ''">group_id = #{groupId},</if>
+            <if test="operationId != null  and operationId != ''">operation_id = #{operationId},</if>
+            <if test="operationTime != null  and operationTime != ''">operation_time = #{operationTime},</if>
+        </trim>
+        where id_ = #{id}
+    </update>
+
+    <delete id="deleteFmbizAndIssueById" parameterType="String">
+        delete from fmbiz_and_issue where id_ = #{id}
+    </delete>
+
+    <delete id="deleteFmbizAndIssueByIds" parameterType="String">
+        delete from fmbiz_and_issue where id_ in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="getFmBizAndIssueByDay" parameterType="String" resultMap="FmbizAndIssueResult">
+        select i.group_id,count(i.fm_id) ccount from fmbiz_and_issue i where i.state_='1'
+        and i.operation_time &lt;= #{day5} group by i.group_id
+    </select>
+    <select id="getRelationByDay" parameterType="String" resultMap="FmbizAndIssueResult">
+        <include refid="selectFmbizAndIssueVo"/>
+        where state_='1'
+        and operation_time &lt;= #{day5}
+    </select>
+
+    <select id="selectFmbizIdList" parameterType="FmbizAndIssue" resultMap="FmbizAndIssueResult">
+        select fm_id, issuefx_id, group_id, operation_id, operation_time from fmbiz_and_issue
+        <where>
+         1=1
+            <if test="issuefxId != null  and issuefxId != ''">
+                and issuefx_Id = #{issuefxId}
+            </if>
+            <if test="params.relationTimeStart != null and params.relationTimeStart != ''">
+                AND operation_time &gt;= #{params.relationTimeStart}
+            </if>
+            <if test="params.relationTimeEnd != null and params.relationTimeEnd != ''">
+                AND operation_time &lt;= #{params.relationTimeEnd}
+            </if>
+        </where>
+    </select>
+</mapper>

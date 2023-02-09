@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+	<th:block th:include="include :: header('工作组列表')" />
+	<th:block th:include="include :: layout-latest-css" />
+	<th:block th:include="include :: ztree-css" />
+</head>
+<body class="gray-bg">
+	<div class="ui-layout-center">
+		<div class="container-div">
+			<div class="row">
+				<div class="col-sm-12 search-collapse">
+					<form id="group-form">
+						<input type="hidden" id="deptId" name="orgId">
+		                <!--<input type="hidden" id="parentId" name="parentId">-->
+						<div class="select-list">
+							<ul>
+								<li>
+									工作组名称：<input type="text" name="grpName"/>
+								</li>
+								<li>
+									隶属机构：<input id="deptName" type="text" onclick="selectDeptTree()" name="orgName"/>
+								</li>
+
+								<li>
+									<a class="btn btn-primary btn-rounded btn-sm" id="searchBtn" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+								    <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-repeat"></i>&nbsp;重置</a>
+								</li>
+							</ul>
+						</div>
+					</form>
+				</div>
+				
+		        <div class="btn-group-sm" id="toolbar" role="group">
+		        </div>
+		        
+		        <div class="col-sm-12 select-table table-striped">
+				    <table id="bootstrap-table"></table>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<th:block th:include="include :: footer" />
+	<th:block th:include="include :: layout-latest-js" />
+	<th:block th:include="include :: ztree-js" />
+	<script th:inline="javascript">
+		var prefix = ctx + "system/work";
+
+		$(function() {
+			document.onkeydown = function(e){
+	            var ev = document.all ? window.event : e;
+	            console.log(ev);
+	            if(ev.keyCode==13) {
+	                $('#searchBtn').trigger('click');
+	                return false;
+	            }
+	        }
+		    var panehHidden = false;
+		    if ($(this).width() < 769) {
+		        panehHidden = true;
+		    }
+		    $('body').layout({ initClosed: panehHidden, west__size: 185 });
+	     	// 回到顶部绑定
+	    	if ($.fn.toTop !== undefined) {
+	    		var opt = {
+	    			win:$('.ui-layout-center'),
+	    			doc:$('.ui-layout-center')
+	    		};
+	    		$('#scroll-up').toTop(opt);
+	    	}
+		    queryWorkList();
+		    /*queryDeptTree();*/
+		});
+
+		function queryWorkList() {
+		    var options = {
+		        url: prefix + "/list",
+		        createUrl: prefix + "/add",
+		        updateUrl: prefix + "/edit/{id}",
+		        removeUrl: prefix + "/remove",
+		        exportUrl: prefix + "/export",
+		        importUrl: prefix + "/importData",
+		        importTemplateUrl: prefix + "/importTemplate",
+		        singleSelect: true,
+		        modalName: "工作组",
+		        columns: [{
+		            checkbox: true
+		        },
+		        {
+		            field: 'groupId',
+		            title: '工作组ID',
+                    visible : false
+		        },
+		        {
+		            field: 'grpName',
+		            title: '工作组名称'
+		        },
+		        {
+		            field: 'ogOrg.orgName',
+		            title: '隶属机构'
+		        },
+				{
+					field: 'ogSys.caption',
+					title: '所属应用系统'
+				},
+		        {
+		            field: 'memo',
+		            title: '工作组说明'
+		        },
+		        {
+                    field: "invalidationMark",
+		        	title: '状态',
+		        	align: 'center',
+		        	formatter: function (value, row, index) {
+		        		if(row.invalidationMark == 1){
+							return "启用";
+						}else{
+                            return "停止";
+						}
+		        	}
+		        },
+		        {
+		            field: 'createTime',
+		            title: '创建时间',
+		            sortable: true
+		        }]
+		    };
+		    $.table.init(options);
+		}
+		
+	
+	</script>
+</body>
+
+</html>

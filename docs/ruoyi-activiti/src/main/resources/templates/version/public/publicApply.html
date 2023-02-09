@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:include="include :: header('版本发布列表')" />
+    <th:block th:include="include :: select2-css" />
+</head>
+<body class="gray-bg">
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-12 search-collapse">
+            <form id="formId">
+                <div class="select-list">
+                    <ul>
+                        <li>
+                            <p>版本编号：</p>
+                            <input type="text" name="versionInfoNo"/>
+                        </li>
+                        <li>
+                            <p>版本简称：</p>
+                            <input type="text" name="versionInfoName"/>
+                        </li>
+                        <li>
+                            <p>创建时间：</p>
+                            <input type="text" class="time-input" id="startTime" name="params[versionCreateTimeStart]" readonly/>
+                        </li>
+                        <li>
+                            <p>所属系统：</p>
+                            <select id="ogSys.caption" name="ogSys.caption" class="form-control noselect2 selectpicker"
+                                    multiple data-actions-box="true" data-width="200px" data-live-search="true"
+                                    data-none-selected-text="请选择系统"
+                                    th:with="type=${@application.selectOgSysList(null)}">
+                                <option th:each="app : ${type}" th:text="${app.caption}" th:value="${app.caption}"></option>
+                            </select>
+                        </li>
+                        <li>
+                            <a class="btn btn-primary btn-rounded btn-sm" id="versionPublic" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                            <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.resetAll()"><i class="fa fa-repeat"></i>&nbsp;重置</a>
+                        </li>
+                    </ul>
+                </div>
+            </form>
+        </div>
+
+        <div class="btn-group-sm" id="toolbar" role="group">
+            <a class="btn btn-success" onclick="$.operate.addTab()">
+                <i class="fa fa-plus"></i> 新建
+            </a>
+            <a class="btn btn-primary single disabled" onclick="edit('','')">
+                <i class="fa fa-edit"></i> 修改
+            </a>
+            <a class="btn btn-danger single disabled" onclick="remove('','')">
+                <i class="fa fa-remove"></i> 删除
+            </a>
+            <a class="btn btn-danger single disabled" onclick="rollBack('','')">
+                <i class="fa fa-reply-all"></i> 撤回
+            </a>
+            <a class="btn btn-info single disabled" onclick="detail('')">
+                <i class="fa fa-search"></i> 查看详情
+            </a>
+            <a class="btn btn-info single disabled" onclick="selectProcess()">
+                <i class="fa fa-search"></i> 查看流程
+            </a>
+        </div>
+        <div class="col-sm-12 select-table table-striped">
+            <table id="bootstrap-table"></table>
+        </div>
+    </div>
+</div>
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: select2-js" />
+<th:block th:include="include :: bootstrap-select-js"/>
+<th:block th:include="include :: bootstrap-select-css"/>
+<script th:src="@{/js/activiti.js}"></script>
+<script th:inline="javascript">
+    var prefix = ctx + "version/public";
+
+    var datas = [[${@pubParaValue.selectPubParaValueByParaName('VERSION_STATUS')}]];
+
+    $(function() {
+        // 回车键搜索
+        document.onkeydown = function(e){
+            var ev = document.all ? window.event : e;
+            if(ev.keyCode==13) {
+                $('#versionPublic').trigger('click');
+                return false;
+            }
+        };
+
+        var options = {
+            url: prefix + "/list",
+            createUrl: prefix + "/add",
+            updateUrl: prefix + "/edit/{id}",
+            removeUrl: prefix + "/remove",
+            detailUrl: prefix + "/edit/{id}",
+            clickToSelect: true,
+            singleSelect: true,
+            modalName: "版本发布申请",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field : 'versionInfoId',
+                    title : '主键ID',
+                    visible: false,
+                    width : 150
+                },
+                {
+                    field : 'versionInfoNo',
+                    title : '版本编号',
+                    width : 150
+                },
+                {
+                    field : 'versionInfoName',
+                    title : '版本简称',
+                    width : 220,
+                    formatter: function (value, row, index) {
+                        return $.table.tooltip(value);
+                    }
+                },
+                {
+                    field : 'versionProducerName',
+                    title : '发布员',
+                    width : 150
+                },
+                {
+                    field : 'versionCreateTime',
+                    title : '创建时间',
+                    sortable: true,
+                    width : 150
+                },
+                {
+                    field : 'versionAttr',
+                    title : '版本属性',
+                    width : 100,
+                    formatter: function(value, row, index) {
+                        return row.versionAttr == '1' ? "版本" : "工具";
+                    }
+                },
+                {
+                    field : 'ogSys.caption',
+                    title : '所属系统',
+                    width : 150
+                },
+                {
+                    field : 'versionStatus',
+                    title : '状态',
+                    width : 100,
+                    formatter: function(value, row, index) {
+                        return $.table.selectPubParaValueData(datas, value);
+                    }
+                }/*,
+                {
+                    title: '操作',
+                    align: 'center',
+                    width : 200,
+                    formatter: function(value, row, index) {
+                        var actions = [];
+                        actions.push('<a class="btn btn-primary btn-xs" href="javascript:void(0)" onclick="edit(\'' + row.versionInfoId + '\',\'' + row.versionStatus + '\')"><i class="fa fa-edit"></i>编辑</a> ');
+                        actions.push('<a class="btn btn-danger btn-xs" href="javascript:void(0)" onclick="remove(\'' + row.versionInfoId + '\',\'' + row.versionStatus + '\')"><i class="fa fa-trash"></i>删除</a> ');
+                        actions.push('<a class="btn btn-danger btn-xs" href="javascript:void(0)" onclick="rollBack(\'' + row.versionInfoId + '\',\'' + row.versionStatus + '\')"><i class="fa fa-reply-all"></i>撤回</a> ');
+                        actions.push('<a class="btn btn-info btn-xs" href="javascript:void(0)" onclick="detail(\'' + row.versionInfoId + '\')"><i class="fa fa-search"></i>查看详情</a>');
+                        return actions.join('');
+                    }
+                }*/]
+        };
+        $.table.init(options);
+    });
+
+    // 查看流程
+    function selectProcess() {
+        var versionStatus = $.table.selectColumns("versionStatus");
+        if(versionStatus == '1'){
+            $.modal.alertWarning("待提交状态的版本单流程未开启，不可查看！");
+            return;
+        }
+        var businessKey = $.table.selectFirstColumns();
+        var url = ctx + 'process/processImg/' + businessKey;
+        $.modal.openFull("查看流程图", url, null, null, null, true);
+    }
+
+    // 编辑
+    function edit(id,versionStatus){
+        if(id == ''){
+            id = $.table.selectFirstColumns();
+        }
+        if(versionStatus == ''){
+            versionStatus = $.table.selectColumns("versionStatus");
+        }
+        if(versionStatus != '1'){
+            $.modal.alertWarning("只有待提交状态的版本信息才允许编辑.");
+            return;
+        }
+        var url = prefix + "/edit/" + id;
+        $.modal.openTab("编辑版本信息",url);
+    }
+
+    // 删除
+    function remove(id,versionStatus) {
+        if(id == ''){
+            id = $.table.selectFirstColumns()[0];
+        }
+        if(versionStatus == ''){
+            versionStatus = $.table.selectColumns("versionStatus");
+        }
+        if(versionStatus != '1'){
+            $.modal.alertWarning("只有待提交状态的版本信息才允许删除.");
+            return;
+        }
+        $.modal.confirm("确认要删除吗?", function() {
+            var url = prefix + "/remove";
+            var data = {"id": id};
+            $.operate.submit(url, "post", "json", data);
+        });
+    }
+
+    /*查看版本发布详情*/
+    function detail(id){
+        if(id == ''){
+            id = $.table.selectFirstColumns();
+        }
+        var url = prefix + "/detail/" + id;
+        $.modal.openTab("版本发布详情",url);
+    }
+
+    /*撤回*/
+    function rollBack(id,versionStatus) {
+        if(id == ''){
+            id = $.table.selectFirstColumns()[0];
+        }
+        if(versionStatus == ''){
+            versionStatus = $.table.selectColumns("versionStatus");
+        }
+        if(versionStatus == '2' || versionStatus == '3' || versionStatus == '6'){
+            $.modal.confirm("确认要撤回吗?", function() {
+                var url = prefix + "/rollBack";
+                var data = {"id": id};
+                $.operate.submit(url, "post", "json", data);
+            });
+        }else{
+            $.modal.alertWarning("版本提交完成后下一环节尚未审批之前才允许撤回.");
+            return;
+        }
+
+    }
+
+</script>
+</body>
+</html>

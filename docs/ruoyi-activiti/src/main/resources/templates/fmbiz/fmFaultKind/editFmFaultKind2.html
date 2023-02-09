@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:include="include :: header('事件分类维护')"/>
+    <th:block th:include="include :: select2-css"/>
+</head>
+<body>
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+    <form id="form-fmkind-add" class="form-horizontal" th:object="${FmKind}">
+        <input name="fmTypeId" id="fmTypeId" class="form-control" type="hidden" required th:value="*{fmTypeId}">
+        <h4 class="form-header h4">事件分类维护</h4>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">所属系统：</label>
+                    <div class="col-sm-8">
+                        <input id="sysId" name="sysId" th:value="*{sysId}" class="form-control" type="hidden">
+                        <input id="sysName" name="sysName" th:value="${caption}" class="form-control" type="text"
+                               readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">上级名称：</label>
+                    <div class="col-sm-8">
+                        <input id="parentId" name="parentId" th:value="*{parentId}" class="form-control" type="hidden">
+                        <input id="paretName" name="paretName" th:value="${paretName}" class="form-control" type="text"
+                               readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">名称：</label>
+                    <div class="col-sm-8">
+                        <input id="name" name="name" maxlength="32" th:value="*{name}" class="form-control" required>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">状态：</label>
+                    <div class="col-sm-8">
+                        <select id="invalidationMark" name="invalidationMark" th:field="*{invalidationMark}"
+                                class="form-control" required>
+                            <option value="1">启用</option>
+                            <option value="0">停用</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">知识库地址：</label>
+                    <div class="col-sm-8">
+                        <input id="knowledgeUrl" name="knowledgeUrl" maxlength="64" class="form-control">
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">序号：</label>
+                    <div class="col-sm-8">
+                        <input id="serialNum" name="serialNum" th:value="*{serialNum}" maxlength="4"
+                               class="form-control" required>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<th:block th:include="include :: footer"/>
+<script type="text/javascript">
+    var prefix_version = ctx + "fmKind";
+
+    $("#form-fmkind-add").validate({
+        onkeyup: false,
+        rules: {},
+        messages: {},
+        focusCleanup: true
+    });
+
+    // 提交
+    function submitHandler() {
+        if ($.validate.form()) {
+            var data = $('#form-fmkind-add').serialize();
+            $.operate.save(prefix_version + "/edit", data);
+            parent.$.table.search('data-form','bootstrap-table-data');
+
+        }
+    };
+</script>
+</body>
+</html>

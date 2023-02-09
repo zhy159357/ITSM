@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:include="include :: header('采购计划实施当前进度维护')"/>
+</head>
+<body class="white-bg">
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+    <form class="form-horizontal m" id="form-current-progress">
+        <input id="purchaseId" name="purchaseId" th:value="*{purchaseId}" type="hidden">
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">当前进度：</label>
+                    <div class="col-sm-8">
+                        <select id="currentProgress" name="currentProgress" class="form-control" th:with="type=${@pubParaValue.selectPubParaValueByParaName('current_progress')}" required>
+                            <option value=""></option>
+                            <option th:each="paraValue : ${type}" th:text="${paraValue.valueDetail}" th:value="${paraValue.value}" th:selected="${paraValue.value eq currentProgress}"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">风险提示：</label>
+                    <div class="col-sm-8">
+                        <select id="riskWarning" name="riskWarning" class="form-control" th:with="type=${@pubParaValue.selectPubParaValueByParaName('risk_warning')}" required>
+                            <option value=""></option>
+                            <option th:each="paraValue : ${type}" th:text="${paraValue.valueDetail}" th:value="${paraValue.value}" th:selected="${paraValue.value eq riskWarning}"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label is-required">备注：</label>
+                    <div class="col-sm-10">
+                        <textarea rows="5" cols="20" id="memo" name="memo" class="form-control" maxlength="600" required></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<div class="row">
+    <div class="col-sm-12">
+        <div class="tabs-container">
+            <ul class="nav nav-tabs">
+                <li class="active"><a data-toggle="tab" href="#tab-1" aria-expanded="true">进度列表</a>
+                </li>
+            </ul>
+            <div class="tab-content">
+                <div id="tab-1" class="tab-pane active">
+                    <div class="panel-body">
+                        <div class="btn-group-sm" id="toolbar" role="group">
+                        </div>
+                        <div class="col-sm-12 select-table table-striped">
+                            <table id="bootstrap-table"></table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<th:block th:include="include :: footer"/>
+<script th:inline="javascript">
+    var prefix = ctx + "purchase/change";
+
+    var currentProgressDatas = [[${@pubParaValue.selectPubParaValueByParaName('current_progress')}]];// 当前进度
+    var riskWarningDatas = [[${@pubParaValue.selectPubParaValueByParaName('risk_warning')}]];// 风险提示
+
+    // 当前进度列表
+    $(function() {
+        var options = {
+            url: prefix + "/selectPurchaseCurrentProgressList",
+            sortName: "createTime",
+            sortOrder: "desc",
+            queryParams: queryParams,
+            modalName: "当前进度列表",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field : 'currentProgressId',
+                    title : '主键ID',
+                    visible : false
+                },
+                {
+                    field : 'purchaseId',
+                    title : '关联采购实施ID',
+                    visible : false
+                },
+                {
+                    field : 'currentProgress',
+                    title : '当前进度',
+                    formatter: function(value, row, index) {
+                        return $.table.selectPubParaValueData(currentProgressDatas, value);
+                    }
+                },
+                {
+                    field : 'riskWarning',
+                    title : '风险提示',
+                    formatter: function(value, row, index) {
+                        return $.table.selectPubParaValueData(riskWarningDatas, value);
+                    }
+                },
+                {
+                    field : 'memo',
+                    title : '备注'
+                },
+                {
+                    field : 'createTime',
+                    title : '创建时间'
+                }]
+        };
+        $.table.init(options);
+    });
+
+    function queryParams(params) {
+        var search = $.table.queryParams(params);
+        search.purchaseId = $("#purchaseId").val();
+        return search;
+    }
+
+    function submitHandler() {
+        if ($.validate.form()) {
+            var data = $("#form-current-progress").serializeArray();
+            $.operate.save(prefix + "/purchaseCurrentProgress", data);
+        }
+    }
+</script>
+</body>
+</html>

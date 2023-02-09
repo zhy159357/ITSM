@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+	<th:block th:include="include :: header('监控事件单')" />
+	<th:block th:include="include :: select2-css" />
+</head>
+<body>
+<div class="main-content">
+	<form id="deal" class="form-horizontal" >
+		<input name="eventId" type="hidden" id="eventId" th:value="${eventId}"/>
+        <h4 class="form-header h4">处理信息</h4>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">处理用时：</label>
+                    <div class="col-sm-7">
+                        <input id="allTime"class="form-control" readonly value="">
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label"></label>
+                    <div class="col-sm-7">
+                        <a class="btn btn-success btn-outline" onclick="viewKnowl()">
+                            <i class="fa fa-paste"> </i> 知识库参考
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div th:if="${eventSource eq '02'}" class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">告警关闭时间：</label>
+                    <div class="col-sm-7">
+                        <input id="closeTime" name="closeTime"  class="form-control" th:value="${closeTime}" readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label"></label>
+                    <div class="col-sm-7">
+                        <a class="btn btn-success btn-outline" onclick="viewCloseTime()">
+                            <i class="fa fa-paste"> </i>查询告警关闭时间
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">负责人：</label>
+                    <div class="col-sm-7">
+                        <select id="chargePerson" name="chargePerson"  class="form-control" required>
+                            <option value="">请选择</option>
+                            <option th:each="user : ${userList}" th:text="${user.pName}" th:value="${user.pId}"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div  th:if="!${eventSource eq '02'}" class="col-sm-6">
+                <div class="form-group date">
+                    <label class="col-sm-3 control-label is-required">关闭时间：</label>
+                    <div class="col-sm-7">
+                        <input id="anticipateTime" name="closeTime" class="form-control" type="text" readonly style="background-color: #fdfdfd" required>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label is-required">处理过程描述：</label>
+                    <div class="col-sm-9">
+                        <textarea rows="6" cols="20" id="handleDescr" name="handleDescr" maxlength="500"   class="form-control" required></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">补充说明：</label>
+                    <div class="col-sm-9">
+                        <textarea rows="6" cols="20" id="supplementExplain" name="supplementExplain" maxlength="500"   class="form-control"></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-offset-5 col-sm-10">
+                <button type="button" class="btn btn-sm btn-primary" onclick="submitData()"><i class="fa fa-check"></i>处 理</button>&nbsp;
+                <button type="button" class="btn btn-sm btn-danger" onclick="closeItem()"><i class="fa fa-window-close"></i>关 闭 </button>
+            </div>
+        </div>
+	</form>
+</div>
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: select2-js" />
+<th:block th:include="include :: datetimepicker-js" />
+<th:block th:include="include :: datetimepicker-css" />
+<script th:src="@{/js/activiti.js}"></script>
+<script th:inline="javascript">
+	var prefix = ctx + "activiti/run";
+	var eventSource=$("#eventSource").val();
+	var time=[[${timing}]];
+	var eventSource=[[${eventSource}]];
+	$(function() {
+		secondsFormat(time);
+        $("#anticipateTime").datetimepicker({
+       		    format: "yyyy-mm-dd hh:ii:ss",
+       		    autoclose: true,
+       		    minView:0,
+       		    minuteStep:1,
+       		    startDate:new Date()
+       		});
+		puFolwHistory2($("#eventId").val());
+		});
+	// 提交
+	function submitData() {
+	    if($.common.isEmpty($("#closeTime").val())&&"02"==eventSource){
+	        return $.modal.alertWarning("告警关闭时间为空，告警尚未关闭，不能处理当前监控事件单！");
+        }
+        if (!$.validate.form()) {
+            return $.modal.alertWarning("参数填写不全!");
+        }else{
+            var data = $("#deal").serializeArray();
+            data.push({name:"params[reCode]",value:0});
+            $.operate.saveTab(prefix + "/deal", data,reBack);
+        }
+	}
+	function viewKnowl(){
+	    $.modal.openTab("知识库参考",prefix+"/goKnowl/"+$("#eventId").val());
+	}
+    function viewCloseTime(){
+        $.ajax({
+            url:prefix + "/searchEvent",
+            async:false,
+            type:"POST",
+            data:{'eventId':$("#eventId").val()},
+            success:function(result){
+                if(result.code==500){
+                    return $.modal.alertWarning("未查询到告警关闭时间，告警尚未关闭!");
+                }
+                if(result.code==0){
+                    return $.modal.alertWarning("告警关闭时间："+result.msg);
+                    $("#closeTime").val(result.msg);
+                }
+            },
+            error:function(){
+                res = false;
+            }
+        })
+    }
+	function secondsFormat(){
+		var day=Math.floor(time/(24*3600));
+		var hour=Math.floor((time-day*24*3600)/3600);
+		var minute=Math.floor((time-day*24*3600-hour*3600)/60);
+		var second=time-day*24*3600-hour*3600-minute*60;
+		var reTime=day+"天"+hour+"小时"+minute+"分钟"+second+"秒";
+		time+=1;
+		$("#allTime").val(reTime);
+		window.setTimeout (secondsFormat, 1000);
+	}
+	  function reBack(result) {
+        if (result.code == web_status.SUCCESS) {
+            var parent = window.parent;
+            if (parent.table.options.type == table_type.bootstrapTable) {
+                $.modal.close();
+                parent.$.modal.msgSuccess(result.msg);
+                parent.$.table.refresh();
+            } else if (parent.table.options.type == table_type.bootstrapTreeTable) {
+                $.modal.close();
+                parent.$.modal.msgSuccess(result.msg);
+                parent.$.treeTable.refresh();
+            } else {
+                $.modal.msgReload("保存成功,正在刷新数据请稍后……", modal_status.SUCCESS);
+            }
+        } else if (result.code == web_status.WARNING) {
+            $.modal.alertWarning(result.msg)
+            return;
+        }  else {
+            $.modal.alertError(result.msg);
+            return;
+        }
+        $.modal.closeLoading();
+        parent.closeBtu();
+    }
+</script>
+</body>
+</html>

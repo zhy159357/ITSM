@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:include="include :: header('查看巡检记录单详情')"/>
+    <th:block th:include="include :: select2-css"/>
+    <th:block th:include="include :: datetimepicker-css" />
+    <link th:href="@{/css/fmbizMaint.css}" rel="stylesheet"/> <!-- 自定css -->
+</head>
+<body>
+<div class="main-content">
+    <form id="form-inspection-add" class="form-horizontal" th:object="${collectingFormsInspection}">
+        <input name="id" id="fmId" class="form-control" type="hidden" required th:value="*{id}">
+        <h4 class="form-header h4">基本信息</h4>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">系统名称：</label>
+                    <div class="col-sm-8">
+                        <input name="sysName" id="sysName" th:value="*{sysName}" class="form-control" type="text" readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">运维单位：</label>
+                    <div class="col-sm-8">
+                        <input name="sysCompany" id="sysCompany" th:value="*{sysCompany}" class="form-control" type="text"readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">巡查人员：</label>
+                    <div class="col-sm-8">
+                        <input name="inspectors" id="inspectors" th:value="*{inspectors}" class="form-control" type="text" readonly>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">联系方式：</label>
+                    <div class="col-sm-8">
+                        <input name="contact" id="contact" th:value="*{contact}" class="form-control" type="text" readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">系统负责人：</label>
+                    <div class="col-sm-8">
+                        <input name="sysManager" id="sysManager" th:value="*{sysManager}" class="form-control" type="text" readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">更新日期：</label>
+                    <div class="col-sm-8">
+                        <input type="text" class="form-control" th:value="*{lastDate}" placeholder="yyyy-MM-dd" id="lastDate"
+                               name="lastDate" readonly/>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">开始时间：</label>
+                    <div class="col-sm-8">
+                        <input type="text" class="form-control" th:value="*{startTime}" placeholder="yyyy-MM-dd HH:mm:ss" id="startTime"
+                               name="startTime" required readonly/>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">结束时间：</label>
+                    <div class="col-sm-8">
+                        <input type="text" class="form-control" th:value="*{endTime}" placeholder="yyyy-MM-dd HH:mm:ss" id="endTime"
+                               name="endTime" required readonly/>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">爬虫进程是否正常：</label>
+                    <div class="col-sm-8">
+                        <div class="col-sm-8">
+                            <label class="radio-box"> <input type="radio" disabled th:checked="*{crawlerStates} == '1' ? true : false" name="crawlerStates" value="1" /> 正常 </label>
+                            <label class="radio-box"> <input type="radio" disabled th:checked="*{crawlerStates} == '0' ? true : false" name="crawlerStates" value="0" /> 异常 </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-8">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">爬虫进程情况说明：</label>
+                    <div class="col-sm-10">
+                        <input name="crawlerAnnotation" id="crawlerAnnotation" th:value="*{crawlerAnnotation}" class="form-control" type="text" readonly>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">采集调度进程运行状态是否正常：</label>
+                    <div class="col-sm-8">
+                        <div class="col-sm-8">
+                            <label class="radio-box"> <input type="radio" disabled th:checked="*{dispatchingStates} == '1' ? true : false" name="dispatchingStates" value="1" /> 正常 </label>
+                            <label class="radio-box"> <input type="radio" disabled th:checked="*{dispatchingStates} == '0' ? true : false" name="dispatchingStates" value="0" /> 异常 </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-8">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">采集调度进程运行状态情况说明：</label>
+                    <div class="col-sm-10">
+                        <input name="dispatchingAnnotation" id="dispatchingAnnotation" th:value="*{dispatchingAnnotation}" class="form-control" type="text" readonly>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">采集进程是否正常：</label>
+                    <div class="col-sm-8">
+                        <div class="col-sm-8">
+                            <label class="radio-box"> <input type="radio" disabled th:checked="*{processStates} == '1' ? true : false" name="processStates" value="1" /> 正常 </label>
+                            <label class="radio-box"> <input type="radio" disabled th:checked="*{processStates} == '0' ? true : false" name="processStates" value="0" /> 异常 </label>
+                    </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-8">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">采集进程情况说明：</label>
+                    <div class="col-sm-10">
+                        <input name="processAnnotation" id="processAnnotation" th:value="*{processAnnotation}" class="form-control" type="text" readonly>
+                    </div>
+                </div>
+            </div>
+            </div>
+
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">异常预警运行是否正常：</label>
+                    <div class="col-sm-8">
+                        <div class="col-sm-8">
+                            <label class="radio-box"> <input type="radio" disabled th:checked="*{warningStates} == '1' ? true : false" name="warningStates" value="1" /> 正常 </label>
+                            <label class="radio-box"> <input type="radio" disabled th:checked="*{warningStates} == '0' ? true : false" name="warningStates" value="0" /> 异常 </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-8">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">异常预警运行情况说明：</label>
+                    <div class="col-sm-10">
+                        <input name="warningAnnotation" id="warningAnnotation" th:value="*{warningAnnotation}" class="form-control" type="text" readonly>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">爬虫更新进程运行是否正常：</label>
+                    <div class="col-sm-8">
+                        <div class="col-sm-8">
+                            <label class="radio-box"> <input type="radio" disabled th:checked="*{updateStates} == '1' ? true : false" name="updateStates" value="1" /> 正常 </label>
+                            <label class="radio-box"> <input type="radio" disabled th:checked="*{updateStates} == '0' ? true : false" name="updateStates" value="0" /> 异常 </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-8">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">爬虫更新进程运行情况说明：</label>
+                    <div class="col-sm-10">
+                        <input name="updateAnnotation" id="updateAnnotation" th:value="*{updateAnnotation}" class="form-control" type="text" readonly>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">数据质量核验运行是否正常：</label>
+                    <div class="col-sm-8">
+                        <div class="col-sm-8">
+                            <label class="radio-box"> <input type="radio" disabled th:checked="*{qualityStates} == '1' ? true : false" name="qualityStates" value="1" /> 正常 </label>
+                            <label class="radio-box"> <input type="radio" disabled th:checked="*{qualityStates} == '0' ? true : false" name="qualityStates" value="0" /> 异常 </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-8">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">数据质量核验运行情况说明：</label>
+                    <div class="col-sm-10">
+                        <input name="qualityAnnotation" id="qualityAnnotation" th:value="*{qualityAnnotation}" class="form-control" type="text" readonly>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="input-group" style="display:-webkit-box">
+                    <label class="col-sm-2 control-label" style="width:10%">备注：</label>
+                    <div class="col-sm-12">
+                        <textarea rows="12" cols="20" id="remark" name="remark"
+                                  class="zdy_input" maxlength="3000" required readonly>[[*{remark}]]</textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<div class="row">
+    <div class="col-sm-offset-5 col-sm-10">
+        <button type="button" class="btn btn-sm btn-danger" onclick="closeItem()"><i class="fa fa-remove"></i>关闭
+        </button>
+    </div>
+</div>
+<th:block th:include="include :: footer"/>
+<th:block th:include="include :: bootstrap-suggest-js" />
+<th:block th:include="include :: bootstrap-typeahead-js" />
+<th:block th:include="include :: select2-js"/>
+<th:block th:include="include :: datetimepicker-js"/>
+</body>
+</html>

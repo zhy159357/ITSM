@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.OgUserPostMapper">
+    
+    <resultMap id="resultMap" type="com.ruoyi.common.core.domain.entity.OgUserPost">
+        <id property="userId" column="USERID"></id>
+        <result property="postId" column="POSTID"></result>
+        <result property="postName" column="POST_NAME"></result>
+        <result property="memo" column="MEMO"></result>
+    </resultMap>
+    <select id="selectPostByUserId" resultMap="resultMap" parameterType="com.ruoyi.common.core.domain.entity.OgUserPost">
+        select r.USERID,r.POSTID,p.POST_NAME,p.MEMO from OG_R_USER_POST r join OG_USER u ON r.USERID = u.USERID join OG_POST p
+        on r.POSTID = p.POSTID
+        <where>
+            r.USERID = #{userId,jdbcType=VARCHAR}
+            <if test="postId!=null and postId!=''">
+               and  r.POSTID = #{postId}
+            </if>
+            <if test="postName!=null and postName!=''">
+                and  p.POST_NAME = #{postName}
+            </if>
+        </where>
+
+    </select>
+
+    <insert id="batchAdd" parameterType="java.util.List" useGeneratedKeys="false">
+        INSERT ALL
+        <foreach item="item" index="index" collection="list">
+            into OG_R_USER_POST (userId,postId)
+            VALUES
+           (#{item.userId},#{item.postId})
+        </foreach>
+        select 1 from dual
+
+    </insert>
+
+    <insert id="batchAddMysql" parameterType="java.util.List"
+            useGeneratedKeys="true">
+        <selectKey resultType="long" keyProperty="id" order="AFTER">
+            SELECT
+            LAST_INSERT_ID()
+        </selectKey>
+        insert into OG_R_USER_POST (userId,postId) values
+        <foreach collection="list" item="wdSolr" index="index"
+                 separator=",">
+            (#{wdSolr.userId},#{wdSolr.postId})
+        </foreach>
+    </insert>
+
+    <delete id="deletePostByUserId" parameterType="java.lang.String">
+        DELETE FROM OG_R_USER_POST
+        where USERID = #{userId,jdbcType=VARCHAR}
+    </delete>
+
+
+    <delete id="deletePostsByUserId" parameterType="java.util.Map">
+        DELETE FROM OG_R_USER_POST
+        where USERID = #{userId,jdbcType=VARCHAR} and postId in
+        <foreach collection="ids" item="id" open="(" close=")" separator="," >
+          #{id}
+        </foreach>
+    </delete>
+    
+    <select id="selectPostByUserIdTwo" resultMap="resultMap">
+        select * from OG_R_USER_POST where USERID=#{userId}
+    </select>
+
+
+</mapper>

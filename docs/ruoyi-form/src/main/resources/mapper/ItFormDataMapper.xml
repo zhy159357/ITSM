@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.form.mapper.ItFormDataMapper">
+    
+    <resultMap type="ItFormData" id="ItFormDataResult">
+        <result property="formId"    column="form_id"    />
+        <result property="formKey"    column="form_key"    />
+        <result property="formName"    column="form_name"    />
+        <result property="formData"    column="form_data"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+    </resultMap>
+
+    <sql id="selectItFormDataVo">
+        select form_id, form_key, form_name, form_data, create_by, create_time from it_form_data
+    </sql>
+
+    <select id="selectItFormDataList" parameterType="ItFormData" resultMap="ItFormDataResult">
+        <include refid="selectItFormDataVo"/>
+        <where>  
+            <if test="formKey != null  and formKey != ''"> and form_key = #{formKey}</if>
+            <if test="formName != null  and formName != ''"> and form_name like concat(concat('%', #{formName}), '%')</if>
+            <if test="formData != null  and formData != ''"> and form_data = #{formData}</if>
+        </where>
+    </select>
+    
+    <select id="selectItFormDataById" parameterType="String" resultMap="ItFormDataResult">
+        <include refid="selectItFormDataVo"/>
+        where form_id = #{formId}
+    </select>
+        
+    <insert id="insertItFormData" parameterType="ItFormData">
+        insert into it_form_data
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="formId != null  and formId != ''">form_id,</if>
+            <if test="formKey != null  and formKey != ''">form_key,</if>
+            <if test="formName != null  and formName != ''">form_name,</if>
+            <if test="formData != null ">form_data,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="createTime != null  and createTime != ''">create_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="formId != null  and formId != ''">#{formId},</if>
+            <if test="formKey != null  and formKey != ''">#{formKey},</if>
+            <if test="formName != null  and formName != ''">#{formName},</if>
+            <if test="formData != null ">#{formData},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="createTime != null  and createTime != ''">#{createTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateItFormData" parameterType="ItFormData">
+        update it_form_data
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="formKey != null  and formKey != ''">form_key = #{formKey},</if>
+            <if test="formName != null  and formName != ''">form_name = #{formName},</if>
+            <if test="formData != null ">form_data = #{formData},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null  and createTime != ''">create_time = #{createTime},</if>
+        </trim>
+        where form_id = #{formId}
+    </update>
+
+    <delete id="deleteItFormDataById" parameterType="String">
+        delete from it_form_data where form_id = #{formId}
+    </delete>
+
+    <delete id="deleteItFormDataByIds" parameterType="String">
+        delete from it_form_data where form_id in 
+        <foreach item="formId" collection="array" open="(" separator="," close=")">
+            #{formId}
+        </foreach>
+    </delete>
+    
+</mapper>

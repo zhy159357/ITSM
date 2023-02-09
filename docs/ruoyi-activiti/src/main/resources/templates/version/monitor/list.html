@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('版本发布监控')" />
+    <th:block th:include="include :: select2-css" />
+</head>
+<body class="gray-bg">
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-12 search-collapse">
+            <form id="formId">
+                <div class="select-list">
+                    <ul>
+                        <li>
+                            <p>版本单号：</p>
+                            <input type="text" name="versionInfoNo"/>
+                        </li>
+                        <li>
+                            <p>版本简称：</p>
+                            <input type="text" name="versionInfoName"/>
+                        </li>
+                        <li>
+                            <p>版本发布员：</p>
+                            <input type="text" name="versionProducerName"/>
+                        </li>
+                        <li>
+                            <p>所属系统：</p>
+                            <select name="ogSys.caption" th:with="type=${@application.selectOgSysList(null)}">
+                                <option value="">所有</option>>
+                                <option th:each="app : ${type}" th:text="${app.caption}" th:value="${app.caption}"></option>
+                            </select>
+                        </li>
+                        <li>
+                            <a class="btn btn-primary btn-rounded btn-sm" id="versionList" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                            <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-repeat"></i>&nbsp;重置</a>
+                        </li>
+                    </ul>
+                </div>
+            </form>
+        </div>
+
+        <div class="btn-group-sm" id="toolbar" role="group">
+            <a class="btn btn-primary single disabled" onclick="monitor()">
+                <i class="fa fa-default"></i> 监控
+            </a>
+            <a class="btn btn-info single disabled" onclick="detail()">
+                <i class="fa fa-search"></i> 详情
+            </a>
+        </div>
+        <div class="col-sm-12 select-table table-striped">
+            <table id="bootstrap-table"></table>
+        </div>
+    </div>
+</div>
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: select2-js" />
+<script th:src="@{/js/activiti.js}"></script>
+<script th:inline="javascript">
+    var prefix = ctx + "version/public";
+    var prefix_taskInfo = ctx + "version/taskInfo";
+
+    var datas = [[${@pubParaValue.selectPubParaValueByParaName('VERSION_STATUS')}]];
+
+    $(function() {
+        // 回车键搜索
+        document.onkeydown = function(e){
+            var ev = document.all ? window.event : e;
+            if(ev.keyCode==13) {
+                $('#versionList').trigger('click');
+                return false;
+            }
+        };
+
+        var options = {
+            url: prefix + "/list",
+            createUrl: prefix + "/add",
+            updateUrl: prefix + "/edit/{id}",
+            removeUrl: prefix + "/remove",
+            detailUrl: prefix + "/edit/{id}",
+            clickToSelect: true,
+            singleSelect: true,
+            queryParams : queryParams,
+            modalName: "版本发布申请",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field : 'versionInfoId',
+                    title : '主键ID',
+                    visible: false
+                },
+                {
+                    field : 'versionInfoNo',
+                    title : '版本单号'
+                },
+                {
+                    field : 'versionCreateTime',
+                    title : '创建时间'
+                },
+                {
+                    field : 'versionInfoName',
+                    title : '版本简称'
+                },
+                {
+                    field : 'ogSys.caption',
+                    title : '所属系统'
+                },
+                {
+                    field : 'versionProducerName',
+                    title : '发布员'
+                },
+                {
+                    field : 'versionStatus',
+                    title : '状态',
+                    formatter: function(value, row, index) {
+                        return $.table.selectPubParaValueData(datas, value);
+                    }
+                }]
+        };
+        $.table.init(options);
+    });
+
+    function queryParams(params) {
+        var search = $.table.queryParams(params);
+        // 版本状态为12-已发布
+        search.versionStatus = "12";
+        search.remark = "versionList";
+        return search;
+    };
+
+    /*监控*/
+    function monitor(){
+        var id = $.table.selectFirstColumns();
+        var versionInfoNo = $.table.selectColumns("versionInfoNo");
+        var url = prefix_taskInfo + "/monitor/" + id + "/" + versionInfoNo;
+        $.modal.openTab("版本信息",url);
+    }
+
+    /*详情*/
+    function detail(){
+        var id = $.table.selectFirstColumns();
+        var url = prefix + "/detail/" + id;
+        $.modal.openTab("版本信息",url);
+    }
+</script>
+</body>
+</html>

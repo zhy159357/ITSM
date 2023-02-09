@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.activiti.mapper.FmBizKhMapper">
+
+    <resultMap type="FmBizKh" id="FmBizKhResult">
+        <result property="id" column="id"/>
+        <result property="sysid" column="sysid"/>
+        <result property="sysName" column="sysname"/>
+        <result property="datetime" column="datetime"/>
+        <result property="completecount" column="completecount"/>
+        <result property="jjcount" column="jjcount"/>
+        <result property="fjjcount" column="fjjcount"/>
+        <result property="satisfaction" column="satisfaction"/>
+        <result property="unsatisfactory" column="unsatisfactory"/>
+    </resultMap>
+
+    <sql id="selectFmBizKhVo">
+        select id, k.sysid,k.sysname, datetime, completecount, jjcount, fjjcount, satisfaction, unsatisfactory
+        from fm_biz_kh k
+        left join og_sys s on k.sysid=s.sysid
+    </sql>
+
+    <select id="selectFmBizKhList" parameterType="FmBizKh" resultMap="FmBizKhResult">
+        <include refid="selectFmBizKhVo"/>
+        <where>
+            <if test="sysid != null  and sysid != ''">and k.sysid = #{sysid}</if>
+            <if test="datetime != null  and datetime != ''">and k.datetime = #{datetime}</if>
+            <if test="completecount != null  and completecount != ''">and completecount = #{completecount}</if>
+            <if test="jjcount != null  and jjcount != ''">and jjcount = #{jjcount}</if>
+            <if test="fjjcount != null  and fjjcount != ''">and fjjcount = #{fjjcount}</if>
+            <if test="satisfaction != null  and satisfaction != ''">and satisfaction = #{satisfaction}</if>
+            <if test="unsatisfactory != null  and unsatisfactory != ''">and unsatisfactory = #{unsatisfactory}</if>
+            <if test="sysName != null  and sysName != ''">and sysname = #{sysName}</if>
+        </where>
+    </select>
+
+    <select id="selectFmBizKhById" parameterType="String" resultMap="FmBizKhResult">
+        <include refid="selectFmBizKhVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertFmBizKh" parameterType="FmBizKh">
+        insert into fm_biz_kh
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null  and id != ''">id,</if>
+            <if test="sysid != null  and sysid != ''">sysid,</if>
+            <if test="datetime != null  and datetime != ''">datetime,</if>
+            <if test="completecount != null  and completecount != ''">completecount,</if>
+            <if test="jjcount != null  and jjcount != ''">jjcount,</if>
+            <if test="fjjcount != null  and fjjcount != ''">fjjcount,</if>
+            <if test="satisfaction != null  and satisfaction != ''">satisfaction,</if>
+            <if test="unsatisfactory != null  and unsatisfactory != ''">unsatisfactory,</if>
+            <if test="sysName != null  and sysName != ''">sysname,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null  and id != ''">#{id},</if>
+            <if test="sysid != null  and sysid != ''">#{sysid},</if>
+            <if test="datetime != null  and datetime != ''">#{datetime},</if>
+            <if test="completecount != null  and completecount != ''">#{completecount},</if>
+            <if test="jjcount != null  and jjcount != ''">#{jjcount},</if>
+            <if test="fjjcount != null  and fjjcount != ''">#{fjjcount},</if>
+            <if test="satisfaction != null  and satisfaction != ''">#{satisfaction},</if>
+            <if test="unsatisfactory != null  and unsatisfactory != ''">#{unsatisfactory},</if>
+            <if test="sysName != null  and sysName != ''">#{sysName},</if>
+        </trim>
+    </insert>
+
+    <update id="updateFmBizKh" parameterType="FmBizKh">
+        update fm_biz_kh
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="sysid != null  and sysid != ''">sysid = #{sysid},</if>
+            <if test="datetime != null  and datetime != ''">datetime = #{datetime},</if>
+            <if test="completecount != null  and completecount != ''">completecount = #{completecount},</if>
+            <if test="jjcount != null  and jjcount != ''">jjcount = #{jjcount},</if>
+            <if test="fjjcount != null  and fjjcount != ''">fjjcount = #{fjjcount},</if>
+            <if test="satisfaction != null  and satisfaction != ''">satisfaction = #{satisfaction},</if>
+            <if test="unsatisfactory != null  and unsatisfactory != ''">unsatisfactory = #{unsatisfactory},</if>
+            <if test="sysName != null  and sysName != ''">sysname = #{sysName},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteFmBizKhById" parameterType="String">
+        delete from fm_biz_kh where id = #{id}
+    </delete>
+
+    <delete id="deleteFmBizKhByIds" parameterType="String">
+        delete from fm_biz_kh where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    <!--根据系统ID和处理时间查询已关闭事件单满意率-->
+    <select id="getFmBizSatisfaction" parameterType="FmBizKh" resultMap="FmBizKhResult">
+        select f.sysid sysid,
+       ROUND((SUM(CASE
+                    WHEN f.evaluate_result != '3' THEN
+                     1
+                    ELSE
+                     0
+                  END) / count(f.fm_id) * 100),
+             2) || '%' satisfaction,
+       ROUND((SUM(CASE
+                    WHEN f.evaluate_result = '3' THEN
+                     1
+                    ELSE
+                     0
+                  END) / count(f.fm_id) * 100),
+             2) || '%' unsatisfactory
+  from fm_biz f
+ where f.current_state = '09'
+   and f.evaluate_time like concat(#{datetime},'%')
+   and f.invalidation_mark = '1'
+   and f.sysid = #{sysid}
+ group by f.sysid
+    </select>
+</mapper>

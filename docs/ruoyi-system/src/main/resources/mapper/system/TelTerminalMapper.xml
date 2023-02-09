@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.TelTerminalMapper">
+    
+    <resultMap type="TelTerminal" id="TelTerminalResult">
+        <result property="id"    column="id"    />
+        <result property="telip"    column="telip"    />
+        <result property="serviceIp"    column="service_ip"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="jobNumber"    column="job_number"    />
+        <result property="createId"    column="create_id"    />
+        <result property="extno"    column="extno"    />
+        <result property="ifskillno"    column="ifskillno"    />
+        <result property="skillId"    column="skill_id"    />
+        <result property="skillsGroupTelname"    column="skills_group_telname"/>
+        <result property="skillsGroupName"    column="skillsGroupName"/>
+        <association property="ogPerson"            column="pid" javaType="OgPerson" resultMap="OgPersonResult" />
+        <association property="ogUser"            column="pid" javaType="ogUser" resultMap="OgUserResult" />
+
+    </resultMap>
+    <resultMap type="OgPerson" id="OgPersonResult">
+        <result property="pName"            column="PNAME"      />
+    </resultMap>
+
+    <resultMap id="OgUserResult" type="OgUser">
+        <result property="username" column="username"/>
+    </resultMap>
+
+    <sql id="selectTelTerminalVo">
+        /*select a.id,  a.telip,  a.service_ip,  a.create_time,  a.job_number, p.PNAME as pName, a.create_id, o.USERNAME as username, a.extno,a.ifskillno,a.skill_id
+        from tel_terminal a
+        left join og_user o  on o.pid=a.job_number
+        left join og_person p  on a.create_id = p.pid*/
+        select
+          a.id,
+          a.telip,
+          a.service_ip,
+          a.create_time,
+          a.job_number,
+          p.PNAME as pName,
+          a.create_id,
+          o.USERNAME as username,
+          a.extno,a.ifskillno,
+          a.skill_id,
+          t.skills_group_telname,
+          t.skills_group_name skillsGroupName
+        from tel_terminal a
+        left join og_user o  on o.pid=a.job_number
+        left join og_person p  on a.create_id = p.pid
+        left join tel_skills_org t on a. skill_id = t.id
+    </sql>
+
+    <select id="selectTelTerminalList" parameterType="TelTerminal" resultMap="TelTerminalResult">
+        <include refid="selectTelTerminalVo"/>
+        <where>  
+            <if test="telip != null  and telip != ''"> and a.telip  like concat(concat('%',#{telip}),'%') </if>
+            <if test="serviceIp != null  and serviceIp != ''"> and a.service_ip like concat(concat('%',#{serviceIp}),'%') </if>
+            <if test="jobNumber != null  and jobNumber != ''"> and o.username like  concat(concat('%',#{jobNumber}),'%')</if>
+            <if test="createId != null  and createId != ''"> and a.create_id = #{createId}</if>
+            <if test="extno != null  and extno != ''"> and a.extno  like concat(concat('%',#{extno}),'%') </if>
+        </where>
+        order by a.create_time desc
+    </select>
+
+    <select id="selectTelTerminalListThree" parameterType="TelTerminal" resultMap="TelTerminalResult">
+        <include refid="selectTelTerminalVo"/>
+            where o.username = #{ogUser.username}
+    </select>
+
+    <select id="selectTelTerminalListByJobNumber" parameterType="TelTerminal" resultMap="TelTerminalResult">
+        <include refid="selectTelTerminalVo"/>
+        <where>
+            <if test="jobNumber != null  and jobNumber != ''"> and a.job_number =#{jobNumber}</if>
+        </where>
+    </select>
+
+    <select id="selectTelTerminalListShowFlag" parameterType="TelTerminal" resultMap="TelTerminalResult">
+        <include refid="selectTelTerminalVo"/>
+            where a.job_number = #{jobNumber}
+            <if test="telip != null  and telip != ''"> and a.telip  like concat(concat('%',#{telip}),'%') </if>
+            <if test="serviceIp != null  and serviceIp != ''"> and a.service_ip like concat(concat('%',#{serviceIp}),'%') </if>
+            <if test="extno != null  and extno != ''"> and a.extno = #{extno}</if>
+        order by a.create_time desc
+    </select>
+
+    <select id="selectTelTerminalListTwo" parameterType="TelTerminal" resultMap="TelTerminalResult">
+        <include refid="selectTelTerminalVo"/>
+        where  job_number= #{jobNumber}
+    </select>
+
+    <select id="selectTelTerminalById" parameterType="String" resultMap="TelTerminalResult">
+        /*select a.id,  a.telip,  a.service_ip,  a.create_time as createTime,  a.job_number, p.pName, a.create_id, o.username, a.extno,a.ifskillno,a.skill_id
+        from tel_terminal a
+        left join og_user o  on o.pid=a.job_number
+        left join og_person p  on a.create_id = p.pid*/
+        select a.id,  a.telip,  a.service_ip,  a.create_time,  a.job_number,
+         p.PNAME as pName, a.create_id, o.USERNAME as username, a.extno,a.ifskillno,a.skill_id,t.skills_group_telname
+        from tel_terminal a
+        left join og_user o  on o.pid=a.job_number
+        left join og_person p  on a.create_id = p.pid
+        left join tel_skills_org t on a. skill_id = t.id
+        where a.id = #{id}
+    </select>
+
+    <insert id="insertTelTerminal" parameterType="TelTerminal">
+        insert into tel_terminal
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null  and id != ''">id,</if>
+            <if test="telip != null  and telip != ''">telip,</if>
+            <if test="serviceIp != null  and serviceIp != ''">service_ip,</if>
+            <if test="createTime != null  and createTime != ''">create_time,</if>
+            <if test="jobNumber != null  and jobNumber != ''">job_number,</if>
+            <if test="createId != null  and createId != ''">create_id,</if>
+            <if test="extno != null  and extno != ''">extno,</if>
+            <if test="ifskillno != null  and ifskillno != ''">ifskillno,</if>
+            <if test="skillId != null  and skillId != ''">skill_id,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null  and id != ''">#{id},</if>
+            <if test="telip != null  and telip != ''">#{telip},</if>
+            <if test="serviceIp != null  and serviceIp != ''">#{serviceIp},</if>
+            <if test="createTime != null  and createTime != ''">#{createTime},</if>
+            <if test="jobNumber != null  and jobNumber != ''">#{jobNumber},</if>
+            <if test="createId != null  and createId != ''">#{createId},</if>
+            <if test="extno != null  and extno != ''">#{extno},</if>
+            <if test="ifskillno != null  and ifskillno != ''">#{ifskillno},</if>
+            <if test="skillId != null  and skillId != ''">#{skill_id},</if>
+         </trim>
+    </insert>
+
+    <update id="updateTelTerminal" parameterType="TelTerminal">
+        update tel_terminal
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="telip != null  and telip != ''">telip = #{telip},</if>
+            <if test="serviceIp != null  and serviceIp != ''">service_ip = #{serviceIp},</if>
+            <if test="createTime != null  and createTime != ''">create_time = #{createTime},</if>
+            <if test="jobNumber != null  and jobNumber != ''">job_number = #{jobNumber},</if>
+            <if test="createId != null  and createId != ''">create_id = #{createId},</if>
+            <if test="extno != null  and extno != ''">extno = #{extno},</if>
+            <if test="ifskillno != null  and ifskillno != ''">ifskillno = #{ifskillno},</if>
+            <if test="skillId != null  and skillId != ''">skill_id = #{skillId}</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteTelTerminalById" parameterType="String">
+        delete from tel_terminal where id = #{id}
+    </delete>
+
+    <delete id="deleteTelTerminalByIds" parameterType="String">
+        delete from tel_terminal where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="selectOgPerson" parameterType="String" resultMap="OgPersonResult">
+        SELECT pname FROM OG_person where pid= #{createId}
+    </select>
+
+
+    <select id="checkBindInfoUnique" parameterType="TelTerminal" resultType="int">
+        select count(1) from tel_terminal where job_number=#{jobNumber}
+    </select>
+
+    <select id="checkBindInfoUniqueServer" parameterType="TelTerminal" resultType="int">
+        select count(1) from tel_terminal where service_ip=#{serviceIp}
+    </select>
+</mapper>

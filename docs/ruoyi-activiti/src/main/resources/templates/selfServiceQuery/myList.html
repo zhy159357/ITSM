@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+
+
+<head>
+    <th:block th:include="include :: header('自助查询申请')"/>
+    <th:block th:include="include :: select2-css"/>
+</head>
+<body class="gray-bg">
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-12 search-collapse">
+            <form id="formId">
+                <div class="select-list">
+                    <ul>
+                        <li>
+                            <p>事件单号：</p>
+                            <input type="text" name="no"/>
+                        </li>
+                        <li>
+                            <p>事件标题：</p>
+                            <input type="text" name="faultDecriptSummary"/>
+                        </li>
+                        <li>
+                            <p>所属系统：</p>
+                            <input id="sysid" name="sysid" type="hidden" class="form-control"/>
+                            <input id="applicationName" name="applicationName" type="text" class="form-control"
+                                   onclick="selectOgSysListByCondition()"/>
+                        </li>
+                        <li>
+                            <p>状态：</p>
+                            <select id="state" name="state" class="form-control"
+                                    th:with="type=${@pubParaValue.selectPubParaValueByParaName('self_status')}">
+                                <option value=""></option>
+                                <option th:each="paraValue : ${type}" th:text="${paraValue.valueDetail}"
+                                        th:value="${paraValue.value}"></option>
+                            </select>
+                        </li>
+                        <li>
+                            <p>当事人：</p>
+                            <input type="text" name="faultReportName" id="faultReportName"/>
+                        </li>
+                        <li>
+                            <p>创建机构：</p>
+                            <input type="hidden" name="createOrgId" id="createOrgId"/>
+                            <input type="text" name="createOrgName" id="createOrgName" onclick="selectcheckOrg()"/>
+                        </li>
+                        <li class="select-time">
+                            <p>事件提交时间： </p>
+                            <input type="text" class="time-input" id="startCreatTime" placeholder="开始时间"
+                                   name="params[startCreatTime]" readonly>
+                            <span>-</span>
+                            <input type="text" class="time-input" id="endCreatTime" placeholder="结束时间"
+                                   name="params[endCreatTime]" readonly>
+                        </li>
+                        <li>
+                            <a class="btn btn-primary btn-rounded btn-sm" id="searchBut" onclick="$.table.search()"><i
+                                    class="fa fa-search"></i>&nbsp;搜索</a>
+                            <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.resetAll('formId')"><i
+                                    class="fa fa-refresh"></i>&nbsp;重置</a>
+                        </li>
+                    </ul>
+                </div>
+            </form>
+        </div>
+        <div class="btn-group-sm" id="toolbar" role="group">
+            <a class="btn btn-success" onclick="add()">
+                <i class="fa fa-plus"></i> 新建
+            </a>
+            <a class="btn btn-primary single disabled" id="iedit" onclick="edit()">
+                <i class="fa fa-edit"></i> 修改
+            </a>
+            <!--<a class="btn btn-warning single disabled" id="executor" onclick="executor()">
+                <i class="fa fa-edit"></i> 执行
+            </a>-->
+            <a class="btn btn-danger multiple disabled" id="idelete" onclick="$.operate.removeAll()">
+                <i class="fa fa-trash"></i> 删除
+            </a>
+            <a class="btn btn-primary single disabled" onclick="detail()">
+                <i class="fa fa-search"></i>查看详情
+            </a>
+        </div>
+        <div class="col-sm-12 select-table table-striped">
+            <table id="bootstrap-table" style="table-layout:fixed;"></table>
+        </div>
+    </div>
+</div>
+<th:block th:include="include :: footer"/>
+<th:block th:include="include :: select2-js"/>
+<th:block th:include="include :: datetimepicker-js"/>
+<script th:inline="javascript">
+    var prefix = ctx + "self/query";
+    var frefix_fmbiz = ctx + "fmbiz";
+    var datas = [[${@pubParaValue.selectPubParaValueByParaName('self_status')}]];
+
+    $(function () {
+        // 回车键搜索
+        document.onkeydown = function (e) {
+            var ev = document.all ? window.event : e;
+            if (ev.keyCode == 13) {
+                $('#searchBut').trigger('click');
+                return false;
+            }
+        };
+        var options = {
+            url: prefix + "/myList",
+            createUrl: prefix + "/add",
+            updateUrl: prefix + "/edit/{id}",
+            removeUrl: prefix + "/remove",
+            sortName: "createrTime",
+            sortOrder: "desc",
+            clickToSelect: true,
+            singleSelect: true,
+            modalName: "自助申请单",
+            onCheck: onCheck,
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'id',
+                    title: '主键ID',
+                    visible: false
+                },
+                {
+                    field: 'no',
+                    width: 150,
+                    title: '单号'
+                },
+                {
+                    field: 'faultDecriptSummary',
+                    width: 250,
+                    title: '事件标题',
+                    formatter: function (value, row, index) {
+                        return $.table.tooltip(value);
+                    },
+                    cellStyle: function cellStyle(value, row, index, field) {
+                        return {classes: 'text-nowrap'};
+                    }
+                },
+                {
+                    field: 'sysName',
+                    width: 200,
+                    title: '所属系统'
+                },
+                {
+                    field: 'createrTime',
+                    width: 150,
+                    title: '事件提交时间',
+                    formatter: function (value, row, index) {
+                        var createrTime = '';
+                        if (value != '' && value != null) {
+                            var pattern = /(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/;
+                            createrTime = value.replace(pattern, '$1-$2-$3 $4:$5:$6');
+                        }
+                        return createrTime;
+                    }
+                },
+                {
+                    field: 'createOrgName',
+                    width: 150,
+                    title: '创建机构'
+                },
+                {
+                    field: 'state',
+                    width: 100,
+                    title: '状态',
+                    formatter: function (value, row, index) {
+                        return $.table.selectPubParaValueData(datas, value);
+                    }
+                },
+                {
+                    field: 'faultReportName',
+                    width: 150,
+                    title: '当事人'
+                },
+                {
+                    field: 'n1',
+                    width: 80,
+                    title: '执行次数'
+                }]
+        };
+        $.table.init(options);
+    });
+
+    function onCheck(row, $element) {
+        var state = row.state;
+        if (state == '0') {
+            $("#iedit").attr('disabled', true);
+            $("#iedit").addClass('disabled');
+            $("#iedit").removeAttr('onclick', '');
+            $("#idelete").attr('disabled', true);
+            $("#idelete").addClass('disabled');
+            $("#idelete").removeAttr('onclick', '');
+            $("#executor").attr('disabled', false);
+            $("#executor").removeClass('disabled');
+            $("#executor").attr('onclick', 'executor()');
+        } else if (state == '1') {
+            $("#executor").attr('disabled', true);
+            $("#executor").addClass('disabled');
+            $("#executor").attr('onclick', '');
+            $("#iedit").attr('disabled', false);
+            $("#iedit").removeClass('disabled');
+            $("#iedit").attr('onclick', 'edit();');
+            $("#idelete").attr('disabled', false);
+            $("#idelete").removeClass('disabled');
+            $("#idelete").attr('onclick', '$.operate.removeAll()');
+        } else {
+            $("#iedit").attr('disabled', true);
+            $("#iedit").addClass('disabled');
+            $("#iedit").removeAttr('onclick', '');
+            $("#idelete").attr('disabled', true);
+            $("#idelete").addClass('disabled');
+            $("#idelete").removeAttr('onclick', '');
+            $("#executor").attr('disabled', true);
+            $("#executor").addClass('disabled');
+            $("#executor").attr('onclick', '');
+        }
+    }
+
+    function add(id) {
+        table.set();
+        $.modal.openTab("添加" + table.options.modalName, $.operate.addUrl(id));
+    };
+
+    function edit(id) {
+        table.set();
+        $.modal.openTab("修改" + table.options.modalName, $.operate.editUrl(id));
+    };
+
+    // 回显数据字典
+    function selectPubParaValueData(datas, value) {
+        var actions = [];
+        $.each(datas, function (index, pubParaValue) {
+            if (pubParaValue.value == ('' + value)) {
+                actions.push($.common.sprintf("<span class='%s'>%s</span>", "", pubParaValue.valueDetail));
+                return false;
+            }
+        });
+        return actions.join('');
+    }
+
+    /*查看详情*/
+    function detail() {
+        var id = $.table.selectFirstColumns();
+        var url = prefix + "/detail/" + id;
+        $.modal.openTab("自助查询申请单详情", url);
+    }
+
+    /*执行*/
+    function executor() {
+        var id = $.table.selectFirstColumns();
+        $.modal.openTab("脚本服务化处理", prefix + "/saveToAuto/" + id + "/" + "1");
+    }
+
+    // 选择应用系统（只能单选）
+    function selectOgSysListByCondition() {
+        $.modal.open("选择应用系统", frefix_fmbiz + "/sysGrouplist");
+    }
+
+    // 选择创建机构
+    function selectcheckOrg() {
+        var url = ctx + "system/dept/selectDeptTree/" + "310100001";
+        var options = {
+            title: '选择部门',
+            width: "380",
+            url: url,
+            callBack: doSubmit
+        };
+        $.modal.openOptions(options);
+    }
+
+    function doSubmit(index, layero) {
+        var tree = layero.find("iframe")[0].contentWindow.$._tree;
+        var body = layer.getChildFrame('body', index);
+        $("#createOrgId").val(body.find('#treeId').val());
+        $("#createOrgName").val(body.find('#treeName').val());
+        layer.close(index);
+    }
+
+    //根据系统查询工作组
+    function getGroupList(sysid) {
+
+    }
+
+    //根据系统查询分类
+
+    function getFmKindOneList(sysid) {
+
+    }
+</script>
+</body>
+</html>

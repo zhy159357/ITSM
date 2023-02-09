@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('处理公告通知')" />
+    <th:block th:include="include :: summernote-css" />
+</head>
+<body class="white-bg">
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+    <form class="form-horizontal m" id="form-notice-edit" th:object="${noticeReceive}">
+        <h4 class="form-header h4">公告属性</h4>
+        <input id="amReceiveId" name="amReceiveId" th:field="*{amReceiveId}"  type="hidden">
+        <input id="amBizId" name="amBizId" th:field="*{amBizId}"  type="hidden">
+        <input name="amType" th:field="*{amType}"  type="hidden">
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">等级：</label>
+                    <div class="col-sm-8">
+                        <select name="urgentLev" class="form-control" th:with="type=${@pubParaValue.selectPubParaValueByParaName('an_urgent_lev')}" th:field="*{urgentLev}" disabled>
+                            <option value="">请选择</option>
+                            <option th:each="paraValue : ${type}" th:text="${paraValue.valueDetail}" th:value="${paraValue.value}"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">密级：</label>
+                    <div class="col-sm-8">
+                        <select name="secretLev" class="form-control" th:with="type=${@pubParaValue.selectPubParaValueByParaName('an_secret_lev')}" th:field="*{secretLev}" disabled>
+                            <option value="">请选择</option>
+                            <option th:each="paraValue : ${type}" th:text="${paraValue.valueDetail}" th:value="${paraValue.value}"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">公告编码：</label>
+                    <div class="col-sm-8">
+                        <input id="amCode" name="amCode" class="form-control" th:value="*{amCode}" readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">公告类型：</label>
+                    <div class="col-sm-8">
+                        <select name="amType" class="form-control" th:with="type=${@pubParaValue.selectPubParaValueByParaName('sys_notice_type')}" th:field="*{amType}" disabled>
+                            <option value="">请选择</option>
+                            <option th:each="paraValue : ${type}" th:text="${paraValue.valueDetail}" th:value="${paraValue.value}"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">联系电话：</label>
+                    <div class="col-sm-8">
+                        <input id="contactPhone" name="contactPhone" class="form-control" type="text" th:field="*{contactPhone}" readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">其他联系电话：</label>
+                    <div class="col-sm-8">
+                        <input id="otherPhone" name="otherPhone" class="form-control" th:field="*{otherPhone}" type="text" readonly>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">短信通知：</label>
+                    <div class="col-sm-8">
+                        <select name="sms" class="form-control" th:with="type=${@pubParaValue.selectPubParaValueByParaName('sms_info')}" th:field="*{sms}" disabled>
+                            <option value="">请选择</option>
+                            <option th:each="paraValue : ${type}" th:text="${paraValue.valueDetail}" th:value="${paraValue.value}"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">发布人：</label>
+                    <div class="col-sm-8">
+                        <input id="pName" name="pName" class="form-control" type="text" th:value="*{pName}" readonly>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">发布机构：</label>
+                    <div class="col-sm-8">
+                        <input id="orgName" name="orgName" class="form-control" type="text" th:value="*{orgName}" readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">接收范围：</label>
+                    <div class="col-sm-8" id="sendRangeDiv"></div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div id="receiveId" class="form-group"></div><!--接收ID-->
+            </div>
+
+        </div>
+        <div class="row">
+            <label class="col-sm-2 control-label is-required">接收机构/工作组：</label>
+            <div class="col-sm-10">
+                <textarea rows="10" cols="20" id="receiveDeptGroupName" name="receiveDeptGroupName" class="form-control" th:field="*{receiveDeptGroupName}" type="text" readonly></textarea>
+            </div>
+        </div>
+
+        <h4 class="form-header h4">公告内容</h4>
+        <div class="form-group">
+            <label class="col-sm-2 control-label is-required">公告标题：</label>
+            <div class="col-sm-10">
+                <input id="amTitle" name="amTitle" class="form-control" type="text" th:field="*{amTitle}" readonly>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">公告摘要：</label>
+            <div class="col-sm-10">
+                <input id="summry" name="summry" class="form-control" type="text" th:field="*{summry}" readonly>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label is-required">公告内容：</label>
+                    <div class="col-sm-10">
+                        <input id="description" name="description" type="hidden" th:field="*{description}" readonly >
+                        <div class="summernote" id="summernote"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">接收响应：</label>
+            <div class="col-sm-10">
+                <textarea rows="10" cols="20" id="receiveReply" maxlength="1000" name="receiveReply" class="form-control"></textarea>
+            </div>
+        </div>
+    </form>
+    <h4 class="form-header h4">上传附件</h4>
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="tabs-container">
+                <ul class="nav nav-tabs">
+                    <li class="active"><a data-toggle="tab" href="#tab-1" aria-expanded="true"> 附件上传</a>
+                    </li>
+                </ul>
+                <div class="tab-content">
+                    <div id="tab-1" class="tab-pane active">
+                        <div class="panel-body">
+                            <div class="btn-group-sm" id="toolbar1" role="group">
+                                <a class="btn btn-primary multiple disabled" onclick="downloadFile()">
+                                    <i class="fa fa-download"></i> 下载附件
+                                </a>
+                            </div>
+                            <div class="col-sm-12 select-table table-striped">
+                                <table id="file-table"></table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="col-sm-12 select-table table-striped">
+                <table id="bootstrap-table"></table>
+            </div>
+            <div class="row">
+                <div class="col-sm-offset-5 col-sm-10">
+                    <button type="button" class="btn btn-sm btn-primary" onclick="submitHandler(this)"><i class="fa fa-check" id="commit"></i>确 定</button>&nbsp;
+                    <button type="button" class="btn btn-sm btn-danger" onclick="closeItem()"><i class="fa fa-window-close"></i>关 闭 </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: summernote-js" />
+<th:block th:include="include :: datetimepicker-js" />
+<script th:inline="javascript">
+    var prefix = ctx + "system/noticeHandle";
+
+    var prefix_public = ctx + "version/public";
+
+    var pub_attachment = ctx + "pub/attachment";
+
+    $(function () {
+        $('.summernote').summernote({
+            placeholder: '',
+            height : 192,
+            lang : 'zh-CN',
+            followingToolbar: false,
+            callbacks: {
+                onImageUpload: function (files) {
+                    sendFile(files[0], this);
+                }
+            },
+            focus:true
+        });
+        var content = $("#description").val();
+        $('#summernote').summernote('code', content);
+        $('.summernote').summernote('disable');
+    });
+
+    $("#form-notice-edit").validate({
+        focusCleanup: true
+    });
+
+    function submitHandler() {
+        if ($.validate.form()) {
+            $.operate.saveTab(prefix + "/edit", $('#form-notice-edit').serialize());
+        }
+    }
+
+    $(function() {
+        var optionsfj = {
+            url: pub_attachment + "/list",
+            id:'file-table',
+            createUrl: pub_attachment + "/add",
+            updateUrl: pub_attachment + "/edit/{id}",
+            removeUrl: pub_attachment + "/remove",
+            detailUrl: pub_attachment + "/edit/{id}",
+            sortName: "fileTime",
+            sortOrder: "desc",
+            toolbar:"toolbar1",
+            singleSelect: true,
+            clickToSelect: true,
+            queryParams:queryParams,
+            modalName: "附件列表",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field : 'atId',
+                    title : '附件ID',
+                    visible : false
+                },
+                {
+                    field : 'person.pId',
+                    title : '上传人员Id',
+                    visible: false
+                },
+                {
+                    field : 'fileName',
+                    title : '文件名称'
+                },
+                {
+                    field : 'person.pName',
+                    title : '上传人'
+                },
+                {
+                    field : 'size',
+                    title : '文件大小'
+                },
+                {
+                    field: 'memo',
+                    title: '文件描述'
+                },
+                {
+                    field: 'fileTime',
+                    title: '上传时间',
+                    formatter: function (value, row, index) {
+                        var startTime = '';
+                        if (value != '' && value != null) {
+                            var pattern = /(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/;
+                            startTime = value.replace(pattern, '$1-$2-$3 $4:$5:$6');
+                        }
+                        return startTime;
+                    }
+                }]
+        };
+        $.table.init(optionsfj);
+    });
+
+    function queryParams(params) {
+        var search = $.table.queryParams(params);
+        search.ownerId = $("#amBizId").val() == '' ? 'version_public_add_no_owner_id' : $("#amBizId").val();
+        return search;
+    }
+
+    // 附件上传页面
+    function upload() {
+        var url = ctx + "pub/attachment/upload/" + $("#amBizId").val();
+        $.modal.open("公告通知附件上传页面", url);
+    }
+
+    // 附件下载
+    function downloadFile() {
+        var rows = $.table.selectFirstColumns();
+        var atId = rows[0];
+        var ownerId = $("#amBizId").val();
+        var url = ctx + "pub/attachment/download/"+ownerId+"/"+atId;
+        window.location.href = url;
+    }
+
+    var sendRangeList=[[${sendRangeList}]];
+
+    var sendRange=[[${noticeReceive.sendRange}]];
+
+    $(function() {
+        var selectHtm=dictToSelect(sendRangeList);
+        $("#sendRangeDiv").append(selectHtm);
+        //changRangeInit(sendRange);
+    });
+
+    function changRangeInit(type) {
+        if (type != "1" && type != "2") {
+            $("#receiveId").html("");
+            $("#receiveName").html("");
+            $("#receiveDeptGroupId").val("");
+            $("#receiveDeptGroupName").val("");
+            $.ajax({
+                cache : true,
+                type : "POST",
+                url : ctx + "system/value/listPara",
+                data : {
+                    "amParaId": type
+                },
+                async : false,
+                error : function(request) {
+                    $.modal.alertError("系统错误");
+                },
+                success : function(data) {
+                    var options="";
+                    var ids="";
+
+                    $.each(data, function(index, dict) {
+                        if( !$.common.isEmpty(dict.orgName)  ){
+                            options+=dict.orgName+",";
+                            ids+="orgId:"+dict.receivedeptid+","
+                        }
+                        if( !$.common.isEmpty(dict.grpName)){
+                            options+=dict.grpName+",";
+                            ids+="grpId:"+dict.receivegroupid+","
+                        }
+                    });
+                    $("#receiveDeptId").val(ids);
+                    $("#receiveDeptName").val(options);
+                    $("#receiveDeptGroupId").val(ids);
+                    $("#receiveDeptGroupName").val(options);
+                }
+            });
+        }
+    }
+
+    function changRange(type) {
+        $("#receiveId").html("");
+        $("#receiveName").html("");
+        $("#receiveDeptGroupId").val("");
+        $("#receiveDeptGroupName").val("");
+        if (type == "" || type == 1) {
+            Dept();
+        } else if (type == 2) {
+            Group();
+        } else {
+            $.ajax({
+                cache : true,
+                type : "POST",
+                url : ctx + "system/value/listPara",
+                data : {
+                    "amParaId": type
+                },
+                async : false,
+                error : function(request) {
+                    $.modal.alertError("系统错误");
+                },
+                success : function(data) {
+                    var options="";
+                    var ids="";
+
+                    $.each(data, function(index, dict) {
+                        if( !$.common.isEmpty(dict.orgName)  ){
+                            options+=dict.orgName+",";
+                            ids+="orgId:"+dict.receivedeptid+","
+                        }
+                        if( !$.common.isEmpty(dict.grpName)){
+                            options+=dict.grpName+",";
+                            ids+="grpId:"+dict.receivegroupid+","
+                        }
+                    });
+                    $("#receiveDeptId").val(ids);
+                    $("#receiveDeptName").val(options);
+                    $("#receiveDeptGroupId").val(ids);
+                    $("#receiveDeptGroupName").val(options);
+                }
+            });
+        }
+    }
+
+    function dictToSelect(datas) {
+        // 数据字典转下拉框
+        var actions = [];
+        actions.push($.common.sprintf("<select onchange='changRange(this.value)' class='form-control' disabled name='%s'>", 'sendRange'));
+        $.each(datas, function(index, dict) {
+            actions.push($.common.sprintf("<option value='%s'", dict.id));
+            if(dict.id==sendRange){
+                actions.push($.common.sprintf("selected='%s'",true));
+            }
+            actions.push($.common.sprintf(">%s</option>", dict.value));
+        });
+        actions.push('</select>');
+        return actions.join('');
+    }
+</script>
+</body>
+</html>

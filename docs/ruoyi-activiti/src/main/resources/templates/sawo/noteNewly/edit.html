@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('通知工单')" />
+    <th:block th:include="include :: select2-css" />
+    <th:block th:include="include :: summernote-css" />
+    <th:block th:include="include :: datetimepicker-css" />
+</head>
+<body>
+<div class="main-content">
+    <form id="form-line-add" class="form-horizontal" th:object="${fmNote}">
+        <input id="noteId" type="hidden" name="noteId" th:value="${noteId}">
+        <input id="feedbackAbortTime" type="hidden" name="feedbackAbortTime" th:value="${feedbackAbortTime}">
+        <input name="ownerId" type="hidden" id="ownerId"/>
+        <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+            <div class="panel-group">
+                <div class="panel panel-default">
+                    <div class="panel-heading" style="green-color: #3c8dbc" data-toggle="collapse" data-target="#collapse1">
+                        <h4 class="panel-title" >
+                            通知工单
+                        </h4>
+                    </div>
+                    <div id="collapse1" class="panel-collapse in">
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label class="col-sm-4 control-label is-required">处置状态：</label>
+                                        <div class="col-sm-8 ">
+                                            <select id="cw" name="disposeState" class="form-control">
+                                                <option></option>
+                                                <option value="1">处置中</option>
+                                                <option value="2">处置完成</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label class="col-sm-4 control-label">是否涉及：</label>
+                                        <div class="col-sm-8">
+                                            <select name="ifInvolve" class="form-control">
+                                                <option></option>
+                                                <option value="1">是</option>
+                                                <option value="2">否</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label class="col-sm-4 control-label is-required">处置单位：</label>
+                                        <div class="col-sm-8">
+                                            <input name="n1"  id="n1" class="form-control" style="background-color: #fff; opacity: 1;" onclick="selectDept()"  type="text" readonly required>
+                                            <input name="orgid" id="orgid" type="hidden">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label class="col-sm-4 control-label is-required">处置人：</label>
+                                        <div class="col-sm-8">
+                                            <select class="form-control" id="disposeId" name="disposeId" required>
+                                                <option th:each="OgPerson : ${personList}" th:text="${OgPerson.pName}"
+                                                        th:value="${OgPerson.pId}"></option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <div class="form-group">
+                                        <label class="col-xs-2 control-label is-required">反馈详情:</label>
+                                        <div class="col-sm-10">
+                                            <textarea rows="6" cols="20" id="feedbackDetail" name="feedbackDetail" required="required"  maxlength="150" class="form-control"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="panel-body">
+                        <!-- Nav tabs -->
+                        <ul class="nav nav-tabs" role="tablist">
+                            <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">附件</a></li>
+                        </ul>
+
+                        <!-- Tab panes -->
+                        <div class="tab-content">
+                            <div role="tabpanel" class="tab-pane active" id="home">
+                                <div class="btn-group-sm" id="toolbar" role="tab" style="margin: 15px 0px;">
+                                    <a class="btn btn-success" type="button" onclick="upload()">
+                                        <i class="fa fa-upload"></i> 添加附件
+                                    </a>
+                                    <a class="btn btn-warning multiple disabled" onclick="downloadFile()">
+                                        <i class="fa fa-download"></i> 下载附件
+                                    </a>
+                                    <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()">
+                                        <i class="fa fa-trash"></i> 删除附件
+                                    </a>
+                                </div>
+                                <div class="col-sm-12 select-table table-striped">
+                                    <table id="file-table"></table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+</div>
+</form>
+</div>
+<div class="row">
+    <div class="col-sm-offset-5 col-sm-10">
+        <button type="button" class="btn btn-sm btn-primary" onclick="submit()"><i class="fa fa-check"></i>通 过</button>
+        <button type="button" class="btn btn-sm btn-danger" onclick="closeItem()"><i class="fa fa-reply-all"></i>关 闭</button>
+    </div>
+</div>
+
+<script th:src="@{/js/activiti.js}"></script>
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: select2-js" />
+<th:block th:include="include :: summernote-js" />
+<th:block th:include="include :: datetimepicker-js" />
+
+<script>
+    var prefix = ctx + "sawo/noteNewly";
+
+    var prefix_attachment = ctx + "pub/attachment";
+    var prefix_p = ctx + "public";
+    var prefix_show = ctx + "system/peo";
+
+    $(function () {
+        puFolwHistory($("#noteId").val());
+        var options = {
+            url: prefix_attachment + "/list",
+            id: "file-table",
+            createUrl: prefix_attachment + "/add",
+            updateUrl: prefix_attachment + "/edit/{id}",
+            removeUrl: prefix_attachment + "/remove",
+            detailUrl: prefix_attachment + "/edit/{id}",
+            sortName: "fileTime",
+            sortOrder: "desc",
+            singleSelect: true,
+            clickToSelect: true,
+            queryParams:queryParams,
+            modalName: "附件列表",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field : 'atId',
+                    title : '附件ID',
+                    visible : false
+                },
+                {
+                    field : 'person.pId',
+                    title : '上传人员Id',
+                    visible: false
+                },
+                {
+                    field : 'fileName',
+                    title : '文件名称'
+                },
+                {
+                    field : 'person.pName',
+                    title : '上传人'
+                },
+                {
+                    field : 'size',
+                    title : '文件大小'
+                },
+                {
+                    field : 'memo',
+                    title : '文件描述'
+                },
+                {
+                    field : 'fileTime',
+                    title : '上传时间'
+                }]
+        };
+        $.table.init(options);
+    });
+
+    function queryParams(params) {
+        var search = $.table.queryParams(params);
+        search.ownerId =  $("#noteId").val();
+        return search;
+    }
+
+    // 附件上传页面
+    function upload() {
+        var url = ctx+"pub/attachment/upload/" + $("#noteId").val();
+        $.modal.open("附件上传", url);
+    }
+
+    // 附件下载
+    function downloadFile() {
+        var rows = $.table.selectFirstColumns();
+        var atId = rows[0];
+        var ownerId = $("#noteId").val();
+        var url = ctx + "pub/attachment/download/" + ownerId + "/" + atId;
+        window.location.href = url;
+    }
+
+    /* 选择审批机构树 */
+    function selectDept() {
+        debugger;
+        var orgId = $("#orgid").val();
+        var deptId = $.common.isEmpty(orgId) ? "310100001" : $("#orgid").val();
+        //var deptId = "310100001";
+        var url = prefix + "/selectDeptTree/" + deptId;
+        var options = {
+            title: '选择部门',
+            width: "380",
+            url: url,
+            callBack: doSubmitOne
+        };
+        $.modal.openOptions(options);
+    }
+
+    function doSubmitOne(index, layero) {
+        debugger;
+        var tree = layero.find("iframe")[0].contentWindow.$._tree;
+        var body = layer.getChildFrame('body', index);
+        $("#orgid").val(body.find('#treeId').val());
+        $("#n1").val(body.find('#treeName').val());
+        getchangeManager(body.find('#treeId').val());
+        layer.close(index);
+    }
+
+    //获取处置人
+    function getchangeManager(changeOrg) {
+        $.ajax({
+            cache: true,
+            type: "POST",
+            url: prefix_p + "/selectPersonByOrgIdOrOrgLvAndRole",
+            data: {
+                "orgId": changeOrg,
+                "rId": "88889",
+                "pflag": "1",
+                "params[isselect]": "1"
+            },
+            async: false,
+            error: function (request) {
+                $.modal.alertError("系统错误");
+            },
+            success: function (data) {
+                var options = "<option value='" + "" + "'>" + "" + "</option> \n";
+                $("#disposeId").html("");
+                for (var ak = 0; ak < data.rows.length; ak++) {
+                    options += "<option value='" + data.rows[ak].pId + "'>" + data.rows[ak].pName + "</option> \n";
+                }
+                $("#disposeId").append(options);
+            }
+        });
+    }
+
+    //字符串yyyyMMddHHmmss转yyyy-MM-dd HH:mm:ss
+    $(function () {
+        var backupDate = $("#createrTime").val();
+        var pattern = /(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/;
+        backupDate = backupDate.replace(pattern, '$1-$2-$3 $4:$5:$6');
+        $("#createrTime").val(backupDate);
+    });
+
+    //发生时间
+    $("#createrTime").datetimepicker({
+        format: "yyyy-mm-dd hh:ii:ss",
+        autoclose: true,
+        minView:0,
+        minuteStep:1
+    });
+
+    $("#dealTime").datetimepicker({
+        format: "yyyy-mm-dd hh:ii:ss",
+        autoclose: true,
+        minView:0,
+        minuteStep:1
+    });
+
+    //新增  1 待处置
+    function submit() {
+        debugger;
+        if ($.validate.form()) {
+            var data = $("#form-line-add").serializeArray();
+            //改变状态
+            data.push({"name":"noteState","value": 2 });
+            debugger;
+
+            //点击通过的时候给它的一个时间
+            var date = new Date();//当前系统时间
+            var month = date.getMonth() + 1;//月比实际月份要少1
+            var strDate = date.getDate();
+            var hours = date.getHours();
+            var minutes = date.getMinutes();
+            var seconds = date.getSeconds();
+            if (month >= 1 && month <= 9) {
+                month = "0" + month;
+            }
+            if (strDate >= 0 && strDate <= 9) {
+                strDate = "0" + strDate;
+            }
+            if (hours >= 0 && hours <= 9) {
+                hours = "0" + hours;
+            }
+            if (minutes >= 0 && minutes <= 9) {
+                minutes = "0" + minutes;
+            }
+            if (seconds >= 0 && seconds <= 9) {
+                seconds = "0" + seconds;
+            }
+            var closeTime = date.getFullYear() + "-" + month + "-" + strDate + " " + hours + ":" + minutes + ":" + seconds;
+            data.push({"name":"feedbackTime","value": closeTime });
+            $.operate.saveTab(prefix + "/edit", data);
+        }
+    }
+
+</script>
+</body>
+</html>

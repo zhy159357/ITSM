@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+    <head>
+        <th:block th:include="include :: header('角色列表')"/>
+    </head>
+    <body class="gray-bg">
+        <div class="container-div">
+            <div class="row">
+                <div class="col-sm-12 search-collapse">
+                    <form id="account-form">
+                        <input name="menuId" id="menuId" class="form-control" type="hidden" required th:value="*{menuId}">
+                        <div class="select-list">
+                            <ul>
+
+                            </ul>
+                        </div>
+                        </p>
+                    </form>
+                    <div class="col-sm-12 select-table table-striped">
+                        <table id="bootstrap-table"></table>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+        <th:block th:include="include :: footer"/>
+        <script th:inline="javascript">
+
+            var prfix_dispose = ctx + "system/menu";
+
+            $(function () {
+                var options = {
+                    url: prfix_dispose + "/viewByRole/" + $("#menuId").val(),
+                    sortOrder: "desc",
+                    clickToSelect: true,
+                    rememberSelected: true,
+                    columns: [{
+                        field: 'state',
+                        checkbox: true
+                    },
+                        {
+                            field: 'rName',
+                            title: '角色名称',
+                        }]
+                };
+                $.table.init(options);
+            });
+
+        </script>
+    </body>
+</html>

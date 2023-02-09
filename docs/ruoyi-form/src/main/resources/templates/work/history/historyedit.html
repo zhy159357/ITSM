@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:margin-top="http://www.w3.org/1999/xhtml">
+<head>
+    <th:block th:include="include :: header('新增5环境单单')"/>
+    <th:block th:include="include :: ztree-css"/>
+    <th:block th:include="include :: footer"/>
+    <th:block th:include="include :: ztree-js"/>
+    <th:block th:include="include :: select2-css"/>
+    <th:block th:include="include :: select2-js"/>
+    <th:block th:include="include :: jquery-cxselect-js"/>
+    <th:block th:include="include :: bootstrap-fileinput-js"/>
+    <th:block th:include="include :: datetimepicker-js"/>
+    <th:block th:include="include :: datetimepicker-css"/>
+
+
+</head>
+<body class="white-bg">
+<div id="accountDiv">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form class="form-horizontal m" id="form-issue-add">
+            <input id="id" name="id" type="hidden" th:value="*{twHistoryEntity.id}"/>
+
+            <h4 class="form-header h4">基本信息</h4>
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label is-required">主机IP：</label>
+                        <div class="col-sm-8">
+                            <input class="form-control" type="text" name="hostIp" id="hostIp" th:value="${twHistoryEntity.hostIp}" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label is-required">环境类型：</label>
+                        <div class="col-sm-8">
+                            <input name="twType" id="twType" class="form-control" type="text" th:value="${twHistoryEntity.twType}"
+                                   maxlength="11"  required>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label is-required">应用系统：</label>
+                        <div class="col-sm-8">
+                            <input class="form-control" type="text" name="sysName" id="sysName" th:value="${twHistoryEntity.sysName}"
+                                   required>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label is-required">节点类型：</label>
+                        <div class="col-sm-8">
+                            <select id="nodeType" name="nodeType" class="form-control" th:field="*{twHistoryEntity.nodeType}"
+                                    th:with="nodeType=${@pubParaValue.selectPubParaValueByParaName('TINYWEB_CLASSIFY')}"
+                                     readonly disabled>
+                                <option th:each="paraValue : ${nodeType}" th:text="${paraValue.valueDetail}"
+                                        th:value="${paraValue.value}" ></option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label is-required">Paso名称：</label>
+                        <div class="col-sm-8">
+                            <input class="form-control" type="text" name="pasoName" id="pasoName" th:value="${twHistoryEntity.pasoName}"
+                                   required>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label is-required">部门负责人：</label>
+                        <div class="col-sm-8">
+                            <input name="deptLeader" id="deptLeader" class="form-control" type="text" maxlength="11" th:value="${twHistoryEntity.deptLeader}"
+                                   required>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label is-required">负责人：</label>
+                        <div class="col-sm-8">
+                            <input class="form-control" type="text" name="personLeader" id="personLeader" th:value="${twHistoryEntity.personLeader}"
+                                   required>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label is-required">数据库类型：</label>
+                        <div class="col-sm-8">
+                            <input name="dbType" id="dbType" class="form-control" type="text" maxlength="11" th:value="${twHistoryEntity.dbType}"
+                                   required>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label is-required">更新时间：</label>
+                        <div class="col-sm-8">
+                            <input class="form-control" type="text" name="updateTime" id="updateTime" th:value="${twHistoryEntity.updateTime}"
+                                   required>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label is-required">状态：</label>
+                        <div class="col-sm-8">
+                            <input name="status" id="status" class="form-control" type="text" maxlength="11" th:value="${twHistoryEntity.status}"
+                                   required>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-offset-5 col-sm-10">
+                    <button type="button" class="btn btn-sm btn-primary" onclick="submitHandler(1)"><i
+                            class="fa fa-check"></i>保 存
+                    </button>&nbsp;
+                    <button type="button" class="btn btn-sm btn-danger" onclick="closeItem()"><i
+                            class="fa fa-window-close"></i>关 闭
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<script th:src="@{/js/activiti.js}"></script>
+<script th:src="@{/js/issue.js}"></script>
+<script th:inline="javascript">
+    var prefix = ctx + "twHistory";
+    $(function () {
+        $("#reporttime").datetimepicker({
+            format: "yyyy-mm-dd hh:ii:ss",
+            autoclose: true,
+            minView: 0,
+            minuteStep: 1,
+            endDate: new Date()
+        });
+        $("#fenLeiOne").hide();
+        $("#fenLeiTwo").hide();
+    });
+
+    function closeOpen() {
+        $.modal.close();
+    }
+
+
+    function submitHandler(type) {
+        if (!$.validate.form()) {
+            $.modal.alertWarning("参数填写不全，请继续填写");
+            return;
+        }
+        var data = $("#form-issue-add").serializeArray();
+        $.operate.saveTab(prefix + "/updateHistory", data);
+        $.modal.close();
+    }
+
+</script>
+</body>
+</html>

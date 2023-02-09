@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:include="include :: header('数据提取单进行工作组指派')"/>
+</head>
+<body>
+
+<div class="row form-group">
+    <div class="col-md-12">
+        <div class="form-group">
+            <label class="col-sm-2 control-label  text-right">涉及系统：</label>
+            <div class="col-sm-10">
+                <input class="form-control" type="text" th:value="${sysName}" readonly/>
+            </div>
+        </div>
+    </div>
+
+</div>
+<div class="row form-group">
+    <div class="col-md-12">
+        <div class="form-group">
+            <label class="col-sm-2 control-label  text-right">工作组：</label>
+            <div class="col-sm-10">
+                <select class="form-control" data-live-search="true"
+                        data-none-selected-text="请选择工作组" id="groupId">
+                    <option value=""></option>
+                    <option th:each="group : ${ogGroups}" th:text="${group.grpName}"
+                            th:value="${group.groupId}"></option>
+                </select>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row form-group">
+    <div class="col-md-12">
+        <div class="form-group">
+            <label class="col-sm-2 control-label  text-right">指派说明：</label>
+            <div class="col-sm-10">
+                <textarea class="form-control" rows="5" id="s-LOG_performDesc"></textarea>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-offset-5 col-sm-10">
+        <button type="button" class="btn btn-sm btn-primary" onclick="submitHandler()">确定
+        </button>&nbsp;&nbsp;
+        <button type="button" class="btn btn-sm btn-danger" onclick="closeItem()"><i
+                class="fa fa-window-close"></i>关 闭
+        </button>
+    </div>
+</div>
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: datetimepicker-js" />
+<th:block th:include="include :: datetimepicker-css" />
+<th:block th:include="include :: select2-css" />
+<th:block th:include="include :: select2-js" />
+<script th:inline="javascript">
+    function  submitHandler() {
+        var subGroupId = $('#groupId').val();
+
+        var errorInfo = '';
+
+        if(isEmpty(subGroupId)){
+            errorInfo += '【指派工作组】不能为空 ';
+        }
+
+        var LOG_performDesc = $('#s-LOG_performDesc').val();
+
+
+        if(isEmpty(LOG_performDesc)){
+            errorInfo += '【指派说明】不能为空';
+        }else{
+            if(getValueLen(LOG_performDesc)>1000){
+                errorInfo += '【指派说明】最大长度不能超过1000';
+            }
+        }
+
+        if(isEmpty(errorInfo)){
+            var parentGroupId = parent.groupId;
+            $(parentGroupId).val(subGroupId);
+            var logPerformDesc = parent.logPerformDesc;
+            $(logPerformDesc).val(LOG_performDesc);
+            //触发父页面的方法
+            parent.assign();
+            $.modal.close();
+        }else{
+            $.modal.alertError(errorInfo);
+        }
+
+
+    }
+    
+    function closeItem() {
+        $.modal.close();
+    }
+
+
+    /**
+     * 输入空值校验
+     * @param valueStr
+     * @returns {boolean}
+     */
+    function  isEmpty(valueStr) {
+        if(valueStr=='' || valueStr==null){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    /**
+     * 获取输入数值的长度
+     * @param valueStr
+     * @returns {number}
+     */
+    function getValueLen(valueStr){
+        return isEmpty(valueStr)?0:valueStr.length;
+    }
+
+</script>
+</body>
+
+</html>

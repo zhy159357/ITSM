@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('服务通讯录列表')" />
+    <th:block th:include="include :: layout-latest-css" />
+</head>
+<body class="gray-bg">
+<div class="ui-layout-center">
+    <div class="container-div">
+        <div class="row">
+            <div class="col-sm-12 search-collapse">
+                <form id="fw-form">
+                    <div class="select-list">
+                        <ul>
+                            <li>
+                                服务名称：<input type="text" name="server_name" maxlength="20"/>
+                            </li>
+                            <li>
+                                手机号：<input type="text" name="phone" maxlength="20"/>
+                            </li>
+                            <li>
+                                使用状态:<select id="invalidationmark" name="invalidationmark" required>
+                                <option value="">所有</option>
+                                <option th:each="invaMark : ${invaMarklist}" th:text="${invaMark.info}" th:value="${invaMark.code}"></option>
+                            </select>
+                            </li>
+                            <li class="select-time">
+                                <label style="width: 80px">创建时间： </label>
+                                <input style="width:90px" type="text" class="time-input"  readonly id="startTime" placeholder="开始时间" name="params[startTime]"/>
+                                <span style="width:10px">-</span>
+                                <input style="width:90px" type="text" class="time-input"  readonly id="endTime" placeholder="结束时间" name="params[endTime]"/>
+                            </li>
+                            <li>
+                                <a class="btn btn-primary btn-rounded btn-sm" id="ss" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.resetAll('fw-form')"><i class="fa fa-repeat"></i>&nbsp;重置</a>
+                            </li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+
+            <div class="btn-group-sm" id="toolbar" role="group">
+                <a class="btn btn-success" onclick="add()">
+                    <i class="fa fa-plus"></i> 新增
+                </a>
+                <a class="btn btn-primary single disabled" onclick="edit()">
+                    <i class="fa fa-edit"></i> 修改
+                </a>
+                <a class="btn btn-danger multiple disabled"  onclick="$.operate.removeAll()">
+                    <i class="fa fa-remove"></i> 删除
+                </a>
+                <a class="btn btn-info single disabled" onclick="detail()">
+                    <i class="fa fa-search"></i> 查看详情
+                </a>
+                <div class="btn-group">
+                    <button data-toggle="dropdown" class="btn btn-primary btn-sm dropdown-toggle"><i class="fa fa-cloud-upload"></i>导出<span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a onclick="$.table.exportExcel()">导出所有</a>
+                        </li>
+                        <li><a onclick="$.table.exportExcelCurrentPage()">导出当前页</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="col-sm-12 select-table table-striped">
+                <table id="bootstrap-table"></table>
+            </div>
+        </div>
+    </div>
+</div>
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: layout-latest-js" />
+<script th:inline="javascript">
+
+    var prefix = ctx + "system/fwlist";
+
+    document.onkeydown = function(e){
+        var ev = document.all ? window.event : e;
+        if(ev.keyCode==13) {
+            $('#ss').trigger('click');
+            return false;
+        } //搜索逻辑
+    }
+
+    $(function() {
+        var options = {
+            url: prefix + "/list",
+            createUrl: prefix + "/add",
+            updateUrl: prefix + "/edit/{id}",
+            removeUrl: prefix + "/remove",
+            detailUrl: prefix + "/detail/{id}",
+            exportUrl: prefix + "/export",
+            modalName: "服务通讯录",
+            clickToSelect:true,
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'address_list_id',
+                    title: 'ID',
+                    visible:false
+                },
+                {
+                    field: 'server_order',
+                    title: '序号'
+                },
+                {
+                    field: 'server_name',
+                    title: '服务名称',
+		        	formatter: function (value, row, index) {
+		        		return $.table.tooltip(value);
+		        	}
+                },
+                {
+                    field: 'phone',
+                    title: '手机号'
+                },
+                {
+                    field: 'invalidationmark',
+                    title: '使用状态'
+                }
+            ]
+        };
+        $.table.init(options);
+    });
+
+    // 详细信息
+    function detail  () {
+        table.set();
+        $.modal.openNoColse("详细信息",  $.operate.detailUrl(), '900', '450');
+    }
+
+    function add(id) {
+        table.set();
+        $.modal.openNoColse("添加" + table.options.modalName, $.operate.addUrl(id));
+    };
+    function edit(id) {
+        table.set();
+        $.modal.openNoColse("修改" + table.options.modalName, $.operate.editUrl(id));
+    };
+    // function removeAll(id) {
+    //     table.set();
+    //     $.modal.openColse("删除" + table.options.modalName, $.operate.removeAll(id));
+    // };
+
+</script>
+</body>
+</html>

@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('知识检索详情')"/>
+    <link th:href="@{/css/style_cm.css}" rel="stylesheet"></link>
+</head>
+<body class="gray-bg">
+	<div class="main-content">
+		<form class="form-horizontal" id="form-search-detail" th:object="${knowledgeContent}">
+			<input name="id" type="hidden" th:field="*{id}" />
+			<input name="ownerId" type="hidden" id="ownerId" th:value="*{id}"/>
+			<div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label class="col-xs-2 control-label is-required">知识标题:</label>
+                    <div class="col-sm-10">
+                        <input class="form-control" th:field="*{title}"  name="title" readonly>
+                    </div>
+                </div>
+            </div>          
+        </div>
+        <div class="row">
+        	<div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">类别名称:</label>
+                    <div class="col-sm-8">
+                    	<input  class="form-control" th:field="*{categoryName}" name="categoryName" readonly>
+                    </div>
+                </div>
+            </div>
+        	<div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required ">事件类型:</label>
+                    <div class="col-sm-8">
+                   		<input type="hidden" class="form-control" id="eventType" name="eventType" th:field="*{eventType}">
+                   		<input type="text" class="form-control" id="eventTypeStr" readonly>
+                    </div>
+                </div>
+            </div> 
+            
+        </div>
+        <div class="row">
+        	<div class="col-sm-6"  id="systemDiv">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label ">系统名称:</label>
+                    <div class="col-sm-8">
+                        <input type="text" class="form-control" id="systemName" name="systemName" th:field="*{systemName}" readonly>
+                    </div>
+                </div>
+            </div> 
+        	<div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label ">一级标题:</label>
+                    <div class="col-sm-8">
+                        <input type="text" class="form-control" id="content" name="content" th:field="*{content}" readonly>
+                    </div>
+                </div>
+            </div>
+        	<div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">二级标题:</label>  
+                    <div class="col-sm-8">
+                    	<input type="text" class="form-control" th:field="*{sectitle}" readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6" id="threeDiv">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">三级标题:</label>
+                    <div class="col-sm-8">
+                        <input type="text" class="form-control" th:field="*{threetitle}" readonly>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">标签：</label>
+                    <div class="col-sm-8">
+                        <input name="name" th:field="*{name}" class="form-control"  readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+            	<input  id="powerId" th:field="*{powerId}" type="hidden">
+                <div class="form-group">
+                     <label class="col-sm-4 control-label is-required">权限：</label>
+                        <div class="col-sm-8">
+                        <input name="powerId" id="powerIdStr" class="form-control" type="text" readonly>
+                    </div>
+                 </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label ">创建人:</label>
+                    <div class="col-sm-8">
+                        <input class="form-control" th:field="*{createName}" name="createName" readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label ">创建时间:</label>
+                    <div class="col-sm-8">
+                        <input class="form-control" type="text" th:field="*{createTime}" name="createTime"  readonly>
+                    </div>
+                </div>
+            </div>
+        </div>
+		<div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label class="col-xs-2 control-label " >知识描述:</label>
+                    <div class="col-xs-10">
+                        <input id ="describes" th:value="*{describes}" type="hidden">
+                    	<div id="editor"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+		</form>
+		
+		<h4 class="form-header h4 form_file">附件区</h4>
+	    <div class="btn-group-sm" id="toolbar" role="group">
+		    <a class="btn btn-primary single disabled" type="button" onclick="downloadIt()">
+		        <i class="fa fa-edit"></i> 下载附件
+		    </a>
+		</div>
+		<div class="col-sm-12 select-table table-striped">
+		    <table id="file-table"></table>
+		</div>
+        <div class="comment_info">
+            <h4 class="form-header h4 form_file">评论区</h4>
+            <div class="col-sm-12 select-table table-striped">
+                <div class="cm_info_text">
+                    <span class="comment-comment_icon01 cm_size"></span>
+                    <span>评论</span><span>(</span><span th:text="*{commentCount}"/><span>)</span>
+                    <span class="comment-comment_icon02 cm_size"></span>
+                    <span>好评</span><span>(</span><span th:text="*{commentGoodCount}"/><span>)</span>
+                    <span class="comment-comment_icon03 cm_size"></span>
+                    <span>差评</span><span>(</span><span th:text="*{commentBadCount}"/><span>)</span>
+                </div>
+
+            <div class="cm_btn_info">
+                <a class="btn btn-primary" type="button" onclick="comment()">
+                  <span>发布评论</span>
+                </a>
+            </div>
+            <div id="commentArea" class="comarea">
+            </div>
+            </div>
+        </div>
+        <a id="collectBtn" class="btn btn-primary btn_sc" type="button" onclick="collect()">
+            <i class="fa fa-edit"></i> <span id="collectArea">收藏</span>
+        </a>
+	</div>
+<th:block th:include="include :: footer"/>
+<script th:src="@{/ckeditor/ckeditor.js}"></script>
+<script th:src="@{/ckeditor/pasteImage.js}"></script>
+<script th:inline="javascript">
+    var prefix = ctx + "es";
+    var prefix_attachment = ctx + "pub/attachment";
+	var commentList = [[${knowledgeComment}]];
+	var collectFlag = [[${collectFlag}]];
+	var editor=CKEDITOR.replace('editor');//CKEDITOR4 插件初始化
+	CKAddLinks("editor");
+	CKFitHeight("editor");
+	$(function() {
+		if($("#powerId").val()=="0"){
+	    	$("#powerIdStr").val("全国");
+	    }else if($("#atId").val()=="1"){
+	    	$("#powerIdStr").val("总行");
+	    }else{
+	    	$("#powerIdStr").val("");
+	    }
+		
+		if($("#eventType").val()=="0"){
+	    	$("#eventTypeStr").val("监控事件单");
+	    	$("#systemDiv").hide();
+	    	$("#threeDiv").hide();
+	    }else if($("#eventType").val()=="1"){
+	    	$("#eventTypeStr").val("业务事件单");
+	    }
+		
+		if(collectFlag){
+			$("#collectBtn").attr("class","btn btn-primary btn_sc disabled");
+			$("#collectArea").text("已收藏");
+		}
+		
+		 var options = {
+		     	url: prefix_attachment + "/list",
+		        sortName: "fileTime",
+		        id:'file-table',
+		        sortOrder: "desc",
+		        singleSelect : true,
+		        queryParams:queryParams,
+		        modalName: "附件列表",
+		        columns: [{
+		            checkbox: true
+		        },
+		        {
+		            field : 'atId',
+		            title : '附件ID',
+		            visible : false
+		        },
+                {
+                    field : 'fileName',
+                    title : '文件名称'
+                },
+                {
+                    field : 'person.pName',
+                    title : '上传人'
+                },
+                {
+                    field : 'size',
+                    title : '文件大小'
+                },
+                {
+                    field : 'memo',
+                    title : '文件描述'
+                },
+                {
+                    field : 'fileTime',
+                    title : '上传时间'
+                }]
+		        };
+        $.table.init(options);
+		
+		var comHtml = "";
+		for(var i=0;i<commentList.length;i++){
+			comHtml = comHtml + commentHtml(commentList[i],0,null);
+		}
+		$("#commentArea").html(comHtml); 
+		
+		editor.setData($('#describes').val());
+    	//CKEDITOR.config.readOnly=true;//设置不可编辑
+	})
+	
+	function commentHtml(comment,k,author){
+		var comHtml = "";
+		var authorHtml = "";
+		if(author!=null){
+			authorHtml = authorHtml + "回复@"+author+" ";
+		}
+		
+		comHtml = comHtml+"<div style=\"margin: 0px 0px 10px "+(k*10)+"px\">"+comment.createName
+				+": "+authorHtml+comment.remark+" ----"+comment.createTime
+				+"<br/>&nbsp;&nbsp;&nbsp;<a href=\"javascript:void(0)\" onclick=reply('"+comment.id+"','"+comment.createName+"','"+comment.contentId+"')>回复</a></div>";
+		var list = comment.replyList;
+		for(var i=0;i<list.length;i++){
+			comHtml = comHtml + commentHtml(list[i],k+1,comment.createName);
+		}
+		comHtml = comHtml+"";
+		return comHtml;
+	}
+	
+	function comment(){
+		var id=$("#id").val();
+		var title=$("#title").val();
+		$.modal.open("评论"+title, prefix+"/comment/"+id,600,300);
+	}
+	
+	function reply(id,author,contentId){
+		$.modal.open("回复 @"+author, prefix+"/reply/"+id+"&"+contentId,600,300);
+	}
+	
+	function downloadIt(){
+		var rows = $.table.selectFirstColumns();
+        var atId = rows[0];
+        var ownerId = $("#ownerId").val();
+        var url = prefix_attachment + "/download/"+ownerId+"/"+atId;
+        window.location.href = url;
+	}
+	function collect(){
+		$.operate.post(ctx +"knowledge/collection/save/"+$("#id").val());
+		$("#collectBtn").attr("class","btn btn-primary btn_sc disabled");
+		$("#collectArea").text("已收藏");
+	}
+	function queryParams(params) {
+        var search = $.table.queryParams(params);
+        search.ownerId = $("#ownerId").val() == '' ? 'id' : $("#ownerId").val();
+        return search;
+    }
+</script>
+</body>
+</html>

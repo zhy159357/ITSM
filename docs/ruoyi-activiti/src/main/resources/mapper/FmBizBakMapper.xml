@@ -1,0 +1,744 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.activiti.mapper.FmBizBakMapper">
+
+    <resultMap type="FmBizBak" id="FmBizBakResult">
+        <result property="fmId" column="fm_id"/>
+        <result property="createId" column="create_id"/>
+        <result property="createOrgId" column="create_org_id"/>
+        <result property="groupId" column="group_id"/>
+        <result property="dealerId" column="dealer_id"/>
+        <result property="dealGroupId" column="deal_group_id"/>
+        <result property="typeinfoId" column="typeinfo_id"/>
+        <result property="sysid" column="sysid"/>
+        <result property="fmTypeId" column="fm_type_id"/>
+        <result property="auditorId" column="auditor_id"/>
+        <result property="occurrenceOrgId" column="occurrence_org_id"/>
+        <result property="evaluaterId" column="evaluater_id"/>
+        <result property="faultNo" column="fault_no"/>
+        <result property="faultSource" column="fault_source"/>
+        <result property="seriousLev" column="serious_lev"/>
+        <result property="occurrenceAddress" column="occurrence_address"/>
+        <result property="occurTime" column="occur_time"/>
+        <result property="faultReportName" column="fault_report_name"/>
+        <result property="reportTime" column="report_time"/>
+        <result property="reportPhone" column="report_phone"/>
+        <result property="faultContactName" column="fault_contact_name"/>
+        <result property="contactPhone" column="contact_phone"/>
+        <result property="contactAddress" column="contact_address"/>
+        <result property="serialNumber" column="serial_number"/>
+        <result property="tradingName" column="trading_name"/>
+        <result property="errorInformation" column="error_information"/>
+        <result property="faultDecriptSummary" column="fault_decript_summary"/>
+        <result property="faultDecriptDetail" column="fault_decript_detail"/>
+        <result property="creatTime" column="creat_time"/>
+        <result property="dealTime" column="deal_time"/>
+        <result property="dealDescription" column="deal_description"/>
+        <result property="evaluate" column="evaluate"/>
+        <result property="evaluateTime" column="evaluate_time"/>
+        <result property="endTime" column="end_time"/>
+        <result property="currentState" column="current_state"/>
+        <result property="auditStatus" column="audit_status"/>
+        <result property="auditTime" column="audit_time"/>
+        <result property="n3" column="n3"/>
+        <result property="n2" column="n2"/>
+        <result property="n4" column="n4"/>
+        <result property="n1" column="n1"/>
+        <result property="n5" column="n5"/>
+        <result property="dealUseTime" column="deal_use_time"/>
+        <result property="involveAmount" column="involve_amount"/>
+        <result property="involveScount" column="involve_scount"/>
+        <result property="customerName" column="customer_name"/>
+        <result property="customerIdcard" column="customer_idcard"/>
+        <result property="transactionAccount" column="transaction_account"/>
+        <result property="transactionAmount" column="transaction_amount"/>
+        <result property="orderNumber" column="order_number"/>
+        <result property="evaluateResult" column="evaluate_result"/>
+        <result property="fmCause" column="fm_cause"/>
+        <result property="fmJkmark" column="fm_jkmark"/>
+        <result property="participatorIds" column="participator_ids"/>
+        <result property="dealMode" column="deal_mode"/>
+        <result property="participateGroupids" column="participate_groupids"/>
+        <result property="toQgzxTime" column="to_qgzx_time"/>
+        <result property="backSzxTime" column="back_szx_time"/>
+        <result property="repeatMark" column="repeat_mark"/>
+        <result property="receiverIds" column="receiver_ids"/>
+        <result property="invalidationMark" column="invalidation_mark"/>
+        <result property="ifJj" column="if_jj"/>
+        <result property="ifBulletion" column="if_bulletion"/>
+        <result property="bullCause" column="bull_cause"/>
+        <result property="bullTime" column="bull_time"/>
+        <result property="isAntiFraud" column="is_anti_fraud"/>
+        <result property="isSend" column="is_send"/>
+        <result property="createName" column="createName"/>
+        <result property="dealName" column="dealName"/>
+        <result property="dealGroupName" column="dealGroupName"/>
+        <result property="createGroupName" column="createGroupName"/>
+        <association property="ogSys" column="sysid" javaType="OgSys" resultMap="OgSysResult"/>
+        <association property="fmKind" column="fmTypeId" javaType="FmKind" resultMap="FmKindResult"/>
+        <association property="ogOrg" column="createOrgId" javaType="OgOrg" resultMap="OgOrgResult"/>
+    </resultMap>
+    <resultMap type="OgSys" id="OgSysResult">
+        <id property="sysId" column="sysId"/>
+        <result property="orgId" column="orgId"/>
+        <result property="code" column="code"/>
+        <result property="caption" column="caption"/>
+        <result property="memo" column="memo"/>
+        <result property="invalidationMark" column="invalidation_Mark"/>
+        <result property="isExamination" column="isExamination"/>
+        <result property="dept" column="dept"/>
+        <result property="pid" column="pid"/>
+        <result property="businessId" column="businessId"/>
+        <result property="isKeySys" column="is_Key_Sys"/>
+        <result property="sysType" column="sys_Type"/>
+    </resultMap>
+    <resultMap type="FmKind" id="FmKindResult">
+        <result property="fmTypeId" column="fm_type_id"/>
+        <result property="name" column="name"/>
+        <result property="sysId" column="sys_id"/>
+        <result property="invalidationMark" column="invalidation_mark"/>
+        <result property="knowledgeUrl" column="knowledge_url"/>
+        <result property="adderId" column="adder_id"/>
+        <result property="updaterId" column="updater_id"/>
+        <result property="addTime" column="add_time"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="type" column="type"/>
+    </resultMap>
+
+    <resultMap type="OgOrg" id="OgOrgResult">
+        <id property="orgId" column="orgId"/>
+        <result property="parentId" column="t_o_orgId"/>
+        <result property="orgCode" column="orgCode"/>
+        <result property="orgName" column="orgName"/>
+        <result property="orgLv" column="orgLv"/>
+        <result property="adder" column="adder"/>
+        <result property="addtime" column="addtime"/>
+        <result property="moder" column="moder"/>
+        <result property="modtime" column="modtime"/>
+        <result property="updatetime" column="update_time"/>
+        <result property="invalidationMark" column="invalidation_Mark"/>
+        <result property="memo" column="memo"/>
+        <result property="branchMark" column="branch_Mark"/>
+        <result property="inoutsideMark" column="inoutside_Mark"/>
+        <result property="levelCode" column="level_Code"/>
+        <result property="leaf" column="leaf"></result>
+        <result property="type" column="type"></result>
+        <result property="sort" column="sort"></result>
+        <result property="operaternum" column="operaternum"></result>
+        <result property="khnum" column="khnum"></result>
+        <result property="parentName" column="parent_name"/>
+    </resultMap>
+    <sql id="selectFmBizBakVo">
+        select f.auditor_id,
+               f.occurrence_org_id,
+               f.evaluater_id,
+               f.fault_no,
+               f.fault_source,
+               f.serious_lev,
+               f.occurrence_address,
+               f.occur_time,
+               f.fault_report_name,
+               f.report_time,
+               f.report_phone,
+               f.fault_contact_name,
+               f.contact_phone,
+               f.contact_address,
+               f.serial_number,
+               f.trading_name,
+               f.error_information,
+               f.fault_decript_summary,
+               f.fault_decript_detail,
+               f.creat_time,
+               f.deal_time,
+               f.deal_description,
+               f.evaluate,
+               f.evaluate_time,
+               f.end_time,
+               f.current_state,
+               f.audit_status,
+               f.audit_time,
+               f.n3,
+               f.n2,
+               f.n4,
+               f.n1,
+               f.n5,
+               f.deal_use_time,
+               f.involve_amount,
+               f.involve_scount,
+               f.customer_name,
+               f.customer_idcard,
+               f.transaction_account,
+               f.transaction_amount,
+               f.order_number,
+               f.evaluate_result,
+               f.fm_cause,
+               f.fm_jkmark,
+               f.participator_ids,
+               f.deal_mode,
+               f.participate_groupids,
+               f.to_qgzx_time,
+               f.back_szx_time,
+               f.repeat_mark,
+               f.receiver_ids,
+               f.invalidation_mark,
+               f.if_jj,
+               f.if_bulletion,
+               f.bull_cause,
+               f.bull_time,
+               f.is_anti_fraud,
+               f.is_send,
+               f.fm_id,
+               f.create_id,
+               f.create_org_id,
+               f.group_id,
+               f.dealer_id,
+               f.deal_group_id,
+               f.typeinfo_id,
+               f.sysid,
+               s.caption,
+               g.grpName  createGroupName,
+               g2.grpName dealGroupName,
+               k.name,
+               o.orgName,
+               p.pname    createName,
+               p2.pname   dealName,
+               p3.pname   evaluateName,
+               f.fm_type_id
+        from fm_biz_cps f
+                 left join og_sys s
+                           on f.sysid = s.sysid
+                 left join og_group g
+                           on f.group_id = g.groupid
+                 left join og_group g2
+                           on f.deal_group_id = g2.groupid
+                 left join fm_kind k
+                           on f.fm_type_id = k.fm_type_id
+                 left join og_org o
+                           on f.occurrence_org_id = o.orgid
+                 left join og_person p
+                           on f.create_Id = p.pid
+                 left join og_person p2
+                           on f.dealer_id = p2.pid
+                 left join og_person p3
+                           on f.evaluater_id = p3.pid
+    </sql>
+    <select id="selectFmBizBakList" parameterType="FmBizBak" resultMap="FmBizBakResult">
+        <include refid="selectFmBizBakVo"/>
+        <where>
+            <if test="fmId != null  and fmId != ''">and fm_id = #{fmId}</if>
+            <if test="createId != null  and createId != ''">and create_id = #{createId}</if>
+            <if test="createOrgId != null  and createOrgId != ''">and create_org_id = #{createOrgId}</if>
+            <if test="groupId != null  and groupId != ''">and group_id = #{groupId}</if>
+            <if test="dealerId != null  and dealerId != ''">and dealer_id = #{dealerId}</if>
+            <if test="dealGroupId != null  and dealGroupId != ''">and deal_group_id = #{dealGroupId}</if>
+            <if test="typeinfoId != null  and typeinfoId != ''">and typeinfo_id = #{typeinfoId}</if>
+            <if test="sysid != null  and sysid != ''">and sysid = #{sysid}</if>
+            <if test="fmTypeId != null  and fmTypeId != ''">and fm_type_id = #{fmTypeId}</if>
+            <if test="auditorId != null  and auditorId != ''">and auditor_id = #{auditorId}</if>
+            <if test="occurrenceOrgId != null  and occurrenceOrgId != ''">and occurrence_org_id = #{occurrenceOrgId}
+            </if>
+            <if test="evaluaterId != null  and evaluaterId != ''">and evaluater_id = #{evaluaterId}</if>
+            <if test="faultNo != null  and faultNo != ''">and fault_no = #{faultNo}</if>
+            <if test="faultSource != null  and faultSource != ''">and fault_source = #{faultSource}</if>
+            <if test="seriousLev != null  and seriousLev != ''">and serious_lev = #{seriousLev}</if>
+            <if test="occurrenceAddress != null  and occurrenceAddress != ''">and occurrence_address =
+                #{occurrenceAddress}
+            </if>
+            <if test="occurTime != null  and occurTime != ''">and occur_time = #{occurTime}</if>
+            <if test="faultReportName != null  and faultReportName != ''">and fault_report_name like concat(concat('%',
+                #{faultReportName}), '%')
+            </if>
+            <if test="reportTime != null  and reportTime != ''">and report_time = #{reportTime}</if>
+            <if test="reportPhone != null  and reportPhone != ''">and report_phone = #{reportPhone}</if>
+            <if test="faultContactName != null  and faultContactName != ''">and fault_contact_name like
+                concat(concat('%', #{faultContactName}), '%')
+            </if>
+            <if test="contactPhone != null  and contactPhone != ''">and contact_phone = #{contactPhone}</if>
+            <if test="contactAddress != null  and contactAddress != ''">and contact_address = #{contactAddress}</if>
+            <if test="serialNumber != null  and serialNumber != ''">and serial_number = #{serialNumber}</if>
+            <if test="tradingName != null  and tradingName != ''">and trading_name like concat(concat('%',
+                #{tradingName}), '%')
+            </if>
+            <if test="errorInformation != null  and errorInformation != ''">and error_information =
+                #{errorInformation}
+            </if>
+            <if test="faultDecriptSummary != null  and faultDecriptSummary != ''">and fault_decript_summary =
+                #{faultDecriptSummary}
+            </if>
+            <if test="faultDecriptDetail != null  and faultDecriptDetail != ''">and fault_decript_detail =
+                #{faultDecriptDetail}
+            </if>
+            <if test="creatTime != null  and creatTime != ''">and creat_time = #{creatTime}</if>
+            <if test="dealTime != null  and dealTime != ''">and deal_time = #{dealTime}</if>
+            <if test="dealDescription != null  and dealDescription != ''">and deal_description = #{dealDescription}</if>
+            <if test="evaluate != null  and evaluate != ''">and evaluate = #{evaluate}</if>
+            <if test="evaluateTime != null  and evaluateTime != ''">and evaluate_time = #{evaluateTime}</if>
+            <if test="endTime != null  and endTime != ''">and end_time = #{endTime}</if>
+            <if test="currentState != null  and currentState != ''">and current_state = #{currentState}</if>
+            <if test="auditStatus != null  and auditStatus != ''">and audit_status = #{auditStatus}</if>
+            <if test="auditTime != null  and auditTime != ''">and audit_time = #{auditTime}</if>
+            <if test="n3 != null  and n3 != ''">and n3 = #{n3}</if>
+            <if test="n2 != null  and n2 != ''">and n2 = #{n2}</if>
+            <if test="n4 != null  and n4 != ''">and n4 = #{n4}</if>
+            <if test="n1 != null  and n1 != ''">and n1 = #{n1}</if>
+            <if test="n5 != null  and n5 != ''">and n5 = #{n5}</if>
+            <if test="dealUseTime != null  and dealUseTime != ''">and deal_use_time = #{dealUseTime}</if>
+            <if test="involveAmount != null  and involveAmount != ''">and involve_amount = #{involveAmount}</if>
+            <if test="involveScount != null  and involveScount != ''">and involve_scount = #{involveScount}</if>
+            <if test="customerName != null  and customerName != ''">and customer_name like concat(concat('%',
+                #{customerName}), '%')
+            </if>
+            <if test="customerIdcard != null  and customerIdcard != ''">and customer_idcard = #{customerIdcard}</if>
+            <if test="transactionAccount != null  and transactionAccount != ''">and transaction_account =
+                #{transactionAccount}
+            </if>
+            <if test="transactionAmount != null  and transactionAmount != ''">and transaction_amount =
+                #{transactionAmount}
+            </if>
+            <if test="orderNumber != null  and orderNumber != ''">and order_number = #{orderNumber}</if>
+            <if test="evaluateResult != null  and evaluateResult != ''">and evaluate_result = #{evaluateResult}</if>
+            <if test="fmCause != null  and fmCause != ''">and fm_cause = #{fmCause}</if>
+            <if test="fmJkmark != null  and fmJkmark != ''">and fm_jkmark = #{fmJkmark}</if>
+            <if test="participatorIds != null  and participatorIds != ''">and participator_ids = #{participatorIds}</if>
+            <if test="dealMode != null  and dealMode != ''">and deal_mode = #{dealMode}</if>
+            <if test="participateGroupids != null  and participateGroupids != ''">and participate_groupids =
+                #{participateGroupids}
+            </if>
+            <if test="toQgzxTime != null  and toQgzxTime != ''">and to_qgzx_time = #{toQgzxTime}</if>
+            <if test="backSzxTime != null  and backSzxTime != ''">and back_szx_time = #{backSzxTime}</if>
+            <if test="repeatMark != null  and repeatMark != ''">and repeat_mark = #{repeatMark}</if>
+            <if test="receiverIds != null  and receiverIds != ''">and receiver_ids = #{receiverIds}</if>
+            <if test="invalidationMark != null  and invalidationMark != ''">and invalidation_mark =
+                #{invalidationMark}
+            </if>
+            <if test="ifJj != null  and ifJj != ''">and if_jj = #{ifJj}</if>
+            <if test="ifBulletion != null  and ifBulletion != ''">and if_bulletion = #{ifBulletion}</if>
+            <if test="bullCause != null  and bullCause != ''">and bull_cause = #{bullCause}</if>
+            <if test="bullTime != null  and bullTime != ''">and bull_time = #{bullTime}</if>
+            <if test="isAntiFraud != null  and isAntiFraud != ''">and is_anti_fraud = #{isAntiFraud}</if>
+            <if test="isSend != null  and isSend != ''">and is_send = #{isSend}</if>
+            <if test="iniSys != null  and iniSys != ''">and ini_sys = #{iniSys}</if>
+            <if test="iniOnetype != null  and iniOnetype != ''">and ini_onetype = #{iniOnetype}</if>
+            <if test="iniTwotype != null  and iniTwotype != ''">and ini_twotype = #{iniTwotype}</if>
+            <if test="iniThreetype != null  and iniThreetype != ''">and ini_threetype = #{iniThreetype}</if>
+            <if test="iniKeywords != null  and iniKeywords != ''">and ini_keywords = #{iniKeywords}</if>
+            <if test="ifKnowledge != null  and ifKnowledge != ''">and if_knowledge = #{ifKnowledge}</if>
+            <if test="isKnowledge != null  and isKnowledge != ''">and is_knowledge = #{isKnowledge}</if>
+            <if test="onetype != null  and onetype != ''">and onetype = #{onetype}</if>
+            <if test="twotype != null  and twotype != ''">and twotype = #{twotype}</if>
+            <if test="threetype != null  and threetype != ''">and threetype = #{threetype}</if>
+            <if test="keywords != null  and keywords != ''">and keywords = #{keywords}</if>
+            <if test="knowledgeId != null  and knowledgeId != ''">and knowledge_id = #{knowledgeId}</if>
+        </where>
+    </select>
+
+    <select id="selectFmBizBakById" parameterType="String" resultMap="FmBizBakResult">
+        <include refid="selectFmBizBakVo"/>
+        where fm_id = #{fmId}
+    </select>
+
+    <insert id="insertFmBizBak" parameterType="FmBizBak">
+        insert into fm_biz_bak
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="fmId != null  and fmId != ''">fm_id,</if>
+            <if test="createId != null  and createId != ''">create_id,</if>
+            <if test="createOrgId != null  and createOrgId != ''">create_org_id,</if>
+            <if test="groupId != null  and groupId != ''">group_id,</if>
+            <if test="dealerId != null  and dealerId != ''">dealer_id,</if>
+            <if test="dealGroupId != null  and dealGroupId != ''">deal_group_id,</if>
+            <if test="typeinfoId != null  and typeinfoId != ''">typeinfo_id,</if>
+            <if test="sysid != null  and sysid != ''">sysid,</if>
+            <if test="fmTypeId != null  and fmTypeId != ''">fm_type_id,</if>
+            <if test="auditorId != null  and auditorId != ''">auditor_id,</if>
+            <if test="occurrenceOrgId != null  and occurrenceOrgId != ''">occurrence_org_id,</if>
+            <if test="evaluaterId != null  and evaluaterId != ''">evaluater_id,</if>
+            <if test="faultNo != null  and faultNo != ''">fault_no,</if>
+            <if test="faultSource != null  and faultSource != ''">fault_source,</if>
+            <if test="seriousLev != null  and seriousLev != ''">serious_lev,</if>
+            <if test="occurrenceAddress != null  and occurrenceAddress != ''">occurrence_address,</if>
+            <if test="occurTime != null  and occurTime != ''">occur_time,</if>
+            <if test="faultReportName != null  and faultReportName != ''">fault_report_name,</if>
+            <if test="reportTime != null  and reportTime != ''">report_time,</if>
+            <if test="reportPhone != null  and reportPhone != ''">report_phone,</if>
+            <if test="faultContactName != null  and faultContactName != ''">fault_contact_name,</if>
+            <if test="contactPhone != null  and contactPhone != ''">contact_phone,</if>
+            <if test="contactAddress != null  and contactAddress != ''">contact_address,</if>
+            <if test="serialNumber != null  and serialNumber != ''">serial_number,</if>
+            <if test="tradingName != null  and tradingName != ''">trading_name,</if>
+            <if test="errorInformation != null  and errorInformation != ''">error_information,</if>
+            <if test="faultDecriptSummary != null  and faultDecriptSummary != ''">fault_decript_summary,</if>
+            <if test="faultDecriptDetail != null  and faultDecriptDetail != ''">fault_decript_detail,</if>
+            <if test="creatTime != null  and creatTime != ''">creat_time,</if>
+            <if test="dealTime != null  and dealTime != ''">deal_time,</if>
+            <if test="dealDescription != null  and dealDescription != ''">deal_description,</if>
+            <if test="evaluate != null  and evaluate != ''">evaluate,</if>
+            <if test="evaluateTime != null  and evaluateTime != ''">evaluate_time,</if>
+            <if test="endTime != null  and endTime != ''">end_time,</if>
+            <if test="currentState != null  and currentState != ''">current_state,</if>
+            <if test="auditStatus != null  and auditStatus != ''">audit_status,</if>
+            <if test="auditTime != null  and auditTime != ''">audit_time,</if>
+            <if test="n3 != null  and n3 != ''">n3,</if>
+            <if test="n2 != null  and n2 != ''">n2,</if>
+            <if test="n4 != null  and n4 != ''">n4,</if>
+            <if test="n1 != null  and n1 != ''">n1,</if>
+            <if test="n5 != null  and n5 != ''">n5,</if>
+            <if test="dealUseTime != null  and dealUseTime != ''">deal_use_time,</if>
+            <if test="involveAmount != null  and involveAmount != ''">involve_amount,</if>
+            <if test="involveScount != null  and involveScount != ''">involve_scount,</if>
+            <if test="customerName != null  and customerName != ''">customer_name,</if>
+            <if test="customerIdcard != null  and customerIdcard != ''">customer_idcard,</if>
+            <if test="transactionAccount != null  and transactionAccount != ''">transaction_account,</if>
+            <if test="transactionAmount != null  and transactionAmount != ''">transaction_amount,</if>
+            <if test="orderNumber != null  and orderNumber != ''">order_number,</if>
+            <if test="evaluateResult != null  and evaluateResult != ''">evaluate_result,</if>
+            <if test="fmCause != null  and fmCause != ''">fm_cause,</if>
+            <if test="fmJkmark != null  and fmJkmark != ''">fm_jkmark,</if>
+            <if test="participatorIds != null  and participatorIds != ''">participator_ids,</if>
+            <if test="dealMode != null  and dealMode != ''">deal_mode,</if>
+            <if test="participateGroupids != null  and participateGroupids != ''">participate_groupids,</if>
+            <if test="toQgzxTime != null  and toQgzxTime != ''">to_qgzx_time,</if>
+            <if test="backSzxTime != null  and backSzxTime != ''">back_szx_time,</if>
+            <if test="repeatMark != null  and repeatMark != ''">repeat_mark,</if>
+            <if test="receiverIds != null  and receiverIds != ''">receiver_ids,</if>
+            <if test="invalidationMark != null  and invalidationMark != ''">invalidation_mark,</if>
+            <if test="ifJj != null  and ifJj != ''">if_jj,</if>
+            <if test="ifBulletion != null  and ifBulletion != ''">if_bulletion,</if>
+            <if test="bullCause != null  and bullCause != ''">bull_cause,</if>
+            <if test="bullTime != null  and bullTime != ''">bull_time,</if>
+            <if test="isAntiFraud != null  and isAntiFraud != ''">is_anti_fraud,</if>
+            <if test="isSend != null  and isSend != ''">is_send,</if>
+            <if test="iniSys != null  and iniSys != ''">ini_sys,</if>
+            <if test="iniOnetype != null  and iniOnetype != ''">ini_onetype,</if>
+            <if test="iniTwotype != null  and iniTwotype != ''">ini_twotype,</if>
+            <if test="iniThreetype != null  and iniThreetype != ''">ini_threetype,</if>
+            <if test="iniKeywords != null  and iniKeywords != ''">ini_keywords,</if>
+            <if test="ifKnowledge != null  and ifKnowledge != ''">if_knowledge,</if>
+            <if test="isKnowledge != null  and isKnowledge != ''">is_knowledge,</if>
+            <if test="onetype != null  and onetype != ''">onetype,</if>
+            <if test="twotype != null  and twotype != ''">twotype,</if>
+            <if test="threetype != null  and threetype != ''">threetype,</if>
+            <if test="keywords != null  and keywords != ''">keywords,</if>
+            <if test="knowledgeId != null  and knowledgeId != ''">knowledge_id,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="fmId != null  and fmId != ''">#{fmId},</if>
+            <if test="createId != null  and createId != ''">#{createId},</if>
+            <if test="createOrgId != null  and createOrgId != ''">#{createOrgId},</if>
+            <if test="groupId != null  and groupId != ''">#{groupId},</if>
+            <if test="dealerId != null  and dealerId != ''">#{dealerId},</if>
+            <if test="dealGroupId != null  and dealGroupId != ''">#{dealGroupId},</if>
+            <if test="typeinfoId != null  and typeinfoId != ''">#{typeinfoId},</if>
+            <if test="sysid != null  and sysid != ''">#{sysid},</if>
+            <if test="fmTypeId != null  and fmTypeId != ''">#{fmTypeId},</if>
+            <if test="auditorId != null  and auditorId != ''">#{auditorId},</if>
+            <if test="occurrenceOrgId != null  and occurrenceOrgId != ''">#{occurrenceOrgId},</if>
+            <if test="evaluaterId != null  and evaluaterId != ''">#{evaluaterId},</if>
+            <if test="faultNo != null  and faultNo != ''">#{faultNo},</if>
+            <if test="faultSource != null  and faultSource != ''">#{faultSource},</if>
+            <if test="seriousLev != null  and seriousLev != ''">#{seriousLev},</if>
+            <if test="occurrenceAddress != null  and occurrenceAddress != ''">#{occurrenceAddress},</if>
+            <if test="occurTime != null  and occurTime != ''">#{occurTime},</if>
+            <if test="faultReportName != null  and faultReportName != ''">#{faultReportName},</if>
+            <if test="reportTime != null  and reportTime != ''">#{reportTime},</if>
+            <if test="reportPhone != null  and reportPhone != ''">#{reportPhone},</if>
+            <if test="faultContactName != null  and faultContactName != ''">#{faultContactName},</if>
+            <if test="contactPhone != null  and contactPhone != ''">#{contactPhone},</if>
+            <if test="contactAddress != null  and contactAddress != ''">#{contactAddress},</if>
+            <if test="serialNumber != null  and serialNumber != ''">#{serialNumber},</if>
+            <if test="tradingName != null  and tradingName != ''">#{tradingName},</if>
+            <if test="errorInformation != null  and errorInformation != ''">#{errorInformation},</if>
+            <if test="faultDecriptSummary != null  and faultDecriptSummary != ''">#{faultDecriptSummary},</if>
+            <if test="faultDecriptDetail != null  and faultDecriptDetail != ''">#{faultDecriptDetail},</if>
+            <if test="creatTime != null  and creatTime != ''">#{creatTime},</if>
+            <if test="dealTime != null  and dealTime != ''">#{dealTime},</if>
+            <if test="dealDescription != null  and dealDescription != ''">#{dealDescription},</if>
+            <if test="evaluate != null  and evaluate != ''">#{evaluate},</if>
+            <if test="evaluateTime != null  and evaluateTime != ''">#{evaluateTime},</if>
+            <if test="endTime != null  and endTime != ''">#{endTime},</if>
+            <if test="currentState != null  and currentState != ''">#{currentState},</if>
+            <if test="auditStatus != null  and auditStatus != ''">#{auditStatus},</if>
+            <if test="auditTime != null  and auditTime != ''">#{auditTime},</if>
+            <if test="n3 != null  and n3 != ''">#{n3},</if>
+            <if test="n2 != null  and n2 != ''">#{n2},</if>
+            <if test="n4 != null  and n4 != ''">#{n4},</if>
+            <if test="n1 != null  and n1 != ''">#{n1},</if>
+            <if test="n5 != null  and n5 != ''">#{n5},</if>
+            <if test="dealUseTime != null  and dealUseTime != ''">#{dealUseTime},</if>
+            <if test="involveAmount != null  and involveAmount != ''">#{involveAmount},</if>
+            <if test="involveScount != null  and involveScount != ''">#{involveScount},</if>
+            <if test="customerName != null  and customerName != ''">#{customerName},</if>
+            <if test="customerIdcard != null  and customerIdcard != ''">#{customerIdcard},</if>
+            <if test="transactionAccount != null  and transactionAccount != ''">#{transactionAccount},</if>
+            <if test="transactionAmount != null  and transactionAmount != ''">#{transactionAmount},</if>
+            <if test="orderNumber != null  and orderNumber != ''">#{orderNumber},</if>
+            <if test="evaluateResult != null  and evaluateResult != ''">#{evaluateResult},</if>
+            <if test="fmCause != null  and fmCause != ''">#{fmCause},</if>
+            <if test="fmJkmark != null  and fmJkmark != ''">#{fmJkmark},</if>
+            <if test="participatorIds != null  and participatorIds != ''">#{participatorIds},</if>
+            <if test="dealMode != null  and dealMode != ''">#{dealMode},</if>
+            <if test="participateGroupids != null  and participateGroupids != ''">#{participateGroupids},</if>
+            <if test="toQgzxTime != null  and toQgzxTime != ''">#{toQgzxTime},</if>
+            <if test="backSzxTime != null  and backSzxTime != ''">#{backSzxTime},</if>
+            <if test="repeatMark != null  and repeatMark != ''">#{repeatMark},</if>
+            <if test="receiverIds != null  and receiverIds != ''">#{receiverIds},</if>
+            <if test="invalidationMark != null  and invalidationMark != ''">#{invalidationMark},</if>
+            <if test="ifJj != null  and ifJj != ''">#{ifJj},</if>
+            <if test="ifBulletion != null  and ifBulletion != ''">#{ifBulletion},</if>
+            <if test="bullCause != null  and bullCause != ''">#{bullCause},</if>
+            <if test="bullTime != null  and bullTime != ''">#{bullTime},</if>
+            <if test="isAntiFraud != null  and isAntiFraud != ''">#{isAntiFraud},</if>
+            <if test="isSend != null  and isSend != ''">#{isSend},</if>
+            <if test="iniSys != null  and iniSys != ''">#{iniSys},</if>
+            <if test="iniOnetype != null  and iniOnetype != ''">#{iniOnetype},</if>
+            <if test="iniTwotype != null  and iniTwotype != ''">#{iniTwotype},</if>
+            <if test="iniThreetype != null  and iniThreetype != ''">#{iniThreetype},</if>
+            <if test="iniKeywords != null  and iniKeywords != ''">#{iniKeywords},</if>
+            <if test="ifKnowledge != null  and ifKnowledge != ''">#{ifKnowledge},</if>
+            <if test="isKnowledge != null  and isKnowledge != ''">#{isKnowledge},</if>
+            <if test="onetype != null  and onetype != ''">#{onetype},</if>
+            <if test="twotype != null  and twotype != ''">#{twotype},</if>
+            <if test="threetype != null  and threetype != ''">#{threetype},</if>
+            <if test="keywords != null  and keywords != ''">#{keywords},</if>
+            <if test="knowledgeId != null  and knowledgeId != ''">#{knowledgeId},</if>
+        </trim>
+    </insert>
+
+    <update id="updateFmBizBak" parameterType="FmBizBak">
+        update fm_biz_bak
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="createId != null  and createId != ''">create_id = #{createId},</if>
+            <if test="createOrgId != null  and createOrgId != ''">create_org_id = #{createOrgId},</if>
+            <if test="groupId != null  and groupId != ''">group_id = #{groupId},</if>
+            <if test="dealerId != null  and dealerId != ''">dealer_id = #{dealerId},</if>
+            <if test="dealGroupId != null  and dealGroupId != ''">deal_group_id = #{dealGroupId},</if>
+            <if test="typeinfoId != null  and typeinfoId != ''">typeinfo_id = #{typeinfoId},</if>
+            <if test="sysid != null  and sysid != ''">sysid = #{sysid},</if>
+            <if test="fmTypeId != null  and fmTypeId != ''">fm_type_id = #{fmTypeId},</if>
+            <if test="auditorId != null  and auditorId != ''">auditor_id = #{auditorId},</if>
+            <if test="occurrenceOrgId != null  and occurrenceOrgId != ''">occurrence_org_id = #{occurrenceOrgId},</if>
+            <if test="evaluaterId != null  and evaluaterId != ''">evaluater_id = #{evaluaterId},</if>
+            <if test="faultNo != null  and faultNo != ''">fault_no = #{faultNo},</if>
+            <if test="faultSource != null  and faultSource != ''">fault_source = #{faultSource},</if>
+            <if test="seriousLev != null  and seriousLev != ''">serious_lev = #{seriousLev},</if>
+            <if test="occurrenceAddress != null  and occurrenceAddress != ''">occurrence_address =
+                #{occurrenceAddress},
+            </if>
+            <if test="occurTime != null  and occurTime != ''">occur_time = #{occurTime},</if>
+            <if test="faultReportName != null  and faultReportName != ''">fault_report_name = #{faultReportName},</if>
+            <if test="reportTime != null  and reportTime != ''">report_time = #{reportTime},</if>
+            <if test="reportPhone != null  and reportPhone != ''">report_phone = #{reportPhone},</if>
+            <if test="faultContactName != null  and faultContactName != ''">fault_contact_name = #{faultContactName},
+            </if>
+            <if test="contactPhone != null  and contactPhone != ''">contact_phone = #{contactPhone},</if>
+            <if test="contactAddress != null  and contactAddress != ''">contact_address = #{contactAddress},</if>
+            <if test="serialNumber != null  and serialNumber != ''">serial_number = #{serialNumber},</if>
+            <if test="tradingName != null  and tradingName != ''">trading_name = #{tradingName},</if>
+            <if test="errorInformation != null  and errorInformation != ''">error_information = #{errorInformation},
+            </if>
+            <if test="faultDecriptSummary != null  and faultDecriptSummary != ''">fault_decript_summary =
+                #{faultDecriptSummary},
+            </if>
+            <if test="faultDecriptDetail != null  and faultDecriptDetail != ''">fault_decript_detail =
+                #{faultDecriptDetail},
+            </if>
+            <if test="creatTime != null  and creatTime != ''">creat_time = #{creatTime},</if>
+            <if test="dealTime != null  and dealTime != ''">deal_time = #{dealTime},</if>
+            <if test="dealDescription != null  and dealDescription != ''">deal_description = #{dealDescription},</if>
+            <if test="evaluate != null  and evaluate != ''">evaluate = #{evaluate},</if>
+            <if test="evaluateTime != null  and evaluateTime != ''">evaluate_time = #{evaluateTime},</if>
+            <if test="endTime != null  and endTime != ''">end_time = #{endTime},</if>
+            <if test="currentState != null  and currentState != ''">current_state = #{currentState},</if>
+            <if test="auditStatus != null  and auditStatus != ''">audit_status = #{auditStatus},</if>
+            <if test="auditTime != null  and auditTime != ''">audit_time = #{auditTime},</if>
+            <if test="n3 != null  and n3 != ''">n3 = #{n3},</if>
+            <if test="n2 != null  and n2 != ''">n2 = #{n2},</if>
+            <if test="n4 != null  and n4 != ''">n4 = #{n4},</if>
+            <if test="n1 != null  and n1 != ''">n1 = #{n1},</if>
+            <if test="n5 != null  and n5 != ''">n5 = #{n5},</if>
+            <if test="dealUseTime != null  and dealUseTime != ''">deal_use_time = #{dealUseTime},</if>
+            <if test="involveAmount != null  and involveAmount != ''">involve_amount = #{involveAmount},</if>
+            <if test="involveScount != null  and involveScount != ''">involve_scount = #{involveScount},</if>
+            <if test="customerName != null  and customerName != ''">customer_name = #{customerName},</if>
+            <if test="customerIdcard != null  and customerIdcard != ''">customer_idcard = #{customerIdcard},</if>
+            <if test="transactionAccount != null  and transactionAccount != ''">transaction_account =
+                #{transactionAccount},
+            </if>
+            <if test="transactionAmount != null  and transactionAmount != ''">transaction_amount =
+                #{transactionAmount},
+            </if>
+            <if test="orderNumber != null  and orderNumber != ''">order_number = #{orderNumber},</if>
+            <if test="evaluateResult != null  and evaluateResult != ''">evaluate_result = #{evaluateResult},</if>
+            <if test="fmCause != null  and fmCause != ''">fm_cause = #{fmCause},</if>
+            <if test="fmJkmark != null  and fmJkmark != ''">fm_jkmark = #{fmJkmark},</if>
+            <if test="participatorIds != null  and participatorIds != ''">participator_ids = #{participatorIds},</if>
+            <if test="dealMode != null  and dealMode != ''">deal_mode = #{dealMode},</if>
+            <if test="participateGroupids != null  and participateGroupids != ''">participate_groupids =
+                #{participateGroupids},
+            </if>
+            <if test="toQgzxTime != null  and toQgzxTime != ''">to_qgzx_time = #{toQgzxTime},</if>
+            <if test="backSzxTime != null  and backSzxTime != ''">back_szx_time = #{backSzxTime},</if>
+            <if test="repeatMark != null  and repeatMark != ''">repeat_mark = #{repeatMark},</if>
+            <if test="receiverIds != null  and receiverIds != ''">receiver_ids = #{receiverIds},</if>
+            <if test="invalidationMark != null  and invalidationMark != ''">invalidation_mark = #{invalidationMark},
+            </if>
+            <if test="ifJj != null  and ifJj != ''">if_jj = #{ifJj},</if>
+            <if test="ifBulletion != null  and ifBulletion != ''">if_bulletion = #{ifBulletion},</if>
+            <if test="bullCause != null  and bullCause != ''">bull_cause = #{bullCause},</if>
+            <if test="bullTime != null  and bullTime != ''">bull_time = #{bullTime},</if>
+            <if test="isAntiFraud != null  and isAntiFraud != ''">is_anti_fraud = #{isAntiFraud},</if>
+            <if test="isSend != null  and isSend != ''">is_send = #{isSend},</if>
+            <if test="iniSys != null  and iniSys != ''">ini_sys = #{iniSys},</if>
+            <if test="iniOnetype != null  and iniOnetype != ''">ini_onetype = #{iniOnetype},</if>
+            <if test="iniTwotype != null  and iniTwotype != ''">ini_twotype = #{iniTwotype},</if>
+            <if test="iniThreetype != null  and iniThreetype != ''">ini_threetype = #{iniThreetype},</if>
+            <if test="iniKeywords != null  and iniKeywords != ''">ini_keywords = #{iniKeywords},</if>
+            <if test="ifKnowledge != null  and ifKnowledge != ''">if_knowledge = #{ifKnowledge},</if>
+            <if test="isKnowledge != null  and isKnowledge != ''">is_knowledge = #{isKnowledge},</if>
+            <if test="onetype != null  and onetype != ''">onetype = #{onetype},</if>
+            <if test="twotype != null  and twotype != ''">twotype = #{twotype},</if>
+            <if test="threetype != null  and threetype != ''">threetype = #{threetype},</if>
+            <if test="keywords != null  and keywords != ''">keywords = #{keywords},</if>
+            <if test="knowledgeId != null  and knowledgeId != ''">knowledge_id = #{knowledgeId},</if>
+        </trim>
+        where fm_id = #{fmId}
+    </update>
+
+    <delete id="deleteFmBizBakById" parameterType="String">
+        delete from fm_biz_bak where fm_id = #{fmId}
+    </delete>
+
+    <delete id="deleteFmBizBakByIds" parameterType="String">
+        delete from fm_biz_bak where fm_id in
+        <foreach item="fmId" collection="array" open="(" separator="," close=")">
+            #{fmId}
+        </foreach>
+    </delete>
+    <!--事件单历史查询-->
+    <select id="selectFmBizBakListPager" parameterType="FmBizBak" resultMap="FmBizBakResult">
+        <include refid="selectFmBizBakVo"/>
+        <where>
+            f.invalidation_mark = '1'
+
+            <if test="params.sGroupid != null  and params.sGroupid != ''">
+                and
+                <foreach collection="params.sGroupid" item="groupId" separator="or" open="(" close=")">
+                    F.PARTICIPATE_GROUPIDS LIKE concat(concat('%',#{groupId}),'%') or F.group_id LIKE
+                    concat(concat('%',#{groupId}),'%')
+                </foreach>
+            </if>
+
+            <if test="params.sorgId != null  and params.sorgId != ''">
+                AND F.CREATE_ORG_ID IN (SELECT O.ORGID FROM OG_ORG O START WITH
+                O.ORGID = #{params.sorgId}
+                CONNECT BY PRIOR O.ORGID = O.T_O_ORGID )
+            </if>
+            <if test="faultNo != null  and faultNo != ''">
+                and fault_no like concat(concat('%',#{faultNo}),'%')
+            </if>
+            <if test="faultDecriptSummary != null  and faultDecriptSummary != ''">
+                and fault_decript_summary like concat(concat('%',#{faultDecriptSummary}),'%')
+            </if>
+            <if test="participateGroupids != null  and participateGroupids != ''">
+                and participate_groupids like concat(concat('%',#{participateGroupids}),'%')
+            </if>
+            <if test="faultDecriptDetail != null  and faultDecriptDetail != ''">
+                and fault_decript_detail like concat(concat('%',#{faultDecriptDetail}),'%')
+            </if>
+            <if test="currentState != null  and currentState != ''">
+                and current_state in
+                <foreach collection="params.state" item="currentState" index="index" open="(" close=")" separator=",">
+                    #{currentState}
+                </foreach>
+            </if>
+            <if test="sysid != null and sysid != '' ">
+                and f.sysid = #{sysid}
+            </if>
+            <if test="iniSys != null and iniSys != '' ">
+                and f.ini_sys = #{iniSys}
+            </if>
+            <if test="groupId != null and groupId != ''">
+                and f.group_Id = #{groupId}
+            </if>
+            <if test="fmTypeId != null and fmTypeId != ''">
+                and f.fm_type_id = #{fmTypeId}
+            </if>
+            <if test="fmCause != null and fmCause != ''">
+                and fm_cause in
+                <foreach collection="params.cause" item="fmCause" index="index" open="(" close=")" separator=",">
+                    #{fmCause}
+                </foreach>
+            </if>
+            <if test="occurrenceOrgId != null  and occurrenceOrgId != ''">
+                and occurrence_org_id in (select o.orgid from og_org o where o.level_code like
+                concat(concat('%',#{params.levelCode}),'%') )
+            </if>
+            <if test="createId != null  and createId != ''">
+                and f.CREATE_ID in (select p.pid from og_person p where p.pname like concat(concat('%',#{createId}),'%')
+                )
+            </if>
+            <if test="dealerId != null  and dealerId != ''">
+                and dealer_id in (select p.pid from og_person p where p.pname like concat(concat('%',#{dealerId}),'%') )
+            </if>
+            <if test="params.startCreatTime != null and params.startCreatTime != ''"><!-- 创建时间起始检索 -->
+                and creat_time &gt;= #{params.startCreatTime}
+            </if>
+            <if test="params.endCreatTime != null and params.endCreatTime != ''"><!-- 创建时间起始检索 -->
+                and creat_time &lt;= #{params.endCreatTime}
+            </if>
+            <if test="params.startDealTime != null and params.startDealTime != ''"><!-- 处理时间起始检索 -->
+                and deal_time &gt;= #{params.startDealTime}
+            </if>
+            <if test="params.endDealTime != null and params.endDealTime != ''"><!-- 处理时间起始检索 -->
+                and deal_time &lt;= #{params.endDealTime}
+            </if>
+            <if test="params.startToQgzxTime != null and params.startToQgzxTime != ''"><!-- 转全国中心时间起始检索 -->
+                and to_qgzx_time &gt;= #{params.startToQgzxTime}
+            </if>
+            <if test="params.endToQgzxTime != null and params.endToQgzxTime != ''"><!-- 转全国中心时间起始检索 -->
+                and to_qgzx_time &lt;= #{params.endToQgzxTime}
+            </if>
+            <if test="faultSource != null  and faultSource != ''">
+                and fault_source = #{faultSource}
+            </if>
+            <if test="seriousLev != null  and seriousLev != ''">
+                and serious_lev = #{seriousLev}
+            </if>
+            <if test="params.ifAuto != null and params.ifAuto != ''"><!-- 是否自动化相关查询 -->
+                and f.fm_id in (select b.fm_id from fm_biz_script b)
+            </if>
+            <if test="params.pList != null  and params.pList != ''">
+                and
+                <foreach collection="params.pList" item="pList" separator="or" open="(" close=")">
+                    F.participator_ids LIKE concat(concat('%',#{pList}),'%') or F.dealer_id LIKE
+                    concat(concat('%',#{pList}),'%')
+                </foreach>
+            </if>
+
+            <if test="ifJj != null and ifJj != ''">
+                and if_jj = #{ifJj}
+            </if>
+            <if test="dealMode != null and dealMode != ''">
+                and deal_mode in
+                <foreach collection="params.dealMode" item="dealMode" index="index" open="(" close=")" separator=",">
+                    #{dealMode}
+                </foreach>
+            </if>
+            <choose>
+                <when test="params.isSc == 2 ">
+                    order by creat_time asc
+                </when>
+                <when test="params.isSc == 3 ">
+                    order by to_qgzx_time desc
+                </when>
+                <when test="params.isSc ==4 ">
+                    order by to_qgzx_time asc
+                </when>
+                <otherwise>
+                    order by creat_time desc
+                </otherwise>
+            </choose>
+        </where>
+    </select>
+</mapper>

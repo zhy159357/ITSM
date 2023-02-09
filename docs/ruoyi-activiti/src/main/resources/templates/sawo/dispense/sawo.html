@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:include="include :: header('【态势感知工单】列表')" />
+</head>
+<body class="gray-bg">
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-12 search-collapse">
+            <form id="formId">
+                <div class="select-list">
+                    <ul>
+                        <li>
+                            <p>工单单号：</p>
+                            <input type="text" name="ordNo" id="ordNo" maxlength="200"/>
+                        </li>
+                        <li>
+                            <p>告警/漏洞/问题名称：</p>
+                            <input type="text" name="gaaName" id="gaaName" maxlength="200"/>
+                        </li>
+                        <li>
+                            <p>工单类型：</p>
+                            <select class="form-control" id="ordType" name="ordType" th:with="type=${@dict.getParaType('ord_type')}" required>
+                                <option value=""></option>
+                                <option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+                            </select>
+                        </li>
+                        <li>
+                            <p>所属部门/分行：</p>
+                            <!--<select class="form-control" id="belDept" name="belDept" th:with="type=${@dict.getParaType('bel_dept')}" required>
+                                <option value=""></option>
+                                <option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+                            </select>-->
+                            <input id="belDept" name="belDept" type="text" maxlength="200"/>
+                        </li>
+
+                        <li>
+                            <a class="btn btn-primary btn-rounded btn-sm" id="ss" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                            <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                        </li>
+                    </ul>
+                </div>
+            </form>
+        </div>
+
+        <div class="btn-group-sm" id="toolbar" role="group">
+            <a class="btn btn-primary single disabled" onclick="editTab()">
+                <i class="fa fa-edit"></i> 分发
+            </a>
+        </div>
+        <div class="col-sm-12 select-table table-striped">
+            <table id="bootstrap-table"></table>
+        </div>
+    </div>
+</div>
+<th:block th:include="include :: footer" />
+<script th:inline="javascript">
+
+    var gaaLev =  [[${@dict.getParaType('customer_impact_degree')}]];
+    var ordType =  [[${@dict.getParaType('ord_type')}]];
+    var gaaType =  [[${@dict.getParaType('gaa_type')}]];
+    var gaaCategory =  [[${@dict.getParaType('gaa_category')}]];
+    var belDept =  [[${@dict.getParaType('bel_dept')}]];
+
+    var prefix = ctx + "sawo/dispense";
+
+    $(function() {
+        document.onkeydown = function(e){
+            var ev = document.all ? window.event : e;
+            console.log(ev);
+            if(ev.keyCode==13) {
+                $('#ss').trigger('click');
+                return false;
+            } //搜索逻辑
+        }
+        var options = {
+            url: prefix + "/list",
+            createUrl: prefix + "/add",
+            updateUrl: prefix + "/edit/{id}",
+            removeUrl: prefix + "/remove",
+            exportUrl: prefix + "/export",
+            modalName: "态势感知工单",
+            sortName: "createrTime",
+            sortOrder: "desc",
+            singleSelect:true,
+            clickToSelect: true,
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'ordId',
+                    title: '工单ID',
+                    visible:false,
+                },
+                {
+                    field: 'ordNo',
+                    title: '工单单号',
+                },
+                {
+                    field : 'gaaName',
+                    title : '告警/漏洞名称'
+                },
+                {
+                    field : 'gaaLev',
+                    title : '告警/漏洞级别',
+                    formatter: function (value,row,index) {
+                        return selectDictLabel(gaaLev, value);
+                    },
+                },
+                {
+                    field : 'ordType',
+                    title : '工单类型',
+                    formatter: function (value,row,index) {
+                        return selectDictLabel(ordType, value);
+                    },
+                },
+                {
+                    field : 'sourceIp',
+                    title : '来源IP'
+                },
+                {
+                    field : 'objIp',
+                    title : '目的IP'
+                },
+                {
+                    field : 'gaaType',
+                    title : '告警/漏洞类型',
+                    formatter: function (value,row,index) {
+                        return selectDictLabel(gaaType, value);
+                    },
+                },
+                {
+                    field : 'gaaCategoryValue',
+                    title : '告警/漏洞类别',
+                },
+                {
+                    field : 'sysId',
+                    title : '目的IP所属系统'
+                },
+                {
+                    field : 'belDept',
+                    title : '所属部门/分行',
+                },
+                {
+                    field : 'resDept',
+                    title : '责任处室/分行'
+                },
+                {
+                    field : 'createrTime',
+                    title : '创建时间',
+                    formatter: function (value, row, index) {
+                        var createrTime = '';
+                        if(value!='' && value !=null){
+                            var pattern = /(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/;
+                            createrTime = value.replace(pattern, '$1-$2-$3 $4:$5:$6');
+                        }
+                        return createrTime;
+                    }
+                },
+                {
+                    field : 'sysAdmin',
+                    title : '系统管理员'
+                },
+                {
+                    field : 'appAdmin',
+                    title : '应用管理员'
+                }]
+        };
+        $.table.init(options);
+    });
+
+    //事件来源（字典项）
+    function selectDictLabel(datas, value) {
+        var actions = [];
+        $.each(datas, function(index, dict) {
+            if (dict.value == ('' + value)) {
+                var listClass = $.common.equals("default", dict.listClass) || $.common.isEmpty(dict.listClass) ? "" : "badge badge-" + dict.listClass;
+                actions.push($.common.sprintf("<span class='%s'>%s</span>", listClass, dict.valueDetail));
+                return false;
+            }
+        });
+        return actions.join('');
+    }
+
+    function editTab() {
+        var ordId = $.table.selectFirstColumns();
+        var url = prefix + '/edit/' + ordId;
+        $.modal.openTab("分发态势感知工单", url);
+    }
+
+</script>
+</body>
+</html>

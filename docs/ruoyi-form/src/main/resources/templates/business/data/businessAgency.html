@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:include="include :: header('测试数据列表')" />
+    <th:block th:include="include :: select2-css" />
+</head>
+<body class="gray-bg">
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-12 search-collapse">
+            <form id="formId">
+                <div class="select-list">
+                    <ul>
+                        <li>
+                            <p>业务编号：</p>
+                            <input type="text" name="businessNo"/>
+                            <!--<input type="hidden" name="params[description]" value="测试"/>-->
+                        </li>
+                        <li>
+                            <p>生成时间：</p>
+                            <input type="text" class="time-input" name="createTime"/>
+                        </li>
+                        <li>
+                            <a class="btn btn-primary btn-rounded btn-sm" id="versionList" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                            <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-repeat"></i>&nbsp;重置</a>
+                        </li>
+                    </ul>
+                </div>
+            </form>
+        </div>
+
+        <div class="btn-group-sm" id="toolbar" role="group">
+            <a class="btn btn-primary single disabled" onclick="approval()">
+                <i class="fa fa-default"></i> 审核
+            </a>
+            <!--<a class="btn btn-primary multiple disabled" onclick="approvalList()">
+                <i class="fa fa-default"></i> 批量审核
+            </a>-->
+            <a class="btn btn-info single disabled" onclick="detail()">
+                <i class="fa fa-search"></i> 查看流程
+            </a>
+        </div>
+        <div class="col-sm-12 select-table table-striped">
+            <table id="bootstrap-table"></table>
+        </div>
+    </div>
+</div>
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: select2-js" />
+<script th:src="@{/js/activiti.js}"></script>
+<script th:inline="javascript">
+    var prefix = ctx + "business/data";
+
+    $(function() {
+        // 回车键搜索
+        document.onkeydown = function(e){
+            var ev = document.all ? window.event : e;
+            if(ev.keyCode==13) {
+                $('#versionList').trigger('click');
+                return false;
+            }
+        };
+
+        var options = {
+            url: prefix + "/businessAgencyList",
+            createUrl: prefix + "/add",
+            updateUrl: prefix + "/edit/{id}",
+            removeUrl: prefix + "/remove",
+            detailUrl: prefix + "/edit/{id}",
+            clickToSelect: true,
+            modalName: "测试",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field : 'businessId',
+                    title : '主键ID',
+                    visible: false
+                },
+                {
+                    field : 'params.taskId',
+                    title : '流程任务ID',
+                    visible: false
+                },
+                {
+                    field : 'businessNo',
+                    title : '业务编号'
+                },
+                {
+                    field : 'createTime',
+                    title : '创建时间'
+                },
+                {
+                    field : 'createName',
+                    title : '创建人'
+                }]
+        };
+        $.table.init(options);
+    });
+
+    /*审核*/
+    function approval(){
+        var businessId = $.table.selectFirstColumns();
+        var taskId = $.table.selectColumns("params.taskId");
+        var url = prefix + "/approval/" + businessId + "/" + taskId;
+        $.modal.openTab("业务审批",url);
+    }
+
+    /*批量审核*/
+    function approvalList(){
+        var approvalListFlag = "releaseApprovalList";
+        var versionInfoId = $.table.selectFirstColumns();
+        var url = prefix + "/versionApprovalList?versionInfoId=" + versionInfoId+"&approvalListFlag="+approvalListFlag;
+        $.modal.openNoColse("批量审核",url);
+    }
+
+    /*查看流程*/
+    function detail(){
+        var businessKey = $.table.selectFirstColumns();
+        /*var url = prefix + "/selectProcess/" + versionInfoId;
+        $.modal.openTab("查看流程",url);*/
+
+        var url = ctx + 'process/processImg/' + businessKey;
+        $.modal.openFull("查看流程图", url, null, null, null, true);
+
+    }
+
+</script>
+</body>
+</html>

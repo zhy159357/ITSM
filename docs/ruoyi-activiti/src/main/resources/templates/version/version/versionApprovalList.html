@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <!--版本审核批量审批页面-->
+    <th:block th:include="include :: header('版本信息')" />
+    <th:block th:include="include :: select2-css" />
+</head>
+<body>
+<div class="main-content">
+    <form id="form-version-approvalList" class="form-horizontal">
+        <!--运维审核标识-->
+        <input name="params[versionFlag]" type="hidden" id="versionFlag" value="1"/>
+        <!--运维审核批量标识-->
+        <input name="params[versionBatchFlag]" type="hidden" id="versionBatchFlag" value="1"/>
+        <input name="versionInfoId" type="hidden" id="versionInfoId" th:value="*{versionInfoId}"/>
+
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">运维审核人：</label><!--应用处长-->
+                    <div class="col-sm-8">
+                        <input id="useDivisionChiefApprovalId" name="useDivisionChiefApprovalId" class="form-control" type="hidden"/>
+                        <input id="useDivisionChiefApprovalName" name="useDivisionChiefApprovalName" class="form-control" onclick="useDivisionChiefApproval()"/>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">发布领导审批：</label>
+                    <div class="col-sm-8">
+                        <input id="uploaderApprovalId" name="uploaderApprovalId" class="form-control" type="hidden"/>
+                        <input id="uploaderApprovalName" name="uploaderApprovalName" class="form-control" onclick="uploaderApproval()"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label is-required">版本审核意见：</label>
+                    <div class="col-sm-10">
+                        <textarea rows="6" cols="10" id="authorText" name="params[comment]" class="form-control" required></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<div class="row">
+    <div class="col-sm-offset-5 col-sm-10">
+        <button type="button" class="btn btn-sm btn-primary" onclick="pass('1')"><i class="fa fa-check"></i>通 过</button>&nbsp;
+        <button type="button" class="btn btn-sm btn-danger" onclick="pass('0')"><i class="fa fa-reply-all"></i>不 通 过</button>&nbsp;
+        <button type="button" class="btn btn-sm btn-danger" onclick="closeHtml()"><i class="fa fa-window-close"></i>关 闭 </button>
+    </div>
+</div>
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: select2-js" />
+<th:block th:include="include :: datetimepicker-js" />
+<script>
+    var prefix = ctx + "version/public";
+
+    $("#form-version-approvalList").validate({
+        onkeyup: false,
+        rules:{
+            "useDivisionChiefApprovalName" : true,
+            "uploaderApprovalName" : true,
+            "params[comment]" : true
+        },
+        messages: {
+            "useDivisionChiefApprovalName" : "运维审核人必选不可为空",
+            "uploaderApprovalName" : "发布领导审批人必选不可为空",
+            "params[comment]" : "版本审核意见必填不可为空"
+        },
+        focusCleanup: true
+    });
+
+    // 选择运维审核人（应用处长）
+    function useDivisionChiefApproval() {
+        var versionInfoId = $("#versionInfoId").val();
+        var rId = "9003";
+        var url = prefix + "/selectBusinessAudit"+"?"+"pflag=1"+"&rId="+rId+"&versionInfoId="+versionInfoId;
+        $.modal.open("选择运维审核人", url);
+    }
+
+    // 选择发布审批领导
+    function uploaderApproval() {
+        var rId = "2307";
+        var url = prefix + "/selectBusinessAudit"+"?"+"pflag=1"+"&rId="+rId;
+        $.modal.open("选择发布审批人", url);
+    }
+
+    /*通过*/
+    function pass(flag) {
+        if(flag == "1"){
+            var useDivisionChiefApprovalName = $("#useDivisionChiefApprovalName").val();
+            var uploaderApprovalName = $("#uploaderApprovalName").val();
+            if(useDivisionChiefApprovalName == null || useDivisionChiefApprovalName == ""
+                || uploaderApprovalName == null || uploaderApprovalName == null){
+                $.modal.alert("版本审核通过必须选择运维审核人和发布审核领导!");
+                return;
+            }
+        }
+        if ($.validate.form()) {
+            var data = $("#form-version-approvalList").serializeArray();
+            data.push({"name": "passFlag", "value": flag});
+            $.operate.save(prefix + "/useApprovalPass", data);
+        }
+    }
+
+    function closeHtml() {
+        $.modal.close();
+    }
+
+</script>
+</body>
+</html>

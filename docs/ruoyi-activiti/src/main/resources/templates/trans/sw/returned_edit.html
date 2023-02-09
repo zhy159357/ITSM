@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('退回修改事务事件单')" />
+    <th:block th:include="include :: summernote-css" />
+    <th:block th:include="include :: select2-css" />
+    <style>
+
+        .form-control[disabled], fieldset[disabled] .form-control {
+            cursor: pointer;
+        }
+
+        .form-control[disabled], .form-control[readonly], fieldset[disabled] .form-control {
+            background-color: #ffffff;
+            opacity: 1;
+        }
+
+        #faultNo,#createOrgName,#dealOrgName,#createId,#createTime,#state{
+            background-color: #eeeeee;
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+<div class="main-content">
+    <form class="form-horizontal" id="form-sw-returned-edit" th:object="${fmSw}">
+        <input name="fmSwId" type="hidden" th:field="*{fmSwId}" id="fmSwId"/>
+        <input name="createOrgId" type="hidden" id="treeId"  th:field="*{createOrgId}"/>
+        <input name="dealOrgId" type="hidden" id="dealOrgId" th:field="*{dealOrgId}"/>
+        <input name="label" type="hidden" id="flag">
+        <input name="currentState" type="hidden" id="currentState">
+        <input name="processStatus" type="hidden" id="processStatus" th:field="*{processStatus}">
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-heading" style="background-color: #3c8dbc" data-toggle="collapse" data-target="#collapse1">
+                    <h4 class="panel-title" >
+                        事件属性
+                    </h4>
+                </div>
+                <div id="collapse1" class="panel-collapse in">
+                    <div class="panel-body">
+                        <div class="row form-group">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label  text-right">事件单编号：</label>
+                                    <div class="col-sm-8">
+                                        <input class="form-control" type="text" readonly th:field="*{faultNo}" id="faultNo">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label  text-right">申请处室：</label>
+                                    <div class="col-sm-8">
+                                        <input  class="form-control" type="text" th:field="*{createOrgName}" disabled id="createOrgName">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label  text-right ">受理处室：</label>
+                                    <div class="col-sm-8">
+                                        <input  id="dealOrgName"  class="form-control" type="text"  th:field="*{dealOrgname}" disabled >
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label  text-right is-required">请求事项：</label>
+                                    <div class="col-sm-8">
+                                        <select name="faultKind" id="faultKind" class="form-control">
+                                            <option value=""th:if="${not #strings.isEmpty(fmSw.dealOrgId)}"></option>
+                                            <option th:each="fmSwMb : ${fmSwMbList}" th:value="${fmSwMb.swmdId}" th:text="${fmSwMb.faultKind}" th:field="*{faultKind}"></option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="display:none;" id="process1">
+                            <div class="row form-group">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="col-sm-4 control-label  text-right ">审核人：</label>
+                                        <div class="col-sm-8">
+                                            <select name="checkedId" id="checkedId" class="form-control">
+                                                <option value=""></option>
+                                                <option th:each="checker :${checkList}" th:value="${checker.pId}" th:text="${checker.pName}" th:field="*{checkedId}"></option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="col-sm-4 control-label  text-right ">授权人：</label>
+                                        <div class="col-sm-8">
+                                            <div onclick="isSelectChecker()">
+                                                <select name="authId" id="authId" class="form-control">
+                                                    <option value=""th:if="${not #strings.isEmpty(fmSw.dealOrgId)}"></option>
+                                                    <option th:each="author : ${authorList}" th:value="${author.pId}" th:text="${author.pName}" th:field="*{authId}"></option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row ">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="col-sm-4 control-label  text-right is-required">处理人：</label>
+                                        <div class="col-sm-8">
+                                            <div onclick="isSelect()">
+                                                <select name="dealerId" id="dealerId" class="form-control" required>
+                                                    <option value=""th:if="${not #strings.isEmpty(fmSw.dealOrgId)}"></option>
+                                                    <option th:each="deal : ${dealList}" th:value="${deal.pId}" th:text="${deal.pName}" th:field="*{dealerId}" ></option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6"></div>
+                            </div>
+                        </div>
+                        <div style="display:none;" id="process2">
+                            <div class="row form-group">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="col-sm-4 control-label  text-right ">审核人2：</label>
+                                        <div class="col-sm-8">
+                                            <div onclick="isSelect()">
+                                                <select name="checkerTwoId" id="checkerTwoId" class="form-control">
+                                                    <option value=""th:if="${not #strings.isEmpty(fmSw.dealOrgId)}"></option>
+                                                    <option th:each="deal : ${dealList}" th:value="${deal.pId}" th:text="${deal.pName}" th:field="*{checkerTwoId}" ></option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="col-sm-4 control-label  text-right ">审核人3：</label>
+                                        <div class="col-sm-8">
+                                            <div onclick="isSelectChecker()">
+                                                <div onclick="isSelect()">
+                                                    <select name="checkerThreeId" id="checkerThreeId" class="form-control">
+                                                        <option value=""th:if="${not #strings.isEmpty(fmSw.dealOrgId)}"></option>
+                                                        <option th:each="deal : ${dealList}" th:value="${deal.pId}" th:text="${deal.pName}" th:field="*{checkerThreeId}" ></option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row ">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="col-sm-4 control-label  text-right">审核人4：</label>
+                                        <div class="col-sm-8">
+                                            <div onclick="isSelect()">
+                                                <select name="checkerFourId" id="checkerFourId" class="form-control">
+                                                    <option value=""th:if="${not #strings.isEmpty(fmSw.dealOrgId)}"></option>
+                                                    <option th:each="deal : ${dealList}" th:value="${deal.pId}" th:text="${deal.pName}" th:field="*{checkerFourId}" ></option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="col-sm-4 control-label  text-right is-required">处理人5：</label>
+                                        <div class="col-sm-8">
+                                            <div onclick="isSelect()">
+                                                <select name="dealerFiveId" id="dealerFiveId" class="form-control" required>
+                                                    <option value=""th:if="${not #strings.isEmpty(fmSw.dealOrgId)}"></option>
+                                                    <option th:each="deal : ${dealList}" th:value="${deal.pId}" th:text="${deal.pName}" th:field="*{dealerFiveId}" ></option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading" style="background-color: #3c8dbc" data-toggle="collapse" data-target="#collapse2">
+
+                    <h4 class="panel-title" >
+                        事件信息
+                    </h4>
+                </div>
+                <div id="collapse2" class="panel-collapse in">
+
+                    <div class="panel-body">
+                        <div class="row form-group">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label  text-right is-required">事件标题：</label>
+                                    <div class="col-sm-10">
+                                        <input name="faultTitle" id="faultTitle" class="form-control" type="text"  required th:field="*{faultTitle}">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row form-group">
+                            <label class="col-sm-2 control-label  text-right is-required">事件内容：</label>
+                            <div class="col-sm-10">
+                                <input id="faultDescription" name="faultDescription" type="hidden" th:field="*{faultDescription}" required>
+                                <div class="summernote" required id="summernote"></div>
+                            </div>
+
+                        </div>
+
+                        <div class="row form-group">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label  text-right ">申请人：</label>
+                                    <div class="col-sm-8">
+                                        <input    class="form-control" type="text" th:field="*{createName}" readonly id="createId">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label  text-right ">申请时间：</label>
+                                    <div class="col-sm-8">
+                                        <input    class="form-control" type="text" th:field="*{createTime}" readonly id="createTime">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row form-group">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label  text-right ">当前状态：</label>
+                                    <div class="col-sm-8">
+                                        <select class="form-control"  id="state" th:with="type=${@dict.getParaType('fmSw_status')}" disabled>
+                                            <option value=""></option>
+                                            <option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}" th:field="*{currentState}"></option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <!-- Nav tabs -->
+                    <ul class="nav nav-tabs" role="tablist">
+                        <li role="presentation" class="active"><a href="#home" aria-controls="home" role="tab" data-toggle="tab">操作日志</a></li>
+                        <li role="presentation"><a href="#profile" aria-controls="profile" role="tab" data-toggle="tab">附件</a></li>
+                    </ul>
+
+                    <!-- Tab panes -->
+                    <div class="tab-content">
+                        <div role="tabpanel" class="tab-pane active" id="home">
+                            <div class="col-sm-12 select-table table-striped">
+                                <table id="history-table"></table>
+                            </div>
+                        </div>
+                        <div role="tabpanel" class="tab-pane" id="profile">
+                            <div class="btn-group-sm" id="toolbar" role="tab" style="margin: 15px 0px;">
+                                <a class="btn btn-success" type="button" onclick="upload()">
+                                    <i class="fa fa-upload"></i> 添加附件
+                                </a>
+                                <a class="btn btn-warning multiple disabled" onclick="downloadFile()">
+                                    <i class="fa fa-download"></i> 下载附件
+                                </a>
+                                <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()">
+                                    <i class="fa fa-trash"></i> 删除附件
+                                </a>
+                            </div>
+                            <div class="col-sm-12 select-table table-striped">
+                                <table id="file-table"></table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-offset-5 col-sm-10">
+                <button type="button" class="btn btn-sm btn-primary" onclick="submitHandler(this)" id="recommit"><i class="fa fa-check"></i>提交</button>&nbsp;
+                <button type="button" class="btn btn-sm btn-primary" onclick="submitHandler(this)" id="cancellation"><i class="fa fa-check"></i>作废</button>
+                <button type="button" class="btn btn-sm btn-danger" onclick="closeItem()"><i class="fa fa-window-close"></i>关 闭 </button>
+            </div>
+        </div>
+    </form>
+</div>
+<script th:src="@{/js/activiti.js}"></script>
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: summernote-js" />
+<th:block th:include="include :: select2-js" />
+<script th:inline="javascript">
+    var prefix = ctx + "trans/sw"
+    var prefix_mb_show = ctx +"transmb/mb";
+    var prefix_attachment = ctx + "pub/attachment";
+    var pId = [[${pId}]];
+    $(function () {
+        //页面打开需要判断processStatus进行div绑定流程显示
+        var processStatus = [[${fmSw.processStatus}]];
+        if(processStatus=='1'){
+            $("#process2").attr("style","display:none;");
+            $("#process1").attr("style","display:block;");
+        }else{
+            $("#process1").attr("style","display:none;");
+            $("#process2").attr("style","display:block;");
+        }
+        puFolwHistory($("#fmSwId").val());
+        var options = {
+            url: prefix_attachment + "/list",
+            id: "file-table",
+            createUrl: prefix_attachment + "/add",
+            updateUrl: prefix_attachment + "/edit/{id}",
+            removeUrl: prefix_attachment + "/remove",
+            detailUrl: prefix_attachment + "/edit/{id}",
+            sortName: "fileTime",
+            sortOrder: "desc",
+            singleSelect: true,
+            clickToSelect: true,
+            queryParams:queryParams,
+            modalName: "附件列表",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field : 'atId',
+                    title : '附件ID',
+                    visible : false
+                },
+                {
+                    field : 'person.pId',
+                    title : '上传人员Id',
+                    visible: false
+                },
+                {
+                    field : 'fileName',
+                    title : '文件名称'
+                },
+                {
+                    field : 'person.pName',
+                    title : '上传人'
+                },
+                {
+                    field : 'size',
+                    title : '文件大小'
+                },
+                {
+                    field : 'memo',
+                    title : '文件描述'
+                },
+                {
+                    field : 'fileTime',
+                    title : '上传时间'
+                }]
+        };
+        $.table.init(options);
+
+    });
+
+
+    function queryParams(params) {
+        var search = $.table.queryParams(params);
+        search.ownerId =  $("#fmSwId").val();
+        return search;
+    }
+
+    $('.summernote').summernote({
+        placeholder: '请输入事务事件内容',
+        height : 192,
+        lang : 'zh-CN',
+        followingToolbar: false,
+        callbacks: {
+            onImageUpload: function (files) {
+                sendFile(files[0], this);
+            }
+        }
+    });
+
+
+
+
+    function  isSelect() {
+        //获取受理机构是否选中
+        var dealId = $("#dealOrgId").val();
+        if(dealId==''){
+            $.modal.alertError("请先选择【受理处室】 ")
+        }
+    }
+
+    function  isSelectChecker() {
+        //获取受理机构是否选中
+        var dealId = $("#dealOrgId").val();
+        if(dealId=='') {
+            $.modal.alertError("请先选择【受理处室】 ")
+        }
+    }
+
+    function submitHandler(elementObj) {
+        //判断当前点击的是暂存还是提交 暂存为待提交 提交为待审核
+        if($(elementObj).attr("id")=='cancellation'){
+            var data = {};
+            data.fmSwId = $('#fmSwId').val();
+            data.label = 'cancellation';
+            data.currentState ='07';
+            data.processStatus =$('#processStatus').val();
+            $.operate.saveTab(prefix + "/returnedEdit", data);
+        }else{
+
+            var errorInfo = '';
+            var data = {};
+            var processStatus=$('#processStatus').val();
+            if(processStatus=='1'){
+                if(isEmpty(treeId)){
+                    errorInfo += '【申请处室】不能为空 ';
+                }
+
+                var dealOrgName = $('#dealOrgName').val();
+                if(isEmpty(dealOrgName)){
+                    errorInfo += '【受理处室】不能为空 ';
+                }
+
+                var faultKind = $('#faultKind').val();
+                if(isEmpty(faultKind)){
+                    errorInfo += '【请求事项】不能为空 ';
+                }
+
+                //验证审核人
+                var checkedId = $('#checkedId').val();
+                if(!isEmpty(checkedId)){
+                    if(pId == checkedId){
+                        errorInfo += '【审核人】不能是当前登陆人 ';
+                    }
+                }
+                //验证审核人
+                var authId = $('#authId').val();
+                if(!isEmpty(authId)){
+                    if(pId == authId){
+                        errorInfo += '【授权人】不能是当前登陆人 ';
+                    }
+                }
+                var dealerId = $('#dealerId').val();
+                if(isEmpty(dealerId)){
+                    errorInfo += '【处理人】不能为空 ';
+                }else{
+                    if(pId == dealerId){
+                        errorInfo += '【处理人】不能是当前登陆人 ';
+                    }
+                }
+            }else{
+                if(isEmpty(treeId)){
+                    errorInfo += '【申请处室】不能为空 ';
+                }
+
+                var dealOrgName = $('#dealOrgName').val();
+                if(isEmpty(dealOrgName)){
+                    errorInfo += '【受理处室】不能为空 ';
+                }
+
+                var faultKind = $('#faultKind').val();
+                if(isEmpty(faultKind)){
+                    errorInfo += '【请求事项】不能为空 ';
+                }
+                //验证审核人2
+                var checkerTwoId = $('#checkerTwoId').val();
+                if(!isEmpty(checkerTwoId)){
+                    if(pId == checkerTwoId){
+                        errorInfo += '【审核人2】不能是当前登陆人 ';
+                    }
+                }
+                //验证审核人3
+                var checkerThreeId = $('#checkerThreeId').val();
+                if(!isEmpty(checkerThreeId)){
+                    if(pId == checkerThreeId){
+                        errorInfo += '【审核人3】不能是当前登陆人 ';
+                    }
+                }
+                //验证审核人4
+                var checkerFourId = $('#checkerFourId').val();
+                if(!isEmpty(checkerFourId)){
+                    if(pId == checkerFourId){
+                        errorInfo += '【审核人4】不能是当前登陆人 ';
+                    }
+                }
+                if(checkerTwoId!='' && checkerThreeId!='' && checkerFourId==''){
+                    errorInfo += '请选择【审核人3】和【审核人4】 ';
+                }else if(checkerTwoId!='' && checkerFourId!='' && checkerThreeId==''){
+                    errorInfo += '请选择【审核人3】和【审核人4】 ';
+                }else if(checkerTwoId!='' && checkerThreeId=='' && checkerFourId==''){
+                    errorInfo += '请选择【审核人4】 ';
+                }else if(checkerThreeId!='' && checkerTwoId=='' && checkerFourId==''){
+                    errorInfo += '请选择【审核人4】 ';
+                }
+                //验证处理人5
+                var dealerFiveId = $('#dealerFiveId').val();
+                if(isEmpty(dealerFiveId)){
+                    errorInfo += '【处理人5】不能为空 ';
+                }else{
+                    if(pId == dealerFiveId){
+                        errorInfo += '【处理人5】不能是当前登陆人 ';
+                    }
+                }
+            }
+
+            //事件标题
+            var faultTitle = $('#faultTitle').val().trim();
+            if(faultTitle=='' ||faultTitle==null){
+                errorInfo += '【事件标题】不能为空 ';
+            }
+
+            //事件标题长度校验
+            if(getValueLen(faultTitle)>50){
+                errorInfo += '【事件标题】最大长度不能超过50';
+            }
+            //事件内容
+            var code = $('#summernote').summernote('code');
+            if($('#summernote').summernote('isEmpty')){
+                errorInfo += '【事件内容】不能为空 ';
+            }
+
+
+            if(isEmpty(errorInfo)){
+                var processStatus=$('#processStatus').val();
+                if(processStatus=='1'){
+                    if($('#checkedId').val()!=''){
+                        data.currentState = '02';
+                    }else{
+                        if($('#authId').val()!=''){
+                            data.currentState = '03';
+                        }else{
+                            data.currentState = '04';
+                        }
+                    }
+                }else{
+                    if($('#checkerTwoId').val()!=''){
+                        data.currentState = '11';
+                    }else if($('#checkerThreeId').val()!=''){
+                        data.currentState = '12';
+                    }else if($('#checkerFourId').val()!=''){
+                        data.currentState = '13';
+                    }else if($('#dealerFiveId').val()!=''){
+                        data.currentState = '14';
+                    }
+                }
+
+                data.fmSwId = $('#fmSwId').val();
+                data.faultKind = $('#faultKind').val();
+                data.checkedId = $('#checkedId').val();
+                data.authId = $('#authId').val();
+                data.dealerId = $('#dealerId').val();
+                data.faultTitle = faultTitle;
+                data.faultDescription = code;
+                data.label = 'recommit';
+                data.checkerTwoId = $('#checkerTwoId').val();//审核人2
+                data.checkerThreeId = $('#checkerThreeId').val();//审核人3
+                data.checkerFourId = $('#checkerFourId').val();//审核人4
+                data.dealerFiveId = dealerFiveId;
+                data.processStatus = processStatus;
+                $.operate.saveTab(prefix + "/returnedEdit", data);
+            }else{
+                $.modal.alertError(errorInfo)
+
+            }
+
+        }
+
+    }
+
+    $("#faultKind").bind("change", function(){
+        if($('#faultKind').val()!=''){
+            var mbId  = $('#faultKind').val();
+            var fmId = $("#faultNo").val();
+            $.post(prefix_mb_show+"/selectMbInfoById",{mbId:mbId,fmId:fmId},function(mbResult){
+                $("#faultTitle").val(mbResult.fmSwMb.swmbTitle);
+                $('#summernote').summernote('code',mbResult.fmSwMb.content);
+                var options = $("#dealerId").find("option");
+                $("#dealerId").html('');
+                var addSelect = "";
+                $.each(options,function (index,item) {
+                    if(item.value==mbResult.fmSwMb.dealPId){
+                        addSelect += "<option  selected value='"+item.value+"'>"+item.text+"</option>";
+                    }else{
+                        addSelect += "<option value='"+item.value+"'>"+item.text+"</option>";
+                    }
+                })
+                $("#dealerId").html(addSelect);
+                //刷新附件列表信息
+                $("#file-table").bootstrapTable('refresh');
+                $("#processStatus").val("1");  //北分delete
+                //北分注释
+                // if(mbResult.fmSwMb.processStatus=='1'){
+                //     $("#processStatus").val("1");
+                //     $("#process2").attr("style","display:none;");
+                //     $("#process1").attr("style","display:block;");
+                // }else{
+                //     $("#processStatus").val("2");
+                //     $("#process1").attr("style","display:none;");
+                //     $("#process2").attr("style","display:block;");
+                // }
+            });
+        }else{
+            $('#faultTitle').val('');
+            $('#summernote').summernote('code','');
+            var options = $("#dealerId").find("option");
+            $("#dealerId").html('');
+            var addSelect = "";
+            $.each(options,function (index,item) {
+                addSelect += "<option value='"+item.value+"'>"+item.text+"</option>";
+            })
+            $("#dealerId").html(addSelect);
+            $('#faultDescription').val('');
+        }
+
+    })
+
+    $(function () {
+        //回显事件内容
+        $('.summernote').summernote('code',$('#faultDescription').val());
+
+        //判断当前编辑的事务事件单是否有受理处室
+        //1.如果有移除disabled
+        if($('#dealOrgId').val() !=''){
+            $('#faultKind').removeAttr('readonly');
+            $('#authId').removeAttr('readonly');
+            $('#dealerId').removeAttr('readonly');
+            $('#checkerTwoId').removeAttr('readonly');
+            $('#checkerThreeId').removeAttr('readonly');
+            $('#checkerFourId').removeAttr('readonly');
+        }else{//2.如果没有添加diabled
+            $('#faultKind').attr('readonly',true);
+            $('#authId').attr('readonly',true);
+            $('#dealerId').attr('readonly',true);
+            $('#checkerTwoId').attr('readonly',true);
+            $('#checkerThreeId').attr('readonly',true);
+            $('#checkerFourId').attr('readonly',true);
+        }
+
+    });
+
+
+    // 附件上传页面
+    function upload() {
+        var url = prefix_attachment+"/upload/" + $("#fmSwId").val();
+        $.modal.open("事务事件单附件上传", url);
+    }
+
+    // 附件下载
+    function downloadFile() {
+        var rows = $.table.selectFirstColumns();
+        var atId = rows[0];
+        var ownerId = $("#fmSwId").val();
+        var url = prefix_attachment+"/download/"+ownerId+"/"+atId;
+        window.location.href = url;
+    }
+
+
+    /**
+     * 输入空值校验
+     * @param valueStr
+     * @returns {boolean}
+     */
+    function  isEmpty(valueStr) {
+        if(valueStr=='' || valueStr==null){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+
+    /**
+     * 获取输入数值的长度
+     * @param valueStr
+     * @returns {number}
+     */
+    function getValueLen(valueStr){
+        return isEmpty(valueStr)?0:valueStr.length;
+    }
+
+</script>
+</body>
+</html>

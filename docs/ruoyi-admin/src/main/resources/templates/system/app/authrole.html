@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+	<th:block th:include="include :: header('所属角色')" />
+</head>
+<body class="gray-bg">
+<div class="container-div">
+	<div class="row">
+		<div class="col-sm-6">
+			<div class="container-div">
+				<div class="row">
+					<div class="col-sm-12 search-collapse">
+						<form id="authrole-form"  th:object="${app}">
+							<input name="sysId" type="hidden" id="sysId" th:field="*{id}"/>
+							<div class="select-list">
+								<ul>
+									<li>
+										角色名称：<input type="text" name="rolename"/><!--字典名称：<input type="text" name="dictName"/>-->
+									</li>
+									<li>
+										<a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search('authrole-form','bootstrap-table-data')"><i class="fa fa-search"></i>&nbsp;搜索</a>
+										<a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset('authrole-form','bootstrap-table-data')"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+									</li>
+								</ul>
+							</div>
+						</form>
+					</div>
+
+					<div class="btn-group-sm"  id="data_toolbar_l"  role="group">
+						<a class="btn btn-success multiple disabled" onclick="saveR()" >
+							<i class="fa fa-plus"></i> 授权
+						</a>
+					</div>
+
+					<div class="col-sm-12 select-table table-striped">
+						<table id="bootstrap-table-data"></table>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="col-sm-6">
+			<div class="container-div">
+				<div class="row">
+					<div class="col-sm-12 search-collapse">
+						<form id="rauthrole-form">
+							<div class="select-list">
+								<ul>
+									<li>
+										角色名称：<input type="text"  name="rolename"/><!--字典名称：<input type="text" name="dictName"/>-->
+									</li>
+									<li>
+										<a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search('rauthrole-form','bootstrap-table')"><i class="fa fa-search"></i>&nbsp;搜索</a>
+										<a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset('rauthrole-form','bootstrap-table')"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+									</li>
+								</ul>
+							</div>
+						</form>
+					</div>
+
+					<div class="btn-group-sm" id="data_toolbar_r" role="group">
+						<a class="btn btn-danger multiple disabled" onclick="deleteR()" >
+							<i class="fa fa-refresh"></i> 删除
+						</a>
+					</div>
+
+					<div class="col-sm-12 select-table table-striped">
+						<table id="bootstrap-table"></table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<th:block th:include="include :: footer" />
+<script th:inline="javascript">
+	var listFlag = [[${@permission.hasPermi('system:app:llist')}]];
+	var removeFlag = [[${@permission.hasPermi('system:app:rremove')}]];
+	var sysid=$("#sysId").val();
+	var prefix = ctx + "system/app";
+	$(function() {
+		var data_options = {
+			id:'bootstrap-table-data',
+			url: prefix + "/llist/"+sysid,
+			createUrl: prefix + "/ladd?appid="+sysid,
+			toolbar: 'data_toolbar_l',
+			sortName: "rname",
+			sortOrder: "asc",
+			modalName: "数据",
+			columns: [{
+				checkbox: true
+			},
+				{
+					field: 'rid',
+					title: '参数值编码',
+					visible:false
+				},
+				{
+					field: 'rName',
+					title: '角色名称'
+				}]
+		};
+		$.table.init(data_options);
+		var options = {
+			id:'bootstrap-table',
+			url: prefix + "/rlist/"+sysid,
+			removeUrl: prefix + "/rremove?appid="+sysid,
+			toolbar:'data_toolbar_r',
+			modalName: "类型",
+			columns: [{
+				checkbox: true
+				},
+				{
+					field: 'rid',
+					title: '参数值编码',
+					visible:false
+				},
+				{
+					field: 'rName',
+					title: '角色名称'
+				}]
+		};
+		$.table.init(options);
+	});
+function saveR(){
+	$.operate.saveIds();
+	$.table.search('rauthrole-form','bootstrap-table');
+	$.table.search('authrole-form','bootstrap-table-data');
+}
+function deleteR(){
+		$.operate.removeAll('bootstrap-table');
+	    $.table.search('rauthrole-form','bootstrap-table');
+		$.table.search('authrole-form','bootstrap-table-data');
+	}
+
+</script>
+</body>
+</html>

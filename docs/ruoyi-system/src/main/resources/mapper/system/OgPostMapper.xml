@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.OgPostMapper">
+
+	<resultMap type="com.ruoyi.system.domain.OgPost" id="OgPostResult">
+		<id     property="postId"        column="postid"       />
+		<result property="postName"      column="post_name"     />
+		<result property="addEr"      column="adder"     />
+		<result property="addTime"    column="addtime"   />
+		<result property="moder"      column="moder"     />
+		<result property="updateTime"    column="update_time"   />
+		<result property="memo"    column="memo"   />
+		<result property="invalidationMark"    column="invalidation_mark"   />
+		<result property="serialNum"    column="serial_num"   />
+		<result property="powerFlag"    column="power_flag"   />
+	</resultMap>
+
+
+	<sql id="selectPostVo">
+		select postid,post_name,adder,addtime,moder,update_time,memo,invalidation_mark,serial_num,power_flag
+		from og_post
+	</sql>
+
+
+	 <select id="selectAllPostByUserId" parameterType="java.util.Map" resultMap="OgPostResult">
+		 SELECT
+		 P .POSTID,
+		 P .POST_NAME,
+		 P .SERIAL_NUM,
+		 P .INVALIDATION_MARK
+		 FROM
+		 OG_R_USER_POST UP
+		 JOIN OG_POST P ON UP.POSTID = P .POSTID
+		 WHERE
+		 UP.USERID = #{userId}
+		 <if test="postName!=null and postName!=''">
+			 and p.post_name like concat(concat('%', #{postName}),'%')
+		 </if>
+		 ORDER BY
+		 ABS (P .SERIAL_NUM)
+	 </select>
+
+	<select id="selectBatchPostList" parameterType="java.util.Map" resultMap="OgPostResult">
+		<include refid="selectPostVo"></include>
+		where postid not in
+		<foreach collection="postIds" separator="," open="(" close=")" item="postId">
+			#{postId}
+		</foreach>
+		<if test="postName!=null and postName!=''">
+			and post_name like concat(concat('%', #{postName}),'%')
+		</if>
+		<!-- centerFlag=true表示全国中心，账号管理维护岗位时不作任何控制，centerFlag=false表示省中心需要控制og_post表中的字段power_flag='B' -->
+		<!--<if test="!centerFlag">
+			and power_flag = 'B'
+		</if>-->
+		ORDER  by abs(serial_num)
+
+	</select>
+	<insert id="insertPost" parameterType="com.ruoyi.system.domain.OgPost" >
+		insert into og_post(
+		postid,
+		<if test="postName != null and postName != ''">post_name,</if>
+		addtime,
+		<if test="memo != null and memo != ''">memo,</if>
+		<if test="powerFlag != null and powerFlag != ''">power_flag,</if>
+		invalidation_mark,
+		serial_num,
+		adder
+		)values(
+		#{postId},
+		<if test="postName != null and postName != ''">#{postName},</if>
+		#{addTime},
+		<if test="memo != null and memo != ''">#{memo},</if>
+		<if test="powerFlag != null and powerFlag != ''">#{powerFlag},</if>
+		#{invalidationMark},
+		#{serialNum},
+		#{addEr}
+		)
+
+	</insert>
+
+
+	<update id="updatePost" parameterType="com.ruoyi.system.domain.OgPost">
+		update og_post
+		<trim prefix="SET" suffixOverrides=",">
+			<if test="postName != null  and postName != ''">post_name = #{postName},</if>
+			<if test="addTime != null  and addTime != ''">addtime = #{addTime},</if>
+			<if test="moder != null  and moder != ''">moder = #{moder},</if>
+			<if test="updateTime != null  and updateTime != ''">update_time = #{updateTime},</if>
+			memo = #{memo,jdbcType=VARCHAR},
+			<if test="invalidationMark != null  and invalidationMark != ''">invalidation_mark = #{invalidationMark},</if>
+			<if test="serialNum != null  and serialNum != ''">serial_num = #{serialNum},</if>
+			power_flag = #{powerFlag,jdbcType=VARCHAR},
+		</trim>
+		where postid = #{postId,jdbcType=VARCHAR}
+	</update>
+
+
+
+
+	<delete id="deletePostByIds" parameterType="java.lang.String">
+		delete from og_post where postid IN
+		<foreach collection="array" item="postId" open="(" separator="," close=")">
+			#{postId,jdbcType=VARCHAR}
+		</foreach>
+	</delete>
+
+	<delete id="deleteRolePost">
+		delete from OG_R_POST_ROLE where rid IN
+		<foreach collection="arg0" item="rid" open="(" separator="," close=")">
+			#{rid}
+		</foreach>
+		and postid  = #{arg1}
+	</delete>
+
+
+	<select id="selectPostList" parameterType="com.ruoyi.system.domain.OgPost" resultMap="OgPostResult">
+		<include refid="selectPostVo"/>
+		<where>
+			<if test="postName != null and postName != ''">
+				 post_name like concat(concat('%', #{postName}),'%')
+			</if>
+			<if test="invalidationMark != null and invalidationMark != ''">
+				AND invalidation_mark = #{invalidationMark}
+			</if>
+			<!-- centerFlag=true表示全国中心，账号管理维护岗位时不作任何控制，centerFlag=false表示省中心需要控制og_post表中的字段power_flag='B' -->
+			<!--<if test="params.centerFlag != null and !params.centerFlag">
+				AND power_flag = 'B'
+			</if>-->
+		</where>
+		order by  abs(serial_num)
+	</select>
+
+
+	<select id="selectPostById" parameterType="java.lang.String" resultMap="OgPostResult">
+		<include refid="selectPostVo"/>
+			where postid = #{postId}
+	</select>
+
+
+
+	<select id="checkPostNameUnique" parameterType="java.lang.String" resultMap="OgPostResult">
+		<include refid="selectPostVo"/>
+		where post_name=#{postName}
+	</select>
+
+
+	<select id="checkPostCodeUnique" parameterType="java.lang.String" resultMap="OgPostResult">
+		<include refid="selectPostVo"/>
+		where postid=#{postId}
+
+	</select>
+
+	<select id="selectLoginUserOgPosts" parameterType="java.lang.String" resultMap="OgPostResult">
+		select p.postid,p.post_name,p.adder,p.addtime,p.moder,p.update_time,p.memo,p.invalidation_mark,p.serial_num
+		  from og_post p
+		  left join og_r_user_post up
+			on p.postid = up.postid
+		  left join og_user u
+			on up.userid = u.userid
+		  where u.userid= #{userId}
+	</select>
+
+
+	<select id="selectPostRoleById" parameterType="com.ruoyi.system.domain.OgPost" resultMap="OgPostResult">
+		SELECT * from OG_R_POST_ROLE WHERE POSTID = #{postId}
+	</select>
+	<select id="selectPostUserById" parameterType="com.ruoyi.system.domain.OgPost" resultMap="OgPostResult">
+		SELECT * from OG_R_USER_POST where  POSTID = #{postId}
+	</select>
+
+
+</mapper>

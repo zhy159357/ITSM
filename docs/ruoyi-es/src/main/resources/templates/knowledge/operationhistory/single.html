@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('单个知识的操作记录')" />
+    <th:block th:include="include :: layout-latest-css" />
+</head>
+<body class="gray-bg">
+<div class="ui-layout-center">
+    <div class="container-div">
+        <div class="row"> 
+            <div class="col-sm-12 select-table table-bordered">
+                <table id="bootstrap-table"></table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: layout-latest-js" />
+<script th:inline="javascript">
+    var prefix = ctx + "knowledge/operationhistory";
+    var operDatas = [[${@pubParaValue.selectPubParaValueByParaName('know_operation')}]];
+    var id = [[${id}]]; 
+    $(function() {
+        var options = {
+        		url: prefix + "/listSingle/"+id,
+                modalName: "知识操作记录",
+                clickToSelect: true,
+                columns: [{
+                    checkbox: true
+                },
+                {
+                    field: 'id',
+                    title: 'ID',
+                    visible: false
+                },
+                {
+                    field: 'contentId',
+                    title: '知识ID',
+                    visible: false
+                },
+                {
+                    field: 'contentTitle',
+                    title: '知识标题'
+                },
+                {
+                    field: 'operId',
+                    title: '操作人ID',
+                    visible: false
+                },
+                {
+                    field: 'operName',
+                    title: '操作人'
+                },
+                {
+                    field: 'operTime',
+                    title: '操作时间'
+                },
+                {
+                	field: 'operation',
+					title: '执行操作',
+		            formatter: function(value, row, index) {
+		            	return $.table.selectPubParaValueData(operDatas, value);
+		            }	
+				},
+				{
+                	field: 'remark',
+					title: '操作原因',
+                    formatter: function (value, row, index) {
+                        return $.table.tooltip(value);
+                    }
+				}]
+        };
+     $.table.init(options);
+    });
+
+    function submitHandler() {
+        var index = parent.layer.getFrameIndex(window.name);
+        parent.layer.close(index);//关闭当前页
+    }
+
+</script>
+</body>
+</html>

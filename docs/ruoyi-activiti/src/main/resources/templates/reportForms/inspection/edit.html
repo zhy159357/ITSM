@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:include="include :: header('修改巡检记录单')"/>
+    <th:block th:include="include :: select2-css"/>
+    <th:block th:include="include :: datetimepicker-css" />
+    <link th:href="@{/css/fmbizMaint.css}" rel="stylesheet"/> <!-- 自定css -->
+</head>
+<body>
+<div class="main-content">
+    <form id="form-inspection-add" class="form-horizontal" th:object="${formsInspection}">
+        <input name="id" id="fmId" class="form-control" type="hidden" required th:value="*{id}">
+        <h4 class="form-header h4">基本信息</h4>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">系统名称：</label>
+                    <div class="col-sm-8">
+                        <input name="sysName" id="sysName" th:value="*{sysName}" class="form-control" type="text" maxlength="18">
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">运维单位：</label>
+                    <div class="col-sm-8">
+                        <input name="sysCompany" id="sysCompany" th:value="*{sysCompany}" class="form-control" type="text" maxlength="30">
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">巡查人员：</label>
+                    <div class="col-sm-8">
+                        <input name="inspectors" id="inspectors" th:value="*{inspectors}" class="form-control" type="text" maxlength="18">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">联系方式：</label>
+                    <div class="col-sm-8">
+                        <input name="contact" id="contact" th:value="*{contact}" class="form-control" type="text" maxlength="18">
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">系统负责人：</label>
+                    <div class="col-sm-8">
+                        <input name="sysManager" id="sysManager" th:value="*{sysManager}" class="form-control" type="text" maxlength="18">
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">更新日期：</label>
+                    <div class="col-sm-8">
+                        <input type="text" class="form-control" th:value="*{lastDate}" placeholder="yyyy-MM-dd" id="lastDate"
+                               name="lastDate" required readonly style="background-color: #fdfdfd"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">开始时间：</label>
+                    <div class="col-sm-8">
+                        <input type="text" class="form-control" th:value="*{startTime}" placeholder="yyyy-MM-dd HH:mm:ss" id="startTime"
+                               name="startTime" required readonly style="background-color: #fdfdfd"/>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">结束时间：</label>
+                    <div class="col-sm-8">
+                        <input type="text" class="form-control" th:value="*{endTime}" placeholder="yyyy-MM-dd HH:mm:ss" id="endTime"
+                               name="endTime" required readonly style="background-color: #fdfdfd"/>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">登录页面是否正常：</label>
+                    <div class="col-sm-8">
+                        <div class="col-sm-8">
+                            <label class="radio-box"> <input type="radio" th:checked="*{loginStates} == '1' ? true : false" name="loginStates" value="1" /> 正常 </label>
+                            <label class="radio-box"> <input type="radio" th:checked="*{loginStates} == '0' ? true : false" name="loginStates" value="0" /> 异常 </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-8">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">登录页面情况说明：</label>
+                    <div class="col-sm-10">
+                        <input name="loginAnnotation" id="loginAnnotation" th:value="*{loginAnnotation}" class="form-control" type="text" maxlength="250">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">数据统计页面是否正常：</label>
+                    <div class="col-sm-8">
+                        <div class="col-sm-8">
+                            <label class="radio-box"> <input type="radio" th:checked="*{dateStates} == '1' ? true : false" name="dateStates" value="1" /> 正常 </label>
+                            <label class="radio-box"> <input type="radio" th:checked="*{dateStates} == '0' ? true : false" name="dateStates" value="0" /> 异常 </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-8">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">数据统计页面情况说明：</label>
+                    <div class="col-sm-10">
+                        <input name="dateAnnotation" id="dateAnnotation" th:value="*{dateAnnotation}" class="form-control" type="text" maxlength="250">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">通讯录管理页面是否正常：</label>
+                    <div class="col-sm-8">
+                        <div class="col-sm-8">
+                            <label class="radio-box"> <input type="radio" th:checked="*{bookStates} == '1' ? true : false" name="bookStates" value="1" /> 正常 </label>
+                            <label class="radio-box"> <input type="radio" th:checked="*{bookStates} == '0' ? true : false" name="bookStates" value="0" /> 异常 </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-8">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">通讯录管理页面情况说明：</label>
+                    <div class="col-sm-10">
+                        <input name="bookAnnotation" id="bookAnnotation" th:value="*{bookAnnotation}" class="form-control" type="text" maxlength="250">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">应用管理页面是否正常：</label>
+                    <div class="col-sm-8">
+                        <div class="col-sm-8">
+                            <label class="radio-box"> <input type="radio" th:checked="*{appStates} == '1' ? true : false" name="appStates" value="1" /> 正常 </label>
+                            <label class="radio-box"> <input type="radio" th:checked="*{appStates} == '0' ? true : false" name="appStates" value="0" /> 异常 </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-8">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">应用管理页面情况说明：</label>
+                    <div class="col-sm-10">
+                        <input name="appAnnotation" id="appAnnotation" th:value="*{appAnnotation}" class="form-control" type="text" maxlength="250">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">全局设置页面是否正常：</label>
+                    <div class="col-sm-8">
+                        <div class="col-sm-8">
+                            <label class="radio-box"> <input type="radio" th:checked="*{globalStates} == '1' ? true : false" name="globalStates" value="1" /> 正常 </label>
+                            <label class="radio-box"> <input type="radio" th:checked="*{globalStates} == '0' ? true : false" name="globalStates" value="0" /> 异常 </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-8">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">全局设置页面情况说明：</label>
+                    <div class="col-sm-10">
+                        <input name="globalAnnotation" id="globalAnnotation" th:value="*{globalAnnotation}" class="form-control" type="text" maxlength="250">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">权限管理页面是否正常：</label>
+                    <div class="col-sm-8">
+                        <div class="col-sm-8">
+                            <label class="radio-box"> <input type="radio" th:checked="*{limitStates} == '1' ? true : false" name="limitStates" value="1" /> 正常 </label>
+                            <label class="radio-box"> <input type="radio" th:checked="*{limitStates} == '0' ? true : false" name="limitStates" value="0" /> 异常 </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-8">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">权限管理页面情况说明：</label>
+                    <div class="col-sm-10">
+                        <input name="limitAnnotation" id="limitAnnotation" th:value="*{limitAnnotation}" class="form-control" type="text" maxlength="250">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">批量上传页面是否正常：</label>
+                    <div class="col-sm-8">
+                        <div class="col-sm-8">
+                            <label class="radio-box"> <input type="radio" th:checked="*{uploadStates} == '1' ? true : false" name="uploadStates" value="1" /> 正常 </label>
+                            <label class="radio-box"> <input type="radio" th:checked="*{uploadStates} == '0' ? true : false" name="uploadStates" value="0" /> 异常 </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-8">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">批量上传页面情况说明：</label>
+                    <div class="col-sm-10">
+                        <input name="uploadAnnotation" id="uploadAnnotation" th:value="*{uploadAnnotation}" class="form-control" type="text" maxlength="250">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">服务器操作系统是否正常：</label>
+                    <div class="col-sm-8">
+                        <div class="col-sm-8">
+                            <label class="radio-box"> <input type="radio" th:checked="*{osStates} == '1' ? true : false" name="osStates" value="1" /> 正常 </label>
+                            <label class="radio-box"> <input type="radio" th:checked="*{osStates} == '0' ? true : false" name="osStates" value="0" /> 异常 </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-8">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">服务器操作系统情况说明：</label>
+                    <div class="col-sm-10">
+                        <input name="osAnnotation" id="osAnnotation" th:value="*{osAnnotation}" class="form-control" type="text" maxlength="250">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">服务器网络是否正常：</label>
+                    <div class="col-sm-8">
+                        <div class="col-sm-8">
+                            <label class="radio-box"> <input type="radio" th:checked="*{networkStates} == '1' ? true : false" name="networkStates" value="1" /> 正常 </label>
+                            <label class="radio-box"> <input type="radio" th:checked="*{networkStates} == '0' ? true : false" name="networkStates" value="0" /> 异常 </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-8">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">服务器网络情况说明：</label>
+                    <div class="col-sm-10">
+                        <input name="networkAnnotation" id="networkAnnotation" th:value="*{networkAnnotation}" class="form-control" type="text" maxlength="250">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">应用系统访问是否正常：</label>
+                    <div class="col-sm-8">
+                        <div class="col-sm-8">
+                            <label class="radio-box"> <input type="radio" th:checked="*{accessStates} == '1' ? true : false" name="accessStates" value="1" /> 正常 </label>
+                            <label class="radio-box"> <input type="radio" th:checked="*{accessStates} == '0' ? true : false" name="accessStates" value="0" /> 异常 </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-8">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">应用系统访问情况说明：</label>
+                    <div class="col-sm-10">
+                        <input name="accessAnnotation" id="accessAnnotation" th:value="*{accessAnnotation}" class="form-control" type="text" maxlength="250">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">数据库是否正常：</label>
+                    <div class="col-sm-8">
+                        <div class="col-sm-8">
+                            <label class="radio-box"> <input type="radio" th:checked="*{databaseStates} == '1' ? true : false" name="databaseStates" value="1" /> 正常 </label>
+                            <label class="radio-box"> <input type="radio" th:checked="*{databaseStates} == '0' ? true : false" name="databaseStates" value="0" /> 异常 </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-8">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">数据库情况说明：</label>
+                    <div class="col-sm-10">
+                        <input name="databaseAnnotation" id="databaseAnnotation" th:value="*{databaseAnnotation}" class="form-control" type="text" maxlength="250">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="input-group" style="display:-webkit-box">
+                    <label class="col-sm-2 control-label" style="width:10%">备注：</label>
+                    <div class="col-sm-12">
+                        <textarea rows="12" cols="20" id="remark" name="remark"
+                                  class="zdy_input" maxlength="3000" required >[[*{remark}]]</textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<div class="row">
+    <div class="col-sm-offset-5 col-sm-10">
+        <button type="button" class="btn btn-sm btn-primary" onclick="submit()"><i class="fa fa-check"></i>重新提交
+        </button>&nbsp;
+        <button type="button" class="btn btn-sm btn-danger" onclick="closeItem()"><i class="fa fa-remove"></i>关闭
+        </button>
+    </div>
+</div>
+<th:block th:include="include :: footer"/>
+<th:block th:include="include :: bootstrap-suggest-js" />
+<th:block th:include="include :: bootstrap-typeahead-js" />
+<th:block th:include="include :: select2-js"/>
+<th:block th:include="include :: datetimepicker-js"/>
+<script>
+    let prefix = ctx + "report/forms";
+    $(function () {
+        $("#lastDate").datetimepicker({
+            format: "yyyy-mm-dd",
+            minView: "month",
+            autoclose: true,
+            endDate:new Date()
+        });
+        $("#startTime").datetimepicker({
+            format: "yyyy-mm-dd hh:ii:ss",
+            autoclose: true,
+            minView:0,
+            minuteStep:1,
+            endDate:new Date()
+        });
+        $("#endTime").datetimepicker({
+            format: "yyyy-mm-dd hh:ii:ss",
+            autoclose: true,
+            minView:0,
+            minuteStep:1,
+            endDate:new Date()
+        });
+    });
+
+    /*重新提交*/
+    function submit() {
+        // if ($.validate.form()) {
+        var data = $("#form-inspection-add").serializeArray();
+        $.operate.saveTab(prefix + "/saveInspectionData", data);
+        // }
+    }
+</script>
+</body>
+</html>

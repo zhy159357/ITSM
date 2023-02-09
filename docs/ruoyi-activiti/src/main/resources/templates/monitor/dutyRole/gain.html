@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:include="include :: header('添加值班组角色')" />
+    <th:block th:include="include :: layout-latest-css" />
+    <th:block th:include="include :: ztree-css" />
+</head>
+<body class="gray-bg">
+<div class="ui-layout-center">
+    <div class="container-div">
+        <div class="row">
+            <!--<div class="col-sm-12 search-collapse">
+                <form id="group-form">
+                    &lt;!&ndash;<div class="select-list">
+                        <ul>
+                            <li>
+                                名称：<input type="text" name="grpName"/>
+                            </li>
+                            <li>
+                                <a class="btn btn-primary btn-rounded btn-sm" id="ss" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                            </li>
+                        </ul>
+                    </div>&ndash;&gt;
+                </form>
+            </div>-->
+
+            <div class="col-sm-12 select-table table-striped">
+                <table id="bootstrap-table"></table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: layout-latest-js" />
+<th:block th:include="include :: ztree-js" />
+<script th:inline="javascript">
+    var prefix = ctx + "monitor/dutyRole";
+    var eventGroupType=[[${@pubParaValue.selectPubParaValueByParaName('event_group_type')}]];
+    $(function() {
+        var options = {
+            url: prefix + "/selectDutyList/0",
+            createUrl: prefix + "/add",
+            removeUrl: prefix + "/remove",
+            clickToSelect: true,
+            showSearch: false,
+            showRefresh: true,
+            showToggle: false,
+            showColumns: false,
+            pageSize: 10,
+            pageList: [10,20,100],
+            modalName: "值班组",
+            columns: [
+                {
+                    checkbox: true
+                },
+                {
+                    field: 'dutyId',
+                    title: '主键ID',
+                    visible : false
+                },
+                {
+                    field: 'groupId',
+                    title: '工作组ID',
+                    visible : false
+                },
+                {
+                    field: 'monitorTypeAccountId',
+                    title: '类型字典ID',
+                    visible : false
+                },
+                {
+                    field: 'dutyName',
+                    title: '值班组名称'
+                },
+                {
+                    field: 'dutyType',
+                    title: '值班组类型',
+                    formatter:function (value) {
+                        return $.table.selectPubParaValueData(eventGroupType,value);
+                    }
+                }]
+        };
+        $.table.init(options);
+    });
+
+    // 调用后台保存值班组数据
+    function submitHandler() {
+        var url = prefix + "/addDuty";
+        var row =  $.table.selectAllColumns();
+
+        if(row.length<0){
+            $.modal.alert("请选择一行数据，再点击【确定】按钮！");
+            return;
+        }
+
+        var data = { "groups":JSON.stringify(row)};
+        $.ajax({
+            type: "post",
+            url: url,
+            data: data,
+            success: function(result) {
+                if (result.code == 0) {
+                    $.modal.close();
+                    window.parent.$.table.refresh('bootstrap-table');
+                } else {
+                    $.modal.alertError(result.msg);
+                }
+            }
+        });
+    }
+
+</script>
+</body>
+</html>

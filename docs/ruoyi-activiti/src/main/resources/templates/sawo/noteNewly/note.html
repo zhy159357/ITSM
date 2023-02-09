@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:include="include :: header('【通知工单】列表')" />
+</head>
+<body class="gray-bg">
+     <div class="container-div">
+        <div class="row">
+            <div class="col-sm-12 search-collapse">
+                <form id="formId">
+                    <div class="select-list">
+                        <ul>
+                            <li>
+                                <p>工单单号：</p>
+                                <input type="text" name="ordNo" id="ordNo"/>
+                            </li>
+                            <li>
+                                <p>工单名称：</p>
+                                <input type="text" name="gaaName" id="gaaName"/>
+                            </li>
+                            <li>
+                                <p>工单类型：</p>
+                                <select class="form-control" id="ordType" name="ordType" th:with="type=${@dict.getParaType('ord_type')}" required>
+                                    <option value=""></option>
+                                    <option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+                                </select>
+                            </li>
+                            <li>
+                                <a class="btn btn-primary btn-rounded btn-sm" id="ss" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                            </li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+
+            <div class="btn-group-sm" id="toolbar" role="group">
+                <a class="btn btn-success" onclick="$.operate.addTab()">
+                    <i class="fa fa-plus"></i> 添加
+                </a>
+                <a class="btn btn-primary single disabled" onclick="jsTab()">
+                    <i class="fa fa-edit"></i> 接手
+                </a>
+                <a class="btn btn-primary single disabled" onclick="editTab()">
+                    <i class="fa fa-edit"></i> 反馈
+                </a>
+            </div>
+            <div class="col-sm-12 select-table table-striped">
+                <table id="bootstrap-table"></table>
+            </div>
+        </div>
+    </div>
+    <th:block th:include="include :: footer" />
+    <script th:inline="javascript">
+
+        var gaaLev =  [[${@dict.getParaType('customer_impact_degree')}]];
+        var ordType =  [[${@dict.getParaType('ord_type')}]];
+        var gaaType =  [[${@dict.getParaType('gaa_type')}]];
+        var gaaCategory =  [[${@dict.getParaType('gaa_category')}]];
+        var belDept =  [[${@dict.getParaType('bel_dept')}]];
+        var LineIsno =  [[${@dict.getParaType('Line_Isno')}]];
+
+        var prefix = ctx + "sawo/noteNewly";
+
+        $(function() {
+            document.onkeydown = function(e){
+                var ev = document.all ? window.event : e;
+                console.log(ev);
+                if(ev.keyCode==13) {
+                    $('#ss').trigger('click');
+                    return false;
+                } //搜索逻辑
+            }
+            var options = {
+                url: prefix + "/list",
+                createUrl: prefix + "/add",
+                updateUrl: prefix + "/edit/{id}",
+                removeUrl: prefix + "/remove",
+                removeUrl: prefix + "/js",
+                exportUrl: prefix + "/export",
+                modalName: "【通知工单】",
+                sortName: "startTime",
+                sortOrder: "desc",
+                buttonsAlign: "left",
+                singleSelect:true,
+                clickToSelect: true,
+                columns: [{
+                    checkbox: true
+                },
+                {
+                    field: 'noteId',
+                    title: '工单ID',
+                    visible:false,
+                },
+                {
+                    field: 'noteNo',
+                    title: '工单单号'
+                },
+                {
+                    field: 'n1',
+                    title: '处置机构'
+                },
+                {
+                    field : 'ifFeedback',
+                    title : '是否反馈',
+                    formatter: function (value,row,index) {
+                        return selectDictLabel(LineIsno, value);
+                    },
+                },
+                {
+                    field : 'feedbackTime',
+                    title : '反馈时间',
+                    formatter: function (value, row, index) {
+                        var createrTime = '';
+                        if(value!='' && value !=null){
+                            var pattern = /(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/;
+                            createrTime = value.replace(pattern, '$1-$2-$3 $4:$5:$6');
+                        }
+                        return createrTime;
+                    }
+                },
+                {
+                    field : 'disposeTime',
+                    title : '超时时间'
+                },
+                {
+                    field : 'acceptingState',
+                    title : '接受状态',
+                    formatter: function (value, row, index) {
+                        if (row.disposeState == '1') {
+                            return '待接手';
+                        } else if (row.performResult == '2') {
+                            return '已接收';
+                        }
+                    }
+                },
+                {
+                    field : 'disposeState',
+                    title : '处置状态',
+                    formatter: function (value, row, index) {
+                        if (row.disposeState == '1') {
+                            return '处置中';
+                        } else if (row.performResult == '2') {
+                            return '处置完成';
+                        }
+                    }
+                },
+                {
+                    field : 'ifInvolve',
+                    title : '是否涉及',
+                    formatter: function (value, row, index) {
+                        if (row.disposeState == '1') {
+                            return '是';
+                        } else if (row.performResult == '2') {
+                            return '否';
+                        }
+                    }
+                },
+                {
+                    field : 'feedbackDetail',
+                    title : '反馈详情',
+                }]
+            };
+            $.table.init(options);
+        });
+
+        function deal() {
+            var ordId = $.table.selectFirstColumns();
+            var url = prefix + '/deal/' + ordId;
+            $.modal.openTab("通知工单", url);
+        }
+
+        //反馈
+        function jsTab(noteId) {
+            debugger;
+            //var noteId = $("#noteId").val();
+            var rows = $.common.isEmpty(table.options.uniqueId) ? $.table.selectFirstColumns() : $.table.selectColumns(table.options.uniqueId);
+            $.ajax({
+                type: 'POST',
+                url: prefix+"/sj/"+rows[0],
+                data: {"noteId":rows[0]},
+                success: function (result) {
+                    alert("已接手，请反馈");
+                },
+                dataType: 'json'
+            });
+        }
+
+        function ifyn() {
+            var a = false;
+            $.ajax({
+                cache: true,
+                type: "POST",
+                url: prefix + "/ifynFmBiz",
+                data: {
+                    "id": $("#fmId").val()
+                },
+                async: false,
+                error: function (request) {
+                    $.modal.alertError("系统错误");
+                },
+                success: function (data) {
+                    if (data && data == "1") {//超过步骤数，不允许任何处理，隐藏按钮
+                        a = true;
+                    }
+                }
+            });
+            return a;
+        }
+
+        //反馈
+        function editTab(ordId) {
+            debugger;
+            table.set();
+            var rows = $.common.isEmpty(table.options.uniqueId) ? $.table.selectFirstColumns() : $.table.selectColumns(table.options.uniqueId);
+            $.ajax({
+                type: 'POST',
+                url: prefix+"/selectById",
+                data: {"noteId":rows[0]},
+                success: function (result) {
+                    if(result.data.ifFeedback=='1'){
+                        if (result.data.acceptingState == '2'){
+                            var noteId = $.table.selectFirstColumns();
+                            var url = prefix + '/edit/' + noteId;
+                            $.modal.openTab("反馈通知工单", url);
+                        }else {
+                            $.modal.alertError("该状态不是已接手，无法反馈!");
+                        }
+                    }else{
+                        $.modal.alertError("该状态不是反馈，无法反馈!");
+                    }
+                },
+                dataType: 'json'
+            });
+        }
+
+        //事件来源（字典项）
+        function selectDictLabel(datas, value) {
+            var actions = [];
+            $.each(datas, function(index, dict) {
+                if (dict.value == ('' + value)) {
+                    var listClass = $.common.equals("default", dict.listClass) || $.common.isEmpty(dict.listClass) ? "" : "badge badge-" + dict.listClass;
+                    actions.push($.common.sprintf("<span class='%s'>%s</span>", listClass, dict.valueDetail));
+                    return false;
+                }
+            });
+            return actions.join('');
+        }
+
+    </script>
+</body>
+</html>

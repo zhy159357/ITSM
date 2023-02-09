@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('受理')" />
+</head>
+<body>
+<div class="main-content">
+    <form id="form-horizontal" class="form-horizontal">
+        <input id="issuefxId" name="issuefxId" th:value="${issuefxId}" hidden>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label class="col-xs-2 control-label is-required">初步分析方案：</label>
+                    <div class="col-xs-10">
+                            <textarea name="papDesc" id="papDesc" placeholder="请输入初步分析方案" rows="3" maxlength="500" class="form-control" type="text" required></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<th:block th:include="include :: footer" />
+<script th:inline="javascript">
+    function submitHandler(index, layero) {
+        if($.common.isEmpty($("#papDesc").val())){
+            $.modal.alertWarning("请填写初步分析方案~");
+            return;
+        }
+        var rows =$("#form-horizontal").serializeArray()
+        var reCode={
+            name:'params[reCode]',
+            value:'0'
+        }
+        var type={
+            name:'params[type]',
+            value:'chuli'
+        }
+        var comment={
+            name:'params[comment]',
+            value:$("#papDesc").val()
+        }
+        rows.push({name:'params[shouli]',value:'1'})
+        rows.push(reCode);
+        rows.push(type);
+        rows.push(comment);
+        $.operate.saveTab(ctx+"issueList/activiti/wentichuli",rows,reBack);
+
+    }
+    function reBack(result) {
+        if (result.code == web_status.SUCCESS) {
+            var parent = window.parent;
+            if (parent.table.options.type == table_type.bootstrapTable) {
+                $.modal.close();
+                parent.$.modal.msgSuccess(result.msg);
+                parent.$.table.refresh();
+            } else if (parent.table.options.type == table_type.bootstrapTreeTable) {
+                $.modal.close();
+                parent.$.modal.msgSuccess(result.msg);
+                parent.$.treeTable.refresh();
+            } else {
+                $.modal.msgReload("保存成功,正在刷新数据请稍后……", modal_status.SUCCESS);
+            }
+        } else if (result.code == web_status.WARNING) {
+            $.modal.alertWarning(result.msg)
+            return;
+        }  else {
+            $.modal.alertError(result.msg);
+            return;
+        }
+        $.modal.closeLoading();
+        parent.closeBtu();
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.activiti.mapper.OgGroupPersonMapper">
+
+    <resultMap type="OgGroupPerson" id="OgGroupPersonResult">
+        <result property="groupId"    column="groupId"    />
+        <result property="pid"    column="pid"    />
+        <result property="pname"    column="pname"    />
+        <result property="gpId"    column="gpid"    />
+        <result property="gpOsition"    column="gposition"    />
+        <result property="gpOrder"    column="gp_order"    />
+    </resultMap>
+
+    <sql id="selectOgGroupPersonVo">
+        select groupid, pid, gpid, gposition, gp_order from og_group_person
+    </sql>
+
+    <select id="selectOgGroupPersonList" parameterType="OgGroupPerson" resultMap="OgGroupPersonResult">
+        <include refid="selectOgGroupPersonVo"/>
+        <where>
+            <if test="groupId != null  and groupId != ''"> and groupid = #{groupId}</if>
+            <if test="pid != null  and pid != ''"> and pid = #{pid}</if>
+            <if test="gpOsition != null  and gpOsition != ''"> and gposition = #{gpOsition}</if>
+            <if test="gpOrder != null "> and gp_order = #{gpOrder}</if>
+        </where>
+    </select>
+
+    <select id="selectOgGroupPersonById" parameterType="String" resultMap="OgGroupPersonResult">
+        select ogp.groupid, ogp.pid, ogp.gpid, ogp.gposition, ogp.gp_order, op.pname from og_group_person ogp
+        inner join og_person op on ogp.pid = op.pid
+        where ogp.groupid = #{gpId}
+    </select>
+
+    <insert id="insertOgGroupPerson" parameterType="OgGroupPerson">
+        insert into og_group_person
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="groupId != null  and groupId != ''">groupid,</if>
+            <if test="pid != null  and pid != ''">pid,</if>
+            <if test="gpId != null  and gpId != ''">gpid,</if>
+            <if test="gpOsition != null  and gpOsition != ''">gposition,</if>
+            <if test="gpOrder != null ">gp_order,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="groupId != null  and groupId != ''">#{groupId},</if>
+            <if test="pid != null  and pid != ''">#{pid},</if>
+            <if test="gpId != null  and gpId != ''">#{gpid},</if>
+            <if test="gpOsition != null  and gpOsition != ''">#{gposition},</if>
+            <if test="gpOrder != null ">#{gpOrder},</if>
+         </trim>
+    </insert>
+
+    <update id="updateOgGroupPerson" parameterType="OgGroupPerson">
+        update og_group_person
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="groupId != null  and groupId != ''">groupId = #{groupId},</if>
+            <if test="pid != null  and pid != ''">pid = #{pid},</if>
+            <if test="gpOsition != null  and gpOsition != ''">gpOsition = #{gposition},</if>
+            <if test="gpOrder != null ">gp_order = #{gpOrder},</if>
+        </trim>
+        where gpid = #{gpId}
+    </update>
+
+    <delete id="deleteOgGroupPersonById" parameterType="String">
+        delete from og_group_person where gpid = #{gpId}
+    </delete>
+
+    <delete id="deleteOgGroupPersonByIds" parameterType="String">
+        delete from og_group_person where gpid in
+        <foreach item="gpId" collection="array" open="(" separator="," close=")">
+            #{gpId}
+        </foreach>
+    </delete>
+
+    <!--根据人员id删除对应的工作组信息-->
+    <delete id="deleteGroupByPersonId" parameterType="String">
+        delete from og_group_person
+        where pid = #{pId,jdbcType=VARCHAR}
+    </delete>
+
+</mapper>

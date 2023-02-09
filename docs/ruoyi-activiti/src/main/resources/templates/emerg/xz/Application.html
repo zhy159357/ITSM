@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+	<th:block th:include="include :: header('应用系统列表9')" />
+</head>
+<body class="gray-bg">
+	<div class="container-div">
+		<div class="row">
+			<div class="col-sm-12 search-collapse">
+				<form id="role-form">
+					<input type="hidden" id="eventid" name="eventid">
+					<div class="select-list">
+						<ul>
+							<li>
+								时间单号：<input type="text" name="caption"/>
+							</li>
+
+							<li>
+								<a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+							    <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+							</li>
+						</ul>
+					</div>
+				</form>
+			</div>
+		
+	        <div class="col-sm-12 select-table table-striped">
+			    <table id="bootstrap-table"></table>
+			</div>
+		</div>
+	</div>
+	<th:block th:include="include :: footer" />
+	<script th:inline="javascript">
+		var prefix = ctx + "xz/Application";
+
+		$(function() {
+		    var options = {
+		        url: prefix + "/list",
+		        modalName: "运行事件",
+		        columns: [{
+		            checkbox: true
+		        },
+				{
+					field: 'eventid',
+					title: '运行事件Id',
+                    visible : false
+				},
+		        {
+		            field: 'eventNumber',
+		            title: '事件单号',
+		            sortable: true
+		        }
+		       ]
+		    };
+		    $.table.init(options);
+		});
+
+        function doSubmit(index, layero){
+            var tree = layero.find("iframe")[0].contentWindow.$._tree;
+            var body = layer.getChildFrame('body', index);
+            $("#deptId").val(body.find('#treeId').val());
+            $("#deptName").val(body.find('#treeName').val());
+            layer.close(index);
+        }
+
+        /* 选择外围系统 */
+        function submitHandler(index, layero) {
+            var rows = $.table.selectFirstColumns();
+            if (rows.length == 0) {
+                $.modal.alertWarning("请至少选择一条记录");
+                return;
+            }
+            var sysNameRows = $.table.selectColumns('caption');
+            $.modal.close();
+            // 父页面的方法
+            // parent.selectUsers();
+            // 父页面的变量
+
+			// 外围系统选择赋值
+            parent.$('#eventid').val(rows.join());
+            parent.$('#eventNumber').val(sysNameRows.join());
+
+        }
+
+	</script>
+</body>
+</html>

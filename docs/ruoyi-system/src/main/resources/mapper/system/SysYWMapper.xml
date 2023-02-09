@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.SysYWMapper">
+
+    <resultMap type="SysAddlist" id="SysYWResult">
+        <result property="address_list_id" column="address_list_id"/>
+        <result property="address_list_type" column="address_list_type"/>
+        <result property="create_pid" column="create_pid"/>
+        <result property="orgId" column="orgId"/>
+        <result property="create_time" column="create_time"/>
+        <result property="update_time" column="update_time"/>
+        <result property="update_user_id" column="update_user_id"/>
+        <result property="phone" column="phone"/>
+        <result property="email" column="email"/>
+        <result property="invalidationmark" column="invalidationmark"/>
+        <result property="pname" column="pname"/>
+        <result property="server_name" column="server_name"/>
+        <result property="tel" column="tel"/>
+        <result property="server_order" column="server_order"/>
+        <result property="iscanread" column="iscanread"/>
+        <result property="create_orgid" column="create_orgid"/>
+        <result property="duty" column="duty"/>
+        <result property="responsibility" column="responsibility"/>
+        <result property="memo" column="memo"/>
+    </resultMap>
+
+    <sql id="selectYWVo">
+		select address_list_id,address_list_type,create_pid,orgId,create_time,update_time,update_user_id,phone,email,invalidationmark,pname,server_name,tel,server_order,iscanread,create_orgid,duty,responsibility,memo
+        from  ADDRESS_LIST t
+	</sql>
+
+    <select id="selectYWList" parameterType="SysAddlist" resultMap="SysYWResult">
+        select address_list_id,address_list_type,create_pid,og.orgname as orgId,create_time,t.update_time, update_user_id,
+        phone,email, CASE invalidationmark WHEN ('0') THEN '使用中' ELSE '已停用' END as invalidationmark,pname,server_name,tel,
+        server_order,iscanread,create_orgid,duty,responsibility,t.memo from ADDRESS_LIST t
+        left join og_org og on t.orgId = og.orgId
+        where address_list_type='1'
+        <if test="orgId!=null and orgId!=''">
+            and t.orgId = #{orgId}
+        </if>
+        <if test="invalidationmark != null and invalidationmark != ''">
+            and invalidationmark like concat(concat('%',#{invalidationmark}),'%')
+        </if>
+        <if test="phone != null and phone != ''">
+            and phone like concat(concat('%',#{phone}),'%')
+        </if>
+        <if test="tel != null and tel != ''">
+            and tel like concat(concat('%',#{tel}),'%')
+        </if>
+        <if test="pname != null and pname != ''">
+            and pname like concat(concat('%',#{pname}),'%')
+        </if>
+        <if test="responsibility != null and responsibility != ''">
+            and responsibility like concat(concat('%',#{responsibility}),'%')
+        </if>
+    </select>
+
+    <select id="selectYWById" parameterType="String" resultMap="SysYWResult">
+        select address_list_id,address_list_type,create_pid,og.orgname as orgId,create_time,t.update_time, update_user_id,
+        phone,email,invalidationmark,pname,server_name,tel,
+        server_order,iscanread,create_orgid,duty,responsibility,t.memo from ADDRESS_LIST t
+        left join og_org og on t.orgId = og.orgId
+        where address_list_type = '1' and t.address_list_id =#{address_list_id}
+    </select>
+
+    <insert id="insertYW" parameterType="com.ruoyi.common.core.domain.entity.SysAddlist" useGeneratedKeys="false"
+            keyProperty="id">
+        insert into ADDRESS_LIST(
+        address_list_id,address_list_type,
+        <if test="pname != null and pname != ''">pname,</if>
+        <if test="phone != null and phone != ''">phone,</if>
+        <if test="tel != null and tel != ''">tel,</if>
+        <if test="email != null and email != ''">email,</if>
+        <if test="invalidationmark != null and invalidationmark != ''">invalidationmark,</if>
+        <if test="duty != null and duty != ''">duty,</if>
+        <if test="responsibility != null and responsibility != ''">responsibility,</if>
+        <if test="orgId != null and orgId != ''">orgId</if>
+        )values(
+        #{address_list_id},'1',
+        <if test="pname != null and pname != ''">#{pname},</if>
+        <if test="phone != null and phone != ''">#{phone},</if>
+        <if test="tel != null and tel != ''">#{tel},</if>
+        <if test="email != null and email != ''"> #{email},</if>
+        <if test="invalidationmark != null and invalidationmark != ''">#{invalidationmark},</if>
+        <if test="duty != null and duty != ''">#{duty},</if>
+        <if test="responsibility != null and responsibility != ''">#{responsibility},</if>
+        <if test="orgId != null and orgId != ''">(select orgid from  OG_ORG  og where og.orgname = #{orgId})</if>
+        )
+    </insert>
+    <update id="updateYW" parameterType="SysAddlist">
+        update ADDRESS_LIST
+        <set>
+            <if test="pname != null and pname != ''">pname = #{pname},</if>
+            <if test="phone != null and phone != ''">phone = #{phone},</if>
+            <if test="tel != null and tel != ''">tel = #{tel},</if>
+            <if test="email != null and email != ''">email = #{email},</if>
+            <if test="invalidationmark != null and invalidationmark != ''">invalidationmark = #{invalidationmark},</if>
+            <if test="duty != null and duty != ''">duty = #{duty},</if>
+            <if test="responsibility != null and responsibility != ''">responsibility = #{responsibility},</if>
+            <if test="orgId != null and orgId != ''">orgId = (select orgid from  OG_ORG  og where og.orgname = #{orgId})</if>
+        </set>
+        where address_list_id = #{address_list_id}
+    </update>
+    <delete id="deleteYWByIds" parameterType="SysAddlist">
+        delete  from ADDRESS_LIST  where address_list_id in
+        <foreach collection="array" item="address_list_id" open="(" separator="," close=")">
+            #{address_list_id}
+        </foreach>
+    </delete>
+</mapper>

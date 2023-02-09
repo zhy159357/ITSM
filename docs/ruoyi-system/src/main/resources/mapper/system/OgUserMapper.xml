@@ -1,0 +1,591 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.OgUserMapper">
+
+    <resultMap id="OgUserResult" type="OgUser">
+        <id property="userId" column="userid"/>
+        <result property="pId" column="pid"/>
+        <result property="username" column="username"/>
+        <result property="password" column="password"/>
+        <result property="updateTime" column="update_Time"/>
+        <result property="invalidationMark" column="invalidation_Mark"/>
+        <result property="ipStart" column="ip_Start"/>
+        <result property="ipEnd" column="ip_End"/>
+        <result property="smsCode" column="sms_Code"/>
+        <result property="lastTime" column="last_Time"/>
+        <result property="lCount" column="l_Count"/>
+        <result property="pNotCount" column="p_Not_Count"/>
+        <result property="lockTime" column="lock_Time"/>
+        <result property="pname" column="pname"/>
+        <result property="custNo" column="cust_no"/>
+        <result property="mobilPhone" column="mobil_phone"/>
+        <result property="weakPwd" column="weak_Pwd"/>
+        <result property="currtTime" column="currtTime"/>
+        <result property="status" column="p_flag"/>
+        <result property="email" column="email"/>
+        <result property="orgname" column="orgname"/>
+        <result property="orgId" column="orgid"/>
+    </resultMap>
+    <select id="selectUserByUsername" parameterType="java.lang.String" resultType="java.lang.String">
+        select u.username
+        from OG_USER u
+        where u.username = #{accountName}
+    </select>
+    <select id="selectPersonByUsername" parameterType="java.lang.String" resultType="java.lang.String">
+      select o.username from og_user o, og_person p where o.pid=p.pid and o.username = #{accountName}
+    </select>
+    <select id="selectTimeByUsername" parameterType="java.lang.String" resultMap="OgUserResult">
+        select u.userid,u.pid,u.invalidation_mark,
+        u.sms_code,u.password,
+        u.update_Time,
+        p.pname
+        from OG_USER u left join og_person p on u.pid=p.pid
+        where u.username = #{accountName,jdbcType=VARCHAR}
+    </select>
+    <select id="selectAccountList" parameterType="OgUser" resultMap="OgUserResult">
+        select
+        u.username,u.userid,u.INVALIDATION_MARK,u.cust_no,p.pname,p.mobil_phone,og.orgname,og.orgid,og.level_code,u.pid
+        from OG_USER u
+        left join OG_PERSON p
+        on u.pid = p.pid
+        left join og_org og
+        on p.orgid = OG.orgid
+        <where>
+            <if test="userId!=null and userId!=''">
+                and u.userId = #{userId}
+            </if>
+            <if test="username!=null and username!=''">
+                and u.username like concat('%',concat(#{username},'%'))
+            </if>
+            <if test="custNo!=null and custNo!=''">
+                and u.cust_no like concat('%',concat(#{custNo},'%'))
+            </if>
+            <if test="pname!=null and pname!=''">
+                and p.pname like concat('%',concat(#{pname},'%'))
+            </if>
+            <if test="mobilPhone!=null and mobilPhone!=''">
+                and p.mobil_phone like concat('%',concat(#{mobilPhone},'%'))
+            </if>
+            <if test="invalidationMark!=null and invalidationMark!=''">
+                and u.invalidation_Mark = #{invalidationMark}
+            </if>
+            <if test="orgname!=null and orgname!=''">
+                and og.orgname like concat('%',concat(#{orgname},'%'))
+            </if>
+            <if test="pId!=null and pId!=''">
+                and u.pid=#{pId}
+            </if>
+            <if test="levelCode!=null and levelCode!=''">
+                and og.LEVEL_CODE like concat(#{levelCode},'%')
+            </if>
+        </where>
+    </select>
+
+    <select id="selectUserByLoginName" parameterType="java.util.Map" resultMap="OgUserResult">
+        select u.userid,
+               u.username,
+               u.password,
+               u.pid,
+               u.cust_no,
+               u.update_Time,
+               p.mobil_phone,
+               p.pname                              as loginName,
+               u.SMS_CODE,
+               u.LAST_TIME,
+               u.L_COUNT,
+               u.P_NOT_COUNT,
+               u.LOCK_TIME,
+               u.invalidation_Mark,
+               to_char(sysdate, 'yyyymmddhh24miss') as currtTime
+        from OG_USER u
+                 left join OG_PERSON p on u.pid = p.pid
+        where u.username = #{username}
+    </select>
+
+    <select id="selectUserByLoginNameMysql" parameterType="java.util.Map" resultMap="OgUserResult">
+        select u.userid,
+        u.username,
+        u.password,
+        u.pid,
+        u.cust_no,
+        u.update_Time,
+        p.mobil_phone,
+        p.pname                              as loginName,
+        u.SMS_CODE,
+        u.LAST_TIME,
+        u.L_COUNT,
+        u.P_NOT_COUNT,
+        u.LOCK_TIME,
+        u.invalidation_Mark,
+        unix_timestamp(now()) as currtTime
+        from OG_USER u
+        left join OG_PERSON p on u.pid = p.pid
+        where u.username = #{username}
+    </select>
+
+    <select id="selectUserByPhoneNumber" parameterType="String" resultMap="OgUserResult">
+        select u.userid,
+        u.username,
+        u.password,
+        u.pid,
+        u.cust_no,
+        p.mobil_phone,
+        p.pname as loginName,
+        u.SMS_CODE,
+        u.LAST_TIME,
+        u.L_COUNT,
+        u.P_NOT_COUNT,
+        u.LOCK_TIME,
+        u.invalidation_Mark,
+        to_char(sysdate, 'yyyymmddhh24miss') as currtTime
+        from OG_USER u
+        left join OG_PERSON p on u.pid = p.pid
+        where p.mobil_phone = #{accountName,jdbcType=VARCHAR}
+        <!-- 根据手机号查询默认附带账号表和人员信息表有效标识为1 -->
+        and u.invalidation_Mark = '1' and p.invalidation_Mark='1'
+    </select>
+
+    <select id="selectUserByPhoneNumberMysql" parameterType="String" resultMap="OgUserResult">
+        select u.userid,
+        u.username,
+        u.password,
+        u.pid,
+        u.cust_no,
+        p.mobil_phone,
+        p.pname as loginName,
+        u.SMS_CODE,
+        u.LAST_TIME,
+        u.L_COUNT,
+        u.P_NOT_COUNT,
+        u.LOCK_TIME,
+        u.invalidation_Mark,
+        date_format (NOW(), '%Y%m%d%H%i%s') AS currtTime
+        from OG_USER u
+        left join OG_PERSON p on u.pid = p.pid
+        where p.mobil_phone = #{accountName,jdbcType=VARCHAR}
+        <!-- 根据手机号查询默认附带账号表和人员信息表有效标识为1 -->
+        and u.invalidation_Mark = '1' and p.invalidation_Mark='1'
+    </select>
+
+    <select id="selectOgUserByUserId" parameterType="String" resultMap="OgUserResult">
+        select u.ip_start,
+               u.ip_end,
+               u.pid,
+               u.username,
+               u.userid,
+               u.INVALIDATION_MARK,
+               u.cust_no,
+               p.pname,
+               p.mobil_phone,
+               og.orgname,
+               u.SMS_CODE,
+               u.LAST_TIME,
+               u.L_COUNT,
+               u.P_NOT_COUNT,
+               u.LOCK_TIME,
+               u.update_time,
+               to_char(sysdate, 'yyyymmddhh24miss') as currtTime
+        from OG_USER u
+                 left join OG_PERSON p
+                           on u.pid = p.pid
+                 left join og_org og
+                           on p.orgid = OG.orgid
+        where u.userid = #{userId,jdbcType=VARCHAR}
+    </select>
+
+    <select id="selectOgUserByUserIdMysql" parameterType="String" resultMap="OgUserResult">
+        select u.ip_start,
+               u.ip_end,
+               u.pid,
+               u.username,
+               u.userid,
+               u.INVALIDATION_MARK,
+               u.cust_no,
+               p.pname,
+               p.mobil_phone,
+               og.orgname,
+               og.orgid,
+               u.SMS_CODE,
+               u.LAST_TIME,
+               u.L_COUNT,
+               u.P_NOT_COUNT,
+               u.LOCK_TIME,
+               u.update_time,
+               date_format (NOW(), '%Y%m%d%H%i%s') AS currtTime
+        from OG_USER u
+                 left join OG_PERSON p
+                           on u.pid = p.pid
+                 left join og_org og
+                           on p.orgid = OG.orgid
+        where u.userid = #{userId,jdbcType=VARCHAR}
+    </select>
+
+    <select id="selectOgUserByUsername" parameterType="String" resultMap="OgUserResult">
+        select u.ip_start,
+               u.ip_end,
+               u.pid,
+               u.username,
+               u.userid,
+               u.INVALIDATION_MARK,
+               u.cust_no,
+               p.pname,
+               p.mobil_phone,
+               og.orgid,
+               og.orgname,
+               u.SMS_CODE,
+               u.LAST_TIME,
+               u.L_COUNT,
+               u.P_NOT_COUNT,
+               u.LOCK_TIME,
+               u.update_time
+        from OG_USER u
+                 left join OG_PERSON p
+                           on u.pid = p.pid
+                 left join og_org og
+                           on p.orgid = og.orgid
+        where u.username = #{username,jdbcType=VARCHAR}
+    </select>
+
+    <select id="selectAllocatedListPost" parameterType="OgUser" resultMap="OgUserResult">
+        select u.username,u.userid,u.INVALIDATION_MARK,pe.pname,pe.mobil_phone,og.orgname,u.pid,pe.sex
+        from OG_USER u
+        left join OG_PERSON pe on u.pid = pe.pid
+        left join og_org og on pe.orgid = OG.orgid
+        LEFT join og_r_user_post up on u.userid = up.userid
+        LEFT JOIN og_post p on p.postid = up.postid
+        where p.postid = #{postId,jdbcType=VARCHAR}
+        <if test="username != null and username != ''">
+            AND u.username like concat(concat('%',#{username}),'%')
+        </if>
+        <if test="pname != null and pname != ''">
+            AND pe.pname like concat(concat('%',#{pname}),'%')
+        </if>
+        <if test="orgname != null and orgname != ''">
+            AND og.orgname like concat(concat('%',#{orgname}),'%')
+        </if>
+    </select>
+
+    <select id="selectAllocatedListAll" parameterType="OgUser" resultMap="OgUserResult">
+        select distinct u.userid, u.username,u.INVALIDATION_MARK,pe.pname,pe.mobil_phone,og.orgname,u.pid,pe.sex
+        from OG_USER u
+        left join OG_PERSON pe on u.pid = pe.pid
+        left join og_org og on pe.orgid = OG.orgid
+        LEFT join og_r_user_post up on u.userid = up.userid
+        LEFT JOIN og_post p on p.postid = up.postid
+        where 1 = 1
+        <if test="username != null and username != ''">
+            AND u.username like concat(concat('%',#{username}),'%')
+        </if>
+        <if test="pname != null and pname != ''">
+            AND pe.pname like concat(concat('%',#{pname}),'%')
+        </if>
+        <if test="orgname != null and orgname != ''">
+            AND og.orgname like concat(concat('%',#{orgname}),'%')
+        </if>
+    </select>
+
+
+    <select id="selectUserIdByPId" parameterType="java.lang.String" resultType="java.lang.String">
+        select userid from OG_USER
+        where pid = #{pId,jdbcType=VARCHAR}
+    </select>
+
+    <insert id="insertOgUser" parameterType="OgUser">
+        insert into og_user
+        (
+        <if test="userId!=null and userId!=''">userid</if>
+        <if test="pId!=null and  pId!=''">,pid</if>
+        <if test="username!=null and username!=''">,username</if>
+        <if test="password!=null and password!=''">,password</if>
+        <if test="custNo!=null and custNo!=''">,cust_no</if>
+        <if test="invalidationMark!=null and invalidationMark!=''">,invalidation_mark</if>
+        <if test="updateTime!=null and updateTime!=''">,update_Time</if>
+        )
+        values
+        (
+        <if test="userId!=null and userId!=''">#{userId}</if>
+        <if test="pId!=null and  pId!=''">,#{pId}</if>
+        <if test="username!=null and username!=''">,#{username}</if>
+        <if test="password!=null and password!=''">,#{password}</if>
+        <if test="custNo!=null and custNo!=''">,#{custNo}</if>
+        <if test="invalidationMark!=null and invalidationMark!=''">,#{invalidationMark}</if>
+        <if test="updateTime!=null and updateTime!=''">,#{updateTime}</if>
+        )
+    </insert>
+
+
+    <update id="updateOgUser" parameterType="OgUser">
+        update og_user
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="pId!=null and pId!=''">
+                pid = #{pId},
+            </if>
+            <if test="updateTime!=null and updateTime!=''">
+                update_Time =#{updateTime},
+            </if>
+            <if test="custNo!=null">
+                cust_no =#{custNo},
+            </if>
+            <if test="password!=null and password!=''">
+                password= #{password},
+            </if>
+            <if test="invalidationMark!=null and invalidationMark!=''">
+                invalidation_mark = #{invalidationMark,jdbcType=VARCHAR},
+            </if>
+            <if test="ipStart!=null and ipStart!=''">
+                ip_start = #{ipStart},
+            </if>
+            <if test="ipEnd!=null and ipEnd!=''">
+                ip_end = #{ipEnd},
+            </if>
+            <if test="lCount!=null and lCount!=''">
+                l_Count = #{lCount},
+            </if>
+            <if test="smsCode!=null and smsCode!=''">
+                sms_code = #{smsCode},
+            </if>
+            <if test="pId!=null and pId!=''">
+                userId = #{pId},
+            </if>
+        </trim>
+        where userid = #{userId,jdbcType=VARCHAR}
+    </update>
+    <update id="updateOgUserPwdUnLock" parameterType="OgUser">
+        update og_user
+        set L_COUNT='0',
+            P_NOT_COUNT = '0',
+            LOCK_TIME=''
+        where userid = #{userId,jdbcType=VARCHAR}
+    </update>
+
+    <update id="updateOgUserPwdLock" parameterType="OgUser">
+        update og_user
+        set P_NOT_COUNT = #{pNotCount}
+        where userid = #{userId,jdbcType=VARCHAR}
+    </update>
+    <update id="updateOgUserPwdLockTime" parameterType="OgUser">
+        update og_user
+        set P_NOT_COUNT = #{pNotCount}
+            ,LOCK_TIME  = UNIX_TIMESTAMP(now())
+        where userid = #{userId,jdbcType=VARCHAR}
+    </update>
+    <update id="updateOgUserTelValidNum" parameterType="OgUser">
+        update og_user
+        set L_COUNT = #{lCount}
+        where userid = #{userId,jdbcType=VARCHAR}
+    </update>
+
+    <update id="updateOgUserSms" parameterType="OgUser">
+        update og_user
+        set LAST_TIME= (sysdate - to_date('1970-01-01 08:00:00', 'YYYY-MM-DD HH:MI:SS')) * 24 * 60 * 60 * 1000,
+            sms_code = #{smsCode}
+        where userid = #{userId,jdbcType=VARCHAR}
+    </update>
+
+    <select id="selectUserTelValidByUsername" parameterType="java.util.Map" resultMap="OgUserResult">
+        select u.*,
+                ((sysdate - to_date('1970-01-01 08:00:00', 'YYYY-MM-DD HH:MI:SS')) * 24 * 60 * 60 * 1000) as currtTime
+        from og_user u
+            where u.username = #{username}
+    </select>
+
+    <select id="selectUserTelValidByUsernameMysql" parameterType="java.util.Map" resultMap="OgUserResult">
+         select u.*,
+                ((now() - str_to_date('1970-01-01 08:00:00', 'YYYY-MM-DD HH:MI:SS')) * 24 * 60 * 60 * 1000) as currtTime
+        from og_user u
+            where u.username = #{username}
+    </select>
+
+    <select id="checkAccountNameUnique" parameterType="OgUser" resultType="int">
+        select count(1)
+        from OG_USER u
+        where username = #{username}
+    </select>
+    <!--根据账号密码状态查询用户-->
+    <select id="selectYesUser" parameterType="OgUser" resultMap="OgUserResult">
+        select *
+        from OG_USER u
+        where username = #{username}
+          and password = #{password}
+          and invalidation_Mark = '1'
+    </select>
+
+    <delete id="deleteOgUserByUserIds" parameterType="String">
+        delete from og_user where userid in
+        <foreach item="userid" collection="array" open="(" separator="," close=")">
+            #{userid}
+        </foreach>
+    </delete>
+    <delete id="deleteOgUserByPIds" parameterType="String">
+        delete from og_user where pid in
+        <foreach item="pid" collection="array" open="(" separator="," close=")">
+            #{pid}
+        </foreach>
+    </delete>
+    <select id="selectUserPersonList" parameterType="OgUser" resultMap="OgUserResult">
+       select u.userid,
+       u.username,
+       p.pname,
+       p.p_flag,
+       o.orgname,
+       u.password,
+       p.email,
+       p.mobil_phone,
+       u.sms_code
+  from og_person p, OG_USER u, og_org o
+ where p.pid = u.pid
+   and p.orgid = o.orgid
+   and u.pid=#{pId}
+    </select>
+
+    <select id="selectAllUserPersonList" parameterType="OgUser" resultMap="OgUserResult">
+        select u.userid,
+        u.username,
+        p.pname,
+        p.p_flag,
+        o.orgname,
+        u.password,
+        p.email,
+        p.mobil_phone,
+        u.sms_code from OG_USER u
+        left join OG_PERSON p
+        on u.pid = p.pid
+        left join og_org o
+        on p.orgid = o.orgid
+        <where>
+            and u.INVALIDATION_MARK='1'
+            <if test="updateTime!=null and updateTime!=''">
+                and u.UPDATE_TIME >= #{updateTime}
+            </if>
+            <if test="updateTime!=null and updateTime!=''">
+                and p.UPDATE_TIME >= #{updateTime}
+            </if>
+        </where>
+    </select>
+    <select id="selectPostAndOrgByUser" parameterType="OgUser" resultMap="OgUserResult">
+        select u.userid,
+        u.username,
+        p.pname,
+        p.p_flag,
+        u.password,
+        p.email,
+        p.mobil_phone,
+        u.sms_code from OG_USER u
+        left join OG_PERSON p
+        on u.pid = p.pid
+        LEFT join og_r_user_post up
+        on u.userid = up.userid
+        <where>
+            u.INVALIDATION_MARK='1'
+            and p.INVALIDATION_MARK='1'
+            and p.ORGID = #{orgId}
+            and up.POSTID = #{postId}
+        </where>
+    </select>
+    <select id="selectPostByUser" parameterType="OgUser" resultMap="OgUserResult">
+        select u.userid,
+        u.username,
+        p.pname
+        from OG_USER u
+        inner join OG_PERSON p
+        on u.pid = p.pid
+        inner join og_r_user_post up
+        on u.userid = up.userid
+        <where>
+            u.INVALIDATION_MARK='1'
+            and p.INVALIDATION_MARK='1'
+            and p.ORGID = #{orgId}
+            and up.POSTID = #{postId}
+        </where>
+    </select>
+
+    <select id="selectOgUserList" parameterType="OgUser" resultMap="OgUserResult">
+        select
+        u.username,u.userid,u.cust_no,u.invalidation_mark,u.pid,u.sms_code,u.last_Time,p.pname,p.mobil_phone,p.email
+        from OG_USER u
+        left join OG_PERSON p
+        on u.pid = p.pid
+        <where>
+            <if test="mobilPhone!=null and mobilPhone!=''">
+                and p.mobil_phone like concat('%',concat(#{mobilPhone},'%'))
+            </if>
+            <if test="username!=null and username!=''">
+                and u.username like concat('%',concat(#{username},'%'))
+            </if>
+        </where>
+    </select>
+
+    <select id="selectOgUserByCustNo" parameterType="String" resultMap="OgUserResult">
+        select u.username,u.userid,u.INVALIDATION_MARK,u.cust_no from og_user u
+        <where>
+            <if test="custNo!=null and custNo!=''">
+                and u.cust_no =#{custNo}
+            </if>
+        </where>
+    </select>
+    <insert id="insertOgUserBatch" parameterType="java.util.List">
+        insert into og_user
+        (userId,pid,username,password,invalidation_mark,update_Time
+        <!--        <if test="userId!=null and userId!=''">userId</if>-->
+        <!--        <if test="pId!=null and  pId!=''">,pid</if>-->
+        <!--        <if test="username!=null and username!=''">,username</if>-->
+        <!--        <if test="password!=null and password!=''">,password</if>-->
+        <!--        <if test="custNo!=null and custNo!=''">,cust_no</if>-->
+        <!--        <if test="invalidationMark!=null and invalidationMark!=''">,invalidation_mark</if>-->
+        <!--        <if test="updateTime!=null and updateTime!=''">,update_Time</if>-->
+        )
+        values
+        <foreach item="account" index="list" collection="list" separator=",">
+            (#{account.userId},#{account.pId},#{account.username},#{account.password},#{account.invalidationMark},#{account.updateTime}
+            <!--            <if test="account.userId!=null and account.userId!=''">#{account.userId}</if>-->
+            <!--            <if test="account.pId!=null and  item.account.pId!=''">,#{account.pId}</if>-->
+            <!--            <if test="account.username!=null and account.username!=''">,#{account.username}</if>-->
+            <!--            <if test="account.password!=null and account.password!=''">,#{account.password}</if>-->
+            <!--            <if test="account.custNo!=null and account.custNo!=''">,#{account.custNo}</if>-->
+            <!--            <if test="account.invalidationMark!=null and account.invalidationMark!=''">,#{account.invalidationMark}</if>-->
+            <!--            <if test="account.updateTime!=null and account.updateTime!=''">,#{account.updateTime}</if>-->
+            )
+        </foreach>
+    </insert>
+    <update id="updateOgUserBatch" parameterType="java.util.List">
+        update og_user
+        <trim prefix="set" suffixOverrides=",">
+
+            <trim prefix="username =case" suffix="end,">
+                <foreach collection="list" item="i" index="index">
+                        when userId=#{i.userId} then #{i.username}
+                </foreach>
+            </trim>
+            <trim prefix="password =case" suffix="end,">
+                <foreach collection="list" item="i" index="index">
+                        when userId=#{i.userId} then #{i.password}
+                </foreach>
+            </trim>
+
+            <trim prefix="invalidationMark =case" suffix="end,">
+                <foreach collection="list" item="i" index="index">
+                        when userId=#{i.userId} then #{i.invalidationMark}
+                </foreach>
+            </trim>
+            <trim prefix="updateTime =case" suffix="end,">
+                <foreach collection="list" item="i" index="index">
+                        when userId=#{i.userId} then #{i.updateTime}
+                </foreach>
+            </trim>
+
+        </trim>
+        where
+        <foreach collection="list" separator="or" item="i" index="index">
+            userId=#{i.userId}
+        </foreach>
+    </update>
+
+    <select id="selectCurrentOrgUsers" parameterType="String" resultMap="OgUserResult">
+        select u.* from og_user u left join og_person p on p.pid = u.pid where p.orgid in (select p.orgid from og_user u left join og_person p on u.pid = p.pid where u.userid = #{userId})
+    </select>
+
+    <select id="selectCurrentOrgLeaders" parameterType="String" resultMap="OgUserResult">
+        select u.* from og_user u left join og_person p on p.pid = u.pid where p.orgid in (select p.orgid from og_user u left join og_person p on u.pid = p.pid where u.userid = #{userId}) and p.leader = 1
+    </select>
+
+</mapper>

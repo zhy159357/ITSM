@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:include="include :: header('受理数据问题单')"/>
+    <th:block th:include="include :: select2-css"/>
+    <th:block th:include="include :: summernote-css"/>
+    <th:block th:include="include :: datetimepicker-css"/>
+</head>
+
+<body class="white-bg">
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+    <form class="form-horizontal m" id="form-dataq-add" th:object="${imBizDataq}">
+        <input id="taskId" name="params[taskId]" th:value="${taskId}" type="hidden"/>
+        <input th:field="*{imId}" id="imId" th:type="hidden"/>
+        <input th:field="*{currentState}" id="currentState" th:type="hidden"/>
+        <input th:field="*{assessorId}" th:type="hidden"/>
+        <input th:field="*{ifJs}" th:type="hidden"/>
+
+        <div class="panel panel-default">
+            <div class="panel-heading" data-target="#demo" data-toggle="collapse" style="background-color: #3c8dbc">
+                <h4 class="panel-title">
+                    基本信息
+                </h4>
+            </div>
+            <div id="demo" class="in">
+                <div class="row form-group">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label ">数据问题单号：</label>
+                            <div class="col-sm-8">
+                                <input class="form-control" id="num" type="text" th:field="*{imNo}" readonly>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label ">系统重要级别:</label>
+                            <div class="col-sm-8">
+                                <select class="form-control" name="sysLv" id="sysLv" disabled
+                                        th:with="type=${@dict.getParaType('CS_LEVEL')}">
+                                    <option value=""></option>
+                                    <option th:each="dict : ${type}" th:text="${dict.valueDetail}" disabled
+                                            th:value="${dict.value}" th:field="*{sysLv}"></option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="row form-group">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label ">问题起因:</label>
+                            <div class="col-sm-8">
+                                <select class="form-control" name="probleCause" id="probleCause" required disabled
+                                        th:with="type=${@dict.getParaType('SJChangReason')}">
+                                    <option value=""></option>
+                                    <option th:each="dict : ${type}" th:text="${dict.valueDetail}"
+                                            th:value="${dict.value}" disabled th:field="*{probleCause}"></option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label ">问题发生时间：</label>
+                            <div class="col-sm-8">
+                                <div class="input-group date">
+                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                    <input name="problemDiscoveryTime"
+                                           th:field="*{problemDiscoveryTime}" class="form-control calcTotalSecondInput"
+                                           disabled type="text" required>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row form-group">
+
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label " style="width:12.5%">评估人：</label>
+                            <div class="col-sm-8" style="width:83.5%">
+                                <input name="assessorId" th:value="*{assessorId}" id="assessorId" disabled
+                                       class="form-control" type="hidden">
+                                <input id="assessorName" th:value="*{assessorName}" onclick="selectBusinessPg()"
+                                       class="form-control" type="text" disabled required>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row form-group">
+
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label" style="width:12.5%">涉及系统：</label>
+                            <div class="col-sm-8" style="width:83.5%">
+                                <input type="hidden" class="form-control" name="sysId" id="sysId" th:field="*{sysId}"/>
+                                <input type="text" class="form-control" name="sysName" id="sysName"
+                                       onclick="selectAppSys()" disabled
+                                       th:field="*{sysName}" required/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel panel-default">
+            <div class="panel-heading" data-target="#demo4" data-toggle="collapse" style="background-color: #3c8dbc">
+                <h4 class="panel-title">
+                    详细信息
+                </h4>
+            </div>
+            <div class="in" id="demo4">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label  text-right " style="width:12.5%">问题标题：</label>
+                            <div class="col-sm-10" style="width:83.5%">
+                                <input class="form-control" disabled id="probleTitle" maxlength="64" name="probleTitle"
+                                       th:field="*{probleTitle}" type="text">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label " style="width:12.5%">问题描述：</label>
+                            <div class="col-sm-10" style="width:83.5%">
+                                <textarea class="form-control" cols="20" disabled id="probleDesc"
+                                          maxlength="2000" name="probleDesc" rows="10"
+                                          th:field="*{probleDesc}"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label " style="width:12.5%">问题影响：</label>
+                            <div class="col-sm-10" style="width:83.5%">
+                                <textarea class="form-control" cols="20" disabled id="probleImpact" maxlength="2000"
+                                          name="probleImpact" required rows="10" th:field="*{probleImpact}"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="panel panel-default">
+            <div class="panel-heading" data-target="#demo2" data-toggle="collapse" style="background-color: #3c8dbc">
+
+                <h4 class="panel-title">
+                    应急预案
+                </h4>
+            </div>
+            <div class="panel-collapse in" id="demo2">
+
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label " style="width:12.5%">应急预案：</label>
+                            <div class="col-sm-10" style="width:83.5%">
+                                <textarea class="form-control" cols="20" disabled id="emergencyPlan" maxlength="2000"
+                                          name="emergencyPlan" rows="10" th:field="*{emergencyPlan}"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading" data-target="#demo3" data-toggle="collapse" style="background-color: #3c8dbc">
+
+                <h4 class="panel-title">
+                    方案
+                </h4>
+            </div>
+            <div class="panel-collapse in" id="demo3">
+
+                <div class="row" id="jsfa" hidden>
+                    <div class="col-sm-12">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label is-required" style="width:12.5%">技术整改方案：</label>
+                            <div class="col-sm-10" style="width:83.5%">
+                                <textarea class="form-control" cols="20" id="technicalRectificationPlan"
+                                          maxlength="2000" name="technicalRectificationPlan" rows="10" required
+                                ></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row" id="ywjjqk" hidden>
+                    <div class="col-sm-12">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label is-required" style="width:12.5%">业务解决情况：</label>
+                            <div class="col-sm-10" style="width:83.5%">
+                                <textarea id="businessSolutions" name="businessSolutions" rows="10" cols="20"
+                                          class="form-control" maxlength="2000" required></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row" id="jiejuetime" hidden>
+                    <div class="col-sm-12">
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label is-required" style="width:12.5%">技术计划解决时间：</label>
+                            <div class="col-sm-8" style="width:83.5%">
+                                <div class="input-group date">
+                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                    <input name="technicalPlanTime" id="technicalPlanTime"
+                                           style="background-color: #fff; opacity: 1;"
+                                           class="form-control calcTotalSecondInput" readonly type="text">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row" id="jjqk" hidden>
+                    <div class="col-sm-12">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label is-required" style="width:12.5%">技术解决情况：</label>
+                            <div class="col-sm-10" style="width:83.5%">
+                                <textarea id="technicalSolutions" name="technicalSolutions" rows="10" cols="20"
+                                          class="form-control" maxlength="2000" required></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row form-group" id="bbdh" hidden>
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label is-required" style="width:12.5%">关联版本单号：</label>
+                            <div class="col-sm-8" style="width:83.5%">
+                                <input class="form-control" type="text" onclick="glbb()" id="versionNo" name="versionNo"
+                                       required readonly style='background-color: #ffffff'>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="tabs-container">
+                    <ul class="nav nav-tabs">
+                        <li class="active"><a aria-expanded="true" data-toggle="tab" href="#tab-1">流程记录</a>
+                        </li>
+                        <li class=""><a aria-expanded="true" data-toggle="tab" href="#tab-2"> 附件</a>
+                        </li>
+                    </ul>
+                    <div class="tab-content">
+                        <div class="tab-pane active" id="tab-1">
+                            <div class="panel-body">
+                                <div class="col-sm-12 select-table table-striped">
+                                    <table id="history-table"></table>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane" id="tab-2">
+                            <div class="panel-body">
+                                <div class="btn-group-sm" id="toolbar1" role="group">
+                                    <a class="btn btn-primary multiple disabled" onclick="downloadFile()">
+                                        <i class="fa fa-download"></i> 下载附件
+                                    </a>
+                                </div>
+                                <div class="col-sm-12 select-table table-striped">
+                                    <table id="file-table"></table>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<div class="row">
+    <div class="col-sm-offset-5 col-sm-10">
+        <div id="shouli" hidden>
+            <button class="btn btn-sm btn-primary" onclick="shouliPass()" type="button"><i hidden class="fa fa-check"></i>受理
+            </button>
+            <button class="btn btn-sm btn-primary" onclick="zhuanfaPass()" type="button"><i class="fa fa-check"></i>转发
+            </button>
+            <button class="btn btn-sm btn-danger" onclick="sendIssue()" type="button"><i class="fa fa-remove"></i>退回
+            </button>
+            <button class="btn btn-sm btn-danger" onclick="closeItem()" type="button"><i class="fa fa-remove"></i>关闭
+            </button>
+        </div>
+        <div id="jstg">
+            <button class="btn btn-sm btn-primary" onclick="jiejuePass()" type="button"><i class="fa fa-check"></i>通过
+            </button>
+            <button class="btn btn-sm btn-danger" onclick="closeItem()" type="button"><i class="fa fa-remove"></i>关闭
+            </button>
+        </div>
+        <div id="ywtg" hidden>
+            <button class="btn btn-sm btn-primary" onclick="yewuTgPass()" type="button"><i class="fa fa-check"></i>通过
+            </button>
+            <button class="btn btn-sm btn-danger" onclick="closeItem()" type="button"><i class="fa fa-remove"></i>关闭
+            </button>
+        </div>
+
+
+    </div>
+</div>
+<script th:src="@{/js/activiti.js}"></script>
+<th:block th:include="include :: footer"/>
+<th:block th:include="include :: summernote-js"/>
+<th:block th:include="include :: select2-js"/>
+<th:block th:include="include :: datetimepicker-js"/>
+<script type="text/javascript">
+
+    var prefix_attachment = ctx + "pub/attachment";
+
+    var prefix = ctx + "system/dataq";
+
+    var wtcurrent = [[${imBizDataq.currentState}]];
+
+
+    $(function () {
+
+        puFolwHistory($("#imId").val());
+
+        iscurrentjs(wtcurrent);
+
+
+        var options = {
+            url: prefix_attachment + "/list",
+            id: "file-table",
+            createUrl: prefix_attachment + "/add",
+            updateUrl: prefix_attachment + "/edit/{id}",
+            removeUrl: prefix_attachment + "/remove",
+            detailUrl: prefix_attachment + "/edit/{id}",
+            sortName: "fileTime",
+            sortOrder: "desc",
+            singleSelect: true,
+            toolbar: "toolbar1",
+            clickToSelect: true,
+            queryParams: queryParams,
+            modalName: "附件列表",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'atId',
+                    title: '附件ID',
+                    visible: false
+                },
+                {
+                    field: 'person.pId',
+                    title: '上传人员Id',
+                    visible: false
+                },
+                {
+                    field: 'fileName',
+                    title: '文件名称'
+                },
+                {
+                    field: 'person.pName',
+                    title: '上传人'
+                },
+                {
+                    field: 'size',
+                    title: '文件大小'
+                },
+                {
+                    field: 'memo',
+                    title: '文件描述'
+                },
+                {
+                    field: 'fileTime',
+                    title: '上传时间'
+                }]
+        };
+        $.table.init(options);
+    });
+
+    //附件
+    function queryParams(params) {
+        var search = $.table.queryParams(params);
+        search.ownerId = $("#imId").val() == '' ? 'version_public_add_no_owner_id' : $("#imId").val();
+        return search;
+    }
+
+
+    // 附件下载
+    function downloadFile() {
+        var rows = $.table.selectFirstColumns();
+        var atId = rows[0];
+        var ownerId = $("#imId").val();
+        var url = ctx + "pub/attachment/download/" + ownerId + "/" + atId;
+        window.location.href = url;
+    }
+
+
+    //日期格式
+    $("input[name='technicalPlanTime']").datetimepicker({
+        autoclose: true,
+        format: "yyyy-mm-dd hh:ii:ss",
+        minView: 0,
+        minuteStep: 1,
+        startDate: new Date()
+    });
+
+
+    function iscurrentjs(value) {
+        //状态为待技术受理
+        if ("03" == value) {
+            $("#shouli").show();
+            $("#jstg").hide();
+            $("#ywtg").hide();
+
+            $("#jsfa").show();
+            $("#jiejuetime").show();
+            $("#jjqk").hide();
+            $("#bbdh").hide();
+            $("#ywjjqk").hide();
+        }
+        //状态为技术受理中
+        if ("04" == value) {
+            $("#jstg").show('');
+            $("#shouli").hide('');
+            $("#ywtg").hide('');
+
+            $("#jjqk").show();
+            $("#bbdh").show();
+            $("#jiejuetime").hide();
+            $("#jsfa").hide();
+            $("#ywjjqk").hide();
+        }
+        //状态为业务受理中
+        if ("11" == value) {
+            $("#ywtg").show();
+            $("#shouli").hide('');
+            $("#jstg").hide('');
+
+            $("#ywjjqk").show();
+            $("#jjqk").hide();
+            $("#bbdh").hide();
+            $("#jiejuetime").hide();
+            $("#jsfa").hide();
+        }
+
+    }
+
+    function glbb() {
+        $.modal.open("关联版本单", prefix + "/glbb");
+    }
+
+
+    function shouliPass() {
+        if ($.validate.form()) {
+            var data = $("#form-dataq-add").serializeArray();
+            $.operate.saveTab(prefix + "/saveAccept", data);
+        } else {
+            return;
+        }
+    }
+
+    function yewuTgPass() {
+        if ($.validate.form()) {
+            var data = $("#form-dataq-add").serializeArray();
+            $.operate.saveTab(prefix + "/saveFlowJj", data);
+        } else {
+            return;
+        }
+    }
+
+    function jiejuePass() {
+        if ($.validate.form()) {
+            var data = $("#form-dataq-add").serializeArray();
+            $.operate.saveTab(prefix + "/saveFlowJj", data);
+        } else {
+            return;
+        }
+    }
+
+
+    function zhuanfaPass() {
+        //打开转发页面
+        var taskId = $('#taskId').val();
+        var imId = $('#imId').val();
+        $.modal.openTab("转发", prefix + "/transmit/" + imId + "/" + taskId);
+    }
+
+    function sendIssue() {
+        //打开退回页面
+        var taskId = $('#taskId').val();
+        var imId = $('#imId').val();
+        $.modal.openTab("退回", prefix + "/sendIssue/" + imId + "/" + taskId);
+    }
+
+    $("#form-dataq-add").validate({
+        onkeyup: false,
+        rules: {},
+        messages: {},
+        focusCleanup: true
+    });
+
+
+</script>
+</body>
+</html>

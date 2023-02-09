@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:margin-top="http://www.w3.org/1999/xhtml">
+<head>
+    <th:block th:include="include :: header('新增4环境单')"/>
+    <th:block th:include="include :: ztree-css"/>
+    <th:block th:include="include :: footer"/>
+    <th:block th:include="include :: ztree-js"/>
+    <th:block th:include="include :: select2-css"/>
+    <th:block th:include="include :: select2-js"/>
+    <th:block th:include="include :: jquery-cxselect-js"/>
+    <th:block th:include="include :: bootstrap-fileinput-js"/>
+    <th:block th:include="include :: datetimepicker-js"/>
+    <th:block th:include="include :: datetimepicker-css"/>
+
+
+</head>
+<body class="white-bg">
+<div id="accountDiv">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form class="form-horizontal m" id="form-issue-add">
+            <input id="issuefxId" name="issuefxId" type="hidden"/>
+            <input id="wordNodeId" name="wordNodeId" type="hidden" th:value="${id}"/>
+            <input id="type" name="type" type="hidden" th:value="${type}"/>
+            <h4 class="form-header h4">基本信息</h4>
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label is-required">用户名：</label>
+                        <div class="col-sm-8">
+                            <input class="form-control" type="text" name="username" id="username" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label is-required">主组：</label>
+                        <div class="col-sm-8">
+                            <input name="primaryGroup" id="primaryGroup" class="form-control" type="text"
+                                   maxlength="11" th:value="${createrPhone}" required>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label is-required">副组：</label>
+                        <div class="col-sm-8">
+                            <input name="secondaryGroup" id="secondaryGroup" class="form-control" type="text" maxlength="11"
+                                   th:value="${createrPhone}" required>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label ">挂载目录：</label>
+                        <div class="col-sm-8">
+                            <input name="mountDirectory" id="mountDirectory" class="form-control" type="text"
+                                   maxlength="11" required>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label ">空间大小：</label>
+                        <div class="col-sm-8">
+                            <input class="form-control" type="text" name="spaceSize" id="spaceSize"
+                                   required>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label is-required">shell脚本：</label>
+                        <div class="col-sm-8">
+                            <input name="shell" id="shell" class="form-control" type="text" maxlength="11"
+                                    required>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-offset-5 col-sm-10">
+                    <button type="button" class="btn btn-sm btn-primary" onclick="submitHandler(1)"><i
+                            class="fa fa-check"></i>提 交
+                    </button>&nbsp;
+                    <button type="button" class="btn btn-sm btn-danger" onclick="closeOpen()"><i
+                            class="fa fa-window-close"></i>关 闭
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<script th:src="@{/js/activiti.js}"></script>
+<script th:src="@{/js/issue.js}"></script>
+<script th:inline="javascript">
+    var prefix = ctx + "twUserDb";
+    var id = [[${id}]];
+    var types = [[${type}]];
+    var nodeType = [[${nodeType}]];
+    $(function () {
+        $("#reporttime").datetimepicker({
+            format: "yyyy-mm-dd hh:ii:ss",
+            autoclose: true,
+            minView: 0,
+            minuteStep: 1,
+            endDate: new Date()
+        });
+        $("#fenLeiOne").hide();
+        $("#fenLeiTwo").hide();
+    });
+
+    /*	$(".isInside").bind("click", function (e) {
+            $(e.target).closest("li").next().find(".checkpf").prop("checked", "checked");
+        })*/
+
+    function closeOpen() {
+        $.modal.close();
+    }
+
+
+    function submitHandler(type) {
+        if (!$.validate.form()) {
+            $.modal.alertWarning("参数填写不全，请继续填写");
+            return;
+        }
+        //saveAllSheet();
+        var type = $("#reviewerId").val(types);
+        var data = $("#form-issue-add").serializeArray();
+        console.log(data);
+        $.operate.saveTab(prefix + "/addUserDb", data);
+        $.modal.close();
+        parent.$("#bootstrap-table1").bootstrapTable('refreshOptions',{pageNumber:1});
+    }
+
+    function getMultiusers() {
+        var url = prefix + "/multiusers/0"
+        $.modal.open("选择协同评估人", url);
+    }
+
+    /*选择技术经理*/
+    function getReviewerId() {
+        var userIds = $("#reviewerId").val();
+        if ($.common.isEmpty(userIds)) {
+            userIds = "0";
+        }
+        var url = prefix + "/reviewer/" + userIds;
+        $.modal.open("选择审核人", url);
+    }
+
+    /*选择技术经理*/
+    function getAuditId() {
+        var userIds = $("#auditId").val();
+        if ($.common.isEmpty(userIds)) {
+            userIds = "0";
+        }
+        var url = prefix + "/audit/" + userIds;
+        $.modal.open("选择技术经理", url);
+    }
+
+    var enuParam_index = 1;
+
+
+    function remove() {
+        var enuParam = document.getElementById("enuParam" + (enuParam_index - 1));
+        if (enuParam_index == 1) {
+            $.modal.alertWarning("至少保留一个！");
+        } else {
+            enuParam.parentNode.removeChild(enuParam);
+            enuParam_index--;
+        }
+
+    }
+
+
+    //转问题单直接保存
+    function saveAllSheet() {
+        var obj1 = '';
+        var obj1Type = '';
+        <!--业务事件单-->
+        if ($("#fmNo").val() != "" && $("#fmNo").val() != null) {
+            obj1 = $("#fmNo").val();
+            obj1Type = '14';
+        }
+        <!--监控事件单-->
+        if ($("#fmjkNo").val() != "" && $("#fmjkNo").val() != null) {
+            obj1 = $("#fmjkNo").val();
+            obj1Type = '13';
+        }
+        <!--数据变更单-->
+        if ($("#cmNo").val() != "" && $("#cmNo").val() != null) {
+            obj1 = $("#cmNo").val();
+            obj1Type = '16';
+        }
+        <!--隐患排查单-->
+        if ($("#csNo").val() != "" && $("#csNo").val() != null) {
+            obj1 = $("#csNo").val();
+            obj1Type = '15';
+        }
+        if (obj1 != '' && obj1Type != '') {
+            var data = new Array();
+            data.push({name: 'obj1Id', value: obj1});
+            data.push({name: 'obj2Id', value: $("#issuefxId").val()});
+            data.push({name: 'type', value: obj1Type});
+            $.operate.save(ctx + "system/relation/add", data);
+        }
+    }
+
+    function orgPer(obj, type) {
+        var options = "<option value=''>请选择</option>";
+        var orgId = obj.value;
+        if ($.common.isEmpty(orgId)) {
+            if (-1 == type) {
+                $("#reviewerId").html("");
+                $("#reviewerId").append(options);
+
+            } else if (0 == type) {
+                var id = obj.id;
+                var num = id.match(/businessOrg(\S*)/)[1];
+                $("#businessId" + num).html("");
+                $("#businessId" + num).append(options);
+            } else {
+                $("#businessId" + type).html("");
+                $("#businessId" + type).append(options);
+            }
+            return;
+        }
+
+        $.ajax({
+            cache: true,
+            type: "POST",
+            url: prefix + "/orgPer",
+            data: {
+                "orgId": orgId,
+                "type": type
+            },
+            async: false,
+            error: function (request) {
+                $.modal.alertError("系统错误");
+            },
+            success: function (data) {
+                if (-1 == type) {
+                    $("#reviewerId").html("");
+                    for (var ak = 0; ak < data.length; ak++) {
+                        options += "<option value='" + data[ak].pId + "'>" + data[ak].pName + "</option> \n";
+                    }
+                    $("#reviewerId").append(options);
+
+                } else if (0 == type) {
+                    var id = obj.id;
+                    var num = id.match(/businessOrg(\S*)/)[1];
+                    $("#businessId" + num).html("");
+                    for (var ak = 0; ak < data.length; ak++) {
+                        options += "<option value='" + data[ak].pId + "'>" + data[ak].pName + "</option> \n";
+                    }
+                    $("#businessId" + num).append(options);
+                } else {
+                    $("#businessId" + type).html("");
+                    for (var ak = 0; ak < data.length; ak++) {
+                        options += "<option value='" + data[ak].pId + "'>" + data[ak].pName + "</option> \n";
+                    }
+                    $("#businessId" + type).append(options);
+                }
+            }
+        });
+    }
+
+    function clearMultiusers() {
+        $("#multiusers").val("");
+        $("#multiusersName").val("");
+    }
+
+    //加载一级分类
+    function getFmKindOneList() {
+        var issueFenlei = $("#issueFenlei").val();
+        var parentId = 'WTD0001';
+        if ('6' == issueFenlei || '3' == issueFenlei) {
+            $("#fenLeiOne").show();
+            $("#fenLeiTwo").show();
+            if ('6' == issueFenlei) {
+                $("#tardingNameDiv").show();
+                parentId = 'WTD0002';
+            } else {
+                $("#tardingNameDiv").hide();
+                $("#tardingName").val('');
+            }
+            $.ajax({
+                cache: true,
+                type: "POST",
+                url: prefix + "/selectFmKindBySysidForWTD",
+                data: {
+                    "category": "1",
+                    "parentId": parentId
+                },
+                async: false,
+                success: function (data) {
+                    var options = "<option value=''>请选择</option>";
+                    $("#oneType").html("");
+                    for (var ak = 0; ak < data.rows.length; ak++) {
+                        options += "<option value='" + data.rows[ak].id + "'>" + data.rows[ak].name + "</option> \n";
+                    }
+                    $("#oneType").append(options);
+                }
+            });
+            $("#twoType").html("");
+            $("#twoType").append("<option value=''>请选择</option>");
+            $("#threeType").html("");
+            $("#threeType").append("<option value=''>请选择</option>");
+        } else {
+            $("#fenLeiOne").hide();
+            $("#fenLeiTwo").hide();
+            $("#oneType").html("");
+            $("#twoType").html("");
+            $("#threeType").html("");
+            $("#tardingName").val('');
+        }
+    }
+
+    //根据一级分类查询二级分类
+    function getFmKindTwoList() {
+        var parentId = $("#oneType").val();
+        if (parentId) {
+            $.ajax({
+                cache: true,
+                type: "POST",
+                url: prefix + "/selectFmKindBySysidForWTD",
+                data: {
+                    "category": "2",
+                    "parentId": parentId
+                },
+                async: false,
+                success: function (data) {
+                    var options = "<option value=''>请选择</option>";
+                    $("#twoType").html("");
+                    for (var ak = 0; ak < data.rows.length; ak++) {
+                        options += "<option value='" + data.rows[ak].id + "'>" + data.rows[ak].name + "</option> \n";
+                    }
+                    $("#twoType").append(options);
+                }
+            });
+        }
+        $("#threeType").html("");
+        $("#threeType").append("<option value=''>请选择</option>");
+    }
+
+    //根据二级分类查询三级分类
+    function getFmKindThreeList() {
+        var parentId = $("#twoType").val();
+        if (parentId) {
+            $.ajax({
+                cache: true,
+                type: "POST",
+                url: prefix + "/selectFmKindBySysidForWTD",
+                data: {
+                    "category": "3",
+                    "parentId": parentId
+                },
+                async: false,
+                success: function (data) {
+                    var options = "<option value=''>请选择</option>";
+                    $("#threeType").html("");
+                    for (var ak = 0; ak < data.rows.length; ak++) {
+                        options += "<option value='" + data.rows[ak].id + "'>" + data.rows[ak].name + "</option> \n";
+                    }
+                    $("#threeType").append(options);
+                }
+            });
+        }
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('环境单5')"/>
+</head>
+<body class="gray-bg">
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-12 search-collapse">
+            <form id="account-form">
+                <div class="select-list">
+                    <li >
+                        <label style="width: 80px">环境类型：</label>
+                        <select id="twType" name="twType" class="form-control"
+                                th:with="myFlag=${@pubParaValue.selectPubParaValueByParaName('pub_myFlag')}">
+                            <option value="">---请选择---</option>
+                            <option th:each="itype : ${myFlag}" th:text="${itype.valueDetail}"
+                                    th:value="${itype.value}"></option>
+                        </select>
+                    </li>
+                    <li>
+                        <label style="width: 80px">Paso名称：</label>
+                        <select id="pasoName" name="pasoName" class="form-control"
+                                th:with="myFlag=${@pubParaValue.selectPubParaValueByParaName('pub_myFlag')}">
+                            <option value="">---请选择---</option>
+                            <option th:each="itype : ${myFlag}" th:text="${itype.valueDetail}"
+                                    th:value="${itype.value}"></option>
+                        </select>
+                    </li>
+                    <li>
+                        <label style="width: 80px">系统名称：</label>
+                        <input id="appSystemCode" name="appSystemCode"   hidden >
+                        <input id="sysName" name="sysName" type="text"   class="form-control" onclick="selectOneApplication()" readonly style="background-color: #fdfdfd" >
+                    </li>
+                    <li>
+                        <a class="btn btn-primary btn-rounded btn-sm" id="searchBut" onclick="$.table.search()"><i
+                                class="fa fa-search"></i>&nbsp;搜索</a>
+                        <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.resetAll('account-form')"><i
+                                class="fa fa-refresh"></i>&nbsp;重置</a>
+                    </li>
+                </div>
+            </form>
+        </div>
+
+        <div class="btn-group-sm" id="toolbar" role="group">
+            <a class="btn btn-success" onclick="add()">
+                <i class="fa fa-plus"></i> 添加
+            </a>
+            <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()">
+                <i class="fa fa-remove"></i> 删除
+            </a>
+            <a class="btn btn-primary single disabled" onclick="update()">
+                <i class="fa fa-edit"></i> 修改
+            </a>
+            <a class="btn btn-info single disabled" onclick="detail()">
+                <i class="fa fa-search"></i> 查看详情
+            </a>
+            <a data-toggle="dropdown" class="btn btn-warning btn-sm dropdown-toggle" aria-expanded="false">导出<span class="caret"></span></a>
+            <ul class="dropdown-menu"><li><a onclick="$.table.exportExcel()">导出所有页</a></li></ul>
+        </div>
+        <div class="col-sm-12 select-table table-striped">
+            <table id="bootstrap-table" style="table-layout:fixed;"></table>
+        </div>
+    </div>
+</div>
+
+<th:block th:include="include :: footer"/>
+<th:block th:include="include :: select2-css"/>
+<th:block th:include="include :: select2-js"/>
+<th:block th:include="include :: bootstrap-select-js"/>
+<th:block th:include="include :: bootstrap-select-css"/>
+<th:block th:include="include :: datetimepicker-js"/>
+<th:block th:include="include :: datetimepicker-css"/>
+
+<script th:src="@{/js/activiti.js}"></script>
+<script th:inline="javascript">
+    var prefix = ctx + "twHistory";
+    var prefix_sys = ctx + "activiti/run";
+    $(function () {
+        // 回车键搜索
+        document.onkeydown = function (e) {
+            var ev = document.all ? window.event : e;
+            if (ev.keyCode == 13) {
+                $('#searchBut').trigger('click');
+                return false;
+            }
+        };
+        var options = {
+            //createUrl: prefix + "/add",
+            url: prefix + "/getList",
+            exportUrl: prefix + "/export",
+            //新增页面
+            updateUrl: ctx + "twHistory/edit/{id}",
+            removeUrl: ctx + "twHistory/remove",
+            showColumns: false,
+            modalName: "环境单",
+            pagination: true,
+            clickToSelect: true,
+            pageSize: 10,
+            queryParams: queryParams,
+            singleSelect: true,
+            striped: true,
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'id',
+                    title: '主键',
+                    visible: false
+                },
+                {
+                    field: 'hostIp',
+                    title: '主机Ip',
+                },
+                {
+                    field: 'twType',
+                    title: '环境类型'
+                },
+                {
+                    field: 'sysName',
+                    title: '应用系统'
+                },
+                {
+                    field: 'nodeType',
+                    title: '节点类型',
+                },
+                {
+                    field: 'pasoName',
+                    title: 'Paso名称'
+                },
+                {
+                    field: 'deptLeader',
+                    title: '部门负责人'
+                },
+                {
+                    field: 'personLeader',
+                    title: '负责人'
+                },
+                {
+                    field: 'dbType',
+                    title: '数据库类型',
+                },
+                {
+                    field: 'updateTime',
+                    title: '更新时间'
+                }, {
+                    field: 'status',
+                    title: '状态',
+                }
+            ]
+        };
+        $.table.init(options);
+    });
+    // 选择应用系统
+    function selectOneApplication() {
+        $.modal.open("选择应用系统", prefix + "/selectOneApplication/1");
+    }
+    function queryParams(data) {
+        var search = $.table.queryParams(data);
+        return search;
+    }
+    function edit() {
+        var id = $.table.selectFirstColumns();
+        // if (eventStatus != '1') {
+        //     $.modal.alertWarning("只有待提交状态的事件单才允许编辑.");
+        //     return;
+        // }
+        var url = prefix_sys + "/edit/" + id;
+        $.modal.openTab("修改申请单", url);
+
+    }
+    function add() {
+        var url = prefix + "/add";
+        $.modal.openTab("新增", url);
+
+    }
+    function update() {
+        var id = $.table.selectFirstColumns();
+        // if (eventStatus != '1') {
+        //     $.modal.alertWarning("只有待提交状态的事件单才允许编辑.");
+        //     return;
+        // }
+        var url = prefix + "/edit/" + id;
+        $.modal.openTab("修改环境单", url);
+
+    }
+
+    function detail() {
+        var id = $.table.selectFirstColumns();
+        var url = prefix + "/historyview/" + id;
+        $.modal.openTab("查询详情", url);
+
+    }
+
+    function editServer() {
+        var id = $.table.selectFirstColumns();
+        // if (eventStatus != '1') {
+        //     $.modal.alertWarning("只有待提交状态的事件单才允许编辑.");
+        //     return;
+        // }
+        var url = prefix + "/editServer/" + id;
+        $.modal.openTab("编辑服务信息", url);
+
+    }
+
+    //详情
+    function view() {
+        var url = ctx + "issueList/activiti/view?"
+
+        var row = $.table.selectFirstColumns("bootstrap-table");
+        if ("list" == type) {
+            url = ctx + "issueList/build/view/";
+            $.modal.openTab("详情", url + row[0]);
+        } else {
+            $.modal.openTab("详情", url + "issuefxId=" + row[0] + "&&type=flowview");
+        }
+    }
+
+</script>
+</body>
+</html>

@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.activiti.mapper.ReportFormsMapper">
+
+    <resultMap type="com.ruoyi.common.core.domain.entity.FormsInspection" id="FormsInspectionResult">
+        <id property="id" column="id"/>
+        <result property="sysName" column="sys_name"/>
+        <result property="sysCompany" column="sys_company"/>
+        <result property="inspectors" column="inspectors"/>
+        <result property="contact" column="contact"/>
+        <result property="sysManager" column="sys_manager"/>
+        <result property="lastDate" column="last_date"/>
+        <result property="startTime" column="start_time"/>
+        <result property="endTime" column="end_time"/>
+        <result property="loginStates" column="login_states"/>
+        <result property="loginAnnotation" column="login_annotation"/>
+        <result property="dateStates" column="date_states"/>
+        <result property="dateAnnotation" column="date_annotation"/>
+        <result property="bookStates" column="book_states"/>
+        <result property="bookAnnotation" column="book_annotation"/>
+        <result property="appStates" column="app_states"/>
+        <result property="appAnnotation" column="app_annotation"/>
+        <result property="globalStates" column="global_states"/>
+        <result property="globalAnnotation" column="global_annotation"/>
+        <result property="limitStates" column="limit_states"/>
+        <result property="limitAnnotation" column="limit_annotation"/>
+        <result property="uploadStates" column="upload_states"/>
+        <result property="uploadAnnotation" column="upload_annotation"/>
+        <result property="osStates" column="os_states"/>
+        <result property="osAnnotation" column="os_annotation"/>
+        <result property="networkStates" column="network_states"/>
+        <result property="networkAnnotation" column="network_annotation"/>
+        <result property="accessStates" column="access_states"/>
+        <result property="accessAnnotation" column="access_annotation"/>
+        <result property="databaseStates" column="database_states"/>
+        <result property="databaseAnnotation" column="database_annotation"/>
+        <result property="remark" column="remark"/>
+    </resultMap>
+
+    <select id="selectInspectionList" parameterType="com.ruoyi.common.core.domain.entity.FormsInspection" resultMap="FormsInspectionResult">
+        select * from forms_inspection
+        <where>
+            <if test="sysName != null  and sysName != ''">and sys_name = #{sysName}</if>
+            <if test="sysCompany != null  and sysCompany != ''">and sys_company = #{sysCompany}</if>
+            <if test="inspectors != null  and inspectors != ''">and inspectors = #{inspectors}</if>
+            <if test="sysManager != null  and sysManager != ''">and sys_manager = #{sysManager}</if>
+        </where>
+    </select>
+
+    <select id="selectFormsById" parameterType="com.ruoyi.common.core.domain.entity.FormsInspection" resultMap="FormsInspectionResult">
+        select * from forms_inspection where id = #{id}
+    </select>
+
+    <delete id="deleteInspectionById" parameterType="String">
+            delete from forms_inspection
+            where id = #{id}
+    </delete>
+
+    <insert id="insertInspection" parameterType="String">
+            insert into forms_inspection
+            (id,sys_name,sys_company,inspectors,contact,sys_manager,last_date,start_time,end_time,login_states,
+            login_annotation,date_states,date_annotation,book_states, book_annotation, app_states, app_annotation,
+            global_states,global_annotation,limit_states,limit_annotation,upload_states,upload_annotation,os_states,
+            os_annotation,network_states,network_annotation,access_states,access_annotation,database_states,
+            database_annotation,remark)
+            values(
+                #{id},#{sysName},#{sysCompany},#{inspectors},#{contact},#{sysManager},#{lastDate},#{startTime},
+                #{endTime},#{loginStates},#{loginAnnotation},#{dateStates},#{dateAnnotation},#{bookStates},
+                #{bookAnnotation},#{appStates},#{appAnnotation},#{globalStates},#{globalAnnotation},#{limitStates},
+                #{limitAnnotation},#{uploadStates},#{uploadAnnotation},#{osStates},#{osAnnotation},#{networkStates},
+                #{networkAnnotation},#{accessStates},#{accessAnnotation},#{databaseStates},#{databaseAnnotation},
+                #{remark}
+            )
+    </insert>
+
+    <update id="updateInspection" parameterType="String">
+            update forms_inspection
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="sysName != null  and sysName != ''">sys_name = #{sysName},</if>
+            <if test="sysCompany != null  and sysCompany != ''">sys_company = #{sysCompany},</if>
+            <if test="inspectors != null  and inspectors != ''">inspectors = #{inspectors},</if>
+            <if test="contact != null  and contact != ''">contact = #{contact},</if>
+            <if test="sysManager != null  and sysManager != ''">sys_manager = #{sysManager},</if>
+            <if test="lastDate != null  and lastDate != ''">last_date = #{lastDate},</if>
+            <if test="startTime != null  and startTime != ''">start_time = #{startTime},</if>
+            <if test="endTime != null  and endTime != ''">end_time = #{endTime},</if>
+            <if test="loginStates != null  and loginStates != ''">login_states = #{loginStates},</if>
+            <if test="loginAnnotation != null  and loginAnnotation != ''">login_annotation = #{loginAnnotation},</if>
+            <if test="dateStates != null  and dateStates != ''">date_states = #{dateStates},</if>
+            <if test="dateAnnotation != null  and dateAnnotation != ''">date_annotation = #{dateAnnotation},</if>
+            <if test="bookStates != null  and bookStates != ''">book_states = #{bookStates},</if>
+            <if test="bookAnnotation != null  and bookAnnotation != ''">book_annotation = #{bookAnnotation},</if>
+            <if test="appStates != null  and appStates != ''">app_states = #{appStates},</if>
+            <if test="appAnnotation != null  and appAnnotation != ''">app_annotation = #{appAnnotation},</if>
+            <if test="globalStates != null  and globalStates != ''">global_states = #{globalStates},</if>
+            <if test="globalAnnotation != null  and globalAnnotation != ''">global_annotation = #{globalAnnotation},</if>
+            <if test="limitStates != null  and limitStates != ''">limit_states = #{limitStates},</if>
+            <if test="limitAnnotation != null  and limitAnnotation != ''">limit_annotation = #{limitAnnotation},</if>
+            <if test="uploadStates != null  and uploadStates != ''">upload_states = #{uploadStates},</if>
+            <if test="uploadAnnotation != null  and uploadAnnotation != ''">upload_annotation = #{uploadAnnotation},</if>
+            <if test="osStates != null  and osStates != ''">os_states = #{osStates},</if>
+            <if test="osAnnotation != null  and osAnnotation != ''">os_annotation = #{osAnnotation},</if>
+            <if test="networkStates != null  and networkStates != ''">network_states = #{networkStates},</if>
+            <if test="networkAnnotation != null  and networkAnnotation != ''">network_annotation = #{networkAnnotation},</if>
+            <if test="accessStates != null  and accessStates != ''">access_states = #{accessStates},</if>
+            <if test="accessAnnotation != null  and accessAnnotation != ''">access_annotation = #{accessAnnotation},</if>
+            <if test="databaseStates != null  and databaseStates != ''">database_states = #{databaseStates},</if>
+            <if test="databaseAnnotation != null  and databaseAnnotation != ''">database_annotation = #{databaseAnnotation},</if>
+            <if test="remark != null  and remark != ''">remark = #{remark},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+</mapper>

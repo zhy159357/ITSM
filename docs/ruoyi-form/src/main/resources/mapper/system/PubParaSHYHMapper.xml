@@ -1,0 +1,125 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.form.mapper.PubParaSHYHMapper">
+    <resultMap id="pubParaResult" type="com.ruoyi.form.domain.PubParaSHYH">
+        <id property="paraId" column="PARA_ID" jdbcType="VARCHAR"></id>
+        <result property="paraName" column="PARA_NAME"></result>
+        <result property="paraExplain" column="PARA_EXPLAIN"></result>
+        <result property="state" column="STATE"></result>
+        <result property="enable" column="enable" />
+        <result property="updateFlag" column="UPDATE_FLAG"></result>
+    </resultMap>
+
+
+    <sql id="selectParaNameVo">
+          select p.para_id,p.para_name,p.para_explain,p.state,p.enable,p.update_flag
+             from pub_para p
+    </sql>
+
+    <sql id="pubParaValueOV">
+        select
+            pv.para_value_id,
+            pv.para_id,
+            pv.value,
+            pv.value_detail,
+            pv.serail
+        from pub_paravalue pv
+    </sql>
+
+    <select id="selectPubParaList" resultMap="pubParaResult" parameterType="com.ruoyi.form.domain.PubParaSHYH">
+        <include refid="selectParaNameVo"/>
+        where 1 = 1
+        <if test="paraName!=null and paraName!=''">and para_name like concat('%',concat(#{paraName},'%'))</if>
+        <if test="updateFlag!=null and updateFlag!=''">and update_flag =#{updateFlag}</if>
+        <if test="paraExplain != null and paraExplain !=''"> and para_explain like concat('%',concat(#{paraExplain},'%'))</if>
+    </select>
+
+    <!--自定义表单一对多查询 主查询-->
+    <select id="selectPubParaCustomerList" resultMap="customerParaList" parameterType="com.ruoyi.form.domain.PubParaSHYH">
+        <include refid="selectParaNameVo"/>
+        where 1 = 1 and enable = '1' and state = '1'
+        <if test="paraName!=null and paraName!=''">and para_name like concat('%',concat(#{paraName},'%'))</if>
+        <if test="updateFlag!=null and updateFlag!=''">and update_flag =#{updateFlag}</if>
+        <if test="paraExplain != null and paraExplain !=''"> and para_explain like concat('%',concat(#{paraExplain},'%'))</if>
+    </select>
+    <!--自定义表单一对多查询 子查询-->
+    <select id="queryPubParaValue" resultType="com.ruoyi.common.core.domain.entity.PubParaValue">
+        <include refid="pubParaValueOV" />
+        where pv.para_id=#{id}
+    </select>
+
+    <resultMap id="customerParaList" type="com.ruoyi.form.domain.PubParaSHYH">
+        <id property="paraId" column="PARA_ID" jdbcType="VARCHAR" />
+        <result property="paraName" column="PARA_NAME" />
+        <result property="paraExplain" column="PARA_EXPLAIN" />
+        <result property="state" column="STATE" />
+        <result property="enable" column="enable" />
+        <result property="updateFlag" column="UPDATE_FLAG" />
+        <collection property="childrenList" ofType="com.ruoyi.common.core.domain.entity.PubParaValue"
+                    select="queryPubParaValue" column="para_id" />
+    </resultMap>
+
+    <select id="checkParaNameUnique" parameterType="String" resultMap="pubParaResult">
+        <include refid="selectParaNameVo"/>
+        where para_name = #{paraName}
+    </select>
+
+    <select id="selectPubParaById" parameterType="String" resultMap="pubParaResult">
+        <include refid="selectParaNameVo"></include>
+        where p.para_id = #{paraId}
+    </select>
+
+    <insert id="insertPubPara" parameterType="com.ruoyi.form.domain.PubParaSHYH">
+        insert into pub_para
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="paraId!=null and paraId!=''">para_id,</if>
+            <if test="paraName!=null and paraName!=''">para_name,</if>
+            <if test="paraExplain!=null and paraExplain!=''">para_explain,</if>
+            <if test="state!=null and state!=''">state,</if>
+            <if test="enable!=null and enable!=''">enable,</if>
+           <if test="updateFlag!=null and updateFlag!=''">update_flag</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="paraId!=null and paraId!=''">#{paraId},</if>
+            <if test="paraName!=null and paraName!=''">#{paraName},</if>
+            <if test="paraExplain!=null and paraExplain!=''">#{paraExplain},</if>
+            <if test="state!=null and state!=''">#{state},</if>
+            <if test="enable!=null and enable!=''">#{enable},</if>
+            <if test="updateFlag!=null and updateFlag!=''">#{updateFlag}</if>
+        </trim>
+    </insert>
+
+    <update id="updatePubParaById" parameterType="com.ruoyi.form.domain.PubParaSHYH">
+        update pub_para
+        <trim prefix="SET" suffixOverrides=",">
+        <if test="paraName!=null and paraName!=''">
+            para_name = #{paraName},
+        </if>
+        <if test="paraExplain!=null and paraExplain!=''">
+            para_explain = #{paraExplain},
+        </if>
+        <if test="state!=null and state!=''">
+            state = #{state},
+        </if>
+        <if test="enable!=null and enable!=''">
+            enable = #{enable}
+        </if>
+        </trim>
+        where para_id = #{paraId}
+    </update>
+    <delete id="deleteByParaId" parameterType="String">
+        delete from pub_para where para_id =#{paraId,jdbcType=VARCHAR}
+    </delete>
+
+    <select id="selectPubParaByparaName" parameterType="String" resultMap="pubParaResult">
+        <include refid="selectParaNameVo"></include>
+        where p.para_name = #{paraName}
+    </select>
+
+
+
+
+
+
+</mapper>

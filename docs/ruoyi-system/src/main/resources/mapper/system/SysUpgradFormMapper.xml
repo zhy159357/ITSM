@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.SysUpgradFormMapper">
+
+    <resultMap type="SysUpgradForm" id="SysUpgradFormResult">
+        <result property="id"       column="id"  />
+        <result property="sysNumber"    column="sys_number"  />
+        <result property="sysName"     column="sys_name"  />
+        <result property="sysContractor"  column="sys_contractor"  />
+        <result property="itemLeader"         column="item_leader"  />
+        <result property="tel"         column="tel"  />
+        <result property="applyDate"       column="apply_date"  />
+        <result property="dept"     column="dept"     />
+        <result property="currentVersion"       column="current_version"  />
+        <result property="upgradedVersion"       column="upgraded_version"  />
+        <result property="relatedSystems"       column="related_systems"  />
+        <result property="startTime"       column="start_time"  />
+        <result property="endTime"       column="end_time"  />
+        <result property="upgradeReason"       column="upgrade_reason"  />
+        <result property="upgradeContent"       column="upgrade_content"  />
+        <result property="remarks"       column="remarks"  />
+        <result property="leaderSign"       column="leader_sign"  />
+        <result property="leaderSignTime"       column="leader_sign_time"  />
+        <result property="sysOpinion"       column="sys_opinion"  />
+        <result property="sysOpinionTime"       column="sys_opinion_time"  />
+        <result property="collectiveUnitOpinion"       column="collective_unit_opinion"  />
+        <result property="collectiveUnitTime"       column="collective_unit_time"  />
+        <result property="bureauUnitOpinion"       column="bureau_unit_opinion"  />
+        <result property="creatTime"       column="creat_time"  />
+    </resultMap>
+
+    <sql id="selectSysUpgradForm">
+        SELECT
+            id,
+            sys_number,
+            sys_name,
+            sys_contractor,
+            item_leader,
+            tel,
+            apply_date,
+            dept,
+            current_version,
+            upgraded_version,
+            related_systems,
+            start_time,
+            end_time,
+            upgrade_reason,
+            upgrade_content,
+            remarks,
+            leader_sign,
+            leader_sign_time,
+            sys_opinion,
+            sys_opinion_time,
+            collective_unit_opinion,
+            collective_unit_time,
+            bureau_unit_opinion,
+            creat_time
+        FROM
+            sys_upgrade_form
+    </sql>
+
+    <select id="selectSysUpgradFormList" parameterType="SysUpgradForm" resultMap="SysUpgradFormResult">
+        <include refid="selectSysUpgradForm"/>
+        <where>
+            <if test="sysNumber != null and sysNumber != ''">
+                AND sys_number like concat(concat('%',#{sysNumber}),'%')
+            </if>
+            <if test="sysName != null and sysName != ''">
+                AND sys_name like concat(concat('%',#{sysName}),'%')
+            </if>
+            <if test="itemLeader != null and itemLeader != ''">
+                AND item_leader like concat(concat('%',#{itemLeader}),'%')
+            </if>
+            <if test="applyDate != null and applyDate != ''">
+                AND apply_date &gt;= #{applyDate}
+            </if>
+            <if test="tel != null and tel != ''">
+                AND tel = #{tel}
+            </if>
+            <if test="startTime != null and startTime != ''">
+                AND start_time &gt;= #{startTime}
+            </if>
+            <if test="endTime != null and endTime != ''">
+                AND end_time &lt;= #{endTime}
+            </if>
+        </where>
+
+        ORDER BY creat_time DESC
+    </select>
+
+    <insert id="insertSysUpgradForm" parameterType="SysUpgradForm">
+        insert into sys_upgrade_form (
+            <if test="id != null and id != ''">id,</if>
+            <if test="sysNumber != null and sysNumber != ''">sys_number,</if>
+            <if test="sysName != null and sysName != ''" >sys_name, </if>
+            <if test="sysContractor != null and sysContractor != ''">sys_contractor, </if>
+            <if test="itemLeader != null and itemLeader != ''">item_leader,</if>
+            <if test="tel != null and tel != ''">tel,</if>
+            <if test="applyDate != null and applyDate != ''">apply_date,</if>
+            <if test="dept != null and dept != ''" >dept,</if>
+            <if test="currentVersion != null and currentVersion != ''">current_version,</if>
+            <if test="upgradedVersion != null and upgradedVersion != ''">upgraded_version,</if>
+            <if test="relatedSystems != null and relatedSystems != ''">related_systems,</if>
+            <if test="startTime != null and startTime != ''">start_time,</if>
+            <if test="endTime != null and endTime != ''">end_time,</if>
+            <if test="upgradeReason != null and upgradeReason != ''">upgrade_reason,</if>
+            <if test="upgradeContent != null and upgradeContent != ''">upgrade_content,</if>
+            <if test="remarks != null and remarks != ''">remarks,</if>
+            <if test="leaderSign != null and leaderSign != ''">leader_sign,</if>
+            <if test="leaderSignTime != null and leaderSignTime != ''">leader_sign_time,</if>
+            <if test="sysOpinion != null and sysOpinion != ''">sys_opinion,</if>
+            <if test="sysOpinionTime != null and sysOpinionTime != ''">sys_opinion_time,</if>
+            <if test="collectiveUnitOpinion != null and collectiveUnitOpinion != ''">collective_unit_opinion, </if>
+            <if test="collectiveUnitTime != null and collectiveUnitTime != ''">collective_unit_time,</if>
+            <if test="bureauUnitOpinion != null and bureauUnitOpinion != ''">bureau_unit_opinion, </if>
+            <if test="creatTime != null and creatTime != ''">creat_time</if>
+        )values(
+            <if test="id != null and id != ''">#{id},</if>
+            <if test="sysNumber != null and sysNumber != ''">#{sysNumber},</if>
+            <if test="sysName != null and sysName != ''" >#{sysName}, </if>
+            <if test="sysContractor != null and sysContractor != ''">#{sysContractor}, </if>
+            <if test="itemLeader != null and itemLeader != ''">#{itemLeader},</if>
+            <if test="tel != null and tel != ''">#{tel},</if>
+            <if test="applyDate != null and applyDate != ''">#{applyDate},</if>
+            <if test="dept != null and dept != ''" >#{dept},</if>
+            <if test="currentVersion != null and currentVersion != ''">#{currentVersion},</if>
+            <if test="upgradedVersion != null and upgradedVersion != ''">#{upgradedVersion},</if>
+            <if test="relatedSystems != null and relatedSystems != ''">#{relatedSystems},</if>
+            <if test="startTime != null and startTime != ''">#{startTime},</if>
+            <if test="endTime != null and endTime != ''">#{endTime},</if>
+            <if test="upgradeReason != null and upgradeReason != ''">#{upgradeReason},</if>
+            <if test="upgradeContent != null and upgradeContent != ''">#{upgradeContent},</if>
+            <if test="remarks != null and remarks != ''">#{remarks},</if>
+            <if test="leaderSign != null and leaderSign != ''">#{leaderSign},</if>
+            <if test="leaderSignTime != null and leaderSignTime != ''">#{leaderSignTime},</if>
+            <if test="sysOpinion != null and sysOpinion != ''">#{sysOpinion},</if>
+            <if test="sysOpinionTime != null and sysOpinionTime != ''">#{sysOpinionTime},</if>
+            <if test="collectiveUnitOpinion != null and collectiveUnitOpinion != ''">#{collectiveUnitOpinion},</if>
+            <if test="collectiveUnitTime != null and collectiveUnitTime != ''">#{collectiveUnitTime},</if>
+            <if test="bureauUnitOpinion != null and bureauUnitOpinion != ''">#{bureauUnitOpinion},</if>
+            <if test="creatTime != null and creatTime != ''">#{creatTime} </if>
+        )
+    </insert>
+
+    <select id="selectSysUpgradFormById" parameterType="String" resultMap="SysUpgradFormResult">
+        <include refid="selectSysUpgradForm"/>
+        where id = #{id}
+    </select>
+
+    <select id="selectSysUpgradFormByCode" parameterType="String" resultMap="SysUpgradFormResult">
+        <include refid="selectSysUpgradForm"/>
+        where sys_number = #{sysNumber}
+    </select>
+
+    <update id="updateSysUpgradForm" parameterType="SysUpgradForm">
+        update sys_upgrade_form
+        <set>
+            <if test="sysNumber != null and sysNumber != ''">sys_number = #{sysNumber},</if>
+            <if test="sysName != null and sysName != ''" >sys_name = #{sysName}, </if>
+            <if test="sysContractor != null and sysContractor != ''">sys_contractor = #{sysContractor}, </if>
+            <if test="itemLeader != null and itemLeader != ''"> item_leader = #{itemLeader},</if>
+            <if test="tel != null and tel != ''"> tel = #{tel},</if>
+            <if test="applyDate != null and applyDate != ''"> apply_date = #{applyDate},</if>
+            <if test="dept != null and dept != ''" > dept = #{dept},</if>
+            <if test="currentVersion != null and currentVersion != ''"> current_version = #{currentVersion},</if>
+            <if test="upgradedVersion != null and upgradedVersion != ''"> upgraded_version = #{upgradedVersion},</if>
+            <if test="relatedSystems != null and relatedSystems != ''"> related_systems = #{relatedSystems},</if>
+            <if test="startTime != null and startTime != ''"> start_time = #{startTime},</if>
+            <if test="endTime != null and endTime != ''"> end_time = #{endTime},</if>
+            <if test="upgradeReason != null and upgradeReason != ''"> upgrade_reason = #{upgradeReason},</if>
+            <if test="upgradeContent != null and upgradeContent != ''"> upgrade_content = #{upgradeContent},</if>
+            <if test="remarks != null and remarks != ''"> remarks = #{remarks},</if>
+            <if test="leaderSign != null and leaderSign != ''"> leader_sign = #{leaderSign},</if>
+            <if test="leaderSignTime != null and leaderSignTime != ''"> leader_sign_time = #{leaderSignTime},</if>
+            <if test="sysOpinion != null and sysOpinion != ''"> sys_opinion = #{sysOpinion},</if>
+            <if test="sysOpinionTime != null and sysOpinionTime != ''"> sys_opinion_time = #{sysOpinionTime},</if>
+            <if test="collectiveUnitOpinion != null and collectiveUnitOpinion != ''">collective_unit_opinion = #{collectiveUnitOpinion}, </if>
+            <if test="collectiveUnitTime != null and collectiveUnitTime != ''"> collective_unit_time = #{collectiveUnitTime},</if>
+            <if test="bureauUnitOpinion != null and bureauUnitOpinion != ''">bureau_unit_opinion = #{bureauUnitOpinion}, </if>
+            <if test="creatTime != null and creatTime != ''"> creat_time = #{creatTime}</if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <select id="getByCount" parameterType="String" resultType="int">
+         select count(*) from sys_upgrade_form where sys_number = #{sysNumber}
+    </select>
+
+
+
+    <delete id="deleteSysUpgradFormByIds" parameterType="String">
+        delete from sys_upgrade_form where id in
+        <foreach collection="array" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

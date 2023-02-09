@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+	<th:block th:include="include :: header('修改部门')" />
+</head>
+<body class="white-bg">
+	<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+		<form class="form-horizontal m" id="form-dept-edit" th:object="${dept}">
+			<input id="treeId" name="parentId" type="hidden" th:value="${dept.parentId}"/>
+			<input id="deptId" name="orgId" type="hidden" th:value="${dept.orgId}"/>
+			<div class="form-group">
+				<label class="col-sm-3 control-label is-required">机构代码：</label>
+				<div class="col-sm-8">
+					<input class="form-control" type="text" name="orgCode" id="orgCode" required th:field="*{orgCode}">
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-3 control-label is-required">机构名称：</label>
+				<div class="col-sm-8">
+					<input class="form-control" type="text" name="orgName" id="orgName" required th:field="*{orgName}">
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label class="col-sm-3 control-label is-required">上级机构：</label>
+				<div class="col-sm-8">
+					<div class="input-group">
+						<input class="form-control" type="text"  id="treeName" th:field="*{parentName}" readonly="true" required/>
+						<span class="input-group-addon"><i class="fa fa-search"></i></span>
+					</div>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-3 control-label ">机构级别：</label>
+				<div class="col-sm-8">
+					<input class="form-control" type="text" name="orgLv" id="orgLv"  th:readonly="readonly" th:field="*{orgLv}">
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-3 control-label is-required">总部标记：</label>
+				<div class="col-sm-8">
+					<select th:name="branchMark" class="form-control m-b" required th:field="*{branchMark}" th:with="type=${@pubParaValue.selectPubParaValueByParaName('branchMark')}">
+						<option th:each="value : ${type}" th:text="${value.valueDetail}" th:value="${value.value}"></option>
+					</select>
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label class="col-sm-3 control-label is-required">内部标记：</label>
+				<div class="col-sm-8">
+					<select th:name="branchMark" class="form-control m-b" required th:field="*{inoutsideMark}" th:with="type=${@pubParaValue.selectPubParaValueByParaName('inoutsideMark')}">
+						<option th:each="value : ${type}" th:text="${value.valueDetail}" th:value="${value.value}"></option>
+					</select>
+				</div>
+			</div>
+<!--			<div class="form-group">
+				<label class="col-sm-3 control-label is-required">是否牵头机构：</label>
+				<div class="col-sm-8">
+					<select id="orgLeader" name="orgLeader" class="form-control" th:field="*{orgLeader}"
+							th:with="type=${@pubParaValue.selectPubParaValueByParaName('org_leader')}">
+						<option value="0">请选择</option>
+						<option th:each="value : ${type}" th:text="${value.valueDetail}" th:value="${value.value}"></option>
+					</select>
+				</div>
+			</div>-->
+			<div class="form-group">
+				<label class="col-sm-3 control-label is-required">机构状态：</label>
+				<div class="col-sm-8">
+					<select th:name="status" class="form-control m-b" th:field="*{invalidationMark}">
+						<option th:selected="*{invalidationMark == '1'}" value="1">启用</option>
+						<option th:selected="*{invalidationMark == '0'}" value="0">停止</option>
+					</select>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-3 control-label ">层级码：</label>
+				<div class="col-sm-8">
+					<input class="form-control" type="text" name="levelCode" id="levelCode" th:readonly="readonly" th:field="*{levelCode}">
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-3 control-label is-required">厂商类别：</label>
+				<div class="col-sm-8">
+					<select th:name="type" class="form-control m-b" required th:field="*{type}">
+						<option th:selected="*{type == '0'}" value="0">支撑类</option>
+						<option th:selected="*{type == '1'}" value="2">核心类</option>
+					</select>
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label class="col-sm-3 control-label ">运维总人数：</label>
+				<div class="col-sm-8">
+					<input class="form-control" type="text" name="operaternum" id="operaternum" th:field="*{operaternum}" isNum="true">
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-3 control-label">备注：</label>
+				<div class="col-sm-8">
+					<textarea name="memo" maxlength="500" class="form-control" rows="3" th:field="*{memo}"></textarea>
+				</div>
+			</div>
+		</form>
+	</div>
+	<th:block th:include="include :: footer" />
+	<script type="text/javascript">
+		var prefix = ctx + "system/dept";
+		$("#form-dept-edit").validate({
+			focusCleanup: true,
+			onkeyup: false,
+			rules:{
+				deptName:{
+					remote: {
+		                url: prefix + "/checkDeptNameUnique",
+		                type: "post",
+		                dataType: "json",
+		                data: {
+		                	"orgId": function() {
+		                        return $("#deptId").val();
+		                    },
+		                    "parentId": function() {
+		                        return $("input[name='parentId']").val();
+		                    },
+		        			"orgName": function() {
+		                        return $.common.trim($("#orgName").val());
+		                    }
+		                },
+		                dataFilter: function(data, type) {
+		                	return $.validate.unique(data);
+		                }
+		            }
+				},
+			},
+			messages: {
+		        "deptName": {
+		            remote: "部门已经存在"
+		        }
+		    },
+		    focusCleanup: true
+		});
+		
+		function submitHandler() {
+	        if ($.validate.form()) {
+	        	$.operate.save(prefix + "/edit", $('#form-dept-edit').serialize());
+	        }
+	    }
+	
+		/*如果是顶级机构(邮政金融运维)则没有上级部门，所以加判断*/
+		function isTopOrg() {
+			if($("#treeId").val() != ''){
+                selectDeptTree();
+			}else{
+			    $("#treeName").val('');
+			}
+        }
+
+        function selectDeptTree() {
+            var options = {
+                title: '部门选择',
+                width: "380",
+                url: prefix + "/selectDeptTreeAll",
+                callBack: doSubmit
+            };
+            $.modal.openOptions(options);
+        }
+		
+		function doSubmit(index, layero){
+			var tree = layero.find("iframe")[0].contentWindow.$._tree;
+			if ($.tree.notAllowLastLevel(tree)) {
+	   			var body = layer.getChildFrame('body', index);
+	   			$("#treeId").val(body.find('#treeId').val());
+	   			$("#treeName").val(body.find('#treeName').val());
+	   			layer.close(index);
+			}
+		}
+	</script>
+</body>
+</html>

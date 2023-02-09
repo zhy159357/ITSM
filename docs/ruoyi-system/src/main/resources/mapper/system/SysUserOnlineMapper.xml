@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.SysUserOnlineMapper">
+
+	<resultMap type="SysUserOnline" id="SysUserOnlineResult">
+		<id     property="sessionId"         column="sessionId"         />
+		<result property="loginName"         column="login_name"        />
+		<result property="deptName"          column="dept_name"         />
+		<result property="ipaddr"            column="ipaddr"            />
+		<result property="loginLocation"     column="login_location"    />
+		<result property="browser"           column="browser"           />
+		<result property="os"                column="os"                />
+		<result property="status"            column="status"            />
+		<result property="startTimestamp"    column="start_timestamp"   />
+		<result property="lastAccessTime"    column="last_access_time"  />
+		<result property="expireTime"        column="expire_time"       />
+		<result property="userId"        column="user_id"       />
+	</resultMap>
+	
+	<sql id="selectOnlineVo">
+       select * from (select sessionId, login_name, dept_name, ipaddr, login_location, browser, os, status, start_timestamp, last_access_time, expire_time, user_id
+	   from sys_user_online
+    </sql>
+	<sql id="selectOnlineVo1">
+      SELECT sessionId, login_name, dept_name, ipaddr, login_location, browser, os, STATUS, start_timestamp, last_access_time, expire_time, user_id FROM sys_user_online
+    </sql>
+
+	<select id="selectOnlineById" parameterType="java.util.Map" resultMap="SysUserOnlineResult">
+		<include refid="selectOnlineVo"/>
+		where sessionid = #{sessionid} order by last_access_time desc ) suo where  rownum = 1
+	</select>
+
+	<select id="selectOnlineByIdMysql" parameterType="java.util.Map" resultMap="SysUserOnlineResult">
+		<include refid="selectOnlineVo1"/>
+		where sessionid = #{sessionid} order by last_access_time desc LIMIT 0, 1
+
+	</select>
+
+	<update id="updateOnlineLastAccessTime" parameterType="SysUserOnline">
+		update sys_user_online
+		<trim prefix="SET" suffixOverrides=",">
+			<if test="lastAccessTime != null">
+				last_access_time = #{lastAccessTime},
+			</if>
+			<if test="userId != null and userId != ''">
+				user_id = #{userId},
+			</if>
+		</trim>
+		where sessionId = #{sessionId}
+	</update>
+
+	<insert id="saveOnline" parameterType="SysUserOnline">
+		insert into sys_user_online(
+		sessionId,
+		login_name,
+		<if test="deptName != null and deptName != ''">dept_name, </if>
+		<if test="ipaddr != null and ipaddr != ''">ipaddr, </if>
+		<if test="loginLocation != null and loginLocation != ''">login_location, </if>
+		<if test="browser != null and browser != ''">browser, </if>
+		<if test="os != null and os != ''">os, </if>
+		<if test="userId != null and userId != ''">user_id, </if>
+		status,
+		start_timestamp,
+		last_access_time,
+		expire_time
+		)values (
+        #{sessionId},
+        #{loginName},
+        <if test="deptName != null and deptName != ''">#{deptName}, </if>
+        <if test="ipaddr != null and ipaddr != ''">#{ipaddr}, </if>
+        <if test="loginLocation != null and loginLocation != ''">#{loginLocation}, </if>
+        <if test="browser != null and browser != ''">#{browser}, </if>
+        <if test="os != null and os != ''">#{os}, </if>
+        <if test="userId != null and userId != ''">#{userId}, </if>
+        #{status},
+        #{startTimestamp},
+        #{lastAccessTime},
+        #{expireTime}
+        )
+	</insert>
+
+ 	<delete id="deleteOnlineById" parameterType="String">
+ 		delete from sys_user_online where sessionId = #{sessionId}
+ 	</delete>
+ 	
+ 	<select id="selectUserOnlineList" parameterType="SysUserOnline" resultMap="SysUserOnlineResult">
+		<where>
+			<if test="ipaddr != null and ipaddr != ''">
+				AND ipaddr like '%${ipaddr}%'
+			</if>
+			<if test="loginName != null and loginName != ''">
+				AND login_name like '%${loginName}%'
+			</if>
+		</where>
+		order by last_access_time desc ) <!-- where  rownum = 1 -->
+	</select>
+
+	<select id="selectUserOnlineListMysql" parameterType="SysUserOnline" resultMap="SysUserOnlineResult">
+		<where>
+			<if test="ipaddr != null and ipaddr != ''">
+				AND ipaddr like '%${ipaddr}%'
+			</if>
+			<if test="loginName != null and loginName != ''">
+				AND login_name like '%${loginName}%'
+			</if>
+		</where>
+	</select>
+	
+	<select id="selectOnlineByExpired" parameterType="Date" resultMap="SysUserOnlineResult">
+		select sessionId, login_name, dept_name, ipaddr, login_location, browser, os, status, start_timestamp, last_access_time, expire_time, user_id
+	    from sys_user_online o
+		WHERE o.last_access_time <![CDATA[ <= ]]> #{lastAccessTime} ORDER BY o.last_access_time ASC
+	</select>
+	
+	<select id="selectWorkStatusByUserId" parameterType="String" resultType="String">
+		  select work_status from itsm_work_status where user_id=#{userId}
+	</select>
+
+	<select id="selectOnlineByUserId" parameterType="String" resultMap="SysUserOnlineResult">
+		<include refid="selectOnlineVo"/>
+		where user_id = #{userId} order by last_access_time desc ) suo where rownum = 1
+	</select>
+
+	<select id="selectOnlineByUserIdMysql" parameterType="String" resultMap="SysUserOnlineResult">
+		<include refid="selectOnlineVo1"/>
+		where user_id = #{userId} order by last_access_time desc limit 0,1
+	</select>
+
+	<select id="distinctLoginName" resultType="String">
+		select distinct login_name from sys_user_online where status='on_line'
+		<if test="ipaddr != null and ipaddr != ''">
+			AND ipaddr like '%${ipaddr}%'
+		</if>
+		<if test="loginName != null and loginName != ''">
+			AND login_name like '%${loginName}%'
+		</if>
+	</select>
+
+	<select id="selectOnlineByLoginName" resultMap="SysUserOnlineResult">
+		SELECT * FROM (select * from SYS_USER_ONLINE t where t.login_name=#{loginName} and status='on_line' order by t.last_access_time desc) t where rownum=1
+	</select>
+
+	<select id="selectOnlineByLoginNameMysql" resultMap="SysUserOnlineResult">
+		select * from SYS_USER_ONLINE t where t.login_name=#{loginName} and status='on_line' order by t.last_access_time desc limit 0,1
+	</select>
+
+	<select id="getOnLineCount" resultType="int">
+		select count(distinct login_name) FROM SYS_USER_ONLINE t where t.status='on_line'
+	</select>
+
+</mapper> 

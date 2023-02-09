@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+	<th:block th:include="include :: header('版本列表')" />
+	<th:block th:include="include :: datetimepicker-css" />
+	<style>
+		.icon-arrow-left{
+			border: solid black;
+			border-width: 0 1px 1px 0;
+			display: inline-block;
+			padding:3px;
+			transform: ratate(135deg);
+			-webkit-transform: rotate(135deg);
+		}
+		.icon-arrow-right{
+			border: solid black;
+			border-width: 0 1px 1px 0;
+			display: inline-block;
+			padding:3px;
+			transform: ratate(-45deg);
+			-webkit-transform: rotate(-45deg);
+		}
+	</style>
+</head>
+<body class="gray-bg">
+	<div class="container-div">
+		<div class="row">
+			<div class="col-sm-12 search-collapse">
+				<form id="role-form">
+					<div class="select-list">
+						<ul>
+							<li>
+								版本名称：<input type="text" name="versionName"/>
+							</li>
+							<li>
+								值班月份：<input type="text" id="dutyDate" name="dutyDate" autocomplete="off" readonly/>
+							</li>
+							<li>
+								<a class="btn btn-primary btn-rounded btn-sm" id="searchList" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+							    <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+							</li>
+						</ul>
+					</div>
+				</form>
+			</div>
+		
+			<div class="btn-group-sm" id="toolbar" role="group">
+				<a class="btn btn-success" onclick="$.operate.add()">
+	                <i class="fa fa-plus"></i> 新增
+	            </a>
+	            <a class="btn btn-primary single disabled" onclick="$.operate.edit()">
+		            <i class="fa fa-edit"></i> 修改
+		        </a>
+				<a class="btn btn-primary single disabled" onclick="clone()" >
+					<i class="fa fa-plus"></i> 克隆
+				</a>
+				<a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()">
+		            <i class="fa fa-trash"></i> 删除
+		        </a>
+	        </div>
+	        
+	        <div class="col-sm-12 select-table table-striped">
+			    <table id="bootstrap-table"></table>
+			</div>
+		</div>
+	</div>
+	<script th:src="@{/ajax/libs/highlight/highlight.min.js}"></script>
+	<script th:src="@{/ajax/libs/datetimepicker/datepicker.js}"></script>
+	<th:block th:include="include :: footer" />
+	<th:block th:include="include :: datetimepicker-js" />
+	<script th:src="@{/js/bootstrap-datetimepicker.zh-CN.js}"></script>
+	<script th:inline="javascript">
+		var prefix = ctx + "duty/version";
+		var today = new Date();
+		$(function() {
+			// 回车键搜索
+			document.onkeydown = function(e){
+				var ev = document.all ? window.event : e;
+				if(ev.keyCode==13) {
+					$('#searchList').trigger('click');
+					return false;
+				}
+			};
+			$('#dutyDate').datetimepicker({
+				autoclose: true,
+				format: "yyyy-mm",
+				forceParse: false,
+				minView:3,
+				startView: 3,
+				multiple:true,
+				datesDisabled:[
+					// new Date(today.getTime()+2*24*3600*1000),
+					// new Date(today.getTime()+3*24*3600*1000)
+				]
+			});
+		})
+
+		$(function() {
+		    var options = {
+		        url: prefix + "/list",
+		        createUrl: prefix + "/add",
+		        updateUrl: prefix + "/edit/{id}",
+		        removeUrl: prefix + "/remove",
+		        exportUrl: prefix + "/export",
+		        clickToSelect: true,
+		        /*sortName: "roleSort",*/
+		        modalName: "版本",
+
+		        columns: [{
+		            checkbox: true
+		        },
+				{
+					field: 'versionId',
+					title: '版本Id',
+					visible: false
+				},
+		        {
+		            field: 'versionNo',
+		            title: '版本编号'
+		        },
+		        {
+		            field: 'versionName',
+		            title: '版本名称',
+<!--		            cellStyle: formatTableUnit,-->
+		            formatter:paramsMatter,
+                    cellStyle: function (value, row, index) {
+                        return {
+                            css: {
+                                "min-width": "100px",
+                                "white-space": "nowrap",
+                                "text-overflow": "ellipsis",
+                                "overflow": "hidden",
+                                "max-width": "200px"
+                            }
+                        }
+                    }
+                },
+		        {
+		            field: 'dutyDate',
+		            title: '值班月份',
+		            formatter:paramsMatter,
+                    cellStyle: function (value, row, index) {
+                        return {
+                            css: {
+                                "min-width": "100px",
+                                "white-space": "nowrap",
+                                "text-overflow": "ellipsis",
+                                "overflow": "hidden",
+                                "max-width": "200px"
+                            }
+                        }
+                    }
+                },
+                    {
+					field: 'addTime',
+					title: '创建时间'
+				},
+		        {
+		            title: '操作',
+		            align: 'center',
+		            formatter: function(value, row, index) {
+		                var actions = [];
+		                actions.push('<a class="btn btn-default btn-xs" href="javascript:void(0)" onclick="typeinfo(\'' + row.versionId + '\')"><i class="fa fa-user"></i>类别维护</a> ');
+		                var more = [];
+		                return actions.join('');
+		            }
+		        }]
+		    };
+		    $.table.init(options);
+		});
+
+		/* 类别维护 */
+		function typeinfo(versionId) {
+		    var url = prefix + '/typeinfo/' + versionId;
+		    $.modal.openTab("类别维护", url);
+		}
+
+		/* 版本克隆 */
+		function clone() {
+			$.modal.confirm("确认要该克隆版本吗？", function() {
+				var rows =  $.table.selectFirstColumns()
+				var url = prefix + '/clone';
+				var data = { "versionId": rows.join() };
+				$.operate.submit(url, "post", "json", data);
+			})
+		}
+
+		function paramsMatter(value,row,index){
+		    var span = document.createElement('span');
+		    span.setAttribute('title',value);
+		    span.innerHTML = value;
+		    return span.outerHTML;
+		}
+	</script>
+</body>
+</html>

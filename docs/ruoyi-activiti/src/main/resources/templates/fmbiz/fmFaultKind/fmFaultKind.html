@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('事件单系统分类列表')"/>
+</head>
+<body class="gray-bg">
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="container-div">
+                <div class="row">
+                    <div class="col-sm-12 search-collapse">
+                        <form id="type-form">
+                            <div class="select-list">
+                                <ul>
+                                    <li>
+                                        系统名称：<input type="text" name="caption" id="caption"/>
+                                    </li>
+                                    <li>
+                                        所属机构：<input type="text" name="orgName" id="orgName"/>
+                                    </li>
+                                    <li>
+                                        <a class="btn btn-primary btn-rounded btn-sm"
+                                           onclick="$.table.search('type-form','bootstrap-table')" id="searchBut2"><i
+                                                class="fa fa-search"></i>&nbsp;搜索</a>
+                                        <a class="btn btn-warning btn-rounded btn-sm"
+                                           onclick="$.form.reset('','bootstrap-table')"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="col-sm-12 select-table table-striped">
+                        <table id="bootstrap-table"></table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="container-div">
+                <div class="row">
+                    <div class="col-sm-12 search-collapse">
+                        <form id="data-form">
+                            <input type="hidden" name="sysId" id="sysId">
+                            <div class="select-list">
+                                <ul>
+                                    <li>
+                                        <p>名称：</p>
+                                        <input type="text" name="name" id="name"/>
+                                    </li>
+                                    <li>
+                                        <p>状态：</p>
+                                        <select id="invalidationMark" name="invalidationMark" class="form-control">
+                                            <option value=""></option>
+                                            <option value="1">启用</option>
+                                            <option value="0">停用</option>
+                                        </select>
+                                    </li>
+                                    <li>
+                                        <a class="btn btn-primary btn-rounded btn-sm"
+                                           onclick="$.treeTable.search('data-form','bootstrap-table-data')"
+                                           id="searchBut"><i
+                                                class="fa fa-search"></i>&nbsp;搜索</a>
+                                        <a class="btn btn-warning btn-rounded btn-sm"
+                                           onclick="$.form.reset('data-form','bootstrap-table-data')"><i
+                                                class="fa fa-refresh"></i>&nbsp;重置</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="btn-group-sm" id="data_toolbar" role="group">
+                        <a class="btn btn-success" onclick="add()">
+                            <i class="fa fa-plus"></i> 增加
+                        </a>
+                        <a class="btn btn-primary" onclick="edit()">
+                            <i class="fa fa-edit"></i> 修改
+                        </a>
+                    </div>
+
+                    <div class="col-sm-12 select-table table-striped">
+                        <table id="bootstrap-table-data"></table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<th:block th:include="include :: footer"/>
+<script th:inline="javascript">
+    var prefix = ctx + "fmKind";
+    var formtype ='0';
+    $(function () {
+        onkeySearch();
+        onkeySearch2();
+        $('#caption').focus(function(){
+            formtype = '2';
+        });
+        $('#orgName').focus(function(){
+            formtype = '2';
+        });
+        $('#name').focus(function(){
+            formtype = '1';
+        });
+        $('#invalidationMark').focus(function(){
+            formtype = '1';
+        });
+    });
+
+    function onkeySearch2() {
+        //回车搜索
+        document.onkeydown = function(e){
+            var ev = document.all ? window.event : e;
+            console.log(ev);
+            if(ev.keyCode==13) {
+                if(formtype == '1'){
+                    $('#searchBut').trigger('click');
+                }
+                if(formtype == '2'){
+                    $('#searchBut2').trigger('click');
+                }
+                return false;
+            } //搜索逻辑
+        }
+        var options = {
+            url: prefix + "/syslist",
+            createUrl: prefix + "/add",
+            updateUrl: prefix + "/edit/{id}",
+            removeUrl: prefix + "/remove",
+            exportUrl: prefix + "/export",
+            clickToSelect: true,
+            toolbar: 'toolbar',
+            modalName: "系统",
+            onClickRow: function (row, obj) {
+                $("#sysId").val(row.sysId);
+                $(obj).siblings().removeClass("selected")
+                $(obj).addClass("selected");
+                $(obj).find("input[type='radio']").prop('checked', 'checked')
+                $.treeTable.search('data-form', 'bootstrap-table-data');
+            },
+            columns: [{
+                radio: true
+            },
+                {
+                    field: 'sysId',
+                    title: '系统Id',
+                    visible: false
+                },
+                {
+                    field: 'code',
+                    title: '系统编号',
+                    width: 100,
+                },
+                {
+                    field: 'caption',
+                    title: '系统名称',
+                    width: 100,
+                    formatter: function (value, row, index) {
+                        return $.table.tooltip(value);
+                    }
+                },
+                {
+                    field: 'orgName',
+                    title: '所属机构',
+                    width: 200,
+                    formatter: function (value, row, index) {
+                        return $.table.tooltip(value);
+                    }
+                },
+                {
+                    field: 'invalidationMark',
+                    title: '状态',
+                    align: 'center',
+                    width: 50,
+                    formatter: function (value, row, index) {
+                        return value == '1' ? '启用' : '禁用';
+                    }
+                }]
+        };
+        $.table.init(options);
+    }
+    function onkeySearch() {
+        //回车搜索
+        document.onkeydown = function (e) {
+            var ev = document.all ? window.event : e;
+            console.log(ev);
+            if (ev.keyCode == 13) {
+                if (formtype == '1') {
+                    $('#searchBut').trigger('click');
+                }
+                if (formtype == '2') {
+                    $('#searchBut2').trigger('click');
+                }
+                return false;
+            } //搜索逻辑
+        }
+        var data_options = {
+            code: "fmTypeId",
+            parentCode: "parentId",
+            uniqueId: "fmTypeId",
+            expandAll: false,
+            url: prefix + "/list",
+            updateUrl: prefix + "/edit/{id}",
+            removeUrl: prefix + "/remove/{id}",
+            queryParams: queryParamsfl,
+            id: 'bootstrap-table-data',
+            toolbar: 'data_toolbar',
+            modalName: "类别",
+            columns: [{
+                field: 'selectItem',
+                radio: true
+            },
+                {
+                    field: 'name',
+                    title: '名称',
+                },
+                {
+                    field: 'sysId',
+                    title: '所属应用系统',
+
+                },
+                {
+                    field: 'invalidationMark',
+                    title: '状态',
+                    formatter: function (value, row, index) {
+                        return value == '1' ? '启用' : '停用';
+                    }
+                },
+                {
+                    field: 'serialNum',
+                    title: '序号',
+                }
+            ]
+        };
+        $.treeTable.init(data_options);
+    }
+
+
+    function queryParamsfl(params) {
+        var search = $.table.queryParams(params);
+        var sysyId = $("#sysId").val();
+        search.sysId = sysyId;
+        var parentName = $("#parentName").val();
+        if (parentName == "") {
+            search.parentId = "33";
+        }
+        return search;
+    }
+
+
+    function add() {
+        var isHasCheck = false;
+        var selects = $("#bootstrap-table").bootstrapTable('getSelections');
+        var fmTypeId = $.treeTable.selectColumns("fmTypeId");
+        if (!$.common.isEmpty(selects)) {
+            if (!$.common.isEmpty(fmTypeId)) {
+                var url = prefix + "/add/" + $("#sysId").val() + "/" + fmTypeId;
+            } else {
+                var url = prefix + "/add/" + $("#sysId").val();
+            }
+            $.modal.open('新增', url)
+        } else {
+            $.modal.alert("添加类别必须选择对应系统!");
+        }
+    }
+
+
+    function edit() {
+
+        var isHasCheck = false;
+        var selects = $("#bootstrap-table").bootstrapTable('getSelections');
+        var selectdatas = $("#bootstrap-table-data").bootstrapTreeTable('getSelections');
+        var fmTypeId = $.treeTable.selectColumns("fmTypeId");
+        if (!$.common.isEmpty(selects)) {
+            if (!$.common.isEmpty(selectdatas)) {
+                var url = prefix + "/edit/" + fmTypeId;
+                $.modal.open('修改', url)
+            } else {
+                $.modal.alert("至少选择一条记录!");
+            }
+        } else {
+            $.modal.alert("类别修改必须选择对应系统!");
+        }
+    }
+
+
+</script>
+</body>
+</html>

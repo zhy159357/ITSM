@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:include="include :: header('运维事件单脚本执行列表')"/>
+    <th:block th:include="include :: bootstrap-editable-css"/>
+</head>
+<body class="gray-bg">
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="container-div">
+                <div class="row">
+                    <div class="col-sm-12 search-collapse">
+                        <form id="type-form" th:object="${fmBiz}">
+                            <input name="fmId" id="fmId" class="form-control" type="hidden" required th:value="*{fmId}">
+                            <div class="select-list">
+                                <ul>
+                                    <li>
+                                        <p>所属系统：</p>
+                                        <input id="sysid" name="sysid" type="hidden" class="form-control"
+                                               th:value="*{sysid}"/>
+                                        <input id="applicationName" name="applicationName" th:value="*{ogSys.caption}"
+                                               type="text" class="form-control"
+                                               onclick="selectOgSysListByCondition()"/>
+                                    </li>
+                                    <li>
+                                        <a class="btn btn-primary btn-rounded btn-sm" id="searchBut"
+                                           onclick="$.table.search('type-form','bootstrap-table')"><i
+                                                class="fa fa-search"></i>&nbsp;搜索</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="col-sm-12 select-table table-striped">
+                        <table id="bootstrap-table"></table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="container-div">
+                <div class="row">
+                    <div class="col-sm-12 search-collapse">
+                        <form id="data-form">
+                            <input type="hidden" name="scriptId" id="scriptId">
+                            <input type="hidden" name="scriptName" id="scriptName">
+                            <input type="hidden" name="scriptVersion" id="scriptVersion">
+                            <div class="select-list">
+                            </div>
+                        </form>
+                    </div>
+                    <div class="btn-group-sm" id="data_toolbar" role="group">
+                        <a style="color:#f00d17;" align="center">选择左侧脚本后，如果需要输入参数请双击击右侧参数值一栏进行编辑，最后点击执行脚本按钮执行。</a>
+                        <a class="btn btn-primary" onclick="executor()">
+                            <i class="fa fa-check"></i> 执行脚本
+                        </a>
+                    </div>
+                    <div class="col-sm-12 select-table table-striped">
+                        <table id="bootstrap-table-data"></table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="tab-pane" id="tab-3">
+            <div class="panel-body">
+                <div class="btn-group-sm" id="toolbar3" role="group">
+                    <a class="btn btn-primary single disabled" type="button" onclick="detailAuto()">
+                        <i class="fa fa-vi"></i> 脚本执行结果详情
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-12 select-table table-striped">
+            <table id="auto-table"></table>
+        </div>
+    </div>
+    <!--<form id="data-form2">
+        <input type="hidden" id="folderId" name="folder" value="">
+    </form>-->
+
+</div>
+<th:block th:include="include :: footer"/>
+<script th:src="@{/js/fmbizAuto.js}"></script>
+<script th:inline="javascript">
+    var prefix_script = ctx + "system/script";
+    var prefix = ctx + "fmbiz";
+    $(function () {
+        var data_options = {
+            id: 'bootstrap-table-data',
+            url: prefix_script + "/paraList",
+            toolbar: 'data_toolbar',
+            clickToSelect: true,
+            singleSelect: true,
+            onDblClickCell: onDblClickCell,
+            modalName: "脚本参数列表",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'params.iid',
+                    title: '参数Id',
+                    visible: false
+                },
+                {
+                    field: 'params.startTaskJsonKey',
+                    title: '启动参数key',
+                    visible: false
+                },
+                {
+                    field: 'params.paramType',
+                    width: 50,
+                    title: '类型'
+                },
+                {
+                    field: 'params.paramDefaultValue',
+                    width: 50,
+                    title: '参数默认值'
+                },
+                {
+                    field: 'params.value',
+                    align: 'center',
+                    width: 150,
+                    title: '<span style="color: red;">参数值</span>',
+                },
+                {
+                    field: 'params.desc',
+                    width: 50,
+                    title: '描述'
+                },
+                {
+                    field: 'params.opder',
+                    width: 20,
+                    title: '序号'
+                }]
+        };
+        $.table.init(data_options);
+        var options = {
+            url: prefix_script + "/scirptList",
+            toolbar: 'toolbar',
+            modalName: "脚本列表",
+            clickToSelect: true,
+            singleSelect: true,
+            onClickRow: function (row, obj) {
+                $("#scriptId").val(row.iid);
+                $("#scriptName").val(row.customName);
+                $("#scriptVersion").val(row.scriptVersion);
+                $(obj).siblings().removeClass("selected")
+                $(obj).addClass("selected");
+                $(obj).find("input[type='radio']").prop('checked', 'checked')
+                $.table.search('data-form', 'bootstrap-table-data')
+            },
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'iid',
+                    title: '脚本Id',
+                    visible: false
+                },
+                {
+                    field: 'customName',
+                    width: 250,
+                    title: '脚本名称'
+                },
+                {
+                    field: 'scriptVersion',
+                    width: 30,
+                    title: '当前版本'
+                },
+                {
+                    field: 'lastVersion',
+                    width: 30,
+                    title: '最新版本'
+                },
+                {
+                    field: 'createTime',
+                    width: 150,
+                    title: '更新时间'
+                }]
+        };
+        $.table.init(options);
+    });
+
+    function onDblClickCell(field, value, row, $element) {
+        if ($.common.isEmpty(value)) {
+            value = "";
+        }
+        var upIndex = $element[0].parentElement.rowIndex - 1;
+        if (field == 'params.value') {
+            $element[0].innerHTML =
+                "<input id='inputCell' type='text' name='inputCell' style ='width: 150px' value='" + value + "'>";
+            $("#inputCell").focus();
+            $("#inputCell").blur(function () {
+                var newValue = $("#inputCell").val();
+                row[field] = newValue;
+                $(this).remove();
+                $('#bootstrap-table-data').bootstrapTable('updateCell', {
+                    index: upIndex,
+                    field: field,
+                    value: newValue
+                });
+                rowedits(field, row);
+            });
+        }
+    }
+
+    function rowedits(field, row) {
+        var val = row[field];
+        row.params.value = val;
+    }
+
+    //执行脚本
+    function executor() {
+        var data = $("#" + table.options.id).bootstrapTable('getData');
+
+        var fmId = {
+            fmId: $("#fmId").val()
+        }
+        data.push(fmId);
+        var scriptId = {
+            scriptId: $("#scriptId").val()
+        }
+        data.push(scriptId);
+
+        var scriptName = {
+            scriptName: $("#scriptName").val()
+        }
+        data.push(scriptName);
+
+        var scriptVersion = {
+            scriptVersion: $("#scriptVersion").val()
+        }
+        data.push(scriptVersion);
+        // console.log(JSON.stringify(data));
+        $.ajax({
+            url: prefix_script + "/executorScript",
+            type: "post",
+            traditional: true,
+            contentType: 'application/json;charset=UTF-8',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            data: JSON.stringify(data),
+            dataType: 'json',
+            success: function (result) {
+                if (result.code == 0) {
+                    $.table.search('', 'auto-table');
+                }
+            }
+        });
+    }
+
+    // 选择应用系统（只能单选）
+    function selectOgSysListByCondition() {
+        $.modal.open("选择应用系统", prefix + "/sysGrouplist");
+    }
+
+    function getGroupList(sysid) {
+    }
+
+    //根据系统查询分类
+    function getFmKindOneList(sysid) {
+    }
+</script>
+</body>
+</html>

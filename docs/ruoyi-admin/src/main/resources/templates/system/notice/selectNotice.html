@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('查询公告通知')" />
+</head>
+<body class="gray-bg">
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="container-div">
+                <div class="row">
+                    <div class="col-sm-12 search-collapse">
+                        <form id="type-form">
+                            <div class="select-list">
+                                <ul>
+                                    <li>
+                                        <label style="width: 80px">公告编号：</label>
+                                        <input id="amCode" style="width:150px" type="text" name="amCode"/>
+                                    </li>
+                                    <li>
+                                        <label style="width: 80px">公告标题：</label>
+                                        <input id="amTitle" style="width:150px" type="text" name="amTitle"/>
+                                    </li>
+                                    <li class="select-time">
+                                        <label style="width: 80px">发布时间： </label>
+                                        <input style="width:150px" type="text" class="time-input"  id="startTime" name="params[releaseBeginTime]" readonly/>
+                                    </li>
+                                    <li class="select-time">
+                                        <label style="width: 80px">至： </label>
+                                        <input style="width:150px" type="text" class="time-input"   id="endTime" name="params[releaseEndTime]" readonly/>
+                                    </li>
+                                    <li>
+                                        <label style="width: 80px">公告状态：</label>
+                                        <select id="currentStatus" style="width:150px" name="currentStatus" th:with="type=${@dict.getParaType('status')}">
+                                            <option value=""></option>
+                                            <option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+                                        </select>
+                                    </li>
+                                    <li>
+                                        <label style="width: 80px">发布机构：</label>
+                                        <input id="orgName" style="width:150px" type="text" name="orgName"/>
+                                    </li>
+                                    <li>
+                                        <label style="width: 80px">公告内容：</label>
+                                        <input id="description" style="width:150px" type="text" name="description"/>
+                                    </li>
+                                    <li>
+                                        <label style="width: 80px">公告类型：</label>
+                                        <select id="amType" style="width:150px" name="amType" th:with="type=${@dict.getParaType('sys_notice_type')}">
+                                            <option value=""></option>
+                                            <option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+                                        </select>
+                                    </li>
+                                    <li>
+                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                        <a class="btn btn-primary btn-rounded btn-sm" id="noticeId" onclick="$.table.search('type-form','bootstrap-table')"><i class="fa fa-search"></i>&nbsp;搜索</a>&nbsp;&nbsp;
+                                        <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset('','bootstrap-table')"><i class="fa fa-repeat"></i>&nbsp;重置</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="btn-group-sm" id="toolbar" role="group">
+                        <a class="btn btn-info single disabled" onclick="details()">
+                            <i class="fa fa-search"></i> 查看详情
+                        </a>
+                        <!--<a class="btn btn-primary single disabled" onclick="downloadFile()">-->
+                            <!--<i class="fa fa-adjust"></i> 打包下载-->
+                        <!--</a>-->
+                        <div class="btn-group">
+                            <button data-toggle="dropdown" class="btn btn-primary btn-sm dropdown-toggle">导出<span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a onclick="$.table.exportExcel('type-form')">导出所有</a>
+                                </li>
+                                <li><a onclick="$.table.exportExcelCurrentPage('type-form')">导出当前页</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-12 select-table table-striped">
+                        <table id="bootstrap-table" style="table-layout:fixed;"></table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="container-div">
+                <div class="row">
+                    <div class="col-sm-12 search-collapse">
+                        <form id="data-form">
+                            <input type="hidden" name="amBizId" id="amBizId">
+                            <div class="select-list">
+                                <ul>
+                                    <li>
+                                        <label style="width: 80px">接收机构：</label>
+                                        <input id="receiveDeptName" style="width:150px" type="text" name="receiveDeptName"/></li>
+                                    <li>
+                                        <label style="width: 80px">接收工作组：</label>
+                                        <input id="receiveGroupName" style="width:150px" type="text" name="receiveGroupName"/></li>
+                                    <li class="select-time">
+                                        <label style="width: 80px">接收时间： </label>
+                                        <input style="width:150px" type="text" class="time-input"  id="startTim" name="params[beginTime]" readonly/>
+                                    </li>
+                                    <li class="select-time">
+                                        <label style="width: 80px">至： </label>
+                                        <input style="width:150px" type="text" class="time-input"   id="endTim" name="params[endTime]" readonly/>
+                                    </li>
+                                    <li>
+                                        <label style="width: 80px">接收状态：</label>
+                                        <select id="ifReceive" style="width:150px" name="ifReceive" th:with="type=${@dict.getParaType('if_receive')}">
+                                            <option value=""></option>
+                                            <option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+                                        </select>
+                                    </li>
+                                    <li>
+                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                        <a class="btn btn-primary btn-rounded btn-sm" id="receiveId" onclick="$.table.search('data-form','bootstrap-table-data')"><i class="fa fa-search"></i>&nbsp;搜索</a>&nbsp;&nbsp;
+                                        <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset('data-form','bootstrap-table-data')"><i class="fa fa-repeat"></i>&nbsp;重置</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="btn-group-sm" id="data_toolbar" role="group">
+                        <a class="btn btn-info single disabled" onclick="receiveNoticeDetails()">
+                            <i class="fa fa-search"></i> 接收详情
+                        </a>
+                        <div class="btn-group">
+                            <button data-toggle="dropdown" class="btn btn-primary btn-sm dropdown-toggle">导出<span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a onclick="$.table.exportExcel('data-form')">导出所有</a>
+                                </li>
+                                <li><a onclick="$.table.exportExcelCurrentPage('data-form')">导出当前页</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="col-sm-12 select-table table-striped">
+                        <table id="bootstrap-table-data" style="table-layout:fixed;"></table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: datetimepicker-js" />
+<script th:inline="javascript">
+    var datas = [[${@pubParaValue.selectPubParaValueByParaName('status')}]];
+    var if_receive = [[${@pubParaValue.selectPubParaValueByParaName('if_receive')}]];
+    var types = [[${@pubParaValue.selectPubParaValueByParaName('sys_notice_type')}]];
+
+    var prefix = ctx + "system/notice";
+    var dataprefix = ctx+ "system/noticeHandle";
+
+    var formtype ='0';
+
+    $(function() {
+        noticeList();
+        noticeReceiveList();
+        // 工作组
+        $('#amCode').focus(function(){
+            formtype = '1';
+        });
+        $('#amTitle').focus(function(){
+            formtype = '1';
+        });
+        $('#startTime').focus(function(){
+            formtype = '1';
+        });
+        $('#endTime').focus(function(){
+            formtype = '1';
+        });
+        $('#currentStatus').focus(function(){
+            formtype = '1';
+        });
+        $('#orgName').focus(function(){
+            formtype = '1';
+        });
+        $('#description').focus(function(){
+            formtype = '1';
+        });
+        $('#amType').focus(function(){
+            formtype = '1';
+        });
+
+        $('#receiveDeptName').focus(function(){
+            formtype = '2';
+        });
+        $('#receiveGroupName').focus(function(){
+            formtype = '2';
+        });
+        $('#startTim').focus(function(){
+            formtype = '2';
+        });
+        $('#endTim').focus(function(){
+            formtype = '2';
+        });
+        $('#ifReceive').focus(function(){
+            formtype = '2';
+        });
+    });
+
+    function noticeReceiveList() {
+        formtype = '2';
+        //回车搜索
+        document.onkeydown = function(e){
+            var ev = document.all ? window.event : e;
+            console.log(ev);
+            if(ev.keyCode==13) {
+                if(formtype == '1'){
+                    $('#noticeId').trigger('click');
+                }
+                if(formtype == '2'){
+                    $('#receiveId').trigger('click');
+                }
+                return false;
+            } //搜索逻辑
+        };
+        var data_options = {
+            id: 'bootstrap-table-data',
+            url: dataprefix + "/noticeList",
+            createUrl: dataprefix + "/add/{id}",
+            receiveDetailUrl: dataprefix + "/receiveDetails/{id}",
+            updateUrl: dataprefix + "/edit/{id}",
+            removeUrl: dataprefix + "/remove",
+            exportUrl: dataprefix + "/export",
+            toolbar: 'data_toolbar',
+            // sortName: "serail",
+            // sortOrder: "asc",
+            clickToSelect: true,
+            singleSelect: true,
+            modalName: "公告通知",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'amReceiveId',
+                    visible: false,
+                    width: 300
+                },
+                {
+                    field: 'receiveDeptName',
+                    title: '接收机构',
+                    width: 150
+                },
+                {
+                    field: 'receiveGroupName',
+                    title: '接收工作组',
+                    width: 150
+                },
+                {
+                    field: 'receiveTime',
+                    title: '接收时间',
+                    width: 150
+                },
+                {
+                    field: 'receiveReply',
+                    title: '反馈信息/接收响应',
+                    formatter: function(value, row, index) {
+                        return $.table.tooltip(value);
+                    },
+                    width : 300
+                },
+                {
+                    field: 'dealerName',
+                    title: '处理人',
+                    width: 150
+                },
+                {
+                    field: 'ifReceive',
+                    title: '是否/处理标记',
+                    formatter: function (value, row, index) {
+                        return selectDictLabel(if_receive, value);
+                    },
+                    width: 150
+                }]
+        };
+        $.table.init(data_options);
+    }
+    function noticeList() {
+        formtype = '1';
+        //回车搜索
+        document.onkeydown = function(e){
+            var ev = document.all ? window.event : e;
+            console.log(ev);
+            if(ev.keyCode==13) {
+                if(formtype == '1'){
+                    $('#noticeId').trigger('click');
+                }
+                if(formtype == '2'){
+                    $('#receiveId').trigger('click');
+                }
+                return false;
+            } //搜索逻辑
+        };
+        var options = {
+            url: prefix + "/selectList",
+            createUrl: prefix + "/add",
+            updateUrl: prefix + "/edit/{id}",
+            detailUrl : prefix + "/details/{id}",
+            removeUrl: prefix + "/remove",
+            exportUrl: prefix + "/export",
+            pagesize: 10,
+            pageList: [10],
+            toolbar:'toolbar',
+            /*sortName: "dictId",
+            sortOrder: "asc",*/
+            clickToSelect:true,
+            onClickRow:onChoose,
+            onCheck:onChoose,
+            singleSelect:true,
+            modalName: "公告通知",
+            onClickRow:function(row,obj){
+                $("#amBizId").val(row.amBizId);
+                $.table.search('data-form','bootstrap-table-data')
+            },
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field : 'amBizId',
+                    visible: false,
+                    width : 300
+                },
+                {
+                    field : 'amCode',
+                    title : '公告编码',
+                    width : 150
+                },
+                {
+                    field: 'amType',
+                    title: '公告类型',
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                        return selectDictLabel(types, value);
+                    },
+                    width : 150
+                },
+                {
+                    field : 'amTitle',
+                    title : '标题',
+                    formatter: function(value, row, index) {
+                        return $.table.tooltip(value);
+                    },
+                    width : 300
+                },
+                {
+                    field : 'pName',
+                    title : '发布人',
+                    width : 150
+                },
+                {
+                    field : 'releaseDate',
+                    title : '发布时间',
+                    width : 150
+                },
+                {
+                    field : 'orgName',
+                    title : '发布机构',
+                    width : 150
+                },
+                {
+                    field: 'currentStatus',
+                    title: '状态',
+                    align: 'center',
+                    formatter: function (value,row,index) {
+                        return selectDictLabel(datas, value);
+                    },
+                    width : 150
+                }]
+        };
+        $.table.init(options);
+    }
+
+    function selectDictLabel(datas, value) {
+        var actions = [];
+        $.each(datas, function(index, dict) {
+            if (dict.value == ('' + value)) {
+                var listClass = $.common.equals("default", dict.listClass) || $.common.isEmpty(dict.listClass) ? "" : "badge badge-" + dict.listClass;
+                actions.push($.common.sprintf("<span class='%s'>%s</span>", listClass, dict.valueDetail));
+                return false;
+            }
+        });
+        return actions.join('');
+    }
+
+    /*公告详情*/
+    function details(){
+        var selects = $("#bootstrap-table").bootstrapTable('getSelections');
+        var url = prefix + "/details/" + selects[0].amBizId;
+        $.modal.openTab("公告详情", url);
+    }
+
+    function receiveNoticeDetails() {
+        table.set();
+        $.modal.openTab("公告接收详情", editUrl());
+    }
+
+    function editUrl(id) {
+        var url = "/404.html";
+        if ($.common.isNotEmpty(id)) {
+            url = table.data_options.receiveDetailUrl.replace("{id}", id);
+        } else {
+            var id = $.common.isEmpty(table.options.uniqueId) ? $.table.selectFirstColumns() : $.table.selectColumns(table.options.uniqueId);
+            if (id.length == 0) {
+                $.modal.alertWarning("请至少选择一条记录");
+                return;
+            }
+            url = table.options.receiveDetailUrl.replace("{id}", id);
+        }
+        return url;
+    }
+
+    //快捷标签
+    function label() {
+        var url = scheduling_prefix + "/label";
+
+        $.modal.openTab('快捷标签',url)
+    }
+
+    function onChoose(row,obj){
+        $("#amBizId").val(row.amBizId);
+        $(obj).siblings().removeClass("selected")
+        $(obj).addClass("selected");
+        $(obj).find("input[type='radio']").prop('checked','checked')
+        $.table.search('data-form','bootstrap-table-data')
+    }
+</script>
+</body>
+</html>

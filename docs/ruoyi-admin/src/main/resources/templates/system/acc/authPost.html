@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+	<th:block th:include="include :: header('岗位查看角色')" />
+</head>
+<body class="gray-bg">
+<div class="container-div">
+	<div class="row">
+		<div class="col-sm-12 search-collapse">
+			<form id="post-form">
+				<input type="hidden" id="userId" name="userId" th:value="${userId}">
+				<div class="select-list">
+					<ul>
+						<li>
+							岗位名称：<input type="text" name="postName"/>
+						</li>
+						<li>
+							<a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+							<a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+						</li>
+					</ul>
+				</div>
+			</form>
+		</div>
+		<div class="btn-group-sm" id="toolbar" role="group">
+			<a class="btn btn-success" onclick="selectAllPost()" >
+				<i class="fa fa-plus"></i> 添加岗位
+			</a>
+			<a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()" >
+				<i class="fa fa-remove"></i> 删除岗位
+			</a>
+		</div>
+
+		<div class="col-sm-12 select-table table-striped">
+			<table id="bootstrap-table"></table>
+		</div>
+	</div>
+</div>
+<th:block th:include="include :: footer" />
+<script th:inline="javascript">
+	var removeFlag = [[${@permission.hasPermi('system:post:remove')}]];
+	var datas = [[${@dict.getParaType('sys_normal_disable')}]];
+	var prefix = ctx + "system/post";
+
+	$(function() {
+		var options = {
+			/*查询出当前账号分配的岗位信息*/
+			url: prefix + "/authUserPost/"+$("#userId").val(),
+			createUrl: prefix + "/add",
+			updateUrl: prefix + "/edit/{id}",
+			removeUrl: prefix + "/remove",
+			exportUrl: prefix + "/export",
+			importUrl: prefix + "/importData",
+			importTemplateUrl: prefix + "/importTemplate",
+			queryParams: queryParams,
+			sortOrder: "desc",
+			modalName: "岗位",
+			columns: [{
+				checkbox: true
+			},
+				{
+					field: 'postId',
+					title: '岗位编号',
+					visible: false
+				},
+				{
+					field: 'postName',
+					title: '岗位名称'
+				},
+				{
+					field: 'memo',
+					title: '岗位说明'
+				}]
+		};
+		$.table.init(options);
+	});
+
+	function queryParams(params) {
+		var search = $.table.queryParams(params);
+		search.postId = $("#postId").val();
+		return search;
+	}
+
+	/* 选择岗位 */
+	function selectAllPost() {
+		var url = prefix +"/accountPost/"+$("#userId").val();
+		$.modal.open("选择角色", url);
+	}
+
+
+
+
+
+
+
+</script>
+</body>
+</html>

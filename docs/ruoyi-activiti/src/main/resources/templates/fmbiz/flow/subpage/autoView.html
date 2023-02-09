@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:include="include :: header('脚本执行详情')"/>
+</head>
+<body>
+<div class="main-content">
+    <form id="form-fmbiz-add" class="form-horizontal" th:object="${FmBizScript}">
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">脚本名称：</label>
+                    <div class="col-sm-8">
+                        <input name="scriptName" id="scriptName" class="form-control" type="text" required
+                               th:value="*{scriptName}" readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">执行人：</label>
+                    <div class="col-sm-8">
+                        <input id="executorName" name="executorName" class="form-control" type="text"
+                               th:value="*{executorName}" readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">执行组：</label>
+                    <div class="col-sm-8">
+                        <input name="executorGroupName" id="executorGroupName" class="form-control" type="text"
+                               th:value="*{executorGroupName}" readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">执行时间：</label>
+                    <div class="col-sm-8">
+                        <input type="text" class="form-control" id="executorTime" name="executorTime"
+                               th:value="*{executorTime}"
+                               disabled/>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">执行脚本参数：</label>
+                    <div class="col-sm-8">
+                        <input type="text" class="form-control" id="scriptPara" name="scriptPara"
+                               th:value="*{scriptPara}"
+                               disabled/>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">执行结果：</label>
+                        <div class="col-sm-10">
+                            <textarea rows="20" cols="20" id="executorResult" th:text="*{executorResult}"
+                                      name="executorResult"
+                                      class="form-control" readonly></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+</div>
+<div class="row">
+    <div class="col-sm-offset-5 col-sm-10">
+        <button type="button" class="btn btn-sm btn-danger" onclick="closeFrom()"><i class="fa fa-remove"></i>关 闭
+        </button>
+    </div>
+</div>
+<th:block th:include="include :: footer"/>
+<th:block th:include="include :: datetimepicker-js"/>
+<script th:inline="javascript">
+
+    $(function () {
+        var value = $("#executorTime").val();
+        var pattern = /(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/;
+        startTime = value.replace(pattern, '$1-$2-$3 $4:$5:$6');
+        $("#executorTime").val(startTime);
+    });
+
+    /** 关闭 */
+    function closeFrom(){
+        var topWindow = $(window.parent.document);
+        var currentId = $('.page-tabs-content', topWindow).find('.active').attr('data-panel');
+        var $contentWindow = $('.RuoYi_iframe[data-id="' + currentId + '"]', topWindow)[0].contentWindow;
+        $.modal.close();
+        $contentWindow.$(".layui-layer-padding").removeAttr("style");
+        if ($contentWindow.table.options.type == table_type.bootstrapTable) {
+            $contentWindow.$.table.refresh('auto-table');
+        } else if ($contentWindow.table.options.type == table_type.bootstrapTreeTable) {
+            $contentWindow.$.treeTable.refresh('auto-table');
+        }
+        $.modal.closeTab();
+    }
+</script>
+</body>
+</html>

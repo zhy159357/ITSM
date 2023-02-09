@@ -1,0 +1,902 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.ConsumerMapper">
+
+    <resultMap type="OgPerson" id="OgPersonResult">
+        <id property="pId" column="PID"/>
+        <result property="orgId" column="ORGID"/>
+        <result property="pName" column="PNAME"/>
+        <result property="sex" column="SEX"/>
+        <result property="edu" column="EDU"/>
+        <result property="birthday" column="BIRTHDAY"/>
+        <result property="birthPlace" column="BIRTHPLACE"/>
+        <result property="phone" column="PHONE"/>
+        <result property="mobilPhone" column="MOBIL_PHONE"/>
+        <result property="email" column="EMAIL"/>
+        <result property="address" column="ADDRESS"/>
+        <result property="createBy" column="create_by"/>
+        <result property="momer" column="MOMER"/>
+        <result property="memo" column="MEMO"/>
+        <result property="updatetime" column="UPDATE_TIME"/>
+        <result property="invalidationMark" column="INVALIDATION_MARK"/>
+        <result property="position" column="POSITION"/>
+        <result property="leader" column="LEADER"/>
+        <result property="pOrder" column="P_ORDER"/>
+        <result property="pflag" column="P_FLAG"/>
+        <result property="orgname" column="ORGNAME"/>
+        <result property="username" column="USERNAME"/>
+       <!-- <result property="custNo" column="custNo"/>-->
+
+        <result property="newMobilPhone" column="NEW_MOBIL_PHONE"/>
+
+    </resultMap>
+
+    <insert id="insertOgPerson" parameterType="com.ruoyi.common.core.domain.entity.OgPerson" useGeneratedKeys="false"
+            keyProperty="pId">
+        insert into og_person(
+        pid,
+        <if test="orgId != null and orgId != ''">orgid,</if>
+        <if test="pName != null and pName != ''">pname,</if>
+        <if test="sex != null and sex != ''">sex,</if>
+        <if test="edu != null and edu != ''">edu,</if>
+        <if test="birthday != null and birthday!='' ">birthday,</if>
+        <if test="birthPlace != null and birthPlace != ''">birthplace,</if>
+        <if test="phone != null and phone != ''">phone,</if>
+        <if test="email != null and email != ''">email,</if>
+        <if test="address != null and address != ''">address,</if>
+        <if test="adder != null and adder != ''">adder,</if>
+        <if test="addtime != null and addtime!='' ">addtime,</if>
+        <if test="moder != null and moder != ''">moder,</if>
+        <if test="memo != null and memo != ''">memo,</if>
+        <if test="updatetime != null and updatetime != ''">update_time,</if>
+        <if test="invalidationMark != null and invalidationMark != ''">invalidation_mark,</if>
+        <if test="position != null and position != ''">position,</if>
+        <if test="leader != null and leader != ''">leader,</if>
+        <if test="pOrder != null and pOrder != ''">p_order,</if>
+        <if test="pflag!= null and pflag != ''">p_flag,</if>
+        <if test="mobilPhone != null and mobilPhone != ''">mobil_phone,</if>
+        <if test="newMobilPhone != null and newMobilPhone != ''">new_mobil_phone</if>
+        )values(
+        #{pId},
+        <if test="orgId != null and orgId != ''">#{orgId},</if>
+        <if test="pName != null and pName != ''">#{pName},</if>
+        <if test="sex != null and sex != ''">#{sex},</if>
+        <if test="edu != null and edu != ''">#{edu},</if>
+        <if test="birthday != null and birthday!='' ">#{birthday},</if>
+        <if test="birthPlace != null and birthPlace != ''">#{birthPlace},</if>
+        <if test="phone != null and phone != ''">#{phone},</if>
+        <if test="email != null and email != ''">#{email},</if>
+        <if test="address != null and address != ''">#{address},</if>
+        <if test="adder != null and adder != ''">#{adder},</if>
+        <if test="addtime != null and addtime!='' ">#{addtime},</if>
+        <if test="moder != null and moder !='' ">#{moder},</if>
+        <if test="memo != null and memo != ''">#{memo},</if>
+        <if test="updatetime != null and updatetime!='' ">#{updatetime},</if>
+        <if test="invalidationMark != null and invalidationMark !='' ">#{invalidationMark},</if>
+        <if test="position != null and position !='' ">#{position},</if>
+        <if test="leader != null and leader !='' ">#{leader},</if>
+        <if test="pOrder != null and pOrder !='' ">#{pOrder},</if>
+        <if test="pflag != null and pflag !='' ">#{pflag},</if>
+        <if test="mobilPhone != null and mobilPhone != ''">#{mobilPhone},</if>
+        <if test="newMobilPhone != null and newMobilPhone != ''">#{newMobilPhone}</if>
+
+        )
+    </insert>
+    <select id="checkPhoneUnique" parameterType="java.lang.String" resultMap="OgPersonResult">
+        select * from og_person
+        where mobil_phone = #{phone,jdbcType=VARCHAR} and  invalidation_mark = '1'
+    </select>
+
+    <select id="bigDataPersonByPhone" parameterType="java.lang.String" resultMap="OgPersonResult">
+        select DISTINCT * from OG_PERSON p,OG_USER u
+where p.PID=u.PID and u.INVALIDATION_MARK = '1' and p.P_FLAG = '1'
+and   mobil_phone = #{phone,jdbcType=VARCHAR}
+    </select>
+
+    <select id="selectBatchPersonList" parameterType="java.util.Map" resultMap="OgPersonResult">
+
+        select p.pid,p.birthplace,
+        p.pname,p.sex,p.mobil_phone,p.phone,p.position,p.leader,p.p_order,p.p_flag,p.email,p.orgid,og.orgname,og.level_code
+        from og_person p
+        left join og_org og
+        on p.orgid = og.orgid
+        where p.invalidation_mark = 1 and p.pid not in (select u.pid from og_user u where u.invalidation_mark='1')
+
+        <if test="ogPerson.pName!=null and ogPerson.pName!=''">
+            and p.pname like concat('%',concat(#{ogPerson.pName,jdbcType=VARCHAR},'%'))
+        </if>
+        <if test="ogPerson.mobilPhone!=null and ogPerson.mobilPhone!=''">
+            and p.mobil_phone like concat('%',concat(#{ogPerson.mobilPhone,jdbcType=VARCHAR},'%'))
+        </if>
+        <if test="ogPerson.levelCode!=null and ogPerson.levelCode!=''">
+            and og.LEVEL_CODE like concat('%',concat(#{ogPerson.levelCode,jdbcType=VARCHAR},'%'))
+        </if>
+
+    </select>
+    <select id="selectOgPersonList" parameterType="OgPerson" resultMap="OgPersonResult">
+        select p.pid,p.birthplace,
+        p.pname,p.sex,p.mobil_phone,p.phone,p.position,p.leader,p.p_order,p.p_flag,p.email,p.orgid,og.orgname,og.level_code,p.invalidation_mark
+        from og_person p
+        left join og_org og
+        on p.orgid = og.orgid
+        where p.pname is not null
+        <if test="pName!=null and pName!=''">
+            and p.pname like concat(concat('%',#{pName}),'%')
+        </if>
+        <if test="orgId!=null and orgId!=''">
+            and p.orgid = #{orgId}
+        </if>
+        <if test="pId!=null and pId!=''">
+            and p.pid = #{pId}
+        </if>
+        <if test="mobilPhone!=null and mobilPhone!=''">
+            and p.mobil_phone like concat(concat('%',#{mobilPhone}),'%')
+        </if>
+        <if test="pflag!=null and pflag!=''">
+            and p.p_flag = #{pflag}
+        </if>
+        <if test="invalidationMark!=null and invalidationMark!=''">
+            and p.invalidation_mark = #{invalidationMark}
+        </if>
+        <if test="orgname!=null and orgname!=''">
+            and og.orgname like concat(concat('%',#{orgname}),'%')
+        </if>
+        <if test="levelCode!=null and levelCode!=''">
+            and og.LEVEL_CODE like concat(#{levelCode},'%')
+        </if>
+
+    </select>
+    <select id="selectOgPersonForOrgIdList" parameterType="String" resultMap="OgPersonResult">
+        select p.pid,p.birthplace, p.pname,p.sex,p.mobil_phone,p.phone,p.position,p.leader,p.p_order,p.p_flag,p.email,p.orgid  from og_person p
+        where p.orgid  like concat(concat('%',#{orgId}),'%')
+    </select>
+
+    <update id="updateOgPersonStatus" parameterType="OgPerson">
+        update og_person
+        set invalidation_mark = #{invalidationMark,jdbcType=VARCHAR}
+        where pid = #{pId,jdbcType=VARCHAR}
+    </update>
+
+
+    <select id="selectOgPersonById" parameterType="java.lang.String" resultMap="OgPersonResult">
+        select p.memo,
+               p.pid,
+               p.pname,
+               p.birthplace,
+               p.email,
+               p.address,
+               p.birthday,
+               p.orgId,
+               p.edu,
+               p.sex,
+               p.mobil_phone,
+               p.phone,
+               p.position,
+               p.leader,
+               p.p_order,
+               p.p_flag,
+               o.orgname,
+               p.NEW_MOBIL_PHONE,
+               u.userid,
+               u.cust_no custNo,
+               u.username
+        from og_person p
+        left join OG_ORG o
+             on p.orgid = o.orgid
+        LEFT JOIN og_user u on u.pid = p.pid
+        where  p.INVALIDATION_MARK = '1' and p.pid = #{id,jdbcType = VARCHAR}
+
+    </select>
+
+
+    <select id="selectListByLevelCode" resultMap="OgPersonResult" parameterType="String">
+        select distinct p.* from OG_USER u,OG_PERSON p,OG_ORG a,OG_R_USER_POST up,OG_R_POST_ROLE pr
+
+        where u.PID = p.PID and p.ORGID = a.ORGID and u.USERID = up.USERID and up.POSTID = pr.POSTID
+
+        AND p.INVALIDATION_MARK = '1' AND u.INVALIDATION_MARK = '1'
+        AND pr.RID =  #{param2}
+        and a.LEVEL_CODE like concat(#{param1},'%')
+
+    </select>
+
+    <select id="selectListByOrgIdAndRoleId" resultMap="OgPersonResult" parameterType="String">
+        select distinct p.* from OG_USER u,OG_PERSON p,OG_ORG a,OG_R_USER_POST up,OG_R_POST_ROLE pr
+
+        where u.PID = p.PID and p.ORGID = a.ORGID and u.USERID = up.USERID and up.POSTID = pr.POSTID
+
+        AND p.INVALIDATION_MARK = '1' AND u.INVALIDATION_MARK = '1'
+        AND pr.RID =  #{rId}
+        AND a.ORGID  =  #{orgId}
+
+    </select>
+
+    <select id="selectListByRoleId" resultMap="OgPersonResult" parameterType="String">
+        select distinct pe.*
+        from OG_USER u
+        left join OG_PERSON pe on u.pid = pe.pid
+        LEFT join og_r_user_post up on u.userid = up.userid
+        LEFT JOIN og_post p on p.postid = up.postid
+        left join OG_R_POST_ROLE pr on pr.postid = p.postid
+		left join og_role r on r.rid=pr.rid
+        where  pe.INVALIDATION_MARK = '1' AND u.INVALIDATION_MARK = '1'
+        AND pr.RID =  #{rId}
+
+    </select>
+
+    <select id="selectRoleByIdTwo" resultMap="OgPersonResult" parameterType="String">
+        select u.username,u.userid,u.INVALIDATION_MARK,pe.pname,pe.mobil_phone,og.orgname,u.pid,pe.sex
+        from OG_USER u
+        left join OG_PERSON pe on u.pid = pe.pid
+        left join og_org og on pe.orgid = OG.orgid
+        LEFT join og_r_user_post up on u.userid = up.userid
+        LEFT JOIN og_post p on p.postid = up.postid
+        left join OG_R_POST_ROLE pr on pr.postid = p.postid
+			  left join og_role r on r.rid=pr.rid
+        where p.invalidation_mark = '1' and r.rid ='1202' and u.userid = #{userId}
+
+    </select>
+
+
+    <update id="updateOgPerson" parameterType="OgPerson">
+        update og_person
+        <set>
+            <if test="orgId != null and orgId != ''">orgid = #{orgId},</if>
+            <if test="pName != null and pName != ''">pname = #{pName},</if>
+            <if test="sex != null and sex != ''">sex = #{sex},</if>
+            <choose>
+                <when test="edu != null and edu != ''">
+                    edu = #{edu},
+                </when>
+                <otherwise>
+                    edu = '',
+                </otherwise>
+            </choose>
+            <choose>
+                <when test="birthday != null">
+                    birthday = #{birthday},
+                </when>
+                <otherwise>
+                    birthday = '',
+                </otherwise>
+            </choose>
+            <choose>
+                <when test="birthPlace != null and birthPlace != ''">
+                    birthplace = #{birthPlace},
+                </when>
+                <otherwise>
+                    birthplace = '',
+                </otherwise>
+            </choose>
+
+            <choose>
+                <when test="phone != null and phone != ''">
+                    phone = #{phone},
+                </when>
+                <otherwise>
+                    phone = '',
+                </otherwise>
+            </choose>
+            <choose>
+                <when test="email != null and email != ''">
+                    email = #{email},
+                </when>
+                <otherwise>
+                    email = '',
+                </otherwise>
+            </choose>
+
+            <choose>
+                <when test="address != null and address != ''">
+                    address = #{address},
+                </when>
+                <otherwise>
+                    address = '',
+                </otherwise>
+            </choose>
+
+            <choose>
+                <when test="moder != null and moder != ''">
+                    moder = #{moder},
+                </when>
+                <otherwise>
+                    moder = '',
+                </otherwise>
+            </choose>
+
+            <choose>
+                <when test="memo != null and memo != ''">
+                    memo = #{memo},
+                </when>
+                <otherwise>
+                    memo = '',
+                </otherwise>
+            </choose>
+
+            <if test="updatetime != null and updatetime != ''">update_time = #{updatetime},</if>
+            <if test="newMobilPhone != null and newMobilPhone != ''">new_mobil_phone = #{newMobilPhone},</if>
+            <if test="invalidationMark != null and invalidationMark != ''">invalidation_mark = #{invalidationMark},</if>
+            <choose>
+                <when test="position != null and position != ''">
+                    position = #{position},
+                </when>
+                <otherwise>
+                    position = '',
+                </otherwise>
+            </choose>
+            <if test="leader != null and leader != ''">leader = #{leader},</if>
+            <if test="pOrder != null and pOrder != ''">p_order = #{pOrder},</if>
+            <if test="pflag!= null and pflag != ''">p_flag = #{pflag},</if>
+            <if test="mobilPhone != null and mobilPhone != ''">mobil_phone = #{mobilPhone}</if>
+        </set>
+        where pid = #{pId}
+    </update>
+    <select id="selectBusinessAuditList" parameterType="OgPerson" resultMap="OgPersonResult">
+        select distinct p.memo,p.pid,
+        p.pname,p.birthplace,p.email,p.address,p.birthday,p.orgId,p.edu,p.sex,p.mobil_phone,p.phone,p.position,p.leader,p.p_order,p.p_flag,a.orgname
+        from OG_USER u,
+        OG_PERSON p,
+        OG_ORG a,
+        OG_R_USER_POST up,
+        OG_R_POST_ROLE pr
+        where u.PID = p.PID
+        and p.ORGID = a.ORGID
+        and u.USERID = up.USERID
+        and up.POSTID = pr.POSTID
+        AND p.INVALIDATION_MARK = '1'
+        AND u.INVALIDATION_MARK = '1'
+        <if test="rId != null and rId!=''">
+            and pr.RID = #{rId}
+        </if>
+        <if test="pId != null and pId!=''">
+            and p.pId = #{pId}
+        </if>
+        <if test="postId != null and postId!=''">
+            and up.POSTID = #{postId}
+        </if>
+        <if test="orgId != null and orgId!=''">
+            and a.orgid = #{orgId}
+        </if>
+        <if test="orgname != null and orgname!=''">
+            and a.orgname like concat(concat('%',#{orgname}),'%')
+        </if>
+        <if test="org != null and  org.levelCode != null and org.levelCode != ''">
+            and a.level_Code like concat(concat('%',#{org.levelCode}),'%')
+        </if>
+        <if test="pName!=null and pName!=''">
+            and p.pname like concat(concat('%',#{pName}),'%')
+        </if>
+        <if test="mobilPhone!=null and mobilPhone!=''">
+            and p.mobil_phone like concat(concat('%',#{mobilPhone}),'%')
+        </if>
+        <!-- 自动化实施的情况传入额外的参数orgId选择应用处长 -->
+        <if test="remark != null and remark!=''">
+            and a.orgid = #{remark}
+        </if>
+        <!--如果传了noPid为不包含该ID的人-->
+        <if test="params.noPid != null and params.noPid!=''">
+            and p.pId != #{params.noPid}
+        </if>
+    </select>
+
+    <select id="selectPersonListByPIds" parameterType="list" resultMap="OgPersonResult">
+        select
+        p.memo,p.pid,
+        p.pname,p.birthplace,p.email,p.address,p.birthday,p.orgId,p.edu,p.sex,p.mobil_phone,p.phone,p.position,p.leader,p.p_order,p.p_flag,p.invalidation_mark
+        from og_person p
+        where p.pid in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+
+    <select id="selectListByRoleId" parameterType="OgPerson" resultMap="OgPersonResult">
+        select distinct p.*,ORGNAME ,u.userid as from
+        OG_USER u,
+        OG_PERSON p,
+        OG_ORG a,
+        OG_R_USER_POST up,
+        OG_R_POST_ROLE pr
+        where
+        u.PID = p.PID and p.ORGID = a.ORGID and u.USERID = up.USERID and up.POSTID = pr.POSTID
+        AND p.INVALIDATION_MARK = '1' AND u.INVALIDATION_MARK = '1'
+        AND pr.RID = '0503'
+        <if test="pName !=null and pName !=''">
+            and p.pname like concat(concat('%',#{pName}),'%')
+        </if>
+        <if test="orgname !=null and orgname !=''">
+            and a.ORGNAME like concat(concat('%',#{orgname}),'%')
+        </if>
+    </select>
+    <select id="selectCmBizPerson" parameterType="OgPerson" resultMap="OgPersonResult">
+        select distinct p.*,ORGNAME ,u.userid as from
+        OG_USER u,
+        OG_PERSON p,
+        OG_ORG a,
+        OG_R_USER_POST up,
+        OG_R_POST_ROLE pr
+        where
+        u.PID = p.PID and p.ORGID = a.ORGID and u.USERID = up.USERID and up.POSTID = pr.POSTID
+        AND p.INVALIDATION_MARK = '1' AND u.INVALIDATION_MARK = '1'
+        AND pr.RID =#{params.rId}
+        <if test="pName !=null and pName !=''">
+            and p.pname like concat(concat('%',#{pName}),'%')
+        </if>
+        <if test="orgname !=null and orgname !=''">
+            and a.ORGNAME like concat(concat('%',#{orgname}),'%')
+        </if>
+    </select>
+
+    <select id="selectOgPersonByOrgAndPostId" parameterType="OgPerson" resultMap="OgPersonResult">
+        select DISTINCT p.memo,p.pid,
+        p.pname,p.birthplace,p.email,p.address,p.birthday,p.orgid,p.edu,p.sex,p.mobil_phone,
+        p.phone,p.position,p.leader,p.p_order,p.p_flag,o.orgname
+        from og_person p, og_r_user_post up, og_user u,og_org o
+        where p.pid = u.pid
+        and up.userid = u.userid
+        and p.orgid=o.orgid
+        and p.invalidation_mark = '1' and u.invalidation_mark = '1'
+        <if test="params.orgIds !=null and params.orgIds !=''">
+            and p.orgid in
+            <foreach item="orgId" collection="params.orgIds" open="(" separator="," close=")">
+                #{orgId}
+            </foreach>
+        </if>
+        <if test="params.postId !=null and params.postId !=''">
+            and up.postid = #{params.postId}
+        </if>
+        <if test="pName !=null and pName !=''">
+            and p.pName like concat(concat('%',#{pName}),'%')
+        </if>
+        <if test="mobilPhone !=null and mobilPhone !=''">
+            and p.mobil_Phone like concat(concat('%',#{mobilPhone}),'%')
+        </if>
+    </select>
+
+    <!--数据提取单根据机构层级和岗位列表查询人员信息-->
+    <select id="selectOgPersonByOrgLevAndPostIds" parameterType="OgPerson" resultMap="OgPersonResult">
+        select DISTINCT p.memo,p.pid,
+        p.pname,p.birthplace,p.email,p.address,p.birthday,p.orgid,p.edu,p.sex,p.mobil_phone,
+        p.phone,p.position,p.leader,p.p_order,p.p_flag,o.orgname
+        from og_person p, og_r_user_post up, og_user u,og_org o
+        <where>
+            and p.pid = u.pid
+            and up.userid = u.userid
+            and p.orgid=o.orgid
+            <if test="params.levelCode !=null and params.levelCode !=''">
+                and o.level_code LIKE concat(#{params.levelCode},'%')
+            </if>
+            <if test="params.postIds !=null and params.postIds !=''">
+                and up.postid in
+                <foreach item="postId" collection="params.postIds" open="(" separator="," close=")">
+                    #{postId}
+                </foreach>
+            </if>
+            <if test="pName!=null and pName!=''">
+                and p.pname like concat(concat('%',#{pName}),'%')
+            </if>
+            <if test="mobilPhone!=null and mobilPhone!=''">
+                and p.mobil_phone like concat(concat('%',#{mobilPhone}),'%')
+            </if>
+        </where>
+    </select>
+
+    <select id="selectOgPersonAddList" parameterType="OgPerson" resultMap="OgPersonResult">
+        select p.pid,p.birthplace,
+        p.pname,p.sex,p.mobil_phone,p.phone,p.position,p.leader,p.p_order,p.p_flag,p.email,p.orgid,og.orgname
+        from (select op.* from og_person op where op.pid not in (select u.pid from og_user u where u.pid is not null)) p
+        left join og_org og
+        on p.orgid = og.orgid
+        where p.pname is not null
+        <if test="pName!=null and pName!=''">
+            and p.pname like concat(concat('%',#{pName}),'%')
+        </if>
+        <if test="orgId!=null and orgId!=''">
+            and p.orgid = #{orgId}
+        </if>
+        <if test="mobilPhone!=null and mobilPhone!=''">
+            and p.mobil_phone like concat(concat('%',#{mobilPhone}),'%')
+        </if>
+        <if test="pflag!=null and pflag!=''">
+            and p.p_flag = #{pflag}
+        </if>
+        <if test="orgname!=null and orgname!=''">
+            and og.orgname like concat(concat('%',#{orgname}),'%')
+        </if>
+    </select>
+
+    <select id="selectPersonByGroupIdAndRoleId" parameterType="OgPerson" resultMap="OgPersonResult">
+        SELECT DISTINCT
+        P .*,
+        org.orgname
+        FROM
+        OG_USER U,
+        OG_GROUP_PERSON G,
+        OG_PERSON P,
+        OG_R_USER_POST up,
+        OG_ROLE r,
+        og_r_post_role pr,
+        OG_ORG org
+        WHERE
+        U .PID = P .PID
+        AND G .PID = P .PID
+        AND U .USERID = up.USERID
+        AND P .INVALIDATION_MARK = '1'
+        AND up.POSTID = pr.POSTID
+        AND org.ORGID = P.ORGID
+        <if test="rId!=null and rId!=''">
+            and pr.RID = #{rId}
+        </if>
+        <if test="groupId!=null and groupId!=''">
+            and g.GROUPID = #{groupId}
+        </if>
+        <if test="pName!=null and pName!=''">
+            and p.pname like concat(concat('%',#{pName}),'%')
+        </if>
+        <if test="mobilPhone!=null and mobilPhone!=''">
+            and p.mobil_phone like concat(concat('%',#{mobilPhone}),'%')
+        </if>
+        <if test="params.levelCode != null and params.levelCode != ''">
+            and org.level_code like concat(#{params.levelCode},'%')
+        </if>
+    </select>
+
+
+    <select id="selectPersonByPostId" parameterType="java.util.Map" resultMap="OgPersonResult">
+        select distinct u.*,op.pname from OG_USER u,OG_POST p,OG_R_USER_POST up,OG_PERSON op
+        where p.INVALIDATION_MARK = '1' and u.INVALIDATION_MARK = '1'
+        and u.USERID = up.USERID and UP.POSTID = p.POSTID and u.PID = op.pid
+        <if test="postId!=null and postId!=''">
+            and p.POSTID = #{postId}
+        </if>
+
+    </select>
+
+
+    <select id="selectOgPersonEvoById" parameterType="java.lang.String" resultMap="OgPersonResult">
+        select p.memo,
+        p.pid,
+        p.pname,
+        p.birthplace,
+        p.email,
+        p.address,
+        p.birthday,
+        p.orgId,
+        p.edu,
+        p.sex,
+        p.mobil_phone,
+        p.phone,
+        p.position,
+        p.leader,
+        p.p_order,
+        p.p_flag,
+        p.INVALIDATION_MARK,
+        o.orgname
+        from og_person p
+        left join OG_ORG o
+        on p.orgid = o.orgid
+        where p.pid = #{id,jdbcType=VARCHAR}
+
+    </select>
+
+    <select id="selectList" parameterType="com.ruoyi.common.core.domain.entity.OgPerson" resultMap="OgPersonResult">
+        select p.memo,
+        p.pid,
+        p.pname,
+        p.birthplace,
+        p.email,
+        p.address,
+        p.birthday,
+        p.orgId,
+        p.edu,
+        p.sex,
+        p.mobil_phone,
+        p.phone,
+        p.position,
+        p.leader,
+        p.p_order,
+        p.p_flag,
+        p.invalidation_mark
+        from og_person p
+        <where>
+            p.invalidation_mark = '1'
+            <if test="orgId!=null and orgId!=''">
+                and p.orgId = #{orgId}
+            </if>
+            <if test="mobilPhone!=null and mobilPhone!=''">
+                and p.mobil_phone = #{mobilPhone}
+            </if>
+            <if test="pName!=null and pName!=''">
+                and p.pname like concat(concat('%',#{pName}),'%')
+            </if>
+        </where>
+    </select>
+    <select id="selectOgPersonOrgById" parameterType="list" resultMap="OgPersonResult">
+          select p.memo,
+            p.pid,
+            p.pname,
+            p.birthplace,
+            p.email,
+            p.address,
+            p.birthday,
+            p.orgId,
+            p.edu,
+            p.sex,
+            p.mobil_phone,
+            p.phone,
+            p.position,
+            p.invalidation_mark,
+            p.leader,
+            p.p_order,
+            p.p_flag
+            from og_person p LEFT JOIN OG_ORG o
+            on p.orgId = o.orgId
+            where p.orgId = #{orgId,jdbcType=VARCHAR}
+
+    </select>
+
+    <delete id="deleteOgPersonByPIds" parameterType="String">
+        delete from og_person where pid in
+        <foreach item="pid" collection="array" open="(" separator="," close=")">
+            #{pid}
+        </foreach>
+    </delete>
+
+    <select id="selectOgPersonByPostIds" parameterType="list" resultMap="OgPersonResult">
+        select distinct p.memo,
+        p.pid,
+        p.pname,
+        p.birthplace,
+        p.email,
+        p.address,
+        p.birthday,
+        p.orgId,
+        p.edu,
+        p.sex,
+        p.mobil_phone,
+        p.phone,
+        p.position,
+        p.leader,
+        p.p_order,
+        p.p_flag,
+        o.orgname
+        from og_person p
+        left join og_user u
+        on p.pid = u.pid
+        left join og_r_user_post ur
+        on u.userid = ur.userid
+        left join og_org o
+        on p.orgid = o.orgid
+        where p.INVALIDATION_MARK = '1'
+        and u.INVALIDATION_MARK = '1'
+        and ur.postid in
+        <foreach item="postId" collection="params.postIds" open="(" separator="," close=")">
+            #{postId}
+        </foreach>
+        <if test="pName!=null and pName!=''">
+            and p.pname like concat(concat('%',#{pName}),'%')
+        </if>
+        <if test="mobilPhone!=null and mobilPhone!=''">
+            and p.mobil_phone =#{mobilPhone}
+        </if>
+    </select>
+
+    <select id="selectPersonListByPostAndRole" parameterType="java.util.Map" resultMap="OgPersonResult">
+        select DISTINCT p.* from OG_PERSON p,OG_USER u,OG_R_USER_POST up,OG_POST op,OG_R_POST_ROLE pr,OG_ROLE r
+        where p.PID = u.PID and u.USERID = UP.USERID and UP.POSTID = OP.POSTID and r.RID = pr.RID and OP.POSTID = pr.POSTID
+        and p.INVALIDATION_MARK = '1' and u.INVALIDATION_MARK = '1'
+        and OP.INVALIDATION_MARK = '1' and r.INVALIDATION_MARK  = '1'
+        and r.RID = #{roleId} and op.POSTID = #{postId}
+        /*and r.RID = '9210' and op.POSTID = '0087'*/
+    </select>
+
+    <select id="selectOgPersonByPid" parameterType="java.lang.String" resultMap="OgPersonResult">
+        select p.memo,
+               p.pid,
+               p.pname,
+               p.birthplace,
+               p.email,
+               p.address,
+               p.birthday,
+               p.orgId,
+               p.edu,
+               p.sex,
+               p.mobil_phone,
+               p.phone,
+               p.position,
+               p.leader,
+               p.p_order,
+               p.p_flag,
+               p.invalidation_mark,
+               o.orgname
+        from og_person p
+        left join OG_ORG o
+             on p.orgid = o.orgid
+        where  p.invalidation_mark = '0' and p.pid = #{id,jdbcType = VARCHAR}
+
+    </select>
+
+    <select id="selectLxbgOgPersonOrgById" parameterType="list" resultMap="OgPersonResult">
+          SELECT
+            P .memo,
+            P .pid,
+            P .pname,
+            P .birthplace,
+            P .email,
+            P .address,
+            P .birthday,
+            P .orgId,
+            P .edu,
+            P .sex,
+            P .mobil_phone,
+            P .phone,
+            P .position,
+            P .invalidation_mark,
+            P .leader,
+            P .p_order,
+            P .p_flag
+          FROM
+            OG_PERSON P,
+            OG_ORG o,
+            OG_ROLE r
+          WHERE
+              P .orgId = o.orgId
+          AND P .orgId= #{orgId,jdbcType=VARCHAR}
+          AND p.INVALIDATION_MARK = '1'
+          AND r.rid = '8300'
+    </select>
+
+
+    <select id="selectOgPersonJqList" parameterType="OgPerson" resultMap="OgPersonResult">
+        select p.pid,p.birthplace,
+        p.pname,p.sex,p.mobil_phone,p.phone,p.position,p.leader,p.p_order,p.p_flag,p.email,p.orgid,og.orgname,og.level_code,p.invalidation_mark
+        from og_person p
+        left join og_org og
+        on p.orgid = og.orgid
+        where p.pname is not null
+        <if test="pName!=null and pName!=''">
+            and p.pname like concat(concat('%',#{pName}),'%')
+        </if>
+        <if test="orgId!=null and orgId!=''">
+            and p.orgid = #{orgId}
+        </if>
+        <if test="pId!=null and pId!=''">
+            and p.pid = #{pId}
+        </if>
+        <if test="mobilPhone!=null and mobilPhone!=''">
+            and p.mobil_phone like concat(concat('%',#{mobilPhone}),'%')
+        </if>
+        <if test="pflag!=null and pflag!=''">
+            and p.p_flag = #{pflag}
+        </if>
+        <if test="invalidationMark!=null and invalidationMark!=''">
+            and p.invalidation_mark = #{invalidationMark}
+        </if>
+        <if test="orgname!=null and orgname!=''">
+            and og.orgname like concat(concat('%',#{orgname}),'%')
+        </if>
+        <if test="levelCode!=null and levelCode!=''">
+            and og.LEVEL_CODE =#{levelCode}
+        </if>
+    </select>
+
+    <select id="selectAssessList" parameterType="OgPerson" resultMap="OgPersonResult">
+        <if test="params.orgIds != null and params.orgIds.size() > 0">
+            select distinct
+            p.pid,p.birthplace,p.pname,p.sex,p.mobil_phone,p.phone,p.position,p.leader,p.p_order,p.p_flag,p.email,p.orgid,og.orgname,og.level_code,p.invalidation_mark
+            from og_person p
+            left join og_org og
+            on p.orgid = og.orgid
+            <where>
+                and og.orgid in
+                <foreach collection="params.orgIds" open="(" close=")" item="orgId" separator=",">
+                    #{orgId}
+                </foreach>
+                <if test="pName!=null and pName!=''">
+                    and p.pname like concat(concat('%',#{pName}),'%')
+                </if>
+                <if test="mobilPhone!=null and mobilPhone!=''">
+                    and p.mobil_phone =#{mobilPhone}
+                </if>
+                and p.invalidation_mark = '1'
+            </where>
+            union
+        </if>
+        select distinct
+        p.pid,p.birthplace,p.pname,p.sex,p.mobil_phone,p.phone,p.position,p.leader,p.p_order,p.p_flag,p.email,p.orgid,og.orgname,og.level_code,p.invalidation_mark
+        from og_person p
+        left join og_user u
+        on p.pid = u.pid
+        left join og_r_user_post up
+        on u.userid = up.userid
+        left join og_org og
+        on p.orgid = og.orgid
+        <where>
+            <if test="params.postIds != null and params.postIds != ''">
+                and up.postid in
+                <foreach collection="params.postIds" open="(" close=")" item="postId" separator=",">
+                    #{postId}
+                </foreach>
+            </if>
+            <if test="pName!=null and pName!=''">
+                and p.pname like concat(concat('%',#{pName}),'%')
+            </if>
+            <if test="mobilPhone!=null and mobilPhone!=''">
+                and p.mobil_phone =#{mobilPhone}
+            </if>
+            and p.invalidation_mark = '1'
+            and u.invalidation_mark = '1'
+        </where>
+    </select>
+
+    <select id="selectAppCheck" parameterType="OgPerson" resultMap="OgPersonResult">
+        select distinct p.*
+        from og_person p
+        left join og_user u
+        on p.pid = u.pid
+        left join og_r_user_post up
+        on u.userid = up.userid
+        <where>
+            <if test="orgId != null and orgId!=''">
+                and p.orgid = #{orgId}
+            </if>
+            <if test="params.postIds != null and params.postIds != ''">
+                and up.postid in
+                <foreach collection="params.postIds" open="(" close=")" item="postId" separator=",">
+                    #{postId}
+                </foreach>
+            </if>
+            <if test="pName!=null and pName!=''">
+                and p.pname like concat(concat('%',#{pName}),'%')
+            </if>
+            <if test="mobilPhone!=null and mobilPhone!=''">
+                and p.mobil_phone =#{mobilPhone}
+            </if>
+            and p.invalidation_mark = '1'
+            and u.invalidation_mark = '1'
+        </where>
+        <!--union
+        select p.*
+            from og_person p
+            left join og_user u
+              on p.pid = u.pid
+            left join og_r_user_post up
+              on u.userid = up.userid
+        <where>
+            <if test="params.postId != null and params.postId != ''">
+                and up.postid = #{params.postId}
+            </if>
+            <if test="pName!=null and pName!=''">
+                and p.pname like concat(concat('%',#{pName}),'%')
+            </if>
+            <if test="mobilPhone!=null and mobilPhone!=''">
+                and p.mobil_phone =#{mobilPhone}
+            </if>
+        </where>-->
+    </select>
+
+    <select id="selectPostByuser" parameterType="OgPerson" resultMap="OgPersonResult">
+        select pe.*
+          from OG_R_USER_POST up
+          left join og_user u
+            on up.userid = u.userid
+          left join og_post op
+            on up.postid = op.postid
+          left join og_person pe
+            on pe.pid = u.pid
+         where op.postid in ('0011', '0016')
+    </select>
+    <select id="getOgPersonListByPostIdAndGroupId" parameterType="map" resultMap="OgPersonResult">
+        select distinct p.pid,p.orgid,p.pname,p.mobil_phone from og_person p,og_r_user_post up,og_group_person gp
+        where up.userid=p.pid and gp.pid=p.pid
+        and p.invalidation_mark='1'
+        <if test="postId!=null and postId!=''">
+            and up.postid=#{postId}
+        </if>
+        <if test="groupId!=null and groupId!=''">
+            and gp.groupid=#{groupId}
+        </if>
+    </select>
+</mapper>

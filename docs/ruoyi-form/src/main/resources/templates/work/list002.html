@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('变更请求单列表')" />
+    <th:block th:include="include :: select2-css" />
+    <th:block th:include="include :: datetimepicker-css" />
+    <th:block th:include="include :: bootstrap-select-css"/>
+</head>
+<body class="gray-bg">
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-12 search-collapse">
+            <form id="formId">
+
+                <div class="select-list">
+                    <ul>
+                        <li>
+                            <label style="width: 80px">工单编号：</label>
+                            <input type="text" name="workNum" maxlength="20"/>
+                        </li>
+                        <li>
+                            <label style="width: 80px">  标题：</label>
+                            <input type="text" name="title" maxlength="64"/>
+                        </li>
+                        <li>
+                            <label style="width: 80px">应用系统：</label>
+                            <select id="appSystem" name="appSystem"  class="form-control " th:with="issueFenleis=${@pubParaValue.selectPubParaValueByParaName('WT_FENLEI')}">
+                                <option value="">所有</option>
+                                <option th:each="itype : ${issueFenleis}" th:text="${itype.valueDetail}" th:value="${itype.value}"></option>
+                            </select>
+                        </li>
+                        <!--							<li>-->
+                        <!--								<label style="width: 80px">问题类型：</label>-->
+                        <!--								<select id="issueType" name="issueType" class="form-control" th:with="issue_type=${@pubParaValue.selectPubParaValueByParaName('WT_TYPE')}">-->
+                        <!--									<option value="">所有</option>-->
+                        <!--									<option th:each="itype : ${issue_type}" th:text="${itype.valueDetail}" th:value="${itype.value}"></option>-->
+                        <!--								</select>-->
+                        <!--							</li>-->
+                        <!--							<li id="issueOrgLi">-->
+                        <!--								<label style="width: 80px">所属机构：</label>-->
+                        <!--								<select id="issueOrg" name="issueOrg" class="form-control " >-->
+                        <!--									<option value="">所有</option>-->
+                        <!--									<option th:each="itype : ${issueOrgs}" th:text="${itype.orgName}" th:value="${itype.orgId}"></option>-->
+                        <!--								</select>-->
+                        <!--							</li>-->
+                        <li>
+                            <label style="width: 80px">项目编号：</label>
+                            <input type="text" name="projectNum" maxlength="50"/>
+                        </li>
+                        <li>
+                            <label style="width: 80px">需求编号：</label>
+                            <input type="text" name="demandNum" maxlength="50"/>
+                        </li>
+                        <!--							<li id="myFlagLi">-->
+                        <!--								<label style="width: 80px">我的标识：</label>-->
+                        <!--								<select id="myFlag" name="params[myFlag]" class="form-control" th:with="myFlag=${@pubParaValue.selectPubParaValueByParaName('pub_myFlag')}">-->
+                        <!--									<option th:each="itype : ${myFlag}" th:text="${itype.valueDetail}" th:value="${itype.value}"></option>-->
+                        <!--								</select>-->
+                        <!--							</li>-->
+
+                        <li class="select-time">
+                            <label style="width: 80px">创建时间： </label>
+                            <input style="width:90px" type="text" class="time-input"  id="startTime" placeholder="开始时间" name="params[startTime]" readonly>
+                            <span style="width:10px">-</span>
+                            <input style="width:90px" type="text" class="time-input"   id="endTime" placeholder="结束时间" name="params[endTime]" readonly>
+                        </li>
+                        <li>
+                            <a class="btn btn-primary btn-rounded btn-sm" id="searchBut"onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                            <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.resetAll('formId')"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                        </li>
+                    </ul>
+                </div>
+
+            </form>
+        </div>
+
+        <div class="btn-group-sm" id="toolbar" role="group">
+            <a class="btn btn-success" onclick="$.operate.addTab()" >
+                <i class="fa fa-plus"></i> 添加
+            </a>
+            <a class="btn btn-primary single disabled" onclick="editTab()" >
+                <i class="fa fa-edit"></i> 修改
+            </a>
+            <a class="btn btn-danger multiple disabled" onclick="cancle()" >
+                <i class="fa fa-trash"></i> 作废
+            </a>
+            <a class="btn btn-danger multiple disabled" onclick="removeAll()" >
+                <i class="fa fa-remove"></i> 删除
+            </a>
+            <a class="btn btn-info single disabled" onclick="detail()">
+                <i class="fa fa-search"></i> 查看详情
+            </a>
+            <a class="btn btn-info single disabled" onclick="showProcessImg()" id="showProcessImg">
+                <i class="fa fa-search"></i>查看流程
+            </a>
+
+        </div>
+        <div class="col-sm-12 select-table table-striped">
+            <table id="bootstrap-table" style="table-layout:fixed;"></table>
+        </div>
+    </div>
+</div>
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: select2-js" />
+<th:block th:include="include :: datetimepicker-js" />
+<th:block th:include="include :: bootstrap-select-js"/>
+<script th:src="@{/js/activiti.js}"></script>
+<script th:inline="javascript">
+    var datas = [[${@pubParaValue.selectPubParaValueByParaName('changeQingQiuStatus')}]];
+
+    var prefix = ctx + "activiti/qingqiu";
+
+    var prefix_parse_resouse = ctx +'system/single';
+
+    $(function() {
+        // 回车键搜索
+        document.onkeydown = function(e){
+            var ev = document.all ? window.event : e;
+            if(ev.keyCode==13) {
+                $('#searchBut').trigger('click');
+                return false;
+            }
+        };
+        var options = {
+            url: prefix + "/listMys",
+            createUrl: prefix + "/add",
+            updateUrl: prefix + "/edit/{id}",
+            detailUrl: prefix + "/detail/{id}",
+            removeUrl: prefix + "/remove",
+            exportUrl: prefix + "/export",
+            clickToSelect:true,
+            singleSelect : true,
+            modalName: "变更请求单",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'changeId',
+                    visible:false
+                },
+                {
+                    field: 'issuefxId',
+                    title: '问题单ID',
+                    visible: false
+                },
+                {
+                    field: 'workNum',
+                    title: '工单编号',
+                },
+                {
+                    field: 'title',
+                    title: '标题',
+                    formatter: function (value, row, index) {
+                        return $.table.tooltip(value);
+                    },
+                    cellStyle: function cellStyle(value, row, index, field) {
+                        return {classes: 'text-nowrap'};
+                    }
+                },
+                {
+                    field: 'appSystem',
+                    title: '应用系统',
+                    formatter: function (value, row, index) {
+                        return $.table.tooltip(value);
+                    },
+                    cellStyle: function cellStyle(value, row, index, field) {
+                        return {classes: 'text-nowrap'};
+                    }
+                },
+                {
+                    field: 'workType',
+                    title: '工单类型',
+                },
+                {
+                    field: 'projectNum',
+                    title: '项目编号',
+                    // formatter:function (value){
+                    // 	return selectPubParaValueData(issueFenlei,value);
+                    // }
+                },
+                {
+                    field: 'demandNum',
+                    title: '需求编号',
+                    // formatter:function (value){
+                    // 	return selectPubParaValueData(issueType,value);
+                    // }
+                },
+                {
+                    field: 'approver',
+                    title: '审批人',
+                    // formatter:function (value){
+                    // 	return selectPubParaValueData(issuesource,value);
+                    // }
+                },
+                {
+                    field: 'contact',
+                    title: '接口人',
+                },
+                {
+                    field: 'createByName',
+                    title: '创建人',
+                    // formatter: function (value, row, index) {
+                    // 	return selectPubParaValueData(allstatus,value);
+                    // }
+                }, {
+                    field: 'createTime',
+                    title: '创建时间',
+                }
+            ]
+        };
+        $.table.init(options);
+    });
+
+    /* 选择分类树 */
+    function selectTypeInfo() {
+        var url = ctx + "system/typeinfo/cmBizTree";
+        var options = {
+            title: '选择分类',
+            width: "380",
+            url: url,
+            callBack: doSubmit2
+        };
+        $.modal.openOptions(options);
+    }
+
+    /*变更分类赋值*/
+    function doSubmit2(index, layero){
+        var tree = layero.find("iframe")[0].contentWindow.$._tree;
+        if(jQuery.isEmptyObject(tree)) {
+            layer.close(index);
+        }
+        var selectNode = tree.getSelectedNodes();
+        if(selectNode.length!=0){
+            $("#changeCategoryId").val(selectNode[0].id);
+            $("#changeCategoryName").val(selectNode[0].name);
+        }
+        layer.close(index);
+    }
+
+    /*字典*/
+    function selectDictLabel(datas, value) {
+        var actions = [];
+        $.each(datas, function(index, dict) {
+            if (dict.value == ('' + value)) {
+                var listClass = $.common.equals("default", dict.listClass) || $.common.isEmpty(dict.listClass) ? "" : "badge badge-" + dict.listClass;
+                actions.push($.common.sprintf("<span class='%s'>%s</span>", listClass, dict.valueDetail));
+                return false;
+            }
+        });
+        return actions.join('');
+    }
+
+    /*修改*/
+    function editTab(id) {
+        table.set();
+        var rows = $.common.isEmpty(table.options.uniqueId) ? $.table.selectFirstColumns() : $.table.selectColumns(table.options.uniqueId);
+        $.ajax({
+            type: 'POST',
+            url: prefix+"/selectById",
+            data: {"id":rows[0]},
+            success: function (result) {
+                if(result.data.stauts=='0100'|| result.data.stauts=='0200'){
+                    if (result.flag == '0') {
+                        $.modal.alertError("您不是该变更单的申请人，不能对其进行修改");
+                    } else {
+                        $.modal.openTab("修改" + table.options.modalName, $.operate.editUrl(id));
+                    }
+                }else{
+                    $.modal.alertError("当前变更单的状态无法修改");
+                }
+            },
+            dataType: 'json'
+        });
+
+    }
+
+    $("#createtime").datetimepicker({
+        format: "yyyy-mm-dd hh:ii:ss",
+        autoclose: true
+    });
+
+    // 作废
+    function  cancle() {
+        table.set();
+        var rows = $.common.isEmpty(table.options.uniqueId) ? $.table.selectFirstColumns() : $.table.selectColumns(table.options.uniqueId);
+        $.ajax({
+            type: 'POST',
+            url: prefix+"/selectById",
+            data: {"id":rows[0]},
+            success: function (result) {
+                if(result.data.stauts == '0200'){
+                    if (result.flag == '0') {
+                        $.modal.alertError("您不是该变更单的申请人，不能将其作废");
+                    } else {
+                        $.modal.confirm("确认要作废这条数据吗?", function () {
+                            var url = prefix + "/cancle";
+                            var data = {"id": rows.join(), "stauts": result.data.stauts};
+                            $.operate.submit(url, "post", "json", data);
+                        });
+                    }
+                }
+                else if(result.data.stauts == '0100'){
+                    $.modal.alertError("草稿建议直接删除");
+                }else{
+                    $.modal.alertError("当前变更单的状态无法作废");
+                }
+            },
+            dataType: 'json'
+        });
+    }
+
+    // 删除
+    function  removeAll(id) {
+        table.set();
+        var rows = $.common.isEmpty(table.options.uniqueId) ? $.table.selectFirstColumns() : $.table.selectColumns(table.options.uniqueId);
+        $.ajax({
+            type: 'POST',
+            url: prefix+"/selectById",
+            data: {"id":rows[0]},
+            success: function (result) {
+                if(result.data.stauts == '0100'){
+                    $.modal.confirm("确认要删除这些数据吗?", function() {
+                        var url = prefix+"/remove";
+                        var data = { "ids": rows.join() };
+                        $.operate.submit(url, "post", "json", data);
+                    });
+                }else{
+                    $.modal.alertError("当前变更单的状态无法删除");
+                }
+            },
+            dataType: 'json'
+        });
+    }
+
+    /*查看详情*/
+    function detail() {
+        var changeId = $.table.selectFirstColumns();
+        var url = prefix + "/detail/" + changeId;
+        $.modal.openTab("变更请求单详情", url);
+    }
+
+    /*转资源变更按钮显隐*/
+    $(function () {
+        var isHasRole = $("#isHasRole").val();
+        if (isHasRole == '0') {
+            $("#startcmbiz").hide();
+        }
+    });
+
+    /**
+     * 转资源变更
+     */
+    function startCmbiz() {
+        //获取当前事务Ids
+        var row = $("#bootstrap-table").bootstrapTable('getSelections')[0];
+        $.ajax({
+            type: 'POST',
+            url: prefix+"/selectById",
+            data: {"id":row.changeId},
+            success: function (result) {
+                if(result.data.stauts == '0500'){
+                    var url = prefix_parse_resouse + "/add/4/"+row.changeId;
+                    $.modal.openTab('转资源变更',url);
+                }else{
+                    $.modal.alertError("当前变更单状态不支持转资源变更单");
+                }
+            },
+            dataType: 'json'
+        });
+    }
+
+    /*我的表示控制状态的显隐*/
+    // $("#myIdentity").change(function () {
+    //     var myIdentity = $("#myIdentity").val();
+    //     if (myIdentity == '1') {
+    //         $("#statudId").attr("style", "display:none");
+    //         $("#stauts").val("");
+    //
+    //     } else {
+    //         $("#statudId").attr("style", "display:show");
+    //     }
+    // })
+
+    /**
+     * 查看流程
+     */
+    function showProcessImg() {
+        var rows = $("#bootstrap-table").bootstrapTable('getSelections');
+        var len = rows.length;
+        if(len==0){
+            $.modal.alertWarning("请选择要查看流程的变更单");
+            return;
+        }
+        var row = rows[0];
+        if(row.stauts=='0100'){
+            $.modal.alertWarning("待提交的变更请求单没有流程");
+            return;
+        }
+        var url = ctx + 'process/processImg/' + row.changeId;
+        $.modal.openNoBtn("查看流程图", url, null, null, null, true);
+    }
+
+    /*撤回*/
+    function rollBack(id, stauts) {
+        if (id == '') {
+            id = $.table.selectFirstColumns();
+        }
+        if (stauts == '') {
+            stauts = $.table.selectColumns("stauts");
+        }
+        if (stauts == '0300' || stauts == '0400' || stauts == '0600') {
+            $.modal.confirm("确认要撤回吗?", function () {
+                var url = prefix + "/rollBack";
+                var data = {"id": id};
+                $.operate.submit(url, "post", "json", data);
+            });
+        } else {
+            $.modal.alertWarning("当前变更单状态不可撤回。");
+            return;
+        }
+    }
+
+    $("#startTime").datetimepicker({
+        format: "yyyy-mm-dd",
+        minView: "month",
+        autoclose: true
+    });
+
+    $("#endTime").datetimepicker({
+        format: "yyyy-mm-dd",
+        minView: "month",
+        autoclose: true
+    });
+</script>
+</body>
+</html>

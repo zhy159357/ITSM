@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ruoyi.es.mapper.KnowledgeTitleMapper">
+	 <resultMap type="com.ruoyi.es.domain.KnowledgeTitle" id="TitleResult">
+        <result property="id" column="id"/>
+        <result property="parentId" column="parent_id"/>
+        <result property="parentName" column="parent_name"/>
+        <result property="name" column="name"/>
+        <result property="category" column="category"/>
+        <result property="eventType" column="event_type"/>
+        <result property="createId" column="create_id"/>
+        <result property="createName" column="create_name"/>
+        <result property="createTime" column="create_time"/>
+        <result property="sysId" column="sys_id"/>
+        <result property="sysName" column="sys_name"/>
+        <result property="isUsed" column="isused"/>
+        <result property="status" column="status"/>
+    </resultMap>
+
+    <sql id="selectKnowledgeTitleVo">
+        select k.id, k.parent_id, k.name, k.category, k.event_type, k.create_time, k.create_id, k.status,
+		(select pname from og_person p where p.pid=k.create_id) as create_name, k2.name as parent_name,
+		k.sys_id, os.caption as sys_name, (select count(1) from knowledge_content kc
+		where (kc.sys_id = k.sys_id and k.category=0) or (kc.content = k.id and k.category=1)
+		 or (kc.sectitle = k.id and k.category=2) or (kc.threetitle = k.id and k.category=3)) as isused
+		from knowledge_titil k
+		left join knowledge_titil k2 on k2.id=k.parent_id
+		left join og_sys os on k.sys_id = os.sysid
+    </sql>
+
+    <select id="selectKnowledgeTitleList" parameterType="KnowledgeTitle" resultMap="TitleResult">
+		<include refid="selectKnowledgeTitleVo"/>
+		<where>
+            <if test="name != null and name != ''"> and k.name like concat('%',concat(#{name},'%'))</if>
+            <if test="parentId != null and parentId != ''">and k.parent_id = #{parentId}</if>
+            <if test="eventType != null and eventType != ''"> and k.event_type = #{eventType}</if>
+            <if test="category != null and category != ''"> and k.category = #{category}</if>
+            <if test="sysId != null and sysId != ''"> and k.sys_id = #{sysId}</if>
+            <if test="createId != null and createId != ''">AND k.id &lt;&gt; #{createId}</if>
+            <if test="status != null and status != ''">AND k.status = #{status}</if>
+        </where>
+        order by k.category asc,k.create_time desc nulls last
+    </select>
+
+    <select id="selectKnowledgeTitleMySqlList" parameterType="KnowledgeTitle" resultMap="TitleResult">
+		<include refid="selectKnowledgeTitleVo"/>
+		<where>
+            os.caption is not null
+            <if test="name != null and name != ''"> and k.name like concat('%',concat(#{name},'%'))</if>
+            <if test="parentId != null and parentId != ''">and k.parent_id = #{parentId}</if>
+            <if test="eventType != null and eventType != ''"> and k.event_type = #{eventType}</if>
+            <if test="category != null and category != ''"> and k.category = #{category}</if>
+            <if test="sysId != null and sysId != ''"> and k.sys_id = #{sysId}</if>
+            <if test="createId != null and createId != ''">AND k.id &lt;&gt; #{createId}</if>
+            <if test="status != null and status != ''">AND k.status = #{status}</if>
+        </where>
+        order by k.category asc,IF(ISNULL(k.create_time),1,0)
+    </select>
+
+    <select id="selectKnowledgeTitleById" parameterType="String" resultMap="TitleResult">
+		<include refid="selectKnowledgeTitleVo"/>
+		where k.id = #{id}
+    </select>
+    
+    <select id="selectKnowledgeTitleByName" parameterType="KnowledgeTitle" resultMap="TitleResult">
+		<include refid="selectKnowledgeTitleVo"/>
+		<where>
+            <if test="name != null and name != ''"> and k.name = #{name}</if>
+            <if test="parentId != null and parentId != ''">and k.parent_id = #{parentId}</if>
+            <if test="eventType != null and eventType != ''"> and k.event_type = #{eventType}</if>
+            <if test="category != null and category != ''"> and k.category = #{category}</if>
+            <if test="sysId != null and sysId != ''"> and k.sys_id = #{sysId}</if>
+            <if test="createId != null and createId != ''">AND k.id &lt;&gt; #{createId}</if>
+            <if test="status != null and status != ''">AND k.status = #{status}</if>
+        </where>
+        order by k.category asc,k.create_time desc nulls last
+    </select>
+
+    <insert id="insertKnowledgeTitle" parameterType="KnowledgeTitle">
+        insert into knowledge_titil(
+            id,
+            <if test="parentId != null ">parent_id,</if>
+            <if test="name != null  and name != ''">name,</if>
+            <if test="eventType!= null  and eventType != ''">event_type,</if>
+            <if test="category != null  and category != ''">category,</if>
+            <if test="createId != null  and createId != ''">create_id,</if>
+            <if test="sysId != null  and sysId != ''">sys_id,</if>
+            <if test="status != null  and status != ''">status,</if>
+            create_time
+ 			)values(
+            #{id},
+            <if test="parentId != null ">#{parentId},</if>
+            <if test="name != null  and name != ''">#{name},</if>
+            <if test="eventType!= null  and eventType != ''">#{eventType},</if>
+            <if test="category != null  and category != ''">#{category},</if>
+            <if test="createId != null  and createId != ''">#{createId},</if>
+            <if test="sysId != null  and sysId != ''">#{sysId},</if>
+            <if test="status != null  and status != ''">#{status},</if>
+			#{createTime}
+			)
+    </insert>
+
+    <update id="updateKnowledgeTitle" parameterType="KnowledgeTitle">
+        update knowledge_titil
+        <trim prefix="SET" suffixOverrides=",">
+        	<if test="parentId != null ">parent_id = #{parentId},</if>
+            <if test="name != null  and name != ''  ">name = #{name},</if>
+            <if test="eventType!= null  and eventType != ''">event_type = #{eventType},</if>
+            <if test="category != null and category != ''  ">category = #{category},</if>
+            <if test="sysId != null and sysId != ''  ">sys_id = #{sysId},</if>
+            <if test="status != null and status != ''  ">status = #{status},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteKnowledgeTitleById" parameterType="String">
+        delete from knowledge_titil where id = #{id}
+    </delete>
+
+	<select id="isUsed" parameterType="String" resultType="int">
+		select count(1) from knowledge_content
+		where sys_id = #{id} or content = #{id} or sectitle = #{id} or threetitle = #{id}
+    </select>
+
+   <update id="updateKnowledgeTitleSys" parameterType="KnowledgeTitle">
+        update knowledge_titil
+        <set>
+            <if test="sysId != null and sysId != ''  ">sys_id = #{sysId}</if>
+        </set>
+        where sys_id = (select sys_id from knowledge_titil where id = #{id})
+    </update>
+
+    <select id="checkSysUnique" parameterType="KnowledgeTitle" resultType="int">
+		select count(0) from knowledge_titil where category = #{category} and sys_id = #{sysId} and event_type=#{eventType}
+   	</select>
+
+   	<select id="selectKnowledgeTitleSysList" resultMap="TitleResult">
+		<include refid="selectKnowledgeTitleVo"/>
+		inner join og_sys os on os.sysid=k.sys_id
+		<where>
+			<if test="knowledgeTitle.eventType != null and knowledgeTitle.eventType != ''  ">and k.event_type = #{knowledgeTitle.eventType}</if>
+			<if test="knowledgeTitle.category != null and knowledgeTitle.category != ''  ">and k.category = #{knowledgeTitle.category}</if>
+			<if test="orgId != null and orgId != ''  ">and os.orgid = #{orgId}</if>
+		</where>
+        order by k.create_time desc nulls last
+    </select>
+    <select id="selectKnowledgeTitleSysMySqlList" resultMap="TitleResult">
+        <include refid="selectKnowledgeTitleVo"/>
+        <where>
+            <if test="knowledgeTitle.eventType != null and knowledgeTitle.eventType != ''  ">and k.event_type = #{knowledgeTitle.eventType}</if>
+            <if test="knowledgeTitle.category != null and knowledgeTitle.category != ''  ">and k.category = #{knowledgeTitle.category}</if>
+            <if test="orgId != null and orgId != ''  ">and os.orgid = #{orgId}</if>
+        </where>
+        order by IF(ISNULL(k.create_time),1,0)
+    </select>
+
+    <select id="selectTitleTree" parameterType="KnowledgeTitle" resultMap="TitleResult">
+        select k.id, k.parent_id, k.name, k.category, k.event_type, k.create_time, k.create_id,
+        (select pname from og_person p where p.pid=k.create_id) as create_name, k2.name as parent_name,
+        k.sys_id, os.caption as sys_name from knowledge_titil k
+        left join knowledge_titil k2 on k2.id=k.parent_id
+        left join og_sys os on k.sys_id = os.sysid
+        where 1=1
+        <if test="parentId != null and parentId != ''">
+            AND k.parent_id = #{parentId}
+        </if>
+        <if test="name != null and name != ''">
+            AND k.name like concat('%',concat(#{name},'%'))
+        </if>
+        <if test="category != null and category != ''">
+            AND k.category = #{category}
+        </if>
+        <if test="sysId != null and sysId != ''">
+            AND k.sys_id = #{sysId}
+        </if>
+
+        <if test="params.sysId != null and params.sysId != ''">
+        and k.sys_id in
+            <foreach collection="params.sysId" item="sysId2" separator="," open="(" close=")">
+                #{sysId2}
+            </foreach>
+        </if>
+        <if test="id!=null and id!=''">
+            AND k.id = #{id}
+        </if>
+        <if test="eventType!=null and eventType!=''">
+            AND k.event_type = #{eventType}
+        </if>
+    </select>
+    <!--业务分类维护专用-->
+    <select id="selectKnowledgeTitleList2" parameterType="KnowledgeTitle" resultMap="TitleResult">
+        select * from knowledge_titil k
+        <where>
+            <if test="name != null and name != ''"> and k.name like concat('%',concat(#{name},'%'))</if>
+            <if test="parentId != null and parentId != ''">and k.parent_id = #{parentId}</if>
+            <if test="eventType != null and eventType != ''"> and k.event_type = #{eventType}</if>
+            <if test="category != null and category != ''"> and k.category = #{category}</if>
+            <if test="sysId != null and sysId != ''"> and k.sys_id = #{sysId}</if>
+            <if test="createId != null and createId != ''">AND k.id &lt;&gt; #{createId}</if>
+            <if test="status != null and status != ''">AND k.status = #{status}</if>
+        </where>
+        order by k.category asc,k.create_time desc nulls last
+    </select>
+    
+    
+    <update id="synchronizeMonitoringContent" >
+        update (select kt.id, kt.name, kt.sys_id, os.caption as sysname from knowledge_titil kt
+		left join og_sys os on os.sysid=kt.sys_id
+		where kt.event_type=0 and kt.category=1 
+		and kt.name &lt;&gt; os.caption ) a set a.name = a.sysname
+    </update>
+    
+</mapper>

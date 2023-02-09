@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('事件单列表')" />
+    <th:block th:include="include :: datetimepicker-css" />
+</head>
+<body class="gray-bg">
+     <div class="container-div">
+        <div class="row">
+            <div class="col-sm-12 search-collapse">
+                <form id="formId">
+                    <input type="hidden" th:value="${pId}" id="pId">
+                    <div class="select-list">
+                        <ul>
+                            <li>
+                                <label>事件单号：</label><input type="text" name="emergId"/>
+                            </li>
+                            <li>
+                                <label>事件描述：</label><input type="text" name="emergMemo"/>
+                            </li>
+                            <li>
+                                <label>事件来源：</label><select class="form-control"  name="emergLy" th:with="type=${@dict.getParaType('em_sjd_source')}" id="emergLy" >
+                                    <option></option>
+                                    <option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+                                </select>
+                            </li>
+                            <li>
+                                <a class="btn btn-primary btn-rounded btn-sm" id="ss" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                            </li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+
+            <div class="btn-group-sm" id="toolbar" role="group">
+                <a class="btn btn-success" onclick="$.operate.addTab()">
+                    <i class="fa fa-plus"></i> 新建
+                </a>
+                <a class="btn btn-primary single disabled" onclick="editTab()">
+                    <i class="fa fa-edit"></i> 修改
+                </a>
+                <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()">
+                    <i class="fa fa-trash"></i> 删除
+                </a>
+                <a class="btn btn-info single disabled" onclick="detailTab()">
+                    <i class="fa fa-search"></i> 详情
+                </a>
+            </div>
+            <div class="col-sm-12 select-table table-striped">
+                <table id="bootstrap-table"></table>
+            </div>
+        </div>
+    </div>
+    <th:block th:include="include :: footer" />
+    <script th:inline="javascript">
+        var editFlag = [[${@permission.hasPermi('system:emerg:edit')}]];
+        var removeFlag = [[${@permission.hasPermi('system:emerg:remove')}]];
+        var emergLy =  [[${@dict.getParaType('em_sjd_source')}]];
+
+        var prefix = ctx + "emerg/xz";
+
+        $(function() {
+            document.onkeydown = function(e){
+                var ev = document.all ? window.event : e;
+                console.log(ev);
+                if(ev.keyCode==13) {
+                    $('#ss').trigger('click');
+                    return false;
+                } //搜索逻辑
+            }
+            var options = {
+                url: prefix + "/list",
+                createUrl: prefix + "/add",
+                updateUrl: prefix + "/edit/{id}",
+                removeUrl: prefix + "/remove",
+                detailUrl: prefix + "/detail/{id}",
+                exportUrl: prefix + "/export",
+                singleSelect:true,
+                clickToSelect: true,
+                modalName: "事件",
+                columns: [{
+                    checkbox: true
+                },
+                    {
+                        field: 'id',
+                        title: 'id',
+                        visible:false
+                    },
+                {
+                    field: 'emergId',
+                    title: '事件单号',
+                },
+                {
+                    field: 'emergLy',
+                    title: '事件来源',
+                    formatter: function (value,row,index) {
+                        return selectDictLabel(emergLy, value);
+                    }
+                },
+                {
+                    field: 'emergSystem',//xtId   CAPTION
+                    title: '应用系统',
+                },
+                {
+                    field: 'emergMemo',
+                    title: '事件描述',
+                    formatter: function(value,row,index){
+                        return $.table.tooltip(value);
+                    }
+                },
+                {
+                    field: 'startTime',
+                    title: '创建时间',
+                },
+                {
+                    field: "markName",
+                    title: '状态',
+                }]
+            };
+            $.table.init(options);
+        });
+        // 添加事件单
+        function addEmerg(id) {
+             var url = prefix + '/addEmerg/' + id;
+             $.modal.openTab("添加事件", url);
+        }
+
+        // 查看事件单
+        function detailTab() {
+            var id = $.table.selectFirstColumns();
+            var url = prefix + '/detail/' + id;
+            $.modal.openTab("详情事件", url);
+        }
+
+        //事件来源（字典项）
+        function selectDictLabel(datas, value) {
+            var actions = [];
+            $.each(datas, function(index, dict) {
+                if (dict.value == ('' + value)) {
+                    var listClass = $.common.equals("default", dict.listClass) || $.common.isEmpty(dict.listClass) ? "" : "badge badge-" + dict.listClass;
+                    actions.push($.common.sprintf("<span class='%s'>%s</span>", listClass, dict.valueDetail));
+                    return false;
+                }
+            });
+            return actions.join('');
+        }
+
+        /*function removeAll(emergId) {
+            debugger;
+            table.set();
+            var rows = $.common.isEmpty(table.options.uniqueId) ? $.table.selectFirstColumns() : $.table.selectColumns(table.options.uniqueId);
+            $.ajax({
+                type: 'POST',
+                url: prefix+"/selectEmergById",
+                data: {"emergId":rows[0]},
+                success: function (result) {
+                    if(result.data.start=='1'){
+                        $.modal.openTab("删除" + table.options.modalName, $.operate.removeAll(emergId));
+                    }else{
+                        $.modal.alertError("该应急事件单不是待提交状态，无法删除!");
+                    }
+                },
+                dataType: 'json'
+            });
+        }*/
+
+        //修改之前判断只有待提交的才能修改
+        /*function editTab(id) {
+            debugger;
+            table.set();
+            var rows = $.common.isEmpty(table.options.uniqueId) ? $.table.selectFirstColumns() : $.table.selectColumns(table.options.uniqueId);
+            $.ajax({
+                type: 'POST',
+                url: prefix+"/selectById",
+                data: {"id":rows[0]},
+                success: function (result) {
+                    /!*console.info(result);*!/
+                    if(result.data.emergMark=='1'){
+                        $.modal.openTab("修改" + table.options.modalName, $.operate.editUrl(id));
+                    }else{
+                        $.modal.alertError("该应急事件单不是待提交状态，无法修改!");
+                    }
+                },
+                dataType: 'json'
+            });
+        }*/
+        function editTab(id) {
+            var id = $.table.selectFirstColumns();
+            var url = prefix + '/edit/' + id;
+            $.modal.openTab("修改应急事件单", url);
+        }
+    </script>
+</body>
+</html>

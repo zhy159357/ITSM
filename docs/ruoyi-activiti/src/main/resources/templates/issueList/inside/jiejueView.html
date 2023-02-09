@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+	<th:block th:include="include :: header('预解决问题单')" />
+	<th:block th:include="include :: ztree-css" />
+</head>
+<body class="white-bg">
+<div id="accountDiv">
+	<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+		<form class="form-horizontal m" id="form-issue-view" th:object="${issue}">
+			<input id="issuefxId" name="issuefxId" type="hidden" th:value="${issuefxId}"/>
+			<input id="type" name="params[type]" th:value="${type}" hidden>
+			<input id="currentState" name="currentState" type="hidden" th:value="*{currentState}"/>
+			<h4 class="form-header h4">基本信息</h4>
+			<div class="row">
+				<div class="col-sm-6">
+					<div class="form-group">
+						<label class="col-sm-4 control-label is-required">问题单号：</label>
+						<div class="col-sm-8">
+							<input class="form-control" type="text" name="issuefxNo" id="issuefxNo" th:field="*{issuefxNo}" readonly>
+						</div>
+					</div>
+				</div>
+				<div class="col-sm-6">
+					<div class="form-group">
+						<label class="col-sm-4 control-label is-required">来源：</label>
+						<div class="col-sm-8">
+							<select id="issuesource" name="issuesource" class="form-control" th:with="issuesources=${@pubParaValue.selectPubParaValueByParaName('WT_SOUCE')}" th:field="*{issuesource}" disabled="disabled" >
+								<option th:each="itype : ${issuesources}" th:text="${itype.valueDetail}" th:value="${itype.value}" th:selected="${itype.value eq issuesource}"></option>
+							</select>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-sm-6">
+					<div class="form-group">
+						<label class="col-sm-4 control-label is-required">问题归属：</label>
+						<div class="col-sm-8">
+							<div class="col-sm-4" th:each="dict : ${@pubParaValue.selectPubParaValueByParaName('WT_ISINSIDE')}" >
+								<input type="radio" th:id="${dict.value}" name="isInside" th:value="${dict.value}" th:checked="${dict.value eq issue.isInside}" disabled>
+								<label th:for="${dict.value}" th:text="${dict.valueDetail}"></label>
+							</div>
+						</div>
+
+					</div>
+				</div>
+				<div class="col-sm-6">
+					<div class="form-group ">
+						<label class="col-sm-4 control-label">上一次故障时间：</label>
+						<div class="col-sm-8">
+							<input name="lastTime" id="lastTime" class="form-control"  maxlength="8" type="text" th:value="*{lastTime}" readonly>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-sm-6">
+					<div class="form-group">
+						<label class="col-sm-4 control-label is-required">问题分类：</label>
+						<div class="col-sm-8">
+							<select id="issueFenlei" name="issueFenlei" class="form-control"  th:with="issueFenleis=${@pubParaValue.selectPubParaValueByParaName('WT_FENLEI')}" th:field="*{issueFenlei}" disabled="disabled">
+								<option value=""></option>
+								<option th:each="itype : ${issueFenleis}" th:text="${itype.valueDetail}" th:value="${itype.value}" th:selected="${itype.value eq issueFenlei}"></option>
+							</select>
+						</div>
+					</div>
+				</div>
+				<div class="col-sm-6">
+					<div class="form-group">
+						<label class="col-sm-4 control-label is-required">问题单影响类型：</label>
+						<div class="col-sm-8">
+							<select id="issueType" name="issueType" class="form-control" th:with="issue_type=${@pubParaValue.selectPubParaValueByParaName('WT_TYPE')}" th:field="*{issueType}" disabled="disabled">
+								<option value=""></option>
+								<option th:each="itype : ${issue_type}" th:text="${itype.valueDetail}" th:value="${itype.value}" ></option>
+							</select>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-sm-6">
+					<div class="form-group">
+						<label class="col-sm-4 control-label is-required">问题等级：</label>
+						<div class="col-sm-8">
+							<select id="seriousLev" name="seriousLev" class="form-control" th:with="issue_serious_lev=${@pubParaValue.selectPubParaValueByParaName('issue_serious_lev')}" th:field="*{seriousLev}" disabled="disabled">
+								<option value=""></option>
+								<option th:each="itype : ${issue_serious_lev}" th:text="${itype.valueDetail}" th:value="${itype.value}" th:selected="${itype.value eq seriousLev}"></option>
+							</select>
+						</div>
+					</div>
+				</div>
+				<div class="col-sm-6">
+					<div class="form-group">
+						<label class="col-sm-4 control-label is-required">问题发生时间：</label>
+						<div class="col-sm-8">
+							<input type="text" class="layui-input form-control" id="reporttime" name="reporttime" th:field="*{reporttime}" placeholder="yyyy-MM-dd HH:mm:ss" readonly>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row" id="fenLeiOne">
+				<div class="col-sm-6">
+					<div class="form-group">
+						<label class="col-sm-4 control-label is-required">问题原因一级分类：</label>
+						<div class="col-sm-8">
+							<select id="oneType" name="oneType" class="form-control" onchange="getFmKindTwoList()" required disabled>
+								<option value="" th:if="${not #strings.isEmpty(issue.oneType)}"></option>
+								<option th:each="KnowledgeTitle : ${oneTypeList}" th:text="${KnowledgeTitle.name}"
+										th:value="${KnowledgeTitle.id}" th:field="*{oneType}"></option>
+							</select>
+						</div>
+					</div>
+				</div>
+				<div class="col-sm-6">
+					<div class="form-group">
+						<label class="col-sm-4 control-label is-required">问题原因二级分类：</label>
+						<div class="col-sm-8">
+							<select id="twoType" name="twoType" onchange="getFmKindThreeList()" class="form-control"
+									required disabled>
+								<option value="" th:if="${not #strings.isEmpty(issue.twoType)}"></option>
+								<option th:each="KnowledgeTitle : ${twoTypeList}" th:text="${KnowledgeTitle.name}"
+										th:value="${KnowledgeTitle.id}" th:field="*{twoType}"></option>
+							</select>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row" id="fenLeiTwo">
+				<div class="col-sm-6">
+					<div class="form-group">
+						<label class="col-sm-4 control-label is-required">问题原因三级分类：</label>
+						<div class="col-sm-8">
+							<select id="threeType" name="threeType" onchange="getKeywordsList()" class="form-control"
+									required disabled>
+								<option value="" th:if="${not #strings.isEmpty(issue.threeType)}"></option>
+								<option th:each="KnowledgeTitle : ${threeTypeList}" th:text="${KnowledgeTitle.name}"
+										th:value="${KnowledgeTitle.id}" th:field="*{threeType}"></option>
+							</select>
+						</div>
+					</div>
+				</div>
+				<div class="col-sm-6" id="tardingNameDiv">
+					<div class="form-group">
+						<label class="col-sm-4 control-label is-required">交易名称：</label>
+						<div class="col-sm-8">
+							<input name="tardingName" id="tardingName" th:field="*{tardingName}" class="form-control" readonly>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-sm-12">
+					<div class="form-group">
+						<label class="col-xs-2 control-label is-required">涉及系统：</label>
+						<div class="col-xs-10">
+							<input id="sysId" name="sysId" th:field="*{sysId}" type="hidden"/>
+							<input class="form-control" type="text" id="sysName" name="sysName" th:field="*{sysName}" readonly  />
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-sm-6">
+					<div class="form-group">
+						<label class="col-sm-4 control-label is-required">系统重要级别：</label>
+						<div class="col-sm-8">
+							<select id="importLevel" name="importLevel" class="form-control" th:with="importLevel=${@pubParaValue.selectPubParaValueByParaName('CS_LEVEL')}" th:field="*{importLevel}"disabled>
+								<option value=""></option>
+								<option th:each="itype : ${importLevel}" th:text="${itype.valueDetail}" th:value="${itype.value}"></option>
+							</select>
+						</div>
+					</div>
+				</div>
+				<div th:if="${issue.isInside eq '1'}" class="col-sm-6">
+					<div class="form-group">
+						<label class="col-sm-4 control-label is-required">实施整改单位：</label>
+						<div class="col-sm-8">
+							<select id="putUnit" name="putUnit" class="form-control" th:with="putUnit=${@pubParaValue.selectPubParaValueByParaName('CS_DEPT')}" th:field="*{putUnit}" disabled>
+								<option value=""></option>
+								<option th:each="itype : ${putUnit}" th:text="${itype.valueDetail}" th:value="${itype.value}"></option>
+							</select>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-sm-6">
+					<div class="form-group">
+						<label class="col-sm-4 control-label is-required">问题单发现人：</label>
+						<div class="col-sm-8">
+							<input name="createrId" id="createrId" th:value="*{createrId}" hidden>
+							<input name="reportname" class="form-control" type="text" th:value="*{reportname}" readonly >
+						</div>
+					</div>
+				</div>
+				<div class="col-sm-6">
+					<div class="form-group">
+						<label class="col-sm-4 control-label is-required">联系方式：</label>
+						<div class="col-sm-8">
+							<input name="reportphone" id="reportphone" th:field="*{reportphone}" class="form-control" type="text" readonly>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-sm-12">
+					<div class="form-group">
+						<label class="col-xs-2 control-label is-required">问题标题：</label>
+						<div class="col-xs-10">
+							<input name="issuefxName" class="form-control" type="text" th:field="*{issuefxName}" placeholder="文本框内容不得超过64个字" maxlength="64" readonly>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-sm-12">
+					<div class="form-group">
+						<label class="col-xs-2 control-label is-required">问题描述：</label>
+						<div class="col-xs-10">
+							<textarea name="issuefxText" maxlength="500" th:field="*{issuefxText}" class="form-control" rows="3" readonly></textarea>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-sm-12">
+					<div class="form-group">
+						<label class="col-xs-2 control-label is-required">影响描述：</label>
+						<div class="col-xs-10">
+							<textarea name="issuefxImpact" maxlength="500" th:field="*{issuefxImpact}" class="form-control" rows="3" readonly></textarea>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-sm-12">
+					<div class="form-group">
+						<label class="col-xs-2 control-label is-required">处理建议：</label>
+						<div class="col-xs-10">
+							<textarea name="dealDescription" maxlength="500" th:field="*{dealDescription}" class="form-control" rows="3" readonly></textarea>
+						</div>
+					</div>
+				</div>
+			</div>
+			<h4 class="form-header h4">涉及多个业务部门点击增加业务审核选择多个</h4>
+			<div class="row">
+				<div class="col-sm-6">
+					<div class="form-group">
+						<label class="col-sm-4 control-label is-required">提出机构：</label>
+						<div class="col-sm-8">
+							<select id="issueOrg" name="issueOrg" class="form-control" th:field="*{issueOrg}"   disabled>
+								<option th:each="org : ${issueOrgs}" th:text="${org.orgName}" th:value="${org.orgId}"></option>
+							</select>
+						</div>
+					</div>
+				</div>
+				<div class="col-sm-6">
+					<div class="form-group">
+						<label class="col-sm-4 control-label is-required">审核人：</label>
+						<div class="col-sm-8">
+							<select id="reviewerId" name="reviewerId" class="form-control" th:field="*{reviewerId}" disabled>
+								<option value=""></option>
+								<option th:each="user : ${userlist}" th:text="${user.pName}" th:value="${user.pId}"></option>
+							</select>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div th:each="entries,stat:${depList}">
+				<div class="row" th:id="enuParam+${stat.index}" >
+					<div class="col-sm-6">
+						<div class="form-group">
+							<label class="col-sm-4 control-label is-required">业务部门：</label>
+							<div class="col-sm-8">
+								<select name="businessOrg" class="form-control" disabled>
+									<option value=""></option>
+									<option th:each="org : ${businessOrgs}" th:selected="${org.paraValueId eq entries.detail}" th:text="${org.valueDetail}" th:value="${org.value}"  ></option>
+								</select>
+							</div>
+						</div>
+					</div>					<div class="col-sm-6">
+						<div class="form-group">
+							<label class="col-sm-4 control-label is-required">业务经理：</label>
+							<div class="col-sm-8">
+								<select name="businessId" class="form-control" disabled>
+									<option value=""></option>
+									<option th:each="user : ${entries['buslist']}" th:selected="${user.pId eq entries.userId}" th:text="${user.pName}" th:value="${user.pId}"  ></option>
+								</select>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-sm-6">
+					<div class="form-group">
+						<label class="col-sm-4 control-label is-required">技术经理：</label>
+						<div class="col-sm-8">
+							<input id="auditId" name="auditId" th:value="*{auditId}" hidden>
+							<input class="form-control" type="text" name="auditIdName" id="auditIdName"  th:value="${auditIdName}" readonly>
+						</div>
+					</div>
+				</div>
+			</div>
+			<h4 class="form-header h4">协同评估人</h4>
+			<div class="row">
+				<div class="col-sm-12">
+					<div class="form-group">
+						<label class="col-xs-2 control-label">协同评估人：</label>
+						<div class="col-xs-10">
+							<input id="multiusers" name="multiusers" type="hidden" th:value="*{multiusers}"/>
+							<input class="form-control" type="text" name="multiusersName" id="multiusersName" th:value="${multiusersName}" readonly>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-sm-12">
+					<div class="tabs-container">
+						<ul class="nav nav-tabs">
+							<li class="active"><a data-toggle="tab" href="#tab-1" aria-expanded="true">流程记录</a>
+							</li>
+							<li class=""><a data-toggle="tab" href="#tab-2" aria-expanded="false"> 附件上传</a></li>
+							<li class=""><a data-toggle="tab" href="#tab-3" aria-expanded="false">关联业务事件单</a>
+							</li>
+							</li>
+							<li class=""><a data-toggle="tab" href="#tab-4" aria-expanded="false">关联监控事件单</a>
+							</li>
+							<li class=""><a data-toggle="tab" href="#tab-5" aria-expanded="false">关联数据变更单</a>
+							</li>
+							<li class=""><a data-toggle="tab" href="#tab-6" aria-expanded="false">关联资源变更单</a>
+							</li>
+						</ul>
+						<div class="tab-content">
+							<div id="tab-1" class="tab-pane active">
+								<div class="panel-body">
+									<div class="col-sm-12 select-table table-striped">
+										<table id="history-table"></table>
+									</div>
+
+								</div>
+							</div>
+							<div id="tab-2" class="tab-pane">
+								<div class="panel-body">
+									<div class="btn-group-sm" id="toolbar1" role="group">
+											<a class="btn btn-success" id="fileAdd" type="button" onclick="upload()">
+												<i class="fa fa-upload"></i> 添加附件
+											</a>
+											<a class="btn btn-primary multiple disabled" onclick="downloadFile()">
+												<i class="fa fa-download"></i> 下载附件
+											</a>
+											<a class="btn btn-danger multiple disabled" id="fileRemove" onclick="$.operate.removeAll()">
+												<i class="fa fa-trash"></i> 删除附件
+											</a>
+									</div>
+									<div class="col-sm-12 select-table table-striped">
+										<table id="file-table"></table>
+									</div>
+								</div>
+							</div>
+
+							<div id="tab-3" class="tab-pane">
+								<div class="panel-body">
+									<div class="btn-group-sm" id="toolbar2" role="group">
+										<a class="btn btn-info " type="button" onclick="detailyw()">
+											<i class="fa fa-search"></i> 查看详情
+										</a>
+									</div>
+									<div class="col-sm-12 select-table table-striped">
+										<table id="yw-table"></table>
+									</div>
+								</div>
+							</div>
+
+
+							<div id="tab-4" class="tab-pane">
+								<div class="panel-body">
+									<div class="btn-group-sm" id="toolbar3" role="group">
+										<a class="btn btn-info" onclick="detailRun()">
+											<i class="fa fa-search"></i> 查看详情
+										</a>
+									</div>
+									<div class="col-sm-12 select-table table-striped">
+										<table id="run-table"></table>
+									</div>
+								</div>
+							</div>
+
+							<div id="tab-5" class="tab-pane">
+								<div class="panel-body">
+									<div class="btn-group-sm" id="toolbar4" role="group">
+										<a class="btn btn-info  " onclick="detailCm()">
+											<i class="fa fa-search"></i> 查看详情
+										</a>
+									</div>
+									<div class="col-sm-12 select-table table-striped">
+										<table id="cm-table"></table>
+									</div>
+								</div>
+							</div>
+							<div id="tab-6" class="tab-pane">
+								<div class="panel-body">
+									<div class="btn-group-sm" id="toolbar5" role="group">
+										<a class="btn btn-info  " onclick="detailCmBiz()">
+											<i class="fa fa-search"></i> 查看详情
+										</a>
+									</div>
+									<div class="col-sm-12 select-table table-striped">
+										<table id="CmBiz-table"></table>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<h4 class="form-header h4">解决详情</h4>
+			<div class="row">
+				<div class="col-sm-6">
+					<div class="form-group">
+						<label class="col-sm-4 control-label is-required">整改实施状态：</label>
+						<div class="col-sm-8">
+							<select name="iStatus" class="form-control m-b" th:with="type=${@pubParaValue.selectPubParaValueByParaName('CS_I_STATUS')}"  th:field="*{iStatus}"required>
+								<option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+							</select>
+						</div>
+					</div>
+				</div>
+				<div class="col-sm-6">
+					<div class="form-group">
+						<label class="col-sm-4 control-label is-required">预计解决时间：</label>
+						<div class="col-sm-8">
+							<input name="jjTime" id="jjTime" class="form-control col-sm-6"   placeholder="日期格式为yyyymmdd,暂时没有解决时间填'不确定'" maxlength="8" type="text" th:value="*{jjTime}" required>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-sm-12">
+					<div class="form-group">
+						<label class="col-xs-2 control-label is-required">实施整改进度：</label>
+						<div class="col-xs-10">
+							<textarea   name="unitSchedule" id="unitSchedule" class="form-control" type='text' placeholder='文本框内容不得超过300个字' maxlength='500' rows="5" th:text="*{unitSchedule}"></textarea>
+						</div>
+					</div>
+				</div>
+			</div>
+		</form>
+	</div>
+
+	<div class="row">
+		<div class="col-sm-offset-5 col-sm-10" id="buttons-view">
+			<button type="button" class="btn btn-sm btn-primary"  onclick="doDeal(1)"><i class="fa fa-check"></i>整改进度更新</button>
+			<button type="button" class="btn btn-sm btn-primary"  onclick="doDeal(0)"><i class="fa fa-check"></i>解决</button>
+			<button type="button" class="btn btn-sm btn-danger" id="buttons-close" onclick="closeItem()"><i class="fa fa-window-close"></i>关 闭 </button>
+			<button type="button" class="btn btn-sm btn-default" onclick="window.print()"><i class="fa fa-print"></i>打印</button>
+		</div>
+	</div>
+</div>
+
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: ztree-js" />
+<script th:src="@{/js/imbiz.js}"></script>
+<script th:src="@{/js/issue.js}"></script>
+<script th:src="@{/js/activiti.js}"></script>
+<script th:inline="javascript">
+	var datas = [[${@pubParaValue.selectPubParaValueByParaName('fmStatus')}]];
+	var eventLevel=[[${@pubParaValue.selectPubParaValueByParaName('dhsj_sjdj')}]];
+	var eventType=[[${@pubParaValue.selectPubParaValueByParaName('YXSJ_TYPE')}]];
+	var eventStatus=[[${@pubParaValue.selectPubParaValueByParaName('Event_status')}]];
+	var eventSource=[[${@pubParaValue.selectPubParaValueByParaName('fmSource')}]];
+	var changeCategoryId_datas =  [[${@pubParaValue.selectPubParaValueByParaName('cm_CateGory')}]];
+	var changeSingleStatus =  [[${@pubParaValue.selectPubParaValueByParaName('cmsj_status')}]];
+	var eventSourceDatas =[[${@dict.getParaType('fmSource')}]];
+	var changeTypeV = [[${@pubParaValue.selectPubParaValueByParaName('change_type')}]];
+	var changeStatusV = [[${@pubParaValue.selectPubParaValueByParaName('changeSingleStatus')}]];
+	var type=[[${type}]];
+	var inside=[[${issue.isInside}]];
+	var editFlag = "";
+	var prefix = ctx + "issueList/build";
+	layui.use('laydate', function() {
+		var laydate = layui.laydate;
+		//日期时间选择器
+		laydate.render({
+			elem: '#occurTime',
+			type: 'datetime'
+		});
+	});
+	$(function (){
+		puFolwHistory($("#issuefxId").val());
+		var issueFenlei = $("#issueFenlei").val();
+		if ('6' != issueFenlei && '3' != issueFenlei) {
+			$("#tardingNameDiv").hide();
+			$("#fenLeiOne").hide();
+			$("#fenLeiTwo").hide();
+		}
+		if ('3' == issueFenlei) {
+			$("#tardingNameDiv").hide();
+		}
+	});
+	function doDeal(reCode){
+		if($.common.isEmpty($("#unitSchedule").val())){
+			$.modal.alertWarning("请填写实施整改进度！");
+			return;
+		}
+		var data=$("#form-issue-view").serializeArray();
+		data.push({name:"params[reCode]",value:reCode})
+		$.operate.saveTab(ctx+"issueList/activiti/jieJueInside",data);
+	}
+	//关闭刷新
+	function closeBtu(){
+		var topWindow = $(window.parent.document);
+		var currentId = $('.page-tabs-content', topWindow).find('.active').attr('data-panel');
+		var $contentWindow = $('.RuoYi_iframe[data-id="' + currentId + '"]', topWindow)[0].contentWindow;
+		var tab=window.top.$("iframe[src='"+currentId+"']");
+		eg:tab.contents().find("#searchBut").click();
+		$.modal.closeTab();
+	}
+</script>
+</body>
+</html>

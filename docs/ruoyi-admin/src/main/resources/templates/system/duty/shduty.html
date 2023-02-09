@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('值班列表')" />
+    <th:block th:include="include :: datetimepicker-css" />
+    <th:block th:include="include :: select2-css" />
+
+</head>
+<body class="gray-bg">
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-12 search-collapse">
+            <form id="holiday-form">
+                <div class="select-list">
+                    <ul>
+<!--                         <li>
+                            值班时间 :<input name="duty_time" type="text" id="duty_time" style="background-color: #ffffff">
+                        </li> -->
+                        <li class="select-time">
+								<label>值班时间 : </label>
+								<input type="text" class="time-input" id="duty_time" placeholder="" name="duty_time"/>
+							</li>
+                        <li>
+                        	<label>值班人姓名 :</label>
+                            <input name="nickname" type="text" id="nickname" style="background-color: #ffffff">
+                        </li>
+                        	<li>
+                        	<label> 值班人工号 :</label>
+                           <input name="user_no" type="text" id="user_no" style="background-color: #ffffff">
+                        </li>
+                 <li>
+                 <label>工作组 :</label>
+                           <input name="group_name" type="text" id="group_name" style="background-color: #ffffff">
+                        </li>
+                        <li>
+                          <label>值班类别 :</label>
+                         <select name="kind" id="kind" class="form-control" th:with="type=${@dict.getParaType('pub_shdutyType')}">
+                            <option value=""></option>
+                            <option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+                        </select>
+                        </li>
+                        <li>
+                            <a class="btn btn-primary btn-rounded btn-sm" id="dutySearch" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;查询</a>
+                            <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-repeat"></i>&nbsp;重置</a>
+                        </li>
+                    </ul>
+                </div>
+            </form>
+        </div>
+
+        <div class="btn-group-sm" id="toolbar" role="group">
+          <a class="btn btn-success" onclick="$.operate.add()" >
+                <i class="fa fa-plus"></i> 新增
+            </a>
+            <a class="btn btn-primary single " onclick="$.operate.edit()">
+                <i class="fa fa-edit"></i> 修改
+            </a>
+            <a class="btn btn-danger multiple " onclick="$.operate.removeAll()">
+                <i class="fa fa-trash"></i> 删除
+            </a>
+           <!--  <a class="btn btn-info" onclick="test()">
+                <i class="fa fa-refresh"></i> test
+            </a> -->
+
+            <a class="btn btn-info" id="sync_btn" onclick="Sync()">
+                <i class="fa fa-refresh"></i> Sync
+            </a>
+        </div>
+
+        <div class="col-sm-12 select-table table-striped">
+            <table id="bootstrap-table"></table>
+        </div>
+    </div>
+</div>
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: datetimepicker-js" />
+<th:block th:include="include :: select2-js" />
+
+<script th:inline="javascript">
+
+    var data_position=[[${@pubParaValue.selectPubParaValueByParaName('pub_shduty_position')}]];
+    var data_kind=[[${@pubParaValue.selectPubParaValueByParaName('pub_shdutyType')}]];
+    var data_status=[[${@pubParaValue.selectPubParaValueByParaName('pub_shduty_status')}]];
+    var prefix = ctx + "system/duty";
+
+    $(function() {
+        // 回车键搜索
+        document.onkeydown = function(e){
+            var ev = document.all ? window.event : e;
+            if(ev.keyCode==13) {
+                $('#dutySearch').trigger('click');
+                return false;
+            }
+        };
+
+        var options = {
+            url: prefix + "/list",
+            createUrl: prefix + "/add",
+            updateUrl: prefix + "/edit/{id}",
+            removeUrl: prefix + "/remove",
+            exportUrl: prefix + "/export",
+            clickToSelect: true,
+            modalName: "值班日",
+            columns: [{
+                checkbox: true
+            	},
+                {
+                    field: 'id',
+                    title: '值班ID',
+                    visible: false
+                },
+                {
+                    field: 'dutyid',
+                    title: '值班编号'
+                },
+                {
+                    field: 'group_code',
+                    title: '值班组编号'
+                },
+                {
+                    field: 'nickname',
+                    title: '值班人'
+                },
+                // {
+                //     field: 'position',
+                //     title: '值班职责',
+                //     align: 'center',
+                //     formatter:function (value){
+                //         return selectPubParaValueData(data_position,value);
+                //     }
+                // },
+                {
+                    field: 'kind',
+                    title: '值班类别',
+                    align: 'center',
+                    formatter:function (value){
+                        return selectPubParaValueData(data_kind,value);
+                    }
+                },
+                {
+                    field: 'phone',
+                    title: '值班电话'
+                },
+                {
+                    field: 'duty_time',
+                    title: '值班时间'
+                },
+                // {
+                //     field: 'remark',
+                //     title: '值班说明'
+                // },
+                // {
+                //     field: 'status',
+                //     title: '审批状态',
+                //     align: 'center',
+                //     formatter:function (value){
+                //         return selectPubParaValueData(data_status,value);
+                //     }
+                // },
+                {
+                    field: 'group_name',
+                    title: '值班组',
+                },{
+                    field: 'user_no',
+                    title: '值班人工号'
+                }
+            ]
+        };
+        $.table.init(options);
+    });
+
+    $("#datetimepicker-demo-2").datetimepicker({
+        format: "yyyy-mm-dd",
+        minView: "month",
+        autoclose: true
+    });
+
+
+    // 回显数据字典
+    function selectPubParaValueData(datas, value) {
+        var actions = [];
+        $.each(datas, function(index, pubParaValue) {
+            if (pubParaValue.value == ('' + value)) {
+                actions.push($.common.sprintf("<span class='%s'>%s</span>", "", pubParaValue.valueDetail));
+                return false;
+            }
+        });
+        return actions.join('');
+    }
+    function test() {
+        $.ajax({
+            type:"post",
+            url: prefix+"/queryDutyPerson",
+            dateType:"json",
+            contentType : 'application/json',
+            success:function(result){
+            	$.modal.alert("同步成功");
+            }
+        });
+    }
+    function Sync() {
+        var btn = document.getElementById("sync_btn");
+        btn.disabled = 'disabled';
+        var counts = 60;
+        $.ajax({
+            type:"post",
+            url: prefix + "/sync",
+            dateType:"json",
+            contentType : 'application/json',
+            timeout: 1800000,
+            data:JSON.stringify(this.queryParam),
+            success:function(result){
+                settime(btn,counts);
+                $.table.refresh("bootstrap-table");
+                $.modal.alert("同步成功");
+            }
+        });
+    }
+    function settime(btn,counts) {
+        var num = 0;
+        if(counts == 0){
+            btn.value = "Sync";
+            btn.removeAttribute("disabled");
+            $.table.refresh("bootstrap-table");
+            return;
+        }
+        btn.setAttribute("disabled", true);
+        btn.value = "等待" + counts + "s";
+        counts--;
+
+        setTimeout(function() {
+            settime(btn,counts);
+        }, 1000);
+    }
+</script>
+</body>
+</html>

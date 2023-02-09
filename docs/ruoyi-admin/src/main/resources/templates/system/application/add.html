@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+	<th:block th:include="include :: header('新增应用系统')" />
+	<th:block th:include="include :: select2-css" />
+</head>
+<body>
+<div class="main-content">
+	<form id="form-application-add" class="form-horizontal">
+		<input name="orgId" type="hidden" id="treeId"/><!--所属机构机构id-->
+		<input name="businessId" type="hidden" id="businessId"/><!--业务部门机构id-->
+		<h4 class="form-header h4">基本信息</h4>
+		<div class="row">
+			<div class="col-sm-6">
+				<div class="form-group">
+					<label class="col-sm-4 control-label is-required">系统编码：</label>
+					<div class="col-sm-8">
+						<input id="code" name="code" placeholder="请输入系统编码" class="form-control" type="text" maxlength="20" required>
+					</div>
+				</div>
+			</div>
+			<div class="col-sm-6">
+				<div class="form-group">
+					<label class="col-sm-4 control-label is-required">系统名称：</label>
+					<div class="col-sm-8">
+						<input name="caption" id="caption" type="text" placeholder="请输入系统名称" class="form-control" maxlength="20" required>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-sm-6">
+				<div class="form-group">
+					<label class="col-sm-4 control-label">所属机构：</label>
+					<div class="col-sm-8">
+						<input id="treeName" readonly style="background-color: #fff" name="orgName" onclick="selectDeptTree()" type="text" placeholder="请选择所属机构" class="form-control">
+					</div>
+				</div>
+			</div>
+			<div class="col-sm-6">
+				<div class="form-group">
+					<label class="col-sm-4 control-label">所属处室：</label>
+					<div id="element1" class="col-sm-8">
+						<select id="dept" name="dept" class=" form-control" th:with="type=${@pubParaValue.selectPubParaValueByParaName('Fm_dept')}" >
+							<option value=""></option>
+							<option th:each="paraValue : ${type}" th:id="${paraValue.paraValueId}" th:text="${paraValue.valueDetail}" th:value="${paraValue.value}"></option>
+						</select>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-sm-6">
+				<div class="form-group">
+					<label class="col-sm-4 control-label">所属业务部门：</label>
+					<div class="col-sm-8">
+						<input id="businessName" name="businessName" onclick="selectDeptTree_1()" readonly style="background-color: #ffffff" type="text" placeholder="请选择业务部门" class="form-control">
+					</div>
+				</div>
+			</div>
+			<div class="col-sm-6">
+				<div class="form-group">
+					<label class="col-sm-4 control-label">系统负责人：</label>
+					<div class="col-sm-8">
+						<select id="pid" name="pid" class="person form-control m-b" data-first-title="系统负责人">
+						</select>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-sm-6">
+				<div class="form-group">
+					<label class="col-sm-4 control-label is-required">系统类别：</label>
+					<div class="col-sm-8">
+						<select id="sysType" name="sysType" class="form-control" th:with="type=${@pubParaValue.selectPubParaValueByParaName('SYS_TYPE')}" required>
+							<option th:each="paraValue : ${type}" th:text="${paraValue.valueDetail}" th:value="${paraValue.valueDetail}" th:selected="4"></option>
+						</select>
+					</div>
+				</div>
+			</div>
+			<div class="col-sm-6">
+				<div class="form-group">
+					<label class="col-sm-4 control-label">备注：</label>
+					<div class="col-sm-8">
+						<input id="memo" name="memo" type="text" class="form-control" maxlength="100">
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-sm-6">
+				<div class="form-group">
+					<label class="col-sm-4 control-label">参与考核：</label>
+					<div class="col-sm-8">
+						<select id="isExamination" name="isExamination" class="form-control">
+							<option value="0">否</option>
+							<option value="1">是</option>
+						</select>
+					</div>
+				</div>
+			</div>
+			<div class="col-sm-6">
+				<div class="form-group">
+					<label class="col-sm-4 control-label is-required">是否重要系统：</label>
+					<div class="col-sm-8">
+						<select id="isKeySys" name="isKeySys" class="form-control" required>
+							<option value="0">否</option>
+							<option value="1">是</option>
+						</select>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-sm-6">
+				<div class="form-group">
+					<label class="col-sm-4 control-label">是否外联渠道：</label>
+					<div class="col-sm-8">
+						<select id="isOutChannel" name="isOutChannel" class="form-control">
+							<option value="0">否</option>
+							<option value="1">是</option>
+						</select>
+					</div>
+				</div>
+			</div>
+			<div class="col-sm-6">
+				<div class="form-group">
+					<label class="col-sm-4 control-label">状态：</label>
+					<div class="col-sm-8">
+						<select id="invalidationMark" name="invalidationMark" class="form-control">
+							<option value="1">启用</option>
+							<option value="0">停止</option>
+						</select>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-sm-6">
+				<div class="form-group">
+					<label class="col-sm-4 control-label">红线时间：</label>
+					<div class="col-sm-8">
+						<input type="time" step="1" id="redlineTime" name="redlineTime" class="form-control"/>
+					</div>
+				</div>
+			</div>
+		</div>
+	</form>
+</div>
+
+<div class="row">
+	<div class="col-sm-offset-5 col-sm-10">
+		<button type="button" class="btn btn-sm btn-primary" onclick="submitHandler()"><i class="fa fa-check"></i>保 存</button>&nbsp;
+		<button type="button" class="btn btn-sm btn-danger" onclick="closeItem()"><i class="fa fa-reply-all"></i>关 闭 </button>
+	</div>
+</div>
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: select2-js" />
+<th:block th:include="include :: jquery-cxselect-js" />
+<script type="text/javascript">
+    var prefix = ctx + "system/application";
+	$("#form-application-add").validate({
+		focusCleanup: true
+	});
+	$(function() {
+		var deptvalue = $("#dept").val();
+		if(deptvalue && deptvalue!=''){
+			$("#pid").empty();
+			var firstValue = $("#dept").get(0).selectedIndex;
+			//根据一级select的值，异步获取数据更新二级的选项
+			$.ajax({
+				type:'post',
+				url:prefix+'/selectOgPersonForOrgIdList/'+firstValue,
+				// data:{
+				// 	parentId:firstValue
+				// },
+				cache:false,
+				dataType:'json',
+				success:function(secondDatas){
+					//遍历回传的数据添加到二级select
+					$("#pid").append("<option value=\"\"></option>");
+					$.each(secondDatas.rows, function(key, secondData) {
+						var option = '<option value="'+secondData.pId+'">'+secondData.pName+'</option>';
+						$("#pid").append(option)
+					})
+				},
+				error:function(){
+					alert("请求失败")
+				}
+			});
+		}
+		$("#dept").change(function(){
+			//清空二级和
+			$("#pid").empty();
+			//获得一级select的值
+			var othValue = $("#dept").get(0).selectedIndex;
+			//如果一级select的值为null，隐藏二、三级select,并返回
+			//根据一级select的值，异步获取数据更新二级的选项
+			$.ajax({
+				type:'post',
+				url:prefix+'/selectOgPersonForOrgIdList/'+othValue,
+				// data:{
+				// 	parentId:firstValue
+				// },
+				cache:false,
+				dataType:'json',
+				success:function(secondDatas){
+					//遍历回传的数据添加到二级select
+					$("#pid").append("<option value=\"\"></option>");
+					$.each(secondDatas.rows, function(key, secondData) {
+						var option = '<option value="'+secondData.pId+'">'+secondData.pName+'</option>';
+						$("#pid").append(option)
+					})
+				},
+				error:function(){
+					alert("请求失败")
+				}
+			});
+		});
+	});
+
+    function submitHandler() {
+        if ($.validate.form()) {
+            $.operate.saveTab(prefix + "/add", $('#form-application-add').serialize());
+        }
+    }
+
+    /* 选择所属机构树 */
+    function selectDeptTree() {
+        var treeId = $("#treeId").val();
+        var deptId = $.common.isEmpty(treeId) ? "310100001" : $("#treeId").val();
+        var url = ctx + "system/dept/selectDeptTree/" + deptId;
+        var options = {
+            title: '选择所属机构',
+            width: "380",
+            url: url,
+            callBack: doSubmit
+        };
+        $.modal.openOptions(options);
+    }
+
+    function doSubmit(index, layero){
+        var tree = layero.find("iframe")[0].contentWindow.$._tree;
+        var body = layer.getChildFrame('body', index);
+        $("#treeId").val(body.find('#treeId').val());
+        $("#treeName").val(body.find('#treeName').val());
+        layer.close(index);
+    }
+
+    /* 选择业务部门树 */
+    function selectDeptTree_1() {
+        var businessId = $("#businessId").val();
+        var deptId = $.common.isEmpty(businessId) ? "310100001" : $("#businessId").val();
+        var url = ctx + "system/dept/selectDeptTree/" + deptId;
+        var options = {
+            title: '选择业务部门',
+            width: "380",
+            url: url,
+            callBack: doSubmit_1
+        };
+        $.modal.openOptions(options);
+    }
+
+    function doSubmit_1(index, layero){
+        var tree = layero.find("iframe")[0].contentWindow.$._tree;
+        var body = layer.getChildFrame('body', index);
+        $("#businessId").val(body.find('#treeId').val());
+        $("#businessName").val(body.find('#treeName').val());
+        layer.close(index);
+    }
+
+</script>
+</body>
+</html>

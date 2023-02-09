@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:include="include :: header('查询调度事件单')"/>
+    <th:block th:include="include :: datetimepicker-css"/>
+</head>
+<body class="gray-bg">
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-12 search-collapse">
+            <form id="post-form">
+                <input type="hidden" id="deptId" name="orgId">
+                <div class="row">
+                    <div class="select-list">
+                        <ul>
+                            <li>
+                                事件单编号：<input type="text" name="faultNo"/>
+                            </li>
+
+                            <li>
+                                主题：<input type="text" name="faultTitle"/>
+                            </li>
+
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="select-list">
+                        <ul>
+                            <li>
+                                <a class="btn btn-primary btn-rounded btn-sm" id="searchBut" onclick="$.table.search()"><i
+                                        class="fa fa-search"></i>&nbsp;搜索</a>
+                                <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i
+                                        class="fa fa-refresh"></i>&nbsp;重置</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div class="btn-group-sm" id="toolbar" role="group">
+            <a class="btn btn-warning single disabled" onclick="showProcessImg()">
+                <i class="fa fa-search"></i> 查看流程
+            </a>
+            <a class="btn btn-primary single disabled" onclick="$.operate.detail()">
+                <i class="fa fa-detail"></i> 查看详情
+            </a>
+        </div>
+        <div class="col-sm-12 select-table table-striped">
+            <table id="bootstrap-table"></table>
+        </div>
+    </div>
+
+</div>
+<th:block th:include="include :: footer"/>
+<th:block th:include="include :: datetimepicker-js"/>
+<script th:inline="javascript">
+
+    var datas = [[${@dict.getParaType('fmdd_status')}]];
+    var changeId = [[${changeId}]];
+    var prefix = ctx + "dispatch/mydispatch";
+
+    $(function () {
+        // 回车键搜索
+        document.onkeydown = function(e){
+            var ev = document.all ? window.event : e;
+            if(ev.keyCode==13) {
+                $('#searchBut').trigger('click');
+                return false;
+            }
+        };
+        var options = {
+            url: prefix + "/list",
+            detailUrl: prefix + "/detail/{id}",
+            clickToSelect: true,
+            singleSelect: true,
+            modalName: "查询调度事件单",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'fmddId',
+                    title: '主键ID',
+                    visible: false
+                },
+                {
+                    field: 'faultNo',
+                    title: '事件单编号',
+                },
+                {
+                    field: 'faultTitle',
+                    title: '主题',
+                },
+                {
+                    field: 'faultType',
+                    title: '调度类型',
+                    formatter: function (value, row, index) {
+                        return value == '1' ? '生产变更报备' : '生产调度申请'
+                    }
+                },
+                {
+                    field: 'currentState',
+                    title: '当前状态',
+                    align: 'center',
+                    formatter: function (value, row, index) {
+                        return selectDictLabel(datas, value);
+                    }
+                },
+                {
+                    field: 'createTime',
+                    title: '创建时间',
+                    formatter: function (value, row, index) {
+                        var startTime = '';
+                        if (value != '' && value != null) {
+                            var pattern = /(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/;
+                            startTime = value.replace(pattern, '$1-$2-$3 $4:$5:$6');
+                        }
+                        return startTime;
+                    }
+                },
+                {
+                    field: 'planTime',
+                    title: '计划操作时间',
+                    formatter: function (value, row, index) {
+                        var startTime = '';
+                        if (value != '' && value != null) {
+                            var pattern = /(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/;
+                            startTime = value.replace(pattern, '$1-$2-$3 $4:$5:$6');
+                        }
+                        return startTime;
+                    }
+                },
+                {
+                    field: 'orgName',
+                    title: '创建机构',
+                }]
+        };
+        $.table.init(options);
+    });
+
+    /*查看调度事件详情*/
+    function detail(id) {
+        var url = prefix + "/detail/" + id;
+        $.modal.openTab("调度事件单详情", url);
+    }
+
+    $("input[name='createTime']").datetimepicker({
+        autoclose: true,
+        format: "yyyy-mm-dd hh:ii:ss"
+    });
+
+    $("input[name='endCreateTime']").datetimepicker({
+        autoclose: true,
+        format: "yyyy-mm-dd hh:ii:ss"
+    });
+
+    $("input[name='planTime']").datetimepicker({
+        autoclose: true,
+        format: "yyyy-mm-dd hh:ii:ss"
+    });
+
+    $("input[name='endPlanTime']").datetimepicker({
+        autoclose: true,
+        format: "yyyy-mm-dd hh:ii:ss"
+    });
+
+
+    function selectDictLabel(datas, value) {
+        var actions = [];
+        $.each(datas, function (index, dict) {
+            if (dict.value == ('' + value)) {
+                var listClass = $.common.equals("default", dict.listClass) || $.common.isEmpty(dict.listClass) ? "" : "badge badge-" + dict.listClass;
+                actions.push($.common.sprintf("<span class='%s'>%s</span>", listClass, dict.valueDetail));
+                return false;
+            }
+        });
+        return actions.join('');
+    }
+
+    function showProcessImg() {
+        var row = $("#bootstrap-table").bootstrapTable('getSelections')[0];
+        var url = '/process/processImg/' + row.fmddId;
+        $.modal.open("查看流程图", url, null, null, null, true);
+    }
+
+    function submitHandler(index, layero) {
+        // 选中数据
+        var arrays = $("#bootstrap-table").bootstrapTable('getSelections');
+        if (arrays.length > 0) {
+            for (var i = 0; i < arrays.length; i++) {
+                var data = new Array();
+                data.push({name: 'obj1Id', value: arrays[i].fmddId});
+                data.push({name: 'obj2Id', value: changeId});
+                data.push({name: 'type', value: '10'});
+                $.operate.save(ctx + "system/relation/add", data);
+            }
+        }
+        $.modal.close();
+        parent.$.table.refresh("fmdd-table");
+    }
+</script>
+</body>
+</html>

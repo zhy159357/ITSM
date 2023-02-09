@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.SysFWMapper">
+
+    <resultMap type="SysFWlist" id="SysFWResult">
+        <result property="address_list_id" column="address_list_id"/>
+        <result property="address_list_type" column="address_list_type"/>
+        <result property="create_pid" column="create_pid"/>
+        <result property="orgId" column="orgId"/>
+        <result property="create_time" column="create_time"/>
+        <result property="update_time" column="update_time"/>
+        <result property="update_user_id" column="update_user_id"/>
+        <result property="phone" column="phone"/>
+        <result property="email" column="email"/>
+        <result property="invalidationmark" column="invalidationmark"/>
+        <result property="pname" column="pname"/>
+        <result property="server_name" column="server_name"/>
+        <result property="tel" column="tel"/>
+        <result property="server_order" column="server_order"/>
+        <result property="iscanread" column="iscanread"/>
+        <result property="create_orgid" column="create_orgid"/>
+        <result property="duty" column="duty"/>
+        <result property="responsibility" column="responsibility"/>
+        <result property="memo" column="memo"/>
+    </resultMap>
+
+    <sql id="selectFWVo">
+		select address_list_id,address_list_type,create_pid,orgId,create_time,update_time,update_user_id,phone,email,invalidationmark,pname,server_name,tel,server_order,iscanread,create_orgid,duty,responsibility,memo
+        from  ADDRESS_LIST t
+	</sql>
+
+    <select id="selectFWList" parameterType="SysAddlist" resultMap="SysFWResult">
+        select address_list_id,address_list_type,create_pid,orgId,create_time,update_time, update_user_id,
+        phone,email, CASE invalidationmark WHEN ('0') THEN '使用中' ELSE '已停用' END as invalidationmark,pname,server_name,tel,
+        server_order,iscanread,create_orgid,duty,responsibility,memo from ADDRESS_LIST t
+        where address_list_type = '0'
+        <if test="server_name != null and server_name != ''">
+            and server_name like concat(concat('%',#{server_name}),'%')
+        </if>
+        <if test="phone != null and phone != ''">
+            and phone like concat(concat('%',#{phone}),'%')
+        </if>
+        <if test="invalidationmark != null and invalidationmark != ''">
+            and invalidationmark like concat(concat('%',#{invalidationmark}),'%')
+        </if>
+        <if test="params.startTime != null and params.startTime != ''"><!-- 创建时间起始检索 -->
+            and create_time &gt;=TO_CHAR(TO_DATE( #{params.startTime},'YYYY-MM-DD HH24:MI:SS'), 'YYYYMMDDHH24MISS')
+        </if>
+        <if test="params.endTime != null and params.endTime != ''"><!-- 创建时间起始检索 -->
+            and create_time &lt;=TO_CHAR(TO_DATE( #{params.endTime},'YYYY-MM-DD HH24:MI:SS')+1, 'YYYYMMDDHH24MISS')
+        </if>
+    </select>
+
+    <select id="selectFWMysqlList" parameterType="SysAddlist" resultMap="SysFWResult">
+        select address_list_id,address_list_type,create_pid,orgId,create_time,update_time, update_user_id,
+        phone,email, CASE invalidationmark WHEN ('0') THEN '使用中' ELSE '已停用' END as invalidationmark,pname,server_name,tel,
+        server_order,iscanread,create_orgid,duty,responsibility,memo from ADDRESS_LIST t
+        where address_list_type = '0'
+        <if test="server_name != null and server_name != ''">
+            and server_name like concat(concat('%',#{server_name}),'%')
+        </if>
+        <if test="phone != null and phone != ''">
+            and phone like concat(concat('%',#{phone}),'%')
+        </if>
+        <if test="invalidationmark != null and invalidationmark != ''">
+            and invalidationmark like concat(concat('%',#{invalidationmark}),'%')
+        </if>
+        <if test="params.startTime != null and params.startTime != ''"><!-- 创建时间起始检索 -->
+            and date_format(create_time ,'%Y-%m-%d') &gt;=DATE_FORMAT(#{params.startTime},'%Y-%m-%d')
+        </if>
+        <if test="params.endTime != null and params.endTime != ''"><!-- 创建时间起始检索 -->
+            and date_format(create_time,'%Y-%m-%d' ) &lt;=DATE_FORMAT(#{params.endTime },'%Y-%m-%d')
+        </if>
+    </select>
+
+    <select id="selectFWById" parameterType="String" resultMap="SysFWResult">
+        <include refid="selectFWVo"/>
+        where address_list_type = '0' and t.address_list_id =#{address_list_id}
+    </select>
+
+    <insert id="insertFW" parameterType="com.ruoyi.common.core.domain.entity.SysAddlist" useGeneratedKeys="false"
+            keyProperty="id">
+        insert into ADDRESS_LIST(
+        address_list_id,address_list_type,
+        <if test="server_order != null and server_order != ''">server_order,</if>
+        <if test="server_name != null and server_name != ''">server_name,</if>
+        <if test="phone != null and phone != ''">phone,</if>
+        <if test="invalidationmark != null and invalidationmark != ''">invalidationmark,</if>
+        <if test="iscanread != null and iscanread != ''">iscanread,</if>
+        <if test="memo != null and memo != ''">memo,</if>
+        create_time
+        )values(
+        #{address_list_id},'0',
+        <if test="server_order != null and server_order != ''">#{server_order},</if>
+        <if test="server_name != null and server_name != ''">#{server_name},</if>
+        <if test="phone != null and phone != ''">#{phone},</if>
+        <if test="invalidationmark != null and invalidationmark != ''"> #{invalidationmark},</if>
+        <if test="iscanread != null and iscanread != ''">#{iscanread},</if>
+        <if test="memo != null and memo != ''">#{memo},</if>
+        #{create_time}
+        )
+    </insert>
+    <update id="updateFW" parameterType="SysAddlist">
+        update ADDRESS_LIST
+        <set>
+            <if test="server_order != null and server_order != ''">server_order = #{server_order},</if>
+            <if test="server_name != null and server_name != ''">server_name = #{server_name},</if>
+            <if test="phone != null and phone != ''">phone = #{phone},</if>
+            <if test="invalidationmark != null and invalidationmark != ''">invalidationmark = #{invalidationmark},</if>
+            <if test="iscanread != null and iscanread != ''">iscanread = #{iscanread},</if>
+            <if test="memo != null and memo != ''">memo = #{memo}</if>
+        </set>
+        where address_list_id = #{address_list_id}
+    </update>
+    <delete id="deleteFWByIds" parameterType="SysAddlist">
+        delete  from ADDRESS_LIST  where address_list_id in
+        <foreach collection="array" item="address_list_id" open="(" separator="," close=")">
+            #{address_list_id}
+        </foreach>
+    </delete>
+</mapper>

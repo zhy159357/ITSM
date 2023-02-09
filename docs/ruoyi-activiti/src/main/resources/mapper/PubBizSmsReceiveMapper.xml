@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.activiti.mapper.PubBizSmsReceiveMapper">
+    
+    <resultMap type="PubBizSmsReceive" id="PubBizSmsReceiveResult">
+        <result property="id"    column="id"    />
+        <result property="telephone"    column="telephone"    />
+        <result property="smsText"    column="sms_text"    />
+        <result property="sendTime"    column="send_time"    />
+        <result property="verificationcode"    column="verificationcode"    />
+        <result property="smsResult"    column="sms_result"    />
+    </resultMap>
+
+    <sql id="selectPubBizSmsReceiveVo">
+        select id, telephone, sms_text, send_time, verificationcode, sms_result from pub_biz_sms_receive
+    </sql>
+
+    <select id="selectPubBizSmsReceiveList" parameterType="PubBizSmsReceive" resultMap="PubBizSmsReceiveResult">
+        <include refid="selectPubBizSmsReceiveVo"/>
+        <where>  
+            <if test="telephone != null  and telephone != ''"> and telephone = #{telephone}</if>
+            <if test="smsText != null  and smsText != ''"> and sms_text = #{smsText}</if>
+            <if test="sendTime != null  and sendTime != ''"> and send_time = #{sendTime}</if>
+            <if test="verificationcode != null  and verificationcode != ''"> and verificationcode = #{verificationcode}</if>
+            <if test="smsResult != null  and smsResult != ''"> and sms_result = #{smsResult}</if>
+        </where>
+    </select>
+    
+    <select id="selectPubBizSmsReceiveById" parameterType="String" resultMap="PubBizSmsReceiveResult">
+        <include refid="selectPubBizSmsReceiveVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertPubBizSmsReceive" parameterType="PubBizSmsReceive">
+        insert into pub_biz_sms_receive
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null  and id != ''">id,</if>
+            <if test="telephone != null  and telephone != ''">telephone,</if>
+            <if test="smsText != null  and smsText != ''">sms_text,</if>
+            <if test="sendTime != null  and sendTime != ''">send_time,</if>
+            <if test="verificationcode != null  and verificationcode != ''">verificationcode,</if>
+            <if test="smsResult != null  and smsResult != ''">sms_result,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null  and id != ''">#{id},</if>
+            <if test="telephone != null  and telephone != ''">#{telephone},</if>
+            <if test="smsText != null  and smsText != ''">#{smsText},</if>
+            <if test="sendTime != null  and sendTime != ''">#{sendTime},</if>
+            <if test="verificationcode != null  and verificationcode != ''">#{verificationcode},</if>
+            <if test="smsResult != null  and smsResult != ''">#{smsResult},</if>
+         </trim>
+    </insert>
+
+    <update id="updatePubBizSmsReceive" parameterType="PubBizSmsReceive">
+        update pub_biz_sms_receive
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="telephone != null  and telephone != ''">telephone = #{telephone},</if>
+            <if test="smsText != null  and smsText != ''">sms_text = #{smsText},</if>
+            <if test="sendTime != null  and sendTime != ''">send_time = #{sendTime},</if>
+            <if test="verificationcode != null  and verificationcode != ''">verificationcode = #{verificationcode},</if>
+            <if test="smsResult != null  and smsResult != ''">sms_result = #{smsResult},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deletePubBizSmsReceiveById" parameterType="String">
+        delete from pub_biz_sms_receive where id = #{id}
+    </delete>
+
+    <delete id="deletePubBizSmsReceiveByIds" parameterType="String">
+        delete from pub_biz_sms_receive where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!--	<th:block th:include="include :: header('工作台')" />-->
+    <!--360浏览器优先以webkit内核解析-->
+    <title>上海银行运维管控中台</title>
+    <link rel="shortcut icon" href="favicon.ico">
+    <link href="../static/css/bootstrap.min.css" th:href="@{/css/bootstrap.min.css}" rel="stylesheet"/>
+    <link href="../static/css/font-awesome.min.css" th:href="@{/css/font-awesome.min.css}" rel="stylesheet"/>
+    <link href="../static/css/main/animate.min.css" th:href="@{/css/main/animate.min.css}" rel="stylesheet"/>
+    <link href="../static/css/main/style.min862f.css" th:href="@{/css/main/style.main.css}" rel="stylesheet"/>
+    <link href="../static/css/custom.css" th:href="@{/css/custom.css}" rel="stylesheet"/>
+</head>
+
+<body class="gray-bg" style="position: relative;overflow-y:auto;">
+
+
+<th:block th:include="include :: footer"/>
+<script th:inline="javascript">
+    //默认首页工作台
+    $(function () {
+        var url = ctx +'/vueIndex/index';
+    	if(ctx=='/'){
+    		url = '/vueIndex/index';
+    	}
+        $.modal.parentTab("工作台", url);
+    })
+
+    //获取当前时间
+    function getTime(days, haveTime) {
+        let dateTime = "";
+        let myData = new Date();
+        myData.setTime(myData.getTime() - 24*60*60*1000*days);
+        let year = myData.getFullYear() + "";
+        let month = myData.getMonth() + 1 + "";
+        if(month.length == 1){
+            month = "0" + month;
+        }
+        let date = myData.getDate() + "";
+        if(date.length == 1){
+            date = "0" + date;
+        }
+        dateTime = year + "-" + month + "-" + date;
+        if(haveTime){
+            let hours = myData.getHours() + "";
+            if(hours.length == 1){
+                hours = "0" + hours;
+            }
+            let minutes = myData.getMinutes() + "";
+            if(minutes.length == 1){
+                minutes = "0" + minutes;
+            }
+            let seconds = myData.getSeconds() + "";
+            if(seconds.length == 1){
+                seconds = "0" + seconds;
+            }
+            dateTime += " " + hours + ":" + minutes + ":" + seconds;
+        }
+        return dateTime;
+    }
+</script>
+
+</body>
+</html>

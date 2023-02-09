@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('填报例行变更作业')" />
+    <th:block th:include="include :: select2-css"/>
+    <th:block th:include="include :: datetimepicker-css" />
+</head>
+<body class="gray-bg">
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-12 search-collapse">
+            <form id="post-form">
+                <input type="hidden" id="deptId" name="orgId">
+                <div class="row">
+                    <div class="select-list">
+                        <ul>
+                            <li>
+                                <p>任务编号：</p>
+                                <input type="text" name="taskFromNo"/>
+                            </li>
+
+                            <li>
+                                <p>计划类别：</p>
+                                <select name="smBizTask.taskTypeId" class="form-control" th:with="type=${@dict.getParaType('task_type_zy')}">
+                                    <option value=""></option>
+                                    <option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+                                </select>
+                            </li>
+
+                            <li>
+                                <p>标题：</p>
+                                <input type="text" name="smBizTask.taskTitle"/>
+                            </li>
+
+                            <li>
+                                <p>执行机构：</p>
+                                <input type="text" name="ogoname"/>
+                            </li>
+
+                            <li >
+                                <p>计划时间：</p>
+                                <input type="text" name="planStartDate" id="planStartDate" readonly />
+                            </li>
+
+                            <li>
+                                <p>至：</p>
+                                <input type="text" name="planEndDate" id="planEndDate" readonly />
+                            </li>
+
+                            <li>
+                                <p>创建人：</p>
+                                <input type="text" name="smBizScheduling.createName"/>
+                            </li>
+
+                            <li>
+                                <p>创建机构：</p>
+                                <input type="text" name="smBizScheduling.orgName"/>
+                            </li>
+                            <li>
+                                <a class="btn btn-primary btn-rounded btn-sm" id="lxbgSearch" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.resetAll('post-form')"><i class="fa fa-repeat"></i>&nbsp;重置</a>
+                            </li>
+
+
+                        </ul>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div class="btn-group-sm" id="toolbar" role="group">
+            <a class="btn btn-primary single disabled" onclick="disposelxbg()">
+                <i class="fa fa-default"></i> 处理
+            </a>
+        </div>
+
+        <div class="col-sm-12 select-table table-striped">
+            <table id="bootstrap-table" style="table-layout:fixed;"></table>
+        </div>
+    </div>
+
+</div>
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: datetimepicker-js" />
+<th:block th:include="include :: select2-js"/>
+<script th:inline="javascript">
+
+    var datas = [[${@dict.getParaType('task_type_zy')}]];
+
+    var prefix = ctx + "lxbg/filllxbg";
+
+
+    $(function() {
+        // 回车搜索
+        document.onkeydown = function(e){
+            var ev = document.all ? window.event : e;
+            if(ev.keyCode==13) {
+                $('#lxbgSearch').trigger('click');
+                return false;
+            }
+        };
+
+        var options = {
+            url: prefix + "/list",
+            createUrl: prefix + "/add",
+            detailUrl: prefix + "/detail/{id}",
+            updateUrl: prefix + "/edit/{id}",
+            removeUrl: prefix + "/remove",
+            exportUrl: prefix + "/export",
+            singleSelect:true,
+            clickToSelect: true,
+            modalName: "查询待处理的例行计划",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'taskFormId',
+                    title: '任务id',
+                    width: 300,
+                    visible: false
+                },
+                {
+                    field: 'taskFromNo',
+                    width: 150,
+                    title: '任务编号'
+                },
+                {
+                    field: 'smBizTask.taskTypeId',
+                    title: '计划类别',
+                    width: 100,
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                        return selectDictLabel(datas, value);
+                    }
+                },
+                {
+                    field: 'smBizTask.taskTitle',
+                    width: 250,
+                    title: '计划单标题',
+                    formatter:function (value,row,index) {
+                        return $.table.tooltip(value)
+                    }
+                },
+                {
+                    field: 'publishTime',
+                    title: '计划发布时间',
+                    width: 250,
+                    align: 'center',
+                    formatter: function (value, row, index) {
+                        var startTime = '';
+                        if(value!='' && value !=null){
+                            var pattern = /(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/;
+                            startTime = value.replace(pattern, '$1-$2-$3 $4:$5:$6');
+                        }
+                        return startTime;
+                    }
+                },
+                {
+                    field: 'grpname',
+                    width: 150,
+                    title: '执行工作组'
+                },
+                {
+                    field: 'ogoname',
+                    width: 150,
+                    title: '执行机构'
+                },
+                {
+                    field: 'smBizScheduling.createName',
+                    width: 150,
+                    title: '创建人'
+                },
+                {
+                    field: 'smBizScheduling.orgName',
+                    width: 150,
+                    title: '创建机构'
+                },
+                {
+                    field: 'updateTime',
+                    width: 250,
+                    title: '创建时间',
+                    align: 'center',
+                    formatter: function (value, row, index) {
+                        var startTime = '';
+                        if(value!='' && value !=null){
+                            var pattern = /(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/;
+                            startTime = value.replace(pattern, '$1-$2-$3 $4:$5:$6');
+                        }
+                        return startTime;
+                    }
+                }]
+        };
+        $.table.init(options);
+    });
+
+
+    /*处理*/
+    function disposelxbg(){
+        var taskFormId = $.table.selectFirstColumns();
+        var url = prefix + "/lxbg/filllxbg/" + taskFormId;
+        $.modal.openTab("代办事项处理",url);
+    }
+
+
+    function selectDictLabel(datas, value) {
+        var actions = [];
+        $.each(datas, function(index, dict) {
+            if (dict.value == ('' + value)) {
+                var listClass = $.common.equals("default", dict.listClass) || $.common.isEmpty(dict.listClass) ? "" : "badge badge-" + dict.listClass;
+                actions.push($.common.sprintf("<span class='%s'>%s</span>", listClass, dict.valueDetail));
+                return false;
+            }
+        });
+        return actions.join('');
+    }
+
+    $("#planStartDate").datetimepicker({
+        format: "yyyy-mm-dd",
+        minView: "month",
+        autoclose: true
+    });
+
+    $("#planEndDate").datetimepicker({
+        format: "yyyy-mm-dd",
+        minView: "month",
+        autoclose: true
+    });
+
+
+</script>
+</body>
+</html>

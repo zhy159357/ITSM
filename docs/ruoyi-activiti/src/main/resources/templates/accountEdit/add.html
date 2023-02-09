@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+	<th:block th:include="include :: header('账号修改新建')" />
+    <th:block th:include="include :: datetimepicker-css" />
+    <th:block th:include="include :: select2-css" />
+    <style type="text/css">
+		label.error{
+			position:relative;
+			right:0px;
+			top:0px;
+			color:#ef392b;
+			font-size:12px;
+			z-index:99;
+		}
+	</style>
+</head>
+<body class="white-bg">
+	<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+		<form class="form-horizontal m" id="form-accountEdit-add" th:object="${accountReq}">
+		<h4 class="form-header h4">基本信息</h4>
+			<input id="id" name="id" th:field="*{id}" type="hidden">
+			<input id="pid" name="pid" th:field="*{pid}" type="hidden">
+			<div class="row">
+            	<div class="col-sm-12">
+					<div class="form-group">
+						<label class="col-sm-2 control-label is-required">姓名</label>
+						<div class="col-sm-10">
+							<input class="form-control" type="text" th:field="*{name}" id="name" required>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+            	<div class="col-sm-6">
+					<div class="form-group">
+						<label class="col-sm-4 control-label is-required">性别</label>
+						<div class="col-sm-8">
+							<select class="form-control noselect2" name="gender" th:field="*{gender}" required>
+								<option value="1">男</option>
+								<option value="2">女</option>
+							</select>
+						</div>
+					</div>
+				</div>
+                <div class="col-sm-6">
+					<div class="form-group">
+						<label class="col-sm-4 control-label">学历</label>
+						<div class="col-sm-8">
+							<select class="form-control noselect2" name="education" th:field="*{education}">
+								<option value="1">博士</option>
+								<option value="2">硕士</option>
+								<option value="3">研究生</option>
+								<option value="4">本科</option>
+								<option value="5">专科</option>
+								<option value="0">其他</option>
+							</select>
+						</div>
+					</div>
+				</div>
+            </div>
+            <div class="row">
+            	<div class="col-sm-12">
+					<div class="form-group">
+						<label class="col-sm-2 control-label">籍贯</label>
+						<div class="col-sm-10">
+							<input th:field="*{birthPlace}" name="birthPlace" class="form-control" type="text">
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+            	<div class="col-sm-6">
+	                <div class="form-group">
+	                    <label class="col-sm-4 control-label is-required">所属机构：</label>
+	                    <div class="col-sm-8">
+	                        <div class="input-group">
+	                        	<input name="dept" type="hidden" th:value="*{deptid}" id="treeId"/>
+	                            <input onclick="selectDeptTree()" th:value="*{dept}" th:id="treeName" type="text" placeholder="请选择所属机构" class="form-control" required>
+	                            <span class="input-group-addon"><i class="fa fa-search"></i></span>
+	                        </div>
+	                    </div>
+	                </div>
+	            </div>
+                <div class="col-sm-6">
+					<div class="form-group">
+						<label class="col-sm-4 control-label">职位</label>
+						<div class="col-sm-8">
+							<input th:field="*{job}" name="job" class="form-control" type="text">
+						</div>
+					</div>
+				</div>
+            </div>
+            <div class="row">
+            	<div class="col-sm-6">
+					<div class="form-group">
+						<label class="col-sm-4 control-label is-required">负责人</label>
+						<div class="col-sm-8">
+							<select class="form-control noselect2" name="director" th:field="*{director}" required>
+								<option value="1">是</option>
+								<option value="0">否</option>
+							</select>
+						</div>
+					</div>
+				</div>
+                <div class="col-sm-6">
+					<div class="form-group">
+						<label class="col-sm-4 control-label is-required">顺序</label>
+						<div class="col-sm-8">
+							<input th:field="*{order}" name="order" class="form-control" type="text" required>
+						</div>
+					</div>
+				</div>
+            </div>
+            <div class="row">
+            	<div class="col-sm-6">
+					<div class="form-group">
+						<label class="col-sm-4 control-label is-required">状态</label>
+						<div class="col-sm-8">
+							<select class="form-control noselect2" name="mark" th:field="*{mark}" required>
+								<option value="1">启用</option>
+								<option value="0">停用</option>
+							</select>
+						</div>
+					</div>
+				</div>	
+				<div class="col-sm-6">
+	                <div class="form-group">
+	                    <label class="col-sm-4 control-label">生日</label>
+	                    <div class="col-sm-8">
+	                        <div class="input-group date">
+	                            <input th:value="*{birthday}" name="birthday" type="text" class="form-control" id="datetimepicker-demo-2" readonly>
+	                            <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+	                        </div>
+	                    </div>
+	                </div>
+            	</div>	
+            </div>
+            <div class="row">
+            	<div class="col-sm-6">
+					<div class="form-group">
+						<label class="col-sm-4 control-label">办公电话</label>
+						<div class="col-sm-8">
+							<input th:field="*{officePhone}" name="officePhone" class="form-control" type="text">
+						</div>
+					</div>
+				</div>
+                <div class="col-sm-6">
+					<div class="form-group">
+						<label class="col-sm-4 control-label is-required">移动电话</label>
+						<div class="col-sm-8">
+							<input th:field="*{mobPhone}" name="mobPhone" class="form-control" type="text" required>
+						</div>
+					</div>
+				</div>
+            </div>
+            <div class="row">
+            	<div class="col-sm-6">
+					<div class="form-group">
+						<label class="col-sm-4 control-label">邮件</label>
+						<div class="col-sm-8">
+							<input th:field="*{email}" name="email" class="form-control" type="text">
+						</div>
+					</div>
+				</div>
+                <div class="col-sm-6">
+					<div class="form-group">
+						<label class="col-sm-4 control-label">地址</label>
+						<div class="col-sm-8">
+							<input th:field="*{address}" name="address" class="form-control" type="text">
+						</div>
+					</div>
+				</div>
+            </div>
+            <div class="row">
+            	<div class="col-sm-12">
+					<div class="form-group">
+						<label class="col-sm-2 control-label">人员说明</label>
+						<div class="col-sm-10">
+							<textarea th:field="*{note}" name="note" maxlength="500" class="form-control" ></textarea>			
+						</div>
+					</div>
+				</div>
+			</div>
+            <h4 class="form-header h4">申请信息</h4>
+            <div class="row">
+            	<div class="col-sm-6">
+					<div class="form-group">
+						<label class="col-sm-4 control-label is-required">受理处室</label>
+						<div class="col-sm-8">
+		                           <select id="auditDept" name="auditDept" onchange="selectAuditor(this.value)" class="form-control noselect2" required>
+		                           </select>
+		                </div>
+					</div>
+				</div>
+                <div class="col-sm-6">
+					<div class="form-group">
+						<label class="col-sm-4 control-label is-required">审核人</label>
+						<div class="col-sm-8">
+		                           <select id="auditor" name="auditor" class="form-control noselect2" required>
+		                           </select>
+		                </div>
+					</div>
+				</div>
+            </div>
+            <div class="row">
+            	<div class="col-sm-12">
+					<div class="form-group">
+						<label class="col-sm-2 control-label">备注</label>
+						<div class="col-sm-10">
+							<textarea th:field="*{remark}" name="remark" maxlength="500" class="form-control" ></textarea>			
+						</div>
+					</div>
+				</div>
+			</div>
+		</form>
+		<div class="row">
+			<div class="col-sm-offset-5 col-sm-10">
+				<button type="button" class="btn btn-sm btn-primary" onclick="submit()"><i class="fa fa-check"></i>提 交</button>&nbsp;
+				<button type="button" class="btn btn-sm btn-primary" onclick="save()"><i class="fa fa-check"></i>暂 存</button>&nbsp;
+				<button type="button" class="btn btn-sm btn-danger" onclick="closeIt()"><i class="fa fa-window-close"></i>关 闭 </button>
+			</div>
+		</div>
+	</div>
+	<th:block th:include="include :: footer" />
+    <th:block th:include="include :: datetimepicker-js" />
+    <th:block th:include="include :: select2-js" />
+	<script th:src="@{/js/activiti.js}"></script>
+	<script th:src="@{/js/validator.js}"></script>
+    <script th:inline="javascript">
+        var prefix = ctx + "accountEdit"
+        $("#form-accountEdit-add").validate({
+        	onkeyup: false,
+        	rules:{
+        		name:{
+        			maxlength2:32
+        		},
+        		birthPlace:{
+        			maxlength2:64
+        		},
+        		job:{
+        			maxlength2:32
+        		},
+        		order:{
+        			digits:true,
+        			max:9999999
+        		},
+        		mobPhone:{
+        			isPhone:true
+        		},
+        		officePhone:{
+        			isTel:true
+        		},
+        		email:{
+        			email:true
+        		},
+        		address:{
+        			maxlength2:64
+        		},
+        		note:{
+        			maxlength2:500
+        		},
+        		remark:{
+        			maxlength2:500
+        		}
+        	},
+            focusCleanup: true
+        });
+
+        function checkPhone(){
+        	var res;
+        	$.ajax({
+        		url:ctx + "accountReq/checkPhone",
+        		async:false,
+        		type:"POST",
+        		data:{"mobPhone":$("#mobPhone").val(),"id":$("#id").val(),"pid":$("#pid").val()},
+        		success:function(result){
+        			res = result;
+        		},
+        		error:function(){
+        			res = false;
+        		}
+        		})
+        	return res;
+        }
+        
+        function submit(){
+        	if(checkPhone()){
+        		$.modal.alertWarning('手机号已存在');
+        		return ;
+        	}
+        	if ($.validate.form() ) {
+                $.operate.saveTab(prefix + "/submit", $('#form-accountEdit-add').serialize());
+            }
+        }
+        function save() {
+        	if(checkPhone()){
+        		$.modal.alertWarning('手机号已存在');
+        		return ;
+        	}
+            if ($.validate.form() ) {
+                $.operate.saveTab(prefix + "/add", $('#form-accountEdit-add').serialize());
+            }
+        }
+        function closeIt(){
+        	 $.modal.closeTab();
+        }
+        
+        $("#datetimepicker-demo-2").datetimepicker({
+	        format: "yyyy-mm-dd",
+	        minView: "month",
+	        ignoreReadonly:true,
+	        autoclose: true
+	    });
+        
+        /* 用户管理-修改-选择部门树 */
+        function selectDeptTree() {
+            var deptId = $.common.isEmpty($("#treeId").val()) ? "100" : $("#treeId").val();
+            var url = ctx + "system/dept/selectDeptTree/" + deptId;
+            var options = {
+                title: '选择部门',
+                width: "380",
+                url: url,
+                callBack: doSubmit
+            };
+            $.modal.openOptions(options);
+        }
+
+        function doSubmit(index, layero){
+            var tree = layero.find("iframe")[0].contentWindow.$._tree;
+            var body = layer.getChildFrame('body', index);
+            $("#treeId").val(body.find('#treeId').val());
+            $("#treeName").val(body.find('#treeName').val());
+            selectAuditDept($("#treeId").val());
+            layer.close(index);
+        }
+        function selectAuditDept(value){	
+        	$("#auditDept").html("");//清空select列表数据
+        	$.ajax({
+        		    async:false,
+        	　　　　type : "POST",
+        	　　　　url:ctx + "accountReq/selectAuditDept",
+        	　　　　dataType : "JSON",
+        	　　　　data : {deptid:value},
+        	　　success : function(msg) 
+        	　　{
+	        		$("#auditDept").append("<option value=''>请选择受理处室</option>");
+					for (var i = 0; i < msg.rows.length; i++) {
+	       	　　　　		$("#auditDept").append("<option value='"+msg.rows[i].orgId+"'>"+msg.rows[i].orgName+"</option>");
+	    	　　		}
+        	　　},error:function(){
+        	　　}
+        	});
+        }
+        function selectAuditor(value){
+        	$("#auditor").html("");//清空select列表数据
+        	$.ajax({
+        		    async:false,
+        	　　　　type : "POST",
+        	　　　　url:ctx + "accountReq/selectAuditor",
+        	　　　　dataType : "JSON",
+        	　　　　data : {orgid:value,deptid:$("#treeId").val()},
+        	　　success : function(msg) 
+        	　　{
+	        		$("#auditor").append("<option value=''>请选择审核人</option>");
+					for (var i = 0; i < msg.rows.length; i++) {
+	       	　　　　		$("#auditor").append("<option value='"+msg.rows[i].pId+"'>"+msg.rows[i].pName+"</option>");
+	    	　　		}
+        	　　},error:function(){
+        	　　}
+        	});
+        }
+        $(document).ready(function(){
+            selectAuditDept($("#treeId").val());
+           // selectAuditor($("#auditDeptid").val());
+          });
+
+    </script>   
+</body>
+</html>

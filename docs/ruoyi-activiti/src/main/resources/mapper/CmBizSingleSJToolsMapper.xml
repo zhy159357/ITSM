@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.activiti.mapper.CmBizSingleSJToolsMapper">
+
+    <resultMap id="listResult" type="CmBizSingleSJTools">
+        <result property="orgName" column="ORGNAME"></result>
+        <result property="caption" column="CAPTION"></result>
+        <result property="cmBizSjNum" column="cmBizSjNum"></result>
+        <result property="isToolsNum" column="isToolsNum"></result>
+        <result property="countEfficiency" column="countEfficiency"></result>
+    </resultMap>
+    
+    <select id="selectToolsCountBySys" parameterType="CmBizSingleSJTools" resultMap="listResult">
+        select s.CAPTION,o.ORGNAME,nvl(count(c.CHANGE_CODE),0) as cmBizSjNum,nvl(sum(CASE WHEN c.IS_TOOLS = '1' THEN c.IS_TOOLS END),0) as isToolsNum,concat(nvl(ROUND((sum(CASE WHEN c.IS_TOOLS = '1' THEN c.IS_TOOLS END)/count(c.CHANGE_CODE)*100),2),0),'%')as countEfficiency from CM_BIZ_SINGLE_SJ c, OG_ORG o,OG_SYS s where o.ORGID = s.ORGID and c.SYSID = s.SYSID and c.CHANGE_SINGLE_STATUS = '10' and c.CREAT_TIME>= #{startCreateTime} and c.CREAT_TIME <![CDATA[<=]]> #{endCreateTime} GROUP BY s.CAPTION,o.ORGNAME
+    </select>
+    <!--mysql-->
+    <select id="selectToolsCountBySysMysql" parameterType="CmBizSingleSJTools" resultMap="listResult">
+        select s.CAPTION,o.ORGNAME,ifnull(count(c.CHANGE_CODE),0) as cmBizSjNum,ifnull(sum(CASE WHEN c.IS_TOOLS = '1' THEN c.IS_TOOLS END),0) as isToolsNum,concat(ifnull(ROUND((sum(CASE WHEN c.IS_TOOLS = '1' THEN c.IS_TOOLS END)/count(c.CHANGE_CODE)*100),2),0),'%')as countEfficiency from CM_BIZ_SINGLE_SJ c, OG_ORG o,OG_SYS s where o.ORGID = s.ORGID and c.SYSID = s.SYSID and c.CHANGE_SINGLE_STATUS = '10' and c.CREAT_TIME>= #{startCreateTime} and c.CREAT_TIME <![CDATA[<=]]> #{endCreateTime} GROUP BY s.CAPTION,o.ORGNAME
+    </select>
+
+    <select id="selectToolsCountByCaption" parameterType="CmBizSingleSJTools" resultMap="listResult">
+        select o.ORGNAME,nvl(count(c.CHANGE_CODE),0) as cmBizSjNum,nvl(sum(CASE WHEN c.IS_TOOLS = '1' THEN c.IS_TOOLS END),0) as isToolsNum,concat(nvl(ROUND((sum(CASE WHEN c.IS_TOOLS = '1' THEN c.IS_TOOLS END)/count(c.CHANGE_CODE)*100),2),0),'%')as countEfficiency from CM_BIZ_SINGLE_SJ c, OG_ORG o,OG_SYS s where o.ORGID = s.ORGID and c.SYSID = s.SYSID and c.CHANGE_SINGLE_STATUS = '10' and c.CREAT_TIME>=#{startCreateTime} and c.CREAT_TIME <![CDATA[<=]]> #{endCreateTime} GROUP BY o.ORGNAME
+    </select>
+    <!--mysql-->
+    <select id="selectToolsCountByCaptionMysql" parameterType="CmBizSingleSJTools" resultMap="listResult">
+        select o.ORGNAME,ifnull(count(c.CHANGE_CODE),0) as cmBizSjNum,ifnull(sum(CASE WHEN c.IS_TOOLS = '1' THEN c.IS_TOOLS END),0) as isToolsNum,concat(ifnull(ROUND((sum(CASE WHEN c.IS_TOOLS = '1' THEN c.IS_TOOLS END)/count(c.CHANGE_CODE)*100),2),0),'%')as countEfficiency from CM_BIZ_SINGLE_SJ c, OG_ORG o,OG_SYS s where o.ORGID = s.ORGID and c.SYSID = s.SYSID and c.CHANGE_SINGLE_STATUS = '10' and c.CREAT_TIME>=#{startCreateTime} and c.CREAT_TIME <![CDATA[<=]]> #{endCreateTime} GROUP BY o.ORGNAME
+    </select>
+</mapper>

@@ -1,0 +1,621 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.activiti.mapper.CmBizQingqiuMapper">
+    
+    <resultMap type="CmBizQingqiu" id="CmBizQingqiuResult">
+        <result property="changeId"    column="change_id"    />
+        <result property="changeCode"    column="change_code"    />
+        <result property="addTime"    column="createtime"    />
+        <result property="createrOrgId"    column="creater_org_id"    />
+        <result property="submitTime"    column="submit_time"    />
+        <result property="applicantId"    column="applicant_id"    />
+        <result property="changeCategoryId"    column="change_category_id"    />
+        <result property="sysid"    column="sysid"    />
+        <result property="sysname"    column="sysname"    />
+        <result property="importantLev"    column="important_lev"    />
+        <result property="isNotice"    column="is_notice"    />
+        <result property="isStop"    column="is_stop"    />
+        <result property="changeResource"    column="change_resource"    />
+        <result property="changeSingleName"    column="change_single_name"    />
+        <result property="changeCauseText"    column="change_cause_text"    />
+        <result property="changeDetails"    column="change_details"    />
+        <result property="checkOrg"    column="check_org"    />
+        <result property="checkerId"    column="checker_id"    />
+        <result property="practicleTime"    column="practicle_time"    />
+        <result property="implementorId"    column="implementor_id"    />
+        <result property="implementorOrgid"    column="implementor_orgid"    />
+        <result property="stauts"    column="stauts"    />
+        <result property="changeStage"    column="change_stage"    />
+        <result property="invalidationMark"    column="invalidation_mark"    />
+        <result property="fucheckerId"    column="fuchecker_id"    />
+        <result property="instanceId"    column="instanceId"    />
+        <result property="typeName"    column="TYPE_NAME"    />
+        <result property="applyName"    column="APPLY_NAME"    />
+        <result property="checkName"    column="CHECK_NAME"    />
+        <result property="acceptanceName"    column="ACCEPTANCE_NAME"    />
+        <result property="fucheckerName"    column="FUCHECKER_NAME"    />
+        <result property="applyOrgName"    column="APPLY_ORG_NAME"    />
+        <result property="checkOrgName"    column="CHECK_ORG_NAME"    />
+        <result property="acceptanceOrgName"    column="ACCEPTANCE_ORG_NAME"    />
+        <result property="dealIdList"    column="DEAL_ID_LIST"    />
+        <result property="fucheckerFlag"    column="FUCHECKER_FLAG"    />
+    </resultMap>
+
+    <resultMap type="OgPerson" id="OgPersonResult">
+        <id     property="pId"              column="PID"         />
+        <result property="orgId"            column="ORGID"         />
+        <result property="pName"            column="PNAME"      />
+        <result property="sex"              column="SEX"       />
+        <result property="edu"              column="EDU"       />
+        <result property="birthday"         column="BIRTHDAY"           />
+        <result property="birthPlace"       column="BIRTHPLACE"     />
+        <result property="phone"            column="PHONE"             />
+        <result property="mobilPhone"       column="MOBIL_PHONE"          />
+        <result property="email"            column="EMAIL"        />
+        <result property="address"          column="ADDRESS"            />
+        <result property="createBy"         column="create_by"          />
+        <result property="momer"            column="MOMER"        />
+        <result property="memo"             column="MEMO"        />
+        <result property="updatetime"       column="UPDATE_TIME"      />
+        <result property="invalidationMark" column="INVALIDATION_MARK" />
+        <result property="position"         column="POSITION"       />
+        <result property="leader"           column="LEADER"     />
+        <result property="pOrder"           column="P_ORDER"       />
+        <result property="pflag"            column="P_FLAG"     />
+        <result property="orgname"          column="ORGNAME"     />
+    </resultMap>
+
+    <sql id="selectCmBizQingqiuVo">
+        SELECT
+            Q.CHANGE_ID AS CHANGE_ID,
+            Q.CHANGE_CODE AS CHANGE_CODE,
+            Q.CREATETIME AS CREATETIME,
+            Q.CREATER_ORG_ID AS CREATER_ORG_ID,
+            Q.SUBMIT_TIME AS SUBMIT_TIME,
+            Q.APPLICANT_ID AS APPLICANT_ID,
+            Q.CHANGE_CATEGORY_ID AS CHANGE_CATEGORY_ID,
+            Q.SYSID AS SYSID,
+            Q.SYSNAME AS SYSNAME,
+            Q.IMPORTANT_LEV AS IMPORTANT_LEV,
+            Q.IS_NOTICE AS IS_NOTICE,
+            Q.IS_STOP AS IS_STOP,
+            Q.CHANGE_RESOURCE AS CHANGE_RESOURCE,
+            Q.CHANGE_SINGLE_NAME AS CHANGE_SINGLE_NAME,
+            Q.CHANGE_CAUSE_TEXT AS CHANGE_CAUSE_TEXT,
+            Q.CHANGE_DETAILS AS CHANGE_DETAILS,
+            Q.CHECK_ORG AS CHECK_ORG,
+            Q.CHECKER_ID AS CHECKER_ID,
+            Q.PRACTICLE_TIME AS PRACTICLE_TIME,
+            Q.IMPLEMENTOR_ID AS IMPLEMENTOR_ID,
+            Q.IMPLEMENTOR_ORGID AS IMPLEMENTOR_ORGID,
+            Q.STAUTS AS STAUTS,
+            Q.CHANGE_STAGE AS CHANGE_STAGE,
+            Q.INVALIDATION_MARK AS INVALIDATION_MARK,
+            Q.DEAL_ID_LIST AS DEAL_ID_LIST,
+            Q.FUCHECKER_ID AS FUCHECKER_ID,
+            Q.FUCHECKER_FLAG AS FUCHECKER_FLAG,
+            Q.INSTANCEID AS INSTANCEID,
+            T .TYPE_NAME AS TYPE_NAME,
+            P.PNAME AS APPLY_NAME,
+            PS.PNAME AS CHECK_NAME,
+            PSN.PNAME AS ACCEPTANCE_NAME,
+            PSF.PNAME AS FUCHECKER_NAME,
+            O.ORGNAME AS APPLY_ORG_NAME,
+            ORS.ORGNAME AS CHECK_ORG_NAME,
+            ORG.ORGNAME AS ACCEPTANCE_ORG_NAME
+            FROM
+                CM_BIZ_QINGQIU Q
+            LEFT JOIN OG_PERSON P 	 	ON Q.APPLICANT_ID 	= P .PID
+            LEFT JOIN OG_PERSON PS 		ON Q.IMPLEMENTOR_ID = PS.PID
+            LEFT JOIN OG_PERSON PSN 	ON Q.CHECKER_ID 	= PSN.PID
+            LEFT JOIN OG_PERSON PSF     ON Q.FUCHECKER_ID = PSF.PID
+            LEFT JOIN OG_ORG O 			ON Q.CREATER_ORG_ID 	= O.ORGID
+            LEFT JOIN OG_ORG ORS 		ON Q.IMPLEMENTOR_ORGID  = ORS.ORGID
+            LEFT JOIN OG_ORG ORG 		ON Q.CHECK_ORG 			= ORG.ORGID
+            LEFT JOIN OG_TYPEINFO T 	ON Q.CHANGE_CATEGORY_ID = T .TYPEINFO_ID
+            WHERE Q.INVALIDATION_MARK = '1'
+    </sql>
+
+    <select id="selectCmBizQingqiuList" parameterType="CmBizQingqiu" resultMap="CmBizQingqiuResult">
+        <include refid="selectCmBizQingqiuVo"/>
+            <if test="changeCode != null and changeCode != ''">
+                AND Q.change_code like concat(concat('%',#{changeCode}),'%')
+            </if>
+            <if test="applyName != null and applyName != ''">
+                AND P.PNAME like concat(concat('%',#{applyName}),'%')
+            </if>
+            <if test="acceptanceOrgName != null and acceptanceOrgName != ''">
+                AND ORG.ORGNAME like concat(concat('%',#{acceptanceOrgName}),'%')
+            </if>
+            <if test="applyOrgName != null and applyOrgName != ''">
+                AND O.ORGNAME like concat(concat('%',#{applyOrgName}),'%')
+            </if>
+            <if test="acceptanceName != null and acceptanceName != ''">
+                AND PSN.PNAME like concat(concat('%',#{acceptanceName}),'%')
+            </if>
+            <if test="typeName != null and typeName != ''">
+                AND T .TYPE_NAME like concat(concat('%',#{typeName}),'%')
+            </if>
+            <if test="fucheckerName != null and fucheckerName != ''">
+                AND PSF.PNAME like concat(concat('%',#{fucheckerName}),'%')
+            </if>
+            <if test="params.createTime != null and params.createTime != ''">
+                AND Q.CREATETIME &gt;= #{params.createTime}
+            </if>
+            <if test="params.endCreateTime != null and params.endCreateTime != ''">
+                AND Q.CREATETIME &lt;= #{params.endCreateTime}
+            </if>
+            <if test="params.practicleTime != null and params.practicleTime != ''">
+                AND Q.PRACTICLE_TIME &gt;= #{params.practicleTime}
+            </if>
+            <if test="params.endpracticleTime != null and params.endpracticleTime != ''">
+                AND Q.PRACTICLE_TIME &lt;= #{params.endpracticleTime}
+            </if>
+            <if test="sysname != null and sysname != ''">
+                AND Q.SYSNAME like concat(concat('%',#{sysname}),'%')
+            </if>
+            <if test="fucheckerId != null  and fucheckerId != ''">
+                AND Q.fuchecker_id = #{fucheckerId}
+             </if>
+            <if test="fucheckerFlag != null  and fucheckerFlag != ''">
+                AND Q.fuchecker_flag = #{fucheckerFlag}
+            </if>
+            <if test="checkerId != null  and checkerId != ''">
+                AND Q.checker_id = #{checkerId}
+            </if>
+            <if test="sysid != null  and sysid != ''">
+                AND Q.sysid = #{sysid}
+            </if>
+            <if test="changeResource != null  and changeResource != ''">
+                AND Q.change_resource = #{changeResource}
+            </if>
+            <if test="addTime != null  and addTime != ''">
+                AND Q.createtime > #{addTime}
+             </if>
+            <if test="applicantId != null  and applicantId != ''">
+                AND Q.applicant_id = #{applicantId}
+            </if>
+            <if test="params.dealIdList != null  and params.dealIdList != ''">
+                AND Q.deal_id_list like concat(concat('%',#{params.dealIdList}),'%')
+            </if>
+            <if test="params.dealId != null  and params.dealId != ''">
+                AND (
+                Q.applicant_id = #{params.createId}
+                OR Q.deal_id_list like concat(concat('%',#{params.dealId}),'%')
+                )
+            </if>
+            <if test="changeCategoryId != null  and changeCategoryId != ''">
+                AND Q.change_category_id = #{changeCategoryId}
+            </if>
+            <if test="isNotice != null  and isNotice != ''">
+                AND Q.is_notice = #{isNotice}</if>
+            <if test="changeSingleName != null  and changeSingleName != ''">
+                AND Q.change_single_name like concat(concat('%', #{changeSingleName}), '%')
+             </if>
+            <if test="stauts != null  and stauts != ''">
+                AND Q.stauts = #{stauts}
+             </if>
+            <if test="params.stauts != null and params.stauts != ''">
+                AND Q.stauts IN ('0200','0400','0500')
+            </if>
+            <if test="checkOrg != null and checkOrg != ''">
+                AND Q.check_org = #{checkOrg}
+            </if>
+            <if test="createrOrgId != null and createrOrgId != ''">
+                AND Q.CREATER_ORG_ID = #{createrOrgId}
+            </if>
+            ORDER BY Q.CREATETIME DESC
+    </select>
+
+    <select id="selectQingqiuList" parameterType="CmBizQingqiu" resultMap="CmBizQingqiuResult">
+        <include refid="selectCmBizQingqiuVo"/>
+        <if test="changeCode != null and changeCode != ''">
+            AND Q.change_code like concat(concat('%',#{changeCode}),'%')
+        </if>
+        <if test="applyName != null and applyName != ''">
+            AND P.PNAME like concat(concat('%',#{applyName}),'%')
+        </if>
+        <if test="acceptanceOrgName != null and acceptanceOrgName != ''">
+            AND ORG.ORGNAME like concat(concat('%',#{acceptanceOrgName}),'%')
+        </if>
+        <if test="applyOrgName != null and applyOrgName != ''">
+            AND O.ORGNAME like concat(concat('%',#{applyOrgName}),'%')
+        </if>
+        <if test="acceptanceName != null and acceptanceName != ''">
+            AND PSN.PNAME like concat(concat('%',#{acceptanceName}),'%')
+        </if>
+        <if test="typeName != null and typeName != ''">
+            AND T .TYPE_NAME like concat(concat('%',#{typeName}),'%')
+        </if>
+        <if test="fucheckerName != null and fucheckerName != ''">
+            AND PSF.PNAME like concat(concat('%',#{fucheckerName}),'%')
+        </if>
+        <if test="fucheckerId != null and fucheckerId != ''">
+            AND Q.FUCHECKER_ID = #{fucheckerId}
+        </if>
+        <if test="fucheckerFlag != null and fucheckerFlag != ''">
+            AND Q.FUCHECKER_FLAG = #{fucheckerFlag}
+        </if>
+        <if test="params.createTime != null and params.createTime != ''">
+            AND Q.CREATETIME &gt;= #{params.createTime}
+        </if>
+        <if test="params.endCreateTime != null and params.endCreateTime != ''">
+            AND Q.CREATETIME &lt;= #{params.endCreateTime}
+        </if>
+        <if test="params.practicleTime != null and params.practicleTime != ''">
+            AND Q.PRACTICLE_TIME &gt;= #{params.practicleTime}
+        </if>
+        <if test="params.endpracticleTime != null and params.endpracticleTime != ''">
+            AND Q.PRACTICLE_TIME &lt;= #{params.endpracticleTime}
+        </if>
+        <if test="sysname != null and sysname != ''">
+            AND Q.SYSNAME like concat(concat('%',#{sysname}),'%')
+        </if>
+        <if test="sysid != null  and sysid != ''">
+            and Q.sysid = #{sysid}
+        </if>
+        <if test="changeResource != null  and changeResource != ''">
+            and Q.change_resource = #{changeResource}
+        </if>
+        <if test="changeCategoryId != null  and changeCategoryId != ''">
+            and Q.change_category_id = #{changeCategoryId}
+        </if>
+        <if test="isNotice != null  and isNotice != ''"> and Q.is_notice = #{isNotice}</if>
+        <if test="changeSingleName != null  and changeSingleName != ''">
+            and Q.change_single_name like concat(concat('%', #{changeSingleName}), '%')
+        </if>
+        <if test="stauts != null  and stauts != ''">
+            and Q.stauts = #{stauts}
+        </if>
+        <if test="params.createId != null  and params.createId != ''">
+            AND Q.applicant_id = #{params.createId}
+        </if>
+        <if test="params.dealIdList != null  and params.dealIdList != ''">
+            AND Q.deal_id_list like concat(concat('%',#{params.dealIdList}),'%')
+        </if>
+        <if test="params.dealId != null  and params.dealId != ''">
+            AND (
+            Q.applicant_id = #{params.dealId}
+            OR Q.deal_id_list like concat(concat('%',#{params.dealId}),'%')
+            )
+        </if>
+        <if test="params.changeIds != null and params.changeIds != ''">
+            AND (
+            Q.CHANGE_ID IN
+            <foreach collection="params.changeIds" item="changeId" open="(" separator="," close=")">
+                #{changeId}
+            </foreach>
+            )
+        </if>
+        <if test="params.orgIds != null and params.orgIds != ''">
+            AND (
+            Q.CHECK_ORG IN
+            <foreach collection="params.orgIds" item="orgId" open="(" separator="," close=")">
+                #{orgId}
+            </foreach>
+            OR Q.applicant_id = #{applicantId}
+            OR Q.deal_id_list like concat(concat('%',#{applicantId}),'%')
+            )
+        </if>
+        <if test="params.flag != null and params.flag != ''">
+            AND (
+            O.LEVEL_CODE LIKE concat(concat('%',#{params.levelCode}),'%')
+            OR
+            Q.IMPLEMENTOR_ID = #{implementorId}
+            OR
+            Q.FUCHECKER_ID = #{fucheckerId}
+            OR
+            Q.CHECKER_ID = #{checkerId}
+            )
+        </if>
+        <if test="params.search != null and params.search != ''">
+            AND (Q.change_code like concat(concat('%',#{params.search}),'%')
+            OR  Q.SYSNAME like concat(concat('%',#{params.search}),'%'))
+        </if>
+        ORDER BY Q.CREATETIME DESC
+    </select>
+    
+    <select id="selectCmBizQingqiuById" parameterType="String" resultMap="CmBizQingqiuResult">
+        <include refid="selectCmBizQingqiuVo"/>
+        AND change_id = #{changeId}
+    </select>
+
+    <select id="selectCmBizQingqiuAcceptanceById" parameterType="String" resultMap="CmBizQingqiuResult">
+        <include refid="selectCmBizQingqiuVo"/>
+        AND Q.STAUTS = '0400'
+        AND change_id = #{changeId}
+    </select>
+
+    <select id="selectBGQQVO" parameterType="CmBizQingqiu" resultMap="CmBizQingqiuResult">
+        <include refid="selectCmBizQingqiuVo"/>
+        AND change_id = #{changeId}
+        <if test="changeCode != null and changeCode != ''">
+            AND Q.change_code like concat(concat('%',#{changeCode}),'%')
+        </if>
+        <if test="applyName != null and applyName != ''">
+            AND P.PNAME like concat(concat('%',#{applyName}),'%')
+        </if>
+        <if test="changeSingleName != null  and changeSingleName != ''">
+            and Q.change_single_name like concat(concat('%',#{changeSingleName}),'%')
+        </if>
+        <if test="changeCategoryId != null  and changeCategoryId != ''">
+            and Q.change_category_id = #{changeCategoryId}
+        </if>
+        <if test="params.createTime != null and params.createTime != ''">
+            AND Q.CREATETIME &gt;= #{params.createTime}
+        </if>
+        <if test="params.endCreateTime != null and params.endCreateTime != ''">
+            AND Q.CREATETIME &lt;= #{params.endCreateTime}
+        </if>
+        <if test="stauts != null and stauts != ''">
+            AND Q.STAUTS = #{stauts}
+        </if>
+        <if test="addTime != null  and addTime != ''">
+            AND Q.createtime > #{addTime}
+        </if>
+        <if test="params.search != null and params.search != ''">
+            AND (Q.change_code like concat(concat('%',#{params.search}),'%')
+            OR  Q.SYSNAME like concat(concat('%',#{params.search}),'%'))
+        </if>
+    </select>
+        
+    <insert id="insertCmBizQingqiu" parameterType="CmBizQingqiu">
+        insert into CM_BIZ_QINGQIU
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="changeId != null  and changeId != ''">change_id,</if>
+            <if test="changeCode != null  and changeCode != ''">change_code,</if>
+            <if test="createrOrgId != null  and createrOrgId != ''">creater_org_id,</if>
+            <if test="submitTime != null  and submitTime != ''">submit_time,</if>
+            <if test="applicantId != null  and applicantId != ''">applicant_id,</if>
+            <if test="changeCategoryId != null  and changeCategoryId != ''">change_category_id,</if>
+            <if test="sysid != null  and sysid != ''">sysid,</if>
+            <if test="sysname != null  and sysname != ''">sysname,</if>
+            <if test="importantLev != null  and importantLev != ''">important_lev,</if>
+            <if test="isNotice != null  and isNotice != ''">is_notice,</if>
+            <if test="isStop != null  and isStop != ''">is_stop,</if>
+            <if test="changeResource != null  and changeResource != ''">change_resource,</if>
+            <if test="changeSingleName != null  and changeSingleName != ''">change_single_name,</if>
+            <if test="changeCauseText != null ">change_cause_text,</if>
+            <if test="changeDetails != null ">change_details,</if>
+            <if test="checkOrg != null  and checkOrg != ''">check_org,</if>
+            <if test="checkerId != null  and checkerId != ''">checker_id,</if>
+            <if test="practicleTime != null  and practicleTime != ''">practicle_time,</if>
+            <if test="implementorId != null  and implementorId != ''">implementor_id,</if>
+            <if test="implementorOrgid != null  and implementorOrgid != ''">implementor_orgid,</if>
+            <if test="stauts != null  and stauts != ''">stauts,</if>
+            <if test="changeStage != null  and changeStage != ''">change_stage,</if>
+            <if test="invalidationMark != null  and invalidationMark != ''">invalidation_mark,</if>
+            <if test="fucheckerId != null  and fucheckerId != ''">fuchecker_id,</if>
+            <if test="dealIdList != null  and dealIdList != ''">deal_id_list,</if>
+            createtime
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="changeId != null  and changeId != ''">#{changeId},</if>
+            <if test="changeCode != null  and changeCode != ''">#{changeCode},</if>
+            <if test="createrOrgId != null  and createrOrgId != ''">#{createrOrgId},</if>
+            <if test="submitTime != null  and submitTime != ''">#{submitTime},</if>
+            <if test="applicantId != null  and applicantId != ''">#{applicantId},</if>
+            <if test="changeCategoryId != null  and changeCategoryId != ''">#{changeCategoryId},</if>
+            <if test="sysid != null  and sysid != ''">#{sysid},</if>
+            <if test="sysname != null  and sysname != ''">#{sysname},</if>
+            <if test="importantLev != null  and importantLev != ''">#{importantLev},</if>
+            <if test="isNotice != null  and isNotice != ''">#{isNotice},</if>
+            <if test="isStop != null  and isStop != ''">#{isStop},</if>
+            <if test="changeResource != null  and changeResource != ''">#{changeResource},</if>
+            <if test="changeSingleName != null  and changeSingleName != ''">#{changeSingleName},</if>
+            <if test="changeCauseText != null ">#{changeCauseText},</if>
+            <if test="changeDetails != null ">#{changeDetails},</if>
+            <if test="checkOrg != null  and checkOrg != ''">#{checkOrg},</if>
+            <if test="checkerId != null  and checkerId != ''">#{checkerId},</if>
+            <if test="practicleTime != null  and practicleTime != ''">#{practicleTime},</if>
+            <if test="implementorId != null  and implementorId != ''">#{implementorId},</if>
+            <if test="implementorOrgid != null  and implementorOrgid != ''">#{implementorOrgid},</if>
+            <if test="stauts != null  and stauts != ''">#{stauts},</if>
+            <if test="changeStage != null  and changeStage != ''">#{changeStage},</if>
+            <if test="invalidationMark != null  and invalidationMark != ''">#{invalidationMark},</if>
+            <if test="fucheckerId != null  and fucheckerId != ''">#{fucheckerId},</if>
+            <if test="dealIdList != null  and dealIdList != ''">#{dealIdList},</if>
+            #{addTime}
+         </trim>
+    </insert>
+
+    <update id="updateCmBizQingqiu" parameterType="CmBizQingqiu">
+        update CM_BIZ_QINGQIU
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="changeCode != null  and changeCode != ''">change_code = #{changeCode},</if>
+            <if test="addTime != null  and addTime != ''">createtime = #{addTime},</if>
+            <if test="createrOrgId != null  and createrOrgId != ''">creater_org_id = #{createrOrgId},</if>
+            <if test="submitTime != null  and submitTime != ''">submit_time = #{submitTime},</if>
+            <if test="applicantId != null  and applicantId != ''">applicant_id = #{applicantId},</if>
+            <if test="changeCategoryId != null  and changeCategoryId != ''">change_category_id = #{changeCategoryId},</if>
+            <if test="sysid != null  and sysid != ''">sysid = #{sysid},</if>
+            <if test="sysname != null  and sysname != ''">sysname = #{sysname},</if>
+            <if test="importantLev != null  and importantLev != ''">important_lev = #{importantLev},</if>
+            <if test="isNotice != null  and isNotice != ''">is_notice = #{isNotice},</if>
+            <if test="isStop != null  and isStop != ''">is_stop = #{isStop},</if>
+            <if test="changeResource != null  and changeResource != ''">change_resource = #{changeResource},</if>
+            <if test="changeSingleName != null  and changeSingleName != ''">change_single_name = #{changeSingleName},</if>
+            <if test="changeCauseText != null ">change_cause_text = #{changeCauseText},</if>
+            <if test="changeDetails != null and changeDetails != ''">change_details = #{changeDetails},</if>
+            <if test="checkOrg != null  and checkOrg != ''">check_org = #{checkOrg},</if>
+            <if test="checkerId != null  and checkerId != ''">checker_id = #{checkerId},</if>
+            <if test="practicleTime != null  and practicleTime != ''">practicle_time = #{practicleTime},</if>
+            <if test="implementorId != null  and implementorId != ''">implementor_id = #{implementorId},</if>
+            <if test="implementorOrgid != null  and implementorOrgid != ''">implementor_orgid = #{implementorOrgid},</if>
+            <if test="stauts != null  and stauts != ''">stauts = #{stauts},</if>
+            <if test="changeStage != null  and changeStage != ''">change_stage = #{changeStage},</if>
+            <if test="invalidationMark != null  and invalidationMark != ''">invalidation_mark = #{invalidationMark},</if>
+            <if test="fucheckerId != null  and fucheckerId != ''">fuchecker_id = #{fucheckerId},</if>
+            <if test="instanceId != null  and instanceId != ''">instanceId = #{instanceId},</if>
+            <if test="dealIdList != null  and dealIdList != ''">deal_id_list = #{dealIdList},</if>
+            <if test="fucheckerFlag != null  and fucheckerFlag != ''">fuchecker_flag = #{fucheckerFlag},</if>
+        </trim>
+        where change_id = #{changeId,jdbcType=VARCHAR}
+    </update>
+
+    <delete id="deleteCmBizQingqiuById" parameterType="String">
+        delete from CM_BIZ_QINGQIU where change_id = #{changeId}
+    </delete>
+
+    <delete id="deleteCmBizQingqiuByIds" parameterType="String">
+        update CM_BIZ_QINGQIU SET INVALIDATION_MARK = '0' where change_id in
+        <foreach item="changeId" collection="array" open="(" separator="," close=")">
+            #{changeId}
+        </foreach>
+    </delete>
+
+    <update id="cmBizQingQiuToCancle" parameterType="String">
+        update CM_BIZ_QINGQIU SET STAUTS = '0501' where change_id =#{changeId}
+    </update>
+
+    <select id="secondaryDeptLeader" parameterType="CmBizQingqiu" resultMap="OgPersonResult">
+        SELECT DISTINCT * FROM	OG_PERSON
+            WHERE
+                pid IN (
+                    SELECT userid	FROM OG_R_USER_POST
+                    WHERE
+                        postid IN (
+                            SELECT postid	FROM	OG_R_POST_ROLE
+                            WHERE
+                                rid = #{role}
+                        )
+                )
+    </select>
+
+    <select id="selectCmBizQingqiuListNotNew" parameterType="CmBizQingqiu" resultMap="CmBizQingqiuResult">
+        <include refid="selectCmBizQingqiuVo"/>
+        AND  Q.STAUTS != '0100'
+        <if test="changeCode != null and changeCode != ''">
+            AND Q.change_code like concat(concat('%',#{changeCode}),'%')
+        </if>
+        <if test="applyName != null and applyName != ''">
+            AND P.PNAME like concat(concat('%',#{applyName}),'%')
+        </if>
+        <if test="acceptanceOrgName != null and acceptanceOrgName != ''">
+            AND ORG.ORGNAME like concat(concat('%',#{acceptanceOrgName}),'%')
+        </if>
+        <if test="applyOrgName != null and applyOrgName != ''">
+            AND O.ORGNAME like concat(concat('%',#{applyOrgName}),'%')
+        </if>
+        <if test="acceptanceName != null and acceptanceName != ''">
+            AND PSN.PNAME like concat(concat('%',#{acceptanceName}),'%')
+        </if>
+        <if test="typeName != null and typeName != ''">
+            AND T .TYPE_NAME like concat(concat('%',#{typeName}),'%')
+        </if>
+        <if test="fucheckerName != null and fucheckerName != ''">
+            AND PSF.PNAME like concat(concat('%',#{fucheckerName}),'%')
+        </if>
+        <if test="params.createTime != null and params.createTime != ''">
+            AND Q.CREATETIME &gt;= #{params.createTime}
+        </if>
+        <if test="params.endCreateTime != null and params.endCreateTime != ''">
+            AND Q.CREATETIME &lt;= #{params.endCreateTime}
+        </if>
+        <if test="params.practicleTime != null and params.practicleTime != ''">
+            AND Q.PRACTICLE_TIME &gt;= #{params.practicleTime}
+        </if>
+        <if test="params.endpracticleTime != null and params.endpracticleTime != ''">
+            AND Q.PRACTICLE_TIME &lt;= #{params.endpracticleTime}
+        </if>
+        <if test="sysname != null and sysname != ''">
+            AND Q.SYSNAME like concat(concat('%',#{sysname}),'%')
+        </if>
+        <if test="fucheckerId != null  and fucheckerId != ''"> and Q.fuchecker_id = #{fucheckerId}</if>
+        <if test="checkerId != null  and checkerId != ''"> and Q.checker_id = #{checkerId}</if>
+        <if test="sysid != null  and sysid != ''"> and Q.sysid = #{sysid}</if>
+        <if test="changeResource != null  and changeResource != ''"> and Q.change_resource = #{changeResource}</if>
+        <if test="addTime != null  and addTime != ''"> and Q.createtime > #{addTime}</if>
+        <if test="applicantId != null  and applicantId != ''"> and Q.applicant_id = #{applicantId}</if>
+        <if test="changeCategoryId != null  and changeCategoryId != ''"> and Q.change_category_id = #{changeCategoryId}</if>
+        <if test="isNotice != null  and isNotice != ''"> and Q.is_notice = #{isNotice}</if>
+        <if test="changeSingleName != null  and changeSingleName != ''"> and Q.change_single_name like concat(concat('%', #{changeSingleName}), '%')</if>
+        ORDER BY Q.CREATETIME DESC
+    </select>
+
+    <select id="togetherAcceptancePerson" parameterType="CmBizQingqiu" resultMap="OgPersonResult">
+        SELECT
+        P.PID AS PID,
+        P.ORGID AS ORGID,
+        P.PNAME AS PNAME,
+        O.ORGNAME AS ORGNAME
+        FROM
+        OG_PERSON P
+        LEFT JOIN OG_ORG O ON P.ORGID = O.ORGID
+        WHERE P.PID IN (
+          SELECT USERID  FROM OG_R_USER_POST WHERE POSTID IN (
+            SELECT POSTID FROM OG_R_POST_ROLE WHERE rid = '2503'
+            )
+          )
+        <if test="togetherAcceptanceOrgIds != null and togetherAcceptanceOrgIds != ''">
+            AND P.ORGID IN
+            <foreach collection="togetherAcceptanceOrgIds" item="orgId" open="(" separator="," close=")">
+                #{orgId}
+            </foreach>
+        </if>
+        AND P.INVALIDATION_MARK = '1'
+        <if test="togetherAcceptanceOrgName != null and togetherAcceptanceOrgName!=''">
+            and O.ORGNAME like concat(concat('%',#{togetherAcceptanceOrgName}),'%')
+        </if>
+        <if test="togetherAcceptanceName!=null and togetherAcceptanceName!=''">
+            and P.PNAME like concat(concat('%',#{togetherAcceptanceName}),'%')
+        </if>
+    </select>
+
+    <select id="selectLeader" parameterType="OgPerson" resultMap="OgPersonResult">
+        SELECT DISTINCT
+        P .MEMO,
+        P .PID,
+        P .PNAME,
+        P .BIRTHPLACE,
+        P .EMAIL,
+        P .ADDRESS,
+        P .BIRTHDAY,
+        P .ORGID,
+        P .EDU,
+        P .SEX,
+        P .MOBIL_PHONE,
+        P .PHONE,
+        P .POSITION,
+        P .LEADER,
+        P .P_ORDER,
+        P .P_FLAG,
+        A .ORGNAME
+        FROM
+        OG_USER U,
+        OG_PERSON P,
+        OG_ORG A,
+        OG_R_USER_POST up,
+        OG_R_POST_ROLE pr
+        WHERE
+        U .PID = P .PID
+        AND P .ORGID = A .ORGID
+        AND U .USERID = up.USERID
+        AND up.POSTID = pr.POSTID
+        AND P .INVALIDATION_MARK = '1'
+        AND U .INVALIDATION_MARK = '1'
+        <if test="rId != null and rId!=''">
+            and pr.RID = #{rId}
+        </if>
+        <if test="params.orgId != null and params.orgId != ''">
+            AND a.orgid IN
+            <foreach collection="params.orgId" item="orgId" open="(" separator="," close=")">
+                #{orgId}
+            </foreach>
+        </if>
+        <if test="orgname != null and orgname!=''">
+            and a.orgname like concat(concat('%',#{orgname}),'%')
+        </if>
+        <if test="org != null and  org.levelCode != null and org.levelCode != ''">
+            and a.level_Code like concat(concat('%',#{org.levelCode}),'%')
+        </if>
+        <if test="pName!=null and pName!=''">
+            and p.pname like concat(concat('%',#{pName}),'%')
+        </if>
+        <if test="mobilPhone!=null and mobilPhone!=''">
+            and p.mobil_phone like concat(concat('%',#{mobilPhone}),'%')
+        </if>
+    </select>
+</mapper>

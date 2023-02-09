@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('标题维护')" />
+    <th:block th:include="include :: layout-latest-css" />
+    <th:block th:include="include :: select2-css" />
+</head>
+<body class="gray-bg">
+<div class="ui-layout-center">
+    <div class="container-div">
+        <div class="row">
+            <div class="col-sm-12 search-collapse">
+                <form id="form-knowledgeTitle">
+                    <div class="select-list">
+                        <ul>
+                            <li>
+                              	<label>标题名称：</label>
+                              	<input type="text" name="name"/>
+                            </li>
+                            <li>
+                                <label>标题分类：</label>
+                                <select id="category" name="category" class="form-control m-b">
+                                	<option value="">所有</option>
+                                    <option value="1">一级标题</option>
+                                    <option value="2">二级标题</option>
+                                </select>
+                            </li>
+                            <li>
+                                <a class="btn btn-primary btn-rounded btn-sm" id="searchBtn" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.resetAll('form-knowledgeTitle')"><i class="fa fa-repeat"></i>&nbsp;重置</a>
+                            </li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+
+            <div class="btn-group-sm" id="toolbar" role="group">
+                <a class="btn btn-success" onclick="$.operate.add()">
+                    <i class="fa fa-plus"></i> 新增
+                </a>
+            </div>
+
+            <div class="col-sm-12 select-table table-bordered">
+                <table id="bootstrap-table"></table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: layout-latest-js" />
+<th:block th:include="include :: select2-js" />
+<script th:inline="javascript">
+    var prefix = ctx + "knowledge/title";
+
+    $(function() {
+    	document.onkeydown = function(e){
+            var ev = document.all ? window.event : e;
+            console.log(ev);
+            if(ev.keyCode==13) {
+                $('#searchBtn').trigger('click');
+                return false;
+            }
+        }
+        var options = {
+        		url: prefix + "/list",
+                createUrl: prefix + "/add",
+                updateUrl: prefix + "/edit/{id}",
+                removeUrl: prefix + "/remove/{id}",
+                modalName: "知识标题",
+                clickToSelect: true,
+                columns: [{
+                    checkbox: true
+                },
+                {
+                    field: 'id',
+                    title: '标题id',
+                    visible: false
+                },
+                {
+                    field: 'name',
+                    title: '标题名称'
+                },
+                {
+                    field: 'category',
+                    title: '标题分类',
+                    formatter: function(value, row, index) {
+    					if(row.category == '1'){
+                            return "一级标题";
+                        }else if(row.category == '2'){
+                            return "二级标题";
+                        }else{
+                            return row.category;
+                        }
+                    }
+                },
+                {
+                    field: 'createName',
+                    title: '创建人'
+                },
+                {
+                    field: 'createTime',
+                    title: '创建时间'
+                },
+                {
+                    field: 'isUsed',
+                    title: '标题使用',
+                    visible: false
+                },
+                {
+					title: '操作',
+					formatter: function(value, row, index) {
+						var actions = [];
+						actions.push('<a class="btn btn-success btn-xs" href="javascript:void(0)" onclick="$.operate.edit(\'' + row.id + '\')"><i class="fa fa-edit"></i>编辑</a> ');
+						if(row.isUsed=='0'){
+							actions.push('<a class="btn btn-danger btn-xs" href="javascript:void(0)" onclick="$.operate.remove(\'' + row.id + '\')"><i class="fa fa-trash"></i>删除</a> ');
+						}
+						return actions.join('');
+					}
+				}]
+        };
+        $.table.init(options);
+    });
+
+</script>
+</body>
+</html>

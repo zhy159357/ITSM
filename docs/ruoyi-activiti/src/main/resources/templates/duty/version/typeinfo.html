@@ -1,0 +1,173 @@
+	<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+	<th:block th:include="include :: header('部门列表')" />
+</head>
+<body class="gray-bg">
+<div class="container-div">
+	<div class="row">
+		<div class="col-sm-12 search-collapse">
+			<form id="dept-form">
+				<input id="treeId" name="parentId" type="hidden" value="310100001">
+<!--				<input id="versionId" name="versionId" type="text" th:value="${versionId}">-->
+				<div class="select-list">
+					<ul>
+						<li>
+							类别名称：<input type="text" name="typeName"/>
+						</li>
+						<li>
+							类别代码：<input type="text" name="typeNo"/>
+						</li>
+						<li>
+							<a class="btn btn-primary btn-rounded btn-sm" id="searchList" onclick="$.treeTable.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+							<a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+						</li>
+					</ul>
+				</div>
+			</form>
+		</div>
+
+		<div class="btn-group-sm" id="toolbar" role="group">
+<!--			<a class="btn btn-primary" onclick="$.operate.edit()">-->
+<!--				<i class="fa fa-edit"></i> 修改-->
+<!--			</a>-->
+			<a class="btn btn-info btn-xs" th:unless="${cntxtag}" onclick="preview()">
+				<i class="fa fa-search"></i> 预览
+			</a>
+			<a class="btn btn-info" id="expandAllBtn">
+				<i class="fa fa-exchange"></i> 展开/折叠
+			</a>
+		</div>
+		<div class="col-sm-12 select-table table-striped">
+			<table id="bootstrap-tree-table"></table>
+		</div>
+	</div>
+</div>
+<th:block th:include="include :: footer" />
+<script th:inline="javascript">
+	var datas = [[${@dict.getParaType('sys_normal_disable')}]];
+	var prefix = ctx + "duty/version";
+	var versionId = [[${versionId}]];
+	$(function() {
+		// 回车键搜索
+		document.onkeydown = function(e){
+			var ev = document.all ? window.event : e;
+			if(ev.keyCode==13) {
+				$('#searchList').trigger('click');
+				return false;
+			}
+		};
+		var options = {
+			code: "typeinfoId",
+			parentCode: "parentId",
+			uniqueId: "versionTypeinfoId",
+			url: prefix + "/typeinfo?versionId="+versionId,
+			updateUrl: prefix + "/typeEdit/{id}",
+			removeUrl: prefix + "/deleteTypeinfo/{id}",
+			modalName: "类别",
+			clickToSelect: true,
+			columns: [{
+				field: 'selectItem',
+				radio: true
+			},
+				{
+					field: 'typeName',
+					title: '类别名称',
+					align: "left",
+					width:'250'
+
+				},
+				{
+					field: 'versionTypeinfoId',
+					title: '版本id',
+					align: "left",
+					visible: false
+				},
+				{
+					field: 'typeNo',
+					title: '类别编号',
+					align: "left"
+				},
+				{
+					field: 'parentName',
+					title: '上级类别',
+					align: "left"
+				},
+				{
+					field: 'typeDescription',
+					title: '类别描述',
+					formatter:paramsMatter,
+					align: "left"
+				},
+				{
+					field: 'leader',
+					title: '主值类别',
+					align: "left",
+					formatter: function(value, row, index) {
+						if(row.leader == 1){
+							return "是";
+						}else{
+							return "否";
+						}
+					}
+				},
+<!--				{-->
+<!--					field: 'mobilephone',-->
+<!--					title: '值班手机',-->
+<!--					align: "left"-->
+<!--				},-->
+				{
+					field: 'serial',
+					title: '序列号',
+					align: "left"
+				},
+				{
+					title: '操作',
+					align: 'left',
+					formatter: function(value, row, index) {
+						if (row.parentId == null) {
+							return "";
+						} else {
+							var actions = [];
+							actions.push('<a class="btn btn-success btn-xs" href="javascript:void(0)" onclick="$.operate.edit(\'' + row.versionTypeinfoId + '\')"><i class="fa fa-edit"></i>编辑</a> ');
+							actions.push('<a class="btn btn-danger btn-xs" href="javascript:void(0)" onclick="$.operate.remove(\'' + row.versionTypeinfoId + '\')"><i class="fa fa-trash"></i>删除</a>');
+							return actions.join('');
+						}
+					}
+				}]
+		};
+		$.treeTable.init(options);
+	});
+
+	/*部门管理-新增-选择父部门树*/
+	function selectDeptTree() {
+		var options = {
+			title: '部门选择',
+			width: "380",
+			url: prefix + "/selectDeptTree/" + ($("#treeId").val() == '' ? "310100001" : $("#treeId").val()),
+			callBack: doSubmit
+		};
+		$.modal.openOptions(options);
+	}
+
+	function doSubmit(index, layero){
+		var body = layer.getChildFrame('body', index);
+		$("#treeId").val(body.find('#treeId').val());
+		$("#treeName").val(body.find('#treeName').val());
+		layer.close(index);
+	}
+
+	function paramsMatter(value,row,index){
+		    var span = document.createElement('span');
+		    span.setAttribute('title',value);
+		    span.innerHTML = value;
+		    return span.outerHTML;
+	}
+
+	// 预览代码
+	function preview() {
+		$.modal.openTab("预览视图", prefix + "/preview/" + [[${versionId}]]);
+	}
+</script>
+</body>
+</html>

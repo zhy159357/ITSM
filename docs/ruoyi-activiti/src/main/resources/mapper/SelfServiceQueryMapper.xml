@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.activiti.mapper.SelfServiceQueryMapper">
+
+    <resultMap type="SelfServiceQuery" id="SelfServiceQueryResult">
+        <result property="id" column="id_"/>
+        <result property="no" column="no_"/>
+        <result property="createOrgId" column="create_org_id"/>
+        <result property="createrTime" column="creater_time"/>
+        <result property="createrId" column="creater_id"/>
+        <result property="createPhone" column="create_phone"/>
+        <result property="occurrenceTime" column="occurrence_time"/>
+        <result property="occurrenceAddress" column="occurrence_address"/>
+        <result property="customerIdcard" column="customer_idcard"/>
+        <result property="sysid" column="sysid"/>
+        <result property="customerName" column="customer_name"/>
+        <result property="transactionAccount" column="transaction_account"/>
+        <result property="faultReportName" column="fault_report_name"/>
+        <result property="reportPhone" column="report_phone"/>
+        <result property="faultDecriptSummary" column="fault_decript_summary"/>
+        <result property="faultDecriptDetail" column="fault_decript_detail"/>
+        <result property="planQueryContent" column="plan_query_content"/>
+        <result property="deadline" column="deadline"/>
+        <result property="state" column="state"/>
+        <result property="n4" column="n4"/>
+        <result property="n1" column="n1"/>
+        <result property="n5" column="n5"/>
+        <result property="createName" column="createName"/>
+        <result property="sysName" column="sysName"/>
+        <result property="createOrgName" column="createOrgName"/>
+    </resultMap>
+
+    <sql id="selectSelfServiceQueryVo">
+        select s.id_,
+        s.no_,
+        s.create_org_id,
+        s.creater_time,
+        s.creater_id,
+        s.create_phone,
+        s.occurrence_time,
+        s.occurrence_address,
+        s.customer_idcard,
+        s.sysid,
+        s.customer_name,
+        s.transaction_account,
+        s.fault_report_name,
+        s.report_phone,
+        s.fault_decript_summary,
+        s.fault_decript_detail,
+         s.plan_query_content,
+         o.orgname createOrgName,
+         y.caption sysName,
+         p.pname createName,
+         s.deadline, s.state, s.n4, s.n1, s.n5 from self_service_query s
+        left join og_org o on s.create_org_id = o.orgid
+        left join og_sys y on s.sysid=y.sysid
+        left join og_person p on p.pid=s.creater_id
+    </sql>
+
+    <select id="selectSelfServiceQueryList" parameterType="SelfServiceQuery" resultMap="SelfServiceQueryResult">
+        <include refid="selectSelfServiceQueryVo"/>
+        <where>
+            <if test="no != null  and no != ''">and no_ = #{no}</if>
+            <if test="createOrgId != null  and createOrgId != ''">and create_org_id = #{createOrgId}</if>
+            <if test="createrTime != null  and createrTime != ''">and creater_time = #{createrTime}</if>
+            <if test="createrId != null  and createrId != ''">and creater_id = #{createrId}</if>
+            <if test="createPhone != null  and createPhone != ''">and create_phone = #{createPhone}</if>
+            <if test="occurrenceTime != null  and occurrenceTime != ''">and occurrence_time = #{occurrenceTime}</if>
+            <if test="occurrenceAddress != null  and occurrenceAddress != ''">and occurrence_address =
+                #{occurrenceAddress}
+            </if>
+            <if test="customerIdcard != null  and customerIdcard != ''">and customer_idcard = #{customerIdcard}</if>
+            <if test="sysid != null  and sysid != ''">and sysid = #{sysid}</if>
+            <if test="customerName != null  and customerName != ''">and customer_name like concat(concat('%',
+                #{customerName}), '%')
+            </if>
+            <if test="transactionAccount != null  and transactionAccount != ''">and transaction_account =
+                #{transactionAccount}
+            </if>
+            <if test="faultReportName != null  and faultReportName != ''">and fault_report_name like concat(concat('%',
+                #{faultReportName}), '%')
+            </if>
+            <if test="reportPhone != null  and reportPhone != ''">and report_phone = #{reportPhone}</if>
+            <if test="faultDecriptSummary != null  and faultDecriptSummary != ''">and fault_decript_summary =
+                #{faultDecriptSummary}
+            </if>
+            <if test="faultDecriptDetail != null  and faultDecriptDetail != ''">and fault_decript_detail =
+                #{faultDecriptDetail}
+            </if>
+            <if test="planQueryContent != null  and planQueryContent != ''">and plan_query_content =
+                #{planQueryContent}
+            </if>
+            <if test="deadline != null  and deadline != ''">and deadline = #{deadline}</if>
+            <if test="state != null  and state != ''">and state = #{state}</if>
+            <if test="n4 != null  and n4 != ''">and n4 = #{n4}</if>
+            <if test="n1 != null  and n1 != ''">and n1 = #{n1}</if>
+            <if test="n5 != null  and n5 != ''">and n5 = #{n5}</if>
+        </where>
+    </select>
+
+    <select id="selectSelfServiceQueryById" parameterType="String" resultMap="SelfServiceQueryResult">
+        <include refid="selectSelfServiceQueryVo"/>
+        where id_ = #{id}
+    </select>
+
+    <insert id="insertSelfServiceQuery" parameterType="SelfServiceQuery">
+        insert into self_service_query
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null  and id != ''">id_,</if>
+            <if test="no != null  and no != ''">no_,</if>
+            <if test="createOrgId != null  and createOrgId != ''">create_org_id,</if>
+            <if test="createrTime != null  and createrTime != ''">creater_time,</if>
+            <if test="createrId != null  and createrId != ''">creater_id,</if>
+            <if test="createPhone != null  and createPhone != ''">create_phone,</if>
+            <if test="occurrenceTime != null  and occurrenceTime != ''">occurrence_time,</if>
+            <if test="occurrenceAddress != null  and occurrenceAddress != ''">occurrence_address,</if>
+            <if test="customerIdcard != null  and customerIdcard != ''">customer_idcard,</if>
+            <if test="sysid != null  and sysid != ''">sysid,</if>
+            <if test="customerName != null  and customerName != ''">customer_name,</if>
+            <if test="transactionAccount != null  and transactionAccount != ''">transaction_account,</if>
+            <if test="faultReportName != null  and faultReportName != ''">fault_report_name,</if>
+            <if test="reportPhone != null  and reportPhone != ''">report_phone,</if>
+            <if test="faultDecriptSummary != null  and faultDecriptSummary != ''">fault_decript_summary,</if>
+            <if test="faultDecriptDetail != null  and faultDecriptDetail != ''">fault_decript_detail,</if>
+            <if test="planQueryContent != null  and planQueryContent != ''">plan_query_content,</if>
+            <if test="deadline != null  and deadline != ''">deadline,</if>
+            <if test="state != null  and state != ''">state,</if>
+            <if test="n4 != null  and n4 != ''">n4,</if>
+            <if test="n1 != null  and n1 != ''">n1,</if>
+            <if test="n5 != null  and n5 != ''">n5,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null  and id != ''">#{id},</if>
+            <if test="no != null  and no != ''">#{no},</if>
+            <if test="createOrgId != null  and createOrgId != ''">#{createOrgId},</if>
+            <if test="createrTime != null  and createrTime != ''">#{createrTime},</if>
+            <if test="createrId != null  and createrId != ''">#{createrId},</if>
+            <if test="createPhone != null  and createPhone != ''">#{createPhone},</if>
+            <if test="occurrenceTime != null  and occurrenceTime != ''">#{occurrenceTime},</if>
+            <if test="occurrenceAddress != null  and occurrenceAddress != ''">#{occurrenceAddress},</if>
+            <if test="customerIdcard != null  and customerIdcard != ''">#{customerIdcard},</if>
+            <if test="sysid != null  and sysid != ''">#{sysid},</if>
+            <if test="customerName != null  and customerName != ''">#{customerName},</if>
+            <if test="transactionAccount != null  and transactionAccount != ''">#{transactionAccount},</if>
+            <if test="faultReportName != null  and faultReportName != ''">#{faultReportName},</if>
+            <if test="reportPhone != null  and reportPhone != ''">#{reportPhone},</if>
+            <if test="faultDecriptSummary != null  and faultDecriptSummary != ''">#{faultDecriptSummary},</if>
+            <if test="faultDecriptDetail != null  and faultDecriptDetail != ''">#{faultDecriptDetail},</if>
+            <if test="planQueryContent != null  and planQueryContent != ''">#{planQueryContent},</if>
+            <if test="deadline != null  and deadline != ''">#{deadline},</if>
+            <if test="state != null  and state != ''">#{state},</if>
+            <if test="n4 != null  and n4 != ''">#{n4},</if>
+            <if test="n1 != null  and n1 != ''">#{n1},</if>
+            <if test="n5 != null  and n5 != ''">#{n5},</if>
+        </trim>
+    </insert>
+
+    <update id="updateSelfServiceQuery" parameterType="SelfServiceQuery">
+        update self_service_query
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="no != null  and no != ''">no_ = #{no},</if>
+            <if test="createOrgId != null  and createOrgId != ''">create_org_id = #{createOrgId},</if>
+            <if test="createrTime != null  and createrTime != ''">creater_time = #{createrTime},</if>
+            <if test="createrId != null  and createrId != ''">creater_id = #{createrId},</if>
+            <if test="createPhone != null  and createPhone != ''">create_phone = #{createPhone},</if>
+            <if test="occurrenceTime != null  and occurrenceTime != ''">occurrence_time = #{occurrenceTime},</if>
+            <if test="occurrenceAddress != null  and occurrenceAddress != ''">occurrence_address =
+                #{occurrenceAddress},
+            </if>
+            <if test="customerIdcard != null  and customerIdcard != ''">customer_idcard = #{customerIdcard},</if>
+            <if test="sysid != null  and sysid != ''">sysid = #{sysid},</if>
+            <if test="customerName != null  and customerName != ''">customer_name = #{customerName},</if>
+            <if test="transactionAccount != null  and transactionAccount != ''">transaction_account =
+                #{transactionAccount},
+            </if>
+            <if test="faultReportName != null  and faultReportName != ''">fault_report_name = #{faultReportName},</if>
+            <if test="reportPhone != null  and reportPhone != ''">report_phone = #{reportPhone},</if>
+            <if test="faultDecriptSummary != null  and faultDecriptSummary != ''">fault_decript_summary =
+                #{faultDecriptSummary},
+            </if>
+            <if test="faultDecriptDetail != null  and faultDecriptDetail != ''">fault_decript_detail =
+                #{faultDecriptDetail},
+            </if>
+            <if test="planQueryContent != null  and planQueryContent != ''">plan_query_content = #{planQueryContent},
+            </if>
+            <if test="deadline != null  and deadline != ''">deadline = #{deadline},</if>
+            <if test="state != null  and state != ''">state = #{state},</if>
+            <if test="n4 != null  and n4 != ''">n4 = #{n4},</if>
+            <if test="n1 != null  and n1 != ''">n1 = #{n1},</if>
+            <if test="n5 != null  and n5 != ''">n5 = #{n5},</if>
+        </trim>
+        where id_ = #{id}
+    </update>
+
+    <delete id="deleteSelfServiceQueryById" parameterType="String">
+        delete from self_service_query where id_ = #{id}
+    </delete>
+
+    <delete id="deleteSelfServiceQueryByIds" parameterType="String">
+        delete from self_service_query where id_ in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="selectSelfServiceQueryMyList" parameterType="SelfServiceQuery" resultMap="SelfServiceQueryResult">
+        <include refid="selectSelfServiceQueryVo"/>
+        <where>
+            <if test="createrId != null  and createrId != ''">
+                and s.creater_id = #{createrId}
+            </if>
+            <if test="no != null  and no != ''">and s.no_ like concat(concat('%',
+                #{no}), '%')
+            </if>
+            <if test="createOrgId != null  and createOrgId != ''">
+                and s.create_org_id in (select r.orgid from og_org r where r.level_code like
+                concat(concat('%',#{params.levelCode}),'%') )
+            </if>
+            <if test="sysid != null  and sysid != ''">and s.sysid = #{sysid}</if>
+            <if test="faultReportName != null  and faultReportName != ''">and s.fault_report_name like
+                concat(concat('%',
+                #{faultReportName}), '%')
+            </if>
+            <if test="faultDecriptSummary != null  and faultDecriptSummary != ''">and s.fault_decript_summary like
+                concat(concat('%',#{faultDecriptSummary}), '%')
+            </if>
+            <if test="state != null  and state != ''">and s.state = #{state}</if>
+            <if test="params.startCreatTime != null and params.startCreatTime != ''"><!-- 创建时间起始检索 -->
+                and s.creater_time &gt;= #{params.startCreatTime}
+            </if>
+            <if test="params.endCreatTime != null and params.endCreatTime != ''"><!-- 创建时间起始检索 -->
+                and s.creater_time &lt;= #{params.endCreatTime}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectSelfList" parameterType="SelfServiceQuery" resultMap="SelfServiceQueryResult">
+        <include refid="selectSelfServiceQueryVo"/>
+        <where>
+            <if test="no != null  and no != ''">and s.no_ like concat(concat('%',
+                #{no}), '%')
+            </if>
+            <if test="createOrgId != null  and createOrgId != ''">
+                and s.create_org_id in (select r.orgid from og_org r where r.level_code like
+                concat(concat('%',#{params.levelCode}),'%') )
+            </if>
+            <if test="sysid != null  and sysid != ''">and s.sysid = #{sysid}</if>
+            <if test="createrId != null  and createrId != ''">and p.pname like
+                concat(concat('%',
+                #{createrId}), '%')
+            </if>
+            <if test="faultDecriptSummary != null  and faultDecriptSummary != ''">and s.fault_decript_summary like
+                concat(concat('%',#{faultDecriptSummary}), '%')
+            </if>
+            <if test="params.startCreatTime != null and params.startCreatTime != ''"><!-- 创建时间起始检索 -->
+                and s.creater_time &gt;= #{params.startCreatTime}
+            </if>
+            <if test="params.endCreatTime != null and params.endCreatTime != ''"><!-- 创建时间起始检索 -->
+                and s.creater_time &lt;= #{params.endCreatTime}
+            </if>
+            <if test="state != null  and state != ''">
+                and s.state in
+                <foreach collection="params.state" item="state" index="index" open="(" close=")" separator=",">
+                    #{state}
+                </foreach>
+            </if>
+        </where>
+    </select>
+    <select id="selectSelfServiceQueryCloseList" parameterType="String" resultMap="SelfServiceQueryResult">
+        <include refid="selectSelfServiceQueryVo"/>
+        where s.deadline &lt;= #{deadline} and s.state='0'
+    </select>
+</mapper>

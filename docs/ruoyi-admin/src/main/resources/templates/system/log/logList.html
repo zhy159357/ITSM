@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('排班信息列表')" />
+    <th:block th:include="include :: layout-latest-css" />
+    <th:block th:include="include :: ztree-css" />
+    <th:block th:include="include :: select2-css" />
+
+</head>
+<body class="gray-bg">
+<div class="ui-layout-center">
+    <div class="container-div">
+        <div class="row">
+<!--            <div class="col-sm-12 search-collapse">-->
+<!--                <form id="user-form">-->
+<!--                    <input type="hidden" id="typeinfoId" name="typeinfoId">-->
+<!--                    <input type="hidden" id="parentId" name="parentId">-->
+<!--                    <div class="select-list">-->
+<!--                        <ul>-->
+<!--                            <li>-->
+<!--                                姓名：<input type="text" name="pname"/>-->
+<!--                            </li>-->
+<!--                            <li>-->
+<!--                                联系电话：<input type="text" name="mobilephone"/>-->
+<!--                            </li>-->
+<!--                            <li>-->
+<!--                                类别编码：<input type="text" name="typeNo"/>-->
+<!--                            </li>-->
+<!--                            <li class="select-time">-->
+<!--                                <label>值班时间： </label>-->
+<!--                                <input type="text" class="time-input" id="startTime" placeholder="开始时间" name="startTime" readonly/>-->
+<!--                                <span>-</span>-->
+<!--                                <input type="text" class="time-input" id="endTime" placeholder="结束时间" name="endTime" readonly/>-->
+<!--                            </li>-->
+<!--                            <li>-->
+<!--                                <a class="btn btn-primary btn-rounded btn-sm" id="searchList" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>-->
+<!--                                <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>-->
+<!--                            </li>-->
+<!--                        </ul>-->
+<!--                    </div>-->
+<!--                </form>-->
+<!--            </div>-->
+
+            <div class="btn-group-sm" id="toolbar" role="group">
+<!--                <a class="btn btn-success" onclick="$.operate.add()">-->
+<!--                    <i class="fa fa-plus"></i> 新增-->
+<!--                </a>-->
+                <a class="btn btn-primary single disabled" onclick="editCheckLog()">
+                    <i class="fa fa-edit"></i> 修改
+                </a>
+                <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()">
+                    <i class="fa fa-trash"></i> 删除
+                </a>
+<!--                <a class="btn btn-info" onclick="$.table.importExcel()">-->
+<!--                    <i class="fa fa-upload"></i> 导入-->
+<!--                </a>-->
+<!--                <a class="btn btn-info" onclick="$.table.importTemplate()">-->
+<!--                    <i class="fa fa-download"></i> 下载导入模板-->
+<!--                </a>-->
+<!--                <a class="btn btn-warning" onclick="$.table.exportExcel()">-->
+<!--                    <i class="fa fa-download"></i> 导出-->
+<!--                </a>-->
+            </div>
+            <div class="col-sm-12 select-table table-striped">
+                <table id="bootstrap-table"></table>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="ibox-content">
+    <div class="text-center" style="display: none">
+        <button type="button" id="log-button-show" class="btn btn-primary" data-toggle="modal" data-target="#myModal">修改</button>
+    </div>
+    <div class="modal inmodal" id="myModal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content animated bounceInRight">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">关闭</span>
+                    </button>
+                    <h4 class="modal-title">修改值班日志</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>日志内容</label>
+<!--                        <input type="email" placeholder="请输入您的Email" class="form-control">-->
+                        <textarea id="log-count" value="" name="log-count" class="form-control" required></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-white" data-dismiss="modal">关闭</button>
+                    <button type="button" class="btn btn-primary" id="write-log">保存</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: select2-js" />
+<th:block th:include="include :: layout-latest-js" />
+<script th:inline="javascript">
+    var prefix = ctx + "duty/scheduling";
+
+    $(function() {
+        // 回车键搜索
+        document.onkeydown = function(e){
+            var ev = document.all ? window.event : e;
+            if(ev.keyCode==13) {
+                $('#searchList').trigger('click');
+                return false;
+            }
+        };
+
+        let userId = $('#login-id', window.parent.document).val();
+        var options = {
+            url: prefix + "/searchLogForUserId/" + userId,
+            // updateUrl: prefix + "/edit/{id}",
+            removeUrl: prefix + "/removeLog",
+            // exportUrl: prefix + "/exportExcel",
+            // importUrl: prefix + "/importData",
+            // importTemplateUrl: prefix + "/importTemplate",
+            modalName: "值班日志",
+            clickToSelect: true,
+            // silent: true,
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'id',
+                    title: '日志id',
+                    visible: false
+                },
+                {
+                    field: 'userId',
+                    title: '用户id',
+                    visible: false
+                },
+                {
+                    field: 'userName',
+                    title: '姓名',
+                },
+                {
+                    field: 'userPhone',
+                    title: '联系电话'
+                },
+                {
+                    field: 'logTime',
+                    title: '日志创建时间'
+                },
+                {
+                    field: 'updateTime',
+                    title: '日志修改时间'
+                },
+                {
+                    field: 'logContent',
+                    title: '日志内容'
+                }]
+        };
+        $.table.init(options);
+    });
+
+    /* 修改排班信息 */
+    function editCheckLog() {
+        let id = "";
+        let content = "";
+        let updateTime = getTime(0,true);
+        let rows = $("#bootstrap-table").bootstrapTable("getSelections");
+        if(rows){
+            id = rows[0].id;
+            content = rows[0].logContent;
+        }
+        $("#log-count").val(content);
+        $("#log-button-show").click();
+        $("#write-log").click(function () {
+            let updateParams = {
+                id: id,
+                updateTime: updateTime,
+                content: $("#log-count").val(),
+            }
+            $.ajax({
+                cache : true,
+                type : "POST",
+                url : prefix + "/editCheckLog",
+                data : updateParams,
+                async : false,
+                error : function(request) {
+                    $.modal.alertError("系统错误");
+                },
+                success : function(data) {
+                    if(data > 0){
+                        $.modal.alert("值班日志修改成功！");
+                        $("#bootstrap-table").bootstrapTable("refresh");
+                        $(".btn-white").click();
+                    } else {
+                        $.modal.alertError("值班日志修改失败！");
+                        // $(".btn-white").click();
+                    }
+                }
+            });
+        });
+    }
+
+    //获取当前时间
+    function getTime(days, haveTime) {
+        let dateTime = "";
+        let myData = new Date();
+        myData.setTime(myData.getTime() - 24*60*60*1000*days);
+        let year = myData.getFullYear() + "";
+        let month = myData.getMonth() + 1 + "";
+        if(month.length == 1){
+            month = "0" + month;
+        }
+        let date = myData.getDate() + "";
+        if(date.length == 1){
+            date = "0" + date;
+        }
+        dateTime = year + "-" + month + "-" + date;
+        if(haveTime){
+            let hours = myData.getHours() + "";
+            if(hours.length == 1){
+                hours = "0" + hours;
+            }
+            let minutes = myData.getMinutes() + "";
+            if(minutes.length == 1){
+                minutes = "0" + minutes;
+            }
+            let seconds = myData.getSeconds() + "";
+            if(seconds.length == 1){
+                seconds = "0" + seconds;
+            }
+            dateTime += " " + hours + ":" + minutes + ":" + seconds;
+        }
+        return dateTime;
+    }
+</script>
+<th:block th:include="include :: ztree-js" />
+<!-- 导入区域 -->
+<script id="importTpl" type="text/template">
+    <form enctype="multipart/form-data" class="mt20 mb10">
+        <div class="col-xs-offset-1">
+            <input type="file" id="file" name="file"/>
+            <font color="red" class="pull-left mt10">
+                提示：仅允许导入“xls”或“xlsx”格式文件！
+            </font>
+        </div>
+    </form>
+</script>
+</body>
+</html>

@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.activiti.mapper.GroupReqMapper">
+
+<resultMap type="GroupReq" id="GroupReqResult">
+        <result property="id"    column="id_"    />
+        <result property="groupid"    column="groupid"    />
+        <result property="name"    column="name_"    />
+        <result property="phone"    column="phone"    />
+        <result property="deptid"    column="deptid"    />
+        <result property="dept"    column="dept"    />
+        <result property="sys"    column="sys"    />
+        <result property="note"    column="note"    />
+        <result property="director"    column="director"    />
+        <result property="mark"    column="mark"    />
+
+		<result property="remark"    column="remark"    />
+        <result property="auditDept"    column="audit_dept"    />
+        <result property="dealDept"    column="deal_dept"    />
+        <result property="auditor"    column="auditor"    />
+        <result property="dealer"    column="dealer"    />
+        <result property="auditDeptid"    column="audit_deptid"    />
+        <result property="dealDeptid"    column="deal_deptid"    />
+        <result property="auditorid"    column="auditorid"    />
+        <result property="dealerid"    column="dealerid"    />
+        <result property="auditSug"    column="audit_sug"    />
+        <result property="dealSug"    column="deal_sug"    />
+        <result property="status"    column="status"    />
+        
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="reqUser"    column="req_user"    />
+        <result property="reqTime"    column="create_time"    />
+        <result property="reqType"    column="req_type"    />
+    </resultMap>
+    
+     <sql id="selectGroupReq">
+        select gr.id_, gr.groupid, gr.name_, gr.phone, gr.dept as deptid, oo1.orgname as dept, 
+        gr.sys as sysid ,os.caption as sys, gr.note, gr.director, gr.mark, gr.audit_dept as audit_deptid, oo2.orgname as audit_dept, gr.deal_dept as deal_deptid, oo3.orgname as deal_dept, 
+        gr.auditor as auditorid, op1.pname as auditor, gr.dealer as dealerid, op2.pname as dealer, gr.audit_sug, gr.deal_sug, gr.create_by, op3.pname as req_user, gr.create_time, gr.update_by, gr.update_time, gr.status, gr.remark, gr.req_type from group_req gr
+    	left join og_org oo1 on gr.dept = oo1.orgid
+   		left join og_org oo2 on gr.audit_dept = oo2.orgid
+   		left join og_org oo3 on gr.deal_dept = oo3.orgid
+   		left join og_person op1 on gr.auditor = op1.pid
+   		left join og_person op2 on gr.dealer = op2.pid
+   		left join og_person op3 on gr.create_by = op3.pid
+    	left join og_sys os on gr.sys = os.sysid
+    </sql>
+    
+    <select id="selectGroupReqList" parameterType="GroupReq" resultMap="GroupReqResult">
+        <include refid="selectGroupReq"/>
+        <where>
+            <if test="name != null  and name != ''"> and gr.name_ like concat(concat('%',#{name}),'%')</if>
+            <if test="params.createTime != null and params.createTime != ''"> and gr.create_time &gt;= to_date(#{params.createTime},'yyyy-MM-dd')</if>
+            <if test="sys != null  and sys != ''"> and gr.sys like concat(concat('%',#{sys}),'%')</if>
+            <if test="mark != null and mark != '' and mark != -1"> and gr.mark = #{mark}</if>
+            <if test="reqType != null and reqType != ''"> and gr.req_type = #{reqType}</if>
+            <if test="status != null and status != '' and status != -1"> and gr.status = #{status}</if>
+            <if test="createBy != null and createBy != ''"> and gr.create_by = #{createBy}</if>
+            <if test="auditor != null and auditor != ''"> and gr.auditor = #{auditor}</if>
+            <if test="dealer != null and dealer != ''"> and gr.dealer = #{dealer}</if>
+        </where>
+        order by gr.create_time desc
+    </select>
+    
+    <select id="selectGroupReqById" parameterType="String" resultMap="GroupReqResult">
+        <include refid="selectGroupReq"/>
+        where gr.id_ = #{id}
+    </select>
+    
+    <insert id="insertGroupReq" parameterType="GroupReq" useGeneratedKeys="false" keyProperty="id">
+		insert into group_req(
+		id_,groupid,
+		<if test="name != null and name != ''">name_,</if>
+		<if test="phone != null and phone != ''">phone,</if>
+		<if test="dept != null and dept != ''">dept,</if>
+		<if test="sys != null and sys!= ''">sys,</if>
+		<if test="note != null and note != ''">note,</if>
+		<if test="director !=null and director != ''">director,</if>
+		<if test="mark != null and mark != ''">mark,</if>
+		<if test="remark != null and remark != ''">remark,</if>
+		<if test="auditDept != null and auditDept != ''">audit_dept,</if>
+		<if test="auditor != null and auditor != ''">auditor,</if>
+		<if test="createBy != null and createBy != ''">create_by,</if>
+		<if test="reqType != null and reqType != ''">req_type,</if>
+		create_time,
+		status
+		)values(
+        #{id},#{groupid},
+		<if test="name != null and name != ''">#{name},</if>
+		<if test="phone != null and phone != ''">#{phone},</if>
+		<if test="dept != null and dept != ''">#{dept},</if>
+		<if test="sys != null and sys != ''">#{sys},</if>
+		<if test="note != null and note != ''">#{note},</if>
+		<if test="director !=null and director != ''">#{director},</if>
+		<if test="mark != null and mark != ''">#{mark},</if>
+		<if test="remark != null and remark != ''">#{remark},</if>
+		<if test="auditDept != null and auditDept != ''">#{auditDept},</if>
+		<if test="auditor != null and auditor != ''">#{auditor},</if>
+		<if test="createBy != null and createBy != ''">#{createBy},</if>
+		<if test="reqType != null and reqType != ''">#{reqType},</if>
+		sysdate,
+		<if test="status != null and status != ''">#{status}</if>
+		)
+	</insert>
+	
+	<update id="updateGroupReq" parameterType="GroupReq">
+        update group_req
+        <set>        
+        <if test="name != null and name != ''">name_ = #{name},</if>
+		<if test="phone != null and phone != ''">phone = #{phone},</if>
+		<if test="dept != null and dept != ''">dept = #{dept},</if>
+		<if test="sys != null and sys != ''">sys = #{sys},</if>
+		<if test="note != null and note != ''">note = #{note},</if>
+		<if test="director != null and director != ''">director = #{director},</if>
+		<if test="mark != null">mark = #{mark},</if>
+		<if test="remark != null and remark != ''">remark = #{remark},</if>
+		<if test="auditDept !=null and auditDept != ''">audit_dept = #{auditDept},</if>
+		<if test="dealDept != null and dealDept != ''">deal_dept = #{dealDept},</if>
+		<if test="auditor != null and auditor != ''">auditor = #{auditor},</if>  
+		<if test="dealer != null and dealer != ''">dealer = #{dealer},</if>  
+		<if test="auditSug != null and auditSug != ''">audit_sug = #{auditSug},</if> 
+		<if test="dealSug != null and dealSug != ''">deal_sug = #{dealSug},</if> 
+		<if test="status != null and status != ''">status = #{status},</if>  
+		<if test="updateBy != null and updateBy != ''">update_by = #{updateBy},</if> 
+        update_time = sysdate
+	   </set>
+        where id_ = #{id}
+    </update>
+    
+     <delete id="deleteGroupReqById" parameterType="String">
+        delete from group_req where id_ = #{id}
+    </delete>
+
+    <delete id="deleteGroupReqByIds" parameterType="String">
+        delete from group_req where id_ in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+    <select id="checkGroupReqUnique" parameterType="GroupReq" resultType="int">
+		select count(id_) from group_req where groupid = #{groupid}
+		and(req_type=2 or req_type=3)
+		and(status=1 or status=2 or status=3)
+   </select>
+</mapper>

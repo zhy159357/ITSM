@@ -1,0 +1,355 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.form.mapper.ProblemSheetMapper">
+    <resultMap type="ProblemSheet" id="ProblemSheetResult">
+        <result property="problemId" column="problem_id"/>
+        <result property="problemNo" column="problem_no"/>
+        <result property="stage" column="stage"/>
+        <result property="status" column="status"/>
+        <result property="problemCurrentHandler" column="problem_current_handler"/>
+        <result property="problemOriginateDepartManager" column="problem_originate_depart_manager"/>
+        <result property="problemOriginator" column="problem_originator"/>
+        <result property="problemManager" column="problem_manager"/>
+        <result property="problemTitle" column="problem_title"/>
+        <result property="problemDescription" column="problem_description"/>
+        <result property="problemSource" column="problem_source"/>
+        <result property="problemCategory" column="problem_category"/>
+        <result property="problemSubclass" column="problem_subclass"/>
+        <result property="problemEntry" column="problem_entry"/>
+        <result property="problemSubentry" column="problem_subentry"/>
+        <result property="tempSolveFlag" column="temp_solve_flag"/>
+        <result property="tempSolutions" column="temp_solutions"/>
+        <result property="problemType" column="problem_type"/>
+        <result property="riskLevel" column="risk_level"/>
+        <result property="frequency" column="frequency"/>
+        <result property="priority" column="priority"/>
+        <result property="impactServiceInterruptFlag" column="impact_service_interrupt_flag"/>
+        <result property="planSolveTime" column="plan_solve_time"/>
+        <result property="problemSolverDepartment" column="problem_solver_department"/>
+        <result property="problemAuditor" column="problem_auditor"/>
+        <result property="problemSolver" column="problem_solver"/>
+        <result property="problemCauseSummary" column="problem_cause_summary"/>
+        <result property="problemCauseClass1" column="problem_cause_class1"/>
+        <result property="problemCauseClass2" column="problem_cause_class2"/>
+        <result property="problemSolutionSummary" column="problem_solution_summary"/>
+        <result property="solutionModifyNum" column="solution_modify_num"/>
+        <result property="planSolveTimeModifyNum" column="plan_solve_time_modify_num"/>
+        <result property="resolutionCompletion" column="resolution_completion"/>
+        <result property="problemSolverLastUpdated" column="problem_solver_last_updated"/>
+        <result property="problemSolveTime" column="problem_solve_time"/>
+        <result property="observationPeriod" column="observation_period"/>
+        <result property="observationExplain" column="observation_explain"/>
+        <result property="problemReopenNum" column="problem_reopen_num"/>
+        <result property="problemCancelInstruction" column="problem_cancel_instruction"/>
+        <result property="problemCancelReason" column="problem_cancel_reason"/>
+        <result property="problemCloseTime" column="problem_close_time"/>
+        <result property="problemCloseType" column="problem_close_type"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+
+        <result property="problemSolverDepartmentName" column="problemSolverDepartmentName"/>
+        <result property="problemCurrentHandlerName" column="problemCurrentHandlerName"/>
+        <result property="problemOriginateDepartManagerName" column="problemOriginateDepartManagerName"/>
+        <result property="problemOriginatorName" column="problemOriginatorName"/>
+        <result property="problemManagerName" column="problemManagerName"/>
+        <result property="problemAuditorName" column="problemAuditorName"/>
+        <result property="preSolutionName" column="preSolutionName"/>
+        <result property="problemSolverName" column="problemSolverName"/>
+    </resultMap>
+    <sql id="selectProblemSheetVo">
+        SELECT p.problem_id,
+               p.problem_no,
+               p.stage,
+               p.status,
+               p.problem_current_handler,
+               p.problem_originate_depart_manager,
+               p.problem_originator,
+               p.problem_manager,
+               p.problem_title,
+               p.problem_description,
+               p.problem_source,
+               p.problem_category,
+               p.problem_subclass,
+               p.problem_entry,
+               p.problem_subentry,
+               p.temp_solve_flag,
+               p.temp_solutions,
+               p.problem_type,
+               p.risk_level,
+               p.frequency,
+               p.priority,
+               p.impact_service_interrupt_flag,
+               p.plan_solve_time,
+               p.problem_solver_department,
+               p.problem_auditor,
+               p.problem_solver,
+               p.problem_cause_summary,
+               p.problem_cause_class1,
+               p.problem_cause_class2,
+               p.problem_solution_summary,
+               p.solution_modify_num,
+               p.plan_solve_time_modify_num,
+               p.resolution_completion,
+               p.problem_solver_last_updated,
+               p.problem_solve_time,
+               p.observation_period,
+               p.observation_explain,
+               p.problem_reopen_num,
+               p.problem_cancel_instruction,
+               p.problem_cancel_reason,
+               p.problem_close_time,
+               p.problem_close_type,
+               p.create_by,
+               p.create_time,
+               p.update_by,
+               p.update_time,
+               g.grpname problemSolverDepartmentName,
+               p1.pname problemCurrentHandlerName,
+               p2.pname problemOriginateDepartManagerName,
+               p3.pname problemOriginatorName,
+               p4.pname problemManagerName,
+               p5.pname problemAuditorName,
+               p6.pname problemSolverName
+        FROM problem_sheet p
+                 LEFT JOIN og_group g
+                           ON p.problem_solver_department = g.groupid
+                 LEFT JOIN og_person p1
+                           ON p.problem_current_handler = p1.pid
+                 LEFT JOIN og_person p2
+                           ON p.problem_originate_depart_manager = p2.pid
+                 LEFT JOIN og_person p3
+                           ON p.problem_originator = p3.pid
+                 LEFT JOIN og_person p4
+                           ON p.problem_manager = p4.pid
+                 LEFT JOIN og_person p5
+                           ON p.problem_auditor = p5.pid
+                 LEFT JOIN og_person p6
+                           ON p.problem_solver = p6.pid
+    </sql>
+
+    <insert id="insertProblemSheet" parameterType="ProblemSheet">
+        insert into problem_sheet
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="problemId != null  and problemId != ''">problem_id,</if>
+            <if test="problemNo != null  and problemNo != ''">problem_no,</if>
+            <if test="stage != null  and stage != ''">stage,</if>
+            <if test="status != null  and status != ''">status,</if>
+            <if test="statusReason != null  and statusReason != ''">status_reason,</if>
+            <if test="problemCurrentHandler != null  and problemCurrentHandler != ''">problem_current_handler,</if>
+            <if test="problemOriginateDepartManager != null  and problemOriginateDepartManager != ''">problem_originate_depart_manager,</if>
+            <if test="problemOriginator != null  and problemOriginator != ''">problem_originator,</if>
+            <if test="problemManager != null  and problemManager != ''">problem_manager,</if>
+            <if test="problemTitle != null  and problemTitle != ''">problem_title,</if>
+            <if test="problemDescription != null  and problemDescription != ''">problem_description,</if>
+            <if test="problemSource != null  and problemSource != ''">problem_source,</if>
+            <if test="problemCategory != null  and problemCategory != ''">problem_category,</if>
+            <if test="problemSubclass != null  and problemSubclass != ''">problem_subclass,</if>
+            <if test="problemEntry != null  and problemEntry != ''">problem_entry,</if>
+            <if test="problemSubentry != null  and problemSubentry != ''">problem_subentry,</if>
+            <if test="tempSolveFlag != null  and tempSolveFlag != ''">temp_solve_flag,</if>
+            <if test="tempSolutions != null  and tempSolutions != ''">temp_solutions,</if>
+            <if test="problemType != null  and problemType != ''">problem_type,</if>
+            <if test="riskLevel != null  and riskLevel != ''">risk_level,</if>
+            <if test="frequency != null  and frequency != ''">frequency,</if>
+            <if test="priority != null  and priority != ''">priority,</if>
+            <if test="impactServiceInterruptFlag != null  and impactServiceInterruptFlag != ''">impact_service_interrupt_flag,</if>
+            <if test="planSolveTime != null">plan_solve_time,</if>
+            <if test="problemSolverDepartment != null  and problemSolverDepartment != ''">problem_solver_department,</if>
+            <if test="problemAuditor != null  and problemAuditor != ''">problem_auditor,</if>
+            <if test="problemSolver != null  and problemSolver != ''">problem_solver,</if>
+            <if test="problemCauseSummary != null  and problemCauseSummary != ''">problem_cause_summary,</if>
+            <if test="problemCauseClass1 != null  and problemCauseClass1 != ''">problem_cause_class1,</if>
+            <if test="problemCauseClass2 != null  and problemCauseClass2 != ''">problem_cause_class2,</if>
+            <if test="problemSolutionSummary != null  and problemSolutionSummary != ''">problem_solution_summary,</if>
+            <if test="solutionModifyNum != null">solution_modify_num,</if>
+            <if test="planSolveTimeModifyNum != null">plan_solve_time_modify_num,</if>
+            <if test="resolutionCompletion != null  and resolutionCompletion != ''">resolution_completion,</if>
+            <if test="problemSolverLastUpdated != null">problem_solver_last_updated,</if>
+            <if test="problemSolveTime != null">problem_solve_time,</if>
+            <if test="observationPeriod != null  and observationPeriod != ''">observation_period,</if>
+            <if test="observationExplain != null  and observationExplain != ''">observation_explain,</if>
+            <if test="problemReopenNum != null">problem_reopen_num,</if>
+            <if test="problemCancelInstruction != null  and problemCancelInstruction != ''">problem_cancel_instruction,</if>
+            <if test="problemCancelReason != null  and problemCancelReason != ''">problem_cancel_reason,</if>
+            <if test="problemCloseTime != null">problem_close_time,</if>
+            <if test="problemCloseType != null  and problemCloseType != ''">problem_close_type,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="problemId != null  and problemId != ''">#{problemId},</if>
+            <if test="problemNo != null  and problemNo != ''">#{problemNo},</if>
+            <if test="stage != null  and stage != ''">#{stage},</if>
+            <if test="status != null  and status != ''">#{status},</if>
+            <if test="statusReason != null  and statusReason != ''">#{statusReason},</if>
+            <if test="problemCurrentHandler != null  and problemCurrentHandler != ''">#{problemCurrentHandler},</if>
+            <if test="problemOriginateDepartManager != null  and problemOriginateDepartManager != ''">#{problemOriginateDepartManager},</if>
+            <if test="problemOriginator != null  and problemOriginator != ''">#{problemOriginator},</if>
+            <if test="problemManager != null  and problemManager != ''">#{problemManager},</if>
+            <if test="problemTitle != null  and problemTitle != ''">#{problemTitle},</if>
+            <if test="problemDescription != null  and problemDescription != ''">#{problemDescription},</if>
+            <if test="problemSource != null  and problemSource != ''">#{problemSource},</if>
+            <if test="problemCategory != null  and problemCategory != ''">#{problemCategory},</if>
+            <if test="problemSubclass != null  and problemSubclass != ''">#{problemSubclass},</if>
+            <if test="problemEntry != null  and problemEntry != ''">#{problemEntry},</if>
+            <if test="problemSubentry != null  and problemSubentry != ''">#{problemSubentry},</if>
+            <if test="tempSolveFlag != null  and tempSolveFlag != ''">#{tempSolveFlag},</if>
+            <if test="tempSolutions != null  and tempSolutions != ''">#{tempSolutions},</if>
+            <if test="problemType != null  and problemType != ''">#{problemType},</if>
+            <if test="riskLevel != null  and riskLevel != ''">#{riskLevel},</if>
+            <if test="frequency != null  and frequency != ''">#{frequency},</if>
+            <if test="priority != null  and priority != ''">#{priority},</if>
+            <if test="impactServiceInterruptFlag != null  and impactServiceInterruptFlag != ''">#{impactServiceInterruptFlag},</if>
+            <if test="planSolveTime != null">#{planSolveTime},</if>
+            <if test="problemSolverDepartment != null  and problemSolverDepartment != ''">#{problemSolverDepartment},</if>
+            <if test="problemAuditor != null  and problemAuditor != ''">#{problemAuditor},</if>
+            <if test="problemSolver != null  and problemSolver != ''">#{problemSolver},</if>
+            <if test="problemCauseSummary != null  and problemCauseSummary != ''">#{problemCauseSummary},</if>
+            <if test="problemCauseClass1 != null  and problemCauseClass1 != ''">#{problemCauseClass1},</if>
+            <if test="problemCauseClass2 != null  and problemCauseClass2 != ''">#{problemCauseClass2},</if>
+            <if test="problemSolutionSummary != null  and problemSolutionSummary != ''">#{problemSolutionSummary},</if>
+            <if test="solutionModifyNum != null">#{solutionModifyNum},</if>
+            <if test="planSolveTimeModifyNum != null">#{planSolveTimeModifyNum},</if>
+            <if test="resolutionCompletion != null  and resolutionCompletion != ''">#{resolutionCompletion},</if>
+            <if test="problemSolverLastUpdated != null">#{problemSolverLastUpdated},</if>
+            <if test="problemSolveTime != null">#{problemSolveTime},</if>
+            <if test="observationPeriod != null  and observationPeriod != ''">#{observationPeriod},</if>
+            <if test="observationExplain != null  and observationExplain != ''">#{observationExplain},</if>
+            <if test="problemReopenNum != null">#{problemReopenNum},</if>
+            <if test="problemCancelInstruction != null  and problemCancelInstruction != ''">#{problemCancelInstruction},</if>
+            <if test="problemCancelReason != null  and problemCancelReason != ''">#{problemCancelReason},</if>
+            <if test="problemCloseTime != null">#{problemCloseTime},</if>
+            <if test="problemCloseType != null  and problemCloseType != ''">#{problemCloseType},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+        </trim>
+    </insert>
+
+    <update id="updateProblemSheet" parameterType="ProblemSheet">
+        update problem_sheet
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="problemNo != null  and problemNo != ''">problem_no = #{problemNo},</if>
+            <if test="stage != null  and stage != ''">stage = #{stage},</if>
+            <if test="status != null  and status != ''">status = #{status},</if>
+            <if test="statusReason != null  and statusReason != ''">status_reason = #{statusReason},</if>
+            <if test="problemCurrentHandler != null  and problemCurrentHandler != ''">problem_current_handler = #{problemCurrentHandler},</if>
+            <if test="problemOriginateDepartManager != null  and problemOriginateDepartManager != ''">problem_originate_depart_manager = #{problemOriginateDepartManager},</if>
+            <if test="problemOriginator != null  and problemOriginator != ''">problem_originator = #{problemOriginator},</if>
+            <if test="problemManager != null  and problemManager != ''">problem_manager = #{problemManager},</if>
+            <if test="problemTitle != null  and problemTitle != ''">problem_title = #{problemTitle},</if>
+            <if test="problemDescription != null  and problemDescription != ''">problem_description = #{problemDescription},</if>
+            <if test="problemSource != null  and problemSource != ''">problem_source = #{problemSource},</if>
+            <if test="problemCategory != null  and problemCategory != ''">problem_category = #{problemCategory},</if>
+            <if test="problemSubclass != null  and problemSubclass != ''">problem_subclass = #{problemSubclass},</if>
+            <if test="problemEntry != null  and problemEntry != ''">problem_entry = #{problemEntry},</if>
+            <if test="problemSubentry != null  and problemSubentry != ''">problem_subentry = #{problemSubentry},</if>
+            <if test="tempSolveFlag != null  and tempSolveFlag != ''">temp_solve_flag = #{tempSolveFlag},</if>
+            <if test="tempSolutions != null  and tempSolutions != ''">temp_solutions = #{tempSolutions},</if>
+            <if test="problemType != null  and problemType != ''">problem_type = #{problemType},</if>
+            <if test="riskLevel != null  and riskLevel != ''">risk_level = #{riskLevel},</if>
+            <if test="frequency != null  and frequency != ''">frequency = #{frequency},</if>
+            <if test="priority != null  and priority != ''">priority = #{priority},</if>
+            <if test="impactServiceInterruptFlag != null  and impactServiceInterruptFlag != ''">impact_service_interrupt_flag = #{impactServiceInterruptFlag},</if>
+            <if test="planSolveTime != null">plan_solve_time = #{planSolveTime},</if>
+            <if test="problemSolverDepartment != null  and problemSolverDepartment != ''">problem_solver_department = #{problemSolverDepartment},</if>
+            <if test="problemAuditor != null  and problemAuditor != ''">problem_auditor = #{problemAuditor},</if>
+            <if test="problemSolver != null  and problemSolver != ''">problem_solver = #{problemSolver},</if>
+            <if test="problemCauseSummary != null  and problemCauseSummary != ''">problem_cause_summary = #{problemCauseSummary},</if>
+            <if test="problemCauseClass1 != null  and problemCauseClass1 != ''">problem_cause_class1 = #{problemCauseClass1},</if>
+            <if test="problemCauseClass2 != null  and problemCauseClass2 != ''">problem_cause_class2 = #{problemCauseClass2},</if>
+            <if test="problemSolutionSummary != null  and problemSolutionSummary != ''">problem_solution_summary = #{problemSolutionSummary},</if>
+            <if test="solutionModifyNum != null">solution_modify_num = #{solutionModifyNum},</if>
+            <if test="planSolveTimeModifyNum != null">plan_solve_time_modify_num = #{planSolveTimeModifyNum},</if>
+            <if test="resolutionCompletion != null  and resolutionCompletion != ''">resolution_completion = #{resolutionCompletion},</if>
+            <if test="problemSolverLastUpdated != null">problem_solver_last_updated = #{problemSolverLastUpdated},</if>
+            <if test="problemSolveTime != null">problem_solve_time = #{problemSolveTime},</if>
+            <if test="observationPeriod != null  and observationPeriod != ''">observation_period = #{observationPeriod},</if>
+            <if test="observationExplain != null  and observationExplain != ''">observation_explain = #{observationExplain},</if>
+            <if test="problemReopenNum != null">problem_reopen_num = #{problemReopenNum},</if>
+            <if test="problemCancelInstruction != null  and problemCancelInstruction != ''">problem_cancel_instruction = #{problemCancelInstruction},</if>
+            <if test="problemCancelReason != null  and problemCancelReason != ''">problem_cancel_reason = #{createBy},</if>
+            <if test="problemCloseTime != null">problem_close_time = #{problemCloseTime},</if>
+            <if test="problemCloseType != null  and problemCloseType != ''">problem_close_type = #{problemCloseType},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+        </trim>
+        where problem_id = #{problemId}
+    </update>
+
+    <update id="cancelProblemSheetByIds" parameterType="String">
+        update problem_sheet
+        set status = #{status},
+            update_by = #{updateBy},
+            update_time = getdate()
+        where problem_id in
+        <foreach item="problemId" collection="array" open="(" separator="," close=")">
+            #{problemId}
+        </foreach>
+    </update>
+    <select id="selectProblemSheetList" parameterType="ProblemSheet" resultMap="ProblemSheetResult">
+        <include refid="selectProblemSheetVo"/>
+        <where>
+            <if test="problemNo != null  and problemNo != ''"> and problem_no = #{problemNo}</if>
+            <if test="stage != null  and stage != ''">and stage = #{stage}</if>
+            <if test="status != null  and status != ''">and status = #{status}</if>
+            <if test="statusReason != null  and statusReason != ''">and status_reason = #{statusReason}</if>
+            <if test="problemCurrentHandler != null  and problemCurrentHandler != ''">and problem_current_handler = #{problemCurrentHandler}</if>
+            <if test="problemOriginateDepartManager != null  and problemOriginateDepartManager != ''">and problem_originate_depart_manager = #{problemOriginateDepartManager}</if>
+            <if test="problemOriginator != null  and problemOriginator != ''">and problem_originator = #{problemOriginator}</if>
+            <if test="problemManager != null  and problemManager != ''">and problem_manager = #{problemManager}</if>
+            <if test="problemTitle != null  and problemTitle != ''">and problem_title = #{problemTitle}</if>
+            <if test="problemDescription != null  and problemDescription != ''">and problem_description = #{problemDescription}</if>
+            <if test="problemSource != null  and problemSource != ''">and problem_source = #{problemSource}</if>
+            <if test="problemCategory != null  and problemCategory != ''">and problem_category = #{problemCategory}</if>
+            <if test="problemSubclass != null  and problemSubclass != ''">and problem_subclass = #{problemSubclass}</if>
+            <if test="problemEntry != null  and problemEntry != ''">and problem_entry = #{problemEntry}</if>
+            <if test="problemSubentry != null  and problemSubentry != ''">and problem_subentry = #{problemSubentry}</if>
+            <if test="tempSolveFlag != null  and tempSolveFlag != ''">and temp_solve_flag = #{tempSolveFlag}</if>
+            <if test="tempSolutions != null  and tempSolutions != ''">and temp_solutions = #{tempSolutions}</if>
+            <if test="problemType != null  and problemType != ''">and problem_type = #{problemType}</if>
+            <if test="riskLevel != null  and riskLevel != ''">and risk_level = #{riskLevel}</if>
+            <if test="frequency != null  and frequency != ''">and frequency = #{frequency}</if>
+            <if test="priority != null  and priority != ''">and priority = #{priority}</if>
+            <if test="impactServiceInterruptFlag != null  and impactServiceInterruptFlag != ''">and impact_service_interrupt_flag = #{impactServiceInterruptFlag}</if>
+            <if test="planSolveTime != null">and plan_solve_time = #{planSolveTime}</if>
+            <if test="problemSolverDepartment != null  and problemSolverDepartment != ''">and problem_solver_department = #{problemSolverDepartment}</if>
+            <if test="problemAuditor != null  and problemAuditor != ''">and problem_auditor = #{problemAuditor}</if>
+            <if test="problemSolver != null  and problemSolver != ''">and problem_solver = #{problemSolver}</if>
+            <if test="problemCauseSummary != null  and problemCauseSummary != ''">and problem_cause_summary = #{problemCauseSummary}</if>
+            <if test="problemCauseClass1 != null  and problemCauseClass1 != ''">and problem_cause_class1 = #{problemCauseClass1}</if>
+            <if test="problemCauseClass2 != null  and problemCauseClass2 != ''">and problem_cause_class2 = #{problemCauseClass2}</if>
+            <if test="problemSolutionSummary != null  and problemSolutionSummary != ''">and problem_solution_summary = #{problemSolutionSummary}</if>
+            <if test="solutionModifyNum != null">and solution_modify_num = #{solutionModifyNum}</if>
+            <if test="planSolveTimeModifyNum != null">and plan_solve_time_modify_num = #{planSolveTimeModifyNum}</if>
+            <if test="resolutionCompletion != null  and resolutionCompletion != ''">and resolution_completion = #{resolutionCompletion}</if>
+            <if test="problemSolverLastUpdated != null">and problem_solver_last_updated = #{problemSolverLastUpdated}</if>
+            <if test="problemSolveTime != null">and problem_solve_time = #{problemSolveTime}</if>
+            <if test="observationPeriod != null  and observationPeriod != ''">and observation_period = #{observationPeriod}</if>
+            <if test="observationExplain != null  and observationExplain != ''">and observation_explain = #{observationExplain}</if>
+            <if test="problemReopenNum != null">and problem_reopen_num = #{problemReopenNum}</if>
+            <if test="problemCancelInstruction != null  and problemCancelInstruction != ''">and problem_cancel_instruction = #{problemCancelInstruction}</if>
+            <if test="problemCancelReason != null  and problemCancelReason != ''">and problem_cancel_reason = #{createBy}</if>
+            <if test="problemCloseTime != null">and problem_close_time = #{problemCloseTime}</if>
+            <if test="problemCloseType != null  and problemCloseType != ''">and problem_close_type = #{problemCloseType}</if>
+            <if test="createBy != null  and createBy != ''">and create_by = #{createBy}</if>
+            <if test="createTime != null ">and create_time = #{createTime}</if>
+            <if test="updateBy != null  and updateBy != ''">and update_by = #{updateBy}</if>
+            <if test="updateTime != null ">and update_time = #{updateTime}</if>
+        </where>
+        order by create_time desc
+    </select>
+    <select id="selectProblemSheetById" resultMap="ProblemSheetResult">
+        <include refid="selectProblemSheetVo"/>
+        where problem_id = #{problemId}
+    </select>
+</mapper>

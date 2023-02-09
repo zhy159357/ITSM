@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('运维通讯录列表')" />
+    <th:block th:include="include :: layout-latest-css" />
+    <th:block th:include="include :: ztree-css" />
+</head>
+<body class="gray-bg">
+<div class="ui-layout-west">
+    <div class="box box-main">
+        <div class="box-header">
+            <div class="box-title">
+                <i class="fa icon-grid"></i> 组织机构
+            </div>
+            <div class="box-tools pull-right">
+                <!--<a type="button" class="btn btn-box-tool" href="#" onclick="dept()" title="管理部门"><i class="fa fa-edit"></i></a>-->
+                <button type="button" class="btn btn-box-tool" id="btnExpand" title="展开" style="display:none;"><i class="fa fa-chevron-up"></i></button>
+                <button type="button" class="btn btn-box-tool" id="btnCollapse" title="折叠"><i class="fa fa-chevron-down"></i></button>
+                <button type="button" class="btn btn-box-tool" id="btnRefresh" title="刷新部门"><i class="fa fa-refresh"></i></button>
+            </div>
+        </div>
+        <div class="ui-layout-content">
+            <div id="tree" class="ztree"></div>
+        </div>
+    </div>
+</div>
+<div class="ui-layout-center">
+    <div class="container-div">
+        <div class="row">
+            <div class="col-sm-12 search-collapse">
+                <form id="yw-form">
+                    <input id="treeId" name="orgId" type="hidden" />
+                    <div class="select-list">
+                        <ul>
+                            <li>
+                                使用状态：<select id="invalidationmark" name="invalidationmark" required style="width: 173px" >
+                                <option value=""></option>
+                                <option th:each="invaMark : ${invaMarklist}" th:text="${invaMark.info}" th:value="${invaMark.code}"></option>
+                            </select>
+                            <li>
+                                手机：<input type="text" name="phone" maxlength="20"/>
+                            </li>
+                            <li>
+                                座机：<input type="text" name="tel" maxlength="20"/>
+                            </li>
+                            <li>
+                                姓名：<input type="text" name="pname" maxlength="20"/>
+                            </li>
+                            <li>
+                                职责：<input type="text" name="responsibility" maxlength="20"/>
+                            </li>
+                            <li>
+                                <a class="btn btn-primary btn-rounded btn-sm" id="ss" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset('yw-form','bootstrap-table')" ><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                            </li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+
+            <div class="btn-group-sm" id="toolbar" role="group">
+                <a class="btn btn-success" onclick="add()">
+                    <i class="fa fa-plus"></i> 新增
+                </a>
+                <a class="btn btn-primary single disabled" onclick="edit()" >
+                    <i class="fa fa-edit"></i> 修改
+                </a>
+                <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()" >
+                    <i class="fa fa-remove"></i> 删除
+                </a>
+                <a class="btn btn-info single disabled" onclick="detail()">
+                    <i class="fa fa-search"></i> 查看详情
+                </a>
+                <div class="btn-group">
+                    <button data-toggle="dropdown" class="btn btn-primary btn-sm dropdown-toggle"><i class="fa fa-cloud-upload"></i>导出<span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a onclick="$.table.exportExcel()">导出所有</a>
+                        </li>
+                        <li><a onclick="$.table.exportExcelCurrentPage()">导出当前页</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="col-sm-12 select-table table-striped">
+                <table id="bootstrap-table"></table>
+            </div>
+        </div>
+    </div>
+</div>
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: layout-latest-js" />
+<th:block th:include="include :: ztree-js" />
+<script th:inline="javascript">
+
+    var prefix = ctx + "system/ywlist";
+    var selectTreeId = "1";
+    var selectTreeName = "1";
+
+    document.onkeydown = function(e){
+        var ev = document.all ? window.event : e;
+        if(ev.keyCode==13) {
+            $('#ss').trigger('click');
+            return false;
+        } //搜索逻辑
+    }
+
+    function queryYWlist() {
+        var options = {
+            url: prefix + "/list",
+            createUrl: prefix + "/add",
+            updateUrl: prefix + "/edit/{id}",
+            removeUrl: prefix + "/remove",
+            detailUrl: prefix + "/detail/{id}",
+            exportUrl: prefix + "/export",
+            clickToSelect:true,
+            firstLoad: false,
+            modalName: "运维通讯录",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'address_list_id',
+                    title: 'ID',
+                    visible:false
+                },
+                {
+                    field: 'pname',
+                    title: '姓名'
+                },
+                {
+                    field: 'phone',
+                    title: '手机'
+                },
+                {
+                    field: 'tel',
+                    title: '座机'
+                },
+                {
+                    field: 'email',
+                    title: '邮箱'
+                },
+                {
+                    field: 'invalidationmark',
+                    title: '使用状态'
+                },
+                {
+                    field: 'duty',
+                    title: '职务',
+		        	formatter: function (value, row, index) {
+		        		return $.table.tooltip(value);
+		        	}
+                },
+                {
+                    field: 'responsibility',
+                    title: '职责',
+		        	formatter: function (value, row, index) {
+		        		return $.table.tooltip(value);
+		        	}
+                }
+            ]
+        };
+        $.table.init(options);
+    };
+
+    function add(id) {
+        if(selectTreeName==1){
+            $.modal.alertWarning("请先选择机构");
+        }else{
+            table.set();
+            console.log($.operate.addUrl(id));
+            $.modal.openNoColse("新增" + table.options.modalName, $.operate.addUrl(id));
+            var aa=selectTreeName;
+            console.log(aa);
+            setTimeout(function(){
+                console.log($("iframe[id*=layui-layer-iframe]").contents().find("#treeName").val(aa));
+            },110);
+        }
+    };
+    function edit(id) {
+        table.set();
+        $.modal.openNoColse("修改" + table.options.modalName, $.operate.editUrl(id));
+    };
+    // 详细信息
+    function detail  () {
+        table.set();
+        $.modal.openNoColse("详细信息",  $.operate.detailUrl());
+    }
+
+    $('#btnExpand').click(function() {
+        $._tree.expandAll(true);
+        $(this).hide();
+        $('#btnCollapse').show();
+    });
+
+    $('#btnCollapse').click(function() {
+        $._tree.expandAll(false);
+        $(this).hide();
+        $('#btnExpand').show();
+    });
+    $('#btnRefresh').click(function() {
+        queryDeptTree();
+    });
+    /* 新增-选择树 */
+    function selectDeptTree() {
+        var treeId = $("#treeId").val();
+        var deptId = $.common.isEmpty(treeId) ? "100" : $("#treeId").val();
+        var url = ctx + "system/info/selectFolderTree/" + deptId;
+        var options = {
+            title: '选择部门',
+            width: "380",
+            url: url,
+            callBack: doSubmit
+        };
+        $.modal.openOptions(options);
+    }
+    function doSubmit(index, layero){
+        var tree = layero.find("iframe")[0].contentWindow.$._tree;
+
+        if(jQuery.isEmptyObject(tree)) {
+            layer.close(index);
+        }else{
+            var selectNode = tree.getSelectedNodes();
+            if(selectNode.length!=0){
+                $("#treeId").val(selectNode[0].id);
+                $("#treeName").val(selectNode[0].name);
+            }
+        }
+        layer.close(index);
+    }
+
+    $(function() {
+        var panehHidden = false;
+        if ($(this).width() < 800) {
+            panehHidden = true;
+        }
+        $('body').layout({ initClosed: panehHidden, west__size: 185 });
+        // 回到顶部绑定
+        if ($.fn.toTop !== undefined) {
+            var opt = {
+                win:$('.ui-layout-center'),
+                doc:$('.ui-layout-center')
+            };
+            $('#scroll-up').toTop(opt);
+        }
+        queryYWlist();
+        queryDeptTree();
+    });
+
+    function queryDeptTree()
+    {
+        var url = ctx + "system/ywlist/treeData";
+        var options = {
+            url: url,
+            expandLevel: 2,
+            onClick : zOnClick
+        };
+        $.tree.init(options);
+
+        function zOnClick(event, treeId, treeNode) {
+            selectTreeId =treeNode.id;
+            selectTreeName =treeNode.name;
+            $("#treeId").val(treeNode.id);
+            $("#treeName").val(treeNode.name);
+            $.table.search();
+        }
+    }
+</script>
+</body>
+</html>

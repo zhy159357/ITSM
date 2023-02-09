@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('修改数据问题单')" />
+    <th:block th:include="include :: select2-css" />
+    <th:block th:include="include :: summernote-css" />
+    <th:block th:include="include :: datetimepicker-css" />
+
+</head>
+
+<body class="white-bg">
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+    <form class="form-horizontal m" id="form-dataq-edit" th:object="${imBizDataq}">
+        <input th:type="hidden" id="imId" th:field="*{imId}"/>
+        <div class="panel panel-default">
+            <div class="panel-heading" style="background-color: #3c8dbc" data-toggle="collapse" data-target="#demo">
+                <h4 class="panel-title" >
+                    基本信息
+                </h4>
+            </div>
+            <div id="demo" class="in">
+                <div class="row form-group">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label is-required">数据问题单号：</label>
+                            <div class="col-sm-8">
+                                <input class="form-control" id="num" type="text" th:field="*{imNo}" readonly>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label is-required">系统重要级别:</label>
+                            <div class="col-sm-8">
+                                <select class="form-control" name="sysLv" id="sysLv"
+                                        th:with="type=${@dict.getParaType('CS_LEVEL')}">
+                                    <option value=""></option>
+                                    <option th:each="dict : ${type}" th:text="${dict.valueDetail}"
+                                            th:value="${dict.value}" th:field="*{sysLv}"></option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="row form-group">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label is-required">问题起因:</label>
+                            <div class="col-sm-8">
+                                <select class="form-control" name="probleCause" id="probleCause"
+                                        th:with="type=${@dict.getParaType('SJChangReason')}">
+                                    <option value=""></option>
+                                    <option th:each="dict : ${type}" th:text="${dict.valueDetail}"
+                                            th:value="${dict.value}" th:field="*{probleCause}"></option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label is-required">问题发生时间：</label>
+                            <div class="col-sm-8">
+                                <div class="input-group date">
+                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                    <input name="problemDiscoveryTime" id="problemDiscoveryTime" style="background-color: #fff; opacity: 1;" th:field="*{problemDiscoveryTime}"  class="form-control calcTotalSecondInput" readonly  type="text"  >
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row form-group">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label is-required" style="width:12.5%">涉及系统：</label>
+                            <div class="col-sm-8" style="width:83.5%">
+                                <input type="hidden"  class="form-control" name="sysId" id="sysId" th:field="*{sysId}"/>
+                                <input type="text"  class="form-control" name="sysName"  id="sysName"  onclick="selectAppSys()" style="background-color: #ffffff;" readonly th:field="*{sysName}"/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel panel-default">
+            <div class="panel-heading" style="background-color: #3c8dbc" data-toggle="collapse" data-target="#demo4">
+                <h4 class="panel-title" >
+                    详细信息
+                </h4>
+            </div>
+            <div id="demo4" class="in">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label  text-right is-required" style="width:12.5%">问题标题：</label>
+                            <div class="col-sm-10" style="width:83.5%">
+                                <input class="form-control" type="text" name="probleTitle" id="probleTitle" maxlength="64"  th:field="*{probleTitle}" required>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label is-required" style="width:12.5%">问题描述：</label>
+                            <div class="col-sm-10" style="width:83.5%">
+                                <textarea id="probleDesc" name="probleDesc" rows="10" cols="20"
+                                          class="form-control" th:field="*{probleDesc}" maxlength="2000"  required></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label is-required" style="width:12.5%">问题影响：</label>
+                            <div class="col-sm-10" style="width:83.5%">
+                                <textarea id="probleImpact" name="probleImpact" rows="10" cols="20"
+                                          class="form-control" maxlength="2000" th:field="*{probleImpact}" required></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </form>
+
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="tabs-container">
+                <ul class="nav nav-tabs">
+                    <li class="active"><a data-toggle="tab" href="#tab-1" aria-expanded="true"> 附件上传</a>
+                    </li>
+                </ul>
+                <div class="tab-content">
+                    <div id="tab-1" class="tab-pane active">
+                        <div class="panel-body">
+                            <div class="btn-group-sm" id="toolbar1" role="group">
+                                <a class="btn btn-success" type="button" onclick="upload()">
+                                    <i class="fa fa-upload"></i> 添加附件
+                                </a>
+                                <a class="btn btn-primary multiple disabled" onclick="downloadFile()">
+                                    <i class="fa fa-download"></i> 下载附件
+                                </a>
+                                <a class="btn btn-danger multiple disabled" onclick="remove()">
+                                    <i class="fa fa-trash"></i> 删除附件
+                                </a>
+                            </div>
+                            <div class="col-sm-12 select-table table-striped">
+                                <table id="file-table"></table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: summernote-js" />
+<th:block th:include="include :: select2-js" />
+<th:block th:include="include :: datetimepicker-js" />
+<script type="text/javascript">
+    var prefix = ctx + "system/dataq"
+
+    var wt_prefix = ctx + "issueList/build";
+
+    var prefix_attachment = ctx + "pub/attachment";
+
+    var sjbg_prefix = ctx + "bg/sjbg";
+
+
+
+    $(function () {
+        var options = {
+            url: prefix_attachment + "/list",
+            id: "file-table",
+            createUrl: prefix_attachment + "/add",
+            updateUrl: prefix_attachment + "/edit/{id}",
+            removeUrl: prefix_attachment + "/remove",
+            detailUrl: prefix_attachment + "/edit/{id}",
+            sortName: "fileTime",
+            sortOrder: "desc",
+            singleSelect: true,
+            toolbar:"toolbar1",
+            clickToSelect: true,
+            queryParams:queryParams,
+            modalName: "附件列表",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field : 'atId',
+                    title : '附件ID',
+                    visible : false
+                },
+                {
+                    field : 'person.pId',
+                    title : '上传人员Id',
+                    visible: false
+                },
+                {
+                    field : 'fileName',
+                    title : '文件名称'
+                },
+                {
+                    field : 'person.pName',
+                    title : '上传人'
+                },
+                {
+                    field : 'size',
+                    title : '文件大小'
+                },
+                {
+                    field : 'memo',
+                    title : '文件描述'
+                },
+                {
+                    field : 'fileTime',
+                    title : '上传时间'
+                }]
+        };
+        $.table.init(options);
+    });
+
+    //附件
+    function queryParams(params) {
+        var search = $.table.queryParams(params);
+        search.ownerId = $("#imId").val() == '' ? 'version_public_add_no_owner_id' : $("#imId").val();
+        return search;
+    }
+
+
+    // 附件上传页面
+    function upload() {
+        var url = ctx +"pub/attachment/upload/" + $("#imId").val();
+        $.modal.open("问题单附件上传", url);
+    }
+
+    // 附件下载
+    function downloadFile() {
+        var rows = $.table.selectFirstColumns();
+        var atId = rows[0];
+        var ownerId = $("#imId").val();
+        var url = ctx + "pub/attachment/download/"+ownerId+"/"+atId;
+        window.location.href = url;
+    }
+
+    function remove() {
+        var row = $('#file-table').bootstrapTable('getSelections')[0]
+        //获取当前登陆人员的id
+        $.get(prefix+'/selectOgUserByUserId',function (result) {
+            if(result.data.pId==row.person.pId){
+                $.operate.removeAll();
+            }else{
+                $.modal.alertError('不能删除非本人上传附件!');
+            }
+        });
+    }
+
+
+    $("#form-dataq-add").validate({
+        focusCleanup: true
+    });
+
+    function submitHandler() {
+        var errorInfo = '';
+        //系统重要级别
+        var sysLv = $('#sysLv').val();
+        if(isEmpty(sysLv)){
+            errorInfo += '【系统重要级别】不能为空 ';
+        }
+        //问题起因
+        var probleCause = $('#probleCause').val();
+        if(isEmpty(probleCause)){
+            errorInfo += '【问题起因】不能为空 ';
+        }
+        //问题发生时间
+        var problemDiscoveryTime = $('#problemDiscoveryTime').val();
+        if(isEmpty(problemDiscoveryTime)){
+            errorInfo += '【问题发生时间】不能为空 ';
+        }
+        //涉及系统
+        var sysId = $('#sysId').val();
+        if(isEmpty(sysId)){
+            errorInfo += '【涉及系统】不能为空 ';
+        }
+        //问题标题
+        var probleTitle = $('#probleTitle').val();
+        if(isEmpty(probleTitle)){
+            errorInfo += '【问题标题】不能为空 ';
+        }
+        //问题描述
+        var probleDesc = $('#probleDesc').val();
+        if(isEmpty(probleDesc)){
+            errorInfo += '【问题描述】不能为空 ';
+        }
+        //问题影响
+        var probleImpact = $('#probleImpact').val();
+        if(isEmpty(probleImpact)){
+            errorInfo += '【问题影响】不能为空 ';
+        }
+        if(isEmpty(errorInfo)) {
+            saveTabWt(prefix + "/editsjwt", $('#form-dataq-edit').serialize());
+
+        }else{
+            $.modal.alertError(errorInfo);
+        }
+    }
+
+    /**
+     * 输入空值校验
+     * @param valueStr
+     * @returns {boolean}
+     */
+    function  isEmpty(valueStr) {
+        if(valueStr=='' || valueStr==null){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    // 保存选项卡信息
+    function saveTabWt(url, data, callback) {
+        var config = {
+            url: url,
+            type: "post",
+            dataType: "json",
+            data: data,
+            beforeSend: function () {
+                $.modal.loading("正在处理中，请稍后...");
+            },
+            success: function(result) {
+                var num = $("#num").val();
+                parent.$('#xzimNo').val(num);
+                $.modal.close();
+            }
+
+        };
+        $.ajax(config)
+    }
+
+
+    /**
+     * 应用系统
+     */
+    function selectAppSys() {
+        var prefix = ctx + "system/dataq";
+        var url = prefix+'/application';
+        $.modal.open('系统选择',url)
+    }
+
+    function aa(){
+        var value=$(this).val();
+        if("0"==value){
+            var businessOrgIds = document.getElementsByName('businessOrg');
+            console.log(businessOrgIds);
+            for(var i=0;i<businessOrgIds.length+1;i++){
+                //业务部门
+                $("#businessOrg"+i).attr("required","true");
+                $("#busDept"+i).addClass("is-required");
+                $("#businessId"+i).attr("required","true");
+                $("#busUser"+i).addClass("is-required");
+            }
+            //技术经理
+            $("#auditName").attr("required","true");
+            $("#audit").addClass("is-required");
+        }
+        if("1"==value){
+            $("#putUnitDiv").show();
+            $("#multiusersName").attr("required","true");
+            $("#pingguLabel").addClass("is-required");
+            var businessOrgIds = document.getElementsByName('businessOrg');
+            console.log(businessOrgIds);
+            for(var i=0;i<businessOrgIds.length+1;i++) {
+                //业务部门
+                $("#businessOrg"+i).removeAttr("required");
+                $("#busDept"+i).removeClass("is-required");
+                $("#businessId"+i).removeAttr("required");
+                $("#busUser"+i).removeClass("is-required");
+            }
+            //技术经理
+            $("#auditName").removeAttr("required","true");
+            $("#audit").removeClass("is-required");
+        }
+    }
+
+
+    function orgPer(obj,type){
+        var options = "<option value=''>请选择</option>";
+        var orgId=obj.value;
+        if($.common.isEmpty(orgId)){
+             if(0==type){
+                var id=obj.id;
+                var num=id.match(/businessOrg(\S*)/)[1];
+                $("#businessId"+num).html("");
+                $("#businessId" + num).append(options);
+            }else {
+                $("#businessId"+type).html("");
+                $("#businessId" + type).append(options);
+            }
+            return;
+        }
+
+        $.ajax({
+            cache : true,
+            type : "POST",
+            url : wt_prefix + "/orgPer",
+            data : {
+                "orgId": orgId,
+                "type": type
+            },
+            async : false,
+            error : function(request) {
+                $.modal.alertError("系统错误");
+            },
+            success : function(data) {
+                if(-1 == type){
+                    $("#reviewerId").html("");
+                    for(var ak=0;ak<data.length;ak++){
+                        options += "<option value='"+data[ak].pId+"'>"+data[ak].pName+"</option> \n";
+                    }
+                    $("#reviewerId").append(options);
+
+                }else if(0==type){
+                    var id=obj.id;
+                    var num=id.match(/businessOrg(\S*)/)[1];
+                    $("#businessId"+num).html("");
+                    for(var ak=0;ak<data.length;ak++){
+                        options += "<option value='"+data[ak].pId+"'>"+data[ak].pName+"</option> \n";
+                    }
+                    $("#businessId" + num).append(options);
+                }else {
+                    $("#businessId"+type).html("");
+                    for(var ak=0;ak<data.length;ak++){
+                        options += "<option value='"+data[ak].pId+"'>"+data[ak].pName+"</option> \n";
+                    }
+                    $("#businessId" + type).append(options);
+                }
+            }
+        });
+
+    }
+
+    //日期格式
+    $("#problemDiscoveryTime").datetimepicker({
+        format: "yyyy-mm-dd hh:ii:ss",
+        autoclose: true,
+        minView:0,
+        minuteStep:1,
+        endDate:new Date()
+    });
+
+    //日期格式
+    $("input[name='businessPlanTime']").datetimepicker({
+        autoclose: true,
+        format: "yyyy-mm-dd hh:ii:ss",
+        minView:0,
+        minuteStep:1,
+        Date:new Date()
+    });
+
+    //日期格式
+    $("input[name='technicalPlanTime']").datetimepicker({
+        autoclose: true,
+        format: "yyyy-mm-dd hh:ii:ss",
+        minView:0,
+        minuteStep:1,
+        Date:new Date()
+    });
+
+    //日期格式
+    $("input[name='observationTime']").datetimepicker({
+        autoclose: true,
+        format: "yyyy-mm-dd hh:ii:ss",
+        minView:0,
+        minuteStep:1,
+        Date:new Date()
+    });
+
+
+
+
+</script>
+</body>
+</html>

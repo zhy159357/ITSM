@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('告警分析')" />
+    <th:block th:include="include :: layout-latest-css" />
+</head>
+<body class="gray-bg">
+<div class="ui-layout-center">
+    <div class="container-div">
+        <div class="row">
+ <div class="col-sm-12 search-collapse">
+                <form id="cont-form">
+                    <input type="text" style="display: none" id="treeId" name="categoryId">
+                    <div class="select-list">
+                        <ul>
+                            <!--  <li>
+                                <label style="width: 65px">告警名称：</label>
+                                <input type="text" name="title"/>
+                            </li>-->
+                            <li>
+                                <label style="width: 65px">对象：</label>
+                                <input type="text" name="content"/>
+                            </li>
+                            <li>
+                                <label style="width: 65px">告警来源二级：</label>
+                                <input type="text" name="sectitle"/>
+                            </li>
+                            <li>
+                                <label style="width: 65px">告警描述三级：</label>
+                                <input type="text" name="name"/>
+                            </li>
+                            <li>
+                                <a class="btn btn-primary btn-rounded btn-sm" id="sou" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.resetAll('cont-form')"><i class="fa fa-repeat"></i>&nbsp;重置</a>
+                            </li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+            
+            <div class="btn-group-sm" id="toolbar" role="group">
+            	<div class="btn-group">
+                    <button data-toggle="dropdown" class="btn btn-warning btn-sm dropdown-toggle">导出<span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a onclick="exportExcel()">导出所有</a>
+                        </li>
+                        <li><a onclick="$.table.exportExcelCurrentPage()">导出当前页</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-sm-12 select-table table-striped">
+                <table id="bootstrap-table"></table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: layout-latest-js" />
+<script th:inline="javascript">
+    var prefix = ctx + "knowledge/cont";
+
+    $(function() {
+        var options = {
+            url: prefix + "/alarmAnalizeList",
+            exportUrl: prefix + "/exportAlarm",
+            //sidePagination: "client", 
+            modalName:"告警分析",
+            columns: [{
+                checkbox: true
+            },
+            {
+                field: 'id',
+                title: 'ID',
+                visible: false
+            },
+            {
+                field: 'title',
+                title: '告警名称',
+                visible: false
+            },
+            {
+                field: 'content',
+                title: '对象',
+                formatter: function (value, row, index) {
+                    return $.table.tooltip(value);
+                }
+            },
+            {
+                field: 'sectitle',
+                title: '告警来源二级',
+                formatter: function (value, row, index) {
+                    return $.table.tooltip(value);
+                }
+            },
+            {
+                field: 'name',
+                title: '告警描述三级',
+                formatter: function (value, row, index) {
+                    return $.table.tooltip(value);
+                }
+            },
+            {
+            	field: 'knowledgeId',
+                title: '知识id',
+                visible: false
+            },
+            {
+            	field: 'knowledgeTitle',
+                title: '检索结果',
+                formatter: function (value, row, index) {
+                	if(row.knowledgeId == null || row.knowledgeTitle == null){
+                		return "";
+                	}else{
+                		return '<a href="javascript:void(0)" onclick=detail(\''+row.knowledgeId+'\')>《'+row.knowledgeTitle+'》</a>';
+                	}   
+                }
+            },
+            {
+            	field: 'params.match',
+                title: '匹配率'
+            }]
+        };
+        $.table.init(options);
+    });
+	
+    function detail(id){
+    	$.modal.openTab("知识详情", ctx+"es/detail/"+id);
+    }
+
+    function exportExcel(formId) {
+        var length = $.table.tableCount();
+        if(length == 0){
+            $.modal.alertWarning("列表数据为空，不做导出数据处理");
+            return;
+        }
+        table.set();
+        $.modal.confirm("确定导出所有" + table.options.modalName + "吗？", function() {
+            var currentId = $.common.isEmpty(formId) ? $('form').attr('id') : formId;
+            var params = $("#" + table.options.id).bootstrapTable('getOptions');
+            var dataParam = $("#" + currentId).serializeArray();
+            dataParam.push({ "name": "orderByColumn", "value": params.sortName });
+            dataParam.push({ "name": "isAsc", "value": params.sortOrder });
+            dataParam.push({ "name": "params[currentPage]", "value": "all" });
+            $.modal.loading("正在导出数据，请稍后...");
+            $.post(table.options.exportUrl, dataParam, function(result) {
+                if (result.code == web_status.SUCCESS) {
+                    window.location.href = ctx + "common/download?fileName=" + encodeURI(result.msg) + "&delete=" + true;
+                    if(0==result.alarmFlag){
+                        selectExportData();
+                    }
+                } else if (result.code == web_status.WARNING) {
+                    $.modal.alertWarning(result.msg)
+                } else {
+                    $.modal.alertError(result.msg);
+                }
+                $.modal.closeLoading();
+            });
+        });
+    }
+</script>
+</body>
+</html>

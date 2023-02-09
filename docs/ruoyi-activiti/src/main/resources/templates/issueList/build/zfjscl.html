@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+	<th:block th:include="include :: header('转技术处理')" />
+</head>
+<body>
+    <div class="main-content">
+        <form id="form-horizontal" class="form-horizontal">
+            <input id="issuefxId" name="issuefxId" th:value="${issuefxId}" hidden>
+            <div class="row">
+            	<div class="col-sm-6">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label is-required">所属应用系统：</label>
+                        <div class="col-sm-8">
+                            <input name="sysName" id="sysName" class="form-control" onclick="selectOneApplication()" value="" readonly style="background-color: #fdfdfd" required>
+                            <input name="sysId" id="sysId"  value="" hidden>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label is-required">技术经理：</label>
+                        <div class="col-sm-8">
+                            <div class="input-group">
+                                <input class="form-control" type="hidden" name="auditId" id="auditId">
+                                <input class="form-control" onclick="getAuditId()" type="text" id="auditName" required readonly style="background-color: #fdfdfd">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <div class="form-group">
+                        <label class="col-xs-2 control-label is-required">操作意见：</label>
+                        <div class="col-xs-10">
+                            <textarea name="params[comment]"  rows="3" placeholder='文本框内容不得超过500个字' maxlength='500' class="form-control" type="text" required></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+	<th:block th:include="include :: footer" />
+<script th:inline="javascript">
+    var prefix = ctx + "issueList/build";
+    var types=[[${type}]];
+    // 选择应用系统（只能单选）
+    function selectOneApplication() {
+        $.modal.open("选择应用系统", prefix+ "/selectOneApplication");
+    }
+    /*选择技术经理*/
+    function getAuditId() {
+        var userIds = $("#auditId").val();
+        console.log(userIds);
+        if($.common.isEmpty(userIds)){
+            userIds = "0";
+        }
+        var url = prefix + "/audit/" + userIds;
+        $.modal.open("选择技术经理", url);
+    }
+    function submitHandler() {
+        if(!$.validate.form()){
+            $.modal.alertWarning("参数填写不全，请继续填写！");
+            return;
+        }
+        var rows =$("#form-horizontal").serializeArray();
+        var reCode={
+            name:'params[reCode]',
+            value:'1'
+        }
+        var type={
+            name:'params[type]',
+            value:types
+        }
+        rows.push(reCode);
+        rows.push(type);
+        $.operate.saveTab(ctx+"issueList/activiti/wentichuli", rows,reBack);
+    }
+    function reBack(result) {
+        if (result.code == web_status.SUCCESS) {
+            var parent = window.parent;
+            if (parent.table.options.type == table_type.bootstrapTable) {
+                $.modal.close();
+                parent.$.modal.msgSuccess(result.msg);
+                parent.$.table.refresh();
+            } else if (parent.table.options.type == table_type.bootstrapTreeTable) {
+                $.modal.close();
+                parent.$.modal.msgSuccess(result.msg);
+                parent.$.treeTable.refresh();
+            } else {
+                $.modal.msgReload("保存成功,正在刷新数据请稍后……", modal_status.SUCCESS);
+            }
+        } else if (result.code == web_status.WARNING) {
+            $.modal.alertWarning(result.msg)
+            return;
+        }  else {
+            $.modal.alertError(result.msg);
+            return;
+        }
+        $.modal.closeLoading();
+        parent.closeBtu();
+    }
+</script>
+</body>
+</html>

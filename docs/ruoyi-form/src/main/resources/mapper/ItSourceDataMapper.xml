@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.form.mapper.ItSourceDataMapper">
+    
+    <resultMap type="ItSourceData" id="ItSourceDataResult">
+        <result property="sourceDataId"    column="source_data_id"    />
+        <result property="businessId"    column="business_id"    />
+        <result property="labelName"    column="label_name"    />
+        <result property="dataKey"    column="data_key"    />
+        <result property="dataValue"    column="data_value"    />
+        <result property="dictKey"    column="dict_key"    />
+        <result property="insertTime"    column="insert_time"    />
+        <result property="remark"    column="remark"    />
+        <result property="formKey"    column="form_key"    />
+    </resultMap>
+
+    <sql id="selectItSourceDataVo">
+        select source_data_id, business_id, label_name, data_key, data_value, dict_key, insert_time, remark, form_key from it_source_data
+    </sql>
+
+    <select id="selectItSourceDataList" parameterType="ItSourceData" resultMap="ItSourceDataResult">
+        <include refid="selectItSourceDataVo"/>
+        <where>  
+            <if test="businessId != null  and businessId != ''"> and business_id = #{businessId}</if>
+            <if test="dataKey != null  and dataKey != ''"> and data_key = #{dataKey}</if>
+            <if test="dataValue != null  and dataValue != ''"> and data_value = #{dataValue}</if>
+            <if test="dictKey != null  and dictKey != ''"> and dict_key = #{dictKey}</if>
+            <if test="insertTime != null  and insertTime != ''"> and insert_time = #{insertTime}</if>
+        </where>
+    </select>
+    
+    <select id="selectItSourceDataById" parameterType="String" resultMap="ItSourceDataResult">
+        <include refid="selectItSourceDataVo"/>
+        where source_data_id = #{sourceDataId}
+    </select>
+        
+    <insert id="insertItSourceData" parameterType="ItSourceData">
+        insert into it_source_data
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="sourceDataId != null  and sourceDataId != ''">source_data_id,</if>
+            <if test="businessId != null  and businessId != ''">business_id,</if>
+            <if test="labelName != null  and labelName != ''">label_name,</if>
+            <if test="dataKey != null  and dataKey != ''">data_key,</if>
+            <if test="dataValue != null  and dataValue != ''">data_value,</if>
+            <if test="dictKey != null  and dictKey != ''">dict_key,</if>
+            <if test="insertTime != null  and insertTime != ''">insert_time,</if>
+            <if test="remark != null  and remark != ''">remark,</if>
+            <if test="formKey != null  and formKey != ''">form_key,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="sourceDataId != null  and sourceDataId != ''">#{sourceDataId},</if>
+            <if test="businessId != null  and businessId != ''">#{businessId},</if>
+            <if test="labelName != null  and labelName != ''">#{labelName},</if>
+            <if test="dataKey != null  and dataKey != ''">#{dataKey},</if>
+            <if test="dataValue != null  and dataValue != ''">#{dataValue},</if>
+            <if test="dictKey != null  and dictKey != ''">#{dictKey},</if>
+            <if test="insertTime != null  and insertTime != ''">#{insertTime},</if>
+            <if test="remark != null  and remark != ''">#{remark},</if>
+            <if test="formKey != null  and formKey != ''">#{formKey},</if>
+         </trim>
+    </insert>
+
+    <update id="updateItSourceData" parameterType="ItSourceData">
+        update it_source_data
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="businessId != null  and businessId != ''">business_id = #{businessId},</if>
+            <if test="dataKey != null  and dataKey != ''">data_key = #{dataKey},</if>
+            <if test="dataValue != null  and dataValue != ''">data_value = #{dataValue},</if>
+            <if test="dictKey != null  and dictKey != ''">dict_key = #{dictKey},</if>
+            <if test="insertTime != null  and insertTime != ''">insert_time = #{insertTime},</if>
+            <if test="remark != null  and remark != ''">remark = #{remark},</if>
+        </trim>
+        where source_data_id = #{sourceDataId}
+    </update>
+
+    <delete id="deleteItSourceDataById" parameterType="String">
+        delete from it_source_data where source_data_id = #{sourceDataId}
+    </delete>
+
+    <delete id="deleteItSourceDataByIds" parameterType="String">
+        delete from it_source_data where source_data_id in 
+        <foreach item="sourceDataId" collection="array" open="(" separator="," close=")">
+            #{sourceDataId}
+        </foreach>
+    </delete>
+    
+</mapper>

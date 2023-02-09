@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('知识检索-评论')" />
+    <style type="text/css">
+		label.error{
+			position:relative;
+			right:0px;
+			top:0px;
+			color:#ef392b;
+			font-size:12px;
+			z-index:99;
+		}
+	</style>
+</head>
+<body>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form class="form-horizontal m" id="form-search-comment" th:object="${knowledgeComment}">
+        <input name="contentId" type="hidden" th:field="*{contentId}" />
+        
+        <div class="row">
+            	<div class="col-sm-12">
+					<div class="form-group">
+						<div class="col-sm-10">
+							<textarea name="remark" th:field="*{remark}" class="form-control" placeholder="写下您的评论"></textarea>
+						</div>
+					</div>
+				</div>
+        </div>
+        <div class="row">
+            <div class="col-sm-9">
+    			<label class="radio-box">
+        			<input type="radio" checked="" value="0" id="optionsRadios1" name="status">好评</label>
+   				<label class="radio-box">
+        			<input type="radio" value="1" id="optionsRadios2" name="status">差评</label>
+			</div>
+        </div>
+        </form>
+    </div>
+    <th:block th:include="include :: footer" />
+    <script th:src="@{/js/validator.js}"></script>
+ 	<script th:inline="javascript">
+ 	var prefix = ctx + "es";
+ 	$("#form-search-comment").validate({
+    	onkeyup: false,
+    	rules:{
+    		remark:{
+    			maxlength2:500
+    		}
+    	},
+        focusCleanup: true
+    });
+ 	function submitHandler() {
+        if ($.validate.form() ) {
+            $.operate.submit(prefix + "/comment", "post", "json", $('#form-search-comment').serialize(),
+            		function(){parent.location.reload()});
+        }
+    }
+ 	
+    </script>
+</body>
+</html>

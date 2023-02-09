@@ -1,0 +1,332 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.form.mapper.DesignBizChmMapper">
+
+    <resultMap type="DesignBizChm" id="DesignBizChmResult">
+        <result property="engineerArriveTime"    column="engineer_arrive_time"    />
+        <result property="engineerAcceptTime"    column="engineer_accept_time"    />
+        <result property="facturerAcceptTime"    column="facturer_accept_time"    />
+        <result property="facturer"    column="facturer"    />
+        <result property="remarks"    column="remarks"    />
+        <result property="dealNotes"    column="deal_notes"    />
+        <result property="implementId"    column="implement_Id"    />
+        <result property="flowNo"    column="flow_no"    />
+        <result property="telephoneFollow"    column="telephone_follow"    />
+        <result property="requestId"    column="requestId"    />
+        <result property="source"    column="source"    />
+        <result property="reportDepartment"    column="report_department"    />
+        <result property="file"    column="file"    />
+        <result property="cancleNote"    column="cancle_note"    />
+        <result property="equipmentModelB"    column="equipment_model_b"    />
+        <result property="equipmentNameB"    column="equipment_name_b"    />
+        <result property="equipmentTypeB"    column="equipment_type_b"    />
+        <result property="serviceEvaluation"    column="service_evaluation"    />
+        <result property="faultType"    column="fault_type"    />
+        <result property="solution"    column="solution"    />
+        <result property="completeTime"    column="complete_time"    />
+        <result property="arriveTime"    column="arrive_time"    />
+        <result property="orderTime"    column="order_time"    />
+        <result property="assignedPerson"    column="assigned_person"    />
+        <result property="assignedGroup"    column="assigned_group"    />
+        <result property="contactDetails"    column="contact_details"    />
+        <result property="contact"    column="contact"    />
+        <result property="equipmentModel"    column="equipment_model"    />
+        <result property="priority"    column="priority"    />
+        <result property="scopeInfluence"    column="scope_influence"    />
+        <result property="equipmentName"    column="equipment_name"    />
+        <result property="urgent"    column="urgent"    />
+        <result property="expectTime"    column="expect_time"    />
+        <result property="equipmentType"    column="equipment_type"    />
+        <result property="faultDescription"    column="fault_Description"    />
+        <result property="implementNo"    column="implement_no"    />
+        <result property="chmType"    column="chm_type"    />
+        <result property="title"    column="title"    />
+        <result property="currentHandlerId"    column="current_handler_id"    />
+        <result property="stage"    column="stage"    />
+        <result property="updatedBy"    column="updated_by"    />
+        <result property="updatedTime"    column="updated_time"    />
+        <result property="createdBy"    column="created_by"    />
+        <result property="createdTime"    column="created_time"    />
+        <result property="status"    column="status"    />
+        <result property="extra5"    column="extra5"    />
+        <result property="extra4"    column="extra4"    />
+        <result property="extra3"    column="extra3"    />
+        <result property="extra2"    column="extra2"    />
+        <result property="extra1"    column="extra1"    />
+        <result property="instanceId"    column="instance_id"    />
+        <result property="id"    column="id"    />
+        <result property="itDealTime" column="it_deal_time"/>
+        <result property="itDealUser" column="it_deal_user"/>
+        <result property="realDealUser" column="real_deal_user"/>
+        <result property="fuHeTime"    column="fu_he_time"    />
+    </resultMap>
+
+    <sql id="selectDesignBizChmVo">
+        select engineer_arrive_time, engineer_accept_time, facturer_accept_time, facturer, remarks, deal_notes, implement_Id, flow_no,
+        telephone_follow, request_Id, source, report_department, cancle_note, equipment_model_b, equipment_name_b, equipment_type_b,
+         service_evaluation, fault_type, solution, complete_time, arrive_time, order_time, assigned_person, assigned_group,
+         contact_details, contact, equipment_model, priority, scope_influence, equipment_name, urgent, expect_time, equipment_type,
+         fault_Description, implement_no, chm_type, title, current_handler_id, stage, updated_by, updated_time, created_by, created_time,
+         status, extra5, extra4, extra3, extra2, extra1, instance_id, id ,it_deal_time, it_deal_user,real_deal_user,fu_he_time from design_biz_chm
+    </sql>
+
+    <select id="selectDesignBizChmList" parameterType="DesignBizChm" resultMap="DesignBizChmResult">
+        <include refid="selectDesignBizChmVo"/>
+        <where>
+            <if test="params.beginEngineerArriveTime != null and params.beginEngineerArriveTime != ''"> and engineer_arrive_time &gt; #{params.beginEngineerArriveTime}</if>
+            <if test="params.endEngineerArriveTime != null and params.endEngineerArriveTime != ''"> and  engineer_arrive_time  &lt; #{params.endEngineerArriveTime} </if>
+
+            <if test="params.beginEngineerAcceptTime != null and params.beginEngineerAcceptTime != ''"> and engineer_accept_time &gt; #{params.beginEngineerAcceptTime}</if>
+            <if test="params.endEngineerAcceptTime != null and params.endEngineerAcceptTime != ''"> and  engineer_accept_time  &lt; #{params.endEngineerAcceptTime} </if>
+
+            <if test="params.beginFacturerAcceptTime != null and params.beginFacturerAcceptTime != ''"> and facturer_accept_time &gt; #{params.beginFacturerAcceptTime}</if>
+            <if test="params.endFacturerAcceptTime != null and params.endFacturerAcceptTime != ''"> and  facturer_accept_time  &lt; #{params.endFacturerAcceptTime} </if>
+
+            <if test="facturer != null  and facturer != ''"> and facturer like concat(concat('%', #{facturer}), '%')</if>
+            <if test="remarks != null and remarks !='' "> and remarks = #{remarks}</if>
+            <if test="implementId != null  and implementId != ''"> and implement_Id = #{implementId}</if>
+            <if test="flowNo != null  and flowNo != ''"> and flow_no = #{flowNo}</if>
+            <if test="telephoneFollow != null  and telephoneFollow != ''"> and telephone_follow = #{telephoneFollow}</if>
+            <if test="reportDepartment != null  and reportDepartment != ''"> and report_department = #{reportDepartment}</if>
+            <if test="cancleNote != null  and cancleNote != ''"> and cancle_note = #{cancleNote}</if>
+            <if test="serviceEvaluation != null  and serviceEvaluation != ''"> and service_evaluation = #{serviceEvaluation}</if>
+            <if test="faultType != null  and faultType != ''"> and fault_type = #{faultType}</if>
+            <if test="solution != null  and solution != ''"> and solution = #{solution}</if>
+
+            <if test="params.beginCompleteTime != null and params.beginCompleteTime != ''"> and complete_time &gt; #{params.beginCompleteTime}</if>
+            <if test="params.endCompleteTime != null and params.endCompleteTime != ''"> and  complete_time  &lt; #{params.endCompleteTime} </if>
+
+
+            <if test="params.beginOrderTime != null and params.beginOrderTime != ''"> and order_time &gt; #{params.beginOrderTime}</if>
+            <if test="params.endOrderTime != null and params.endOrderTime != ''"> and  order_time  &lt; #{params.endOrderTime} </if>
+
+            <if test="contactDetails != null  and contactDetails != ''"> and contact_details = #{contactDetails}</if>
+            <if test="contact != null  and contact != ''"> and contact = #{contact}</if>
+            <if test="equipmentModel != null  and equipmentModel != ''"> and equipment_model = #{equipmentModel}</if>
+            <if test="priority != null  and priority != ''"> and priority = #{priority}</if>
+            <if test="scopeInfluence != null  and scopeInfluence != ''"> and scope_influence = #{scopeInfluence}</if>
+            <if test="equipmentName != null  and equipmentName != ''"> and equipment_name like concat(concat('%', #{equipmentName}), '%')</if>
+            <if test="urgent != null "> and urgent = #{urgent}</if>
+
+            <if test="params.beginExpectTime != null and params.beginExpectTime != ''"> and expect_time &gt; #{params.beginExpectTime}</if>
+            <if test="params.endExpectTime != null and params.endExpectTime != ''"> and  expect_time  &lt; #{params.endExpectTime} </if>
+
+
+            <if test="equipmentType != null  and equipmentType != ''"> and equipment_type = #{equipmentType}</if>
+            <if test="faultDescription != null  and faultDescription != ''"> and fault_Description like concat(concat('%', #{faultDescription}), '%')</if>
+            <if test="implementNo != null  and implementNo != ''"> and implement_no = #{implementNo}</if>
+            <if test="chmType != null  and chmType != ''"> and chm_type = #{chmType}</if>
+            <if test="title != null  and title != ''"> and title like concat(concat('%', #{title}), '%')</if>
+            <if test="updatedTime != null "> and updated_time = #{updatedTime}</if>
+            <if test="createdBy != null  and createdBy != ''"> and created_by = #{createdBy}</if>
+
+            <if test="params.beginCreatedTime != null and params.beginCreatedTime != ''"> and created_time &gt; #{params.beginCreatedTime}</if>
+            <if test="params.endCreatedTime != null and params.endCreatedTime != ''"> and  created_time  &lt; #{params.endCreatedTime} </if>
+
+            <if test="params.beginUpdatedTime != null and params.beginUpdatedTime != ''"> and updated_time &gt; #{params.beginUpdatedTime}</if>
+            <if test="params.endUpdatedTime != null and params.endUpdatedTime != ''"> and  updated_time  &lt; #{params.endUpdatedTime} </if>
+            <if test="params.beginItDealTime != null and params.beginItDealTime != ''"> and  it_deal_time  &gt; #{params.beginItDealTime} </if>
+            <if test="params.endItDealTime != null and params.endItDealTime != ''"> and  it_deal_time  &lt; #{params.endItDealTime} </if>
+            <if test="params.beginFuheTime != null and params.beginFuheTime != ''"> and  fu_he_time  &gt; #{params.beginFuheTime} </if>
+            <if test="params.endFuheTime != null and params.endFuheTime != ''"> and  fu_he_time  &lt; #{params.endFuheTime} </if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+            <if test="extra1 !=null and extra1 !=''">and extra1 like concat(concat('%',#{extra1}),'%')</if>
+            <if test="itDealUser !=null and itDealUser !=''">and it_deal_user like concat(concat('%',#{itDealUser}),'%')</if>
+            <if test="realDealUser !=null and realDealUser !=''">and real_deal_user like concat(concat('%',#{realDealUser}),'%')</if>
+            <if test="currentHandlerId !=null and currentHandlerId !=''">and current_handler_id like concat(concat('%',#{currentHandlerId}),'%')</if>
+        </where>
+        order by created_time desc
+    </select>
+
+    <select id="selectDesignBizChmById" parameterType="Long" resultMap="DesignBizChmResult">
+        <include refid="selectDesignBizChmVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertDesignBizChm" parameterType="DesignBizChm">
+        <selectKey keyProperty="id" resultType="long" order="BEFORE">
+            SELECT seq_design_biz_chm.NEXTVAL as id FROM DUAL
+        </selectKey>
+        insert into design_biz_chm
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="engineerArriveTime != null ">engineer_arrive_time,</if>
+            <if test="engineerAcceptTime != null ">engineer_accept_time,</if>
+            <if test="facturerAcceptTime != null ">facturer_accept_time,</if>
+            <if test="facturer != null  and facturer != ''">facturer,</if>
+            <if test="remarks != null ">remarks,</if>
+            <if test="dealNotes != null ">deal_notes,</if>
+            <if test="implementId != null  and implementId != ''">implement_Id,</if>
+            <if test="flowNo != null  and flowNo != ''">flow_no,</if>
+            <if test="telephoneFollow != null  and telephoneFollow != ''">telephone_follow,</if>
+            <if test="requestId != null  and requestId != ''">requestId,</if>
+            <if test="source != null  and source != ''">source,</if>
+            <if test="reportDepartment != null  and reportDepartment != ''">report_department,</if>
+            <if test="file != null  and file != ''">file,</if>
+            <if test="cancleNote != null  and cancleNote != ''">cancle_note,</if>
+            <if test="equipmentModelB != null  and equipmentModelB != ''">equipment_model_b,</if>
+            <if test="equipmentNameB != null  and equipmentNameB != ''">equipment_name_b,</if>
+            <if test="equipmentTypeB != null  and equipmentTypeB != ''">equipment_type_b,</if>
+            <if test="serviceEvaluation != null  and serviceEvaluation != ''">service_evaluation,</if>
+            <if test="faultType != null  and faultType != ''">fault_type,</if>
+            <if test="solution != null  and solution != ''">solution,</if>
+            <if test="completeTime != null ">complete_time,</if>
+            <if test="arriveTime != null  and arriveTime != ''">arrive_time,</if>
+            <if test="orderTime != null ">order_time,</if>
+            <if test="assignedPerson != null  and assignedPerson != ''">assigned_person,</if>
+            <if test="assignedGroup != null  and assignedGroup != ''">assigned_group,</if>
+            <if test="contactDetails != null  and contactDetails != ''">contact_details,</if>
+            <if test="contact != null  and contact != ''">contact,</if>
+            <if test="equipmentModel != null  and equipmentModel != ''">equipment_model,</if>
+            <if test="priority != null  and priority != ''">priority,</if>
+            <if test="scopeInfluence != null  and scopeInfluence != ''">scope_influence,</if>
+            <if test="equipmentName != null  and equipmentName != ''">equipment_name,</if>
+            <if test="urgent != null ">urgent,</if>
+            <if test="expectTime != null ">expect_time,</if>
+            <if test="equipmentType != null  and equipmentType != ''">equipment_type,</if>
+            <if test="faultDescription != null  and faultDescription != ''">fault_Description,</if>
+            <if test="implementNo != null  and implementNo != ''">implement_no,</if>
+            <if test="chmType != null  and chmType != ''">chm_type,</if>
+            <if test="title != null  and title != ''">title,</if>
+            <if test="currentHandlerId != null  and currentHandlerId != ''">current_handler_id,</if>
+            <if test="stage != null  and stage != ''">stage,</if>
+            <if test="updatedBy != null  and updatedBy != ''">updated_by,</if>
+            <if test="updatedTime != null ">updated_time,</if>
+            <if test="createdBy != null  and createdBy != ''">created_by,</if>
+            <if test="createdTime != null ">created_time,</if>
+            <if test="status != null  and status != ''">status,</if>
+            <if test="extra5 != null  and extra5 != ''">extra5,</if>
+            <if test="extra4 != null  and extra4 != ''">extra4,</if>
+            <if test="extra3 != null  and extra3 != ''">extra3,</if>
+            <if test="extra2 != null  and extra2 != ''">extra2,</if>
+            <if test="extra1 != null  and extra1 != ''">extra1,</if>
+            <if test="instanceId != null  and instanceId != ''">instance_id,</if>
+            <if test="id != null ">id,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="engineerArriveTime != null ">#{engineerArriveTime},</if>
+            <if test="engineerAcceptTime != null ">#{engineerAcceptTime},</if>
+            <if test="facturerAcceptTime != null ">#{facturerAcceptTime},</if>
+            <if test="facturer != null  and facturer != ''">#{facturer},</if>
+            <if test="remarks != null ">#{remarks},</if>
+            <if test="dealNotes != null ">#{dealNotes},</if>
+            <if test="implementId != null  and implementId != ''">#{implementId},</if>
+            <if test="flowNo != null  and flowNo != ''">#{flowNo},</if>
+            <if test="telephoneFollow != null  and telephoneFollow != ''">#{telephoneFollow},</if>
+            <if test="requestId != null  and requestId != ''">#{requestId},</if>
+            <if test="source != null  and source != ''">#{source},</if>
+            <if test="reportDepartment != null  and reportDepartment != ''">#{reportDepartment},</if>
+            <if test="file != null  and file != ''">#{file},</if>
+            <if test="cancleNote != null  and cancleNote != ''">#{cancleNote},</if>
+            <if test="equipmentModelB != null  and equipmentModelB != ''">#{equipmentModelB},</if>
+            <if test="equipmentNameB != null  and equipmentNameB != ''">#{equipmentNameB},</if>
+            <if test="equipmentTypeB != null  and equipmentTypeB != ''">#{equipmentTypeB},</if>
+            <if test="serviceEvaluation != null  and serviceEvaluation != ''">#{serviceEvaluation},</if>
+            <if test="faultType != null  and faultType != ''">#{faultType},</if>
+            <if test="solution != null  and solution != ''">#{solution},</if>
+            <if test="completeTime != null ">#{completeTime},</if>
+            <if test="arriveTime != null  and arriveTime != ''">#{arriveTime},</if>
+            <if test="orderTime != null ">#{orderTime},</if>
+            <if test="assignedPerson != null  and assignedPerson != ''">#{assignedPerson},</if>
+            <if test="assignedGroup != null  and assignedGroup != ''">#{assignedGroup},</if>
+            <if test="contactDetails != null  and contactDetails != ''">#{contactDetails},</if>
+            <if test="contact != null  and contact != ''">#{contact},</if>
+            <if test="equipmentModel != null  and equipmentModel != ''">#{equipmentModel},</if>
+            <if test="priority != null  and priority != ''">#{priority},</if>
+            <if test="scopeInfluence != null  and scopeInfluence != ''">#{scopeInfluence},</if>
+            <if test="equipmentName != null  and equipmentName != ''">#{equipmentName},</if>
+            <if test="urgent != null ">#{urgent},</if>
+            <if test="expectTime != null ">#{expectTime},</if>
+            <if test="equipmentType != null  and equipmentType != ''">#{equipmentType},</if>
+            <if test="faultDescription != null  and faultDescription != ''">#{faultDescription},</if>
+            <if test="implementNo != null  and implementNo != ''">#{implementNo},</if>
+            <if test="chmType != null  and chmType != ''">#{chmType},</if>
+            <if test="title != null  and title != ''">#{title},</if>
+            <if test="currentHandlerId != null  and currentHandlerId != ''">#{currentHandlerId},</if>
+            <if test="stage != null  and stage != ''">#{stage},</if>
+            <if test="updatedBy != null  and updatedBy != ''">#{updatedBy},</if>
+            <if test="updatedTime != null ">#{updatedTime},</if>
+            <if test="createdBy != null  and createdBy != ''">#{createdBy},</if>
+            <if test="createdTime != null ">#{createdTime},</if>
+            <if test="status != null  and status != ''">#{status},</if>
+            <if test="extra5 != null  and extra5 != ''">#{extra5},</if>
+            <if test="extra4 != null  and extra4 != ''">#{extra4},</if>
+            <if test="extra3 != null  and extra3 != ''">#{extra3},</if>
+            <if test="extra2 != null  and extra2 != ''">#{extra2},</if>
+            <if test="extra1 != null  and extra1 != ''">#{extra1},</if>
+            <if test="instanceId != null  and instanceId != ''">#{instanceId},</if>
+            <if test="id != null ">#{id},</if>
+        </trim>
+    </insert>
+
+    <update id="updateDesignBizChm" parameterType="DesignBizChm">
+        update design_biz_chm
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="engineerArriveTime != null ">engineer_arrive_time = #{engineerArriveTime},</if>
+            <if test="engineerAcceptTime != null ">engineer_accept_time = #{engineerAcceptTime},</if>
+            <if test="facturerAcceptTime != null ">facturer_accept_time = #{facturerAcceptTime},</if>
+            <if test="facturer != null  and facturer != ''">facturer = #{facturer},</if>
+            <if test="remarks != null ">remarks = #{remarks},</if>
+            <if test="dealNotes != null ">deal_notes = #{dealNotes},</if>
+            <if test="implementId != null  and implementId != ''">implement_Id = #{implementId},</if>
+            <if test="flowNo != null  and flowNo != ''">flow_no = #{flowNo},</if>
+            <if test="telephoneFollow != null  and telephoneFollow != ''">telephone_follow = #{telephoneFollow},</if>
+            <if test="requestId != null  and requestId != ''">requestId = #{requestId},</if>
+            <if test="source != null  and source != ''">source = #{source},</if>
+            <if test="reportDepartment != null  and reportDepartment != ''">report_department = #{reportDepartment},</if>
+            <if test="file != null  and file != ''">file = #{file},</if>
+            <if test="cancleNote != null  and cancleNote != ''">cancle_note = #{cancleNote},</if>
+            <if test="equipmentModelB != null  and equipmentModelB != ''">equipment_model_b = #{equipmentModelB},</if>
+            <if test="equipmentNameB != null  and equipmentNameB != ''">equipment_name_b = #{equipmentNameB},</if>
+            <if test="equipmentTypeB != null  and equipmentTypeB != ''">equipment_type_b = #{equipmentTypeB},</if>
+            <if test="serviceEvaluation != null  and serviceEvaluation != ''">service_evaluation = #{serviceEvaluation},</if>
+            <if test="faultType != null  and faultType != ''">fault_type = #{faultType},</if>
+            <if test="solution != null  and solution != ''">solution = #{solution},</if>
+            <if test="completeTime != null ">complete_time = #{completeTime},</if>
+            <if test="arriveTime != null  and arriveTime != ''">arrive_time = #{arriveTime},</if>
+            <if test="orderTime != null ">order_time = #{orderTime},</if>
+            <if test="assignedPerson != null  and assignedPerson != ''">assigned_person = #{assignedPerson},</if>
+            <if test="assignedGroup != null  and assignedGroup != ''">assigned_group = #{assignedGroup},</if>
+            <if test="contactDetails != null  and contactDetails != ''">contact_details = #{contactDetails},</if>
+            <if test="contact != null  and contact != ''">contact = #{contact},</if>
+            <if test="equipmentModel != null  and equipmentModel != ''">equipment_model = #{equipmentModel},</if>
+            <if test="priority != null  and priority != ''">priority = #{priority},</if>
+            <if test="scopeInfluence != null  and scopeInfluence != ''">scope_influence = #{scopeInfluence},</if>
+            <if test="equipmentName != null  and equipmentName != ''">equipment_name = #{equipmentName},</if>
+            <if test="urgent != null ">urgent = #{urgent},</if>
+            <if test="expectTime != null ">expect_time = #{expectTime},</if>
+            <if test="equipmentType != null  and equipmentType != ''">equipment_type = #{equipmentType},</if>
+            <if test="faultDescription != null  and faultDescription != ''">fault_Description = #{faultDescription},</if>
+            <if test="implementNo != null  and implementNo != ''">implement_no = #{implementNo},</if>
+            <if test="chmType != null  and chmType != ''">chm_type = #{chmType},</if>
+            <if test="title != null  and title != ''">title = #{title},</if>
+            <if test="currentHandlerId != null  and currentHandlerId != ''">current_handler_id = #{currentHandlerId},</if>
+            <if test="stage != null  and stage != ''">stage = #{stage},</if>
+            <if test="updatedBy != null  and updatedBy != ''">updated_by = #{updatedBy},</if>
+            <if test="updatedTime != null ">updated_time = #{updatedTime},</if>
+            <if test="createdBy != null  and createdBy != ''">created_by = #{createdBy},</if>
+            <if test="createdTime != null ">created_time = #{createdTime},</if>
+            <if test="status != null  and status != ''">status = #{status},</if>
+            <if test="extra5 != null  and extra5 != ''">extra5 = #{extra5},</if>
+            <if test="extra4 != null  and extra4 != ''">extra4 = #{extra4},</if>
+            <if test="extra3 != null  and extra3 != ''">extra3 = #{extra3},</if>
+            <if test="extra2 != null  and extra2 != ''">extra2 = #{extra2},</if>
+            <if test="extra1 != null  and extra1 != ''">extra1 = #{extra1},</if>
+            <if test="instanceId != null  and instanceId != ''">instance_id = #{instanceId},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteDesignBizChmById" parameterType="Long">
+        delete from design_biz_chm where id = #{id}
+    </delete>
+
+    <delete id="deleteDesignBizChmByIds" parameterType="String">
+        delete from design_biz_chm where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>

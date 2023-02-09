@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:include="include :: header('机房出入登记详情')"/>
+    <th:block th:include="include :: select2-css"/>
+    <th:block th:include="include :: datetimepicker-css"/>
+</head>
+<body>
+<div class="main-content">
+    <form id="form-computerRoom-add" class="form-horizontal" th:object="${computerRoom}">
+        <input name="ownerId" type="hidden" id="ownerId"/>
+        <input name="id" type="hidden" id="ids" th:value="*{id}">
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-heading" style="background-color: #3c8dbc" data-toggle="collapse" data-target="#collapse1">
+                    <h4 class="panel-title" >
+                        基本信息
+                    </h4>
+                </div>
+                <br/>
+                <div id="collapse1" class="panel-collapse in">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label is-required">机房出入编号：</label>
+                                <div class="col-sm-8">
+                                    <input id="computerApplyNo" autocomplete="off" name="computerApplyNo" type="text"  th:value="*{computerApplyNo}" class="form-control"  required readonly>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label is-required">申请处室：</label>
+                                <div class="col-sm-8">
+                                    <input name="applyOrgId" id="applyOrgId" class="form-control" type="hidden"
+                                           th:value="*{applyOrgId}">
+                                    <input id="applyOrgName" name="applyOrgName" type="text" class="form-control" readonly
+                                           th:value="*{applyOrgName}" required/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label is-required">申请人：</label>
+                                <div class="col-sm-8">
+                                    <input name="applyUserId" id="applyUserId" class="form-control" type="hidden"
+                                           th:value="*{applyUserId}">
+                                    <input name="applyUserName" id="applyUserName" class="form-control" type="text" readonly
+                                           th:value="*{applyUserName}"  maxlength="18" required/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label is-required">进入机房所属中心：</label>
+                                <div class="col-sm-8">
+                                    <select id="computerCenter" name="computerCenter" th:field="*{computerCenter}" class="form-control" readonly="readonly" disabled="disabled">
+                                        <option value="">请选择</option>
+                                        <option th:each="itype : ${moduleList}" th:text="${itype.name}" th:value="${itype.id}" th:selected="${itype.id eq computerCenter}"></option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label is-required">进入机房模块：</label>
+                                <div class="col-sm-8">
+                                    <input id="computerRoomModuleName" name="computerRoomModuleName" placeholder="请填写机房模块" th:value="*{computerRoomModuleName}" class="form-control"  readonly="readonly" disabled="disabled">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label is-required">陪同人员1：</label>
+                                <div class="col-sm-8">
+                                    <select  id="accompanyUserId" name="accompanyUserId" class="form-control" th:field="*{accompanyUserId}"  disabled="disabled"  readonly="readonly">
+                                        <option value="">请选择</option>
+                                        <option th:each="user : ${userlist}" th:text="${user.pname}" th:value="${user.pId}" th:selected="${user.pId eq accompanyUserId}"></option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">陪同人员2：</label>
+                                <div class="col-sm-8">
+                                    <select  id="accompanyUserIdTwo" name="accompanyUserIdTwo" class="form-control" th:field="*{accompanyUserIdTwo}" disabled="disabled"  readonly="readonly" >
+                                        <option value="">请选择</option>
+                                        <option th:each="user : ${userlist}" th:text="${user.pname}" th:value="${user.pId}" th:selected="${user.pId eq accompanyUserIdTwo}"></option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label is-required">是否紧急状态：</label>
+                                <div class="col-sm-8">
+                                    <select  id="isUrgency" name="isUrgency" class="form-control" onchange="isUrgencyChange()" readonly="readonly" disabled="disabled" >
+                                        <option value="">请选择</option>
+                                        <option th:selected="*{isUrgency == '0'}" value="0">否</option>
+                                        <option th:selected="*{isUrgency == '1'}" value="1">是</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label is-required">预计进入时间：</label>
+                                <div class="col-sm-8">
+                                    <input type="text" autocomplete="off" class="form-control" placeholder="yyyy-MM-dd hh:mm:ss" id="predictInTime"
+                                           name="predictInTime"  onchange="checkStartTime()" th:value="*{predictInTime}" readonly/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label is-required">预计离开时间：</label>
+                                <div class="col-sm-8">
+                                    <input type="text" autocomplete="off" class="form-control" placeholder="yyyy-MM-dd hh:mm:ss" id="predictOutTime"
+                                           name="predictOutTime" onchange="checkEndTime()" th:value="*{predictOutTime}"   readonly />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label is-required">工作内容：</label>
+                                <div class="col-sm-10">
+                                    <input id="workContentIds" name="workContentIds" type="hidden" class="form-control" />
+                                    <input id="workContent" autocomplete="off" name="workContent" type="text" placeholder="请选择相应工作内容" class="form-control"  th:value="*{workContent}" readonly>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label is-required">具体工作描述：</label>
+                                <div class="col-sm-10">
+                                    <textarea rows="10" cols="20" autocomplete="off" id="workDescription" name="workDescription"
+                                              class="form-control" maxlength="1300" th:text="*{workDescription}"  readonly></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row" style="margin-top: 10px">
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label is-required">是否为临时人员：</label>
+                        <div class="col-sm-8">
+                            <select  id="isTemporary" name="isTemporary" class="form-control" onchange="isTemporaryChange()" readonly="readonly" disabled="disabled" >
+                                <option value="">请选择</option>
+                                <option th:selected="*{isTemporary == '0'}"  value="0">否</option>
+                                <option th:selected="*{isTemporary == '1'}" value="1">是</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel panel-default" id="selectBusinessLine">
+                <div class="panel-heading" style="background-color: #3c8dbc" data-toggle="collapse" data-target="#collapse2">
+                    <h4 class="panel-title">
+                        临时出入机房人员
+                    </h4>
+                </div>
+                <br/>
+                <div id="collapse2" class="panel-collapse in">
+                    <div class="row" id="enuParam0">
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">姓名：</label>
+                                <div class="col-sm-8">
+                                    <input id="intoName0" name="intoName" class="form-control" type="text" th:value="*{intoName}" readonly>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">身份证号：</label>
+                                <div class="col-sm-8">
+                                    <input id="intoIdNumber0" name="intoIdNumber" class="form-control" maxlength="18" th:value="*{intoIdNumber}" readonly>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">电话：</label>
+                                <div class="col-sm-8">
+                                    <input id="intoPhone0" name="intoPhone" class="form-control" th:value="*{intoPhone}" readonly>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label">单位名称：</label>
+                                <div class="col-sm-8">
+                                    <input id="intoUnit0" name="intoUnit" class="form-control" th:value="*{intoUnit}" readonly>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row" style="margin-top: 10px">
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">是否携带物品：</label>
+                        <div class="col-sm-8">
+                            <select  id="isBelongings" name="isBelongings" class="form-control" onchange="isBelongingsChange()" readonly="readonly" disabled="disabled" >
+                                <option value="">请选择</option>
+                                <option th:selected="*{isBelongings == '0'}"  value="0">否</option>
+                                <option th:selected="*{isBelongings == '1'}" value="1">是</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel panel-default" id="isBelongingLine">
+                <div class="panel-heading" style="background-color: #3c8dbc" data-toggle="collapse" data-target="#collapse3">
+                    <h4 class="panel-title" >
+                        出入机房物品
+                    </h4>
+                </div>
+                <br/>
+                <div id="collapse3" class="panel-collapse in">
+                    <div class="row" id="enuParams0">
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label is-required">物品名称：</label>
+                                <div class="col-sm-8">
+                                    <input id="belongings0" name="belongings" class="form-control" type="text" th:value="*{belongings}" readonly>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label is-required">数量：</label>
+                                <div class="col-sm-8">
+                                    <input id="belongingsNum0" type="number" name="belongingsNum"  class="form-control" maxlength="2" th:value="*{belongingsNum}" readonly/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label is-required">进出情况：</label>
+                                <div class="col-sm-8">
+                                    <select id="inOutType0" name="inOutType" class="form-control" style="pointer-events: none;" th:with="type=${@pubParaValue.selectPubParaValueByParaName('in_out_type')}" th:field="*{inOutType}"  readonly disabled >
+                                        <option value="">请选择</option>
+                                        <option th:each="paraValue : ${type}" th:text="${paraValue.valueDetail}" th:value="${paraValue.valueDetail}" th:selected="${paraValue.valueDetail eq inOutType}"></option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label is-required">设备安装位置：</label>
+                                <div class="col-sm-8">
+                                    <input id="installSite0" name="installSite" class="form-control" th:value="*{installSite}" readonly>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel panel-default" id="registerLine">
+                <div class="panel-heading" style="background-color: #3c8dbc" data-toggle="collapse" data-target="#collapse4">
+                    <h4 class="panel-title" >
+                        登记
+                    </h4>
+                </div>
+                <br/>
+                <div id="collapse4" class="panel-collapse in">
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label is-required">登记时间：</label>
+                                <div class="col-sm-8">
+                                    <input type="text" autocomplete="off" class="form-control" placeholder="yyyy-MM-dd HH:mm:ss" id="registerTime"
+                                           name="registerTime" th:value="*{registerTime}"  readonly />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label is-required">实际陪同人员：</label>                                <div class="col-sm-8">
+                                <input id="registerAccompanyUserName" name="registerAccompanyUserName" class="form-control" type="text" th:value="*{registerAccompanyUserName}" readonly>
+                            </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label is-required">实际进入时间：</label>
+                                <div class="col-sm-8">
+                                    <input type="text" autocomplete="off" class="form-control" placeholder="yyyy-MM-dd HH:mm:ss" id="realityIntoTime"
+                                           name="realityIntoTime" th:value="*{realityIntoTime}"   readonly/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label is-required">实际离开时间：</label>
+                                <div class="col-sm-8">
+                                    <input type="text" autocomplete="off" class="form-control" placeholder="yyyy-MM-dd HH:mm:ss" id="realityOuttoTime"
+                                           name="realityOuttoTime"  th:value="*{realityOuttoTime}"  readonly/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label is-required">实际临时进入人员：</label>
+                                <div class="col-sm-8">
+                                    <input id="realityIntoPersonnel" name="realityIntoPersonnel" class="form-control" type="text" th:value="*{realityIntoPersonnel}" readonly>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label is-required">实际进入机房模块：</label>
+                                <div class="col-sm-8">
+                                    <input id="realityModule" name="realityModule" class="form-control" type="text" th:value="*{realityModule}" readonly>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row" th:if="*{isBelongings == '1'}" style="margin: 0 auto; max-width: 95%;">
+                        <div class="panel panel-default" id="realityBelongingLine">
+                            <div class="panel-heading" style="background-color: #999999" data-toggle="collapse" data-target="#collapse5">
+                                <h4 class="panel-title" >
+                                    实际进入机房物品
+                                </h4>
+                            </div>
+                            <br/>
+                            <div id="collapse5" class="panel-collapse in">
+                                <div class="row" id="enuParamer0">
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label is-required">物品名称：</label>
+                                            <div class="col-sm-8">
+                                                <input id="realityBelongings0" name="realityBelongings" class="form-control" type="text" th:value="*{realityBelongings}" readonly>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label is-required">数量：</label>
+                                            <div class="col-sm-8">
+                                                <input id="realityBelongingsNum0" type="number" name="realityBelongingsNum"  onchange=checkNum(this)  class="form-control" maxlength="2" th:value="*{realityBelongingsNum}" readonly/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row"  style="margin-top: 10px">
+                        <div class="col-sm-6">
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label ">备注：</label>
+                                <div class="col-sm-8">
+                                    <textarea rows="3" cols="6" autocomplete="off" id="remark" name="remark"
+                                              class="form-control" maxlength="500" th:text="*{remark}" readonly></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<div class="row">
+    <div class="col-sm-offset-5 col-sm-10">
+        <button type="button" class="btn btn-sm btn-danger" onclick="closeItem()"><i class="fa fa-remove"></i>关 闭
+        </button>
+    </div>
+</div>
+<th:block th:include="include :: footer"/>
+<!--<th:block th:include="include :: select2-js"/>-->
+<th:block th:include="include :: datetimepicker-js"/>
+<script th:src="@{/js/activiti.js}"></script>
+<script th:inline="javascript">
+    var prefix_attachment = ctx + "pub/attachment";
+    var prefix_version = ctx + "computerRoom/apply";
+    $(function () {
+        $("#registerTime").datetimepicker({
+            format: "yyyy-mm-dd hh:ii:ss",
+            autoclose: true,
+            minView:0,
+            minuteStep:1,
+            Date:new Date()
+        });
+
+        $("#realityIntoTime").datetimepicker({
+            format: "yyyy-mm-dd hh:ii:ss",
+            autoclose: true,
+            minView:0,
+            minuteStep:1,
+            Date:new Date()
+        });
+        $("#realityOuttoTime").datetimepicker({
+            format: "yyyy-mm-dd hh:ii:ss",
+            autoclose: true,
+            minView:0,
+            minuteStep:1,
+            Date:new Date()
+        });
+        var optionsfj = {
+            url: prefix_attachment + "/list",
+            id: 'file-table',
+            createUrl: prefix_attachment + "/add",
+            updateUrl: prefix_attachment + "/edit/{id}",
+            removeUrl: prefix_attachment + "/remove",
+            detailUrl: prefix_attachment + "/edit/{id}",
+            sortName: "fileTime",
+            singleSelect: true,
+            clickToSelect: true,
+            sortOrder: "desc",
+            toolbar: "toolbar1",
+            queryParams: queryParams,
+            modalName: "附件列表",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'atId',
+                    title: '附件ID',
+                    visible: false
+                },
+                {
+                    field: 'fileName',
+                    title: '文件名称'
+                },
+                {
+                    field: 'person.pName',
+                    title: '上传人'
+                },
+                {
+                    field: 'size',
+                    title: '文件大小'
+                },
+                {
+                    field: 'memo',
+                    title: '文件描述'
+                },
+                {
+                    field: 'fileTime',
+                    title: '上传时间',
+                    formatter: function (value, row, index) {
+                        var startTime = '';
+                        if (value != '' && value != null) {
+                            var pattern = /(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/;
+                            startTime = value.replace(pattern, '$1-$2-$3 $4:$5:$6');
+                        }
+                        return startTime;
+                    }
+                }]
+        };
+        $.table.init(optionsfj);
+
+        var intoList = [[${intoList}]];
+
+        var belongingsList = [[${belongingsList}]];
+
+        var realitybelongingsList = [[${realitybelongingsList}]];
+        // 显示动态框
+        showBusiness(intoList);
+
+        showBelongings(belongingsList);
+
+        showRealityBelongings(realitybelongingsList);
+
+        isTemporaryChange();
+        isBelongingsChange();
+
+    });
+
+    function checkNum(elementObj){
+
+        var realityBelongingsNum =  $(elementObj).attr("id");
+        var index = realityBelongingsNum.slice(20);
+        //实际进入数量
+        var value = $("#"+realityBelongingsNum).val();
+        var belongingsNums = "belongingsNum"+index;
+        //预计携带数量
+        var belongingsNum = $("#"+belongingsNums).val();
+        if(value > belongingsNum){
+            $.modal.alertWarning("不允许，实际携带数量大于预计！");
+            $("#"+realityBelongingsNum).val("");
+
+        }
+
+
+    }
+
+    function isTemporaryChange(){
+        var isTemporary = $("#isTemporary").val();
+        if(isTemporary == '1' ){
+            //展示进入机房人员表格
+            $("#selectBusinessLine").show();
+        }else {
+            $("#selectBusinessLine").hide();
+        }
+    }
+
+    function isBelongingsChange(){
+        var isBelongings = $("#isBelongings").val();
+        if(isBelongings == '1'){
+            //展示携带物品信息
+            $("#isBelongingLine").show();
+        }else {
+            $("#isBelongingLine").hide();
+        }
+    }
+
+    var enuParam_index1 = 1;
+
+    var enuParam_index2 = 1;
+
+    // 显示动态框
+    function showBusiness(intoList) {
+
+        // 如果业务部门集合为空，则不做任何操作
+        if(intoList == null || intoList.length == 0){
+            return;
+        }
+
+        // 默认给第一个框赋值
+        $("#intoName0").val(intoList[0].intoName);
+        $("#intoIdNumber0").val(intoList[0].intoIdNumber);
+        $("#intoPhone0").val(intoList[0].intoPhone);
+        $("#intoUnit0").val(intoList[0].intoUnit);
+
+        // 大于1个时，需要动态增加并赋值
+        if(intoList.length>1){
+            for(var i=1;i<intoList.length;i++){
+                var business = intoList[i];
+                var intoName = business.intoName;
+                var intoIdNumber = business.intoIdNumber;
+                var intoPhone = business.intoPhone;
+                var intoUnit = business.intoUnit;
+                console.log(business);
+                var enuParam =
+                    "<div class=\"row\" id='enuParam"+i+"'>\n" +
+
+
+                    "\t\t\t\t\t<div class=\"col-sm-3\">\n" +
+                    "\t\t\t\t\t\t<div class=\"form-group\">\n" +
+                    "\t\t\t\t\t\t\t<label class=\"col-sm-4 control-label\">姓名"+i+"：</label>\n" +
+                    "\t\t\t\t\t\t\t<div class=\"col-sm-8\">\n" +
+                    "\t\t\t\t\t\t\t\t<input id=\"intoName"+i+"\" name=\"intoName\" class=\"form-control\" type='text' readonly>\n" +
+                    "\t\t\t\t\t\t\t</div>\n" +
+                    "\t\t\t\t\t\t</div>\n" +
+                    "\t\t\t\t\t</div>\n" +
+
+                    "\t\t\t\t\t<div class=\"col-sm-3\">\n" +
+                    "\t\t\t\t\t\t<div class=\"form-group\">\n" +
+                    "\t\t\t\t\t\t\t<label class=\"col-sm-4 control-label\">身份证号"+i+"：</label>\n" +
+                    "\t\t\t\t\t\t\t<div class=\"col-sm-8\">\n" +
+                    "\t\t\t\t\t\t\t\t<input id=\"intoIdNumber"+i+"\" name=\"intoIdNumber\" class=\"form-control\" maxlength='18' type='text' readonly>\n" +
+                    "\t\t\t\t\t\t\t</div>\n" +
+                    "\t\t\t\t\t\t</div>\n" +
+                    "\t\t\t\t\t</div>\n" +
+
+                    "\t\t\t\t\t<div class=\"col-sm-3\">\n" +
+                    "\t\t\t\t\t\t<div class=\"form-group\">\n" +
+                    "\t\t\t\t\t\t\t<label class=\"col-sm-4 control-label\">电话"+i+"：</label>\n" +
+                    "\t\t\t\t\t\t\t<div class=\"col-sm-8\">\n" +
+                    "\t\t\t\t\t\t\t\t<input id=\"intoPhone"+i+"\" name=\"intoPhone\" class=\"form-control\" type='text' readonly>\n" +
+                    "\t\t\t\t\t\t\t</div>\n" +
+                    "\t\t\t\t\t\t</div>\n" +
+                    "\t\t\t\t\t</div>\n" +
+
+                    "\t\t\t\t\t<div class=\"col-sm-3\">\n" +
+                    "\t\t\t\t\t\t<div class=\"form-group\">\n" +
+                    "\t\t\t\t\t\t\t<label class=\"col-sm-4 control-label\">单位名称"+i+"：</label>\n" +
+                    "\t\t\t\t\t\t\t<div class=\"col-sm-8\">\n" +
+                    "\t\t\t\t\t\t\t\t<input id=\"intoUnit"+i+"\" name=\"intoUnit\" class=\"form-control\" type='text' readonly>\n" +
+                    "\t\t\t\t\t\t\t</div>\n" +
+                    "\t\t\t\t\t\t</div>\n" +
+                    "\t\t\t\t\t</div>\n" +
+
+                    "\t\t\t\t</div>";
+                $("#enuParam" + (i - 1)).after(enuParam);
+
+                $("#intoName"+i).val(intoName);
+                $("#intoIdNumber"+i).val(intoIdNumber);
+                $("#intoPhone"+i).val(intoPhone);
+                $("#intoUnit"+i).val(intoUnit);
+                enuParam_index = i+1;
+            }
+        }
+    }
+
+
+    // 显示物品动态框
+    function showBelongings(belongingsList) {
+
+        // 不做任何操作
+        if(belongingsList == null || belongingsList.length == 0){
+            return;
+        }
+
+        // 默认给第一个框赋值
+        $("#belongings0").val(belongingsList[0].belongings);
+        $("#belongingsNum0").val(belongingsList[0].belongingsNum);
+        //$("#inOutType0").val(belongingsList[0].inOutType);
+        $("#installSite0").val(belongingsList[0].installSite);
+
+        var options1 = "<option value=''>请选择</option>";
+        var businessOrgs = [[${@pubParaValue.selectPubParaValueByParaName('in_out_type')}]];
+        for(var ak=0;ak<businessOrgs.length;ak++){
+            options1 += "<option value='"+businessOrgs[ak].valueDetail+"'>"+businessOrgs[ak].valueDetail+"</option>";
+        }
+        // 大于1个，需要动态增加并赋值
+        if(belongingsList.length>1){
+            for(var i=1;i<belongingsList.length;i++){
+                var business = belongingsList[i];
+                var belongings = business.belongings;
+                var belongingsNum = business.belongingsNum;
+                var inOutType = business.inOutType;
+                var installSite = business.installSite;
+                console.log("物品："+business);
+                var enuParams =
+                    "<div class=\"row\" id='enuParams"+i+"'>\n" +
+
+
+                    "\t\t\t\t\t<div class=\"col-sm-3\">\n" +
+                    "\t\t\t\t\t\t<div class=\"form-group\">\n" +
+                    "\t\t\t\t\t\t\t<label class=\"col-sm-4 control-label is-required\">物品名称"+i+"：</label>\n" +
+                    "\t\t\t\t\t\t\t<div class=\"col-sm-8\">\n" +
+                    "\t\t\t\t\t\t\t\t<input id=\"belongings"+i+"\" name=\"belongings\" class=\"form-control\" type='text' readonly>\n" +
+                    "\t\t\t\t\t\t\t</div>\n" +
+                    "\t\t\t\t\t\t</div>\n" +
+                    "\t\t\t\t\t</div>\n" +
+
+                    "\t\t\t\t\t<div class=\"col-sm-3\">\n" +
+                    "\t\t\t\t\t\t<div class=\"form-group\">\n" +
+                    "\t\t\t\t\t\t\t<label class=\"col-sm-4 control-label is-required\">数量"+i+"：</label>\n" +
+                    "\t\t\t\t\t\t\t<div class=\"col-sm-8\">\n" +
+                    "\t\t\t\t\t\t\t\t<input id=\"belongingsNum"+i+"\" name=\"belongingsNum\" class=\"form-control\" maxlength='2' type='number' readonly>\n" +
+                    "\t\t\t\t\t\t\t</div>\n" +
+                    "\t\t\t\t\t\t</div>\n" +
+                    "\t\t\t\t\t</div>\n" +
+
+                    "\t\t\t\t\t<div class=\"col-sm-3\">\n" +
+                    "\t\t\t\t\t\t<div class=\"form-group\">\n" +
+                    "\t\t\t\t\t\t\t<label class=\"col-sm-4 control-label is-required\">进出情况"+i+"：</label>\n" +
+                    "\t\t\t\t\t\t\t<div class=\"col-sm-8\">\n" +
+                    "\t\t\t\t\t\t\t\t<select id=\"inOutType"+i+"\" name=\"inOutType\" class=\"form-control\" readonly style=\"pointer-events: none;\" >\n" +
+                    options1 +
+                    "\t\t\t\t\t\t\t\t</select>\n" +
+                    "\t\t\t\t\t\t\t</div>\n" +
+                    "\t\t\t\t\t\t</div>\n" +
+                    "\t\t\t\t\t</div>\n" +
+
+                    "\t\t\t\t\t<div class=\"col-sm-3\">\n" +
+                    "\t\t\t\t\t\t<div class=\"form-group\">\n" +
+                    "\t\t\t\t\t\t\t<label class=\"col-sm-4 control-label is-required\">设备安装位置"+i+"：</label>\n" +
+                    "\t\t\t\t\t\t\t<div class=\"col-sm-8\">\n" +
+                    "\t\t\t\t\t\t\t\t<input id=\"installSite"+i+"\" name=\"installSite\" class=\"form-control\" type='text' readonly>\n" +
+                    "\t\t\t\t\t\t\t</div>\n" +
+                    "\t\t\t\t\t\t</div>\n" +
+                    "\t\t\t\t\t</div>\n" +
+
+                    "\t\t\t\t</div>";
+                $("#enuParams" + (i - 1)).after(enuParams);
+
+                $("#belongings"+i).val(belongings);
+                $("#belongingsNum"+i).val(belongingsNum);
+                $("#inOutType"+i).val(inOutType);
+                $("#installSite"+i).val(installSite);
+                enuParam_index1 = i+1;
+            }
+        }
+    }
+
+
+
+    // 显示实际进入物品动态框
+    function showRealityBelongings(belongingsList) {
+
+        // 不做任何操作
+        if(belongingsList == null || belongingsList.length == 0){
+            return;
+        }
+
+        // 默认给第一个框赋值
+        $("#realityBelongings0").val(belongingsList[0].realityBelongings);
+        $("#realityBelongingsNum0").val(belongingsList[0].realityBelongingsNum);
+
+
+        // 大于1个，需要动态增加并赋值
+        if(belongingsList.length>1){
+            for(var i=1;i<belongingsList.length;i++){
+                var business = belongingsList[i];
+                var belongings = business.realityBelongings;
+                var belongingsNum = business.realityBelongingsNum;
+
+                var enuParamer =
+                    "<div class=\"row\" id='enuParamer"+i+"'>\n" +
+
+
+                    "\t\t\t\t\t<div class=\"col-sm-6\">\n" +
+                    "\t\t\t\t\t\t<div class=\"form-group\">\n" +
+                    "\t\t\t\t\t\t\t<label class=\"col-sm-4 control-label is-required\">物品名称"+i+"：</label>\n" +
+                    "\t\t\t\t\t\t\t<div class=\"col-sm-8\">\n" +
+                    "\t\t\t\t\t\t\t\t<input id=\"realityBelongings"+i+"\" name=\"realityBelongings\" class=\"form-control\" type='text' readonly>\n" +
+                    "\t\t\t\t\t\t\t</div>\n" +
+                    "\t\t\t\t\t\t</div>\n" +
+                    "\t\t\t\t\t</div>\n" +
+
+                    "\t\t\t\t\t<div class=\"col-sm-6\">\n" +
+                    "\t\t\t\t\t\t<div class=\"form-group\">\n" +
+                    "\t\t\t\t\t\t\t<label class=\"col-sm-4 control-label is-required\">数量"+i+"：</label>\n" +
+                    "\t\t\t\t\t\t\t<div class=\"col-sm-8\">\n" +
+                    "\t\t\t\t\t\t\t\t<input id=\"realityBelongingsNum"+i+"\" name=\"realityBelongingsNum\" class=\"form-control\" maxlength='2' type='number' readonly>\n" +
+                    "\t\t\t\t\t\t\t</div>\n" +
+                    "\t\t\t\t\t\t</div>\n" +
+                    "\t\t\t\t\t</div>\n" +
+
+
+                    "\t\t\t\t</div>";
+                $("#enuParamer" + (i - 1)).after(enuParamer);
+
+                $("#realityBelongings"+i).val(belongings);
+                $("#realityBelongingsNum"+i).val(belongingsNum);
+                enuParam_index2 = i+1;
+            }
+        }
+    }
+
+
+    function remove1() {
+        var enuParamer = document.getElementById("enuParamer" + (enuParam_index2 - 1));
+        if(enuParam_index2 <= 1){
+            $.modal.alertWarning("至少保留一行机房物品选择框！");
+        }else{
+            enuParamer.parentNode.removeChild(enuParamer);
+            enuParam_index2--;
+        }
+    }
+
+
+
+    //查询当前登陆人的处室人员
+    function selectPersonList(){
+        $.modal.open("选择陪同人员", prefix_version + "/selectAccompanyUser");
+    }
+
+    // 选择工作内容(可以多选)
+    function selectWorkContent() {
+        $.modal.open("选择工作内容", prefix_version + "/selectWorkContent");
+    }
+
+    // 选择外围系统(可以多选)
+    function selectApplication() {
+        $.modal.open("选择外围系统", prefix_version + "/selectApplication");
+    }
+
+    // 校验开始升级时间
+    function checkStartTime(){
+        var startUpgradeTime = $("#registerTime").val();
+        var startUpgradeDate = new Date(startUpgradeTime);
+        var nowDate = new Date();// 当前系统时间
+        if(startUpgradeDate <= nowDate.getTime()){
+            $.modal.alertWarning("登记时间必须大于当前系统时间！");
+            $("#registerTime").val("");
+            return;
+        }
+    }
+
+
+    // 校验结束升级时间
+    function checkEndTime(){
+        var startUpgradeTime = $("#realityIntoTime").val();
+        var endUpgradeTime = $("#realityOuttoTime").val();
+        var startUpgradeDate = new Date(startUpgradeTime);// 开始升级时间
+        var endUpgradeDate = new Date(endUpgradeTime);// 结束升级时间
+        if(startUpgradeDate.getTime() >= endUpgradeDate.getTime()){
+            $.modal.alertWarning("实际离开时间必须大于实际进入时间！");
+            $("#realityOuttoTime").val("");
+            return;
+        }
+    }
+
+
+
+
+    // 提交
+    function submit() {
+        if ($.validate.form()) {
+            var data = $("#form-computerRoom-add").serializeArray();
+            $.operate.save(prefix_version + "/saveRegisterEdit", data);
+        } else {
+            $.modal.alertWarning("有必填参数未填写。");
+        }
+    };
+
+    // 暂存
+    function save() {
+        var idCard = checkIdcard();
+        if (!idCard) {
+            return;
+        }
+        var data = $("#form-fmbiz-add").serializeArray();
+        $.operate.saveTab(prefix_version + "/save", data);
+    };
+
+
+    // 附件上传页面
+    function upload() {
+        var ownerId = $("#ids").val();
+        var url = prefix_attachment + "/upload/" + ownerId;
+        $.modal.open("附件上传", url,'1100','620');
+    }
+
+
+
+    // 附件下载
+    function downloadAttachment() {
+        var rows = $.table.selectFirstColumns();
+        var atId = rows[0];
+        var ownerId = $("#ids").val();
+        var url = prefix_attachment + "/download/" + ownerId + "/" + atId;
+        window.location.href = url;
+    }
+
+    // 选择应用系统（只能单选）
+    function selectOgSysListByCondition() {
+        $.modal.open("选择应用系统", prefix_version + "/sysGrouplist");
+    }
+
+
+    // 选择创建机构（只能单选）
+    function selectogOrg() {
+        $.modal.open("选择创建机构", prefix_version + "/selectogOrg");
+    }
+
+    function queryParams(params) {
+        var search = $.table.queryParams(params);
+        search.ownerId = $("#ownerId").val() == '' ? 'version_public_add_no_owner_id' : $("#ownerId").val();
+        return search;
+    }
+
+
+
+
+    //根据系统查询工作组
+    function getGroupList(sysid) {
+    }
+
+</script>
+</body>
+</html>

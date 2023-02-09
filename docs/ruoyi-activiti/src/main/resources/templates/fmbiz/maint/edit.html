@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:include="include :: header('修改事件维护')"/>
+</head>
+<body class="white-bg">
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+    <form class="form-horizontal m" id="form-fw-edit"  th:object="${info}">
+        <input id="mId" name="mId" type="hidden" th:value="${mId}" />
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">事件标题:</label>
+                    <div class="col-sm-8">
+                        <input class="form-control" type="text" name="mTitle" id="mTitle" th:value="*{mTitle}" maxlength="64" required>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label class="col-xs-2 control-label " >事件描述:</label>
+                    <div class="col-xs-10">
+                        <textarea name="mDetail" id="mDetail"  class="form-control" th:maxlength="2000" th:field="*{mDetail}"
+                                  rows="10" ></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<div class="row">
+    <div class="col-sm-offset-5 col-sm-10">
+        <button type="button" class="btn btn-sm btn-primary" onclick="submitHandler()"><i class="fa fa-check"></i>提交</button>&nbsp;
+        <button type="button" class="btn btn-sm btn-danger" onclick="closeItem()"><i class="fa fa-window-close"></i>关闭 </button>
+    </div>
+</div>
+<th:block th:include="include :: footer" />
+<script type="text/javascript">
+
+    //** 关闭选项卡 */
+    function closeItem() {
+        var index = parent.layer.getFrameIndex(window.name);
+        parent.layer.close(index);//关闭当前页
+    }
+
+    var prefix = ctx + "fmbizmaint";
+
+    function submitHandler() {
+        var data = $("#form-fw-edit").serializeArray();
+        if ($.validate.form()) {
+            $.operate.save(prefix + "/edit", data);
+        }
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.form.mapper.RelationLogMapper">
+    
+    <resultMap type="RelationLog" id="RelationLogResult">
+        <result property="endDate"    column="end_date"    />
+        <result property="startDate"    column="start_date"    />
+        <result property="currentHandlerId"    column="current_handler_id"    />
+        <result property="status"    column="status"    />
+        <result property="requestSummary"    column="request_summary"    />
+        <result property="requestType"    column="request_type"    />
+        <result property="relationNo"    column="relation_no"    />
+        <result property="requestNo"    column="request_no"    />
+        <result property="relationType"    column="relation_type"    />
+        <result property="id"    column="id"    />
+    </resultMap>
+
+    <sql id="selectRelationLogVo">
+        select end_date, start_date, current_handler_id, status, request_summary, request_type, relation_no, request_no, relation_type, id from relation_log
+    </sql>
+
+    <select id="selectRelationLogList" parameterType="RelationLog" resultMap="RelationLogResult">
+        <include refid="selectRelationLogVo"/>
+        <where>  
+            <if test="endDate != null "> and end_date = #{endDate}</if>
+            <if test="startDate != null "> and start_date = #{startDate}</if>
+            <if test="currentHandlerId != null  and currentHandlerId != ''"> and current_handler_id = #{currentHandlerId}</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+            <if test="requestSummary != null  and requestSummary != ''"> and request_summary = #{requestSummary}</if>
+            <if test="requestType != null  and requestType != ''"> and request_type = #{requestType}</if>
+            <if test="relationNo != null  and relationNo != ''"> and relation_no = #{relationNo}</if>
+            <if test="requestNo != null  and requestNo != ''"> and request_no = #{requestNo}</if>
+            <if test="relationType != null  and relationType != ''"> and relation_type = #{relationType}</if>
+        </where>
+    </select>
+    
+    <select id="selectRelationLogById" parameterType="Long" resultMap="RelationLogResult">
+        <include refid="selectRelationLogVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertRelationLog" parameterType="RelationLog">
+        insert into relation_log
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="endDate != null ">end_date,</if>
+            <if test="startDate != null ">start_date,</if>
+            <if test="currentHandlerId != null  and currentHandlerId != ''">current_handler_id,</if>
+            <if test="status != null  and status != ''">status,</if>
+            <if test="requestSummary != null  and requestSummary != ''">request_summary,</if>
+            <if test="requestType != null  and requestType != ''">request_type,</if>
+            <if test="relationNo != null  and relationNo != ''">relation_no,</if>
+            <if test="requestNo != null  and requestNo != ''">request_no,</if>
+            <if test="relationType != null  and relationType != ''">relation_type,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="endDate != null ">#{endDate},</if>
+            <if test="startDate != null ">#{startDate},</if>
+            <if test="currentHandlerId != null  and currentHandlerId != ''">#{currentHandlerId},</if>
+            <if test="status != null  and status != ''">#{status},</if>
+            <if test="requestSummary != null  and requestSummary != ''">#{requestSummary},</if>
+            <if test="requestType != null  and requestType != ''">#{requestType},</if>
+            <if test="relationNo != null  and relationNo != ''">#{relationNo},</if>
+            <if test="requestNo != null  and requestNo != ''">#{requestNo},</if>
+            <if test="relationType != null  and relationType != ''">#{relationType},</if>
+         </trim>
+    </insert>
+
+    <update id="updateRelationLog" parameterType="RelationLog">
+        update relation_log
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="endDate != null ">end_date = #{endDate},</if>
+            <if test="startDate != null ">start_date = #{startDate},</if>
+            <if test="currentHandlerId != null  and currentHandlerId != ''">current_handler_id = #{currentHandlerId},</if>
+            <if test="status != null  and status != ''">status = #{status},</if>
+            <if test="requestSummary != null  and requestSummary != ''">request_summary = #{requestSummary},</if>
+            <if test="requestType != null  and requestType != ''">request_type = #{requestType},</if>
+            <if test="relationNo != null  and relationNo != ''">relation_no = #{relationNo},</if>
+            <if test="requestNo != null  and requestNo != ''">request_no = #{requestNo},</if>
+            <if test="relationType != null  and relationType != ''">relation_type = #{relationType},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteRelationLogById" parameterType="Long">
+        delete from relation_log where id = #{id}
+    </delete>
+
+    <delete id="deleteRelationLogByIds" parameterType="String">
+        delete from relation_log where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

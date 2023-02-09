@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('审批例行变更计划')" />
+    <th:block th:include="include :: datetimepicker-css" />
+    <th:block th:include="include :: select2-css"/>
+</head>
+<body class="gray-bg">
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-12 search-collapse">
+            <form id="post-form">
+                <input type="hidden" id="deptId" name="orgId">
+                <div class="row">
+                    <div class="select-list">
+                        <ul>
+                            <li>
+                                <p>计划单单号：</p>
+                                <input type="text" name="schedulingNo"/>
+                            </li>
+
+                            <li>
+                                <p>计划单标题：</p>
+                                <input type="text" name="schedulingName"/>
+                            </li>
+
+                            <li>
+                                <p>创建人：</p>
+                                <input type="text" name="createName"/>
+                            </li>
+
+                            <li>
+                                <p>创建机构：</p>
+                                <input type="text" name="orgName"/>
+                            </li>
+                            <li>
+                                <a class="btn btn-primary btn-rounded btn-sm" id="lxbgSearch" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-repeat"></i>&nbsp;重置</a>
+                            </li>
+
+                        </ul>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div class="btn-group-sm" id="toolbar" role="group">
+            <a class="btn btn-primary single disabled" onclick="authorlxbg()">
+                <i class="fa fa-default"></i> 审核
+            </a>
+        </div>
+
+        <div class="col-sm-12 select-table table-striped">
+            <table id="bootstrap-table" style="table-layout:fixed;"></table>
+        </div>
+    </div>
+
+</div>
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: datetimepicker-js" />
+<th:block th:include="include :: select2-js"/>
+<script th:src="@{/js/activiti.js}"></script>
+<script th:inline="javascript">
+
+    var datas = [[${@dict.getParaType('zd_plan_status')}]];
+
+    var prefix = ctx + "lxbg/auditlxbg";
+
+    var sch_prefix = ctx + "lxbg/addlxbg"
+
+    $(function() {
+
+        // 回车搜索
+        document.onkeydown = function(e){
+            var ev = document.all ? window.event : e;
+            if(ev.keyCode==13) {
+                $('#lxbgSearch').trigger('click');
+                return false;
+            }
+        };
+
+
+        var options = {
+            url: prefix + "/list",
+            createUrl: prefix + "/add",
+            detailUrl: prefix + "/detail/{id}",
+            updateUrl: prefix + "/edit/{id}",
+            removeUrl: prefix + "/remove",
+            exportUrl: prefix + "/export",
+            clickToSelect: true,
+            singleSelect:true,
+            queryParams:queryParams,
+            modalName: "查询待审批的例行计划",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'schedulingId',
+                    title: '计划单id',
+                    width: 300,
+                    visible: false
+                },
+                {
+                    field: 'schedulingNo',
+                    width: 150,
+                    title: '计划单编号'
+                },
+                {
+                    field: 'schedulingName',
+                    width: 250,
+                    title: '计划单标题',
+                    formatter:function (value,row,index) {
+                        return $.table.tooltip(value)
+                    }
+                },
+                {
+                    field: 'createName',
+                    width: 150,
+                    title: '创建人'
+                },
+                {
+                    field: 'createTime',
+                    width: 250,
+                    title: '创建时间',
+                    align: 'center',
+                    formatter: function (value, row, index) {
+                        var startTime = '';
+                        if(value!='' && value !=null){
+                            var pattern = /(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/;
+                            startTime = value.replace(pattern, '$1-$2-$3 $4:$5:$6');
+                        }
+                        return startTime;
+                    }
+                },
+                {
+                    field: 'orgName',
+                    width: 150,
+                    title: '创建机构',
+                },
+                {
+                    field: 'planStatus',
+                    width: 150,
+                    title: '计划状态',
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                        return selectDictLabel(datas, value);
+                    }
+                }]
+        };
+        $.table.init(options);
+    });
+
+
+
+    /*审核*/
+    function authorlxbg(){
+        var schedulingId = $.table.selectFirstColumns();
+        var url = prefix + "/lxbg/auditlxbg/" + schedulingId;
+        $.modal.openTab("代办事项处理",url);
+    }
+
+
+    function queryParams(params) {
+        var search = $.table.queryParams(params);
+        search.planStatus = '02';
+        return search;
+    }
+
+
+
+    function selectDictLabel(datas, value) {
+        var actions = [];
+        $.each(datas, function(index, dict) {
+            if (dict.value == ('' + value)) {
+                var listClass = $.common.equals("default", dict.listClass) || $.common.isEmpty(dict.listClass) ? "" : "badge badge-" + dict.listClass;
+                actions.push($.common.sprintf("<span class='%s'>%s</span>", listClass, dict.valueDetail));
+                return false;
+            }
+        });
+        return actions.join('');
+    }
+
+
+</script>
+</body>
+</html>

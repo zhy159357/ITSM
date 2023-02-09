@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="renderer" content="webkit">
+    <!--    <title>中国邮政储蓄银行</title>-->
+    <title>上海银行运维管控中台</title>
+    <!-- 避免IE使用兼容模式 -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link th:href="@{ca_favicon.ico}" rel="shortcut icon"/>
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet"/>
+    <link th:href="@{/css/jquery.contextMenu.min.css}" rel="stylesheet"/>
+    <link th:href="@{/css/font-awesome.min.css}" rel="stylesheet"/>
+    <link th:href="@{/css/animate.css}" rel="stylesheet"/>
+    <link th:href="@{/css/style.css}" rel="stylesheet"/>
+    <link th:href="@{/css/skins.css}" rel="stylesheet"/>
+    <link th:href="@{/ruoyi/css/ry-ui.css?v=4.5.1}" rel="stylesheet"/>
+
+    <meta name="keywords" content="视频客服"/>
+    <meta name="description" content="视频客服"/>
+    <meta name="content-type" content="text/html; charset=UTF-8"/>
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Cache-Control" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <!--360浏览器优先以webkit内核解析-->
+    <link rel="shortcut icon" href="ca_favicon.ico">
+    <link href="../static/tphone/js/webrtc/css/webrtc.popup-2.0.0.css"
+          th:href="@{/tphone/js/webrtc/css/webrtc.popup-2.0.0.css}" rel="stylesheet"/>
+    <!--第二版 添加的-->
+    <link href="../static/tphone/css/phone.css"
+          th:href="@{/tphone/css/phone.css}" rel="stylesheet"/>
+    <link href="../static/tphone/css/phonebar1.css"
+          th:href="@{/tphone/css/phonebar1.css}" rel="stylesheet"/>
+    <link href="../static/tphone/css/calllist.css"
+          th:href="@{/tphone/css/calllist.css}" rel="stylesheet"/>
+    <link href="../static/tphone/css/settingPage.css"
+          th:href="@{/tphone/css/settingPage.css}" rel="stylesheet"/>
+    <!--第三版 换的新版本  上边有的就没有添加-->
+    <link href="../static/tphone/iconfont/iconfont.css"
+          th:href="@{/tphone/iconfont/iconfont.css}" rel="stylesheet"/>
+
+</head>
+<body class="fixed-sidebar full-height-layout gray-bg" style="overflow: hidden">
+<object name="client"
+        classid="clsid:3A936095-1D1B-419F-B57B-FA98E41128CD"
+        style="height: 1pt; width:1pt"
+        codebase="WebSocketClient/WebSocketClient.cab#version=1,0,0,0" hidden>
+</object>
+<object name="client1"
+        classid="clsid:3A936095-1D1B-419F-B57B-FA98E41128CD"
+        style="height: 1pt; width: 1pt"
+        codebase="WebSocketClient/WebSocketClient.cab#version=1,0,0,0" hidden>
+</object>
+<div id="main-container" style="position: absolute;top: 1px;left:0px;z-index:100000;right:0px"></div>
+<div id="show_div"
+     style="display:none;position:absolute;top:10%;width:80%;border:16px solid ligthblue; background-color:blue; z-index:1000; overflow:auto;">
+    <div id="div"></div>
+    <div style="text-align:right;height:40pxk"><span style="font-size:16px;" onclick="CloseDiv()">关闭</span></div>
+</div>
+<div id="wrapper">
+    <input name="label" type="hidden" id="flag"/>
+
+    <!--左侧导航开始-->
+    <nav class="navbar-default navbar-static-side" role="navigation">
+        <div class="nav-close">
+            <i class="fa fa-times-circle"></i>
+        </div>
+        <a th:href="@{/index}">
+            <li class="logo hidden-xs ">
+                <!--                <span class="logo-lg"></span>-->
+                <!--<span class="logo-cos">-->
+                    <!--<img src="./img/an.png">-->
+
+                <!--</span>-->
+                <span class="logo-lg-ca">
+                    <img src="./img/logo.png">
+                </span>
+            </li>
+        </a>
+        <div class="sidebar-collapse" style="overflow: auto">
+            <ul class="nav" id="side-menu">
+                <li style="display: none">
+                    <div class="user-panel">
+                        <a class="menuItem noactive" title="个人中心" th:href="@{/system/peo/edit/{id}(id=${user.pId})}">
+                            <div class="hide" th:text="个人中心"></div>
+                            <div class="pull-left image">
+                                <img th:src="(${#strings.isEmpty(user.avatar)}) ? @{/img/profile.jpg} : @{${user.avatar}}"
+                                     th:onerror="this.src='img/profile.jpg'" class="img-circle" alt="User Image">
+                            </div>
+                        </a>
+                        <div class="pull-left info">
+                            <p>[[${user.loginName}]]</p>
+                            <a href="#"><i class="fa fa-circle text-success"></i> 在线</a>
+                            <a th:href="@{logout}" style="padding-left:5px;"><i class="fa fa-sign-out text-danger"></i>
+                                注销</a>
+                        </div>
+                    </div>
+                </li>
+                <li>
+                    <a class="menuItem" th:href="@{/system/main}"><i class="fa fa-home"></i> <span
+                            class="nav-label">工作台</span> </a>
+                </li>
+                <li th:each="menu : ${menus}">
+                    <a th:class="@{${!#strings.isEmpty(menu.url) && menu.url != '#'} ? ${menu.target}}"
+                       th:href="@{${#strings.isEmpty(menu.url)} ? |#| : ${menu.url}}">
+                        <i class="fa fa-bar-chart-o" th:class="${menu.icon}"></i>
+                        <span class="nav-label" th:text="${menu.menuName}">一级菜单</span>
+                        <span th:class="${#strings.isEmpty(menu.url) || menu.url == '#'} ? |fa arrow|"></span>
+                    </a>
+                    <ul class="nav nav-second-level collapse">
+                        <li th:each="cmenu : ${menu.children}">
+                            <a th:if="${#lists.isEmpty(cmenu.children)}"
+                               th:class="${#strings.isEmpty(cmenu.target)} ? |menuItem| : ${cmenu.target}"
+                               th:utext="${cmenu.menuName}" th:href="@{${cmenu.url}}">二级菜单</a>
+                            <a th:if="${not #lists.isEmpty(cmenu.children)}" href="#">[[${cmenu.menuName}]]<span
+                                    class="fa arrow"></span></a>
+                            <ul th:if="${not #lists.isEmpty(cmenu.children)}" class="nav nav-third-level">
+                                <li th:each="emenu : ${cmenu.children}">
+                                    <a th:if="${#lists.isEmpty(emenu.children)}"
+                                       th:class="${#strings.isEmpty(emenu.target)} ? |menuItem| : ${emenu.target}"
+                                       th:text="${emenu.menuName}" th:href="@{${emenu.url}}">三级菜单</a>
+                                    <a th:if="${not #lists.isEmpty(emenu.children)}" href="#">[[${emenu.menuName}]]<span
+                                            class="fa arrow"></span></a>
+                                    <ul th:if="${not #lists.isEmpty(emenu.children)}" class="nav nav-four-level">
+                                        <li th:each="fmenu : ${emenu.children}"><a
+                                                th:if="${#lists.isEmpty(fmenu.children)}"
+                                                th:class="${#strings.isEmpty(fmenu.target)} ? |menuItem| : ${fmenu.target}"
+                                                th:text="${fmenu.menuName}" th:href="@{${fmenu.url}}">四级菜单</a></li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                <li th:if="${demoEnabled}">
+                    <a href="#"><i class="fa fa-desktop"></i><span class="nav-label">实例演示</span><span
+                            class="fa arrow"></span></a>
+                    <ul class="nav nav-second-level collapse">
+                        <li><a>表单<span class="fa arrow"></span></a>
+                            <ul class="nav nav-third-level">
+                                <li hidden="true"><a class="menuItem" th:href="@{/demo/form/button}">按钮</a></li>
+                                <li><a class="menuItem" th:href="@{/demo/form/grid}">栅格</a></li>
+                                <li><a class="menuItem" th:href="@{/demo/form/select}">下拉框</a></li>
+                                <li><a class="menuItem" th:href="@{/demo/form/timeline}">时间轴</a></li>
+                                <li><a class="menuItem" th:href="@{/demo/form/basic}">基本表单</a></li>
+                                <li><a class="menuItem" th:href="@{/demo/form/cards}">卡片列表</a></li>
+                                <li><a class="menuItem" th:href="@{/demo/form/jasny}">功能扩展</a></li>
+                                <li><a class="menuItem" th:href="@{/demo/form/sortable}">拖动排序</a></li>
+                                <li><a class="menuItem" th:href="@{/demo/form/tabs_panels}">选项卡 & 面板</a></li>
+                                <li><a class="menuItem" th:href="@{/demo/form/validate}">表单校验</a></li>
+                                <li><a class="menuItem" th:href="@{/demo/form/wizard}">表单向导</a></li>
+                                <li><a class="menuItem" th:href="@{/demo/form/upload}">文件上传</a></li>
+                                <li><a class="menuItem" th:href="@{/demo/form/datetime}">日期和时间</a></li>
+                                <li><a class="menuItem" th:href="@{/demo/form/summernote}">富文本编辑器</a></li>
+                                <li><a class="menuItem" th:href="@{/demo/form/duallistbox}">左右互选组件</a></li>
+                                <li><a class="menuItem" th:href="@{/demo/form/autocomplete}">搜索自动补全</a></li>
+                                <li><a class="menuItem" th:href="@{/demo/form/cxselect}">多级联动下拉</a></li>
+                                <li><a class="menuItem" th:href="@{/demo/form/localrefresh}">Ajax局部刷新</a></li>
+                            </ul>
+                        </li>
+                        <li><a>表格<span class="fa arrow"></span></a>
+                            <ul class="nav nav-third-level">
+                                <li><a class="menuItem" th:href="@{/demo/table/search}">查询条件</a></li>
+                                <li><a class="menuItem" th:href="@{/demo/table/footer}">数据汇总</a></li>
+                                <li><a class="menuItem" th:href="@{/demo/table/groupHeader}">组合表头</a></li>
+                                <li><a class="menuItem" th:href="@{/demo/table/export}">表格导出</a></li>
+                                <li><a class="menuItem" th:href="@{/demo/table/remember}">翻页记住选择</a></li>
+                                <li><a class="menuItem" th:href="@{/demo/table/pageGo}">跳转至指定页</a></li>
+                                <li><a class="menuItem" th:href="@{/demo/table/params}">自定义查询参数</a></li>
+                                <li><a class="menuItem" th:href="@{/demo/table/multi}">初始多表格</a></li>
+                                <li><a class="menuItem" th:href="@{/demo/table/button}">点击按钮加载表格</a></li>
+                                <li><a class="menuItem" th:href="@{/demo/table/data}">直接加载表格数据</a></li>
+                                <li><a class="menuItem" th:href="@{/demo/table/fixedColumns}">表格冻结列</a></li>
+                                <li><a class="menuItem" th:href="@{/demo/table/event}">自定义触发事件</a></li>
+                                <li><a class="menuItem" th:href="@{/demo/table/headerStyle}">表格标题格式化</a></li>
+                                <li><a class="menuItem" th:href="@{/demo/table/detail}">表格细节视图</a></li>
+                                <li><a class="menuItem" th:href="@{/demo/table/child}">表格父子视图</a></li>
+                                <li><a class="menuItem" th:href="@{/demo/table/image}">表格图片预览</a></li>
+                                <li><a class="menuItem" th:href="@{/demo/table/curd}">动态增删改查</a></li>
+                                <li><a class="menuItem" th:href="@{/demo/table/reorder}">表格拖拽操作</a></li>
+                                <li><a class="menuItem" th:href="@{/demo/table/resizable}">表格列宽拖动</a></li>
+                                <li><a class="menuItem" th:href="@{/demo/table/editable}">表格行内编辑</a></li>
+                                <li><a class="menuItem" th:href="@{/demo/table/subdata}">主子表提交</a></li>
+                                <li><a class="menuItem" th:href="@{/demo/table/refresh}">表格自动刷新</a></li>
+                                <li><a class="menuItem" th:href="@{/demo/table/print}">表格打印配置</a></li>
+                                <li><a class="menuItem" th:href="@{/demo/table/other}">表格其他操作</a></li>
+                            </ul>
+                        </li>
+                        <li><a>弹框<span class="fa arrow"></span></a>
+                            <ul class="nav nav-third-level">
+                                <li><a class="menuItem" th:href="@{/demo/modal/dialog}">模态窗口</a></li>
+                                <li><a class="menuItem" th:href="@{/demo/modal/layer}">弹层组件</a></li>
+                                <li><a class="menuItem" th:href="@{/demo/modal/table}">弹层表格</a></li>
+                            </ul>
+                        </li>
+                        <li><a>操作<span class="fa arrow"></span></a>
+                            <ul class="nav nav-third-level">
+                                <li><a class="menuItem" th:href="@{/demo/operate/table}">表格</a></li>
+                                <li><a class="menuItem" th:href="@{/demo/operate/other}">其他</a></li>
+                            </ul>
+                        </li>
+                        <li><a>报表<span class="fa arrow"></span></a>
+                            <ul class="nav nav-third-level">
+                                <li><a class="menuItem" th:href="@{/demo/report/echarts}">百度ECharts</a></li>
+                                <li><a class="menuItem" th:href="@{/demo/report/peity}">peity</a></li>
+                                <li><a class="menuItem" th:href="@{/demo/report/sparkline}">sparkline</a></li>
+                                <li><a class="menuItem" th:href="@{/demo/report/metrics}">图表组合</a></li>
+                            </ul>
+                        </li>
+                        <li><a>图标<span class="fa arrow"></span></a>
+                            <ul class="nav nav-third-level">
+                                <li><a class="menuItem" th:href="@{/demo/icon/fontawesome}">Font Awesome</a></li>
+                                <li><a class="menuItem" th:href="@{/demo/icon/glyphicons}">Glyphicons</a></li>
+                            </ul>
+                        </li>
+                        <li>
+                            <a href="#"><i class="fa fa-sitemap"></i>四层菜单<span class="fa arrow"></span></a>
+                            <ul class="nav nav-third-level collapse">
+                                <li>
+                                    <a href="#" id="damian">三级菜单1<span class="fa arrow"></span></a>
+                                    <ul class="nav nav-third-level">
+                                        <li>
+                                            <a href="#">四级菜单1</a>
+                                        </li>
+                                        <li>
+                                            <a href="#">四级菜单2</a>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li><a href="#">三级菜单2</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <!--左侧导航结束-->
+
+    <!--右侧部分开始-->
+    <div id="page-wrapper" class="gray-bg dashbard-1">
+
+        <div class="row border-bottom">
+
+            <nav class="navbar navbar-static-top" role="navigation" style="margin-bottom: 0">
+                <!--<p class="title_nav">运维管控中心</p>-->
+                <div class="navbar-header">
+                    <a class="navbar-minimalize minimalize-styl-2" style="color:#FFF;" href="#" title="收起菜单">
+                        <i class="fa fa-bars"></i>
+                    </a>
+                </div>
+                <ul class="nav navbar-top-links navbar-right welcome-message">
+                    <!--                    <li><a title="视频教程" href="http://doc.ruoyi.vip/ruoyi/document/spjc.html" target="_blank"><i class="fa fa-video-camera"></i> 视频教程</a></li>-->
+                    <!--                    <li><a title="开发文档" href="http://doc.ruoyi.vip" target="_blank"><i class="fa fa-question-circle"></i> 开发文档</a></li>-->
+
+                    <!-- 值班角色 -->
+                    <li th:if="${dataCenter}" class="dropdown user-menu" style="display: none">
+
+                        <a href="javascript:void(0)" class="dropdown-toggle" data-hover="dropdown">
+                            <span class="zbz_icon"></span>
+                            <span class="hidden-xs">值班组</span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li class="mt5">
+                                <a onclick="getRole()" class="menuItem noactive">
+                                    <i class="glyphicon glyphicon-certificate "></i>获取值班角色</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li th:if="${dataCenter}" class="dropdown user-menu " style="display: none">
+                        <a href="javascript:void(0)" class="dropdown-toggle" data-hover="dropdown">
+                            <span class="status_icon"></span>
+                            <span class="hidden-xs">工作状态：[[${workStatus}]]</span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a onclick="management(this)" id="1">
+                                    <i></i> 签到</a>
+                            </li>
+                            <li>
+                                <a onclick="management(this)" id="2">
+                                    <i></i> 签退</a>
+                            </li>
+                            <li>
+                                <a onclick="management(this)" id="3">
+                                    <i></i> 午休</a>
+                            </li>
+                            <li>
+                                <a onclick="management(this)" id="4">
+                                    <i></i> 午休结束</a>
+                            </li>
+                            <li>
+                                <a onclick="management(this)" id="5">
+                                    <i></i> 小休</a>
+                            </li>
+                            <li>
+                                <a onclick="management(this)" id="6">
+                                    <i></i> 小休结束</a>
+                            </li>
+                            <!--<li class="divider"></li>-->
+                            <!--<li>-->
+                            <!--<a onclick="management(this)" id="7">-->
+                            <!--<i></i> 离线</a>-->
+                            <!--</li>-->
+                        </ul>
+                    </li>
+                    <li class="dropdown user-menu">
+                        <a href="javascript:void(0)" class="dropdown-toggle" data-hover="dropdown">
+                            <span class="gly_icon"></span>
+                            <!--<img th:src="(${#strings.isEmpty(user.avatar)}) ? @{/img/profile.jpg} : @{${user.avatar}}" th:onerror="this.src='img/profile.jpg'" class="user-image">-->
+                            <span class="hidden-xs">登录人：[[${#strings.defaultString(user.loginName, '-')}]]</span>
+                            <!--username-->
+                            <input type="hidden" id="login-phone" th:value="${user.mobilPhone}"/>
+                            <input type="hidden" id="login-name" th:value="${user.loginName}"/>
+                            <input type="hidden" id="login-id" th:value="${user.pId}"/>
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li class="mt5">
+                                <!--<a th:href="@{/system/ogperson}" class="menuItem noactive">-->
+                                <a th:href="@{/system/peo/edit/{id}(id=${user.pId})}" class="menuItem noactive">
+                                    <i class="fa fa-user"></i> 个人中心</a>
+                            </li>
+                           <!-- <li class="mt5">
+                                <a th:href="@{/system/post2}" class="menuItem noactive">
+                                    <i class="glyphicon glyphicon-screenshot"></i> 岗位信息</a>
+                            </li>-->
+                            <li class="mt5">
+                                <a th:href="@{/system/work2}" class="menuItem noactive">
+                                    <i class="glyphicon glyphicon-certificate "></i> 所在工作组</a>
+                            </li>
+                            <li class="mt5">
+                                <a th:href="@{/system/acc/edit/{userId}(userId=${user.userId})}"
+                                   class="menuItem noactive" id="editPassword">
+                                    <i class="fa fa-key"></i> 修改密码</a>
+                            </li>
+                            <li>
+                                <a onclick="toggleMenu()">
+                                    <i class="fa fa-toggle-off"></i> 横向菜单</a>
+                            </li>
+                            <!--<li>
+                                <a onclick="resetPwd()">
+                                <i class="fa fa-key"></i> 修改密码</a>
+                            </li>-->
+                            <!--<li>
+                                <a onclick="switchSkin()">
+                                <i class="fa fa-dashboard"></i> 切换主题</a>
+                            </li>
+                            <li>
+                                <a onclick="toggleMenu()">
+                                <i class="fa fa-toggle-off"></i> 横向菜单</a>
+                            </li>-->
+                            <li class="divider"></li>
+                            <li>
+                                <a th:href="@{logout}">
+                                    <i class="fa fa-sign-out"></i> 退出登录</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li><a title="全屏显示" href="javascript:void(0)" id="fullScreen"><i class="fa fa-arrows-alt"></i> 全屏显示</a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+        <div class="row content-tabs">
+            <button class="roll-nav roll-left tabLeft">
+                <i class="fa fa-backward"></i>
+            </button>
+            <nav class="page-tabs menuTabs">
+                <div class="page-tabs-content">
+                    <a href="javascript:;" class="active menuTab" th:data-id="@{/system/main}">工作台</a>
+                </div>
+            </nav>
+            <button class="roll-nav roll-right tabRight">
+                <i class="fa fa-forward"></i>
+            </button>
+            <a href="javascript:void(0);" class="roll-nav roll-right tabReload"><i class="fa fa-refresh"></i> 刷新</a>
+        </div>
+
+        <a id="ax_close_max" class="ax_close_max" href="#" title="关闭全屏"> <i class="fa fa-times-circle-o"></i> </a>
+
+        <div class="row mainContent" id="content-main"
+             th:style="${#bools.isFalse(ignoreFooter)} ? |height: calc(100% - 91px)|">
+            <iframe class="RuoYi_iframe" name="iframe0" width="100%" height="100%" th:data-id="@{/system/main}"
+                    th:src="@{/system/main}" frameborder="0" seamless></iframe>
+        </div>
+        <div th:if="${ignoreFooter}" class="footer">
+            <div class="pull-left"><span id="theClock"></span></div>
+            <div class="pull-right">© [[${copyrightYear}]]</div>
+            <div style="text-align: center;" id="onLineCount"></div>
+            <div id="footerDiv"></div>
+        </div>
+    </div>
+    <!--右侧部分结束-->
+</div>
+<!-- 全局js -->
+<script th:src="@{/js/jquery.min.js}"></script>
+<script th:src="@{/js/bootstrap.min.js}"></script>
+<script th:src="@{/js/jquery.contextMenu.min.js}"></script>
+<script th:src="@{/ajax/libs/blockUI/jquery.blockUI.js}"></script>
+<script th:src="@{/ajax/libs/layer/layer.min.js}"></script>
+<script th:src="@{/ruoyi/js/ry-ui.js?v=4.5.1}"></script>
+<script th:src="@{/ruoyi/js/common.js?v=4.5.1}"></script>
+<script th:src="@{/ruoyi/index.js}"></script>
+<script th:src="@{/js/plugins/metisMenu/jquery.metisMenu.js}"></script>
+<script th:src="@{/js/plugins/slimscroll/jquery.slimscroll.min.js}"></script>
+<script th:src="@{/ajax/libs/fullscreen/jquery.fullscreen.js}"></script>
+
+<script th:inline="javascript">
+
+    var ctx = [[@{
+        /}]];
+        var userId = [[${user.userId}]];
+        var prefix_xz = ctx + "phone/xz";
+        var prefix = ctx + "system/status";
+        var dataCenter = [[${dataCenter}]];
+        var workStatus = [[${workStatus}]];
+        // 皮肤缓存
+        var skin = storage.get("skin");
+        // history（表示去掉地址的#）否则地址以"#"形式展示
+        var mode = "history";
+        // 历史访问路径缓存
+        var historyPath = storage.get("historyPath");
+        // 是否页签与菜单联动
+        var isLinkage = true;
+
+        // 本地主题优先，未设置取系统配置
+        if ($.common.isNotEmpty(skin)) {
+            $("body").addClass(skin.split('|')[0]);
+            $("body").addClass(skin.split('|')[1]);
+        } else {
+            $("body").addClass([[${sideTheme}]]);
+            $("body").addClass([[${skinName}]]);
+        }
+
+        /* 用户管理-重置密码 */
+        function resetPwd() {
+            var url = ctx + 'system/user/profile/resetPwd';
+            $.modal.open("重置密码", url, '770', '380');
+        }
+
+        window.onload = function () {
+            var flag = [[${flag}]];
+            if ('1' == flag) {
+                var tab = window.top.$("iframe[src='/system/main']");
+                var a = document.getElementById("editPassword");
+                eg:a.click();
+            }
+            ;
+            myfun();
+        }
+
+        /* 切换主题 */
+        function switchSkin() {
+            layer.open({
+                type: 2,
+                shadeClose: true,
+                title: "切换主题",
+                area: ["530px", "386px"],
+                content: [ctx + "system/switchSkin", 'no']
+            })
+        }
+
+        /* 切换菜单 */
+        function toggleMenu() {
+            $.modal.confirm("确认要切换成横向菜单吗？", function () {
+                $.get(ctx + 'system/menuStyle/topnav', function (result) {
+                    window.location.reload();
+                });
+            })
+        }
+
+        /** 刷新时访问路径页签 */
+        function applyPath(url) {
+            $('a[href$="' + decodeURI(url) + '"]').click();
+            if (!$('a[href$="' + url + '"]').hasClass("noactive")) {
+                $('a[href$="' + url + '"]').parent("li").addClass("selected").parents("li").addClass("active").end().parents("ul").addClass("in");
+            }
+        }
+
+        //获取值班角色
+        function getRole() {
+            if (workStatus == "签退" || workStatus == "离线" || $.common.isEmpty(workStatus)) {
+                return $.modal.alertError("请先更新工作状态！");
+            }
+
+            var menuName = "获取值班角色";
+            var panelUrl = "/system/main";
+            var dataUrl = "monitor/dutyRole/myDutyRole"
+            var dataIndex = $.common.random(1, 100);
+            var topWindow = $(window.parent.document);
+            flag = true;
+            if (dataUrl == undefined || $.trim(dataUrl).length == 0) return false;
+            // 选项卡菜单已存在
+            $('.menuTab', topWindow).each(function () {
+                if ($(this).data('id') == dataUrl) {
+                    if (!$(this).hasClass('active')) {
+                        $(this).addClass('active').siblings('.menuTab').removeClass('active');
+                        scrollToTab(this);
+                        $('.page-tabs-content').animate({marginLeft: ""}, "fast");
+                        // 显示tab对应的内容区
+                        $('.mainContent .RuoYi_iframe', topWindow).each(function () {
+                            if ($(this).data('id') == dataUrl) {
+                                $(this).show().siblings('.RuoYi_iframe').hide();
+                                return false;
+                            }
+                        });
+                    }
+                    flag = false;
+                    return false;
+                }
+            });
+            if (flag) {
+                var str = '<a href="javascript:;" class="active menuTab noactive" data-id="' + dataUrl + '" data-panel="' + panelUrl + '">' + menuName + ' <i class="fa fa-times-circle"></i></a>';
+                $('.menuTab', topWindow).removeClass('active');
+                // 添加选项卡对应的iframe
+                var str1 = '<iframe class="RuoYi_iframe" name="iframe' + dataIndex + '" width="100%" height="100%" src="' + dataUrl + '" frameborder="0" data-id="' + dataUrl + '" data-panel="' + panelUrl + '" seamless></iframe>';
+                $('.mainContent', topWindow).find('iframe.RuoYi_iframe').hide().parents('.mainContent').append(str1);
+
+                window.parent.$.modal.loading("数据加载中，请稍后...");
+                $('.mainContent iframe:visible', topWindow).load(function () {
+                    window.parent.$.modal.closeLoading();
+                });
+                // 添加选项卡
+                $('.menuTabs .page-tabs-content', topWindow).append(str);
+                scrollToTab($('.menuTab.active', topWindow));
+            }
+        }
+
+        //弹到电话事件单新增界面
+        function open_telBiz_page(userdata) {
+            var url = prefix_xz + '/addTwo/' + userdata.g_ani + '/' + userdata.g_type;
+            $.modal.openMask("电话接入", url);
+            //$.modal.openTab("电话接入", url);
+        }
+
+        $(function () {
+            if ($.common.equals("history", mode) && window.performance.navigation.type == 1) {
+                var url = storage.get('publicPath');
+                if ($.common.isNotEmpty(url)) {
+                    applyPath(url);
+                }
+            } else {
+                var hash = location.hash;
+                if ($.common.isNotEmpty(hash)) {
+                    var url = hash.substring(1, hash.length);
+                    applyPath(url);
+                } else {
+                    if ($.common.equals("history", mode)) {
+                        storage.set('publicPath', "");
+                    }
+                }
+            }
+
+            /* 初始密码提示 */
+            if ([[${isDefaultModifyPwd}]]) {
+                layer.confirm("您的密码还是初始密码，请修改密码！", {
+                    icon: 0,
+                    title: "安全提示",
+                    btn: ['确认', '取消'],
+                    offset: ['30%']
+                }, function (index) {
+                    resetPwd();
+                    layer.close(index);
+                });
+            }
+
+            /* 过期密码提示 */
+            if ([[${isPasswordExpired}]]) {
+                layer.confirm("您的密码已过期，请尽快修改密码！", {
+                    icon: 0,
+                    title: "安全提示",
+                    btn: ['确认', '取消'],
+                    offset: ['30%']
+                }, function (index) {
+                    resetPwd();
+                    layer.close(index);
+                });
+            }
+        });
+
+
+        var days = new Array("日", "一", "二", "三", "四", "五", "六");
+
+        function showDT() {
+            var currentDT = new Date();
+            var y, m, date, day, hs, ms, ss, theDateStr;
+            y = currentDT.getFullYear(); // 四位整数表示的年份
+            m = currentDT.getMonth() + 1; // 月 返回值是0-11,需要加一个1 才能达到1-12月
+            date = currentDT.getDate(); // 日
+            day = currentDT.getDay(); // 星期
+            hs = currentDT.getHours(); // 时
+            ms = currentDT.getMinutes(); // 分
+            ss = currentDT.getSeconds(); // 秒
+            //月份不足两位，用0占位
+            if (m < 10) {
+                m = '0' + m;
+            }
+            //日期不足两位，用0占位
+            if (date < 10) {
+                date = '0' + date;
+            }
+            //小时不足两位，用0占位
+            if (hs < 10) {
+                hs = '0' + hs;
+            }
+            //分钟不足两位，用0占位
+            if (ms < 10) {
+                ms = '0' + ms;
+            }
+            //秒数不足两位，用0占位
+            if (ss < 10) {
+                ss = '0' + ss;
+            }
+            theDateStr = y + "年" + m + "月" + date + "日 星期" + days[day] + " " + hs + ":" + ms + ":" + ss;
+            document.getElementById("theClock").innerHTML = theDateStr;
+            // setTimeout 在执行时,是在载入后延迟指定时间后,去执行一次表达式,仅执行一次
+            window.setTimeout(showDT, 1000);
+        }
+
+        showDT();
+        //notice();
+
+        function getOnLineCount() {
+            $.ajax({
+                url: ctx + "monitor/online" + "/getOnLineCount",
+                dataType: "json",
+                type: "POST",
+                success: function (result) {
+                   // $("#onLineCount").html('今日访问人数:&nbsp;&nbsp;' + result.onLineCount);
+                }
+            });
+            window.setTimeout(getOnLineCount, 300000);
+        }
+
+        getOnLineCount();
+        //系统通知
+        var websocket = null;
+
+        function creatWebsocket() {
+            //判断当前浏览器是否支持WebSocket
+            if ('WebSocket' in window) {
+                var host = document.location.host;
+                //var url='wss://'+host+'/itsm/webSocket/'+userId;
+                var url = 'ws://' + host + '/webSocket/' + userId;
+                websocket = new WebSocket(url);
+            } else {
+                console.log('当前浏览器 Not support websocket');
+                return;
+            }
+        }
+
+        function notice() {
+            creatWebsocket();
+            websocket.onopen = function () {
+                console.log("WebSocket连接成功");
+            }
+            //接收到消息的回调方法
+            websocket.onmessage = function (event) {
+                //console.log(event.data);
+                layer.open({
+                    type: 1,
+                    offset: 'rb',
+                    title: ['系统通知', 'font-size:3px;'],
+                    content: '<div style="padding:20px 10px;">' + event.data + '</div>',
+                    btn: '关闭',
+                    btnAlign: 'c',
+                    shade: 0,
+                    anim: 6,
+                    shadeClose: true,
+                    cancel: function (index) {
+                        return true;
+                    }
+                });
+            }
+            //连接关闭的回调方法
+            websocket.onclose = function () {
+                creatWebsocket();
+                console.log("WebSocket连接关闭，重新连接");
+            }
+        }
+
+        function management(elementObj) {
+
+            //判断当前点击的是什么状态
+            var data = {};//构造提交的数据
+
+            if ($(elementObj).attr("id") == '1') {
+                data.label = '1';
+            } else if ($(elementObj).attr("id") == '2') {
+                data.label = '2';
+            } else if ($(elementObj).attr("id") == '3') {
+                data.label = '3';
+            } else if ($(elementObj).attr("id") == '4') {
+                data.label = '4';
+            } else if ($(elementObj).attr("id") == '5') {
+                data.label = '5';
+            } else if ($(elementObj).attr("id") == '6') {
+                data.label = '6';
+            } else if ($(elementObj).attr("id") == '7') {
+                data.label = '7';
+            }
+            $.operate.save(prefix + "/add", data)
+        }
+
+        function initPhoneUiKit(extno, serviceIp) {
+            phoneUiKit = new PhoneUiKit();
+            var obj = new Object();
+            obj.connecttproxyserver = true
+            //测试环境
+            //obj.tproxyserver = "ws://20.200.24.134:38080/tproxysrv";//ws://10.50.5.126:30079/ws,wss://devcc.egooccs.com/tproxy,
+            //生产环境
+            obj.tproxyserver = "ws://11.105.60.6:38080/tproxysrv";//ws://10.50.5.126:30079/ws,wss://devcc.egooccs.com/tproxy,
+            obj.uimode = "onpage";//inpage表示嵌入到集成页面里，onpage表示悬浮在页表上
+            obj.parentid = "main-container";//需要嵌入或悬浮的页面区域idx
+            obj.transferparentid = "main-container";//转接列表浮层建立父组件id,传容器最外层组件id
+            //"login","logout", "ready", "notready","btnReleaseCall","btnAnswerCall", "btnHoldCall", "btnRetrieveCall", "btnMuteCall", "btnUnmuteCall","handleOver","emotion", "listen-show", "transfer_consult", "btnTransferIVR", "btnCompleteTransfer", "btnCompleteConference", "btnBargeIn", "btnForceBreak","dialingNum","status_duration","btnRejectCall","btnCancelMonitoring","btnIntercept"
+            obj.hidebtns = ['setting-line', 'btnCalllist', 'listen-show', 'btnTransferIVR', 'emotion', 'btnYanMiConference'];//需要隐藏的按钮
+            obj.userdata = {"channel": "adsfsgd", "vprType": "ssaf", "serverType": "", "audioTransmission": true}
+            var agent = {
+                tenantId: $(".tenantId").val(),
+                agentId: serviceIp,
+                extension: extno,
+                password: $(".extension-password").val(),
+                /* tenantId:'default',//ems,default,ICBC
+                 agentId:'99996',//20002,agent1009
+                 extension:'45997',//1000@47.99.197.109:9966,819011
+                 password:''*/
+            }
+            if (!agent.agentId) {
+                alert("租户和工号不能为空")
+                return
+            }
+            if (!agent.extension) {
+                alert("分机号和分机密码为空，请确认config.js中dnpooServer地址是否配置为cfg-api地址、autoGetDn为true,如果已配置cfg-api则点确定继续初始化")
+            }
+            if ($("#tphone" + agent.agentId).length > 0) {
+                return
+            }
+            obj.agent = agent;
+            obj.size = 10;
+            obj.days = 2;
+            <!--        console.log(phoneUiKit)-->
+            phoneUiKit.init(obj)
+            /*$.PhoneUiKit.init(obj)*/
+        }
+
+        var prefixTerminal = ctx + "system/terminal";
+
+        function myfun() {
+            $.ajax({
+                url: prefixTerminal + "/main",
+                async: false,
+                dataType: "json",
+                type: "POST",
+                success: function (data) {
+                    for (var ak = 0; ak < data.rows.length; ak++) {
+                        if (data.rows != '' || data.rows != undefined) {
+                            initPhoneUiKit(data.rows[ak].extno, data.rows[ak].serviceIp);
+                        }
+                    }
+                }
+            });
+        }
+
+        function initCallList() {
+            callListUiKit = new CallListUiKit();
+            var obj = new Object();
+            obj.uimode = "onpage";//inpage表示嵌入到集成页面里，onpage表示悬浮在页表上
+            obj.parentid = "main-container";//需要嵌入或悬浮的页面区域id
+            var agent = {
+                tenantId: $(".tenantId").val(),
+                agentId: $(".agentNum").val()
+            }
+            obj.agent = agent;
+            obj.size = 10;
+            obj.days = 2;
+            obj.independent = true;//false表示在电话条内调用，true表示在电话条外调用
+            callListUiKit.init(obj)
+        }
+
+        var phone = null;
+        var closeTime = null;
+
+        function setphone(aa) {
+            phone = aa;
+            return phone;
+        }
+
+        function getphone() {
+            var telphone = phone;
+            return telphone;
+
+        }
+
+
+        function CloseDiv() {
+            document.getElementById("show_div").style.display = "none";
+        }
+
+</script>
+<!--<script th:src="@{/tphone/js/util/jquery.js}"></script>-->
+<!--第一版 老板本的-->
+<!--<script th:src="@{/tphone/js/phoneui/phone.uikit-1.0.0.js}"></script>-->
+<script th:src="@{/tphone/js/calllist/calllist.uikit-1.0.0.js}"></script>
+<script th:src="@{/tphone/js/sdk/app.agent.js}"></script>
+<script th:src="@{/tphone/js/webrtc/js/webrtc.uikit-2.0.0.js}"></script>
+<script th:src="@{/tphone/js/webrtc/js/webrtc.message.handler.js}"></script>
+<script th:src="@{/tphone/js/sdk/phone.customization.handler-1.0.0.js}"></script>
+
+<!--第三版 换版需要的 之前是第一版老版本的-->
+<script th:src="@{/tphone/js/util/reconnecting-websocket.js}"></script>
+<script th:src="@{/tphone/js/sdk/phone.handler-1.0.1.js}"></script>
+<script th:src="@{/tphone/js/aphone/phonekit.js}"></script>
+<script th:src="@{/tphone/js/aphone/aphone.handler.js}"></script>
+<script th:src="@{/tphone/js/config.js}"></script>
+<script th:src="@{/tphone/js/util/common.api.js}"></script>
+<script th:src="@{/tphone/js/My97DatePicker/WdatePicker.js}"></script>
+
+<!--第二版 添加的-->
+<script th:src="@{/tphone/js/phoneui/phone.uikit-2.0.0.js}"></script>
+<script th:src="@{/tphone/js/phoneui/setting.uikit-1.0.0.js}"></script>
+<!--<script th:src="@{/tphoneTwo/js/sdk/echat.phone-2.2.1.js}"></script>-->
+<script th:src="@{/tphone/js/sdk/constants.js}"></script>
+
+<!--第三版 添加的-->
+<script th:src="@{/tphone/js/sdk/echat.phone-2.2.1.js}"></script>
+
+
+<script th:src="@{/tphone/js/phoneui/phone.customization.action-1.0.0.js}"></script>
+
+<script th:src="@{/tphone/js/easyui/easyui.js}"></script>
+<script th:src="@{/js/phone.js}"></script>
+</body>
+</html>

@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('【请填写功能名称】列表')" />
+</head>
+<body class="gray-bg">
+     <div class="container-div">
+        <div class="row">
+            <div class="col-sm-12 search-collapse">
+                <form id="formId">
+                    <input name="orgIdTwo" id="orgIdTwo" type="hidden" th:value="*{orgIdTwo}"/>
+                    <input name="roleId" id="roleId" type="hidden" th:value="*{roleId}"/>
+                    <div class="select-list">
+                        <ul>
+                            <li>
+                                <p>公司名称：</p>
+                                <input type="text" name="orgname"/>
+                            </li>
+                            <li>
+                                <p>系统名称：</p>
+                                <input type="text" name="sysname"/>
+                            </li>
+                            <li>
+                                <p>姓名：</p>
+                                <input type="text" name="name"/>
+                            </li>
+                            <li>
+                                <p>分机号：</p>
+                                <input type="text" name="extension"/>
+                            </li>
+                            <li>
+                                <a class="btn btn-primary btn-rounded btn-sm" id="ss" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                            </li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+
+            <div class="btn-group-sm" id="toolbar" role="group">
+                <a class="btn btn-success" onclick="$.operate.addTab()">
+                    <i class="fa fa-plus"></i> 添加
+                </a>
+                <a class="btn btn-primary single disabled" onclick="editTab()">
+                    <i class="fa fa-edit"></i> 修改
+                </a>
+                <a class="btn btn-danger multiple disabled" onclick="remove()">
+                    <i class="fa fa-remove"></i> 删除
+                </a>
+            </div>
+            <div class="col-sm-12 select-table table-striped">
+                <table id="bootstrap-table"></table>
+            </div>
+        </div>
+    </div>
+    <th:block th:include="include :: footer" />
+    <script th:inline="javascript">
+        var prefix = ctx + "ext/person";
+
+        var prefix_ss = ctx + "system/single";
+        var prefix_fmbiz = ctx + "activiti/qingqiu";
+        var prefix_p = ctx + "public";
+
+        $(function() {
+            document.onkeydown = function(e){
+                var ev = document.all ? window.event : e;
+                console.log(ev);
+                if(ev.keyCode==13) {
+                    $('#ss').trigger('click');
+                    return false;
+                } //搜索逻辑
+            }
+
+            var options = {
+                url: prefix + "/list",
+                createUrl: prefix + "/add",
+                updateUrl: prefix + "/edit/{id,orgid}",
+                removeUrl: prefix + "/remove/{id,orgid}",
+                exportUrl: prefix + "/export",
+                singleSelect:true,
+                clickToSelect: true,
+                modalName: "支持人员分机号",
+                sortName: "createTime",
+                columns: [{
+                    checkbox: true
+                },{
+                    field : 'id',
+                    title : 'ID',
+                    visible: false
+                },
+
+                    {
+                        field : 'orgid',
+                        title : '公司名称',
+                        visible: false
+                    },
+                {
+                    field : 'orgname',
+                    title : '公司名称'
+                },
+                {
+                    field : 'name',
+                    title : '姓名'
+                },
+                {
+                    field : 'extension',
+                    title : '分机号'
+                },
+                {
+                    field : 'sysname',
+                    title : '系统名称',
+                    formatter: function (value, row, index) {
+                        return $.table.tooltip(value);
+                    },
+                    cellStyle: function cellStyle(value, row, index, field) {
+                        return { classes: 'text-nowrap'};
+                    }
+                }]
+            };
+            $.table.init(options);
+        })
+
+        // 修改
+        function editTab(id,orgid) {
+            debugger;
+            var id = $.table.selectFirstColumns();
+            var orgid = $.table.selectColumns("orgid");
+            var orgIdTwo = $("#orgIdTwo").val();
+            if (orgIdTwo!=null && orgIdTwo != ''){
+                if(orgid != orgIdTwo){
+                    return $.modal.alertError("无权限");
+                }
+            }
+            var url = prefix + '/edit/' + id;
+            $.modal.openTab("修改", url);
+        }
+
+        // 刪除
+        function remove(id,orgid) {
+            debugger;
+
+            var id = $.table.selectFirstColumns();
+            var orgid = $.table.selectColumns("orgid");
+            var orgIdTwo = $("#orgIdTwo").val();
+            if(orgIdTwo!=null && orgIdTwo != ''){
+                if(orgid != orgIdTwo){
+                    return $.modal.alertError("无权限");
+                }
+            }
+            var url = prefix + "/delete";
+            var data = {"id": id[0]};
+            //$.operate.submit(url, "post", "json", data);
+            $.operate.submit(url, "post", "json", data);
+        }
+
+        /*function editTab(id) {
+            table.set();
+            var rows = $.common.isEmpty(table.options.uniqueId) ? $.table.selectFirstColumns() : $.table.selectColumns(table.options.uniqueId);
+            $.ajax({
+                type: 'POST',
+                url: prefix+"/selectById",
+                data: {"id":rows[0]},
+                success: function (result) {
+                    if(result.flag=='1'){
+                        debugger;
+                        $.modal.openTab("修改", $.operate.editUrl(id));
+                    }else{
+                        $.modal.alertError("不是本公司无法修改!");
+                    }
+                },
+                dataType: 'json'
+            });
+        }*/
+
+
+        // 删除
+        /*function  removeAll(id) {
+            table.set();
+            var rows = $.common.isEmpty(table.options.uniqueId) ? $.table.selectFirstColumns() : $.table.selectColumns(table.options.uniqueId);
+            $.ajax({
+                type: 'POST',
+                url: prefix+"/remove",
+                data:{id:rows[0]},
+                success: function (result) {
+                    if(result.flag == 1){
+                        debugger;
+                        $.modal.alertError("无权限");
+                    }
+                },
+                dataType: 'json'
+            });
+        }*/
+    </script>
+</body>
+</html>

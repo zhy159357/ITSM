@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('查询变更请求单列表')" />
+    <th:block th:include="include :: datetimepicker-css" />
+</head>
+<body class="gray-bg">
+     <div class="container-div">
+        <div class="row">
+            <div class="col-sm-12 search-collapse">
+                <form id="formId">
+                    <input id="isHasRole" name="isHasRole" class="form-control" th:value="*{isHasRole}" type="hidden">
+                    <input id="tongbuButton" name="tongbuButton" class="form-control" th:value="*{tongbuButton}" type="hidden">
+                    <div class="row">
+                        <div class="select-list">
+                            <ul>
+                                <li>
+                                    <label style="width: 80px">变更单号：</label>
+                                    <input type="text" name="changeCode"/>
+                                </li>
+                                <li>
+                                    <label style="width: 80px">申请人：</label>
+                                    <input type="text" name="applyName">
+
+                                </li>
+                                <li>
+                                    <label style="width: 80px">创建时间： </label>
+                                    <input type="text" id="startTime" name="params[createTime]" readonly/>
+                                </li>
+                                <li>
+                                    <label style="width: 80px">至：</label>
+                                    <input type="text" id="endTime" name="params[endCreateTime]" readonly/>
+                                </li>
+                                <li>
+                                    <label style="width: 80px">受理时间： </label>
+                                    <input type="text" id="practicleTime" name="params[practicleTime]" readonly/>
+                                </li>
+                                <li>
+                                    <label style="width: 80px">至：</label>
+                                    <input type="text" id="endpracticleTime" name="params[endpracticleTime]" readonly/>
+                                </li>
+                                <li>
+                                    <label style="width: 80px">变更分类：</label>
+                                    <input name="changeCategoryId"  id="changeCategoryId" class="form-control"  type="hidden">
+                                    <input name="changeCategoryName"  id="changeCategoryName" class="form-control"  style="background-color: #fff; opacity: 1;" onclick="selectTypeInfo()" type="text" readonly>
+                                </li>
+                                <li>
+                                    <label style="width: 80px">受理机构：</label>
+                                    <input name="acceptanceOrgName"  id="acceptanceOrgName" class="form-control"  type="text">
+                                </li>
+                                <li>
+                                    <label style="width: 80px">通知业务：</label>
+                                    <select name="isNotice" id="isNotice">
+                                        <option value="">所有</option>
+                                        <option value="1">是</option>
+                                        <option value="0">否</option>
+                                    </select>
+                                </li>
+                                <li>
+                                    <label style="width: 80px">创建机构：</label>
+                                    <input name="applyOrgName"  id="applyOrgName" class="form-control"  type="text">
+                                </li>
+                                <li>
+                                    <label style="width: 80px">变更标题：</label>
+                                    <input type="text" name="changeSingleName"/>
+                                </li>
+                                <li>
+                                    <label style="width: 80px">状&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;态：</label>
+                                    <select name="stauts" th:with="type=${@dict.getParaType('changeQingQiuStatus')}">
+                                        <option value="">所有</option>
+                                        <option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+                                    </select>
+                                </li>
+                                <li>
+                                    <label style="width: 80px">受理人：</label>
+                                    <input type="text" name="acceptanceName"/>
+                                </li>
+                                <li>
+                                    <label style="width: 80px">分管领导：</label>
+                                    <input type="text" name="fucheckerName"/>
+                                </li>
+                                <li>
+                                    <label style="width: 80px">应用系统：</label>
+                                    <input type="text" name="sysname"/>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="select-list">
+                            <ul>
+                                <li>
+                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    <a class="btn btn-primary btn-rounded btn-sm" id="searchBut" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>&nbsp;&nbsp;&nbsp;
+                                    <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.resetAll('formId')"><i
+                                            class="fa fa-repeat"></i>&nbsp;重置</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div class="btn-group-sm" id="toolbar" role="group">
+                <a id="startcmbiz" class="btn btn-primary single disabled" onclick="startCmbiz()" >
+                    <i class="fa fa-default"></i> 生成综合变更
+                </a>
+                <div class="btn-group">
+                    <button data-toggle="dropdown" class="btn btn-primary btn-sm dropdown-toggle">导出<span class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a onclick="$.table.exportExcel()">导出所有</a>
+                        </li>
+                    </ul>
+                </div>
+                <a class="btn btn-info single disabled" onclick="detail()" >
+                    <i class="fa fa-search"></i> 查看详情
+                </a>
+                <a class="btn btn-info single disabled" onclick="showProcessImg()" id="showProcessImg">
+                    <i class="fa fa-search"></i>查看流程
+                </a>
+                <a id="tongbu" class="btn btn-primary single disabled" onclick="tongbu()" >
+                    <i class="fa fa-default"></i> 同步操作ID
+                </a>
+            </div>
+            <div class="col-sm-12 select-table table-striped">
+                <table id="bootstrap-table" style="table-layout:fixed;"></table>
+            </div>
+        </div>
+    </div>
+    <th:block th:include="include :: footer" />
+     <th:block th:include="include :: datetimepicker-js" />
+    <script th:inline="javascript">
+        var datas = [[${@pubParaValue.selectPubParaValueByParaName('changeQingQiuStatus')}]];
+        var prefix = ctx + "activiti/qingqiu";
+
+        var prefix_parse_resouse = ctx +'system/single';
+
+        $(function() {
+            // 回车键搜索
+            document.onkeydown = function(e){
+                var ev = document.all ? window.event : e;
+                if(ev.keyCode==13) {
+                    $('#searchBut').trigger('click');
+                    return false;
+                }
+            };
+            var options = {
+                url: prefix + "/selectQingQiu",
+                createUrl: prefix + "/add",
+                updateUrl: prefix + "/edit/{id}",
+                detailUrl: prefix + "/detail/{id}",
+                removeUrl: prefix + "/remove",
+                exportUrl: prefix + "/exportSelectQingQiu",
+                clickToSelect:true,
+                singleSelect : true,
+                modalName: "变更请求单",
+                columns: [{
+                    checkbox: true
+                },{
+                    field: 'changeId',
+                    visible:false
+                },
+                {
+                    field : 'changeCode', 
+                    title : '变更单号',
+                    width : 200
+                },
+                {
+                    field : 'changeSingleName',
+                    title : '变更标题',
+                    formatter: function(value, row, index) {
+                        return $.table.tooltip(value);
+                    },
+                    width : 300
+                },
+                {
+                    field : 'applyName',
+                    title : '申请人',
+                    width : 150
+                },
+                {
+                    field : 'typeName',
+                    title : '变更分类',
+                    width : 150
+                },
+                {
+                    field : 'submitTime',
+                    title : '提交时间',
+                    width : 150,
+                    formatter: function (value, row, index) {
+                        var startTime = '';
+                        if (value != '' && value != null) {
+                            var pattern = /(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/;
+                            startTime = value.replace(pattern, '$1-$2-$3 $4:$5:$6');
+                        }
+                        return startTime;
+                    }
+                },
+                {
+                    field : 'stauts', 
+                    title : '状态',
+                    formatter: function (value,row,index) {
+                        return selectDictLabel(datas, value);
+                    },
+                    width : 150
+                },
+                {
+                    field : 'addTime',
+                    title : '创建时间',
+                    width : 150,
+                    formatter: function (value, row, index) {
+                        var startTime = '';
+                        if (value != '' && value != null) {
+                            var pattern = /(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/;
+                            startTime = value.replace(pattern, '$1-$2-$3 $4:$5:$6');
+                        }
+                        return startTime;
+                    }
+                },
+                {
+                    field : 'practicleTime',
+                    title : '受理时间',
+                    width : 150,
+                    formatter: function (value, row, index) {
+                        var startTime = '';
+                        if (value != '' && value != null) {
+                            var pattern = /(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/;
+                            startTime = value.replace(pattern, '$1-$2-$3 $4:$5:$6');
+                        }
+                        return startTime;
+                    }
+                }]
+            };
+            $.table.init(options);
+        });
+
+        /*字典*/
+        function selectDictLabel(datas, value) {
+            var actions = [];
+            $.each(datas, function(index, dict) {
+                if (dict.value == ('' + value)) {
+                    var listClass = $.common.equals("default", dict.listClass) || $.common.isEmpty(dict.listClass) ? "" : "badge badge-" + dict.listClass;
+                    actions.push($.common.sprintf("<span class='%s'>%s</span>", listClass, dict.valueDetail));
+                    return false;
+                }
+            });
+            return actions.join('');
+        }
+        /* 选择分类树 */
+        function selectTypeInfo() {
+            var url = ctx + "system/typeinfo/cmBizTree";
+            var options = {
+                title: '选择分类',
+                width: "380",
+                url: url,
+                callBack: doSubmit2
+            };
+            $.modal.openOptions(options);
+        }
+
+        /*变更分类赋值*/
+        function doSubmit2(index, layero){
+            var tree = layero.find("iframe")[0].contentWindow.$._tree;
+            if(jQuery.isEmptyObject(tree)) {
+                layer.close(index);
+            }
+            var selectNode = tree.getSelectedNodes();
+            if(selectNode.length!=0){
+                $("#changeCategoryId").val(selectNode[0].id);
+                $("#changeCategoryName").val(selectNode[0].name);
+            }
+            layer.close(index);
+        }
+
+        // function startCmbiz() {
+        //     var row = $("#bootstrap-table").bootstrapTable('getSelections');
+        //     $.modal.openTab("转资源变更单",prefix+"/addCmbiz?changeId="+row[0].changeId);
+        // }
+
+        /**
+         * 转资源变更
+         */
+        function startCmbiz() {
+            //获取当前事务Ids
+            var row = $("#bootstrap-table").bootstrapTable('getSelections')[0];
+            $.ajax({
+                type: 'POST',
+                url: prefix+"/selectById",
+                data: {"id":row.changeId},
+                success: function (result) {
+                    if(result.data.stauts == '0500'){
+                        var url = prefix_parse_resouse + "/add/4/"+row.changeId;
+                        $.modal.openTab('转资源变更',url);
+                    }else{
+                        $.modal.alertError("当前变更单状态不支持转资源变更单!");
+                    }
+                },
+                dataType: 'json'
+            });
+        }
+
+        /*转资源变更按钮显隐*/
+        $(function () {
+            var isHasRole = $("#isHasRole").val();
+            if (isHasRole == '0') {
+                $("#startcmbiz").hide();
+            }
+            var tongbuButton = $("#tongbuButton").val();
+            if (tongbuButton == '0') {
+                $("#tongbu").hide();
+            }
+        });
+
+        /*查看详情*/
+        function detail() {
+            var changeId = $.table.selectFirstColumns();
+            var url = prefix + "/detail/" + changeId;
+            $.modal.openTab("变更请求单详情", url);
+        }
+
+        // 同步
+        function  tongbu() {
+            table.set();
+            var rows = $.common.isEmpty(table.options.uniqueId) ? $.table.selectFirstColumns() : $.table.selectColumns(table.options.uniqueId);
+            var startTime = $("#startTime").val();
+            var endTime = $("#endTime").val();
+            if (startTime == null || startTime == '') {
+                $.modal.alertWarning("创建时间未选择");
+                return;
+            }
+            if (endTime == null || endTime == '') {
+                $.modal.alertWarning("创建时间至未选择");
+                return;
+            }
+            $.ajax({
+                type: 'POST',
+                url: prefix+"/tongbu",
+                data: {"id":rows[0], "createTime" : startTime, "endCreateTime" : endTime},
+                success: function (result) {
+                    if (result.num >= 0) {
+                        $.modal.alertWarning('已同步' + result.num + '条');
+                    }
+                },
+                dataType: 'json'
+            });
+        }
+
+        /**
+         * 查看流程
+         */
+        function showProcessImg() {
+            var rows = $("#bootstrap-table").bootstrapTable('getSelections');
+            var len = rows.length;
+            if(len==0){
+                $.modal.alertWarning("请选择要查看流程的变更单");
+                return;
+            }
+            var row = rows[0];
+            if(row.stauts=='0100'){
+                $.modal.alertWarning("待提交的变更请求单没有流程");
+                return;
+            }
+            var url = ctx + 'process/processImg/' + row.changeId;
+            $.modal.openNoBtn("查看流程图", url, null, null, null, true);
+        }
+
+        $("#startTime").datetimepicker({
+            format: "yyyy-mm-dd",
+            minView: "month",
+            autoclose: true
+        });
+
+        $("#endTime").datetimepicker({
+            format: "yyyy-mm-dd",
+            minView: "month",
+            autoclose: true
+        });
+
+        $("#practicleTime").datetimepicker({
+            format: "yyyy-mm-dd",
+            minView: "month",
+            autoclose: true
+        });
+
+        $("#endpracticleTime").datetimepicker({
+            format: "yyyy-mm-dd",
+            minView: "month",
+            autoclose: true
+        });
+    </script>
+</body>
+</html>

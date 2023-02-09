@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:include="include :: header('采购计划实施')"/>
+</head>
+<body class="white-bg">
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+    <form class="form-horizontal m" id="form-demand-practice" th:object="${purchaseProjectDemand}">
+        <input id="purchaseId" name="purchaseId" th:field="*{purchaseId}" type="hidden">
+        <h4 class="form-header h4">基本信息</h4>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">采购计划编号：</label>
+                    <div class="col-sm-8">
+                        <input id="purchaseNo" name="purchaseNo" class="form-control" type="text"
+                               th:value="*{purchaseNo}" readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">采购项目类别：</label>
+                    <div class="col-sm-8">
+                        <select id="purchaseProjectType" name="purchaseProjectType" class="form-control"
+                                th:field="*{purchaseProjectType}"
+                                th:with="type=${@pubParaValue.selectPubParaValueByParaName('purchase_project_type')}"
+                                readonly>
+                            <option value=""></option>
+                            <option th:each="paraValue : ${type}" th:text="${paraValue.valueDetail}"
+                                    th:value="${paraValue.value}"
+                                    th:selected="${paraValue.value eq purchaseProjectType}"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">项目名称：</label>
+                    <div class="col-sm-8">
+                        <input id="projectName" name="projectName" class="form-control" type="text"
+                               th:value="*{projectName}" readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">采购方式建议：</label>
+                    <div class="col-sm-8">
+                        <select id="purchaseMode" name="purchaseMode" class="form-control"
+                                th:with="type=${@pubParaValue.selectPubParaValueByParaName('purchase_mode')}"
+                                th:field="*{purchaseMode}" readonly>
+                            <option value=""></option>
+                            <option th:each="paraValue : ${type}" th:text="${paraValue.valueDetail}"
+                                    th:value="${paraValue.value}"
+                                    th:selected="${paraValue.value eq purchaseMode}"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label is-required">采购具体内容：</label>
+                    <div class="col-sm-10">
+                        <textarea id="purchaseContent" name="purchaseContent" rows="5" cols="10" class="form-control" type="text" th:field="*{purchaseContent}" readonly></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label is-required">采购背景、必要性说明：</label>
+                    <div class="col-sm-10">
+                        <textarea id="purchaseBackground" name="purchaseBackground" rows="5" cols="10" class="form-control" type="text" th:field="*{purchaseBackground}" readonly></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">项目总金额（万元）：</label>
+                    <div class="col-sm-8">
+                        <input id="projectTotalAmount" name="projectTotalAmount" class="form-control" type="text" th:value="*{projectTotalAmount}" readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">支出金额（万元）：</label>
+                    <div class="col-sm-8">
+                        <input id="payTotalAmount" name="payTotalAmount" class="form-control" type="text" th:value="*{payTotalAmount}" readonly>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">物资到货/服务提供时间：</label>
+                    <div class="col-sm-8">
+                        <input id="serviceProvideTime" name="serviceProvideTime" class="form-control" type="text" th:value="*{serviceProvideTime}" readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">采购有效期：</label>
+                    <div class="col-sm-8">
+                        <input id="purchaseEffectivePeriod" name="purchaseEffectivePeriod" class="form-control" type="text" th:value="*{purchaseEffectivePeriod}" readonly>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">资金落实情况：</label>
+                    <div class="col-sm-8">
+                        <select id="capitalImplSituation" name="capitalImplSituation" class="form-control"
+                                th:with="type=${@pubParaValue.selectPubParaValueByParaName('capital_impl_situation')}"
+                                th:field="*{capitalImplSituation}" readonly>
+                            <option value=""></option>
+                            <option th:each="paraValue : ${type}" th:text="${paraValue.valueDetail}"
+                                    th:value="${paraValue.value}"
+                                    th:selected="${paraValue.value eq capitalImplSituation}"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">需求处室：</label>
+                    <div class="col-sm-8">
+                        <input id="demandDept" name="demandDept" class="form-control" th:value="*{demandDept}" type="text" readonly>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">需求处室联系人：</label>
+                    <div class="col-sm-8">
+                        <input id="demandPerson" name="demandPerson" class="form-control" type="text" th:value="*{demandPerson}" readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">联系方式：</label>
+                    <div class="col-sm-8">
+                        <input id="demandMobilPhone" name="demandMobilPhone" class="form-control" type="text" th:value="*{demandMobilPhone}" readonly>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">规范书计划提交时间：</label>
+                    <div class="col-sm-8">
+                        <input id="techSubmitTime" name="techSubmitTime" class="form-control" type="text" th:value="*{techSubmitTime}" readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">采购申请计划提交时间：</label>
+                    <div class="col-sm-8">
+                        <input id="planSubmitTime" name="planSubmitTime" class="form-control" type="text" th:value="*{planSubmitTime}" readonly>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">采购实施计划启动时间：</label>
+                    <div class="col-sm-8">
+                        <input id="implStartTime" name="implStartTime" class="form-control" type="text" th:value="*{implStartTime}" readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">采购实施计划完成时间：</label>
+                    <div class="col-sm-8">
+                        <input id="implEndTime" name="implEndTime" class="form-control" type="text" th:value="*{implEndTime}" readonly>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">合同计划签订时间：</label>
+                    <div class="col-sm-8">
+                        <input id="contractSignTime" name="contractSignTime" class="form-control" type="text" th:value="*{contractSignTime}" readonly>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">采购计划调整内容：</label>
+                    <div class="col-sm-10">
+                        <textarea rows="5" cols="20" id="adjustContent" name="adjustContent" class="form-control"
+                                  maxlength="600" th:field="*{adjustContent}" readonly></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">采购计划调整原因：</label>
+                    <div class="col-sm-10">
+                        <textarea rows="5" cols="20" id="adjustReason" name="adjustReason" class="form-control"
+                                  maxlength="600" th:field="*{adjustReason}" readonly></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 采购实施需要填写字段 -->
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">正式提交采购申请时间：</label>
+                    <div class="col-sm-8">
+                        <input id="formalSubmitTime" name="formalSubmitTime" class="form-control" type="text" th:value="*{formalSubmitTime}" required>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">预计合同签订时间：</label>
+                    <div class="col-sm-8">
+                        <input id="estimateContractSignTime" name="estimateContractSignTime" class="form-control" type="text" th:value="*{estimateContractSignTime}" required>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">采购部对接人：</label>
+                    <div class="col-sm-8">
+                        <input id="purchaseOppositePerson" name="purchaseOppositePerson" class="form-control" type="text" th:value="*{purchaseOppositePerson}" required>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">当前进度：</label>
+                    <div class="col-sm-8">
+                        <select id="currentProgress" name="currentProgress" class="form-control" th:with="type=${@pubParaValue.selectPubParaValueByParaName('current_progress')}" th:field="*{currentProgress}" required>
+                            <option value=""></option>
+                            <option th:each="paraValue : ${type}" th:text="${paraValue.valueDetail}" th:value="${paraValue.value}" th:selected="${paraValue.value eq currentProgress}"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">风险提示：</label>
+                    <div class="col-sm-8">
+                        <select id="riskWarning" name="riskWarning" class="form-control" th:with="type=${@pubParaValue.selectPubParaValueByParaName('risk_warning')}" th:field="*{riskWarning}" required>
+                            <option value=""></option>
+                            <option th:each="paraValue : ${type}" th:text="${paraValue.valueDetail}" th:value="${paraValue.value}" th:selected="${paraValue.value eq riskWarning}"></option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">备注：</label>
+                    <div class="col-sm-10">
+                        <textarea rows="5" cols="20" id="memo" name="memo" class="form-control" maxlength="600" th:field="*{memo}" required></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<div class="row">
+    <div class="col-sm-12">
+        <div class="tabs-container">
+            <ul class="nav nav-tabs">
+                <li class="active"><a data-toggle="tab" href="#tab-1" aria-expanded="true">进度列表</a>
+                </li>
+            </ul>
+            <div class="tab-content">
+                <div id="tab-1" class="tab-pane active">
+                    <div class="panel-body">
+                        <div class="btn-group-sm" id="toolbar" role="group">
+                        </div>
+                        <div class="col-sm-12 select-table table-striped">
+                            <table id="bootstrap-table"></table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-sm-offset-5 col-sm-10">
+        <button type="button" class="btn btn-sm btn-primary" onclick="submit()"><i class="fa fa-check"></i>提 交</button>&nbsp;
+        <button type="button" class="btn btn-sm btn-danger" onclick="closeItem()"><i class="fa fa-window-close"></i>关 闭
+        </button>
+    </div>
+</div>
+
+<th:block th:include="include :: footer"/>
+<script th:inline="javascript">
+    var prefix = ctx + "purchase/change";
+
+    var currentProgressDatas = [[${@pubParaValue.selectPubParaValueByParaName('current_progress')}]];// 当前进度
+    var riskWarningDatas = [[${@pubParaValue.selectPubParaValueByParaName('risk_warning')}]];// 风险提示
+
+    // 当前进度列表
+    $(function() {
+        var options = {
+            url: prefix + "/selectPurchaseCurrentProgressList",
+            sortName: "createTime",
+            sortOrder: "desc",
+            queryParams: queryParams,
+            modalName: "当前进度列表",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field : 'currentProgressId',
+                    title : '主键ID',
+                    visible : false
+                },
+                {
+                    field : 'purchaseId',
+                    title : '关联采购实施ID',
+                    visible : false
+                },
+                {
+                    field : 'currentProgress',
+                    title : '当前进度',
+                    formatter: function(value, row, index) {
+                        return $.table.selectPubParaValueData(currentProgressDatas, value);
+                    }
+                },
+                {
+                    field : 'riskWarning',
+                    title : '风险提示',
+                    formatter: function(value, row, index) {
+                        return $.table.selectPubParaValueData(riskWarningDatas, value);
+                    }
+                },
+                {
+                    field : 'memo',
+                    title : '备注'
+                },
+                {
+                    field : 'createTime',
+                    title : '创建时间'
+                }]
+        };
+        $.table.init(options);
+    });
+
+    function queryParams(params) {
+        var search = $.table.queryParams(params);
+        search.purchaseId = $("#purchaseId").val();
+        return search;
+    }
+
+    // 采购实施提交管理员
+    function submit() {
+        if ($.validate.form()) {
+            var data = $("#form-demand-practice").serializeArray();
+            data.push({"name": "remark", "value": "practice"});
+            $.operate.saveTab(prefix + "/purchasePractice", data);
+        }
+    }
+</script>
+</body>
+</html>

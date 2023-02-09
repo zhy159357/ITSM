@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.activiti.mapper.AutoItsmFastfileMapper">
+    
+    <resultMap type="AutoItsmFastfile" id="AutoItsmFastfileResult">
+        <result property="uuid"    column="uuid"    />
+        <result property="iitsmno"    column="iitsmno"    />
+        <result property="isystem"    column="isystem"    />
+        <result property="isystemabb"    column="isystemabb"    />
+        <result property="fastno"    column="fastno"    />
+        <result property="groupname"    column="groupname"    />
+        <result property="filepath"    column="filepath"    />
+        <result property="filename"    column="filename"    />
+        <result property="istatus"    column="istatus"    />
+        <result property="istatus"    column="istatus"    />
+        <result property="istatusCentral"    column="istatus_central"    />
+        <result property="idownloadtime"    column="idownloadtime"    />
+        <result property="yzCenterStatus"    column="yz_center_status"    />
+        <result property="hfCenterStatus"    column="hf_center_status"    />
+        <result property="sendStatus"    column="send_status"    />
+    </resultMap>
+
+    <sql id="selectAutoItsmFastfileVo">
+        select uuid, iitsmno, isystem, isystemabb, fastno, groupname, filepath, filename, istatus,
+            istatus_central, iuploadtime, idownloadtime,yz_center_status,hf_center_status,send_status
+        from auto_itsm_fastfile
+    </sql>
+
+    <select id="selectAutoItsmFastfileList" parameterType="AutoItsmFastfile" resultMap="AutoItsmFastfileResult">
+        <include refid="selectAutoItsmFastfileVo"/>
+        <where>  
+            <if test="iitsmno != null  and iitsmno != ''"> and iitsmno = #{iitsmno}</if>
+            <if test="isystem != null  and isystem != ''"> and isystem = #{isystem}</if>
+            <if test="isystemabb != null  and isystemabb != ''"> and isystemabb = #{isystemabb}</if>
+            <if test="fastno != null  and fastno != ''"> and fastno = #{fastno}</if>
+            <if test="groupname != null  and groupname != ''"> and groupname like concat(concat('%', #{groupname}), '%')</if>
+            <if test="filepath != null  and filepath != ''"> and filepath = #{filepath}</if>
+            <if test="filename != null  and filename != ''"> and filename like concat(concat('%', #{filename}), '%')</if>
+            <if test="istatus != null "> and istatus = #{istatus}</if>
+            <if test="istatusCentral != null "> and istatus_Central = #{istatusCentral}</if>
+            <if test="iuploadtime != null "> and iuploadtime = #{iuploadtime}</if>
+            <if test="idownloadtime != null "> and idownloadtime = #{idownloadtime}</if>
+            <if test="yzCenterStatus != null "> and yz_center_status = #{yzCenterStatus}</if>
+            <if test="hfCenterStatus != null "> and hf_center_status = #{hfCenterStatus}</if>
+            <if test="sendStatus != null "> and send_status = #{sendStatus}</if>
+        </where>
+    </select>
+    
+    <select id="selectAutoItsmFastfileById" parameterType="String" resultMap="AutoItsmFastfileResult">
+        <include refid="selectAutoItsmFastfileVo"/>
+        where uuid = #{uuid}
+    </select>
+        
+    <insert id="insertAutoItsmFastfile" parameterType="AutoItsmFastfile">
+        insert into auto_itsm_fastfile
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="uuid != null  and uuid != ''">uuid,</if>
+            <if test="iitsmno != null  and iitsmno != ''">iitsmno,</if>
+            <if test="isystem != null  and isystem != ''">isystem,</if>
+            <if test="isystemabb != null  and isystemabb != ''">isystemabb,</if>
+            <if test="fastno != null  and fastno != ''">fastno,</if>
+            <if test="groupname != null  and groupname != ''">groupname,</if>
+            <if test="filepath != null  and filepath != ''">filepath,</if>
+            <if test="filename != null  and filename != ''">filename,</if>
+            <if test="istatus != null ">istatus,</if>
+            <if test="istatusCentral != null ">istatus_Central,</if>
+            <if test="iuploadtime != null ">iuploadtime,</if>
+            <if test="idownloadtime != null ">idownloadtime,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="uuid != null  and uuid != ''">#{uuid},</if>
+            <if test="iitsmno != null  and iitsmno != ''">#{iitsmno},</if>
+            <if test="isystem != null  and isystem != ''">#{isystem},</if>
+            <if test="isystemabb != null  and isystemabb != ''">#{isystemabb},</if>
+            <if test="fastno != null  and fastno != ''">#{fastno},</if>
+            <if test="groupname != null  and groupname != ''">#{groupname},</if>
+            <if test="filepath != null  and filepath != ''">#{filepath},</if>
+            <if test="filename != null  and filename != ''">#{filename},</if>
+            <if test="istatus != null ">#{istatus},</if>
+            <if test="istatusCentral != null ">#{istatusCentral},</if>
+            <if test="iuploadtime != null ">#{iuploadtime},</if>
+            <if test="idownloadtime != null ">#{idownloadtime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateAutoItsmFastfile" parameterType="AutoItsmFastfile">
+        update auto_itsm_fastfile
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="iitsmno != null  and iitsmno != ''">iitsmno = #{iitsmno},</if>
+            <if test="isystem != null  and isystem != ''">isystem = #{isystem},</if>
+            <if test="isystemabb != null  and isystemabb != ''">isystemabb = #{isystemabb},</if>
+            <if test="fastno != null  and fastno != ''">fastno = #{fastno},</if>
+            <if test="groupname != null  and groupname != ''">groupname = #{groupname},</if>
+            <if test="filepath != null  and filepath != ''">filepath = #{filepath},</if>
+            <if test="filename != null  and filename != ''">filename = #{filename},</if>
+            <if test="istatus != null ">istatus = #{istatus},</if>
+            <if test="istatusCentral != null ">istatus_Central = #{istatusCentral},</if>
+            <if test="iuploadtime != null ">iuploadtime = #{iuploadtime},</if>
+            <if test="idownloadtime != null ">idownloadtime = #{idownloadtime},</if>
+            <if test="sendStatus != null ">send_status = #{sendStatus},</if>
+        </trim>
+        where uuid = #{uuid}
+    </update>
+
+    <delete id="deleteAutoItsmFastfileById" parameterType="String">
+        delete from auto_itsm_fastfile where uuid = #{uuid}
+    </delete>
+
+    <delete id="deleteAutoItsmFastfileByIds" parameterType="String">
+        delete from auto_itsm_fastfile where uuid in 
+        <foreach item="uuid" collection="array" open="(" separator="," close=")">
+            #{uuid}
+        </foreach>
+    </delete>
+    
+</mapper>

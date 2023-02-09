@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('账号申请处理')" />
+    <th:block th:include="include :: datetimepicker-css" />
+    <th:block th:include="include :: select2-css" />
+    <style type="text/css">
+		label.error{
+			position:relative;
+			right:0px;
+			top:0px;
+			color:#ef392b;
+			font-size:12px;
+			z-index:99;
+		}
+	</style>
+</head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form class="form-horizontal m" id="form-accountReq-deal" th:object="${accountReq}">
+        <h4 class="form-header h4">基本信息</h4>
+            <input name="id" th:field="*{id}" id="userid" type="hidden">
+            <input name="pid" th:field="*{pid}" id="pid" type="hidden">
+            <div class="row">
+            	<div class="col-sm-12">
+		            <div class="form-group">
+		                <label class="col-sm-2 control-label is-required">姓名</label>
+		                <div class="col-sm-10">
+		                    <input name="name" th:field="*{name}" class="form-control" type="text" readonly>
+		                </div>
+		            </div>
+		        </div>
+		    </div>
+		    <div class="row">
+            	<div class="col-sm-6">
+		            <input  id="gender" th:field="*{gender}" type="hidden">
+		            <div class="form-group">
+		                <label class="col-sm-4 control-label is-required">性别</label>
+		                <div class="col-sm-8">
+		                    <input name="gender" id="genderStr" class="form-control" type="text" readonly>
+		                </div>
+		            </div>
+		        </div>
+                <div class="col-sm-6">
+		            <input  id="education" th:field="*{education}" type="hidden">
+		            <div class="form-group">
+		                <label class="col-sm-4 control-label">学历</label>
+		                <div class="col-sm-8">
+		                    <input name="education" id="educationStr" class="form-control" type="text" readonly>
+		                </div>
+		            </div>
+		        </div>
+		    </div>
+		    <div class="row">
+            	<div class="col-sm-12">
+		            <div class="form-group">
+						<label class="col-sm-2 control-label">籍贯</label>
+						<div class="col-sm-10">
+							<input name="birthPlace" th:field="*{birthPlace}" class="form-control" type="text" readonly>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+            	<div class="col-sm-6">
+					<div class="form-group">
+						<label class="col-sm-4 control-label is-required">所属机构</label>
+						<div class="col-sm-8">
+							<input name="dept" id="dept" th:value="*{deptid}" class="form-control" type="hidden">
+							<input th:value="*{dept}" class="form-control" type="text" readonly>
+						</div>
+					</div>
+				</div>
+                <div class="col-sm-6">
+					<div class="form-group">
+						<label class="col-sm-4 control-label">职位</label>
+						<div class="col-sm-8">
+							<input name="job" th:field="*{job}" class="form-control" type="text" readonly>
+						</div>
+					</div>
+				</div>
+		    </div>
+		    <div class="row">
+            	<div class="col-sm-6">
+					<input  id="director" th:field="*{director}" type="hidden">
+		            <div class="form-group">
+		                <label class="col-sm-4 control-label is-required">负责人</label>
+		                <div class="col-sm-8">
+		                    <input name="director" id="directorStr" class="form-control" type="text" readonly>
+		                </div>
+		            </div>
+		        </div>
+                <div class="col-sm-6">
+					<div class="form-group">
+						<label class="col-sm-4 control-label is-required">顺序</label>
+						<div class="col-sm-8">
+							<input name="order" th:field="*{order}" class="form-control" type="text" readonly>
+						</div>
+					</div>
+				</div>
+		    </div>
+		    <div class="row">
+            	<div class="col-sm-6">
+					<input  id="mark" th:field="*{mark}" type="hidden">
+		            <div class="form-group">
+		                <label class="col-sm-4 control-label is-required">状态</label>
+		                <div class="col-sm-8">
+		                    <input name="mark" id="markStr" class="form-control" type="text" readonly>
+		                </div>
+		            </div>
+		        </div>
+                 <div class="col-sm-6">
+	                <div class="form-group">
+	                    <label class="col-sm-4 control-label">生日</label>
+	                    <div class="col-sm-8">
+	                        <div class="input-group date">
+	                            <input th:value="*{birthday}" name="birthday" type="text" class="form-control" id="datetimepicker-demo-2" readonly>
+	                            <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+	                        </div>
+	                    </div>
+	                </div>
+            	</div>
+		    </div>
+		    <div class="row">
+            	<div class="col-sm-6">
+					<div class="form-group">
+						<label class="col-sm-4 control-label">办公电话</label>
+						<div class="col-sm-8">
+							<input name="officePhone" th:field="*{officePhone}" class="form-control" type="text" readonly>
+						</div>
+					</div>
+				</div>
+                <div class="col-sm-6">
+					<div class="form-group">
+						<label class="col-sm-4 control-label is-required">移动电话</label>
+						<div class="col-sm-8">
+							<input name="mobPhone" th:field="*{mobPhone}" class="form-control" type="text" readonly>
+						</div>
+					</div>
+				</div>
+		    </div>
+		    <div class="row">
+            	<div class="col-sm-6">
+					<div class="form-group">
+						<label class="col-sm-4 control-label">邮箱</label>
+						<div class="col-sm-8">
+							<input name="email" th:field="*{email}" class="form-control" type="text" readonly>
+						</div>
+					</div>
+				</div>
+                <div class="col-sm-6">
+					<div class="form-group">
+						<label class="col-sm-4 control-label">家庭住址</label>
+						<div class="col-sm-8">
+							<input name="address" th:field="*{address}" class="form-control" type="text" readonly>
+						</div>
+					</div>
+				</div>
+		    </div>
+		    <div class="row">
+            	<div class="col-sm-12">
+					<div class="form-group">
+						<label class="col-sm-2 control-label">人员说明</label>
+						<div class="col-sm-10">
+							<textarea name="note" th:field="*{note}" class="form-control" readonly></textarea>
+						</div>
+					</div>
+				</div>
+			</div>
+			<h4 class="form-header h4">申请信息</h4>
+		    <div class="row">
+            	<div class="col-sm-6">
+					<div class="form-group">
+						<label class="col-sm-4 control-label is-required">受理处室</label>
+						<div class="col-sm-8">
+							<input name="auditDept" th:value="*{auditDeptid}" class="form-control" type="hidden">
+							<input th:value="*{auditDept}" class="form-control" type="text" readonly>
+						</div>
+					</div>
+				</div>
+                <div class="col-sm-6">
+					<div class="form-group">
+						<label class="col-sm-4 control-label is-required">审核人</label>
+						<div class="col-sm-8">
+							<input name="auditor" th:value="*{auditorid}" class="form-control" type="hidden">
+							<input class="form-control" th:value="*{auditor}" type="text" readonly>
+						</div>
+					</div>
+				</div>
+		    </div>
+		      <div class="row">
+            	<div class="col-sm-6">
+					<div class="form-group">
+						<label class="col-sm-4 control-label is-required">受理处室</label>
+						<div class="col-sm-8">
+							<input name="dealDept" th:value="*{dealDeptid}" class="form-control" type="hidden">
+							<input th:value="*{dealDept}" class="form-control" type="text" readonly>
+						</div>
+					</div>
+				</div>
+                <div class="col-sm-6">
+					<div class="form-group">
+						<label class="col-sm-4 control-label is-required">处理人</label>
+						<div class="col-sm-8">
+							<input name="dealer" th:value="*{dealerid}" class="form-control" type="hidden">
+							<input class="form-control" th:value="*{dealer}" type="text" readonly>
+						</div>
+					</div>
+				</div>
+		    </div>
+		    <div class="row">
+            	<div class="col-sm-12">
+					<div class="form-group">
+						<label class="col-sm-2 control-label">备注</label>
+						<div class="col-sm-10">
+							<textarea name="remark" th:field="*{remark}" class="form-control" readonly></textarea>
+						</div>
+					</div>
+				</div>
+		    </div>
+		    <div class="row">
+            	<div class="col-sm-12">
+					<div class="form-group">
+						<label class="col-sm-2 control-label is-required">审核意见</label>
+						<div class="col-sm-10">
+							<textarea name="auditSug" th:field="*{auditSug}" class="form-control" readonly></textarea>
+						</div>
+					</div>
+				</div>
+		    </div>
+		    <div class="row">
+            	<div class="col-sm-12">
+					<div class="form-group">
+						<label class="col-sm-2 control-label is-required">处理意见</label>
+						<div class="col-sm-10">
+							<textarea name="dealSug" th:field="*{dealSug}" maxlength="500" class="form-control" required></textarea>
+						</div>
+					</div>
+				</div>
+		    </div>
+        </form>
+		<div class="row">
+			<div class="col-sm-offset-5 col-sm-10">
+				<button type="button" class="btn btn-sm btn-primary" onclick="authUserPost()">分配岗位</button>&nbsp;
+				<button type="button" class="btn btn-sm btn-primary" onclick="deal()"><i class="fa fa-check"></i>通 过</button>&nbsp;
+				<button type="button" class="btn btn-sm btn-danger" onclick="back()"><i class="fa fa-reply-all"></i>退 回</button>&nbsp;
+				<button type="button" class="btn btn-sm btn-danger" onclick="closeIt()"><i class="fa fa-window-close"></i>关 闭 </button>
+			</div>
+		</div>
+    </div>
+    <th:block th:include="include :: footer" />
+    <th:block th:include="include :: datetimepicker-js" />
+    <th:block th:include="include :: select2-js" />
+    <script th:src="@{/js/activiti.js}"></script>
+    <script th:src="@{/js/validator.js}"></script>
+    <script th:inline="javascript">
+  		var prefix = ctx + "accountReq";
+  		$("#form-accountReq-deal").validate({
+        	onkeyup: false,
+        	rules:{
+        		dealSug:{
+        			maxlength2:500
+        		}
+        	},
+            focusCleanup: true
+        });
+	    if($("#gender").val()=="1"){
+	    	$("#genderStr").val("男");
+	    }else{
+	    	$("#genderStr").val("女");
+	    }
+	    
+	    if($("#education").val()=="1"){
+	    	$("#educationStr").val("博士");
+	    }else if($("#education").val()=="2"){
+	    	$("#educationStr").val("硕士");
+	    }else if($("#education").val()=="3"){
+	    	$("#educationStr").val("研究生");
+	    }else if($("#education").val()=="4"){
+	    	$("#educationStr").val("本科");
+	    }else if($("#education").val()=="5"){
+	    	$("#educationStr").val("专科");
+	    }else{
+	    	$("#educationStr").val("其他");
+	    }
+	    
+	    if($("#director").val()=="1"){
+	    	$("#directorStr").val("是");
+	    }else{
+	    	$("#directorStr").val("否");
+	    }
+	    
+	    if($("#mark").val()=="1"){
+	    	$("#markStr").val("启用");
+	    }else{
+	    	$("#markStr").val("禁用");
+	    }
+	    
+	    function back(){
+        	if ($.validate.form() ) {
+                $.operate.saveTab(prefix + "/edit", $('#form-accountReq-deal').serialize());
+            }
+        }
+        function deal() {
+            if ($.validate.form() ) {
+                $.operate.saveTab(prefix + "/deal", $('#form-accountReq-deal').serialize());
+            }
+        }
+        function authUserPost(){
+        	//var url = ctx + "system/account/authPost/" +$("#pid").val();
+        	var url = prefix + "/selectPost/"+$("#pid").val();;
+        	$.modal.open("分配岗位", url);
+        }
+        function closeIt(){
+        	 $.modal.closeTab();
+        }
+        
+
+	    
+    </script>
+</body>
+</html>

@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+	<th:block th:include="include :: header('修改角色')" />
+	<th:block th:include="include :: ztree-css" />
+</head>
+<body class="white-bg">
+	<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+		<form class="form-horizontal m" id="form-role-edit" th:object="${role}">
+			<div class="form-group">
+				<label class="col-sm-3 control-label is-required">角色代码：</label>
+				<div class="col-sm-8">
+					<input class="form-control" type="text" name="rid" id="rid" maxlength="10" th:field="*{rid}" isNum="true" readonly>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-3 control-label is-required">角色名称：</label>
+				<div class="col-sm-8">
+					<input class="form-control" type="text" name="roleName" id="roleName" maxlength="20" th:field="*{rName}" required>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-3 control-label">状态：</label>
+				<div class="col-sm-8">
+					<select class="form-control" name="invalidationMark" id="invalidationMark" th:field="*{invalidationMark}">
+						<option th:selected="*{invalidationMark == '1'}" value="1">启用</option>
+						<option th:selected="*{invalidationMark == '0'}" value="0">停止</option>
+					</select>
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-3 control-label">备注：</label>
+				<div class="col-sm-8">
+					<input id="memo" name="memo" class="form-control" type="text" maxlength="200" th:field="*{memo}">
+				</div>
+			</div>
+			<div class="form-group">
+				<label class="col-sm-3 control-label">菜单权限：</label>
+				<div class="col-sm-8">
+				    <label class="check-box">
+				        <input type="checkbox" value="1">展开/折叠</label>
+				    <label class="check-box">
+				        <input type="checkbox" value="2">全选/全不选</label>
+				    <label class="check-box">
+				        <input type="checkbox" value="3" checked>父子联动</label>
+				    <div id="menuTrees" class="ztree ztree-border"></div>
+				</div>
+			</div>
+		</form>
+	</div>
+	<th:block th:include="include :: footer" />
+	<th:block th:include="include :: ztree-js" />
+	<script type="text/javascript">
+	     $(function() {
+			var url = ctx + "system/menu/roleMenuTreeData?rid=" + $("#rid").val();
+			var options = {
+				id: "menuTrees",
+		        url: url,
+		        check: { enable: true },
+		        expandLevel: 0
+		    };
+			$.tree.init(options);
+		});
+	
+		$("#form-role-edit").validate({
+			onkeyup: false,
+			rules:{
+				rName:{
+					remote: {
+		                url: ctx + "system/role/checkRoleNameUnique",
+		                type: "post",
+		                dataType: "json",
+		                data: {
+							"rid": function() {
+							    return $("#rid").val();
+							},
+							"rName": function() {
+							    return $.common.trim($("#rName").val());
+							}
+		                },
+		                dataFilter: function(data, type) {
+		                	return $.validate.unique(data);
+		                }
+		            }
+				},
+				roleSort:{
+					digits:true
+				},
+			},
+			messages: {
+		        "rName": {
+		            remote: "角色名称已经存在"
+		        }
+		    },
+		    focusCleanup: true
+		});
+		
+		$('input').on('ifChanged', function(obj){
+			var type = $(this).val();
+			var checked = obj.currentTarget.checked;
+			if (type == 1) {
+			    if (checked) {
+			        $._tree.expandAll(true);
+			    } else {
+			        $._tree.expandAll(false);
+			    }
+			} else if (type == "2") {
+			    if (checked) {
+			        $._tree.checkAllNodes(true);
+			    } else {
+			        $._tree.checkAllNodes(false);
+			    }
+			} else if (type == "3") {
+			    if (checked) {
+			        $._tree.setting.check.chkboxType = { "Y": "ps", "N": "ps" };
+			    } else {
+			        $._tree.setting.check.chkboxType = { "Y": "", "N": "" };
+			    }
+			}
+		})
+
+		function edit() {
+            var data = $("#form-role-edit").serializeArray();
+            var menuIds = $.tree.getCheckedNodes();
+            data.push({"name":"menuIds","value": menuIds });
+			//$.operate.save(ctx + "system/role/edit",data);
+            $.post(ctx + "system/role/edit",data,function (result) {
+                if(result.code==0){
+                    $.modal.close();
+                    parent.$.form.reset('','bootstrap-table1');
+                    parent.$.modal.msgSuccess(result.msg);
+
+                }
+            });
+		}
+
+		function submitHandler() {
+			edit();
+	    }
+	</script>
+</body>
+</html>

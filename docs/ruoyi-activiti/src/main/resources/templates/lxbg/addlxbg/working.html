@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+	<th:block th:include="include :: header('选择工作组')" />
+</head>
+<body class="gray-bg">
+<div class="container-div">
+	<div class="row">
+		<div class="col-sm-12 search-collapse">
+			<form id="role-form">
+				<div class="select-list">
+					<ul>
+						<li>
+							工作组名称：<input type="text" name="grpName"/>
+						</li>
+						<li>
+							<a class="btn btn-primary btn-rounded btn-sm" id="gzzSearch" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+							<a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+						</li>
+					</ul>
+				</div>
+			</form>
+		</div>
+
+		<div class="col-sm-12 select-table table-striped">
+			<table id="bootstrap-table"></table>
+		</div>
+	</div>
+</div>
+<th:block th:include="include :: footer" />
+<script th:inline="javascript">
+
+
+    var groupIds = [[${groupIds}]];
+    var url = ctx + "lxbg/addlxbg/selectWorking/"+groupIds;
+
+
+
+    $(function() {
+
+        // 回车键搜索
+        document.onkeydown = function(e){
+            var ev = document.all ? window.event : e;
+            if(ev.keyCode==13) {
+                $('#gzzSearch').trigger('click');
+                return false;
+            }
+        };
+
+        var options = {
+            url: url,
+            modalName: "工作组",
+            clickToSelect: true,
+            rememberSelected: true,
+            columns: [{
+                field: 'state',
+                checkbox: true,
+                formatter:function (value, row, index) {
+                    if($.common.isEmpty(value)) {
+                        return { checked: row.flag };
+                    } else {
+                        return { checked: value }
+                    }
+                }
+            },
+                {
+                    field: 'groupId',
+                    title: '工作组ID',
+                    visible : false
+                },
+                {
+                    field: 'grpName',
+                    title: '工作组名称'
+                }]
+        };
+        $.table.init(options);
+    });
+
+
+    function submitForm() {
+        // 获取选中行数据
+        var rows = $.table.selectFirstColumns();
+        if (rows.length == 0) {
+            $.modal.alertWarning("请至少选择一条记录");
+            return;
+        }
+        var sysNameRows = $.table.selectColumns('grpName');
+        $.modal.close();
+
+        parent.$('#working').val('');
+        parent.$('#working').val(rows.join());
+        parent.$('#workingname').val('');
+        parent.$('#workingname').val(sysNameRows.join());
+
+    }
+
+</script>
+</body>
+</html>

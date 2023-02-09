@@ -1,0 +1,481 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.SysDeptMapper">
+
+	<resultMap type="OgOrg" id="OgOrgResult">
+		<id     property="orgId"     column="orgId"     />
+		<result property="parentId"   column="t_o_orgId"   />
+		<result property="orgCode"  column="orgCode"   />
+		<result property="orgName"   column="orgName"   />
+		<result property="orgLv"   column="orgLv"   />
+		<result property="adder"     column="adder"      />
+		<result property="addtime"      column="addtime"       />
+		<result property="moder"      column="moder"       />
+		<result property="modtime"     column="modtime"      />
+		<result property="updatetime"    column="update_time"    />
+		<result property="invalidationMark" column="invalidation_Mark" />
+		<result property="memo"   column="memo"   />
+		<result property="branchMark" column="branch_Mark" />
+		<result property="inoutsideMark"   column="inoutside_Mark"   />
+		<result property="levelCode" column="level_Code" />
+		<result property="leaf"  column="leaf"></result>
+		<result property="type" column="type"></result>
+		<result property="sort" column="sort"></result>
+		<result property="operaternum" column="operaternum"></result>
+		<result property="khnum" column="khnum"></result>
+		<result property="parentName" column="parent_name" />
+		<result property="orgLeader" column="org_leader" />
+	</resultMap>
+
+	<sql id="selectDeptVo">
+        select d.dept_id, d.parent_id, d.ancestors, d.dept_name, d.order_num, d.leader, d.phone, d.email, d.status, d.del_flag, d.create_by, d.create_time
+        from sys_dept d
+    </sql>
+
+	<sql id="selectOrgVo">
+         select o.orgid,o.t_o_orgid,o.orgcode,o.orgname,o.orglv,o.adder,o.addtime,o.moder,o.modtime,o.update_time,o.org_leader,
+    		o.invalidation_Mark,o.memo,o.branch_Mark,o.inoutside_Mark,o.level_Code,o.leaf,o.type,o.sort,o.operaternum,o.khnum,
+    		(select orgname from og_org where orgid = o.t_o_orgid) parent_name
+    	from og_org o
+    </sql>
+
+	<select id="selectRoleDeptTree" parameterType="Long" resultType="String">
+		select concat(d.dept_id, d.dept_name) as dept_name
+		from sys_dept d
+			left join sys_role_dept rd on d.dept_id = rd.dept_id
+		where d.del_flag = '0' and rd.role_id = #{roleId}
+		order by d.parent_id, d.order_num
+	</select>
+
+	<select id="selectDeptList" parameterType="OgOrg" resultMap="OgOrgResult">
+        <include refid="selectOrgVo"/>
+        where 1=1
+        <if test="parentId != null and parentId != ''">
+			AND o.t_o_orgid = #{parentId}
+		</if>
+		<if test="orgName != null and orgName != ''">
+			AND o.orgName like concat('%',concat(#{orgName},'%'))
+		</if>
+		<if test="orgCode!=null and orgCode!=''">
+			AND o.orgCode like concat('%',concat(#{orgCode},'%'))
+		</if>
+		<if test="levelCode!=null and levelCode!=''">
+			AND o.level_Code like concat('%',concat(#{levelCode},'%'))
+		</if>
+		<if test="params.levelCode!=null and params.levelCode!=''">
+			AND o.level_Code = #{params.levelCode}
+		</if>
+		<if test="invalidationMark!=null and invalidationMark!=''">
+			AND o.invalidation_Mark = #{invalidationMark}
+		</if>
+		<if test="memo!=null and memo!=''">
+			AND o.memo = #{memo}
+		</if>
+		order by o.orgcode
+    </select>
+
+	<select id="selectDeptListByOrgId" parameterType="OgOrg" resultMap="OgOrgResult">
+		<include refid="selectOrgVo"/>
+		where 1=1 AND o.invalidation_Mark = '1'
+		<if test="parentId != null and parentId != ''">
+			AND o.t_o_orgid = #{parentId}
+		</if>
+		<if test="orgName != null and orgName != ''">
+			AND o.orgName like concat('%',concat(#{orgName},'%'))
+		</if>
+		<if test="orgCode!=null and orgCode!=''">
+			AND o.orgCode = #{orgCode}
+		</if>
+		<if test="levelCode!=null and levelCode!=''">
+			AND o.level_Code like concat('%',concat(#{levelCode},'%'))
+		</if>
+		<if test="orgId!=null and orgId!=''">
+			AND o.orgId = #{orgId}
+		</if>
+		order by o.orgcode
+	</select>
+
+	<select id="selectDeptListTwo" parameterType="OgOrg" resultMap="OgOrgResult">
+		select t.* from OG_ORG t  where t.TYPE like '%00%' or t.orglv='1'
+	</select>
+
+	<select id="checkDeptExistUser" parameterType="String" resultType="int">
+		select count(1) from og_person where orgid = #{orgId} and invalidation_Mark = '1'
+	</select>
+
+	<select id="selectDeptCount" parameterType="OgOrg" resultType="int">
+		select count(1) from og_org
+		where 1=1
+		<if test="orgId != null and orgId != ''"> and orgId = #{orgId} </if>
+		<if test="parentId != null and parentId != ''"> and t_o_orgid = #{parentId} </if>
+	</select>
+
+	<select id="checkDeptNameUnique" resultMap="OgOrgResult">
+	    <include refid="selectOrgVo"/>
+		where orgname=#{deptName} and t_o_orgid = #{parentId}
+	</select>
+
+	<select id="selectDeptById" parameterType="String" resultMap="OgOrgResult">
+		<include refid="selectOrgVo"/>
+		where o.orgid = #{deptId,jdbcType=VARCHAR}
+	</select>
+
+	<select id="selectDeptByIds" parameterType="list" resultMap="OgOrgResult">
+		<include refid="selectOrgVo"/>
+		where o.orgid in
+		<foreach collection="array" item="orgId" open="(" separator="," close=")">
+			#{orgId}
+		</foreach>
+	</select>
+
+	<select id="selectChildrenDeptById" parameterType="String" resultMap="OgOrgResult">
+		<include refid="selectOrgVo"/>
+		where 1=1 and o.t_o_orgid = #{deptId}
+	</select>
+
+	<select id="selectNormalChildrenDeptById" parameterType="Long" resultType="int">
+		select count(*) from sys_dept where status = 0 and del_flag = '0' and instr(#{deptId}, ancestors)>0
+	</select>
+
+	<insert id="insertDept" parameterType="OgOrg" useGeneratedKeys="false" keyProperty="deptId">
+		insert into Og_Org(
+			orgid,
+			<if test="parentId!=null and parentId != ''">
+				t_o_orgid,
+			</if>
+			<if test="orgCode !=null and orgCode != ''">
+				orgcode,
+			</if>
+			<if test="orgName !=null and orgName != ''">
+				orgname,
+			</if>
+
+			<if test="memo !=null and memo != ''">
+				memo,
+			</if>
+			<if test="branchMark !=null and branchMark != ''">
+				branch_Mark,
+			</if>
+			<if test="inoutsideMark !=null and inoutsideMark != ''">
+				inoutside_Mark,
+			</if>
+			<if test="type !=null and type != ''">
+				type,
+			</if>
+			<if test="orgLv !=null and orgLv != ''">
+				orglv,
+			</if>
+			<if test="operaternum != null and operaternum != ''">
+				operaternum,
+			</if>
+			<if test="levelCode !=null and levelCode!=''">
+				level_Code,
+			</if>
+			<if test="invalidationMark !=null and invalidationMark!=''">
+				invalidation_mark,
+			</if>
+		    <if test="orgLeader !=null and orgLeader!=''">
+			    org_leader,
+		    </if>
+			addtime
+		)
+		values(
+			#{orgId},
+			<if test="parentId != null and parentId != ''">
+				#{parentId},
+			</if>
+			<if test="orgCode !=null and orgCode != ''">
+				#{orgCode},
+			</if>
+			<if test="orgName !=null and orgName != ''">
+				#{orgName},
+			</if>
+			<if test="memo !=null and memo != ''">
+				#{memo},
+			</if>
+			<if test="branchMark !=null and branchMark != ''">
+				#{branchMark},
+			</if>
+			<if test="inoutsideMark !=null and inoutsideMark != ''">
+				#{inoutsideMark},
+			</if>
+			<if test="type !=null and type != ''">
+				#{type},
+			</if>
+			<if test="orgLv !=null and orgLv != ''">
+				#{orgLv},
+			</if>
+			<if test="operaternum != null and operaternum != ''">
+				#{operaternum},
+			</if>
+			<if test="levelCode !=null and levelCode!=''">
+				#{levelCode},
+			</if>
+			<if test="invalidationMark !=null and invalidationMark!=''">
+				#{invalidationMark},
+			</if>
+		    <if test="orgLeader !=null and orgLeader!=''">
+				#{orgLeader},
+		    </if>
+			sysdate
+		)
+	</insert>
+
+	<insert id="insertDeptMysql" parameterType="OgOrg" useGeneratedKeys="false" keyProperty="deptId">
+		insert into Og_Org(
+		orgid,
+		<if test="parentId!=null and parentId != ''">
+			t_o_orgid,
+		</if>
+		<if test="orgCode !=null and orgCode != ''">
+			orgcode,
+		</if>
+		<if test="orgName !=null and orgName != ''">
+			orgname,
+		</if>
+
+		<if test="memo !=null and memo != ''">
+			memo,
+		</if>
+		<if test="branchMark !=null and branchMark != ''">
+			branch_Mark,
+		</if>
+		<if test="inoutsideMark !=null and inoutsideMark != ''">
+			inoutside_Mark,
+		</if>
+		<if test="type !=null and type != ''">
+			type,
+		</if>
+		<if test="orgLv !=null and orgLv != ''">
+			orglv,
+		</if>
+		<if test="operaternum != null and operaternum != ''">
+			operaternum,
+		</if>
+		<if test="levelCode !=null and levelCode!=''">
+			level_Code,
+		</if>
+		<if test="invalidationMark !=null and invalidationMark!=''">
+			invalidation_mark,
+		</if>
+		<if test="orgLeader !=null and orgLeader!=''">
+			org_leader,
+		</if>
+		addtime
+		)
+		values(
+		#{orgId},
+		<if test="parentId != null and parentId != ''">
+			#{parentId},
+		</if>
+		<if test="orgCode !=null and orgCode != ''">
+			#{orgCode},
+		</if>
+		<if test="orgName !=null and orgName != ''">
+			#{orgName},
+		</if>
+		<if test="memo !=null and memo != ''">
+			#{memo},
+		</if>
+		<if test="branchMark !=null and branchMark != ''">
+			#{branchMark},
+		</if>
+		<if test="inoutsideMark !=null and inoutsideMark != ''">
+			#{inoutsideMark},
+		</if>
+		<if test="type !=null and type != ''">
+			#{type},
+		</if>
+		<if test="orgLv !=null and orgLv != ''">
+			#{orgLv},
+		</if>
+		<if test="operaternum != null and operaternum != ''">
+			#{operaternum},
+		</if>
+		<if test="levelCode !=null and levelCode!=''">
+			#{levelCode},
+		</if>
+		<if test="invalidationMark !=null and invalidationMark!=''">
+			#{invalidationMark},
+		</if>
+		<if test="orgLeader !=null and orgLeader!=''">
+			#{orgLeader},
+		</if>
+		now()
+		)
+	</insert>
+
+	<update id="updateDept" parameterType="OgOrg">
+ 		update Og_Org
+ 		<set>
+			<if test="parentId!=null and parentId !=''">
+				t_o_orgid = #{parentId},
+			</if>
+			<if test="levelCode !=null and levelCode !=''">
+				level_Code = #{levelCode},
+			</if>
+			<if test="operaternum !=null and operaternum !=''">
+				operaternum = #{operaternum},
+			</if>
+			<if test="memo !=null and memo !=''">
+				memo = #{memo},
+			</if>
+			<if test="orgName !=null and orgName !=''">
+				orgName = #{orgName},
+			</if>
+			<if test="branchMark !=null and branchMark !=''">
+				branch_Mark = #{branchMark},
+			</if>
+			<if test="inoutsideMark !=null and inoutsideMark !=''">
+				inoutside_Mark = #{inoutsideMark},
+			</if>
+			<if test="invalidationMark !=null and invalidationMark !=''">
+				invalidation_Mark = #{invalidationMark},
+			</if>
+			<if test="orgCode!=null and orgCode!=''">
+				orgCode = #{orgCode},
+			</if>
+			<if test="type !=null and type!=''">
+				type = #{type},
+			</if>
+			<if test="orgLeader !=null and orgLeader!=''">
+				org_leader=#{orgLeader},
+			</if>
+ 			update_time = sysdate
+ 		</set>
+ 		where orgid = #{orgId}
+	</update>
+
+	<update id="updateDeptMysql" parameterType="OgOrg">
+		update Og_Org
+		<set>
+			<if test="parentId!=null and parentId !=''">
+				t_o_orgid = #{parentId},
+			</if>
+			<if test="levelCode !=null and levelCode !=''">
+				level_Code = #{levelCode},
+			</if>
+			<if test="operaternum !=null and operaternum !=''">
+				operaternum = #{operaternum},
+			</if>
+			<if test="memo !=null and memo !=''">
+				memo = #{memo},
+			</if>
+			<if test="orgName !=null and orgName !=''">
+				orgName = #{orgName},
+			</if>
+			<if test="branchMark !=null and branchMark !=''">
+				branch_Mark = #{branchMark},
+			</if>
+			<if test="inoutsideMark !=null and inoutsideMark !=''">
+				inoutside_Mark = #{inoutsideMark},
+			</if>
+			<if test="invalidationMark !=null and invalidationMark !=''">
+				invalidation_Mark = #{invalidationMark},
+			</if>
+			<if test="orgCode!=null and orgCode!=''">
+				orgCode = #{orgCode},
+			</if>
+			<if test="type !=null and type!=''">
+				type = #{type},
+			</if>
+			<if test="orgLeader !=null and orgLeader!=''">
+				org_leader=#{orgLeader},
+			</if>
+			update_time = now()
+		</set>
+		where orgid = #{orgId}
+	</update>
+
+	<update id="updateDeptByTierAndLevel" parameterType="SysDept">
+		update og_org
+		<set>
+			<if test="orgLv!=null and orgLv!=''">orgLv = #{orgLv},</if>
+			<if test="levelCode!=null and levelCode!=''">level_Code = #{level_Code}</if>
+		</set>
+		where orgid = #{orgId}
+	</update>
+
+	<update id="updateDeptChildren" parameterType="OgOrg">
+		update og_org
+		<set>
+			level_code=#{levelCode}
+		</set>
+		where orgId = #{orgId}
+	 </update>
+
+	<delete id="deleteDeptById" parameterType="String">
+		delete from og_org where orgId = #{orgId}
+	</delete>
+
+	<update id="updateDeptStatus" parameterType="SysDept">
+ 	    update sys_dept
+ 	    <set>
+ 	        <if test="status != null and status != ''">status = #{status},</if>
+ 	        <if test="updateBy != null and updateBy != ''">update_by = #{updateBy},</if>
+ 	        update_time = sysdate
+        </set>
+ 	    where dept_id in (${ancestors})
+	</update>
+
+	<update id="updateDeptStatusMysql" parameterType="SysDept">
+		update sys_dept
+		<set>
+			<if test="status != null and status != ''">status = #{status},</if>
+			<if test="updateBy != null and updateBy != ''">update_by = #{updateBy},</if>
+			update_time = now()
+		</set>
+		where dept_id in (${ancestors})
+	</update>
+
+	<select id="selectDeptByCode" resultMap="OgOrgResult" parameterType="String">
+		select orgid,orgcode,orgname,level_code,orglv from og_org
+		where orgcode = #{value}
+	</select>
+
+	<select id="selectDeptByOrgCodeLike" resultMap="OgOrgResult" parameterType="OgOrg">
+		<include refid="selectOrgVo"/>
+		where o.orgcode like '${orgCode}' and o.orglv='3'
+		<if test="inoutsideMark !=null and inoutsideMark !=''">
+			and o.inoutside_Mark = #{inoutsideMark}
+		</if>
+	</select>
+
+	<select id="selectDeptByOrgName" resultMap="OgOrgResult" parameterType="String">
+		<include refid="selectOrgVo"/>
+		where o.orgName = #{orgName}
+	</select>
+
+	<!--系统条线故障 故障登记查询-->
+	<select id="selectDeptListByDJ" resultMap="OgOrgResult">
+		select * from og_org o where o.level_code like '/000000000/010000888/010900888/%'
+	</select>
+	<!--根据id查询下级机构 selectAllChildOrg-->
+	<select id="selectAllChildOrg" resultMap="OgOrgResult" parameterType="String">
+		select* from og_org where level_code like   '%'||(select orgcode from og_org o where o.orgid =#{orgId}) ||'%' and invalidation_mark ='1'
+	</select>
+
+	<select id="selectOrgList"  parameterType="String" resultType="OgOrg">
+		SELECT ID.LEVEL,
+			   DATA.*
+		FROM (SELECT @ids AS _ids,
+    (SELECT
+      @ids := GROUP_CONCAT(orgid)
+    FROM
+      og_org
+    WHERE FIND_IN_SET(t_o_orgid, @ids)) AS cids,
+    @l := @l + 1 AS LEVEL
+			  FROM
+				  og_org,
+				  (SELECT
+				  @ids := #{orgid},
+				  @l := 0) b
+			  WHERE @ids IS NOT NULL) ID,
+			 og_org DATA
+		WHERE FIND_IN_SET(DATA.orgid, ID._ids)
+		ORDER BY LEVEL,
+				 orgid
+	</select>
+</mapper>

@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:include="include :: header('数据问题单列表')"/>
+    <th:block th:include="include :: datetimepicker-css"/>
+    <th:block th:include="include :: select2-css"/>
+</head>
+<body class="gray-bg">
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-12 search-collapse">
+            <form id="formId">
+                <div class="select-list">
+                    <ul>
+                        <li>
+                            <p>问题单号：</p>
+                            <input type="hidden" class="form-control" id="description" placeholder="流程任务描述"
+                                   name="params[description]" value="edit"/>
+                            <input type="text" name="imNo"/>
+                        </li>
+                        </li>
+                        <li>
+                            <p>系统名称：</p>
+                            <input type="text" name="sysName"/>
+                        </li>
+                        <li>
+                            <p>问题标题：</p>
+                            <input type="text" name="probleTitle"/>
+                        </li>
+                        <li>
+                            <p>问题起因：</p>
+                            <select name="probleCause" class="form-control"
+                                    th:with="type=${@pubParaValue.selectPubParaValueByParaName('SJChangReason')}">
+                                <option value=""></option>
+                                <option th:each="paraValue : ${type}" th:text="${paraValue.valueDetail}"
+                                        th:value="${paraValue.value}"></option>
+                            </select>
+                        </li>
+                        <li class="select-time">
+                            <p>创建时间：</p>
+                            <input type="text" id="creatTime" placeholder="开始时间" name="creatTime" readonly/>
+                            <span>-</span>
+                            <input type="text" id="endCreateTime" placeholder="结束时间" name="endCreateTime" readonly/>
+                        </li>
+                        <li class="select-time">
+                            <p>问题发生时间：</p>
+                            <input type="text" id="problemDiscoveryTime" placeholder="开始时间" name="problemDiscoveryTime"
+                                   readonly/>
+                            <span>-</span>
+                            <input type="text" id="endproblemDiscoveryTime" placeholder="结束时间"
+                                   name="endproblemDiscoveryTime" readonly/>
+                        </li>
+                        <li>
+                            <p>问题单状态：</p>
+                            <select name="currentState" class="form-control"
+                                    th:with="type=${@pubParaValue.selectPubParaValueByParaName('sjwt_status')}">
+                                <option value=""></option>
+                                <option th:each="paraValue : ${type}" th:text="${paraValue.valueDetail}"
+                                        th:value="${paraValue.value}"></option>
+                            </select>
+                        </li>
+                        <li>
+                            <a class="btn btn-primary btn-rounded btn-sm" id="SjWtSearch" onclick="$.table.search()"><i
+                                    class="fa fa-search"></i> 搜索</a>
+                            <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.resetAll('formId')"><i
+                                    class="fa fa-refresh"></i> 重置</a>
+                        </li>
+                    </ul>
+                </div>
+            </form>
+        </div>
+
+        <div class="btn-group-sm" id="toolbar" role="group">
+            <a class="btn btn-primary single disabled" onclick="edit('','')">
+                <i class="fa fa-edit"></i> 修改
+            </a>
+            <a class="btn btn-danger multiple disabled" onclick="removeSjwt()">
+                <i class="fa fa-remove"></i> 删除
+            </a>
+            <a class="btn btn-info single disabled" onclick="$.operate.detail()">
+                <i class="fa fa-search"></i> 查看详情
+            </a>
+            <a class="btn btn-info single disabled" onclick="showProcessImg()">
+                <i class="fa fa-search"></i> 查看流程
+            </a>
+            <!--导出所有｜当前页按钮组合-->
+            <div class="btn-group">
+                <button data-toggle="dropdown" class="btn btn-primary btn-sm dropdown-toggle"><i
+                        class="fa fa-cloud-upload"></i>导出<span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a onclick="$.table.exportExcel()">导出所有</a>
+                    </li>
+                    <li><a onclick="$.table.exportExcelCurrentPage()">导出当前页</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="col-sm-12 select-table table-striped">
+            <table id="bootstrap-table"></table>
+        </div>
+    </div>
+</div>
+<th:block th:include="include :: footer"/>
+<th:block th:include="include :: datetimepicker-js"/>
+<th:block th:include="include :: select2-js"/>
+<script th:inline="javascript">
+
+    var prefix = ctx + "system/dataq";
+
+    var data = [[${@pubParaValue.selectPubParaValueByParaName('SJChangReason')}]];
+
+    var datas = [[${@pubParaValue.selectPubParaValueByParaName('sjwt_status')}]];
+
+
+    $(function () {
+
+        // 回车搜索
+        document.onkeydown = function (e) {
+            var ev = document.all ? window.event : e;
+            if (ev.keyCode == 13) {
+                $('#SjWtSearch').trigger('click');
+                return false;
+            }
+        };
+
+        var options = {
+            url: prefix + "/list",
+            createUrl: prefix + "/add",
+            updateUrl: prefix + "/edit/{id}",
+            detailUrl: prefix + "/detail/{id}",
+            removeUrl: prefix + "/remove",
+            exportUrl: prefix + "/export",
+            singleSelect: true,
+            clickToSelect: true,
+            modalName: "数据问题单",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'imId',
+                    title: '数据问题单ID',
+                    visible: false,
+                    cellStyle: function cellStyle(value, row, index, field) {
+                        return {classes: 'text-nowrap'};
+                    }
+                },
+                {
+                    field: 'params.taskId',
+                    title: '任务ID',
+                    visible: false,
+                    cellStyle: function cellStyle(value, row, index, field) {
+                        return {classes: 'text-nowrap'};
+                    }
+                },
+                {
+                    field: 'imNo',
+                    title: '数据问题单号',
+                    cellStyle: function cellStyle(value, row, index, field) {
+                        return {classes: 'text-nowrap'};
+                    }
+                },
+                {
+                    field: 'createName',
+                    title: '创建人',
+                    formatter: function (value, row, index) {
+                        return $.table.tooltip(value);
+                    },
+                    cellStyle: function cellStyle(value, row, index, field) {
+                        return {classes: 'text-nowrap'};
+                    }
+                },
+                {
+                    field: 'creatTime',
+                    title: '创建时间',
+                    formatter: function (value, row, index) {
+                        var startTime = '';
+                        if (value != '' && value != null) {
+                            var pattern = /(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/;
+                            startTime = value.replace(pattern, '$1-$2-$3 $4:$5:$6');
+                        }
+                        return startTime;
+                    },
+                    cellStyle: function cellStyle(value, row, index, field) {
+                        return {classes: 'text-nowrap'};
+                    }
+                },
+                {
+                    field: 'problemDiscoveryTime',
+                    title: '问题发生时间',
+                    formatter: function (value, row, index) {
+                        var startTime = '';
+                        if (value != '' && value != null) {
+                            var pattern = /(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/;
+                            startTime = value.replace(pattern, '$1-$2-$3 $4:$5:$6');
+                        }
+                        return startTime;
+                    },
+                    cellStyle: function cellStyle(value, row, index, field) {
+                        return {classes: 'text-nowrap'};
+                    }
+                },
+                {
+                    field: 'sysName',
+                    title: '涉及系统',
+                    formatter: function (value, row, index) {
+                        return $.table.tooltip(value)
+                    },
+                    cellStyle: function cellStyle(value, row, index, field) {
+                        return {classes: 'text-nowrap'};
+                    }
+                },
+                {
+                    field: 'probleTitle',
+                    title: '问题标题',
+                    formatter: function (value, row, index) {
+                        return $.table.tooltip(value)
+                    },
+                    cellStyle: function cellStyle(value, row, index, field) {
+                        return {classes: 'text-nowrap'};
+                    }
+                },
+                {
+                    field: 'probleCause',
+                    title: '问题起因',
+                    formatter: function (value, row, index) {
+                        return selectDictLabel(data, value);
+                    },
+                    cellStyle: function cellStyle(value, row, index, field) {
+                        return {classes: 'text-nowrap'};
+                    }
+                },
+                {
+                    field: 'currentState',
+                    title: '问题单状态',
+                    formatter: function (value, row, index) {
+                        return selectDictLabel(datas, value);
+                    },
+                    cellStyle: function cellStyle(value, row, index, field) {
+                        return {classes: 'text-nowrap'};
+                    }
+                }
+            ]
+        };
+        $.table.init(options);
+    });
+
+
+    $("#creatTime").datetimepicker({
+        format: "yyyy-mm-dd",
+        minView: "month",
+        autoclose: true
+    });
+
+    $("#endCreateTime").datetimepicker({
+        format: "yyyy-mm-dd",
+        minView: "month",
+        autoclose: true
+    });
+
+    $("#problemDiscoveryTime").datetimepicker({
+        format: "yyyy-mm-dd",
+        minView: "month",
+        autoclose: true
+    });
+
+    $("#endproblemDiscoveryTime").datetimepicker({
+        format: "yyyy-mm-dd",
+        minView: "month",
+        autoclose: true
+    });
+
+    function selectDictLabel(datas, value) {
+        var actions = [];
+        $.each(datas, function (index, dict) {
+            if (dict.value == ('' + value)) {
+                var listClass = $.common.equals("default", dict.listClass) || $.common.isEmpty(dict.listClass) ? "" : "badge badge-" + dict.listClass;
+                actions.push($.common.sprintf("<span class='%s'>%s</span>", listClass, dict.valueDetail));
+                return false;
+            }
+        });
+        return actions.join('');
+    }
+
+
+    function editTab(id) {
+        table.set();
+        var rows = $.common.isEmpty(table.options.uniqueId) ? $.table.selectFirstColumns() : $.table.selectColumns(table.options.uniqueId);
+        $.ajax({
+            type: 'POST',
+            url: prefix + "/selectById",
+            data: {"id": rows[0]},
+            success: function (result) {
+                if (result.data.currentState == '09') {
+                    $.modal.openTab("修改" + table.options.modalName, $.operate.editUrl(id));
+                } else {
+                    $.modal.alertError("该状态的数据问题单无法修改!");
+                }
+            },
+            dataType: 'json'
+        });
+    }
+
+    //修改按钮对应函数
+    function edit(imId, currentState) {
+        if (imId == '') {
+            imId = $.table.selectFirstColumns();
+        }
+        if (currentState == '') {
+            currentState = $.table.selectColumns("currentState");
+        }
+        if (currentState != '09') {
+            $.modal.alertError("该状态的数据问题单无法修改!");
+            return;
+        }
+        var url = prefix + "/edit/" + imId ;
+        $.modal.openTab("修改变更单", url);
+    }
+
+    function showProcessImg() {
+        var currentState = $.table.selectColumns("currentState");
+        if (currentState == '01') {
+            $.modal.alertWarning("待提交状态的数据问题单流程未开启，不可查看！");
+            return;
+        }
+        var row = $("#bootstrap-table").bootstrapTable('getSelections')[0];
+        var url = ctx + 'process/processImg/' + row.imId;
+        $.modal.openNoBtn("查看流程图", url, null, null, null, true);
+    }
+
+
+    // 删除问题单
+    function removeSjwt() {
+        table.set();
+        var rows = $.common.isEmpty(table.options.uniqueId) ? $.table.selectFirstColumns() : $.table.selectColumns(table.options.uniqueId);
+        if (rows.length == 0) {
+            $.modal.alertWarning("请至少选择一条记录");
+            return;
+        }
+
+        $.ajax({
+            type: 'POST',
+            url: prefix+"/selectById",
+            data: {"id":rows[0]},
+            success: function (result) {
+                if(result.data.currentState =='01'){
+                    $.modal.confirm("确认要删除问题单?", function() {
+                        var url = table.options.removeUrl;
+                        var data = { "ids": rows.join() };
+                        $.operate.submit(url, "post", "json", data);
+                    });
+                }else{
+                    $.modal.alertError("当前选中的数据问题单不为待提交状态,无法删除!");
+                }
+            },
+            dataType: 'json'
+        });
+    }
+
+</script>
+</body>
+</html>

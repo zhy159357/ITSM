@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('替班信息列表')" />
+</head>
+<body class="gray-bg">
+<div class="ui-layout-center">
+    <div class="container-div">
+        <div class="row">
+            <div class="col-sm-12 search-collapse">
+                <form id="user-form">
+                    <input type="hidden" id="typeinfoId" name="typeinfoId">
+                    <input type="hidden" id="parentId" name="parentId">
+                    <div class="select-list">
+                        <ul>
+                            <li class="select-time">
+                                <label>值班时间： </label>
+                                <input type="text" style="width:150px" class="time-input" id="startTime" placeholder="开始时间" name="startTime" readonly/>
+                                <span>-</span>
+                                <input type="text" style="width:150px" class="time-input" id="endTime" placeholder="结束时间" name="endTime" readonly/>
+                            </li>
+                            <li>
+                                <p>状态：</p>
+                                <select name="status">
+                                    <option value="">所有</option>
+                                    <option th:each="dict : ${statusList}" th:text="${dict.info}" th:value="${dict.code}"></option>
+                                </select>
+                            </li>
+                            <li>
+                                <a class="btn btn-primary btn-rounded btn-sm" id="searchList" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                            </li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+            <div class="col-sm-12 select-table table-striped">
+                <table id="bootstrap-table"></table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<th:block th:include="include :: footer" />
+<script th:inline="javascript">
+    var prefix = ctx + "duty/substitute";
+
+    $(function() {
+        // 回车键搜索
+        document.onkeydown = function(e){
+            var ev = document.all ? window.event : e;
+            if(ev.keyCode==13) {
+                $('#searchList').trigger('click');
+                return false;
+            }
+        };
+        var options = {
+            url: prefix + "/tlist",
+            updateUrl: prefix + "/edit/{id}",
+            modalName: "替班信息",
+            columns: [{
+                checkbox: true
+            },
+            {
+                field: 'substituteId',
+                title: '替班id',
+                visible: false
+            },
+            {
+                field: 'pname',
+                title: '值班人'
+            },
+            {
+                field: 'dutyDate',
+                title: '值班时间'
+            },
+            {
+                field: 'typeNo',
+                title: '类别编码'
+            },
+            {
+                field: 'typeName',
+                title: '类别名称'
+            },
+            {
+                field: 'tname',
+                title: '替班人'
+            },
+            {
+                field: 'status',
+                title: '状态'
+            },
+            {
+                title: '操作',
+                align: 'center',
+                formatter: function(value, row, index) {
+                    var actions = [];
+                    if(row.status=='待审核'){
+                        actions.push('<a class="btn btn-success btn-xs" href="javascript:void(0)" onclick="$.operate.edit(\'' + row.substituteId + '\')"><i class="fa fa-edit"></i>审核</a> ');
+                    }else{
+                        actions.push('——')
+                    }
+                    return actions.join('');
+                }
+            }]
+        };
+        $.table.init(options);
+    });
+
+</script>
+</body>
+</html>

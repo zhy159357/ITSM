@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+	<th:block th:include="include :: header('添加标题')" />
+</head>
+<body class="gray-bg">
+<div class="container-div">
+	<div class="row">
+		<div class="col-sm-12 search-collapse">
+			<form id="post-form">
+				<input type="hidden" id="postId" name="postId">
+				<div class="select-list">
+					<ul>
+						<li>
+							知识标题：<input type="text" name="title"/>
+						</li>
+						<li>
+							<a id="search" class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+							<a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+						</li>
+					</ul>
+				</div>
+			</form>
+		</div>
+
+		<div class="col-sm-12 select-table table-striped">
+			<table id="bootstrap-table"></table>
+		</div>
+	</div>
+</div>
+<div th:include="include :: footer"></div>
+<script th:inline="javascript">
+	var prefix = ctx + "es";
+
+	$(function() {
+		document.onkeydown = function (e) {
+			var ev = document.all?window.event:e;
+			if(ev.keyCode==13){
+				$("#search").trigger('click');
+				return;
+			}
+		}
+		var options = {
+			url: prefix + "/content",
+			showSearch: false,
+			showRefresh: false,
+			showToggle: false,
+			showColumns: false,
+			clickToSelect: true,
+			columns: [{
+				checkbox: true
+			},
+			{
+				field : 'id',
+				title : '知识标题id',
+				visible: false
+			},
+			{
+				field : 'title',
+				title : '知识标题'
+			},
+			{
+				field : 'describe',
+				title : '知识描述'
+			},
+			{
+				field : 'createName',
+				title : '创建人'
+			},
+			{
+				field : 'createTime',
+				title : '创建时间'
+			}]
+		};
+		$.table.init(options);
+	});
+        
+	/* 添加用户-选择用户-提交 */
+	function submitHandler(index, layero) {
+		var rows = $('#bootstrap-table').bootstrapTable('getSelections');
+		if (rows.length == 0) {
+			$.modal.alertWarning("请至少选择一条记录");
+			return;
+		}
+		var title = "";
+		var id = "";
+		for(var i= 0;i<rows.length;i++){
+			title += rows[i].title + ",";
+			id += rows[i].id + ",";
+		}
+		$.modal.close();
+		// 父页面的变量
+		parent.$('#contentId').val(id.substr(0,id.length-1));
+		parent.$('#title').val(title.substr(0,title.length-1));
+	}
+</script>
+</body>
+</html>

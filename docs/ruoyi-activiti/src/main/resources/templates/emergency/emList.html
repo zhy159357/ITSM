@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:include="include :: header('应急通讯录')"/>
+    <th:block th:include="include :: layout-latest-css" />
+    <th:block th:include="include :: ztree-css" />
+    <th:block th:include="include :: select2-css"/>
+    <th:block th:include="include :: datetimepicker-css" />
+</head>
+<body class="gray-bg">
+<div class="ui-layout-west">
+    <div class="box box-main">
+        <div class="box-header">
+            <div class="box-title">
+                <i class="fa icon-grid"></i>应用系统
+            </div>
+            <div class="box-tools pull-right">
+                <input type="text" class="empty" id="keyword" maxlength="50" style="width: 104px">
+                <button type="button" class="btn btn-box-tool" id="addRecord" title="新建" onclick="addTree()"
+                ><i
+                        class="fa fa-plus"></i></button>
+                <button type="button" class="btn btn-box-tool" id="btnRefresh" title="刷新列表"><i
+                        class="fa fa-refresh"></i></button>
+            </div>
+        </div>
+        <div class="ui-layout-content">
+            <div id="tree" class="ztree"></div>
+        </div>
+    </div>
+</div>
+<div class="ui-layout-center">
+    <div class="container-div">
+        <div class="row">
+            <div class="col-sm-12 search-collapse">
+                <form id="form-knowledgeTitle">
+                    <input id="ifAdmin" name="ifAdmin" class="form-control" th:value="*{ifAdmin}" type="hidden">
+                    <input type="text" style="display: none" id="treeId" name="sysId">
+                    <div class="select-list">
+                        <ul>
+                            <li>
+                                <p>人员姓名：</p>
+                                <input type="text" id="pname" name="pname"/>
+                            </li>
+                            <li>
+                                <p>固话：</p>
+                                <input type="text" id="phone" name="phone"/>
+                            </li>
+                            <li>
+                                <p>移动电话：</p>
+                                <input type="text" id="mobilPhone" name="mobilPhone"/>
+                            </li>
+                            <li>
+                                <p>部门：</p>
+                                <input type="text" id="orgName" name="orgName"/>
+                            </li>
+                            <li>
+                                <p>岗位：</p>
+                                <input type="text" id="roleName" name="roleName"/>
+                            </li>
+                            <li>
+                                <a class="btn btn-primary btn-rounded btn-sm" id="sou" onclick="$.table.search()"><i
+                                        class="fa fa-search"></i>&nbsp;搜索</a>
+                                <a class="btn btn-warning btn-rounded btn-sm" onclick="updReset('form-knowledgeTitle')"><i
+                                        class="fa fa-repeat"></i>&nbsp;重置</a>
+                            </li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+
+            <div class="btn-group-sm" id="toolbar" role="group">
+                <a class="btn btn-success" onclick="add()">
+                    <i class="fa fa-plus"></i> 新增
+                </a>
+                <a class="btn btn-primary single disabled" onclick="editTab()">
+                    <i class="fa fa-edit"></i> 修改
+                </a>
+                <a class="btn btn-danger multiple disabled" onclick="remove()">
+                    <i class="fa fa-remove"></i> 删除
+                </a>
+                <a id="importButton" class="btn btn-info" onclick="$.table.importExcel()">
+                    <i class="fa fa-upload"></i> 导入
+                </a>
+            </div>
+
+            <div class="col-sm-12 select-table table-striped">
+                <table id="bootstrap-table" style="table-layout:fixed;"></table>
+            </div>
+        </div>
+    </div>
+</div>
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: select2-js"/>
+<th:block th:include="include :: layout-latest-js" />
+<th:block th:include="include :: datetimepicker-js" />
+<th:block th:include="include :: ztree-js" />
+<script th:src="@{/js/activiti.js}"></script>
+<script th:inline="javascript">
+    var prefix = ctx + "system/emergencyphone";
+    var selecttreeName = "";
+    var selecttreeId = "-1";
+
+    $('#btnExpand').click(function () {
+        $._tree.expandAll(true);
+        $(this).hide();
+        $('#btnCollapse').show();
+    });
+
+    $('#btnCollapse').click(function () {
+        $._tree.expandAll(false);
+        $(this).hide();
+        $('#btnExpand').show();
+    });
+    $('#btnRefresh').click(function () {
+        queryDeptTree();
+    });
+
+    $(function () {
+        var panehHidden = false;
+        if ($(this).width() < 800) {
+            panehHidden = true;
+        }
+        $('body').layout({initClosed: panehHidden, west__size: 300});
+        // 回到顶部绑定
+        if ($.fn.toTop !== undefined) {
+            var opt = {
+                win: $('.ui-layout-center'),
+                doc: $('.ui-layout-center')
+            };
+            $('#scroll-up').toTop(opt);
+        }
+        queryDeptTree();
+    });
+
+    // 点击左侧树
+    function queryDeptTree() {
+        var url = prefix + "/treeData";
+        var options = {
+            url: url,
+            expandLevel: 2,
+            onClick: zOnClick
+        };
+        $.tree.init(options);
+
+        function zOnClick(event, treeId, treeNode) {
+            $("#treeId").val(treeNode.id);
+            selecttreeId = treeNode.id;
+            selecttreeName = treeNode.name;
+            $("#treeName").val(treeNode.name);
+            $.table.search();
+        }
+    }
+
+    $(function () {
+        var a = $('#ifAdmin').val();
+        if (a == '0') {
+            $('#importButton').hide();
+        }
+        //搜索绑定键盘点击
+        document.onkeydown = function (e) {
+            var ev = document.all ? window.event : e;
+            if (ev.keyCode == 13) {
+                $('#sou').trigger('click');
+                return false;
+            }
+        }
+        var options = {
+            url: prefix + "/list",
+            createUrl: prefix + "/add",
+            updateUrl: prefix + "/edit/{id}",
+            removeUrl: prefix + "/remove",
+            exportUrl: prefix + "/export",
+            importUrl: prefix + "/importData",
+            clickToSelect:true,
+            singleSelect : true,
+            modalName: "应急通讯录",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field : 'emId',
+                    title : 'ID',
+                    visible: false,
+                    width : 150
+                },
+                {
+                    field : 'sysId',
+                    title : '系统ID',
+                    visible: false,
+                    width : 150
+                },
+                {
+                    field : 'orgName',
+                    title : '部门名称',
+                    width : 300,
+                    sortable: true,
+                    formatter: function(value, row, index) {
+                        return $.table.tooltip(value);
+                    }
+                },
+                {
+                    field : 'roleName',
+                    title : '岗位名称',
+                    width : 300,
+                    sortable: true,
+                    formatter: function(value, row, index) {
+                        return $.table.tooltip(value);
+                    }
+                },
+                {
+                    field : 'pname',
+                    title : '人员姓名',
+                    width : 200,
+                    sortable: true,
+                    formatter: function(value, row, index) {
+                        return $.table.tooltip(value);
+                    }
+                },
+                {
+                    field : 'phone',
+                    title : '固话',
+                    width : 150,
+                    formatter: function(value, row, index) {
+                        return $.table.tooltip(value);
+                    }
+
+                },
+                {
+                    field : 'mobilPhone',
+                    title : '移动电话',
+                    width : 150,
+                    formatter: function(value, row, index) {
+                        return $.table.tooltip(value);
+                    }
+                },
+                {
+                    field : 'addTime',
+                    title : '创建时间',
+                    width : 150
+                }]
+        };
+        $.table.init(options);
+        queryDeptTree();
+    });
+
+    // 详细信息
+    function detail() {
+        table.set();
+        $.modal.openNoColse("详细信息", $.operate.detailUrl());
+    }
+
+    function add() {
+        var id = $("#treeId").val();
+        if (id) {
+            $.ajax({
+                type: 'POST',
+                url: prefix +"/ifGroupLeader",
+                data: {"id":id},
+                success: function (result) {
+                    if(result.ifGroupLeader == '0'){
+                        $.modal.alertError("非管理人员不能维护");
+                    } else {
+                        var url = prefix + "/add/" + id;
+                        $.modal.open("添加应急联系人", url);
+                    }
+                },
+                dataType: 'json'
+            });
+        }else{
+            $.modal.alertError("请先选择左侧树节点。");
+        }
+    }
+
+    /*修改*/
+    function editTab(id) {
+        var tid = $("#treeId").val();
+        table.set();
+        var rows = $.common.isEmpty(table.options.uniqueId) ? $.table.selectFirstColumns() : $.table.selectColumns(table.options.uniqueId);
+        $.ajax({
+            type: 'POST',
+            url: prefix +"/ifGroupLeader",
+            data: {"id":tid},
+            success: function (result) {
+                if(result.ifGroupLeader == '0') {
+                    $.modal.alertError("非管理人员不能维护");
+                } else {
+                    $.modal.open("修改" + table.options.modalName, $.operate.editUrl(id));
+                }
+            },
+            dataType: 'json'
+        });
+
+    }
+
+    //刪除
+    function remove(id) {
+        var tid = $("#treeId").val();
+        table.set();
+        var rows = $.common.isEmpty(table.options.uniqueId) ? $.table.selectFirstColumns() : $.table.selectColumns(table.options.uniqueId);
+        $.ajax({
+            type: 'POST',
+            url: prefix+"/ifGroupLeader",
+            data: {"id":tid},
+            success: function (result) {
+                if(result.ifGroupLeader == '0') {
+                    $.modal.alertError("非管理人员不能维护");
+                } else {
+                    $.modal.confirm("确认删除？", function () {
+                        var url = prefix+"/remove";
+                        var data = { "ids": rows.join() };
+                        $.operate.submit(url, "post", "json", data);
+                    });
+                }
+            },
+            dataType: 'json'
+        });
+    }
+
+    function addTree() {
+        var url = prefix + "/addSys";
+        $.modal.open("添加分类所属系统", url);
+
+    }
+
+    //重置
+    function updReset(filetable) {
+        if ($("#treeId").val() == null || $("#treeId").val() == '') {
+            $("#treeId").val('-2')
+            return
+        }
+        $('#pname').val('');
+        $('#phone').val('');
+        $('#mobilPhone').val('');
+        $('#orgName').val('');
+        $('#roleName').val('');
+        $.table.search(filetable, 'bootstrap-table');
+    }
+</script>
+
+<!-- 导入区域 -->
+<script id="importTpl" type="text/template">
+    <form enctype="multipart/form-data" class="mt20 mb10">
+        <div class="col-xs-offset-1">
+            <input type="file" id="file" name="file"/>
+            <font color="red" class="pull-left mt10">
+                提示：仅允许导入“xls”或“xlsx”格式文件！
+            </font>
+        </div>
+    </form>
+</script>
+</body>
+</html>

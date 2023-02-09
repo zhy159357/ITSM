@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+	<th:block th:include="include :: header('关联系统用户')" />
+</head>
+
+<body class="gray-bg">
+	<div class="container-div">
+		<div class="row">
+			<div class="col-sm-12 search-collapse">
+				<form id="role-form">
+					<div class="select-list">
+						<ul>
+							<li>
+								用户名：<input type="text" name="username"/>
+							</li>
+							<li>
+								手机号：<input type="text" name="mobilPhone"/>
+							</li>
+							<li>
+								<a class="btn btn-primary btn-rounded btn-sm" id="ss" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+							    <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+							</li>
+						</ul>
+					</div>
+				</form>
+			</div>
+
+	        <div class="col-sm-12 select-table table-striped">
+			    <table id="bootstrap-table"></table>
+			</div>
+		</div>
+	</div>
+	<th:block th:include="include :: footer" />
+	<script th:inline="javascript">
+		var prefix = ctx + "user";
+
+		$(function() {
+			document.onkeydown = function(e){
+				var ev = document.all ? window.event : e;
+				console.log(ev);
+				if(ev.keyCode==13) {
+					$('#ss').trigger('click');
+					return false;
+				} //搜索逻辑
+			};
+			var options = {
+		        url: prefix + "/selectSystemUser",
+		        queryParams: queryParams,
+		        modalName: "系统用户",
+                clickToSelect: true,
+                singleSelect: true,
+		        columns: [{
+		            checkbox: true
+		        },
+		        {
+		            field: 'userId',
+		            title: '用户ID',
+		            visible: false
+		        },
+		        {
+		            field: 'username',
+		            title: '用户名称'
+		        },
+				{
+					field: 'pname',
+					title: '名称'
+				},
+				{
+					field: 'mobilPhone',
+					title: '手机'
+				},
+		        {
+		            field: 'email',
+		            title: '邮箱'
+		        },
+		        {
+		        	field: 'invalidationMark',
+		        	title: '用户状态',
+		        	align: 'center',
+                    formatter: function (value, row, index) {
+                        return value == "1"?"启用":"禁用"
+                    }
+		        }]
+		    };
+		    $.table.init(options);
+		});
+
+		function queryParams(params) {
+			var search = $.table.queryParams(params);
+			return search;
+		}
+
+		function submitHandler() {
+			var rows = $.table.selectFirstColumns();
+			if (rows.length == 0) {
+       			$.modal.alertWarning("请选择一条记录！");
+       			return;
+			}
+            var userId = $.table.selectFirstColumns()[0];
+            var username = $.table.selectColumns('username')[0];
+            var mobilPhone = $.table.selectColumns('mobilPhone')[0];
+            var pname = $.table.selectColumns('pname')[0];
+            var data = {
+                userId: userId,
+                username: username,
+                mobilPhone: mobilPhone,
+                pname: pname
+            };
+            $.operate.save(prefix + "/add", data);
+		}
+	</script>
+</body>
+</html>

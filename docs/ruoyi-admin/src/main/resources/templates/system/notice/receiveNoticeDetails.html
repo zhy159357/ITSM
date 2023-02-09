@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('接收公告详情')" />
+</head>
+<body class="gray-bg">
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-12 search-collapse">
+            <form id="notice-form">
+                <input id="amReceiveId" name="amReceiveId" type="hidden"  th:value="*{amReceiveId}">
+                <div class="select-list">
+                    <ul>
+                        <li>
+                            接收人：<input type="text" name="pName" placeholder=""/>
+                        </li>
+                        <li>
+                            <p>接收状态：</p>
+                            <select name="currentState" th:with="type=${@dict.getParaType('if_receive')}">
+                                <option value=""></option>
+                                <option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+                            </select>
+                        </li>
+                        <li class="select-time">
+                            <label>接收时间： </label>
+                            <input type="text" class="time-input" id="startTime" placeholder="从" name="params[beginTime]"/>
+                            <span>-</span>
+                            <input type="text" class="time-input" id="endTime" placeholder="到" name="params[endTime]"/>
+                        </li>
+                        <li>
+                            <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                            <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                        </li>
+                    </ul>
+                </div>
+            </form>
+        </div>
+        <div class="btn-group-sm" id="toolbar" role="group">
+            <button class="btn btn-primary" type="button" onclick="window.print()">
+                <i class="fa fa-print"></i>打印
+            </button>
+            <div class="btn-group">
+                <button data-toggle="dropdown" class="btn btn-primary btn-sm dropdown-toggle">导出<span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a onclick="$.table.exportExcel()">导出所有</a>
+                    </li>
+                    <li><a onclick="$.table.exportExcelCurrentPage()">导出当前页</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="col-sm-12 select-table table-striped">
+            <table id="bootstrap-table"></table>
+        </div>
+        <div class="col-sm-offset-5 col-sm-10">
+            <button type="button" class="btn btn-sm btn-danger" onclick="closeItem()"><i class="fa fa-window-close"></i>关 闭 </button>
+        </div>
+    </div>
+</div>
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: datetimepicker-js" />
+<script th:inline="javascript">
+    var datas = [[${@pubParaValue.selectPubParaValueByParaName('if_receive')}]];
+    var prefix = ctx + "system/noticeHandle";
+    $(function() {
+        var options = {
+            url: prefix + "/receiveNoticeLists",
+            createUrl: prefix + "/add",
+            updateUrl: prefix + "/edit/{id}",
+            removeUrl: prefix + "/remove",
+            exportUrl: prefix + "/exportDetails",
+            modalName: "公告",
+
+            clickToSelect:true,
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field : 'amActlogId',
+                    title : '公告接收日志Id',
+                    visible: false
+                },
+                {
+                    field : 'pName',
+                    title : '接收人'
+                },
+                {
+                    field : 'orgName',
+                    title : '接收机构'
+                },
+                {
+                    field : 'groupName',
+                    title : '接收工作组'
+                },
+                {
+                    field : 'phone',
+                    title : '联系电话'
+                },
+                {
+                    field : 'editTime',
+                    title : '接收时间'
+                },
+                {
+                    field: 'currentState',
+                    title: '接收状态',
+                    align: 'center',
+                    formatter: function (value,row,index) {
+                        return selectDictLabel(datas, value);
+                    }
+                }]
+        };
+        $.table.init(options);
+    });
+
+    $("#datetimepicker-demo-2").datetimepicker({
+        format: "yyyy-mm-dd",
+        minView: "month",
+        autoclose: true
+    });
+
+    function selectDictLabel(datas, value) {
+        var actions = [];
+        $.each(datas, function(index, dict) {
+            if (dict.value == ('' + value)) {
+                var listClass = $.common.equals("default", dict.listClass) || $.common.isEmpty(dict.listClass) ? "" : "badge badge-" + dict.listClass;
+                actions.push($.common.sprintf("<span class='%s'>%s</span>", listClass, dict.valueDetail));
+                return false;
+            }
+        });
+        return actions.join('');
+    }
+</script>
+</body>
+</html>

@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+	<th:block th:include="include :: header('话机终端绑定列表')" />
+</head>
+<body class="gray-bg">
+	<div class="container-div">
+		<div class="row">
+			<div class="col-sm-12 search-collapse">
+				<form id="role-form">
+					<div class="select-list">
+						<ul>
+							<li>
+								IP地址：<input type="text" name="ip"/>
+							</li>
+							<li>
+								工号：<input type="text" name="jobnum"/>
+							</li>
+							<li>
+								分机号：<input type="text" name="extensnum"/>
+							</li>
+							<li>
+								电话银行工号：<input type="text" name="telbankid"/>
+							</li>
+
+							<li>
+								<a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+							    <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+							</li>
+						</ul>
+					</div>
+				</form>
+			</div>
+		
+			<div class="btn-group-sm" id="toolbar" role="group">
+				<a class="btn btn-primary single disabled" onclick="$.operate.detail()" >
+					<i class="fa fa-detail"></i> 查看详情
+				</a>
+		        <a class="btn btn-warning" onclick="$.table.exportExcel()" >
+		            <i class="fa fa-download"></i> 导出
+		        </a>
+	        </div>
+
+	        <div class="col-sm-12 select-table table-striped">
+			    <table id="bootstrap-table"></table>
+			</div>
+		</div>
+	</div>
+	<th:block th:include="include :: footer" />
+	<script th:inline="javascript">
+		var editFlag = [[${@permission.hasPermi('system:bind:edit')}]];
+		var removeFlag = [[${@permission.hasPermi('system:bind:remove')}]];
+		var prefix = ctx + "system/bindSearch";
+		
+
+		$(function() {
+		    var options = {
+		        url: prefix + "/list",
+                detailUrl: prefix + "/detail/{id}",
+		        exportUrl: prefix + "/export",
+		        // sortName: "appsort",
+		        modalName: "应用系统",
+		        columns: [{
+		            checkbox: true
+		        },
+		        {
+		            field: 'id',
+		            title: 'ID',
+                    visible:false,
+                    sortable: true
+		        },
+		        {
+		            field: 'ip',
+		            title: 'IP地址',
+		            sortable: true
+		        },
+		        {
+		            field: 'telbankid',
+		            title: '电话银行工号',
+		            sortable: true
+		        },
+		        {
+		            field: 'extensnum',
+		            title: '分机号',
+		            sortable: true
+		        },
+		        {
+		            field: 'jobnum',
+		            title: '工号',
+		            sortable: true
+		        },
+		        {
+		            field: 'creater',
+		            title: '创建人',
+		            sortable: true
+		        }]
+		    };
+		    $.table.init(options);
+		});
+		
+		/* 角色管理-分配数据权限 */
+		function authDataScope(bindId) {
+		    var url = prefix + '/authDataScope/' + bindId;
+		    $.modal.open("分配数据权限", url);
+		}
+		
+		/* 角色管理-分配用户 */
+		function authUser(bindId) {
+		    var url = prefix + '/authUser/' + bindId;
+		    $.modal.openTab("分配用户", url);
+		}
+		
+		/* 角色状态显示 */
+		function statusTools(row) {
+		    if (row.status == 1) {
+    			return '<i class=\"fa fa-toggle-off text-info fa-2x\" onclick="enable(\'' + row.id + '\')"></i> ';
+    		} else {
+    			return '<i class=\"fa fa-toggle-on text-info fa-2x\" onclick="disable(\'' + row.id + '\')"></i> ';
+    		}
+		}
+		
+		/* 角色管理-停用 */
+		function disable(id) {
+			$.modal.confirm("确认要停用角色吗？", function() {
+				$.operate.post(prefix + "/changeStatus", { "id": id, "status": 1 });
+		    })
+		}
+
+		/* 角色管理启用 */
+		function enable(bindId) {
+			$.modal.confirm("确认要启用角色吗？", function() {
+				$.operate.post(prefix + "/changeStatus", { "bindId": bindId, "status": 0 });
+		    })
+		}
+	</script>
+</body>
+</html>

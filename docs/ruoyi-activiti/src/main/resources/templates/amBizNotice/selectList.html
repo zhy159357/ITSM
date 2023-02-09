@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('查询公告通知列表')" />
+</head>
+<body class="gray-bg">
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-12 search-collapse">
+            <form id="notice-form">
+                <div class="select-list">
+                    <ul>
+                        <li>
+                            <label style="width: 80px">公告编码：</label>
+                            <input type="text" name="amCode" placeholder=""/>
+                        </li>
+                        <li>
+                            <label style="width: 80px">公告标题：</label>
+                            <input type="text" name="amTitle" placeholder=""/>
+                        </li>
+                        <li>
+                            <label style="width: 80px">发布人员：</label>
+                            <input type="text" name="pName" placeholder=""/>
+                        </li>
+                        <li>
+                            <label style="width: 80px">公告状态：</label>
+                            <select name="currentStatus" class="form-control" th:with="type=${@pubParaValue.selectPubParaValueByParaName('notice_status')}" type="text">
+                                <option value=""></option>
+                                <option th:each="paraValue : ${type}" th:text="${paraValue.valueDetail}" th:value="${paraValue.value}"></option>
+                            </select>
+                        </li>
+                        <li>
+                            <label style="width: 80px">发布机构：</label>
+                            <input type="text" name="orgName" placeholder=""/>
+                        </li>
+                        <li class="select-time">
+                            <label style="width: 80px">创建时间： </label>
+                            <input style="width:90px" type="text" class="time-input"  id="startTime" placeholder="从" name="params[beginTime]" readonly/>
+                            <span style="width:10px">-</span>
+                            <input style="width:90px" type="text" class="time-input"   id="endTime" placeholder="到" name="params[endTime]" readonly/>
+                        </li>
+                        <li>
+                            <a class="btn btn-primary btn-rounded btn-sm" id="searchBut" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                            <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-repeat"></i>&nbsp;重置</a>
+                        </li>
+                    </ul>
+                </div>
+            </form>
+        </div>
+
+        <div class="btn-group-sm" id="toolbar" role="group">
+            <a class="btn btn-info single disabled" onclick="details()">
+                <i class="fa fa-search"></i> 查看详情
+            </a>
+        </div>
+
+        <div class="col-sm-12 select-table table-striped">
+            <table id="bootstrap-table"></table>
+        </div>
+    </div>
+</div>
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: datetimepicker-js" />
+<script th:inline="javascript">
+
+    var datas = [[${@pubParaValue.selectPubParaValueByParaName('notice_status')}]];
+    var isTop = [[${@pubParaValue.selectPubParaValueByParaName('is_top')}]];
+    var sendRange = [[${@pubParaValue.selectPubParaValueByParaName('ambiz_receive')}]];
+    var prefix = ctx + "activiti/notice";
+
+    var pub_attachment = ctx + "pub/attachment";
+
+    $(function() {
+        // 回车键搜索
+        document.onkeydown = function(e){
+            var ev = document.all ? window.event : e;
+            if(ev.keyCode==13) {
+                $('#searchBut').trigger('click');
+                return false;
+            }
+        };
+        var options = {
+            url: prefix + "/selectList",
+            createUrl: prefix + "/add",
+            updateUrl: prefix + "/edit/{id}",
+            cloneUrl: prefix + "/clone/{id}",
+            detailUrl : prefix + "/details/{id}",
+            removeUrl: prefix + "/remove",
+            clickToSelect:true,
+            singleSelect : true,
+            modalName: "公告",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field : 'amBizId',
+                    visible: false,
+                    width : 300
+                },
+                {
+                    field : 'amCode',
+                    title : '公告编码',
+                    width : 150
+                },
+                {
+                    field : 'amTitle',
+                    title : '标题',
+                    width : 300
+                },
+                {
+                    field : 'pName',
+                    title : '发布人',
+                    width : 150
+                },
+                {
+                    field : 'orgName',
+                    title : '发布机构',
+                    width : 150
+                },
+                {
+                    field : 'checkerName',
+                    title : '审核人',
+                    width : 150
+                },
+                {
+                    field: 'isTop',
+                    title: '是否置顶',
+                    align: 'center',
+                    formatter: function (value,row,index) {
+                        return selectDictLabel(isTop, value);
+                    },
+                    width : 100
+                },
+                {
+                    field: 'sendRange',
+                    title: '接收范围',
+                    align: 'center',
+                    formatter: function (value,row,index) {
+                        return selectDictLabel(sendRange, value);
+                    },
+                    width : 100
+                },
+                {
+                    field : 'addTime',
+                    title : '创建时间',
+                    width : 150,
+                    formatter: function (value, row, index) {
+                        var startTime = '';
+                        if (value != '' && value != null) {
+                            var pattern = /(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/;
+                            startTime = value.replace(pattern, '$1-$2-$3 $4:$5:$6');
+                        }
+                        return startTime;
+                    }
+                },
+                {
+                    field : 'releaseDate',
+                    title : '发布时间',
+                    width : 150,
+                    formatter: function (value, row, index) {
+                        var startTime = '';
+                        if (value != '' && value != null) {
+                            var pattern = /(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/;
+                            startTime = value.replace(pattern, '$1-$2-$3 $4:$5:$6');
+                        }
+                        return startTime;
+                    }
+                },
+                {
+                    field: 'currentStatus',
+                    title: '状态',
+                    align: 'center',
+                    formatter: function (value,row,index) {
+                        return selectDictLabel(datas, value);
+                    },
+                    width : 150
+                }]
+        };
+        $.table.init(options);
+    });
+
+    $("#datetimepicker-demo-2").datetimepicker({
+        format: "yyyy-mm-dd",
+        minView: "month",
+        autoclose: true
+    });
+
+    /*公告详情*/
+    function details(){
+        var amBizId = $.table.selectFirstColumns();
+        var url = prefix + "/details/" + amBizId;
+        $.modal.openTab("公告详情", url);
+    }
+
+    // 附件下载
+    function downloadFile() {
+        var taskFormId = $.table.selectFirstColumns();
+        $.ajax({
+            url: pub_attachment + "/listAll",
+            data:{"ownerId":taskFormId[0]},
+            async: false,
+            dataType: "json",
+            type: "POST",
+            success: function (data) {
+                if(data==null||data.length<1){
+                    return $.modal.alertError('该公告没有附件可以下载')
+                }else {
+                    $.each(data, function(i) {
+                        var url = ctx + "pub/attachment/download/"+taskFormId+"/"+ data[i].atId;
+                        window.location.href = url;
+                    });
+                }
+            }
+        });
+    }
+
+    function selectDictLabel(datas, value) {
+        var actions = [];
+        $.each(datas, function(index, dict) {
+            if (dict.value == ('' + value)) {
+                var listClass = $.common.equals("default", dict.listClass) || $.common.isEmpty(dict.listClass) ? "" : "badge badge-" + dict.listClass;
+                actions.push($.common.sprintf("<span class='%s'>%s</span>", listClass, dict.valueDetail));
+                return false;
+            }
+        });
+        return actions.join('');
+    }
+</script>
+</body>
+</html>

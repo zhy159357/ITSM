@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:include="include :: header('版本任务列表')" />
+    <th:block th:include="include :: select2-css" />
+</head>
+<body class="gray-bg">
+     <div class="container-div">
+        <div class="row">
+            <div class="col-sm-12 search-collapse">
+                <form id="formId">
+                    <div class="select-list">
+                        <ul>
+                            <li>
+                                <p>任务单号：</p>
+                                <input type="text" name="taskNo"/>
+                            </li>
+                            <li>
+                                <p>版本编号：</p>
+                                <input type="text" name="vmBizInfo.versionInfoNo"/>
+                            </li>
+                            <li>
+                                <p>任务状态：</p>
+                                <select name="taskStatus">
+                                    <option value=""></option>
+                                    <option value="1">待下载</option>
+                                    <option value="2">已下载</option>
+                                    <option value="3">已完成</option>
+                                </select>
+                                <input type="hidden" id="taskStatus" name="params[taskStatusCompleteFlag]" th:value=2>
+                            </li>
+                            <li>
+                                <p>是否自动化：</p>
+                                <select name="vmBizInfo.isAutomate">
+                                    <option value=""></option>
+                                    <option value="1">是</option>
+                                    <option value="2">否</option>
+                                </select>
+                            </li>
+                            <li>
+                                <p>所属系统：</p>
+                                <select id="params[caption]" name="params[caption]" class="form-control noselect2 selectpicker"
+                                        multiple data-actions-box="true" data-width="200px" data-live-search="true"
+                                        data-none-selected-text="请选择系统"
+                                        th:with="type=${@application.selectOgSysList(null)}">
+                                    <option th:each="app : ${type}" th:text="${app.caption}" th:value="${app.caption}"></option>
+                                </select>
+                            </li>
+                            <li>
+                                <a class="btn btn-primary btn-rounded btn-sm" id="versionTaskInfoList" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.resetAll()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                            </li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+
+            <div class="btn-group-sm" id="toolbar" role="group">
+                <a class="btn btn-warning single disabled" onclick="taskDownload()">
+                    <i class="fa fa-download"></i> 下载版本
+                </a>
+                <a class="btn btn-primary single disabled" onclick="confirmVersionTask()">
+                    <i class="fa fa-check"></i> 操作完成
+                </a>
+                <a class="btn btn-primary single disabled" onclick="upgradeAfterCondition()">
+                    <i class="fa fa-check"></i> 升级后评价
+                </a>
+                <a class="btn btn-info single disabled" onclick="taskDetail()">
+                    <i class="fa fa-search"></i> 查看任务详情
+                </a>
+                <a class="btn btn-primary single disabled" onclick="automate()" id="automate">
+                    <i class="fa fa-default"></i> 启动自动化
+                </a>
+            </div>
+            <div class="col-sm-12 select-table table-striped">
+                <table id="bootstrap-table" style="table-layout: fixed"></table>
+            </div>
+        </div>
+    </div>
+    <th:block th:include="include :: footer" />
+     <th:block th:include="include :: bootstrap-select-js"/>
+     <th:block th:include="include :: bootstrap-select-css"/>
+    <script th:inline="javascript">
+        var prefix = ctx + "version/taskInfo";
+        var currentUser = [[${@currentUser.getCurrentUser()}]];
+
+        $(function() {
+            // 回车键搜索
+            document.onkeydown = function(e){
+                var ev = document.all ? window.event : e;
+                if(ev.keyCode==13) {
+                    $('#versionTaskInfoList').trigger('click');
+                    return false;
+                }
+            };
+
+            var options = {
+                url: prefix + "/list",
+                createUrl: prefix + "/add",
+                updateUrl: prefix + "/edit/{id}",
+                removeUrl: prefix + "/remove",
+                exportUrl: prefix + "/export",
+                clickToSelect: true,
+                singleSelect: true,
+                onCheck: showStartAgentBut,
+                queryParams: queryParams,
+                modalName: "版本任务",
+                columns: [{
+                    checkbox: true
+                },
+                {
+                    field : 'taskId', 
+                    title : '任务序号ID',
+                    visible: false,
+                    width : 250
+                },
+                {
+                    field : 'versionInfoId',
+                    title : '版本发布单ID',
+                    visible: false,
+                    width : 250
+                },
+                {
+                    field : 'taskNo',
+                    title : '任务单号',
+                    width : 150
+                },
+                {
+                    field : 'vmBizInfo.versionInfoNo',
+                    title : '版本单号',
+                    width : 150
+                },
+                {
+                    field : 'vmBizInfo.ogSys.caption',
+                    title : '所属系统',
+                    width : 150
+                },
+                {
+                    field : 'vmBizInfo.versionInfoName',
+                    title : '版本简称',
+                    width : 300
+                },
+                {
+                    field : 'taskproducetime',
+                    title : '生成时间',
+                    width : 150
+                },
+                {
+                    field : 'actualStartTime',
+                    title : '开始时间',
+                    width : 150
+                },
+                {
+                    field : 'actualFinishTime',
+                    title : '结束时间',
+                    width : 150
+                },
+                {
+                    field : 'ogOrg.orgName',
+                    title : '所属单位',
+                    width : 150
+                },
+                {
+                    field : 'estFinishDate',
+                    title : '版本下载时间',
+                    width : 150
+                },
+                {
+                    field : 'taskStatus',
+                    title : '任务状态',
+                    formatter: function(value, row, index) {
+                        if(row.taskStatus == '1'){
+                            return "待下载";
+                        }else if(row.taskStatus == '2'){
+                            return "已下载";
+                        }else if(row.taskStatus == '3'){
+                            return "已完成";
+                        } else if(row.taskStatus == '4'){
+                            return "已评价";
+                        }
+                    },
+                    width : 80
+                },{
+                    field : 'vmBizInfo.automateAuditId',
+                    title : '自动化实施人ID',
+                    visible: false,
+                    width : 250
+                },{
+                    field : 'vmBizInfo.isAutomate',
+                    title : '自动化',
+                    formatter: function(value, row, index) {
+                        if(row.vmBizInfo.isAutomate == '1'){
+                            return "是";
+                        } else if(row.vmBizInfo.isAutomate == '2') {
+                            return "否";
+                        }
+                    },
+                    width : 80
+                }]
+            };
+            $.table.init(options);
+        });
+
+        // 下载版本
+        function taskDownload() {
+            var taskId = $.table.selectColumns("taskId");
+            var versionInfoId = $.table.selectColumns("versionInfoId");
+            var url = prefix + "/download/" + versionInfoId + "/" + taskId;
+            $.modal.openTab("下载附件",url);
+        }
+
+        // 操作完成
+        function confirmVersionTask() {
+            var taskId = $.table.selectFirstColumns();
+            /*var isAutomate = $.table.selectColumns("vmBizInfo.isAutomate");
+            if(isAutomate == "1"){
+                $.modal.alertWarning("该版本任务属于自动化升级任务,请点击【启动自动化】弹出自动化步骤附件页面，点击【启动】按钮代替【操作完成】操作！");
+                return;
+            }*/
+            var taskStatus = $.table.selectColumns("taskStatus");
+            if(taskStatus != "2"){
+                $.modal.alertWarning("版本任务附件下载完成即任务状态为【已下载】,方可点击【操作完成】按钮进行确认！");
+                return;
+            }
+            var url = prefix + "/confirm/" + taskId;
+            $.modal.openTab("操作完成",url);
+        }
+
+        // 升级后情况
+        function upgradeAfterCondition() {
+            var taskId = $.table.selectFirstColumns();
+            $.ajax({
+                url: prefix + "/selectCompleteDate/" + taskId,
+                type: "post",
+                dataType: "json",
+                data: {},
+                success: function (result) {
+                    if (result.code == 0) {
+                        var flag = result.data.flag;
+                        var msg = result.data.msg;
+                        // 校验确认时间与下载时间的差值是否在12小时以内，flag==true才打开升级后评估页面
+                        if(flag){
+                            var url = prefix + "/upgradeAfterCondition/" + taskId;
+                            $.modal.open("升级后评估",url);
+                        }else{
+                            $.modal.alertWarning(msg);
+                        }
+                    }
+                }
+            });
+        }
+
+        function queryParams(params) {
+            var taskStatus = $("#taskStatus").val();
+            if(taskStatus == null || taskStatus == ""){
+                $("#taskStatus").val("2");
+            }
+            var search = $.table.queryParams(params);
+            return search;
+        }
+
+        // 查看任务详情
+        function taskDetail() {
+            var taskId = $.table.selectFirstColumns();
+            var url = prefix + "/detail/" + taskId;
+            $.modal.openTab("版本信息",url);
+        }
+
+        function showStartAgentBut() {
+            var userId = currentUser.userId;
+            var automateAuditId = $.table.selectColumns("vmBizInfo.automateAuditId");
+            var isAutomate = $.table.selectColumns("vmBizInfo.isAutomate");
+            // 如果当前登录人不是自动化实施人或者非自动化不能发布自动化，将按钮置灰不可用
+            if(automateAuditId != userId || isAutomate != "1"){
+                $("#automate").attr('disabled', true);
+                $("#automate").addClass('disabled');
+                $("#automate").removeAttr('onclick', '');
+            } else {
+                $("#automate").attr("disabled", false);
+                $("#automate").removeClass('disabled');
+                $("#automate").attr('onclick', 'automate();');
+            }
+        }
+
+        // 启动自动化
+        function automate() {
+            var versionInfoId = $.table.selectColumns("versionInfoId");
+            var taskId = $.table.selectColumns("taskId");
+            var url = prefix + "/automate/" + taskId + "/" +versionInfoId;
+            $.modal.openTab("启动自动化",url);
+        }
+
+    </script>
+</body>
+</html>

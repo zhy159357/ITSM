@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:include="include :: header('结束流程列表')" />
+    <th:block th:include="include :: datetimepicker-css" />
+    <style>
+        .select-list li p, .select-list li label:not(.radio-box) {
+            float: left;
+            width: 100px;
+            margin: 5px 0px 0px 0px;
+            text-align: right;
+        }
+    </style>
+</head>
+<body class="gray-bg">
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-12 search-collapse">
+            <form id="task-query-form">
+                <div class="select-list">
+                    <ul>
+                        <li>
+                            <label>任务类型： </label>
+                            <select name="defineKey" id="defineKey" th:with="type=${@dict.getParaType('endTask_type')}">
+                                <option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+                            </select>
+                        </li>
+                        <li>
+                            <label>单号： </label><input type="text" name="number" id="number"/>
+                        </li>
+                        <li>
+                            <a class="btn btn-primary btn-rounded btn-sm" id="taskSearch" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                            <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                        </li>
+                    </ul>
+                </div>
+            </form>
+        </div>
+
+        <div class="btn-group-sm" id="toolbar" role="group">
+            <a class="btn btn-danger disabled single " onclick="closeProcess()">
+                <i class="fa fa-window-close"></i> 关闭
+            </a>
+            <a class="btn btn-danger disabled single " onclick="removeProcess()">
+                <i class="fa fa-trash"></i> 删除
+            </a>
+            <a class="btn btn-success disabled single " onclick="showProcessImg()">
+                <i class="fa fa-search"></i> 查看流程
+            </a>
+        </div>
+
+        <div class="col-sm-12 select-table table-striped">
+            <table id="bootstrap-table"></table>
+        </div>
+    </div>
+</div>
+
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: datetimepicker-js" />
+<script th:inline="javascript">
+
+    //初始化加载一个固定事件单的所有任务列表
+    var prefix = ctx + "system/task";
+    $(function() {
+        // 回车键搜索
+        document.onkeydown = function(e){
+            var ev = document.all ? window.event : e;
+            if(ev.keyCode==13) {
+                $('#taskSearch').trigger('click');
+                return false;
+            }
+        };
+
+        var options = {
+            id: 'bootstrap-table',
+            url: prefix + "/list",
+            removeUrl: prefix + "/remove",
+            modalName: "结束流程列表数据",
+            queryParams: queryParams,
+            singleSelect:true,
+            clickToSelect: true,
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'businesskey',
+                    title: '流程单id',
+                    visible:false
+                },
+                {
+                    field: 'taskType',
+                    title: '任务类型',
+                    align: 'center'
+                },
+                {
+                    field: 'taskNo',
+                    title: '单号',
+                    align: 'center'
+                },
+                {
+                    field: 'taskName',
+                    title: '任务名称',
+                    align: 'center'
+                },
+                {
+                    field: 'taskTitle',
+                    title: '标题',
+                    align: 'center'
+                },
+                {
+                    field: 'taskGeneterTime',
+                    title: '任务生成时间',
+                    align: 'center'
+                }]
+        };
+        $.table.init(options);
+    });
+
+    function queryParams(params) {
+        var search = $.table.queryParams(params);
+        search.number = $('#number').val();
+        search.type =   $('#defineKey').val();
+        return search;
+    }
+
+
+    /**
+     * 查看流程
+     */
+    function showProcessImg() {
+        var rows = $("#bootstrap-table").bootstrapTable('getSelections');
+        var row = rows[0];
+        var url = ctx+'process/processImg/' + row.businesskey;
+        $.modal.openNoBtn("查看流程图", url, null, null, null, true);
+    }
+
+    function closeProcess() {
+        var rows = $("#bootstrap-table").bootstrapTable('getSelections');
+        var row = rows[0];
+        $.modal.confirm("确认要关闭吗?", function() {
+            var url =prefix+"/close";
+            var type = $('#defineKey').val();
+            var data = { "id": row.businesskey,"type":type};
+            $.operate.submit(url, "post", "json", data);
+        });
+    }
+
+
+    function removeProcess(){
+        var rows = $("#bootstrap-table").bootstrapTable('getSelections');
+        var row = rows[0];
+        $.modal.confirm("确认要删除吗?", function() {
+            var url =prefix+"/remove";
+            var type = $('#defineKey').val();
+            var data = { "id": row.businesskey,"type":type};
+            $.operate.submit(url, "post", "json", data);
+        });
+    }
+
+</script>
+</body>
+</html>

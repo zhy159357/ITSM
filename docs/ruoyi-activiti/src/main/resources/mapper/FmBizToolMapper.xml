@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.activiti.mapper.FmBizToolMapper">
+
+    <resultMap type="FmBizTool" id="FmBizToolResult">
+        <result property="fbtId" column="fbt_id"/>
+        <result property="fmId" column="fm_id"/>
+        <result property="ifTool" column="if_tool"/>
+        <result property="toolName" column="tool_name"/>
+        <result property="dealName" column="deal_name"/>
+        <result property="n1" column="n1"/>
+        <result property="n2" column="n2"/>
+        <result property="sysId" column="sys_id"/>
+        <result property="residenceTime" column="residence_time"/>
+        <result property="dealTime" column="deal_time"/>
+        <!--以下只为展示使用-->
+        <result property="orgName" column="orgName"/>
+        <result property="dealCouNum" column="dealCouNum"/>
+        <result property="isToolsNum" column="isToolsNum"/>
+        <result property="countTool" column="countTool"/>
+        <association property="ogSys" column="sysId" javaType="OgSys" resultMap="OgSysResult"/>
+    </resultMap>
+
+    <resultMap type="OgSys" id="OgSysResult">
+        <id property="sysId" column="sysId"/>
+        <result property="orgId" column="orgId"/>
+        <result property="code" column="code"/>
+        <result property="caption" column="caption"/>
+        <result property="memo" column="memo"/>
+        <result property="invalidationMark" column="invalidation_Mark"/>
+        <result property="isExamination" column="isExamination"/>
+        <result property="dept" column="dept"/>
+        <result property="pid" column="pid"/>
+        <result property="businessId" column="businessId"/>
+        <result property="isKeySys" column="is_Key_Sys"/>
+        <result property="sysType" column="sys_Type"/>
+    </resultMap>
+
+    <sql id="selectFmBizToolVo">
+        select fbt_id,
+               fm_id,
+               if_tool,
+               tool_name,
+               deal_name,
+               n1,
+               n2,
+               sys_id,
+               residence_time,
+               deal_time
+        from fm_biz_tool
+    </sql>
+
+    <select id="selectFmBizToolList" parameterType="FmBizTool" resultMap="FmBizToolResult">
+        <include refid="selectFmBizToolVo"/>
+        <where>
+            <if test="fmId != null  and fmId != ''">and fm_id = #{fmId}</if>
+            <if test="ifTool != null  and ifTool != ''">and if_tool = #{ifTool}</if>
+            <if test="toolName != null  and toolName != ''">and tool_name like concat(concat('%', #{toolName}), '%')
+            </if>
+            <if test="dealName != null  and dealName != ''">and deal_name like concat(concat('%', #{dealName}), '%')
+            </if>
+            <if test="n1 != null  and n1 != ''">and n1 = #{n1}</if>
+            <if test="n2 != null  and n2 != ''">and n2 = #{n2}</if>
+            <if test="sysId != null  and sysId != ''">and sys_id = #{sysId}</if>
+            <if test="residenceTime != null  and residenceTime != ''">and residence_time = #{residenceTime}</if>
+            <if test="dealTime != null  and dealTime != ''">and deal_time = #{dealTime}</if>
+        </where>
+    </select>
+
+    <select id="selectFmBizToolById" parameterType="String" resultMap="FmBizToolResult">
+        <include refid="selectFmBizToolVo"/>
+        where fbt_id = #{fbtId}
+    </select>
+
+    <insert id="insertFmBizTool" parameterType="FmBizTool">
+        insert into fm_biz_tool
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="fbtId != null  and fbtId != ''">fbt_id,</if>
+            <if test="fmId != null  and fmId != ''">fm_id,</if>
+            <if test="ifTool != null  and ifTool != ''">if_tool,</if>
+            <if test="toolName != null  and toolName != ''">tool_name,</if>
+            <if test="dealName != null  and dealName != ''">deal_name,</if>
+            <if test="n1 != null  and n1 != ''">n1,</if>
+            <if test="n2 != null  and n2 != ''">n2,</if>
+            <if test="sysId != null  and sysId != ''">sys_id,</if>
+            <if test="residenceTime != null  and residenceTime != ''">residence_time,</if>
+            <if test="dealTime != null  and dealTime != ''">deal_time,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="fbtId != null  and fbtId != ''">#{fbtId},</if>
+            <if test="fmId != null  and fmId != ''">#{fmId},</if>
+            <if test="ifTool != null  and ifTool != ''">#{ifTool},</if>
+            <if test="toolName != null  and toolName != ''">#{toolName},</if>
+            <if test="dealName != null  and dealName != ''">#{dealName},</if>
+            <if test="n1 != null  and n1 != ''">#{n1},</if>
+            <if test="n2 != null  and n2 != ''">#{n2},</if>
+            <if test="sysId != null  and sysId != ''">#{sysId},</if>
+            <if test="residenceTime != null  and residenceTime != ''">#{residenceTime},</if>
+            <if test="dealTime != null  and dealTime != ''">#{dealTime},</if>
+        </trim>
+    </insert>
+
+    <update id="updateFmBizTool" parameterType="FmBizTool">
+        update fm_biz_tool
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="fmId != null  and fmId != ''">fm_id = #{fmId},</if>
+            <if test="ifTool != null  and ifTool != ''">if_tool = #{ifTool},</if>
+            <if test="toolName != null  and toolName != ''">tool_name = #{toolName},</if>
+            <if test="dealName != null  and dealName != ''">deal_name = #{dealName},</if>
+            <if test="n1 != null  and n1 != ''">n1 = #{n1},</if>
+            <if test="n2 != null  and n2 != ''">n2 = #{n2},</if>
+            <if test="sysId != null  and sysId != ''">sys_id = #{sysId},</if>
+            <if test="residenceTime != null  and residenceTime != ''">residence_time = #{residenceTime},</if>
+            <if test="dealTime != null  and dealTime != ''">deal_time = #{dealTime},</if>
+        </trim>
+        where fbt_id = #{fbtId}
+    </update>
+
+    <delete id="deleteFmBizToolById" parameterType="String">
+        delete
+        from fm_biz_tool
+        where fbt_id = #{fbtId}
+    </delete>
+
+    <delete id="deleteFmBizToolByIds" parameterType="String">
+        delete from fm_biz_tool where fbt_id in
+        <foreach item="fbtId" collection="array" open="(" separator="," close=")">
+            #{fbtId}
+        </foreach>
+    </delete>
+    <!-- 查询工具使用情况事件单 系统-->
+    <select id="selectFmBizToolAppr" parameterType="FmBizTool" resultMap="FmBizToolResult">
+        select s.caption,
+        o.orgname orgName,
+        count(*) dealCouNum,
+        count(case when f.if_tool='1' then f.if_tool end) isToolsNum,
+        nvl(round((sum(case when f.if_tool ='1' then f.if_tool end) / count(f.sys_id) *100),2),0)||'%' countTool
+        from fm_biz_tool f
+        left join og_sys s on f.sys_id=s.sysid
+        left join og_org o on s.orgid=o.orgid
+        <where>
+            <if test="params.startCreatTime != null and params.startCreatTime != ''"><!-- 创建时间起始检索 -->
+                and f.deal_time &gt;= #{params.startCreatTime}
+            </if>
+            <if test="params.endCreatTime != null and params.endCreatTime != ''"><!-- 创建时间起始检索 -->
+                and f.deal_time &lt;= #{params.endCreatTime}
+            </if>
+        </where>
+        group by s.CAPTION, o.ORGNAME
+    </select>
+    <!-- 查询工具使用情况事件单厂商-->
+    <select id="selectFmBizToolAppr2" parameterType="FmBizTool" resultMap="FmBizToolResult">
+        select o.orgname orgName,
+        count(*) dealCouNum,
+        count(case when f.if_tool='1' then f.if_tool end) isToolsNum,
+        nvl(round((sum(case when f.if_tool ='1' then f.if_tool end) / count(f.sys_id) *100),2),0)||'%' countTool
+        from fm_biz_tool f
+        left join og_sys s on f.sys_id=s.sysid
+        left join og_org o on s.orgid=o.orgid
+        <where>
+            <if test="params.startCreatTime != null and params.startCreatTime != ''"><!-- 创建时间起始检索 -->
+                and f.deal_time &gt;= #{params.startCreatTime}
+            </if>
+            <if test="params.endCreatTime != null and params.endCreatTime != ''"><!-- 创建时间起始检索 -->
+                and f.deal_time &lt;= #{params.endCreatTime}
+            </if>
+            group by o.ORGNAME
+        </where>
+    </select>
+</mapper>

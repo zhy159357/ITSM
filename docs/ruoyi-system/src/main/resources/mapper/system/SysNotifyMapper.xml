@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.SysNotifyMapper">
+
+    <resultMap type="SysNotify" id="SysNotifyResult">
+        <result property="id"    column="id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="roleId"    column="role_id"    />
+        <result property="type"    column="type"    />
+        <result property="isPush"    column="is_push"    />
+        <result property="creatTime"    column="creat_time"    />
+        <result property="text"    column="text"    />
+    </resultMap>
+
+    <sql id="selectSysNotifyVo">
+        select id, user_id, role_id, type, is_push, creat_time, text from sys_notify
+    </sql>
+
+    <select id="selectSysNotifyList" parameterType="SysNotify" resultMap="SysNotifyResult">
+        <include refid="selectSysNotifyVo"/>
+        <where>
+            <if test="userId != null  and userId != ''"> and user_id = #{userId}</if>
+            <if test="roleId != null  and roleId != ''"> and role_id = #{roleId}</if>
+            <if test="type != null  and type != ''"> and type = #{type}</if>
+            <if test="isPush != null  and isPush != ''"> and is_push = #{isPush}</if>
+            <if test="creatTime != null  and creatTime != ''"> and creat_time = #{creatTime}</if>
+            <if test="text != null  and text != ''"> and text = #{text}</if>
+        </where>
+    </select>
+
+    <select id="selectSysNotifyById" parameterType="String" resultMap="SysNotifyResult">
+        <include refid="selectSysNotifyVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertSysNotify" parameterType="SysNotify">
+        insert into sys_notify
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null  and id != ''">id,</if>
+            <if test="userId != null  and userId != ''">user_id,</if>
+            <if test="roleId != null  and roleId != ''">role_id,</if>
+            <if test="type != null  and type != ''">type,</if>
+            <if test="isPush != null  and isPush != ''">is_push,</if>
+            <if test="creatTime != null  and creatTime != ''">creat_time,</if>
+            <if test="text != null  and text != ''">text,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null  and id != ''">#{id},</if>
+            <if test="userId != null  and userId != ''">#{userId},</if>
+            <if test="roleId != null  and roleId != ''">#{roleId},</if>
+            <if test="type != null  and type != ''">#{type},</if>
+            <if test="isPush != null  and isPush != ''">#{isPush},</if>
+            <if test="creatTime != null  and creatTime != ''">#{creatTime},</if>
+            <if test="text != null  and text != ''">#{text},</if>
+        </trim>
+    </insert>
+
+    <update id="updateSysNotify" parameterType="SysNotify">
+        update sys_notify
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userId != null  and userId != ''">user_id = #{userId},</if>
+            <if test="roleId != null  and roleId != ''">role_id = #{roleId},</if>
+            <if test="type != null  and type != ''">type = #{type},</if>
+            <if test="isPush != null  and isPush != ''">is_push = #{isPush},</if>
+            <if test="creatTime != null  and creatTime != ''">creat_time = #{creatTime},</if>
+            <if test="text != null  and text != ''">text = #{text},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSysNotifyById" parameterType="String">
+        delete from sys_notify where id = #{id}
+    </delete>
+
+    <delete id="deleteSysNotifyByIds" parameterType="String">
+        TRUNCATE TABLE sys_notify
+    </delete>
+
+</mapper>

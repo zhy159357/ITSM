@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:include="include :: header('我的资源变更单')"/>
+</head>
+<body class="gray-bg">
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-12 search-collapse">
+            <form id="formId">
+                <div class="select-list">
+                    <ul>
+                        <li>
+                            <p>变更标题：</p>
+                            <input type="text" name="changeSingleName"/>
+                        </li>
+                        <li>
+                            <p>类型：</p>
+                            <select name="changeType" th:with="type=${@dict.getParaType('change_type')}">
+                                <option value="">所有</option>
+                                <option th:each="dict : ${type}" th:text="${dict.valueDetail}"
+                                        th:value="${dict.value}"></option>
+                            </select>
+                        </li>
+                        <li>
+                            <p>变更来源：</p>
+                            <select name="changeResource" th:with="type=${@dict.getParaType('change_resource')}">
+                                <option value="">所有</option>
+                                <option th:each="dict : ${type}" th:text="${dict.valueDetail}"
+                                        th:value="${dict.value}"></option>
+                            </select>
+                        </li>
+                        <li>
+                            <p>通知业务：</p>
+                            <select name="isNotice" id="isNotice">
+                                <option value="">所有</option>
+                                <option value="0">否</option>
+                                <option value="1">是</option>
+                            </select>
+                        </li>
+                        <li>
+                            <p>变更分类：</p>
+                            <input name="changeCategoryId" id="changeCategoryId" class="form-control" type="hidden">
+                            <input name="changeCategoryName" id="changeCategoryName" class="form-control"
+                                   onclick="selectTypeInfo()" type="text" readonly style="background-color:  #ffffff">
+
+                        </li>
+                        <li class="select-time">
+                            <p>创建时间： </p>
+                            <input type="text" class="time-input" id="startCreatTime" placeholder="开始时间"
+                                   name="params[startCreatTime]" readonly>
+                            <span>-</span>
+                            <input type="text" class="time-input" id="endCreatTime" placeholder="结束时间"
+                                   name="params[endCreatTime]" readonly>
+                        </li>
+                        <li>
+                            <a class="btn btn-primary btn-rounded btn-sm" id="searchBut" onclick="$.table.search()"><i
+                                    class="fa fa-search"></i>&nbsp;搜索</a>
+                            <a class="btn btn-warning btn-rounded btn-sm" onclick="resetForm()"><i
+                                    class="fa fa-refresh"></i>&nbsp;重置</a>
+                        </li>
+                    </ul>
+                </div>
+            </form>
+        </div>
+
+        <div class="btn-group-sm" id="toolbar" role="group">
+            <a class="btn btn-primary single disabled" onclick="detail()">
+                <i class="fa fa-search"></i>查看详情
+            </a>
+        </div>
+        <div class="col-sm-12 select-table table-striped">
+            <table id="bootstrap-table" style="table-layout: fixed;"></table>
+        </div>
+    </div>
+</div>
+<th:block th:include="include :: footer"/>
+<script th:inline="javascript">
+
+    var changeTypeV = [[${@pubParaValue.selectPubParaValueByParaName('change_type')}]];
+    var changeStatusV = [[${@pubParaValue.selectPubParaValueByParaName('changeSingleStatus')}]];
+    var changeResourceV = [[${@pubParaValue.selectPubParaValueByParaName('change_resource')}]];
+    var prefix = ctx + "system/single";
+
+    $(function () {
+        // 回车键搜索
+        document.onkeydown = function (e) {
+            var ev = document.all ? window.event : e;
+            if (ev.keyCode == 13) {
+                $('#searchBut').trigger('click');
+                return false;
+            }
+        };
+        var options = {
+            url: prefix + "/assessedCmbizlist",
+            createUrl: prefix + "/add",
+            exportUrl: prefix + "/myExport",
+            singleSelect: true,
+            clickToSelect: true,
+            sortName: "createtime",
+            sortOrder: "desc",
+            modalName: "资源变更单",
+            columns: [{
+                checkbox: true
+            }, {
+                field: 'changeId',
+                visible: false
+            }, {
+                field: 'xtchangeManagerId',
+                visible: false
+            },
+                {
+                    field: 'changeCode',
+                    width: 150,
+                    title: '变更单号'
+                },
+                {
+                    field: 'changeSingleName',
+                    width: 250,
+                    title: '变更标题',
+                    formatter: function (value, row, index) {
+                        return $.table.tooltip(value);
+                    }
+                },
+                {
+                    field: 'applicantName',
+                    width: 150,
+                    title: '申请人'
+                },
+                {
+                    field: 'createtime',
+                    width: 150,
+                    title: '创建时间',
+                    formatter: function (value, row, index) {
+                        var startTime = '';
+                        if (value != '' && value != null) {
+                            var pattern = /(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/;
+                            startTime = value.replace(pattern, '$1-$2-$3 $4:$5:$6');
+                        }
+                        return startTime;
+                    }
+                },
+                {
+                    field: 'expectStartTime',
+                    width: 150,
+                    title: '计划变更时间',
+                    formatter: function (value, row, index) {
+                        var startTime = '';
+                        if (value != '' && value != null) {
+                            var pattern = /(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/;
+                            startTime = value.replace(pattern, '$1-$2-$3 $4:$5:$6');
+                        }
+                        return startTime;
+                    }
+                },
+                {
+                    field: 'changeType',
+                    width: 100,
+                    title: '类型',
+                    formatter: function (value, row, index) {
+                        return $.table.selectPubParaValueData(changeTypeV, value);
+                    }
+                },
+                {
+                    field: 'changeCategoryName',
+                    width: 100,
+                    title: '变更分类'
+                },
+                {
+                    field: 'changeSingleStauts',
+                    width: 100,
+                    title: '状态',
+                    formatter: function (value, row, index) {
+                        return $.table.selectPubParaValueData(changeStatusV, value);
+                    }
+                },
+                {
+                    field: 'changeResource',
+                    width: 150,
+                    title: '变更来源',
+                    formatter: function (value, row, index) {
+                        return $.table.selectPubParaValueData(changeResourceV, value);
+                    }
+                },
+                {
+                    title: '操作',
+                    align: 'center',
+                    width: 100,
+                    formatter: function (value, row, index) {
+                        var actions = [];
+                        actions.push('<a class="btn btn-danger btn-xs" href="javascript:void(0)" onclick="rollBack(\'' + row.changeId + '\',\'' + row.changeSingleStauts + '\')"><i class="fa fa-edit"></i>撤回</a> ');
+                        return actions.join('');
+                    }
+                }]
+        };
+        $.table.init(options);
+    });
+
+    // 回显数据字典
+    function selectPubParaValueData(datas, value) {
+        var actions = [];
+        $.each(datas, function (index, pubParaValue) {
+            if (pubParaValue.value == ('' + value)) {
+                actions.push($.common.sprintf("<span class='%s'>%s</span>", "", pubParaValue.valueDetail));
+                return false;
+            }
+        });
+        return actions.join('');
+    }
+
+    function showProcessImg(instanceId) {
+        var url = prefix + '/processImg/' + instanceId;
+        $.modal.open("查看流程图", url, null, null, null, true);
+    }
+
+    /*查看详情*/
+    function detail() {
+        var changeId = $.table.selectFirstColumns();
+        var url = prefix + "/detail/" + changeId;
+        $.modal.openTab("变更单详情", url);
+    }
+
+    /* 选择分类树 */
+    function selectTypeInfo() {
+        var url = ctx + "system/typeinfo/cmBizTree";
+        var options = {
+            title: '选择分类',
+            width: "380",
+            url: url,
+            callBack: doSubmit2
+        };
+        $.modal.openOptions(options);
+    }
+
+    function doSubmit2(index, layero) {
+        var tree = layero.find("iframe")[0].contentWindow.$._tree;
+        if (jQuery.isEmptyObject(tree)) {
+            layer.close(index);
+        }
+        var selectNode = tree.getSelectedNodes();
+        if (selectNode.length != 0) {
+            $("#changeCategoryId").val(selectNode[0].id);
+            $("#changeCategoryName").val(selectNode[0].name);
+        }
+        layer.close(index);
+    }
+
+    //修改按钮对应函数
+    function edit(changeId, changeSingleStauts) {
+        if (changeId == '') {
+            changeId = $.table.selectFirstColumns();
+        }
+        if (changeSingleStauts == '') {
+            changeSingleStauts = $.table.selectColumns("changeSingleStauts");
+        }
+        if (changeSingleStauts != '0100' && changeSingleStauts != '0200') {
+            $.modal.alertWarning("只有待提交、退回待修改状态的变更单才允许修改！");
+            return;
+        }
+        var url = prefix + "/edit/" + changeId;
+        $.modal.openTab("修改变更单", url);
+    }
+
+    //删除按钮对应函数
+    function delet(changeId, changeSingleStauts) {
+        if (changeId == '') {
+            changeId = $.table.selectColumns("changeId")[0];
+        }
+        if (changeSingleStauts == '') {
+            changeSingleStauts = $.table.selectColumns("changeSingleStauts");
+        }
+        if (changeSingleStauts != '0100') {
+            $.modal.alertWarning("只有待提交状态的变更单才允许删除！");
+            return;
+        }
+        $.modal.confirm("确认要删除吗?", function () {
+            var url = prefix + "/remove";
+            var data = {"changeId": changeId};
+            $.operate.submit(url, "post", "json", data);
+        });
+    }
+
+    function resetForm() {
+        $("#changeCategoryId").val("");// 设置地址之后进行查询
+        $.form.reset();
+    }
+
+    /*撤回*/
+    function rollBack(id, status) {
+        if (id == '') {
+            id = $.table.selectFirstColumns();
+        }
+        if (status == '') {
+            status = $.table.selectColumns("changeSingleStauts");
+        }
+        var xtchangeManagerId = $.table.selectColumns("xtchangeManagerId");
+
+        $.modal.confirm("确认要撤回吗?", function () {
+            var url = prefix + "/assessedRollBack";
+            var data = {"id": id};
+            $.operate.submit(url, "post", "json", data);
+        });
+    }
+</script>
+</body>
+</html>

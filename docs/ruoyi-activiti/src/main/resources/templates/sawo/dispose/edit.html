@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('态势感知工单')" />
+    <th:block th:include="include :: select2-css" />
+    <th:block th:include="include :: summernote-css" />
+    <th:block th:include="include :: datetimepicker-css" />
+</head>
+<body>
+<div class="main-content">
+    <form id="form-line-add" class="form-horizontal" th:object="${fmSawo}">
+        <input id="ordId" type="hidden" name="ordId" th:value="${ordId}">
+        <input id="creatTwoId" type="hidden" th:value="${creatTwoId}">
+        <input name="ownerId" type="hidden" id="ownerId"/>
+        <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+            <div class="panel-group">
+                <div class="panel panel-default">
+                    <div class="panel-heading" style="green-color: #3c8dbc" data-toggle="collapse" data-target="#collapse1">
+                        <h4 class="panel-title" >
+                            态势感知工单
+                        </h4>
+                    </div>
+                    <div id="collapse1" class="panel-collapse in">
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label class="col-sm-4 control-label is-required">工单单号：</label>
+                                        <div class="col-sm-8">
+                                            <input id="ordNo" name="ordNo" type="text" maxlength="20" th:value="*{ordNo}" readonly required
+                                                   class="form-control"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label class="col-sm-4 control-label is-required">告警/漏洞名称：</label>
+                                        <div class="col-sm-8">
+                                            <input id="gaaName" name="gaaName" type="text" maxlength="100" th:field="*{gaaName}"
+                                                   class="form-control" readonly required/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label class="col-sm-4 control-label is-required">告警/漏洞级别：</label>
+                                        <div class="col-sm-8">
+                                            <select class="form-control" id="gaaLev" name="gaaLev" th:field="*{gaaLev}" th:with="type=${@dict.getParaType('customer_impact_degree')}" disabled>
+                                                <option value=""></option>
+                                                <option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label class="col-sm-4 control-label is-required">创建时间：</label>
+                                        <div class="col-sm-8">
+                                            <input id="createrTime" name="createrTime" th:value="*{createrTime}" class="form-control" type="text" placeholder="yyyy-MM-dd HH:mm:ss" readonly required>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label class="col-sm-4 control-label is-required">工单类型：</label>
+                                        <div class="col-sm-8 ">
+                                            <select class="form-control" id="ordType" name="ordType" th:field="*{ordType}" th:with="type=${@dict.getParaType('ord_type')}" disabled>
+                                                <option value=""></option>
+                                                <option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group" >
+                                        <label class="col-sm-4 control-label is-required">告警/漏洞类型：</label>
+                                        <div class="col-sm-8">
+                                            <select class="form-control" id="gaaType" name="gaaType" th:field="*{gaaType}" th:with="type=${@dict.getParaType('gaa_type')}" disabled>
+                                                <option value=""></option>
+                                                <option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label class="col-sm-4 control-label">来源IP：</label>
+                                        <div class="col-sm-8">
+                                            <input id="sourceIp" name="sourceIp" th:field="*{sourceIp}" type="text" class="form-control" readonly/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label class="col-sm-4 control-label">目的IP：</label>
+                                        <div class="col-sm-8">
+                                            <input id="objIp" name="objIp" th:field="*{objIp}" type="text" class="form-control" readonly/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label class="col-sm-4 control-label is-required">告警/漏洞类别：</label>
+                                        <div class="col-sm-8">
+                                            <!--<select class="form-control" id="gaaCategory" name="gaaCategory" th:field="*{gaaCategory}" th:with="type=${@dict.getParaType('gaa_category')}" required>
+                                                <option value=""></option>
+                                                <option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+                                            </select>-->
+                                            <input id="gaaCategoryValue" name="gaaCategoryValue" th:field="*{gaaCategoryValue}" class="form-control" maxlength="20" type="text" readonly required>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label class="col-sm-4 control-label">目的IP所属系统：</label>
+                                        <div class="col-sm-8">
+                                            <input id="sysId" name="sysId" th:field="*{sysId}" class="form-control" maxlength="60" type="text" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label class="col-sm-4 control-label is-required">所属部门/分行：</label>
+                                        <div class="col-sm-8">
+                                            <!--<select class="form-control" id="belDept" name="belDept" th:field="*{belDept}" th:with="type=${@dict.getParaType('bel_dept')}" disabled>
+                                                <option value=""></option>
+                                                <option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}" ></option>
+                                            </select>-->
+                                            <input id="belDept" name="belDept" th:field="*{belDept}" class="form-control" maxlength="60" type="text" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label class="col-sm-4 control-label">责任处室/分行：</label>
+                                        <div class="col-sm-8">
+                                            <input id="resDept" name="resDept" th:field="*{resDept}" class="form-control" maxlength="100" type="text" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label class="col-sm-4 control-label ">系统管理员：</label>
+                                        <div class="col-sm-8">
+                                            <input id="sysAdmin" name="sysAdmin" th:field="*{sysAdmin}" type="text" class="form-control" readonly >
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label class="col-sm-4 control-label">应用管理员：</label>
+                                        <div class="col-sm-8">
+                                            <input id="appAdmin" name="appAdmin" th:field="*{appAdmin}" type="text" class="form-control" readonly >
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <h4 class="form-header h4">告警/漏洞/问题描述</h4>
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <div class="form-group">
+                                        <label class="col-sm-2 control-label is-required" style="width:11%">告警/漏洞描述：</label>
+                                        <div class="col-sm-10" style="width:89%">
+                                            <input id="gaaDesc" name="gaaDesc" type="hidden" th:field="*{gaaDesc}" readonly >
+                                            <div class="summernote" id="summernote"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <h4 class="form-header h4">处置信息</h4>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label class="col-sm-4 control-label is-required">处置结果：</label>
+                                        <div class="col-sm-8">
+                                            <!-- <input name="dealDept"  id="dealDept" class="form-control" style="background-color: #fff; opacity: 1;" onclick="selectDept()" readonly type="text" required>
+                                             <input name="n1" id="n1" type="hidden">-->
+                                            <select id="cw" onchange="cwrr()" name="disposeResult" class="form-control">
+                                                <option></option>
+                                                <option value="1">完成</option>
+                                                <option value="2">误报</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label class="col-sm-4 control-label is-required">处置完成时间：</label>
+                                            <div class="col-sm-8">
+                                                <input id="dealTime" name="dealTime" th:field="*{dealTime}" class="form-control" type="text" placeholder="yyyy-MM-dd HH:mm:ss" readonly>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-sm-12">
+                                    <div class="form-group">
+                                        <label class="col-xs-2 control-label is-required">描述:</label>
+                                        <div class="col-sm-10">
+                                            <textarea rows="6" cols="20" id="rem" name="rem" required="required"  maxlength="150" class="form-control"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+</div>
+</form>
+</div>
+<div class="row">
+    <div class="col-sm-12">
+        <div class="tabs-container">
+            <ul class="nav nav-tabs">
+                <li class="active"><a data-toggle="tab" href="#tab-1" aria-expanded="true">流程记录</a></li>
+                <li class=""><a data-toggle="tab" href="#tab-2" aria-expanded="false">附件列表</a></li>
+            </ul>
+            <div class="tab-content">
+                <div id="tab-1" class="tab-pane active">
+                    <div class="panel-body">
+                        <div class="col-sm-12 select-table table-striped">
+                            <table id="history-table"></table>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="tab-2" class="tab-pane">
+                    <div class="panel-body">
+                        <div class="btn-group-sm" id="toolbar" role="tab" style="margin: 15px 0px;">
+                            <a class="btn btn-warning multiple disabled" onclick="downloadFile()">
+                                <i class="fa fa-download"></i> 下载附件
+                            </a>
+                        </div>
+                        <div class="col-sm-12 select-table table-striped">
+                            <table id="file-table"></table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-offset-5 col-sm-10">
+        <button type="button" class="btn btn-sm btn-primary" onclick="submit()"><i class="fa fa-check"></i>通 过</button>
+        <button type="button" class="btn btn-sm btn-primary" onclick="save()"><i class="fa fa-check"></i>转 发</button>
+        <button type="button" class="btn btn-sm btn-danger" onclick="closeItem()"><i class="fa fa-reply-all"></i>关 闭</button>
+    </div>
+</div>
+<script th:src="@{/js/activiti.js}"></script>
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: select2-js" />
+<th:block th:include="include :: summernote-js" />
+<th:block th:include="include :: datetimepicker-js" />
+
+<script>
+    var prefix = ctx + "sawo/dispose";
+    var prefix_attachment = ctx + "pub/attachment";
+    var prefix_p = ctx + "public";
+    var prefix_show = ctx + "system/peo";
+
+    $(function () {
+        puFolwHistory($("#ordId").val());
+        var options = {
+            url: prefix_attachment + "/list",
+            id: "file-table",
+            createUrl: prefix_attachment + "/add",
+            updateUrl: prefix_attachment + "/edit/{id}",
+            removeUrl: prefix_attachment + "/remove",
+            detailUrl: prefix_attachment + "/edit/{id}",
+            sortName: "fileTime",
+            sortOrder: "desc",
+            singleSelect: true,
+            clickToSelect: true,
+            queryParams:queryParams,
+            modalName: "附件列表",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field : 'atId',
+                    title : '附件ID',
+                    visible : false
+                },
+                {
+                    field : 'person.pId',
+                    title : '上传人员Id',
+                    visible: false
+                },
+                {
+                    field : 'fileName',
+                    title : '文件名称'
+                },
+                {
+                    field : 'person.pName',
+                    title : '上传人'
+                },
+                {
+                    field : 'size',
+                    title : '文件大小'
+                },
+                {
+                    field : 'memo',
+                    title : '文件描述'
+                },
+                {
+                    field : 'fileTime',
+                    title : '上传时间'
+                }]
+        };
+        $.table.init(options);
+    });
+
+    function queryParams(params) {
+        var search = $.table.queryParams(params);
+        search.ownerId =  $("#ordId").val();
+        return search;
+    }
+
+    $(function () {
+        $('.summernote').summernote({
+            placeholder: '请输入',
+            height : 192,
+            lang : 'zh-CN',
+            followingToolbar: false,
+            callbacks: {
+                onImageUpload: function (files) {
+                    sendFile(files[0], this);
+                }
+            },
+            focus:true
+        });
+        var content = $("#gaaDesc").val();
+        $('#summernote').summernote('code', content);
+        $('.summernote').summernote('disable');
+    });
+
+    // 附件下载
+    function downloadFile() {
+        var rows = $.table.selectFirstColumns();
+        var atId = rows[0];
+        var ownerId = $("#ordId").val();
+        var url = ctx + "pub/attachment/download/" + ownerId + "/" + atId;
+        window.location.href = url;
+    }
+
+    function cwrr(){
+        var cw = $("#cw").val();
+        if (cw == '2'){//必填
+            $("#rem").attr("required", "true");
+        }else {//非必填
+            $("#rem").removeAttr("required");
+
+        }
+    }
+
+    //字符串yyyyMMddHHmmss转yyyy-MM-dd HH:mm:ss
+    $(function () {
+        var backupDate = $("#dealTime").val();
+        var pattern = /(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/;
+        backupDate = backupDate.replace(pattern, '$1-$2-$3 $4:$5:$6');
+        $("#dealTime").val(backupDate);
+    });
+
+    //发生时间
+    $("#createrTime").datetimepicker({
+        format: "yyyy-mm-dd hh:ii:ss",
+        autoclose: true,
+        minView:0,
+        minuteStep:1
+    });
+
+    //新增  3 待验证
+    function submit() {
+        if ($.validate.form()) {
+            var data = $("#form-line-add").serializeArray();
+            //data.push({name:"rem",value:rem.getData()});//富文本内容单独获取
+            data.push({"name":"ordState","value": 3 });
+            var creatTwoId = $('#creatTwoId').val();
+            data.push({"name":"createId","value": creatTwoId });
+
+            //点击通过的时候给它的一个时间
+            var date = new Date();//当前系统时间
+            var month = date.getMonth() + 1;//月比实际月份要少1
+            var strDate = date.getDate();
+            var hours = date.getHours();
+            var minutes = date.getMinutes();
+            var seconds = date.getSeconds();
+            if (month >= 1 && month <= 9) {
+                month = "0" + month;
+            }
+            if (strDate >= 0 && strDate <= 9) {
+                strDate = "0" + strDate;
+            }
+            if (hours >= 0 && hours <= 9) {
+                hours = "0" + hours;
+            }
+            if (minutes >= 0 && minutes <= 9) {
+                minutes = "0" + minutes;
+            }
+            if (seconds >= 0 && seconds <= 9) {
+                seconds = "0" + seconds;
+            }
+            var closeTime = date.getFullYear() + "-" + month + "-" + strDate + " " + hours + ":" + minutes + ":" + seconds;
+            //var closeTime = date.getFullYear() + month + strDate + hours + minutes + seconds;
+            //$("#gaaTypeValue").val(closeTime);
+            data.push({"name":"gaaTypeValue","value": closeTime });
+            debugger;
+
+            //处置开始时间
+            var dealTime = $('#dealTime').val();
+
+
+            $.operate.saveTab(prefix + "/edit", data);
+        }
+    }
+
+    //转发   3：待验证
+    function save() {
+        var ordId = $("#ordId").val();
+        $.modal.openTab("打开转发按钮页面", prefix + "/saverepeatIn/" + ordId);
+    }
+
+</script>
+</body>
+</html>

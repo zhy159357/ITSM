@@ -1,0 +1,599 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.activiti.mapper.ComputerRoomMapper">
+
+    <resultMap type="OgPerson" id="OgPersonResult">
+        <id     property="pId"              column="PID"         />
+        <result property="orgId"            column="ORGID"         />
+        <result property="pName"            column="PNAME"      />
+        <result property="sex"              column="SEX"       />
+        <result property="edu"              column="EDU"       />
+        <result property="birthday"         column="BIRTHDAY"           />
+        <result property="birthPlace"       column="BIRTHPLACE"     />
+        <result property="phone"            column="PHONE"             />
+        <result property="mobilPhone"       column="MOBIL_PHONE"          />
+        <result property="email"            column="EMAIL"        />
+        <result property="address"          column="ADDRESS"            />
+        <result property="createBy"         column="create_by"          />
+        <result property="momer"            column="MOMER"        />
+        <result property="memo"             column="MEMO"        />
+        <result property="updatetime"       column="UPDATE_TIME"      />
+        <result property="invalidationMark" column="INVALIDATION_MARK" />
+        <result property="position"         column="POSITION"       />
+        <result property="leader"           column="LEADER"     />
+        <result property="pOrder"           column="P_ORDER"       />
+        <result property="pflag"            column="P_FLAG"     />
+        <result property="orgname"          column="ORGNAME"     />
+    </resultMap>
+
+    <resultMap type="com.ruoyi.activiti.domain.ComputerModule" id="ModelResult">
+        <result property="id" column="id"/>
+        <result property="parentId" column="parent_id"/>
+        <result property="parentName" column="parent_name"/>
+        <result property="name" column="name"/>
+        <result property="createId" column="create_id"/>
+        <result property="createName" column="create_name"/>
+        <result property="createTime" column="create_time"/>
+        <result property="status" column="status"/>
+    </resultMap>
+
+    <sql id="selectComputerRoomApplyVO">
+        SELECT
+            cra.ID,
+            cra.COMPUTER_APPLY_NO as computerApplyNo,
+            cra.APPLY_USER_ID as applyUserId,
+            (SELECT PNAME FROM OG_PERSON WHERE OG_PERSON.PID =cra.APPLY_USER_ID ) as applyUserName,
+            cra.APPLY_ORG_ID as applyOrgId,
+            cra.AUDITOR_ID as auditorId,
+            (SELECT PNAME FROM OG_PERSON WHERE OG_PERSON.PID =cra.AUDITOR_ID ) as auditorName,
+            org.ORGNAME as applyOrgName,
+            cra.COMPUTER_ROOM_MODULE as computerRoomModule,
+            cra.COMPUTER_ROOM_MODULE_NAME as computerRoomModuleName,
+            cra.ACCOMPANY_USER_ID as accompanyUserId ,
+            (SELECT PNAME FROM OG_PERSON WHERE OG_PERSON.PID =cra.ACCOMPANY_USER_ID ) as accompanyUserName,
+            cra.ACCOMPANYUSERIDTWO as accompanyUserIdTwo,
+            (SELECT PNAME FROM OG_PERSON WHERE OG_PERSON.PID =cra.ACCOMPANYUSERIDTWO ) as accompanyUserNameTwo,
+            cra.PREDICT_IN_TIME as predictInTime,
+            cra.PREDICT_OUT_TIME as predictOutTime,
+            cra.WORK_CONTENT_IDS as workContentIds,
+            cra.WORK_CONTENT as workContent,
+            cra.WORK_DESCRIPTION as workDescription,
+            cra.APPLY_STATE as applyState,
+            cra.REGISTER_ACCOMPANY_USER_NAME as registerAccompanyUserName,
+            cra.REGISTER_TIME as registerTime,
+            cra.REASON as reason,
+            cra.IS_TEMPORARY as isTemporary,
+            cra.INTO_NAME as intoName,
+            cra.INTO_IDNUMBER as intoIdNumber,
+            cra.INTO_PHONE as intoPhone,
+            cra.INTO_UNIT as intoUnit,
+            cra.IS_BELONGINGS as isBelongings,
+            cra.BELONGINGS as belongings,
+            cra.BELONGINGSNUM as belongingsNum,
+            cra.INOUTTYPE as inOutType,
+            cra.INSTALLSITE as installSite,
+            cra.IS_URGENCY as isUrgency,
+            cra.REMARK as remark,
+            cra.COMPUTERCENTER as computerCenter,
+            cm.NAME as computerCenterName,
+            cra.ACCOMPANYUSERONE as accompanyUserOne,
+            cra.CREATE_TIMES as createTimes,
+            cra.UPDATE_TIMES as updateTimes,
+            cra.REALITYINTO_TIME as realityIntoTime,
+            cra.REALITYOUTTO_TIME as realityOuttoTime,
+            cra.REALITYINTOPERSONNEL as realityIntoPersonnel,
+            cra.REALITY_BELONGINGS as realityBelongings,
+            cra.REALITY_BELONGINGS_NUM as realityBelongingsNum,
+            cra.REALITY_MODULE as realityModule,
+            cra.REGISTER_NAME as registerName
+        FROM
+            COMPUTER_ROOM_APPLY cra
+                LEFT JOIN COMPUTER_MODULE cm ON cra.COMPUTERCENTER = cm.ID
+                LEFT JOIN OG_ORG org ON cra.APPLY_ORG_ID = org.ORGID
+    </sql>
+
+
+    <insert id="insertComputerRoomApply" parameterType="computerRoom">
+        insert into COMPUTER_ROOM_APPLY
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null  and id != ''">ID,</if>
+            <if test="computerApplyNo != null  and computerApplyNo != ''">COMPUTER_APPLY_NO,</if>
+            <if test="applyUserId != null  and applyUserId != ''">APPLY_USER_ID,</if>
+            <if test="applyOrgId  != null  and applyOrgId  != ''">APPLY_ORG_ID,</if>
+            <if test="computerRoomModule  != null  and computerRoomModule  != ''">COMPUTER_ROOM_MODULE,</if>
+            <if test="computerRoomModuleName  != null  and computerRoomModuleName  != ''">COMPUTER_ROOM_MODULE_NAME,</if>
+            <if test="accompanyUserId  != null  and accompanyUserId  != ''">ACCOMPANY_USER_ID,</if>
+            <if test="predictInTime  != null  and predictInTime  != ''">PREDICT_IN_TIME,</if>
+            <if test="predictOutTime  != null  and predictOutTime  != ''">PREDICT_OUT_TIME,</if>
+            <if test="workContentIds  != null  and workContentIds  != ''">WORK_CONTENT_IDS,</if>
+            <if test="workContent  != null  and workContent  != ''">WORK_CONTENT,</if>
+            <if test="workDescription  != null  and workDescription  != ''">WORK_DESCRIPTION,</if>
+            <if test="applyState  != null  and applyState  != ''">APPLY_STATE,</if>
+            <if test="registerTime  != null  and registerTime  != ''">REGISTER_TIME,</if>
+            <if test="reason  != null  and reason  != ''">REASON,</if>
+            <if test="auditorId  != null  and auditorId != ''">AUDITOR_ID,</if>
+            <if test="createTimes  != null  and createTimes  != ''">CREATE_TIMES,</if>
+            <if test="updateTimes  != null  and updateTimes  != ''">UPDATE_TIMES,</if>
+            <if test="isTemporary  != null  and isTemporary  != ''">IS_TEMPORARY,</if>
+            <if test="intoName  != null  and intoName  != ''">INTO_NAME,</if>
+            <if test="intoIdNumber  != null  and intoIdNumber  != ''">INTO_IDNUMBER,</if>
+            <if test="intoPhone  != null  and intoPhone  != ''">INTO_PHONE,</if>
+            <if test="intoUnit  != null  and intoUnit  != ''">INTO_UNIT,</if>
+            <if test="isBelongings  != null  and isBelongings   != ''">IS_BELONGINGS,</if>
+            <if test="belongings  != null  and belongings  != ''">BELONGINGS,</if>
+            <if test="isUrgency  != null  and isUrgency  != ''">IS_URGENCY,</if>
+            <if test="remark  != null  and remark  != ''">REMARK,</if>
+            <if test="computerCenter  != null  and computerCenter  != ''">COMPUTERCENTER,</if>
+            <if test="accompanyUserOne  != null  and accompanyUserOne  != ''">ACCOMPANYUSERONE,</if>
+            <if test="accompanyUserIdTwo  != null  and accompanyUserIdTwo  != ''">ACCOMPANYUSERIDTWO,</if>
+            <if test="belongingsNum  != null  and belongingsNum  != ''">BELONGINGSNUM,</if>
+            <if test="inOutType  != null  and inOutType  != ''">INOUTTYPE,</if>
+            <if test="installSite  != null  and installSite  != ''">INSTALLSITE,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null  and id != ''">#{id},</if>
+            <if test="computerApplyNo != null  and computerApplyNo != ''">#{computerApplyNo},</if>
+            <if test="applyUserId != null  and applyUserId != ''">#{applyUserId},</if>
+            <if test="applyOrgId  != null  and applyOrgId  != ''">#{applyOrgId},</if>
+            <if test="computerRoomModule  != null  and computerRoomModule  != ''">#{computerRoomModule},</if>
+            <if test="computerRoomModuleName  != null  and computerRoomModuleName  != ''">#{computerRoomModuleName},</if>
+            <if test="accompanyUserId  != null  and accompanyUserId  != ''">#{accompanyUserId},</if>
+            <if test="predictInTime  != null  and predictInTime  != ''">#{predictInTime},</if>
+            <if test="predictOutTime  != null  and predictOutTime  != ''">#{predictOutTime},</if>
+            <if test="workContentIds  != null  and workContentIds  != ''">#{workContentIds},</if>
+            <if test="workContent  != null  and workContent  != ''">#{workContent},</if>
+            <if test="workDescription  != null  and workDescription  != ''">#{workDescription},</if>
+            <if test="applyState  != null  and applyState  != ''">#{applyState},</if>
+            <if test="registerTime  != null  and registerTime  != ''">#{registerTime},</if>
+            <if test="reason  != null  and reason  != ''">#{reason},</if>
+            <if test="auditorId  != null  and auditorId != ''">#{auditorId},</if>
+            <if test="createTimes  != null  and createTimes  != ''">#{createTimes},</if>
+            <if test="updateTimes  != null  and updateTimes  != ''">#{updateTimes},</if>
+            <if test="isTemporary  != null  and isTemporary  != ''">#{isTemporary},</if>
+            <if test="intoName  != null  and intoName  != ''">#{intoName},</if>
+            <if test="intoIdNumber  != null  and intoIdNumber  != ''">#{intoIdNumber},</if>
+            <if test="intoPhone  != null  and intoPhone  != ''">#{intoPhone},</if>
+            <if test="intoUnit  != null  and intoUnit  != ''">#{intoUnit},</if>
+            <if test="isBelongings  != null  and isBelongings   != ''">#{isBelongings},</if>
+            <if test="belongings  != null  and belongings  != ''">#{belongings},</if>
+            <if test="isUrgency  != null  and isUrgency  != ''">#{isUrgency},</if>
+            <if test="remark  != null  and remark  != ''">#{remark},</if>
+            <if test="computerCenter  != null  and computerCenter  != ''">#{computerCenter},</if>
+            <if test="accompanyUserOne  != null  and accompanyUserOne  != ''">#{accompanyUserOne},</if>
+            <if test="accompanyUserIdTwo  != null  and accompanyUserIdTwo  != ''">#{accompanyUserIdTwo},</if>
+            <if test="belongingsNum  != null  and belongingsNum  != ''">#{belongingsNum},</if>
+            <if test="inOutType  != null  and inOutType  != ''">#{inOutType},</if>
+            <if test="installSite  != null  and installSite  != ''">#{installSite},</if>
+        </trim>
+    </insert>
+    <insert id="insertComputerModule" parameterType="ComputerModule">
+        insert into COMPUTER_MODULE(
+        id,
+        <if test="parentId != null ">parent_id,</if>
+        <if test="name != null  and name != ''">name,</if>
+        <if test="createId != null  and createId != ''">create_id,</if>
+        <if test="status != null  and status != ''">status,</if>
+        create_time
+        )values(
+        #{id},
+        <if test="parentId != null ">#{parentId},</if>
+        <if test="name != null  and name != ''">#{name},</if>
+        <if test="createId != null  and createId != ''">#{createId},</if>
+        <if test="status != null  and status != ''">#{status},</if>
+        #{createTime}
+        )
+    </insert>
+    <update id="upadateComputerRoomApply">
+        update COMPUTER_ROOM_APPLY
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="applyOrgId  != null  and applyOrgId  != ''">APPLY_ORG_ID = #{applyOrgId},</if>
+            <if test="computerRoomModule  != null  and computerRoomModule  != ''">COMPUTER_ROOM_MODULE = #{computerRoomModule},</if>
+            <if test="computerRoomModuleName  != null  and computerRoomModuleName  != ''">COMPUTER_ROOM_MODULE_NAME = #{computerRoomModuleName},</if>
+            <if test="accompanyUserId  != null  and accompanyUserId  != ''">ACCOMPANY_USER_ID = #{accompanyUserId},</if>
+            <if test="accompanyUserIdTwo  != null  and accompanyUserIdTwo  != ''">ACCOMPANYUSERIDTWO = #{accompanyUserIdTwo},</if>
+            <if test="predictInTime  != null  and predictInTime  != ''">PREDICT_IN_TIME = #{predictInTime},</if>
+            <if test="predictOutTime  != null  and predictOutTime  != ''">PREDICT_OUT_TIME = #{predictOutTime},</if>
+            <if test="workContentIds  != null  and workContentIds  != ''">WORK_CONTENT_IDS = #{workContentIds},</if>
+            <if test="workContent  != null  and workContent  != ''">WORK_CONTENT = #{workContent},</if>
+            <if test="workDescription  != null  and workDescription  != ''">WORK_DESCRIPTION = #{workDescription},</if>
+            <if test="reason  != null  and reason  != ''">REASON = #{reason},</if>
+            <if test="auditorId  != null  and auditorId != ''">AUDITOR_ID = #{auditorId},</if>
+            <if test="registerTime  != null  and registerTime  != ''">REGISTER_TIME = #{registerTime},</if>
+            <if test="registerAccompanyUserName  != null  and registerAccompanyUserName  != ''">REGISTER_ACCOMPANY_USER_NAME = #{registerAccompanyUserName},</if>
+            <if test="updateTimes  != null  and updateTimes  != ''">UPDATE_TIMES = #{updateTimes},</if>
+            <if test="isTemporary  != null  and isTemporary  != ''">IS_TEMPORARY = #{isTemporary},</if>
+            <if test="isBelongings  != null  and isBelongings   != ''">IS_BELONGINGS = #{isBelongings},</if>
+            <if test="isUrgency  != null  and isUrgency  != ''">IS_URGENCY=#{isUrgency},</if>
+            <if test="remark  != null  and remark  != ''">REMARK=#{remark},</if>
+            <if test="computerCenter  != null  and computerCenter  != ''">COMPUTERCENTER=#{computerCenter},</if>
+            <if test="accompanyUserOne  != null  and accompanyUserOne  != ''">ACCOMPANYUSERONE =#{accompanyUserOne},</if>
+            <if test="applyState  != null  and applyState  != ''">APPLY_STATE =#{applyState},</if>
+            <if test="realityIntoTime != null and realityIntoTime !=''">REALITYINTO_TIME = #{realityIntoTime},</if>
+            <if test="realityOuttoTime != null and realityOuttoTime !=''">REALITYOUTTO_TIME = #{realityOuttoTime},</if>
+            <if test="realityIntoPersonnel != null and realityIntoPersonnel !=''">REALITYINTOPERSONNEL = #{realityIntoPersonnel},</if>
+            <if test="realityBelongings != null and realityBelongings !=''">REALITY_BELONGINGS = #{realityBelongings},</if>
+            <if test="realityBelongingsNum != null and realityBelongingsNum !=''">REALITY_BELONGINGS_NUM = #{realityBelongingsNum},</if>
+            <if test="realityModule != null and realityModule !=''">REALITY_MODULE = #{realityModule},</if>
+            INTO_NAME=#{intoName},
+            INTO_IDNUMBER=#{intoIdNumber},
+            INTO_PHONE=#{intoPhone},
+            INTO_UNIT=#{intoUnit},
+            BELONGINGS=#{belongings},
+            BELONGINGSNUM = #{belongingsNum},
+            INOUTTYPE = #{inOutType},
+            INSTALLSITE = #{installSite}
+        </trim>
+        where ID = #{id,jdbcType=VARCHAR}
+    </update>
+    <update id="updateComputerRoomApplyState">
+        update COMPUTER_ROOM_APPLY
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="applyState  != null  and applyState  != ''">APPLY_STATE = #{applyState},</if>
+            <if test="reason  != null  and reason  != ''">REASON = #{reason},</if>
+            <if test="updateTimes  != null  and updateTimes  != ''">UPDATE_TIMES = #{updateTimes},</if>
+        </trim>
+        where ID = #{id,jdbcType=VARCHAR}
+    </update>
+    <update id="updateComputerModule">
+        update COMPUTER_MODULE
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="parentId != null ">parent_id = #{parentId},</if>
+            <if test="name != null  and name != ''  ">name = #{name},</if>
+            <if test="status != null and status != ''  ">status = #{status},</if>
+        </trim>
+        where id = #{id}
+    </update>
+    <update id="updateComputerRoomRegister">
+        update COMPUTER_ROOM_APPLY
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="applyOrgId  != null  and applyOrgId  != ''">APPLY_ORG_ID = #{applyOrgId},</if>
+            <if test="computerRoomModule  != null  and computerRoomModule  != ''">COMPUTER_ROOM_MODULE = #{computerRoomModule},</if>
+            <if test="computerRoomModuleName  != null  and computerRoomModuleName  != ''">COMPUTER_ROOM_MODULE_NAME = #{computerRoomModuleName},</if>
+            <if test="accompanyUserId  != null  and accompanyUserId  != ''">ACCOMPANY_USER_ID = #{accompanyUserId},</if>
+            <if test="accompanyUserIdTwo  != null  and accompanyUserIdTwo  != ''">ACCOMPANYUSERIDTWO = #{accompanyUserIdTwo},</if>
+            <if test="predictInTime  != null  and predictInTime  != ''">PREDICT_IN_TIME = #{predictInTime},</if>
+            <if test="predictOutTime  != null  and predictOutTime  != ''">PREDICT_OUT_TIME = #{predictOutTime},</if>
+            <if test="workContentIds  != null  and workContentIds  != ''">WORK_CONTENT_IDS = #{workContentIds},</if>
+            <if test="workContent  != null  and workContent  != ''">WORK_CONTENT = #{workContent},</if>
+            <if test="workDescription  != null  and workDescription  != ''">WORK_DESCRIPTION = #{workDescription},</if>
+            <if test="reason  != null  and reason  != ''">REASON = #{reason},</if>
+            <if test="registerTime  != null  and registerTime  != ''">REGISTER_TIME = #{registerTime},</if>
+            <if test="registerAccompanyUserName  != null  and registerAccompanyUserName  != ''">REGISTER_ACCOMPANY_USER_NAME = #{registerAccompanyUserName},</if>
+            <if test="updateTimes  != null  and updateTimes  != ''">UPDATE_TIMES = #{updateTimes},</if>
+            <if test="isTemporary  != null  and isTemporary  != ''">IS_TEMPORARY = #{isTemporary},</if>
+            <if test="isBelongings  != null  and isBelongings   != ''">IS_BELONGINGS = #{isBelongings},</if>
+            <if test="isUrgency  != null  and isUrgency  != ''">IS_URGENCY=#{isUrgency},</if>
+            <if test="remark  != null  and remark  != ''">REMARK=#{remark},</if>
+            <if test="computerCenter  != null  and computerCenter  != ''">COMPUTERCENTER=#{computerCenter},</if>
+            <if test="accompanyUserOne  != null  and accompanyUserOne  != ''">ACCOMPANYUSERONE =#{accompanyUserOne},</if>
+            <if test="applyState  != null  and applyState  != ''">APPLY_STATE =#{applyState},</if>
+            <if test="realityIntoTime != null and realityIntoTime !=''">REALITYINTO_TIME = #{realityIntoTime},</if>
+            <if test="realityOuttoTime != null and realityOuttoTime !=''">REALITYOUTTO_TIME = #{realityOuttoTime},</if>
+            <if test="realityIntoPersonnel != null and realityIntoPersonnel !=''">REALITYINTOPERSONNEL = #{realityIntoPersonnel},</if>
+            <if test="realityBelongings != null and realityBelongings !=''">REALITY_BELONGINGS = #{realityBelongings},</if>
+            <if test="realityBelongingsNum != null and realityBelongingsNum !=''">REALITY_BELONGINGS_NUM = #{realityBelongingsNum},</if>
+            <if test="realityModule != null and realityModule !=''">REALITY_MODULE = #{realityModule},</if>
+            <if test="registerName != null and registerName !=''">REGISTER_NAME = #{registerName},</if>
+        </trim>
+        where ID = #{id,jdbcType=VARCHAR}
+    </update>
+    <select id="selectUserList" resultMap="OgPersonResult">
+        SELECT
+        p.PID,p.PNAME,org.ORGNAME
+        FROM
+        OG_PERSON p
+        LEFT JOIN OG_ORG org ON p.ORGID = org.ORGID
+        <where>
+            p.INVALIDATION_MARK = '1'
+            and org.ORGCODE IN ('010107888','010302888')
+            <if test="pName !=null and pName != ''">
+                and p.PNAME like concat('%',concat(#{pName},'%'))
+            </if>
+            <if test="orgname != null and orgname != ''">
+                and org.ORGNAME like concat('%',concat(#{orgname},'%'))
+            </if>
+        </where>
+    </select>
+
+
+    <select id="selectPubParaValueByParaName" resultType="com.ruoyi.activiti.domain.ComputerRoom">
+        select p.value as workContentIds ,p.value_detail as workContent
+        from pub_paravalue p
+        where p.para_id in
+              (select p2.para_id  from pub_para p2 where p2.para_name = #{paraName})
+        order by p.serail asc
+    </select>
+
+    <select id="computerRoomApplylist" resultType="com.ruoyi.activiti.domain.ComputerRoom">
+        <include refid="selectComputerRoomApplyVO"/>
+        <where>
+            <if test="applyUserId != null and applyUserId !=''">
+                and cra.APPLY_USER_ID = #{applyUserId}
+            </if>
+            <if test="computerRoomModule != null and computerRoomModule !=''">
+                and cra.COMPUTER_ROOM_MODULE like concat('%',concat(#{computerRoomModule},'%'))
+            </if>
+            <if test="applyOrgId != null and applyOrgId != ''">
+                and org.ORGID = #{applyOrgId}
+            </if>
+            <if test="params.startTime != null and params.startTime != ''"><!-- 开始时间检索 -->
+                and to_date(cra.PREDICT_IN_TIME,'yyyy-MM-dd hh24:mi:ss') &gt;= to_date(#{params.startTime},'yyyy-MM-dd hh24:mi:ss')
+            </if>
+            <if test="params.endTime != null and params.endTime != ''"><!-- 结束时间检索 -->
+                and to_date(cra.PREDICT_IN_TIME,'yyyy-MM-dd hh24:mi:ss') &lt;= to_date(#{params.endTime},'yyyy-MM-dd hh24:mi:ss')
+            </if>
+            <if test="accompanyUserId != null and accompanyUserId !=''">
+                and cra.ACCOMPANY_USER_ID = #{accompanyUserId}
+            </if>
+            <if test="workContent != null and workContent !=''">
+                and cra.WORK_CONTENT like concat('%',concat(#{workContent},'%'))
+            </if>
+            <if test="computerCenter != null and computerCenter != ''">
+                and cra.COMPUTERCENTER = #{computerCenter}
+            </if>
+            <if test="isBelongings != null and isBelongings != ''">
+                and cra.IS_BELONGINGS = #{isBelongings}
+            </if>
+            <if test="applyState != null and applyState !='' ">
+                and cra.APPLY_STATE = #{applyState}
+            </if>
+            <if test="computerApplyNo != null and computerApplyNo !='' ">
+                and cra.COMPUTER_APPLY_NO like concat('%',concat(#{computerApplyNo},'%'))
+            </if>
+        </where>
+        ORDER BY CREATE_TIMES DESC
+    </select>
+    <select id="computerRoomApplylistMysql" resultType="com.ruoyi.activiti.domain.ComputerRoom">
+        <include refid="selectComputerRoomApplyVO"/>
+        <where>
+            <if test="applyUserId != null and applyUserId !=''">
+                and cra.APPLY_USER_ID = #{applyUserId}
+            </if>
+            <if test="computerRoomModule != null and computerRoomModule !=''">
+                and cra.COMPUTER_ROOM_MODULE like concat('%',concat(#{computerRoomModule},'%'))
+            </if>
+            <if test="applyOrgId != null and applyOrgId != ''">
+                and org.ORGID = #{applyOrgId}
+            </if>
+            <if test="params.startTime != null and params.startTime != ''"><!-- 开始时间检索 -->
+                and cra.PREDICT_IN_TIME >= DATE_FORMAT(#{params.startTime},'%Y-%m-%d')
+            </if>
+            <if test="params.endTime != null and params.endTime != ''"><!-- 结束时间检索 -->
+                and cra.PREDICT_IN_TIME &lt;= DATE_FORMAT(#{params.endTime},'%Y-%m-%d')+1
+            </if>
+            <if test="accompanyUserId != null and accompanyUserId !=''">
+                and cra.ACCOMPANY_USER_ID = #{accompanyUserId}
+            </if>
+            <if test="workContent != null and workContent !=''">
+                and cra.WORK_CONTENT like concat('%',concat(#{workContent},'%'))
+            </if>
+            <if test="computerCenter != null and computerCenter != ''">
+                and cra.COMPUTERCENTER = #{computerCenter}
+            </if>
+            <if test="isBelongings != null and isBelongings != ''">
+                and cra.IS_BELONGINGS = #{isBelongings}
+            </if>
+            <if test="applyState != null and applyState !='' ">
+                and cra.APPLY_STATE = #{applyState}
+            </if>
+            <if test="computerApplyNo != null and computerApplyNo !='' ">
+                and cra.COMPUTER_APPLY_NO like concat('%',concat(#{computerApplyNo},'%'))
+            </if>
+        </where>
+        ORDER BY CREATE_TIMES DESC
+    </select>
+    <select id="selectComputerRoomApplyById" resultType="com.ruoyi.activiti.domain.ComputerRoom">
+        <include refid="selectComputerRoomApplyVO"/>
+        where
+        cra.ID = #{id}
+    </select>
+    <select id="selectComputerRoomAuditlist" resultType="com.ruoyi.activiti.domain.ComputerRoom">
+        <include refid="selectComputerRoomApplyVO"/>
+        <where>
+            cra.APPLY_STATE = '0'
+            <if test="computerRoomModule != null and computerRoomModule !=''">
+                and cra.COMPUTER_ROOM_MODULE like concat('%',concat(#{computerRoomModule},'%'))
+            </if>
+            <if test="applyOrgId != null and applyOrgId != ''">
+                and org.ORGID = #{applyOrgId}
+            </if>
+            <if test="params.startTime != null and params.startTime != ''"><!-- 开始时间检索 -->
+                and to_date(cra.PREDICT_IN_TIME,'yyyy-MM-dd hh24:mi:ss') &gt;= to_date(#{params.startTime},'yyyy-MM-dd hh24:mi:ss')
+            </if>
+            <if test="params.endTime != null and params.endTime != ''"><!-- 结束时间检索 -->
+                and to_date(cra.PREDICT_IN_TIME,'yyyy-MM-dd hh24:mi:ss') &lt;= to_date(#{params.endTime},'yyyy-MM-dd hh24:mi:ss')
+            </if>
+            <if test="accompanyUserId != null and accompanyUserId !=''">
+                and cra.ACCOMPANY_USER_ID = #{accompanyUserId}
+            </if>
+            <if test="workContent != null and workContent !=''">
+                and cra.WORK_CONTENT like  concat('%',concat(#{workContent},'%'))
+            </if>
+            <if test="auditorId != null and auditorId !=''">
+                and cra.AUDITOR_ID = #{auditorId}
+            </if>
+            <if test="computerApplyNo != null and computerApplyNo !='' ">
+                and cra.COMPUTER_APPLY_NO like concat('%',concat(#{computerApplyNo},'%'))
+            </if>
+        </where>
+        ORDER BY CREATE_TIMES DESC
+    </select>
+
+    <select id="selectComputerRoomAuditlistMysql" resultType="com.ruoyi.activiti.domain.ComputerRoom">
+        <include refid="selectComputerRoomApplyVO"/>
+        <where>
+            cra.APPLY_STATE = '0'
+            <if test="computerRoomModule != null and computerRoomModule !=''">
+                and cra.COMPUTER_ROOM_MODULE like concat('%',concat(#{computerRoomModule},'%'))
+            </if>
+            <if test="applyOrgId != null and applyOrgId != ''">
+                and org.ORGID = #{applyOrgId}
+            </if>
+            <if test="params.startTime != null and params.startTime != ''"><!-- 开始时间检索 -->
+                and cra.PREDICT_IN_TIME >= DATE_FORMAT(#{params.startTime},'%Y-%m-%d')
+            </if>
+            <if test="params.endTime != null and params.endTime != ''"><!-- 结束时间检索 -->
+                and cra.PREDICT_IN_TIME &lt;= DATE_FORMAT(#{params.endTime},'%Y-%m-%d')+1
+            </if>
+            <if test="accompanyUserId != null and accompanyUserId !=''">
+                and cra.ACCOMPANY_USER_ID = #{accompanyUserId}
+            </if>
+            <if test="workContent != null and workContent !=''">
+                and cra.WORK_CONTENT like  concat('%',concat(#{workContent},'%'))
+            </if>
+            <if test="auditorId != null and auditorId !=''">
+                and cra.AUDITOR_ID = #{auditorId}
+            </if>
+            <if test="computerApplyNo != null and computerApplyNo !='' ">
+                and cra.COMPUTER_APPLY_NO like concat('%',concat(#{computerApplyNo},'%'))
+            </if>
+        </where>
+        ORDER BY CREATE_TIMES DESC
+    </select>
+    <select id="selectComputerRoomRegisterList" resultType="com.ruoyi.activiti.domain.ComputerRoom">
+        <include refid="selectComputerRoomApplyVO"/>
+        <where>
+            1=1
+            <if test="accompanyUserId != null and accompanyUserId !=''">
+                and
+                cra.ACCOMPANY_USER_ID = #{accompanyUserId}
+                or
+                cra.ACCOMPANYUSERIDTWO = #{accompanyUserId}
+            </if>
+            <if test="computerRoomModule != null and computerRoomModule !=''">
+                and cra.COMPUTER_ROOM_MODULE like concat('%',concat(#{computerRoomModule},'%'))
+            </if>
+            <if test="applyOrgId != null and applyOrgId != ''">
+                and org.ORGID = #{applyOrgId}
+            </if>
+            <if test="params.startTime != null and params.startTime != ''"><!-- 开始时间检索 -->
+                and to_date(cra.REGISTER_TIME,'yyyy-MM-dd hh24:mi:ss') &gt;= to_date(#{params.startTime},'yyyy-MM-dd hh24:mi:ss')
+            </if>
+            <if test="params.endTime != null and params.endTime != ''"><!-- 结束时间检索 -->
+                and to_date(cra.REGISTER_TIME,'yyyy-MM-dd hh24:mi:ss') &lt;= to_date(#{params.endTime},'yyyy-MM-dd hh24:mi:ss')
+            </if>
+            <if test="workContent != null and workContent !=''">
+                and cra.WORK_CONTENT like concat('%',concat(#{workContent},'%'))
+            </if>
+            <if test="computerApplyNo != null and computerApplyNo !='' ">
+                and cra.COMPUTER_APPLY_NO like concat('%',concat(#{computerApplyNo},'%'))
+            </if>
+            <if test="computerCenter != null and computerCenter != ''">
+                and cra.COMPUTERCENTER = #{computerCenter}
+            </if>
+            <if test="isBelongings != null and isBelongings != ''">
+                and cra.IS_BELONGINGS = #{isBelongings}
+            </if>
+        </where>
+        ORDER BY CREATE_TIMES DESC
+    </select>
+
+    <select id="selectComputerRoomRegisterListMysql" resultType="com.ruoyi.activiti.domain.ComputerRoom">
+        <include refid="selectComputerRoomApplyVO"/>
+        <where>
+            1=1
+            <if test="accompanyUserId != null and accompanyUserId !=''">
+                and
+                cra.ACCOMPANY_USER_ID = #{accompanyUserId}
+                or
+                cra.ACCOMPANYUSERIDTWO = #{accompanyUserId}
+            </if>
+            <if test="computerRoomModule != null and computerRoomModule !=''">
+                and cra.COMPUTER_ROOM_MODULE like concat('%',concat(#{computerRoomModule},'%'))
+            </if>
+            <if test="applyOrgId != null and applyOrgId != ''">
+                and org.ORGID = #{applyOrgId}
+            </if>
+            <if test="params.startTime != null and params.startTime != ''"><!-- 开始时间检索 -->
+                and cra.REGISTER_TIME >= DATE_FORMAT(#{params.startTime},'%Y-%m-%d')
+            </if>
+            <if test="params.endTime != null and params.endTime != ''"><!-- 结束时间检索 -->
+                and cra.REGISTER_TIME &lt;= DATE_FORMAT(#{params.endTime},'%Y-%m-%d')+1
+            </if>
+            <if test="workContent != null and workContent !=''">
+                and cra.WORK_CONTENT like concat('%',concat(#{workContent},'%'))
+            </if>
+            <if test="computerApplyNo != null and computerApplyNo !='' ">
+                and cra.COMPUTER_APPLY_NO like concat('%',concat(#{computerApplyNo},'%'))
+            </if>
+            <if test="computerCenter != null and computerCenter != ''">
+                and cra.COMPUTERCENTER = #{computerCenter}
+            </if>
+            <if test="isBelongings != null and isBelongings != ''">
+                and cra.IS_BELONGINGS = #{isBelongings}
+            </if>
+        </where>
+        ORDER BY CREATE_TIMES DESC
+    </select>
+
+    <select id="selectTree" parameterType="ComputerModule" resultMap="ModelResult">
+        select k.id, k.parent_id, k.name, k.create_time, k.create_id,k.status,
+        (select pname from og_person p where p.pid=k.create_id) as create_name, k2.name as parent_name
+        from COMPUTER_MODULE k
+        left join COMPUTER_MODULE k2 on k2.id=k.parent_id
+        where 1=1
+        <if test="parentId != null and parentId != ''">
+            AND k.parent_id = #{parentId}
+        </if>
+        <if test="name != null and name != ''">
+            AND k.name like concat('%',concat(#{name},'%'))
+        </if>
+        <if test="id!=null and id!=''">
+            AND k.id = #{id}
+        </if>
+    </select>
+    <select id="selectComputerModuleList" parameterType="ComputerModule" resultMap="ModelResult">
+        select k.id, k.parent_id, k.name, k.create_time, k.create_id,k.status,
+        (select pname from og_person p where p.pid=k.create_id) as create_name, k2.name as parent_name
+        from COMPUTER_MODULE k
+        left join COMPUTER_MODULE k2 on k2.id=k.parent_id
+        <where>
+            <if test="name != null and name != ''"> and k.name like concat('%',concat(#{name},'%'))</if>
+            <if test="parentId != null and parentId != ''">and k.parent_id = #{parentId}</if>
+            <if test="createId != null and createId != ''">AND k.id = #{createId}</if>
+            <if test="status != null and status != ''">AND k.status = #{status}</if>
+        </where>
+        order by k.create_time asc nulls last
+    </select>
+
+    <select id="selectComputerModuleMysqlList" parameterType="ComputerModule" resultMap="ModelResult">
+        select k.id, k.parent_id, k.name, k.create_time, k.create_id,k.status,
+        (select pname from og_person p where p.pid=k.create_id) as create_name, k2.name as parent_name
+        from COMPUTER_MODULE k
+        left join COMPUTER_MODULE k2 on k2.id=k.parent_id
+        <where>
+            <if test="name != null and name != ''"> and k.name like concat('%',concat(#{name},'%'))</if>
+            <if test="parentId != null and parentId != ''">and k.parent_id = #{parentId}</if>
+            <if test="createId != null and createId != ''">AND k.id = #{createId}</if>
+            <if test="status != null and status != ''">AND k.status = #{status}</if>
+        </where>
+            order by IF(ISNULL(k.create_time),1,0),create_time
+    </select>
+    <select id="selectComputerModuleById" parameterType="ComputerModule" resultMap="ModelResult">
+        select k.id, k.parent_id, k.name, k.create_time, k.create_id,k.status,
+               (select pname from og_person p where p.pid=k.create_id) as create_name, k2.name as parent_name
+        from COMPUTER_MODULE k
+                 left join COMPUTER_MODULE k2 on k2.id=k.parent_id
+        where k.id = #{id}
+    </select>
+    <select id="selectComputerModuleCenter" resultMap="ModelResult">
+        select k.id, k.parent_id, k.name, k.create_time, k.create_id,k.status
+        from COMPUTER_MODULE k
+        WHERE PARENT_ID  IS NULL
+        order by k.create_time
+    </select>
+    <select id="selectAllocatedListPost"  parameterType="OgUser" resultType="com.ruoyi.common.core.domain.entity.OgUser">
+        select  distinct concat(concat(concat(concat(og.orgname,'-'),pe.pname),'-'),pe.mobil_phone) as pname,u.username,u.userid,u.INVALIDATION_MARK,pe.pname,pe.mobil_phone,og.orgname,u.pid,pe.sex
+        from OG_USER u
+                 left join OG_PERSON pe on u.pid = pe.pid
+                 left join og_org og on pe.orgid = OG.orgid
+                 LEFT join og_r_user_post up on u.userid = up.userid
+                 LEFT JOIN og_post p on p.postid = up.postid
+        where p.postid = #{postId,jdbcType=VARCHAR}
+          and pe.invalidation_mark='1'
+    </select>
+
+
+</mapper>

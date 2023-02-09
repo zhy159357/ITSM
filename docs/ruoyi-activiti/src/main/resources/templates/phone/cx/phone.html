@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('事件单展示')" />
+    <th:block th:include="include :: datetimepicker-css" />
+</head>
+<body class="gray-bg">
+     <div class="container-div">
+        <div class="row">
+            <div class="col-sm-12 search-collapse">
+                <form id="formId">
+                    <div class="select-list">
+                        <ul>
+                            <li>
+                                <label>事件单号：</label><input type="text" name="telno"/>
+                            </li>
+                            <li>
+                                <label>来电机构：</label><select class="form-control" name="contactOrg" th:with="type=${@dict.getParaType('TelBiz_Org')}">
+                                <option value=""></option>
+                                <option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+                            </select>
+                            </li>
+                            <li>
+                                <label>所属系统：</label><input id="applicationName" name="caption" type="text" class="form-control">
+                            </li>
+                            <li>
+                                <label> 来电人：</label><input name="contactName" id="contactName" class="form-control" type="text"/>
+                            </li>
+                            <li>
+                                <label>来电号码：</label><input name="contactPhone" th:onclick="isPhoneNo" id="contactPhone" class="form-control" type="text"/>
+                            </li>
+                            <li>
+                                <label> 溢出组：</label><input name="overFlowGroup" id="overFlowGroup" class="form-control" type="text">
+                            </li>
+                            <li>
+                                <label> 创建人：</label><input name="pName" id="pName" class="form-control" type="text"/>
+                            </li>
+                            <li>
+                                <label>事件类型：</label><select class="form-control" id="telType" name="telType" th:with="type=${@dict.getParaType('TelBiz_Type')}" >
+                                    <option value=""></option>
+                                    <option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+                                </select>
+                            </li>
+                            <li>
+                                <label> 工单类型：</label><select class="form-control" name="eventType" th:with="type=${@dict.getParaType('TelBiz_EventType')}">
+                                    <option value=""></option>
+                                    <option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+                                </select>
+                            </li>
+                            <li>
+                                <label> 状态：</label><select class="form-control" name="state" th:with="type=${@dict.getParaType('TelBiz_State')}">
+                                <option value=""></option>
+                                <option th:each="dict : ${type}" th:text="${dict.valueDetail}" th:value="${dict.value}"></option>
+                            </select>
+                            <li>
+                                <label>创建时间：</label><input class="form-control" id="createTime" name="createTime" style="background-color: #fff; opacity: 1;" type="text" readonly>
+                            </li>
+                            <li>
+                                <label>至：</label><input class="form-control" id="startTimeBiz" name="startTimeBiz" style="background-color: #fff; opacity: 1;" type="text" readonly>
+                            </li>
+
+                            <li>
+                                <a class="btn btn-primary btn-rounded btn-sm" id="ss" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                            </li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+
+            <div class="btn-group-sm" id="toolbar" role="group">
+                <a class="btn btn-primary single disabled" onclick="detailTab()">
+                    <i class="fa fa-search"></i> 详情
+                </a>
+                <!--导出所有｜当前页按钮组合-->
+                <div class="btn-group">
+                    <button data-toggle="dropdown" class="btn btn-primary btn-sm dropdown-toggle">导出<span
+                            class="caret"></span>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a onclick="$.table.exportExcel()">导出所有</a>
+                        </li>
+                        <li><a onclick="$.table.exportExcelCurrentPage()">导出当前页</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-sm-12 select-table table-striped">
+                <table id="bootstrap-table"></table>
+            </div>
+        </div>
+    </div>
+    <th:block th:include="include :: footer" />
+    <th:block th:include="include :: datetimepicker-js" />
+    <script th:inline="javascript">
+        var editFlag = [[${@permission.hasPermi('system:phone:edit')}]];
+        var removeFlag = [[${@permission.hasPermi('system:phone:remove')}]];
+        var state =  [[${@dict.getParaType('TelBiz_State')}]];
+        var contactOrg =  [[${@dict.getParaType('TelBiz_Org')}]];
+        var eventType =  [[${@dict.getParaType('TelBiz_EventType')}]];
+
+        var prefix = ctx + "phone/cx";
+
+        var prefix_version = ctx + "version/public";
+
+        var prefix_f = ctx + "fmbiz";
+
+        $(function() {
+            document.onkeydown = function(e){
+                var ev = document.all ? window.event : e;
+                console.log(ev);
+                if(ev.keyCode==13) {
+                    $('#ss').trigger('click');
+                    return false;
+                } //搜索逻辑
+            }
+            var options = {
+                url: prefix + "/list",
+                createUrl: prefix + "/add",
+                updateUrl: prefix + "/edit/{id}",
+                removeUrl: prefix + "/remove",
+                detailUrl: prefix + "/detail/{id}",
+                exportUrl: prefix + "/export",
+                alterUrl: prefix + "/alter/{id}",
+                sortName: "createTime",
+                sortOrder: "desc",
+                singleSelect:true,
+                clickToSelect: true,
+                modalName: "电话事件",
+                columns: [{
+                    checkbox: true
+                },
+                {
+                    field: 'telid',
+                    title: '事件ID',
+                    visible:false,
+                },
+                {
+                    field: 'telno',
+                    title: '事件单号',
+                },
+                {
+                    field: 'contactName',
+                    title: '来电人',
+                },
+                {
+                    field: 'caption',
+                    title: '所属系统',
+                },
+                {
+                    field: 'contactPhone',
+                    title: '来电号码',
+                },
+                {
+                    field: 'contactOrg',
+                    title: '来电机构',
+                    formatter: function (value,row,index) {
+                        return selectDictLabel(contactOrg, value);
+                    }
+                },
+                {
+                    field: 'createTime',
+                    title: '创建时间',
+                    formatter: function (value, row, index) {
+                        var startTime = '';
+                        if(value!='' && value !=null){
+                            var pattern = /(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})/;
+                            startTime = value.replace(pattern, '$1-$2-$3 $4:$5:$6');
+                        }
+                        return startTime;
+                    }
+                },
+                    {
+                        field: 'eventType',
+                        title: '工单类型',
+                        formatter: function (value,row,index) {
+                            return selectDictLabel(eventType, value);
+                        },
+                        /*width: '1000',*/
+                        cellStyle: function cellStyle(value, row, index, field) {
+                            return { classes: 'text-nowrap'};
+                        }
+                    },
+                {
+                    field: "state",
+                    title: '状态',
+                    formatter: function (value,row,index) {
+                        return selectDictLabel(state, value);
+                    }
+                }]
+            };
+            $.table.init(options);
+        });
+
+        //回显机构的（字典项）
+        function selectDictLabel(datas, value) {
+            var actions = [];
+            $.each(datas, function(index, dict) {
+                if (dict.value == ('' + value)) {
+                    var listClass = $.common.equals("default", dict.listClass) || $.common.isEmpty(dict.listClass) ? "" : "badge badge-" + dict.listClass;
+                    actions.push($.common.sprintf("<span class='%s'>%s</span>", listClass, dict.valueDetail));
+                    return false;
+                }
+            });
+            return actions.join('');
+        }
+
+        /* 查看事件单 */
+        function detailTab() {
+            var telid = $.table.selectFirstColumns();
+            var url = prefix + '/detail/' + telid;
+            $.modal.openTab("详情事件", url);
+        }
+
+        // 选择应用系统（只能单选）
+        function selectOneApplication() {
+            $.modal.open("选择应用系统", prefix_version + "/selectOneApplication");
+        }
+
+        // 选择创建机构（只能单选）
+        function selectogOrg() {
+            $.modal.open("选择创建机构", prefix_f + "/selectogOrg");
+        }
+
+        //状态显示（字典项）
+        function selectDictLabel(datas, value) {
+            var actions = [];
+            $.each(datas, function(index, dict) {
+                if (dict.value == ('' + value)) {
+                    var listClass = $.common.equals("default", dict.listClass) || $.common.isEmpty(dict.listClass) ? "" : "badge badge-" + dict.listClass;
+                    actions.push($.common.sprintf("<span class='%s'>%s</span>", listClass, dict.valueDetail));
+                    return false;
+                }
+            });
+            return actions.join('');
+        }
+
+        //接入时间
+        $("#createTime").datetimepicker({
+            format: "yyyy-mm-dd",
+            minView: "month",
+            autoclose: true
+        });
+
+        $("#startTimeBiz").datetimepicker({
+            format: "yyyy-mm-dd",
+            minView: "month",
+            autoclose: true
+        });
+
+    </script>
+</body>
+</html>

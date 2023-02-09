@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('公告详情')" />
+</head>
+<body class="gray-bg">
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-12 search-collapse">
+            <form id="notice-form">
+                <div class="select-list">
+                    <ul>
+                        <li>
+                            接收人：<input type="text" name="amTitle" placeholder=""/>
+                        </li>
+
+                        <li>
+                            接收状态：
+                            <select name="ifReceive" id="ifReceive" >
+                                <option value="">请选择</option>
+                                <option value="0">待处理</option>
+                                <option value="1">处理中</option>
+                                <option value="2">已结束</option>
+                            </select>
+                        </li>
+
+                        <li class="select-time">
+                            <label>接收时间： </label>
+                            <input type="text" class="time-input" id="startTime" placeholder="这里为始" name="params[receiveTimeStart]"/>
+                        </li>
+                        <li>
+                            <label>至： </label>
+                            <input type="text" class="time-input" id="endTime" placeholder="到这为止" name="params[receiveTimeEnd]"/>
+                        </li>
+                        <li>
+                            <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                            <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                        </li>
+                    </ul>
+                </div>
+            </form>
+        </div>
+
+        <div class="btn-group-sm" id="toolbar" role="group">
+            <div class="btn-group">
+                <button data-toggle="dropdown" class="btn btn-primary dropdown-toggle">导出<span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a onclick="$.table.exportExcel()">导出所有</a>
+                    </li>
+                    <li><a onclick="$.table.exportExcelCurrentPage()">导出当前页</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="col-sm-12 select-table table-striped">
+            <table id="bootstrap-table"></table>
+        </div>
+    </div>
+</div>
+<th:block th:include="include :: footer" />
+<th:block th:include="include :: datetimepicker-js" />
+<script th:inline="javascript">
+    var ifReceive = [[${@pubParaValue.selectPubParaValueByParaName('if_receive')}]];
+
+    var prefix = ctx + "system/noticeHandle";
+
+    $(function() {
+        var options = {
+            url: prefix + "/list",
+            exportUrl: dataprefix + "/export",
+            modalName: "公告",
+            clickToSelect:true,
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field : 'amReceiveId',
+                    title : '公告接收Id',
+                    visible: false
+                },
+                {
+                    field : 'dealerName',
+                    title : '接收人'
+                },
+                {
+                    field : 'receiveDeptName',
+                    title : '接收机构'
+                },
+                {
+                    field : 'receiveGroupName',
+                    title : '接收工作组'
+                },
+                {
+                    field : 'dealerPhone',
+                    title : '接收电话'
+                },
+                {
+                    field : 'receiveTime',
+                    title : '接收时间'
+                },
+                {
+                    field: 'ifReceive',
+                    title: '接收状态',
+                    align: 'center',
+                    formatter: function (value,row,index) {
+                        return selectDictLabel(ifReceive, value);
+                    }
+                }]
+        };
+        $.table.init(options);
+    });
+
+    function selectDictLabel(datas, value) {
+        var actions = [];
+        $.each(datas, function(index, dict) {
+            if (dict.value == ('' + value)) {
+                var listClass = $.common.equals("default", dict.listClass) || $.common.isEmpty(dict.listClass) ? "" : "badge badge-" + dict.listClass;
+                actions.push($.common.sprintf("<span class='%s'>%s</span>", listClass, dict.valueDetail));
+                return false;
+            }
+        });
+        return actions.join('');
+    }
+</script>
+</body>
+</html>

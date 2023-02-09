@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:include="include :: header('业务事件单监控通报')"/>
+    <th:block th:include="include :: select2-css"/>
+</head>
+<body>
+<div class="main-content">
+    <form id="form-fmbiz-add" class="form-horizontal">
+        <input name="fmId" id="fmId" class="form-control" type="hidden" required th:value="*{fmId}">
+        <h4 class="form-header h4">事件单监控通报</h4>
+        <div class="row">
+
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label is-required">通报原因：</label>
+                    <div class="col-sm-8">
+                        <textarea id="bullCause" cols="20" name="bullCause" maxlength="128"
+                                  class="form-control"></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<th:block th:include="include :: footer"/>
+<th:block th:include="include :: select2-js"/>
+<th:block th:include="include :: datetimepicker-js"/>
+<script>
+    var prefix_version = ctx + "fmBizControl";
+
+    $("#form-fmbiz-add").validate({
+        onkeyup: false,
+        rules: {},
+        messages: {},
+        focusCleanup: true
+    });
+
+    // 提交
+    function submitHandler() {
+        if ($.validate.form()) {
+            var data = $("#form-fmbiz-add").serializeArray();
+            $.operate.save(prefix_version + "/savetongbao", data);
+        }
+    };
+</script>
+</body>
+</html>

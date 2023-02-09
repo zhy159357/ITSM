@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.activiti.mapper.FolderMapper">
+
+    <resultMap type="SmBizFolder" id="FolderResult">
+        <id property="id_" column="id_"></id>
+        <result property="name_"    column="name_"    />
+        <result property="path_"    column="path_"    />
+        <result property="parent_"    column="parent_"    />
+        <result property="description_"    column="description_"    />
+        <result property="createUser_"    column="create_user_"    />
+        <result property="createTime_"    column="create_time_"    />
+        <result property="modifyUser_"    column="modify_user_"    />
+        <result property="modifyTime_"    column="modify_time_"    />
+        <result property="updateTime_"    column="update_time_"    />
+        <result property="leaf_"    column="leaf_"    />
+        <result property="type"    column="type"    />
+    </resultMap>
+
+    <sql id="selectFolderVo">
+        SELECT
+            ID_,
+            NAME_,
+            PATH_,
+            PARENT_,
+            description_,
+            create_user_,
+            create_time_,
+            modify_user_,
+            modify_time_,
+            update_time_,
+            leaf_,
+            TYPE
+    </sql>
+
+
+
+
+    <select id="selectFolderTree" parameterType="SmBizFolder" resultMap="FolderResult">
+        <include refid="selectFolderVo"/>
+        FROM sm_biz_folder
+        ORDER by create_time_ asc
+    </select>
+
+    <select id="selectFolderTreeById" parameterType="String" resultMap="FolderResult">
+        <include refid="selectFolderVo"/>
+        FROM sm_biz_folder
+        where id_ = #{id_,jdbcType=VARCHAR}
+    </select>
+
+
+    <select id="selectUpdLeafById" parameterType="String" resultType="java.lang.Integer">
+        select count(1) from sm_biz_folder  where parent_ = #{id_}
+
+    </select>
+
+
+
+    <insert id="insertTree" parameterType="SmBizFolder" useGeneratedKeys="false" keyProperty="id_">
+        insert into sm_biz_folder
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+        id_,
+        create_user_,
+        <if test="parent_ != null and parent_ != ''">parent_,</if>
+        <if test="path_ != null and path_ != ''">path_,</if>
+        <if test="name_ != null and name_ != ''">name_,</if>
+        <if test="createTime_ != null and createTime_ != ''">create_time_,</if>
+        description_,
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+        #{id_},
+        #{createUser_},
+        <if test="parent_ != null and parent_ != ''">#{parent_},</if>
+        <if test="path_ != null and path_ != ''">#{path_},</if>
+        <if test="name_ != null and name_ != ''">#{name_},</if>
+        <if test="createTime_ != null and createTime_ != ''">#{createTime_},</if>
+        #{description_},
+        </trim>
+    </insert>
+
+
+    <update id="updateTree" parameterType="SmBizFolder">
+        update sm_biz_folder
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name_ != null  and name_ != ''">name_ = #{name_},</if>
+            path_ = #{path_},
+            <if test="parent_ != null  and parent_ != ''">parent_ = #{parent},</if>
+            description_ = #{description_},
+            <if test="createUser_ != null  and createUser_ != ''">create_user_ = #{createUser_},</if>
+            <if test="createTime_ != null  and createTime_ != ''">create_time_ = #{createTime_},</if>
+            <if test="modifyUser_ != null  and modifyUser_ != ''">modify_user_ = #{modifyUser_},</if>
+            <if test="modifyTime_ != null  and modifyTime_ != ''">modify_time_ = #{modifyTime_},</if>
+            <if test="updateTime_ != null  and updateTime_ != ''">update_time_ = #{updateTime_},</if>
+            <if test="leaf_ != null  and leaf_ != ''">leaf_ = #{leaf_},</if>
+            <if test="type != null  and type != ''">type = #{type},</if>
+        </trim>
+        where id_ = #{id_}
+    </update>
+
+    <delete id="deleteTree" parameterType="SmBizFolder">
+      delete from sm_biz_folder where id_ = #{id_}
+    </delete>
+
+
+    <select id="selectFolderById" parameterType="String" resultMap="FolderResult">
+        SELECT
+            ID_,
+            NAME_,
+            PATH_,
+            PARENT_,
+            description_,
+            create_user_,
+            create_time_,
+            modify_user_,
+            modify_time_,
+            update_time_,
+            leaf_,
+            TYPE
+            from sm_biz_folder
+            where id_ = #{id_}
+
+
+    </select>
+
+    <select id="selectParentName" parameterType="String" resultType="String">
+        select name_ from sm_biz_folder  where id_ = #{parent_}
+    </select>
+
+
+    <select id="selectFolderList" parameterType="SmBizFolder" resultMap="FolderResult">
+        SELECT
+            a.ID_,
+            a.NAME_,
+            a.PATH_,
+            a.PARENT_,
+            a.description_,
+            a.create_user_,
+            a.create_time_,
+            a.modify_user_,
+            a.modify_time_,
+            a.update_time_,
+            a.leaf_,
+            a.TYPE
+            from sm_biz_folder a LEFT JOIN  SM_BIZ_SCHEDULING b on a.ID_ = b.folder
+            where b.folder = #{id_}
+
+    </select>
+
+
+</mapper>
